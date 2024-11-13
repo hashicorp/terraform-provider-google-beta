@@ -1,9 +1,39 @@
-## 6.12.0 (Unreleased)
+## 6.13.0 (Unreleased)
+
+## 6.12.0
+
+FEATURES:
+* **New Data Source:** `google_access_context_manager_access_policy` ([#8676](https://github.com/hashicorp/terraform-provider-google-beta/pull/8676))
+* **New Data Source:** `google_backup_dr_data_source` (beta) ([#8641](https://github.com/hashicorp/terraform-provider-google-beta/pull/8641))
+* **New Resource:** `google_dataproc_gdc_spark_application` ([#8662](https://github.com/hashicorp/terraform-provider-google-beta/pull/8662))
+* **New Resource:** `google_iam_folders_policy_binding` (beta) ([#8677](https://github.com/hashicorp/terraform-provider-google-beta/pull/8677))
+* **New Resource:** `google_iam_organizations_policy_binding` (beta) ([#8679](https://github.com/hashicorp/terraform-provider-google-beta/pull/8679))
+
+IMPROVEMENTS:
+* artifactregistry: added `common_repository` field to `google_artifact_registry_repository` resource ([#8681](https://github.com/hashicorp/terraform-provider-google-beta/pull/8681))
+* backupdr: added `access_restriction` field to`google_backup_dr_backup_vault` resource (beta) ([#8656](https://github.com/hashicorp/terraform-provider-google-beta/pull/8656))
+* cloudrunv2: added `urls` output field to `google_cloud_run_v2_service` resource ([#8686](https://github.com/hashicorp/terraform-provider-google-beta/pull/8686))
+* compute: Added `IDPF` as a possible `nic_type` for `google_compute_instance.network_interface` resource ([#8664](https://github.com/hashicorp/terraform-provider-google-beta/pull/8664))
+* compute: Added the `IDPF` tag to the list of `guestOsFeatures` ([#8664](https://github.com/hashicorp/terraform-provider-google-beta/pull/8664))
+* compute: added `replica_names` field to `sql_database_instance` resource ([#8637](https://github.com/hashicorp/terraform-provider-google-beta/pull/8637))
+* filestore: added `performance_config` field to `google_filestore_instance` resource ([#8647](https://github.com/hashicorp/terraform-provider-google-beta/pull/8647))
+* redis: added `persistence_config` to `google_redis_cluster`. ([#8643](https://github.com/hashicorp/terraform-provider-google-beta/pull/8643))
+* securesourcemanager: added `workforce_identity_federation_config` field to `google_secure_source_manager_instance` resource ([#8670](https://github.com/hashicorp/terraform-provider-google-beta/pull/8670))
+* spanner: added `default_backup_schedule_type` field to  `google_spanner_instance` ([#8644](https://github.com/hashicorp/terraform-provider-google-beta/pull/8644))
+* sql: added `psc_auto_connections` field to `instances` resource ([#8682](https://github.com/hashicorp/terraform-provider-google-beta/pull/8682))
+
+BUG FIXES:
+* accesscontextmanager: fixed permadiff in perimeter `google_access_context_manager_service_perimeter_ingress_policy` and `google_access_context_manager_service_perimeter_egress_policy` resources when there are duplicate resources in the rules ([#8675](https://github.com/hashicorp/terraform-provider-google-beta/pull/8675))
+* accesscontextmanager: fixed comparison of `identity_type` in `ingress_from` and `egress_from` when the `IDENTITY_TYPE_UNSPECIFIED` is set ([#8648](https://github.com/hashicorp/terraform-provider-google-beta/pull/8648))
+* compute: fixed permadiff on attempted `type` field updates in `google_computer_security_policy`, updating this field will now force recreation of the resource ([#8689](https://github.com/hashicorp/terraform-provider-google-beta/pull/8689))
+* identityplatform: fixed perma-diff in `google_identity_platform_config` ([#8663](https://github.com/hashicorp/terraform-provider-google-beta/pull/8663))
+
+## 6.11.1 (November 12, 2024)
+BUG FIXES:
+* container: fixed diff on `google_container_cluster.user_managed_keys_config` field for resources that had not set it. ([#8687](https://github.com/hashicorp/terraform-provider-google-beta/pull/8687))
+* container: marked `google_container_cluster.user_managed_keys_config` as immutable because it can't be updated in place. ([#8687](https://github.com/hashicorp/terraform-provider-google-beta/pull/8687))
 
 ## 6.11.0 (November 11, 2024)
-
-NOTES:
-* compute: migrated `google_compute_firewall_policy_rule` from DCL engine to MMv1 engine. ([#8604](https://github.com/hashicorp/terraform-provider-google-beta/pull/8604))
 
 BREAKING CHANGES:
 * looker: made `oauth_config` a required field in `google_looker_instance`, as creating this resource without that field always triggers an API error ([#8633](https://github.com/hashicorp/terraform-provider-google-beta/pull/8633))
