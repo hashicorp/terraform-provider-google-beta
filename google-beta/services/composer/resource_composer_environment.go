@@ -165,8 +165,8 @@ func ResourceComposerEnvironment() *schema.Resource {
 				customdiff.ValidateChange("config.0.software_config.0.image_version", imageVersionChangeValidationFunc),
 				versionValidationCustomizeDiffFunc,
 			),
-			customdiff.ForceNewIf("config.0.node_config.0.network", forceNewCustomDiff("config.0.node_config.0.network")),
-			customdiff.ForceNewIf("config.0.node_config.0.subnetwork", forceNewCustomDiff("config.0.node_config.0.subnetwork")),
+			customdiff.ForceNewIf("config.0.node_config.0.network", forceNewIfNotComposer3CustomDiff("config.0.node_config.0.network")),
+			customdiff.ForceNewIf("config.0.node_config.0.subnetwork", forceNewIfNotComposer3CustomDiff("config.0.node_config.0.subnetwork")),
 		),
 
 		Schema: map[string]*schema.Schema{
@@ -236,7 +236,6 @@ func ResourceComposerEnvironment() *schema.Resource {
 										Type:             schema.TypeString,
 										Computed:         true,
 										Optional:         true,
-										ForceNew:         false,
 										ConflictsWith:    []string{"config.0.node_config.0.composer_network_attachment"},
 										DiffSuppressFunc: tpgresource.CompareSelfLinkOrResourceName,
 										Description:      `The Compute Engine machine type used for cluster instances, specified as a name or relative resource name. For example: "projects/{project}/zones/{zone}/machineTypes/{machineType}". Must belong to the enclosing environment's project and region/zone. The network must belong to the environment's project. If unspecified, the "default" network ID in the environment's project is used. If a Custom Subnet Network is provided, subnetwork must also be provided.`,
@@ -244,7 +243,6 @@ func ResourceComposerEnvironment() *schema.Resource {
 									"subnetwork": {
 										Type:             schema.TypeString,
 										Optional:         true,
-										ForceNew:         false,
 										Computed:         true,
 										ConflictsWith:    []string{"config.0.node_config.0.composer_network_attachment"},
 										DiffSuppressFunc: tpgresource.CompareSelfLinkOrResourceName,
@@ -2980,7 +2978,7 @@ func isComposer3(imageVersion string) bool {
 	return strings.Contains(imageVersion, "composer-3")
 }
 
-func forceNewCustomDiff(key string) customdiff.ResourceConditionFunc {
+func forceNewIfNotComposer3CustomDiff(key string) customdiff.ResourceConditionFunc {
 	return func(ctx context.Context, d *schema.ResourceDiff, meta interface{}) bool {
 		old, new := d.GetChange(key)
 		imageVersion := d.Get("config.0.software_config.0.image_version").(string)
