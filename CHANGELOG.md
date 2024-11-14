@@ -4,23 +4,23 @@
 
 FEATURES:
 * **New Data Source:** `google_access_context_manager_access_policy` ([#8676](https://github.com/hashicorp/terraform-provider-google-beta/pull/8676))
-* **New Data Source:** `google_backup_dr_data_source` (beta) ([#8641](https://github.com/hashicorp/terraform-provider-google-beta/pull/8641))
+* **New Data Source:** `google_backup_dr_data_source` ([#8641](https://github.com/hashicorp/terraform-provider-google-beta/pull/8641))
 * **New Resource:** `google_dataproc_gdc_spark_application` ([#8662](https://github.com/hashicorp/terraform-provider-google-beta/pull/8662))
-* **New Resource:** `google_iam_folders_policy_binding` (beta) ([#8677](https://github.com/hashicorp/terraform-provider-google-beta/pull/8677))
-* **New Resource:** `google_iam_organizations_policy_binding` (beta) ([#8679](https://github.com/hashicorp/terraform-provider-google-beta/pull/8679))
+* **New Resource:** `google_iam_folders_policy_binding` ([#8677](https://github.com/hashicorp/terraform-provider-google-beta/pull/8677))
+* **New Resource:** `google_iam_organizations_policy_binding` ([#8679](https://github.com/hashicorp/terraform-provider-google-beta/pull/8679))
 
 IMPROVEMENTS:
 * artifactregistry: added `common_repository` field to `google_artifact_registry_repository` resource ([#8681](https://github.com/hashicorp/terraform-provider-google-beta/pull/8681))
 * backupdr: added `access_restriction` field to`google_backup_dr_backup_vault` resource (beta) ([#8656](https://github.com/hashicorp/terraform-provider-google-beta/pull/8656))
 * cloudrunv2: added `urls` output field to `google_cloud_run_v2_service` resource ([#8686](https://github.com/hashicorp/terraform-provider-google-beta/pull/8686))
-* compute: Added `IDPF` as a possible `nic_type` for `google_compute_instance.network_interface` resource ([#8664](https://github.com/hashicorp/terraform-provider-google-beta/pull/8664))
-* compute: Added the `IDPF` tag to the list of `guestOsFeatures` ([#8664](https://github.com/hashicorp/terraform-provider-google-beta/pull/8664))
+* compute: added `IDPF` as a possible value for the `network_interface.nic_type` field in `google_compute_instance` resource ([#8664](https://github.com/hashicorp/terraform-provider-google-beta/pull/8664))
+* compute: added `IDPF` as a possible value for the `guest_os_features.type` field in `google_compute_image` resource ([#8664](https://github.com/hashicorp/terraform-provider-google-beta/pull/8664))
 * compute: added `replica_names` field to `sql_database_instance` resource ([#8637](https://github.com/hashicorp/terraform-provider-google-beta/pull/8637))
 * filestore: added `performance_config` field to `google_filestore_instance` resource ([#8647](https://github.com/hashicorp/terraform-provider-google-beta/pull/8647))
 * redis: added `persistence_config` to `google_redis_cluster`. ([#8643](https://github.com/hashicorp/terraform-provider-google-beta/pull/8643))
 * securesourcemanager: added `workforce_identity_federation_config` field to `google_secure_source_manager_instance` resource ([#8670](https://github.com/hashicorp/terraform-provider-google-beta/pull/8670))
 * spanner: added `default_backup_schedule_type` field to  `google_spanner_instance` ([#8644](https://github.com/hashicorp/terraform-provider-google-beta/pull/8644))
-* sql: added `psc_auto_connections` field to `instances` resource ([#8682](https://github.com/hashicorp/terraform-provider-google-beta/pull/8682))
+* sql: added `psc_auto_connections` fields to `google_sql_database_instance` resource ([#8682](https://github.com/hashicorp/terraform-provider-google-beta/pull/8682))
 
 BUG FIXES:
 * accesscontextmanager: fixed permadiff in perimeter `google_access_context_manager_service_perimeter_ingress_policy` and `google_access_context_manager_service_perimeter_egress_policy` resources when there are duplicate resources in the rules ([#8675](https://github.com/hashicorp/terraform-provider-google-beta/pull/8675))
