@@ -39,7 +39,7 @@ func TestAccComposerUserWorkloadsConfigMap_composerUserWorkloadsConfigMapBasicEx
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckComposerUserWorkloadsConfigMapDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -58,6 +58,7 @@ func TestAccComposerUserWorkloadsConfigMap_composerUserWorkloadsConfigMapBasicEx
 func testAccComposerUserWorkloadsConfigMap_composerUserWorkloadsConfigMapBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_composer_environment" "environment" {
+  provider = google-beta
   name   = "tf-test-test-environment%{random_suffix}"
   region = "us-central1"
   config {
@@ -68,6 +69,7 @@ resource "google_composer_environment" "environment" {
 }
 
 resource "google_composer_user_workloads_config_map" "config_map" {
+  provider = google-beta
   name = "tf-test-test-config-map%{random_suffix}"
   region = "us-central1"
   environment = google_composer_environment.environment.name
