@@ -41,7 +41,7 @@ func TestAccBackupDRBackupVault_backupDrBackupVaultFullExample(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckBackupDRBackupVaultDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -60,18 +60,17 @@ func TestAccBackupDRBackupVault_backupDrBackupVaultFullExample(t *testing.T) {
 func testAccBackupDRBackupVault_backupDrBackupVaultFullExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_backup_dr_backup_vault" "backup-vault-test" {
-  provider = google-beta
   location = "us-central1"
   backup_vault_id    = "tf-test-backup-vault-test%{random_suffix}"
   description = "This is a second backup vault built by Terraform."
   backup_minimum_enforced_retention_duration = "100000s"
-  labels = {
-    foo = "bar1"
-    bar = "baz1"
-  }
   annotations = {
     annotations1 = "bar1"
     annotations2 = "baz1"
+  }
+  labels = {
+    foo = "bar1"
+    bar = "baz1"
   }
   force_update = "true"
   access_restriction = "WITHIN_ORGANIZATION"
