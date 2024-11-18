@@ -91,6 +91,7 @@ func ResourceComputeRegionInstanceGroupManager() *schema.Resource {
 					},
 				},
 			},
+
 			"instance_flexibility_policy": {
 				Type:        schema.TypeList,
 				Optional:    true,
@@ -932,6 +933,7 @@ func resourceComputeRegionInstanceGroupManagerUpdate(d *schema.ResourceData, met
 		updatedManager.Versions = expandVersions(d.Get("version").([]interface{}))
 		change = true
 	}
+
 	var targetSizePatchUpdate bool
 	if d.HasChange("instance_flexibility_policy") {
 		updatedManager.InstanceFlexibilityPolicy = expandInstanceFlexibilityPolicy(d)
@@ -1176,6 +1178,7 @@ func flattenRegionUpdatePolicy(updatePolicy *compute.InstanceGroupManagerUpdateP
 	}
 	return results
 }
+
 func expandInstanceFlexibilityPolicy(d *schema.ResourceData) *compute.InstanceGroupManagerInstanceFlexibilityPolicy {
 	instanceFlexibilityPolicy := &compute.InstanceGroupManagerInstanceFlexibilityPolicy{}
 	oldFlexibilityPolicy, newFlexibilityPolicy := d.GetChange("instance_flexibility_policy")
@@ -1244,6 +1247,7 @@ func expandDistributionPolicyForCreate(d *schema.ResourceData) *compute.Distribu
 	}
 	return distributionPolicy
 }
+
 func flattenInstanceFlexibilityPolicy(instanceFlexibilityPolicy *compute.InstanceGroupManagerInstanceFlexibilityPolicy) []map[string]any {
 	flattenedInstanceFlexibilityPolicy := []map[string]any{}
 	if instanceFlexibilityPolicy != nil {
