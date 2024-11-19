@@ -70,7 +70,7 @@ except the last character, which cannot be a dash.`,
 			"default_custom_error_response_policy": {
 				Type:     schema.TypeList,
 				Optional: true,
-				Description: `defaultCustomErrorResponsePolicy specifies how the Load Balancer returns error responses when BackendServiceor BackendBucket responds with an error.
+				Description: `defaultCustomErrorResponsePolicy specifies how the Load Balancer returns error responses when BackendService or BackendBucket responds with an error.
 
 This policy takes effect at the PathMatcher level and applies only when no policy has been defined for the error code at lower levels like RouteRule and PathRule within this PathMatcher. If an error code does not have a policy defined in defaultCustomErrorResponsePolicy, then a policy defined for the error code in UrlMap.defaultCustomErrorResponsePolicy takes effect.
 
@@ -790,7 +790,7 @@ prior to sending the response back to the client.`,
 						"default_custom_error_response_policy": {
 							Type:     schema.TypeList,
 							Optional: true,
-							Description: `defaultCustomErrorResponsePolicy specifies how the Load Balancer returns error responses when BackendServiceor BackendBucket responds with an error.
+							Description: `defaultCustomErrorResponsePolicy specifies how the Load Balancer returns error responses when BackendService or BackendBucket responds with an error.
 
 This policy takes effect at the PathMatcher level and applies only when no policy has been defined for the error code at lower levels like RouteRule and PathRule within this PathMatcher. If an error code does not have a policy defined in defaultCustomErrorResponsePolicy, then a policy defined for the error code in UrlMap.defaultCustomErrorResponsePolicy takes effect.
 
@@ -1472,7 +1472,7 @@ allowed here.`,
 									"custom_error_response_policy": {
 										Type:     schema.TypeList,
 										Optional: true,
-										Description: `customErrorResponsePolicy specifies how the Load Balancer returns error responses when BackendServiceor BackendBucket responds with an error.
+										Description: `customErrorResponsePolicy specifies how the Load Balancer returns error responses when BackendService or BackendBucket responds with an error.
 If a policy for an error code is not configured for the PathRule, a policy for the error code configured in pathMatcher.defaultCustomErrorResponsePolicy is applied. If one is not specified in pathMatcher.defaultCustomErrorResponsePolicy, the policy configured in UrlMap.defaultCustomErrorResponsePolicy takes effect.
 For example, consider a UrlMap with the following configuration:
 UrlMap.defaultCustomErrorResponsePolicy are configured with policies for 5xx and 4xx errors
