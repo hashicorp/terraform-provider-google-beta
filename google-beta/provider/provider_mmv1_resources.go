@@ -82,6 +82,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/gkeonprem"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/healthcare"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/iam2"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/iam3"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/iambeta"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/iamworkforcepool"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/iap"
@@ -159,6 +160,7 @@ var handwrittenDatasources = map[string]*schema.Resource{
 	"google_access_approval_folder_service_account":        accessapproval.DataSourceAccessApprovalFolderServiceAccount(),
 	"google_access_approval_organization_service_account":  accessapproval.DataSourceAccessApprovalOrganizationServiceAccount(),
 	"google_access_approval_project_service_account":       accessapproval.DataSourceAccessApprovalProjectServiceAccount(),
+	"google_access_context_manager_access_policy":          accesscontextmanager.DataSourceAccessContextManagerAccessPolicy(),
 	"google_active_folder":                                 resourcemanager.DataSourceGoogleActiveFolder(),
 	"google_alloydb_locations":                             alloydb.DataSourceAlloydbLocations(),
 	"google_alloydb_supported_database_flags":              alloydb.DataSourceAlloydbSupportedDatabaseFlags(),
@@ -170,7 +172,9 @@ var handwrittenDatasources = map[string]*schema.Resource{
 	"google_apphub_application":                            apphub.DataSourceGoogleApphubApplication(),
 	"google_apphub_discovered_service":                     apphub.DataSourceApphubDiscoveredService(),
 	"google_backup_dr_management_server":                   backupdr.DataSourceGoogleCloudBackupDRService(),
+	"google_backup_dr_backup_plan_association":             backupdr.DataSourceGoogleCloudBackupDRBackupPlanAssociation(),
 	"google_backup_dr_backup_plan":                         backupdr.DataSourceGoogleCloudBackupDRBackupPlan(),
+	"google_backup_dr_data_source":                         backupdr.DataSourceGoogleCloudBackupDRDataSource(),
 	"google_beyondcorp_app_connection":                     beyondcorp.DataSourceGoogleBeyondcorpAppConnection(),
 	"google_beyondcorp_app_connector":                      beyondcorp.DataSourceGoogleBeyondcorpAppConnector(),
 	"google_beyondcorp_app_gateway":                        beyondcorp.DataSourceGoogleBeyondcorpAppGateway(),
@@ -501,9 +505,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 551
+// Generated resources: 556
 // Generated IAM resources: 291
-// Total generated resources: 842
+// Total generated resources: 847
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -584,6 +588,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_artifact_registry_repository_iam_policy":                             tpgiamresource.ResourceIamPolicy(artifactregistry.ArtifactRegistryRepositoryIamSchema, artifactregistry.ArtifactRegistryRepositoryIamUpdaterProducer, artifactregistry.ArtifactRegistryRepositoryIdParseFunc),
 	"google_artifact_registry_vpcsc_config":                                      artifactregistry.ResourceArtifactRegistryVPCSCConfig(),
 	"google_backup_dr_backup_plan":                                               backupdr.ResourceBackupDRBackupPlan(),
+	"google_backup_dr_backup_plan_association":                                   backupdr.ResourceBackupDRBackupPlanAssociation(),
 	"google_backup_dr_backup_vault":                                              backupdr.ResourceBackupDRBackupVault(),
 	"google_backup_dr_management_server":                                         backupdr.ResourceBackupDRManagementServer(),
 	"google_beyondcorp_app_connection":                                           beyondcorp.ResourceBeyondcorpAppConnection(),
@@ -891,6 +896,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_dataproc_batch":                                                      dataproc.ResourceDataprocBatch(),
 	"google_dataproc_gdc_application_environment":                                dataprocgdc.ResourceDataprocGdcApplicationEnvironment(),
 	"google_dataproc_gdc_service_instance":                                       dataprocgdc.ResourceDataprocGdcServiceInstance(),
+	"google_dataproc_gdc_spark_application":                                      dataprocgdc.ResourceDataprocGdcSparkApplication(),
 	"google_dataproc_metastore_federation":                                       dataprocmetastore.ResourceDataprocMetastoreFederation(),
 	"google_dataproc_metastore_federation_iam_binding":                           tpgiamresource.ResourceIamBinding(dataprocmetastore.DataprocMetastoreFederationIamSchema, dataprocmetastore.DataprocMetastoreFederationIamUpdaterProducer, dataprocmetastore.DataprocMetastoreFederationIdParseFunc),
 	"google_dataproc_metastore_federation_iam_member":                            tpgiamresource.ResourceIamMember(dataprocmetastore.DataprocMetastoreFederationIamSchema, dataprocmetastore.DataprocMetastoreFederationIamUpdaterProducer, dataprocmetastore.DataprocMetastoreFederationIdParseFunc),
@@ -1010,6 +1016,9 @@ var generatedResources = map[string]*schema.Resource{
 	"google_healthcare_workspace":                                                healthcare.ResourceHealthcareWorkspace(),
 	"google_iam_access_boundary_policy":                                          iam2.ResourceIAM2AccessBoundaryPolicy(),
 	"google_iam_deny_policy":                                                     iam2.ResourceIAM2DenyPolicy(),
+	"google_iam_folders_policy_binding":                                          iam3.ResourceIAM3FoldersPolicyBinding(),
+	"google_iam_organizations_policy_binding":                                    iam3.ResourceIAM3OrganizationsPolicyBinding(),
+	"google_iam_principal_access_boundary_policy":                                iam3.ResourceIAM3PrincipalAccessBoundaryPolicy(),
 	"google_iam_workload_identity_pool":                                          iambeta.ResourceIAMBetaWorkloadIdentityPool(),
 	"google_iam_workload_identity_pool_provider":                                 iambeta.ResourceIAMBetaWorkloadIdentityPoolProvider(),
 	"google_iam_workforce_pool":                                                  iamworkforcepool.ResourceIAMWorkforcePoolWorkforcePool(),

@@ -31,6 +31,9 @@ func Provider() *schema.Provider {
 	}
 
 	provider := &schema.Provider{
+		// See: https://developer.hashicorp.com/terraform/plugin/framework/migrating/mux
+		// "The schema and configuration handling must exactly match between all underlying providers of the mux server"
+		// This schema matches the schema implemented with the plugin-framework in google/fwprovider/framework_provider.go
 		Schema: map[string]*schema.Schema{
 			"credentials": {
 				Type:          schema.TypeString,
@@ -531,6 +534,11 @@ func Provider() *schema.Provider {
 				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
 			},
 			"iam2_custom_endpoint": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
+			},
+			"iam3_custom_endpoint": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
@@ -1120,6 +1128,7 @@ func ProviderConfigure(ctx context.Context, d *schema.ResourceData, p *schema.Pr
 	config.GkeonpremBasePath = d.Get("gkeonprem_custom_endpoint").(string)
 	config.HealthcareBasePath = d.Get("healthcare_custom_endpoint").(string)
 	config.IAM2BasePath = d.Get("iam2_custom_endpoint").(string)
+	config.IAM3BasePath = d.Get("iam3_custom_endpoint").(string)
 	config.IAMBetaBasePath = d.Get("iam_beta_custom_endpoint").(string)
 	config.IAMWorkforcePoolBasePath = d.Get("iam_workforce_pool_custom_endpoint").(string)
 	config.IapBasePath = d.Get("iap_custom_endpoint").(string)
