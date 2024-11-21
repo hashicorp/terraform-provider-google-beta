@@ -7,12 +7,12 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-provider-google-beta/google-beta/fwtransport"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 type LocationDescriber interface {
-	GetLocationDescription(providerConfig *fwtransport.FrameworkProviderConfig) LocationDescription
+	GetLocationDescription(providerConfig *transport_tpg.Config) LocationDescription
 }
 
 type LocationDescription struct {

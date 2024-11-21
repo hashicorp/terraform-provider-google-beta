@@ -11,6 +11,9 @@ import (
 )
 
 func TestAccBackupDRBackupVault_fullUpdate(t *testing.T) {
+	// Uses time.Now
+	acctest.SkipIfVcr(t)
+
 	t.Parallel()
 
 	timeNow := time.Now().UTC()
@@ -24,7 +27,7 @@ func TestAccBackupDRBackupVault_fullUpdate(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccBackupDRBackupVault_fullCreate(context),
@@ -33,7 +36,7 @@ func TestAccBackupDRBackupVault_fullUpdate(t *testing.T) {
 				ResourceName:            "google_backup_dr_backup_vault.backup-vault-test",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"allow_missing", "annotations", "backup_vault_id", "force_delete", "force_update", "ignore_backup_plan_references", "ignore_inactive_datasources", "labels", "location", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"allow_missing", "annotations", "backup_vault_id", "force_delete", "force_update", "ignore_backup_plan_references", "ignore_inactive_datasources", "access_restriction", "labels", "location", "terraform_labels"},
 			},
 			{
 				Config: testAccBackupDRBackupVault_fullUpdate(context),
@@ -42,7 +45,7 @@ func TestAccBackupDRBackupVault_fullUpdate(t *testing.T) {
 				ResourceName:            "google_backup_dr_backup_vault.backup-vault-test",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"allow_missing", "annotations", "backup_vault_id", "force_delete", "force_update", "ignore_backup_plan_references", "ignore_inactive_datasources", "labels", "location", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"allow_missing", "annotations", "backup_vault_id", "force_delete", "force_update", "ignore_backup_plan_references", "ignore_inactive_datasources", "access_restriction", "labels", "location", "terraform_labels"},
 			},
 		},
 	})
@@ -51,7 +54,6 @@ func TestAccBackupDRBackupVault_fullUpdate(t *testing.T) {
 func testAccBackupDRBackupVault_fullCreate(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_backup_dr_backup_vault" "backup-vault-test" {
-  provider = google-beta
   location = "us-central1"
   backup_vault_id    = "tf-test-backup-vault-test%{random_suffix}"
   description = "This is a backup vault built by Terraform."
@@ -67,6 +69,7 @@ resource "google_backup_dr_backup_vault" "backup-vault-test" {
   }
   force_update = "true"
   ignore_inactive_datasources = "true"
+  access_restriction = "WITHIN_ORGANIZATION"
   ignore_backup_plan_references = "true"
   allow_missing = "true"
 }
@@ -76,7 +79,6 @@ resource "google_backup_dr_backup_vault" "backup-vault-test" {
 func testAccBackupDRBackupVault_fullUpdate(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_backup_dr_backup_vault" "backup-vault-test" {
-  provider = google-beta
   location = "us-central1"
   backup_vault_id    = "tf-test-backup-vault-test%{random_suffix}"
   description = "This is a second backup vault built by Terraform."
@@ -91,6 +93,7 @@ resource "google_backup_dr_backup_vault" "backup-vault-test" {
 	annotations2 = "baz1"
   }
   force_update = "true"
+  access_restriction = "WITHIN_ORGANIZATION"
   ignore_inactive_datasources = "true"
   ignore_backup_plan_references = "true"
   allow_missing = "true"

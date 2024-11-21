@@ -39,7 +39,7 @@ func TestAccParallelstoreInstance_parallelstoreInstanceBasicExample(t *testing.T
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckParallelstoreInstanceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -68,7 +68,6 @@ resource "google_parallelstore_instance" "instance" {
   labels = {
     test = "value"
   }
-  provider = google-beta
   depends_on = [google_service_networking_connection.default]
 }
 
@@ -76,7 +75,6 @@ resource "google_compute_network" "network" {
   name                    = "network%{random_suffix}"
   auto_create_subnetworks = true
   mtu = 8896
-  provider = google-beta
 }
 
 # Create an IP address
@@ -86,7 +84,6 @@ resource "google_compute_global_address" "private_ip_alloc" {
   address_type  = "INTERNAL"
   prefix_length = 24
   network       = google_compute_network.network.id
-  provider = google-beta
 }
 
 # Create a private connection
@@ -94,7 +91,6 @@ resource "google_service_networking_connection" "default" {
   network                 = google_compute_network.network.id
   service                 = "servicenetworking.googleapis.com"
   reserved_peering_ranges = [google_compute_global_address.private_ip_alloc.name]
-  provider = google-beta
 }
 `, context)
 }

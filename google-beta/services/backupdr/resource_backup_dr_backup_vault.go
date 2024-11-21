@@ -30,6 +30,7 @@ import (
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 )
 
 func ResourceBackupDRBackupVault() *schema.Resource {
@@ -72,6 +73,14 @@ func ResourceBackupDRBackupVault() *schema.Resource {
 				Required:    true,
 				ForceNew:    true,
 				Description: `The GCP location for the backup vault.`,
+			},
+			"access_restriction": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ForceNew:     true,
+				ValidateFunc: verify.ValidateEnum([]string{"ACCESS_RESTRICTION_UNSPECIFIED", "WITHIN_PROJECT", "WITHIN_ORGANIZATION", "UNRESTRICTED", "WITHIN_ORG_BUT_UNRESTRICTED_FOR_BA", ""}),
+				Description:  `Access restriction for the backup vault. Default value is 'WITHIN_ORGANIZATION' if not provided during creation. Default value: "WITHIN_ORGANIZATION" Possible values: ["ACCESS_RESTRICTION_UNSPECIFIED", "WITHIN_PROJECT", "WITHIN_ORGANIZATION", "UNRESTRICTED", "WITHIN_ORG_BUT_UNRESTRICTED_FOR_BA"]`,
+				Default:      "WITHIN_ORGANIZATION",
 			},
 			"allow_missing": {
 				Type:        schema.TypeBool,
@@ -254,6 +263,12 @@ func resourceBackupDRBackupVaultCreate(d *schema.ResourceData, meta interface{})
 	} else if v, ok := d.GetOkExists("effective_time"); !tpgresource.IsEmptyValue(reflect.ValueOf(effectiveTimeProp)) && (ok || !reflect.DeepEqual(v, effectiveTimeProp)) {
 		obj["effectiveTime"] = effectiveTimeProp
 	}
+	accessRestrictionProp, err := expandBackupDRBackupVaultAccessRestriction(d.Get("access_restriction"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("access_restriction"); !tpgresource.IsEmptyValue(reflect.ValueOf(accessRestrictionProp)) && (ok || !reflect.DeepEqual(v, accessRestrictionProp)) {
+		obj["accessRestriction"] = accessRestrictionProp
+	}
 	labelsProp, err := expandBackupDRBackupVaultEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
@@ -422,6 +437,9 @@ func resourceBackupDRBackupVaultRead(d *schema.ResourceData, meta interface{}) e
 		return fmt.Errorf("Error reading BackupVault: %s", err)
 	}
 	if err := d.Set("annotations", flattenBackupDRBackupVaultAnnotations(res["annotations"], d, config)); err != nil {
+		return fmt.Errorf("Error reading BackupVault: %s", err)
+	}
+	if err := d.Set("access_restriction", flattenBackupDRBackupVaultAccessRestriction(res["accessRestriction"], d, config)); err != nil {
 		return fmt.Errorf("Error reading BackupVault: %s", err)
 	}
 	if err := d.Set("terraform_labels", flattenBackupDRBackupVaultTerraformLabels(res["labels"], d, config)); err != nil {
@@ -737,6 +755,10 @@ func flattenBackupDRBackupVaultAnnotations(v interface{}, d *schema.ResourceData
 	return transformed
 }
 
+func flattenBackupDRBackupVaultAccessRestriction(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenBackupDRBackupVaultTerraformLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
@@ -769,6 +791,10 @@ func expandBackupDRBackupVaultBackupMinimumEnforcedRetentionDuration(v interface
 }
 
 func expandBackupDRBackupVaultEffectiveTime(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandBackupDRBackupVaultAccessRestriction(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

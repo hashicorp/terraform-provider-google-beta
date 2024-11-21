@@ -15,7 +15,7 @@
 //
 // ----------------------------------------------------------------------------
 
-package oracledatabase
+package iam3
 
 import (
 	"context"
@@ -30,12 +30,12 @@ import (
 )
 
 func init() {
-	sweeper.AddTestSweepers("OracleDatabaseCloudVmCluster", testSweepOracleDatabaseCloudVmCluster)
+	sweeper.AddTestSweepers("IAM3PrincipalAccessBoundaryPolicy", testSweepIAM3PrincipalAccessBoundaryPolicy)
 }
 
 // At the time of writing, the CI only passes us-central1 as the region
-func testSweepOracleDatabaseCloudVmCluster(region string) error {
-	resourceName := "OracleDatabaseCloudVmCluster"
+func testSweepIAM3PrincipalAccessBoundaryPolicy(region string) error {
+	resourceName := "IAM3PrincipalAccessBoundaryPolicy"
 	log.Printf("[INFO][SWEEPER_LOG] Starting sweeper for %s", resourceName)
 
 	config, err := sweeper.SharedConfigForRegion(region)
@@ -64,7 +64,7 @@ func testSweepOracleDatabaseCloudVmCluster(region string) error {
 		},
 	}
 
-	listTemplate := strings.Split("https://oracledatabase.googleapis.com/v1/projects/{{project}}/locations/{{location}}/cloudVmClusters", "?")[0]
+	listTemplate := strings.Split("https://iam.googleapis.com/v3beta/organizations/{{organization}}/locations/{{location}}/principalAccessBoundaryPolicies", "?")[0]
 	listUrl, err := tpgresource.ReplaceVars(d, config, listTemplate)
 	if err != nil {
 		log.Printf("[INFO][SWEEPER_LOG] error preparing sweeper list url: %s", err)
@@ -83,7 +83,7 @@ func testSweepOracleDatabaseCloudVmCluster(region string) error {
 		return nil
 	}
 
-	resourceList, ok := res["cloudVmClusters"]
+	resourceList, ok := res["principalAccessBoundaryPolicies"]
 	if !ok {
 		log.Printf("[INFO][SWEEPER_LOG] Nothing found in response.")
 		return nil
@@ -112,7 +112,7 @@ func testSweepOracleDatabaseCloudVmCluster(region string) error {
 			continue
 		}
 
-		deleteTemplate := "https://oracledatabase.googleapis.com/v1/projects/{{project}}/locations/{{location}}/cloudVmClusters/{{cloud_vm_cluster_id}}"
+		deleteTemplate := "https://iam.googleapis.com/v3beta/organizations/{{organization}}/locations/{{location}}/principalAccessBoundaryPolicies/{{principal_access_boundary_policy_id}}"
 		deleteUrl, err := tpgresource.ReplaceVars(d, config, deleteTemplate)
 		if err != nil {
 			log.Printf("[INFO][SWEEPER_LOG] error preparing delete url: %s", err)

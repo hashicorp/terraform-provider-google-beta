@@ -39,7 +39,7 @@ func TestAccManagedKafkaTopic_managedkafkaTopicBasicExample(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckManagedKafkaTopicDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -71,8 +71,6 @@ resource "google_managed_kafka_cluster" "cluster" {
       }
     }
   }
-
-  provider = google-beta
 }
 
 resource "google_managed_kafka_topic" "example" {
@@ -84,12 +82,9 @@ resource "google_managed_kafka_topic" "example" {
   configs = {
     "cleanup.policy" = "compact"
   }
-
-  provider = google-beta
 }
 
 data "google_project" "project" {
-  provider = google-beta
 }
 `, context)
 }

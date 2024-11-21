@@ -91,6 +91,7 @@ func ResourceComputeRegionInstanceGroupManager() *schema.Resource {
 					},
 				},
 			},
+
 			"instance_flexibility_policy": {
 				Type:        schema.TypeList,
 				Optional:    true,
@@ -157,6 +158,12 @@ func ResourceComputeRegionInstanceGroupManager() *schema.Resource {
 				Optional:    true,
 				ForceNew:    true,
 				Description: `An optional textual description of the instance group manager.`,
+			},
+
+			"instance_group_manager_id": {
+				Type:        schema.TypeInt,
+				Computed:    true,
+				Description: `The unique identifier number for the resource. This identifier is defined by the server.`,
 			},
 
 			"fingerprint": {
@@ -811,6 +818,9 @@ func resourceComputeRegionInstanceGroupManagerRead(d *schema.ResourceData, meta 
 	if err := d.Set("description", manager.Description); err != nil {
 		return fmt.Errorf("Error setting description: %s", err)
 	}
+	if err := d.Set("instance_group_manager_id", manager.Id); err != nil {
+		return fmt.Errorf("Error setting description: %s", err)
+	}
 	if err := d.Set("project", project); err != nil {
 		return fmt.Errorf("Error setting project: %s", err)
 	}
@@ -932,6 +942,7 @@ func resourceComputeRegionInstanceGroupManagerUpdate(d *schema.ResourceData, met
 		updatedManager.Versions = expandVersions(d.Get("version").([]interface{}))
 		change = true
 	}
+
 	var targetSizePatchUpdate bool
 	if d.HasChange("instance_flexibility_policy") {
 		updatedManager.InstanceFlexibilityPolicy = expandInstanceFlexibilityPolicy(d)
@@ -1176,6 +1187,7 @@ func flattenRegionUpdatePolicy(updatePolicy *compute.InstanceGroupManagerUpdateP
 	}
 	return results
 }
+
 func expandInstanceFlexibilityPolicy(d *schema.ResourceData) *compute.InstanceGroupManagerInstanceFlexibilityPolicy {
 	instanceFlexibilityPolicy := &compute.InstanceGroupManagerInstanceFlexibilityPolicy{}
 	oldFlexibilityPolicy, newFlexibilityPolicy := d.GetChange("instance_flexibility_policy")
@@ -1244,6 +1256,7 @@ func expandDistributionPolicyForCreate(d *schema.ResourceData) *compute.Distribu
 	}
 	return distributionPolicy
 }
+
 func flattenInstanceFlexibilityPolicy(instanceFlexibilityPolicy *compute.InstanceGroupManagerInstanceFlexibilityPolicy) []map[string]any {
 	flattenedInstanceFlexibilityPolicy := []map[string]any{}
 	if instanceFlexibilityPolicy != nil {

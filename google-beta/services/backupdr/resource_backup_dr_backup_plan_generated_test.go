@@ -60,7 +60,7 @@ func testAccBackupDRBackupPlan_backupDrBackupPlanSimpleExample(context map[strin
 resource "google_backup_dr_backup_vault" "my_backup_vault" {
   provider                                      = google-beta
   location                                      = "us-central1"
-  backup_vault_id                               = "bv-bp-test"
+  backup_vault_id                               = "tf-test-backup-vault-simple-test%{random_suffix}"
   backup_minimum_enforced_retention_duration    = "100000s"
 }
 

@@ -634,12 +634,6 @@ resource "google_cloud_run_service" "default" {
   location = "us-central1"
   provider = google-beta
 
-  metadata {
-    annotations = {
-      "run.googleapis.com/launch-stage" = "BETA"
-    }
-  }
-
   template {
     metadata {
       annotations = {
