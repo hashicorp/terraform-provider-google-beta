@@ -1144,5 +1144,6 @@ func (p *FrameworkProvider) EphemeralResources(_ context.Context) []func() ephem
 	return []func() ephemeral.EphemeralResource{
 		resourcemanager.GoogleEphemeralServiceAccountAccessToken,
 		resourcemanager.GoogleEphemeralServiceAccountIdToken,
+		resourcemanager.GoogleEphemeralServiceAccountJwt,
 	}
 }
