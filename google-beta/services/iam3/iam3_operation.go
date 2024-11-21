@@ -30,6 +30,7 @@ import (
 type IAM3OperationWaiter struct {
 	Config    *transport_tpg.Config
 	UserAgent string
+	Project   string
 	tpgresource.CommonOperationWaiter
 }
 
@@ -43,15 +44,17 @@ func (w *IAM3OperationWaiter) QueryOp() (interface{}, error) {
 	return transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    w.Config,
 		Method:    "GET",
+		Project:   w.Project,
 		RawURL:    url,
 		UserAgent: w.UserAgent,
 	})
 }
 
-func createIAM3Waiter(config *transport_tpg.Config, op map[string]interface{}, activity, userAgent string) (*IAM3OperationWaiter, error) {
+func createIAM3Waiter(config *transport_tpg.Config, op map[string]interface{}, project, activity, userAgent string) (*IAM3OperationWaiter, error) {
 	w := &IAM3OperationWaiter{
 		Config:    config,
 		UserAgent: userAgent,
+		Project:   project,
 	}
 	if err := w.CommonOperationWaiter.SetOp(op); err != nil {
 		return nil, err
@@ -60,8 +63,8 @@ func createIAM3Waiter(config *transport_tpg.Config, op map[string]interface{}, a
 }
 
 // nolint: deadcode,unused
-func IAM3OperationWaitTimeWithResponse(config *transport_tpg.Config, op map[string]interface{}, response *map[string]interface{}, activity, userAgent string, timeout time.Duration) error {
-	w, err := createIAM3Waiter(config, op, activity, userAgent)
+func IAM3OperationWaitTimeWithResponse(config *transport_tpg.Config, op map[string]interface{}, response *map[string]interface{}, project, activity, userAgent string, timeout time.Duration) error {
+	w, err := createIAM3Waiter(config, op, project, activity, userAgent)
 	if err != nil {
 		return err
 	}
@@ -75,12 +78,12 @@ func IAM3OperationWaitTimeWithResponse(config *transport_tpg.Config, op map[stri
 	return json.Unmarshal(rawResponse, response)
 }
 
-func IAM3OperationWaitTime(config *transport_tpg.Config, op map[string]interface{}, activity, userAgent string, timeout time.Duration) error {
+func IAM3OperationWaitTime(config *transport_tpg.Config, op map[string]interface{}, project, activity, userAgent string, timeout time.Duration) error {
 	if val, ok := op["name"]; !ok || val == "" {
 		// This was a synchronous call - there is no operation to wait for.
 		return nil
 	}
-	w, err := createIAM3Waiter(config, op, activity, userAgent)
+	w, err := createIAM3Waiter(config, op, project, activity, userAgent)
 	if err != nil {
 		// If w is nil, the op was synchronous.
 		return err

@@ -505,9 +505,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 556
+// Generated resources: 557
 // Generated IAM resources: 291
-// Total generated resources: 847
+// Total generated resources: 848
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -1019,6 +1019,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_iam_folders_policy_binding":                                          iam3.ResourceIAM3FoldersPolicyBinding(),
 	"google_iam_organizations_policy_binding":                                    iam3.ResourceIAM3OrganizationsPolicyBinding(),
 	"google_iam_principal_access_boundary_policy":                                iam3.ResourceIAM3PrincipalAccessBoundaryPolicy(),
+	"google_iam_projects_policy_binding":                                         iam3.ResourceIAM3ProjectsPolicyBinding(),
 	"google_iam_workload_identity_pool":                                          iambeta.ResourceIAMBetaWorkloadIdentityPool(),
 	"google_iam_workload_identity_pool_provider":                                 iambeta.ResourceIAMBetaWorkloadIdentityPoolProvider(),
 	"google_iam_workforce_pool":                                                  iamworkforcepool.ResourceIAMWorkforcePoolWorkforcePool(),
