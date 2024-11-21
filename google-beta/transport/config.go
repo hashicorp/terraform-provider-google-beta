@@ -49,6 +49,7 @@ import (
 	dataflow "google.golang.org/api/dataflow/v1b3"
 	"google.golang.org/api/dataproc/v1"
 	"google.golang.org/api/dns/v1"
+	firebase "google.golang.org/api/firebase/v1beta1"
 	healthcare "google.golang.org/api/healthcare/v1"
 	"google.golang.org/api/iam/v1"
 	iamcredentials "google.golang.org/api/iamcredentials/v1"
@@ -187,7 +188,7 @@ type Config struct {
 	UserAgent          string
 	gRPCLoggingOptions []option.ClientOption
 
-	tokenSource oauth2.TokenSource
+	TokenSource oauth2.TokenSource
 
 	AccessApprovalBasePath           string
 	AccessContextManagerBasePath     string
@@ -1529,7 +1530,7 @@ func (c *Config) LoadAndValidate(ctx context.Context) error {
 		return err
 	}
 
-	c.tokenSource = tokenSource
+	c.TokenSource = tokenSource
 
 	cleanCtx := context.WithValue(ctx, oauth2.HTTPClient, cleanhttp.DefaultClient())
 
@@ -1756,6 +1757,20 @@ func (c *Config) NewDnsClient(userAgent string) *dns.Service {
 	clientDns.BasePath = dnsClientBasePath
 
 	return clientDns
+}
+func (c *Config) NewFirebaseClient(ctx context.Context, userAgent string) *firebase.Service {
+	firebaseClientBasePath := RemoveBasePathVersion(c.FirebaseBasePath)
+	firebaseClientBasePath = strings.ReplaceAll(firebaseClientBasePath, "/firebase/", "")
+	log.Printf("[INFO] Instantiating Google Cloud firebase client for path %s", firebaseClientBasePath)
+	clientFirebase, err := firebase.NewService(c.Context, option.WithHTTPClient(c.Client))
+	if err != nil {
+		log.Printf("[WARN] Error creating client firebase: %s", err)
+		return nil
+	}
+	clientFirebase.UserAgent = userAgent
+	clientFirebase.BasePath = firebaseClientBasePath
+
+	return clientFirebase
 }
 
 func (c *Config) NewKmsClientWithCtx(ctx context.Context, userAgent string) *cloudkms.Service {
@@ -2169,7 +2184,7 @@ func (c *Config) NewCloudIdentityClient(userAgent string) *cloudidentity.Service
 func (c *Config) BigTableClientFactory(userAgent string) *BigtableClientFactory {
 	bigtableClientFactory := &BigtableClientFactory{
 		UserAgent:           userAgent,
-		TokenSource:         c.tokenSource,
+		TokenSource:         c.TokenSource,
 		gRPCLoggingOptions:  c.gRPCLoggingOptions,
 		BillingProject:      c.BillingProject,
 		UserProjectOverride: c.UserProjectOverride,

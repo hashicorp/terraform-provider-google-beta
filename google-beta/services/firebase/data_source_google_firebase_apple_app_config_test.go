@@ -12,8 +12,6 @@ import (
 )
 
 func TestAccDataSourceGoogleFirebaseAppleAppConfig(t *testing.T) {
-	// TODO: https://github.com/hashicorp/terraform-provider-google/issues/14158
-	acctest.SkipIfVcr(t)
 	t.Parallel()
 
 	context := map[string]interface{}{
@@ -25,20 +23,9 @@ func TestAccDataSourceGoogleFirebaseAppleAppConfig(t *testing.T) {
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
-		PreCheck: func() { acctest.AccTestPreCheck(t) },
+		PreCheck:     func() { acctest.AccTestPreCheck(t) },
+		CheckDestroy: testAccCheckFirebaseAppleAppDestroyProducer(t),
 		Steps: []resource.TestStep{
-			{
-				ExternalProviders: map[string]resource.ExternalProvider{
-					"google": {
-						VersionConstraint: "4.58.0",
-						Source:            "hashicorp/google-beta",
-					},
-				},
-				Config: testAccDataSourceGoogleFirebaseAppleAppConfig(context),
-				Check: resource.ComposeTestCheckFunc(
-					testAccDataSourceFirebaseAppleAppConfigCheck("data.google_firebase_apple_app_config.my_app_config"),
-				),
-			},
 			{
 				ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 				Config:                   testAccDataSourceGoogleFirebaseAppleAppConfig(context),
