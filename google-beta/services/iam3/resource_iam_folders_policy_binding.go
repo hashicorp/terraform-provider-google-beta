@@ -212,6 +212,7 @@ to the policy kind) - The input policy kind   Possible values:  POLICY_KIND_UNSP
 }
 
 func resourceIAM3FoldersPolicyBindingCreate(d *schema.ResourceData, meta interface{}) error {
+	var project string
 	config := meta.(*transport_tpg.Config)
 	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
@@ -295,7 +296,7 @@ func resourceIAM3FoldersPolicyBindingCreate(d *schema.ResourceData, meta interfa
 	// identity fields and d.Id() before read
 	var opRes map[string]interface{}
 	err = IAM3OperationWaitTimeWithResponse(
-		config, res, &opRes, "Creating FoldersPolicyBinding", userAgent,
+		config, res, &opRes, project, "Creating FoldersPolicyBinding", userAgent,
 		d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		// The resource didn't actually create
@@ -396,6 +397,7 @@ func resourceIAM3FoldersPolicyBindingRead(d *schema.ResourceData, meta interface
 }
 
 func resourceIAM3FoldersPolicyBindingUpdate(d *schema.ResourceData, meta interface{}) error {
+	var project string
 	config := meta.(*transport_tpg.Config)
 	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
@@ -486,7 +488,7 @@ func resourceIAM3FoldersPolicyBindingUpdate(d *schema.ResourceData, meta interfa
 		}
 
 		err = IAM3OperationWaitTime(
-			config, res, "Updating FoldersPolicyBinding", userAgent,
+			config, res, project, "Updating FoldersPolicyBinding", userAgent,
 			d.Timeout(schema.TimeoutUpdate))
 
 		if err != nil {
@@ -498,6 +500,7 @@ func resourceIAM3FoldersPolicyBindingUpdate(d *schema.ResourceData, meta interfa
 }
 
 func resourceIAM3FoldersPolicyBindingDelete(d *schema.ResourceData, meta interface{}) error {
+	var project string
 	config := meta.(*transport_tpg.Config)
 	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
@@ -536,7 +539,7 @@ func resourceIAM3FoldersPolicyBindingDelete(d *schema.ResourceData, meta interfa
 	}
 
 	err = IAM3OperationWaitTime(
-		config, res, "Deleting FoldersPolicyBinding", userAgent,
+		config, res, project, "Deleting FoldersPolicyBinding", userAgent,
 		d.Timeout(schema.TimeoutDelete))
 
 	if err != nil {

@@ -32,15 +32,15 @@ import (
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
-func ResourceIAM3OrganizationsPolicyBinding() *schema.Resource {
+func ResourceIAM3ProjectsPolicyBinding() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceIAM3OrganizationsPolicyBindingCreate,
-		Read:   resourceIAM3OrganizationsPolicyBindingRead,
-		Update: resourceIAM3OrganizationsPolicyBindingUpdate,
-		Delete: resourceIAM3OrganizationsPolicyBindingDelete,
+		Create: resourceIAM3ProjectsPolicyBindingCreate,
+		Read:   resourceIAM3ProjectsPolicyBindingRead,
+		Update: resourceIAM3ProjectsPolicyBindingUpdate,
+		Delete: resourceIAM3ProjectsPolicyBindingDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: resourceIAM3OrganizationsPolicyBindingImport,
+			State: resourceIAM3ProjectsPolicyBindingImport,
 		},
 
 		Timeouts: &schema.ResourceTimeout{
@@ -51,6 +51,7 @@ func ResourceIAM3OrganizationsPolicyBinding() *schema.Resource {
 
 		CustomizeDiff: customdiff.All(
 			tpgresource.SetAnnotationsDiff,
+			tpgresource.DefaultProviderProject,
 		),
 
 		Schema: map[string]*schema.Schema{
@@ -59,12 +60,6 @@ func ResourceIAM3OrganizationsPolicyBinding() *schema.Resource {
 				Required:    true,
 				ForceNew:    true,
 				Description: `The location of the Policy Binding`,
-			},
-			"organization": {
-				Type:        schema.TypeString,
-				Required:    true,
-				ForceNew:    true,
-				Description: `The parent organization of the Policy Binding.`,
 			},
 			"policy": {
 				Type:        schema.TypeString,
@@ -206,13 +201,18 @@ to the policy kind) - The input policy kind   Possible values:  POLICY_KIND_UNSP
 				Computed:    true,
 				Description: `Output only. The time when the policy binding was most recently updated.`,
 			},
+			"project": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+				ForceNew: true,
+			},
 		},
 		UseJSONNumber: true,
 	}
 }
 
-func resourceIAM3OrganizationsPolicyBindingCreate(d *schema.ResourceData, meta interface{}) error {
-	var project string
+func resourceIAM3ProjectsPolicyBindingCreate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
 	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
@@ -220,50 +220,62 @@ func resourceIAM3OrganizationsPolicyBindingCreate(d *schema.ResourceData, meta i
 	}
 
 	obj := make(map[string]interface{})
-	displayNameProp, err := expandIAM3OrganizationsPolicyBindingDisplayName(d.Get("display_name"), d, config)
+	etagProp, err := expandIAM3ProjectsPolicyBindingEtag(d.Get("etag"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("etag"); !tpgresource.IsEmptyValue(reflect.ValueOf(etagProp)) && (ok || !reflect.DeepEqual(v, etagProp)) {
+		obj["etag"] = etagProp
+	}
+	displayNameProp, err := expandIAM3ProjectsPolicyBindingDisplayName(d.Get("display_name"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("display_name"); !tpgresource.IsEmptyValue(reflect.ValueOf(displayNameProp)) && (ok || !reflect.DeepEqual(v, displayNameProp)) {
 		obj["displayName"] = displayNameProp
 	}
-	targetProp, err := expandIAM3OrganizationsPolicyBindingTarget(d.Get("target"), d, config)
+	targetProp, err := expandIAM3ProjectsPolicyBindingTarget(d.Get("target"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("target"); !tpgresource.IsEmptyValue(reflect.ValueOf(targetProp)) && (ok || !reflect.DeepEqual(v, targetProp)) {
 		obj["target"] = targetProp
 	}
-	policyKindProp, err := expandIAM3OrganizationsPolicyBindingPolicyKind(d.Get("policy_kind"), d, config)
+	policyKindProp, err := expandIAM3ProjectsPolicyBindingPolicyKind(d.Get("policy_kind"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("policy_kind"); !tpgresource.IsEmptyValue(reflect.ValueOf(policyKindProp)) && (ok || !reflect.DeepEqual(v, policyKindProp)) {
 		obj["policyKind"] = policyKindProp
 	}
-	policyProp, err := expandIAM3OrganizationsPolicyBindingPolicy(d.Get("policy"), d, config)
+	policyProp, err := expandIAM3ProjectsPolicyBindingPolicy(d.Get("policy"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("policy"); !tpgresource.IsEmptyValue(reflect.ValueOf(policyProp)) && (ok || !reflect.DeepEqual(v, policyProp)) {
 		obj["policy"] = policyProp
 	}
-	conditionProp, err := expandIAM3OrganizationsPolicyBindingCondition(d.Get("condition"), d, config)
+	conditionProp, err := expandIAM3ProjectsPolicyBindingCondition(d.Get("condition"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("condition"); !tpgresource.IsEmptyValue(reflect.ValueOf(conditionProp)) && (ok || !reflect.DeepEqual(v, conditionProp)) {
 		obj["condition"] = conditionProp
 	}
-	annotationsProp, err := expandIAM3OrganizationsPolicyBindingEffectiveAnnotations(d.Get("effective_annotations"), d, config)
+	annotationsProp, err := expandIAM3ProjectsPolicyBindingEffectiveAnnotations(d.Get("effective_annotations"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("effective_annotations"); !tpgresource.IsEmptyValue(reflect.ValueOf(annotationsProp)) && (ok || !reflect.DeepEqual(v, annotationsProp)) {
 		obj["annotations"] = annotationsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{IAM3BasePath}}organizations/{{organization}}/locations/{{location}}/policyBindings?policyBindingId={{policy_binding_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{IAM3BasePath}}projects/{{project}}/locations/{{location}}/policyBindings?policyBindingId={{policy_binding_id}}")
 	if err != nil {
 		return err
 	}
 
-	log.Printf("[DEBUG] Creating new OrganizationsPolicyBinding: %#v", obj)
+	log.Printf("[DEBUG] Creating new ProjectsPolicyBinding: %#v", obj)
 	billingProject := ""
+
+	project, err := tpgresource.GetProject(d, config)
+	if err != nil {
+		return fmt.Errorf("Error fetching project for ProjectsPolicyBinding: %s", err)
+	}
+	billingProject = project
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
@@ -282,11 +294,11 @@ func resourceIAM3OrganizationsPolicyBindingCreate(d *schema.ResourceData, meta i
 		Headers:   headers,
 	})
 	if err != nil {
-		return fmt.Errorf("Error creating OrganizationsPolicyBinding: %s", err)
+		return fmt.Errorf("Error creating ProjectsPolicyBinding: %s", err)
 	}
 
 	// Store the ID now
-	id, err := tpgresource.ReplaceVars(d, config, "organizations/{{organization}}/locations/{{location}}/policyBindings/{{policy_binding_id}}")
+	id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/locations/{{location}}/policyBindings/{{policy_binding_id}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -296,44 +308,50 @@ func resourceIAM3OrganizationsPolicyBindingCreate(d *schema.ResourceData, meta i
 	// identity fields and d.Id() before read
 	var opRes map[string]interface{}
 	err = IAM3OperationWaitTimeWithResponse(
-		config, res, &opRes, project, "Creating OrganizationsPolicyBinding", userAgent,
+		config, res, &opRes, project, "Creating ProjectsPolicyBinding", userAgent,
 		d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		// The resource didn't actually create
 		d.SetId("")
 
-		return fmt.Errorf("Error waiting to create OrganizationsPolicyBinding: %s", err)
+		return fmt.Errorf("Error waiting to create ProjectsPolicyBinding: %s", err)
 	}
 
-	if err := d.Set("name", flattenIAM3OrganizationsPolicyBindingName(opRes["name"], d, config)); err != nil {
+	if err := d.Set("name", flattenIAM3ProjectsPolicyBindingName(opRes["name"], d, config)); err != nil {
 		return err
 	}
 
 	// This may have caused the ID to update - update it if so.
-	id, err = tpgresource.ReplaceVars(d, config, "organizations/{{organization}}/locations/{{location}}/policyBindings/{{policy_binding_id}}")
+	id, err = tpgresource.ReplaceVars(d, config, "projects/{{project}}/locations/{{location}}/policyBindings/{{policy_binding_id}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
 	d.SetId(id)
 
-	log.Printf("[DEBUG] Finished creating OrganizationsPolicyBinding %q: %#v", d.Id(), res)
+	log.Printf("[DEBUG] Finished creating ProjectsPolicyBinding %q: %#v", d.Id(), res)
 
-	return resourceIAM3OrganizationsPolicyBindingRead(d, meta)
+	return resourceIAM3ProjectsPolicyBindingRead(d, meta)
 }
 
-func resourceIAM3OrganizationsPolicyBindingRead(d *schema.ResourceData, meta interface{}) error {
+func resourceIAM3ProjectsPolicyBindingRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
 	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{IAM3BasePath}}organizations/{{organization}}/locations/{{location}}/policyBindings/{{policy_binding_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{IAM3BasePath}}projects/{{project}}/locations/{{location}}/policyBindings/{{policy_binding_id}}")
 	if err != nil {
 		return err
 	}
 
 	billingProject := ""
+
+	project, err := tpgresource.GetProject(d, config)
+	if err != nil {
+		return fmt.Errorf("Error fetching project for ProjectsPolicyBinding: %s", err)
+	}
+	billingProject = project
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
@@ -350,54 +368,57 @@ func resourceIAM3OrganizationsPolicyBindingRead(d *schema.ResourceData, meta int
 		Headers:   headers,
 	})
 	if err != nil {
-		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("IAM3OrganizationsPolicyBinding %q", d.Id()))
+		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("IAM3ProjectsPolicyBinding %q", d.Id()))
 	}
 
-	if err := d.Set("name", flattenIAM3OrganizationsPolicyBindingName(res["name"], d, config)); err != nil {
-		return fmt.Errorf("Error reading OrganizationsPolicyBinding: %s", err)
+	if err := d.Set("project", project); err != nil {
+		return fmt.Errorf("Error reading ProjectsPolicyBinding: %s", err)
 	}
-	if err := d.Set("uid", flattenIAM3OrganizationsPolicyBindingUid(res["uid"], d, config)); err != nil {
-		return fmt.Errorf("Error reading OrganizationsPolicyBinding: %s", err)
+
+	if err := d.Set("name", flattenIAM3ProjectsPolicyBindingName(res["name"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ProjectsPolicyBinding: %s", err)
 	}
-	if err := d.Set("etag", flattenIAM3OrganizationsPolicyBindingEtag(res["etag"], d, config)); err != nil {
-		return fmt.Errorf("Error reading OrganizationsPolicyBinding: %s", err)
+	if err := d.Set("uid", flattenIAM3ProjectsPolicyBindingUid(res["uid"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ProjectsPolicyBinding: %s", err)
 	}
-	if err := d.Set("display_name", flattenIAM3OrganizationsPolicyBindingDisplayName(res["displayName"], d, config)); err != nil {
-		return fmt.Errorf("Error reading OrganizationsPolicyBinding: %s", err)
+	if err := d.Set("etag", flattenIAM3ProjectsPolicyBindingEtag(res["etag"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ProjectsPolicyBinding: %s", err)
 	}
-	if err := d.Set("annotations", flattenIAM3OrganizationsPolicyBindingAnnotations(res["annotations"], d, config)); err != nil {
-		return fmt.Errorf("Error reading OrganizationsPolicyBinding: %s", err)
+	if err := d.Set("display_name", flattenIAM3ProjectsPolicyBindingDisplayName(res["displayName"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ProjectsPolicyBinding: %s", err)
 	}
-	if err := d.Set("target", flattenIAM3OrganizationsPolicyBindingTarget(res["target"], d, config)); err != nil {
-		return fmt.Errorf("Error reading OrganizationsPolicyBinding: %s", err)
+	if err := d.Set("annotations", flattenIAM3ProjectsPolicyBindingAnnotations(res["annotations"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ProjectsPolicyBinding: %s", err)
 	}
-	if err := d.Set("policy_kind", flattenIAM3OrganizationsPolicyBindingPolicyKind(res["policyKind"], d, config)); err != nil {
-		return fmt.Errorf("Error reading OrganizationsPolicyBinding: %s", err)
+	if err := d.Set("target", flattenIAM3ProjectsPolicyBindingTarget(res["target"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ProjectsPolicyBinding: %s", err)
 	}
-	if err := d.Set("policy", flattenIAM3OrganizationsPolicyBindingPolicy(res["policy"], d, config)); err != nil {
-		return fmt.Errorf("Error reading OrganizationsPolicyBinding: %s", err)
+	if err := d.Set("policy_kind", flattenIAM3ProjectsPolicyBindingPolicyKind(res["policyKind"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ProjectsPolicyBinding: %s", err)
 	}
-	if err := d.Set("policy_uid", flattenIAM3OrganizationsPolicyBindingPolicyUid(res["policyUid"], d, config)); err != nil {
-		return fmt.Errorf("Error reading OrganizationsPolicyBinding: %s", err)
+	if err := d.Set("policy", flattenIAM3ProjectsPolicyBindingPolicy(res["policy"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ProjectsPolicyBinding: %s", err)
 	}
-	if err := d.Set("condition", flattenIAM3OrganizationsPolicyBindingCondition(res["condition"], d, config)); err != nil {
-		return fmt.Errorf("Error reading OrganizationsPolicyBinding: %s", err)
+	if err := d.Set("policy_uid", flattenIAM3ProjectsPolicyBindingPolicyUid(res["policyUid"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ProjectsPolicyBinding: %s", err)
 	}
-	if err := d.Set("create_time", flattenIAM3OrganizationsPolicyBindingCreateTime(res["createTime"], d, config)); err != nil {
-		return fmt.Errorf("Error reading OrganizationsPolicyBinding: %s", err)
+	if err := d.Set("condition", flattenIAM3ProjectsPolicyBindingCondition(res["condition"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ProjectsPolicyBinding: %s", err)
 	}
-	if err := d.Set("update_time", flattenIAM3OrganizationsPolicyBindingUpdateTime(res["updateTime"], d, config)); err != nil {
-		return fmt.Errorf("Error reading OrganizationsPolicyBinding: %s", err)
+	if err := d.Set("create_time", flattenIAM3ProjectsPolicyBindingCreateTime(res["createTime"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ProjectsPolicyBinding: %s", err)
 	}
-	if err := d.Set("effective_annotations", flattenIAM3OrganizationsPolicyBindingEffectiveAnnotations(res["annotations"], d, config)); err != nil {
-		return fmt.Errorf("Error reading OrganizationsPolicyBinding: %s", err)
+	if err := d.Set("update_time", flattenIAM3ProjectsPolicyBindingUpdateTime(res["updateTime"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ProjectsPolicyBinding: %s", err)
+	}
+	if err := d.Set("effective_annotations", flattenIAM3ProjectsPolicyBindingEffectiveAnnotations(res["annotations"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ProjectsPolicyBinding: %s", err)
 	}
 
 	return nil
 }
 
-func resourceIAM3OrganizationsPolicyBindingUpdate(d *schema.ResourceData, meta interface{}) error {
-	var project string
+func resourceIAM3ProjectsPolicyBindingUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
 	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
@@ -406,40 +427,56 @@ func resourceIAM3OrganizationsPolicyBindingUpdate(d *schema.ResourceData, meta i
 
 	billingProject := ""
 
+	project, err := tpgresource.GetProject(d, config)
+	if err != nil {
+		return fmt.Errorf("Error fetching project for ProjectsPolicyBinding: %s", err)
+	}
+	billingProject = project
+
 	obj := make(map[string]interface{})
-	displayNameProp, err := expandIAM3OrganizationsPolicyBindingDisplayName(d.Get("display_name"), d, config)
+	etagProp, err := expandIAM3ProjectsPolicyBindingEtag(d.Get("etag"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("etag"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, etagProp)) {
+		obj["etag"] = etagProp
+	}
+	displayNameProp, err := expandIAM3ProjectsPolicyBindingDisplayName(d.Get("display_name"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("display_name"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, displayNameProp)) {
 		obj["displayName"] = displayNameProp
 	}
-	targetProp, err := expandIAM3OrganizationsPolicyBindingTarget(d.Get("target"), d, config)
+	targetProp, err := expandIAM3ProjectsPolicyBindingTarget(d.Get("target"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("target"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, targetProp)) {
 		obj["target"] = targetProp
 	}
-	conditionProp, err := expandIAM3OrganizationsPolicyBindingCondition(d.Get("condition"), d, config)
+	conditionProp, err := expandIAM3ProjectsPolicyBindingCondition(d.Get("condition"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("condition"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, conditionProp)) {
 		obj["condition"] = conditionProp
 	}
-	annotationsProp, err := expandIAM3OrganizationsPolicyBindingEffectiveAnnotations(d.Get("effective_annotations"), d, config)
+	annotationsProp, err := expandIAM3ProjectsPolicyBindingEffectiveAnnotations(d.Get("effective_annotations"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("effective_annotations"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, annotationsProp)) {
 		obj["annotations"] = annotationsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{IAM3BasePath}}organizations/{{organization}}/locations/{{location}}/policyBindings/{{policy_binding_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{IAM3BasePath}}projects/{{project}}/locations/{{location}}/policyBindings/{{policy_binding_id}}")
 	if err != nil {
 		return err
 	}
 
-	log.Printf("[DEBUG] Updating OrganizationsPolicyBinding %q: %#v", d.Id(), obj)
+	log.Printf("[DEBUG] Updating ProjectsPolicyBinding %q: %#v", d.Id(), obj)
 	headers := make(http.Header)
 	updateMask := []string{}
+
+	if d.HasChange("etag") {
+		updateMask = append(updateMask, "etag")
+	}
 
 	if d.HasChange("display_name") {
 		updateMask = append(updateMask, "displayName")
@@ -482,13 +519,13 @@ func resourceIAM3OrganizationsPolicyBindingUpdate(d *schema.ResourceData, meta i
 		})
 
 		if err != nil {
-			return fmt.Errorf("Error updating OrganizationsPolicyBinding %q: %s", d.Id(), err)
+			return fmt.Errorf("Error updating ProjectsPolicyBinding %q: %s", d.Id(), err)
 		} else {
-			log.Printf("[DEBUG] Finished updating OrganizationsPolicyBinding %q: %#v", d.Id(), res)
+			log.Printf("[DEBUG] Finished updating ProjectsPolicyBinding %q: %#v", d.Id(), res)
 		}
 
 		err = IAM3OperationWaitTime(
-			config, res, project, "Updating OrganizationsPolicyBinding", userAgent,
+			config, res, project, "Updating ProjectsPolicyBinding", userAgent,
 			d.Timeout(schema.TimeoutUpdate))
 
 		if err != nil {
@@ -496,11 +533,10 @@ func resourceIAM3OrganizationsPolicyBindingUpdate(d *schema.ResourceData, meta i
 		}
 	}
 
-	return resourceIAM3OrganizationsPolicyBindingRead(d, meta)
+	return resourceIAM3ProjectsPolicyBindingRead(d, meta)
 }
 
-func resourceIAM3OrganizationsPolicyBindingDelete(d *schema.ResourceData, meta interface{}) error {
-	var project string
+func resourceIAM3ProjectsPolicyBindingDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
 	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
@@ -509,7 +545,13 @@ func resourceIAM3OrganizationsPolicyBindingDelete(d *schema.ResourceData, meta i
 
 	billingProject := ""
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{IAM3BasePath}}organizations/{{organization}}/locations/{{location}}/policyBindings/{{policy_binding_id}}")
+	project, err := tpgresource.GetProject(d, config)
+	if err != nil {
+		return fmt.Errorf("Error fetching project for ProjectsPolicyBinding: %s", err)
+	}
+	billingProject = project
+
+	url, err := tpgresource.ReplaceVars(d, config, "{{IAM3BasePath}}projects/{{project}}/locations/{{location}}/policyBindings/{{policy_binding_id}}")
 	if err != nil {
 		return err
 	}
@@ -523,7 +565,7 @@ func resourceIAM3OrganizationsPolicyBindingDelete(d *schema.ResourceData, meta i
 
 	headers := make(http.Header)
 
-	log.Printf("[DEBUG] Deleting OrganizationsPolicyBinding %q", d.Id())
+	log.Printf("[DEBUG] Deleting ProjectsPolicyBinding %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -535,11 +577,11 @@ func resourceIAM3OrganizationsPolicyBindingDelete(d *schema.ResourceData, meta i
 		Headers:   headers,
 	})
 	if err != nil {
-		return transport_tpg.HandleNotFoundError(err, d, "OrganizationsPolicyBinding")
+		return transport_tpg.HandleNotFoundError(err, d, "ProjectsPolicyBinding")
 	}
 
 	err = IAM3OperationWaitTime(
-		config, res, project, "Deleting OrganizationsPolicyBinding", userAgent,
+		config, res, project, "Deleting ProjectsPolicyBinding", userAgent,
 		d.Timeout(schema.TimeoutDelete))
 
 	if err != nil {
@@ -549,21 +591,22 @@ func resourceIAM3OrganizationsPolicyBindingDelete(d *schema.ResourceData, meta i
 	// That is, if the deletion of a dependent resource has not propagated.
 	time.Sleep(5 * time.Second)
 
-	log.Printf("[DEBUG] Finished deleting OrganizationsPolicyBinding %q: %#v", d.Id(), res)
+	log.Printf("[DEBUG] Finished deleting ProjectsPolicyBinding %q: %#v", d.Id(), res)
 	return nil
 }
 
-func resourceIAM3OrganizationsPolicyBindingImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceIAM3ProjectsPolicyBindingImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*transport_tpg.Config)
 	if err := tpgresource.ParseImportId([]string{
-		"^organizations/(?P<organization>[^/]+)/locations/(?P<location>[^/]+)/policyBindings/(?P<policy_binding_id>[^/]+)$",
-		"^(?P<organization>[^/]+)/(?P<location>[^/]+)/(?P<policy_binding_id>[^/]+)$",
+		"^projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/policyBindings/(?P<policy_binding_id>[^/]+)$",
+		"^(?P<project>[^/]+)/(?P<location>[^/]+)/(?P<policy_binding_id>[^/]+)$",
+		"^(?P<location>[^/]+)/(?P<policy_binding_id>[^/]+)$",
 	}, d, config); err != nil {
 		return nil, err
 	}
 
 	// Replace import id for the resource id
-	id, err := tpgresource.ReplaceVars(d, config, "organizations/{{organization}}/locations/{{location}}/policyBindings/{{policy_binding_id}}")
+	id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/locations/{{location}}/policyBindings/{{policy_binding_id}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -572,23 +615,23 @@ func resourceIAM3OrganizationsPolicyBindingImport(d *schema.ResourceData, meta i
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenIAM3OrganizationsPolicyBindingName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+func flattenIAM3ProjectsPolicyBindingName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenIAM3OrganizationsPolicyBindingUid(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+func flattenIAM3ProjectsPolicyBindingUid(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenIAM3OrganizationsPolicyBindingEtag(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+func flattenIAM3ProjectsPolicyBindingEtag(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenIAM3OrganizationsPolicyBindingDisplayName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+func flattenIAM3ProjectsPolicyBindingDisplayName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenIAM3OrganizationsPolicyBindingAnnotations(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+func flattenIAM3ProjectsPolicyBindingAnnotations(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
 	}
@@ -603,7 +646,7 @@ func flattenIAM3OrganizationsPolicyBindingAnnotations(v interface{}, d *schema.R
 	return transformed
 }
 
-func flattenIAM3OrganizationsPolicyBindingTarget(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+func flattenIAM3ProjectsPolicyBindingTarget(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -613,26 +656,26 @@ func flattenIAM3OrganizationsPolicyBindingTarget(v interface{}, d *schema.Resour
 	}
 	transformed := make(map[string]interface{})
 	transformed["principal_set"] =
-		flattenIAM3OrganizationsPolicyBindingTargetPrincipalSet(original["principalSet"], d, config)
+		flattenIAM3ProjectsPolicyBindingTargetPrincipalSet(original["principalSet"], d, config)
 	return []interface{}{transformed}
 }
-func flattenIAM3OrganizationsPolicyBindingTargetPrincipalSet(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+func flattenIAM3ProjectsPolicyBindingTargetPrincipalSet(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenIAM3OrganizationsPolicyBindingPolicyKind(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+func flattenIAM3ProjectsPolicyBindingPolicyKind(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenIAM3OrganizationsPolicyBindingPolicy(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+func flattenIAM3ProjectsPolicyBindingPolicy(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenIAM3OrganizationsPolicyBindingPolicyUid(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+func flattenIAM3ProjectsPolicyBindingPolicyUid(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenIAM3OrganizationsPolicyBindingCondition(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+func flattenIAM3ProjectsPolicyBindingCondition(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -642,48 +685,52 @@ func flattenIAM3OrganizationsPolicyBindingCondition(v interface{}, d *schema.Res
 	}
 	transformed := make(map[string]interface{})
 	transformed["expression"] =
-		flattenIAM3OrganizationsPolicyBindingConditionExpression(original["expression"], d, config)
+		flattenIAM3ProjectsPolicyBindingConditionExpression(original["expression"], d, config)
 	transformed["title"] =
-		flattenIAM3OrganizationsPolicyBindingConditionTitle(original["title"], d, config)
+		flattenIAM3ProjectsPolicyBindingConditionTitle(original["title"], d, config)
 	transformed["description"] =
-		flattenIAM3OrganizationsPolicyBindingConditionDescription(original["description"], d, config)
+		flattenIAM3ProjectsPolicyBindingConditionDescription(original["description"], d, config)
 	transformed["location"] =
-		flattenIAM3OrganizationsPolicyBindingConditionLocation(original["location"], d, config)
+		flattenIAM3ProjectsPolicyBindingConditionLocation(original["location"], d, config)
 	return []interface{}{transformed}
 }
-func flattenIAM3OrganizationsPolicyBindingConditionExpression(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+func flattenIAM3ProjectsPolicyBindingConditionExpression(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenIAM3OrganizationsPolicyBindingConditionTitle(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+func flattenIAM3ProjectsPolicyBindingConditionTitle(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenIAM3OrganizationsPolicyBindingConditionDescription(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+func flattenIAM3ProjectsPolicyBindingConditionDescription(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenIAM3OrganizationsPolicyBindingConditionLocation(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+func flattenIAM3ProjectsPolicyBindingConditionLocation(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenIAM3OrganizationsPolicyBindingCreateTime(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+func flattenIAM3ProjectsPolicyBindingCreateTime(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenIAM3OrganizationsPolicyBindingUpdateTime(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+func flattenIAM3ProjectsPolicyBindingUpdateTime(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenIAM3OrganizationsPolicyBindingEffectiveAnnotations(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+func flattenIAM3ProjectsPolicyBindingEffectiveAnnotations(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func expandIAM3OrganizationsPolicyBindingDisplayName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandIAM3ProjectsPolicyBindingEtag(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandIAM3OrganizationsPolicyBindingTarget(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandIAM3ProjectsPolicyBindingDisplayName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandIAM3ProjectsPolicyBindingTarget(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -692,7 +739,7 @@ func expandIAM3OrganizationsPolicyBindingTarget(v interface{}, d tpgresource.Ter
 	original := raw.(map[string]interface{})
 	transformed := make(map[string]interface{})
 
-	transformedPrincipalSet, err := expandIAM3OrganizationsPolicyBindingTargetPrincipalSet(original["principal_set"], d, config)
+	transformedPrincipalSet, err := expandIAM3ProjectsPolicyBindingTargetPrincipalSet(original["principal_set"], d, config)
 	if err != nil {
 		return nil, err
 	} else if val := reflect.ValueOf(transformedPrincipalSet); val.IsValid() && !tpgresource.IsEmptyValue(val) {
@@ -702,19 +749,19 @@ func expandIAM3OrganizationsPolicyBindingTarget(v interface{}, d tpgresource.Ter
 	return transformed, nil
 }
 
-func expandIAM3OrganizationsPolicyBindingTargetPrincipalSet(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandIAM3ProjectsPolicyBindingTargetPrincipalSet(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandIAM3OrganizationsPolicyBindingPolicyKind(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandIAM3ProjectsPolicyBindingPolicyKind(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandIAM3OrganizationsPolicyBindingPolicy(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandIAM3ProjectsPolicyBindingPolicy(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandIAM3OrganizationsPolicyBindingCondition(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandIAM3ProjectsPolicyBindingCondition(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -723,28 +770,28 @@ func expandIAM3OrganizationsPolicyBindingCondition(v interface{}, d tpgresource.
 	original := raw.(map[string]interface{})
 	transformed := make(map[string]interface{})
 
-	transformedExpression, err := expandIAM3OrganizationsPolicyBindingConditionExpression(original["expression"], d, config)
+	transformedExpression, err := expandIAM3ProjectsPolicyBindingConditionExpression(original["expression"], d, config)
 	if err != nil {
 		return nil, err
 	} else if val := reflect.ValueOf(transformedExpression); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["expression"] = transformedExpression
 	}
 
-	transformedTitle, err := expandIAM3OrganizationsPolicyBindingConditionTitle(original["title"], d, config)
+	transformedTitle, err := expandIAM3ProjectsPolicyBindingConditionTitle(original["title"], d, config)
 	if err != nil {
 		return nil, err
 	} else if val := reflect.ValueOf(transformedTitle); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["title"] = transformedTitle
 	}
 
-	transformedDescription, err := expandIAM3OrganizationsPolicyBindingConditionDescription(original["description"], d, config)
+	transformedDescription, err := expandIAM3ProjectsPolicyBindingConditionDescription(original["description"], d, config)
 	if err != nil {
 		return nil, err
 	} else if val := reflect.ValueOf(transformedDescription); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["description"] = transformedDescription
 	}
 
-	transformedLocation, err := expandIAM3OrganizationsPolicyBindingConditionLocation(original["location"], d, config)
+	transformedLocation, err := expandIAM3ProjectsPolicyBindingConditionLocation(original["location"], d, config)
 	if err != nil {
 		return nil, err
 	} else if val := reflect.ValueOf(transformedLocation); val.IsValid() && !tpgresource.IsEmptyValue(val) {
@@ -754,23 +801,23 @@ func expandIAM3OrganizationsPolicyBindingCondition(v interface{}, d tpgresource.
 	return transformed, nil
 }
 
-func expandIAM3OrganizationsPolicyBindingConditionExpression(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandIAM3ProjectsPolicyBindingConditionExpression(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandIAM3OrganizationsPolicyBindingConditionTitle(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandIAM3ProjectsPolicyBindingConditionTitle(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandIAM3OrganizationsPolicyBindingConditionDescription(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandIAM3ProjectsPolicyBindingConditionDescription(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandIAM3OrganizationsPolicyBindingConditionLocation(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandIAM3ProjectsPolicyBindingConditionLocation(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandIAM3OrganizationsPolicyBindingEffectiveAnnotations(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+func expandIAM3ProjectsPolicyBindingEffectiveAnnotations(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
 	}

@@ -182,6 +182,7 @@ won't get updated when new versions are released.`,
 }
 
 func resourceIAM3PrincipalAccessBoundaryPolicyCreate(d *schema.ResourceData, meta interface{}) error {
+	var project string
 	config := meta.(*transport_tpg.Config)
 	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
@@ -247,7 +248,7 @@ func resourceIAM3PrincipalAccessBoundaryPolicyCreate(d *schema.ResourceData, met
 	// identity fields and d.Id() before read
 	var opRes map[string]interface{}
 	err = IAM3OperationWaitTimeWithResponse(
-		config, res, &opRes, "Creating PrincipalAccessBoundaryPolicy", userAgent,
+		config, res, &opRes, project, "Creating PrincipalAccessBoundaryPolicy", userAgent,
 		d.Timeout(schema.TimeoutCreate))
 	if err != nil {
 		// The resource didn't actually create
@@ -336,6 +337,7 @@ func resourceIAM3PrincipalAccessBoundaryPolicyRead(d *schema.ResourceData, meta 
 }
 
 func resourceIAM3PrincipalAccessBoundaryPolicyUpdate(d *schema.ResourceData, meta interface{}) error {
+	var project string
 	config := meta.(*transport_tpg.Config)
 	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
@@ -416,7 +418,7 @@ func resourceIAM3PrincipalAccessBoundaryPolicyUpdate(d *schema.ResourceData, met
 		}
 
 		err = IAM3OperationWaitTime(
-			config, res, "Updating PrincipalAccessBoundaryPolicy", userAgent,
+			config, res, project, "Updating PrincipalAccessBoundaryPolicy", userAgent,
 			d.Timeout(schema.TimeoutUpdate))
 
 		if err != nil {
@@ -428,6 +430,7 @@ func resourceIAM3PrincipalAccessBoundaryPolicyUpdate(d *schema.ResourceData, met
 }
 
 func resourceIAM3PrincipalAccessBoundaryPolicyDelete(d *schema.ResourceData, meta interface{}) error {
+	var project string
 	config := meta.(*transport_tpg.Config)
 	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
@@ -466,7 +469,7 @@ func resourceIAM3PrincipalAccessBoundaryPolicyDelete(d *schema.ResourceData, met
 	}
 
 	err = IAM3OperationWaitTime(
-		config, res, "Deleting PrincipalAccessBoundaryPolicy", userAgent,
+		config, res, project, "Deleting PrincipalAccessBoundaryPolicy", userAgent,
 		d.Timeout(schema.TimeoutDelete))
 
 	if err != nil {
