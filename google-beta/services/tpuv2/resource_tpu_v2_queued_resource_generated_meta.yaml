@@ -1,0 +1,5 @@
+resource: 'google_tpu_v2_queued_resource'
+generation_type: 'mmv1'
+api_service_name: 'tpu.googleapis.com'
+api_version: 'v2'
+api_resource_type_kind: 'QueuedResource'
