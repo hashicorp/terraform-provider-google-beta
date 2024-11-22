@@ -39,7 +39,7 @@ func TestAccParallelstoreInstance_parallelstoreInstanceBasicExample(t *testing.T
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckParallelstoreInstanceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -65,11 +65,9 @@ resource "google_parallelstore_instance" "instance" {
   network = google_compute_network.network.name
   file_stripe_level = "FILE_STRIPE_LEVEL_MIN"
   directory_stripe_level = "DIRECTORY_STRIPE_LEVEL_MIN"
-  deployment_type = "SCRATCH"
   labels = {
     test = "value"
   }
-  provider = google-beta
   depends_on = [google_service_networking_connection.default]
 }
 
@@ -77,7 +75,6 @@ resource "google_compute_network" "network" {
   name                    = "network%{random_suffix}"
   auto_create_subnetworks = true
   mtu = 8896
-  provider = google-beta
 }
 
 # Create an IP address
@@ -86,7 +83,6 @@ resource "google_compute_global_address" "private_ip_alloc" {
   purpose       = "VPC_PEERING"
   address_type  = "INTERNAL"
   prefix_length = 24
-  provider = google-beta
   network       = google_compute_network.network.id
 }
 
@@ -94,7 +90,6 @@ resource "google_compute_global_address" "private_ip_alloc" {
 resource "google_service_networking_connection" "default" {
   network                 = google_compute_network.network.id
   service                 = "servicenetworking.googleapis.com"
-  provider = google-beta
   reserved_peering_ranges = [google_compute_global_address.private_ip_alloc.name]
 }
 `, context)
