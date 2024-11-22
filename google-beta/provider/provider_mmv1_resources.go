@@ -505,9 +505,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 557
+// Generated resources: 558
 // Generated IAM resources: 291
-// Total generated resources: 848
+// Total generated resources: 849
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -1307,6 +1307,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_tags_tag_value_iam_member":                                           tpgiamresource.ResourceIamMember(tags.TagsTagValueIamSchema, tags.TagsTagValueIamUpdaterProducer, tags.TagsTagValueIdParseFunc),
 	"google_tags_tag_value_iam_policy":                                           tpgiamresource.ResourceIamPolicy(tags.TagsTagValueIamSchema, tags.TagsTagValueIamUpdaterProducer, tags.TagsTagValueIdParseFunc),
 	"google_tpu_node":                                                            tpu.ResourceTPUNode(),
+	"google_tpu_v2_queued_resource":                                              tpuv2.ResourceTpuV2QueuedResource(),
 	"google_tpu_v2_vm":                                                           tpuv2.ResourceTpuV2Vm(),
 	"google_transcoder_job":                                                      transcoder.ResourceTranscoderJob(),
 	"google_transcoder_job_template":                                             transcoder.ResourceTranscoderJobTemplate(),
