@@ -41,7 +41,7 @@ func TestAccIAM3ProjectsPolicyBinding_iamProjectsPolicyBindingExample(t *testing
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckIAM3ProjectsPolicyBindingDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -60,11 +60,10 @@ func TestAccIAM3ProjectsPolicyBinding_iamProjectsPolicyBindingExample(t *testing
 func testAccIAM3ProjectsPolicyBinding_iamProjectsPolicyBindingExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 data "google_project" "project" {
-  provider = google-beta
+  provider = google
 }
 
 resource "google_iam_principal_access_boundary_policy" "pab_policy" {
-  provider = google-beta
   organization   = "%{org_id}"
   location       = "global"
   display_name   = "test project binding%{random_suffix}"
@@ -72,7 +71,6 @@ resource "google_iam_principal_access_boundary_policy" "pab_policy" {
 }
 
 resource "google_iam_projects_policy_binding" "my-project-binding" {
-  provider = google-beta
   project        = data.google_project.project.project_id
   location       = "global"
   display_name   = "test project binding%{random_suffix}"

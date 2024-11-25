@@ -41,7 +41,7 @@ func TestAccIAM3OrganizationsPolicyBinding_iamOrganizationsPolicyBindingExample(
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckIAM3OrganizationsPolicyBindingDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -60,7 +60,6 @@ func TestAccIAM3OrganizationsPolicyBinding_iamOrganizationsPolicyBindingExample(
 func testAccIAM3OrganizationsPolicyBinding_iamOrganizationsPolicyBindingExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_iam_principal_access_boundary_policy" "pab_policy" {
-  provider = google-beta
   organization   = "%{org_id}"
   location       = "global"
   display_name   = "test org binding%{random_suffix}"
@@ -68,7 +67,6 @@ resource "google_iam_principal_access_boundary_policy" "pab_policy" {
 }
 
 resource "google_iam_organizations_policy_binding" "my-org-binding" {
-  provider = google-beta
   organization   = "%{org_id}"
   location       = "global"
   display_name   = "test org binding%{random_suffix}"
