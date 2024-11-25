@@ -262,6 +262,7 @@ type Config struct {
 	FirebaseHostingBasePath          string
 	FirebaseStorageBasePath          string
 	FirestoreBasePath                string
+	GeminiBasePath                   string
 	GKEBackupBasePath                string
 	GKEHubBasePath                   string
 	GKEHub2BasePath                  string
@@ -423,6 +424,7 @@ const FirebaseExtensionsBasePathKey = "FirebaseExtensions"
 const FirebaseHostingBasePathKey = "FirebaseHosting"
 const FirebaseStorageBasePathKey = "FirebaseStorage"
 const FirestoreBasePathKey = "Firestore"
+const GeminiBasePathKey = "Gemini"
 const GKEBackupBasePathKey = "GKEBackup"
 const GKEHubBasePathKey = "GKEHub"
 const GKEHub2BasePathKey = "GKEHub2"
@@ -578,6 +580,7 @@ var DefaultBasePaths = map[string]string{
 	FirebaseHostingBasePathKey:          "https://firebasehosting.googleapis.com/v1beta1/",
 	FirebaseStorageBasePathKey:          "https://firebasestorage.googleapis.com/v1beta/",
 	FirestoreBasePathKey:                "https://firestore.googleapis.com/v1/",
+	GeminiBasePathKey:                   "https://cloudaicompanion.googleapis.com/v1/",
 	GKEBackupBasePathKey:                "https://gkebackup.googleapis.com/v1/",
 	GKEHubBasePathKey:                   "https://gkehub.googleapis.com/v1beta1/",
 	GKEHub2BasePathKey:                  "https://gkehub.googleapis.com/v1beta/",
@@ -1091,6 +1094,11 @@ func SetEndpointDefaults(d *schema.ResourceData) error {
 		d.Set("firestore_custom_endpoint", MultiEnvDefault([]string{
 			"GOOGLE_FIRESTORE_CUSTOM_ENDPOINT",
 		}, DefaultBasePaths[FirestoreBasePathKey]))
+	}
+	if d.Get("gemini_custom_endpoint") == "" {
+		d.Set("gemini_custom_endpoint", MultiEnvDefault([]string{
+			"GOOGLE_GEMINI_CUSTOM_ENDPOINT",
+		}, DefaultBasePaths[GeminiBasePathKey]))
 	}
 	if d.Get("gke_backup_custom_endpoint") == "" {
 		d.Set("gke_backup_custom_endpoint", MultiEnvDefault([]string{
@@ -2455,6 +2463,7 @@ func ConfigureBasePaths(c *Config) {
 	c.FirebaseHostingBasePath = DefaultBasePaths[FirebaseHostingBasePathKey]
 	c.FirebaseStorageBasePath = DefaultBasePaths[FirebaseStorageBasePathKey]
 	c.FirestoreBasePath = DefaultBasePaths[FirestoreBasePathKey]
+	c.GeminiBasePath = DefaultBasePaths[GeminiBasePathKey]
 	c.GKEBackupBasePath = DefaultBasePaths[GKEBackupBasePathKey]
 	c.GKEHubBasePath = DefaultBasePaths[GKEHubBasePathKey]
 	c.GKEHub2BasePath = DefaultBasePaths[GKEHub2BasePathKey]
