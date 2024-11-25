@@ -102,6 +102,7 @@ type ProviderModel struct {
 	FirebaseHostingCustomEndpoint          types.String `tfsdk:"firebase_hosting_custom_endpoint"`
 	FirebaseStorageCustomEndpoint          types.String `tfsdk:"firebase_storage_custom_endpoint"`
 	FirestoreCustomEndpoint                types.String `tfsdk:"firestore_custom_endpoint"`
+	GeminiCustomEndpoint                   types.String `tfsdk:"gemini_custom_endpoint"`
 	GKEBackupCustomEndpoint                types.String `tfsdk:"gke_backup_custom_endpoint"`
 	GKEHubCustomEndpoint                   types.String `tfsdk:"gke_hub_custom_endpoint"`
 	GKEHub2CustomEndpoint                  types.String `tfsdk:"gke_hub2_custom_endpoint"`

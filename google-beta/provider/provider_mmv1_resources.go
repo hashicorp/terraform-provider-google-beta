@@ -76,6 +76,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebasehosting"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebasestorage"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firestore"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/gemini"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/gkebackup"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/gkehub"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/gkehub2"
@@ -507,9 +508,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 558
+// Generated resources: 559
 // Generated IAM resources: 291
-// Total generated resources: 849
+// Total generated resources: 850
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -976,6 +977,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_firestore_document":                                                  firestore.ResourceFirestoreDocument(),
 	"google_firestore_field":                                                     firestore.ResourceFirestoreField(),
 	"google_firestore_index":                                                     firestore.ResourceFirestoreIndex(),
+	"google_gemini_code_repository_index":                                        gemini.ResourceGeminiCodeRepositoryIndex(),
 	"google_gke_backup_backup_plan":                                              gkebackup.ResourceGKEBackupBackupPlan(),
 	"google_gke_backup_backup_plan_iam_binding":                                  tpgiamresource.ResourceIamBinding(gkebackup.GKEBackupBackupPlanIamSchema, gkebackup.GKEBackupBackupPlanIamUpdaterProducer, gkebackup.GKEBackupBackupPlanIdParseFunc),
 	"google_gke_backup_backup_plan_iam_member":                                   tpgiamresource.ResourceIamMember(gkebackup.GKEBackupBackupPlanIamSchema, gkebackup.GKEBackupBackupPlanIamUpdaterProducer, gkebackup.GKEBackupBackupPlanIdParseFunc),
