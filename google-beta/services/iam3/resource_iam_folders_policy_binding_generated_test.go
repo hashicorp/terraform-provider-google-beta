@@ -41,7 +41,7 @@ func TestAccIAM3FoldersPolicyBinding_iamFoldersPolicyBindingExample(t *testing.T
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		ExternalProviders: map[string]resource.ExternalProvider{
 			"time": {},
 		},
@@ -63,7 +63,6 @@ func TestAccIAM3FoldersPolicyBinding_iamFoldersPolicyBindingExample(t *testing.T
 func testAccIAM3FoldersPolicyBinding_iamFoldersPolicyBindingExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_iam_principal_access_boundary_policy" "pab_policy" {
-  provider = google-beta
   organization   = "%{org_id}"
   location       = "global"
   display_name   = "test folder binding%{random_suffix}"
@@ -71,7 +70,6 @@ resource "google_iam_principal_access_boundary_policy" "pab_policy" {
 }
 
 resource "google_folder" "folder" {
-  provider = google-beta
   display_name        = "test folder%{random_suffix}"
   parent              = "organizations/%{org_id}"
   deletion_protection = false
@@ -83,7 +81,6 @@ resource "time_sleep" "wait_120s" {
 }
 
 resource "google_iam_folders_policy_binding" "my-folder-binding" {
-  provider = google-beta
   folder         = google_folder.folder.folder_id
   location       = "global"
   display_name   = "test folder binding%{random_suffix}"

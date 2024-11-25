@@ -41,7 +41,7 @@ func TestAccIAM3PrincipalAccessBoundaryPolicy_iamPrincipalAccessBoundaryPolicyEx
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckIAM3PrincipalAccessBoundaryPolicyDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -60,7 +60,6 @@ func TestAccIAM3PrincipalAccessBoundaryPolicy_iamPrincipalAccessBoundaryPolicyEx
 func testAccIAM3PrincipalAccessBoundaryPolicy_iamPrincipalAccessBoundaryPolicyExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_iam_principal_access_boundary_policy" "my-pab-policy" {
-  provider = google-beta
   organization   = "%{org_id}"
   location       = "global"
   display_name   = "test pab policy%{random_suffix}"
