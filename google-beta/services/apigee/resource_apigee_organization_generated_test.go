@@ -44,7 +44,10 @@ func TestAccApigeeOrganization_apigeeOrganizationCloudBasicTestExample(t *testin
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
-		CheckDestroy:             testAccCheckApigeeOrganizationDestroyProducer(t),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccCheckApigeeOrganizationDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccApigeeOrganization_apigeeOrganizationCloudBasicTestExample(context),
@@ -69,19 +72,27 @@ resource "google_project" "project" {
   deletion_policy = "DELETE"
 }
 
+resource "time_sleep" "wait_60_seconds" {
+  create_duration = "60s"
+  depends_on = [google_project.project]
+}
+
 resource "google_project_service" "apigee" {
   project = google_project.project.project_id
   service = "apigee.googleapis.com"
+  depends_on = [time_sleep.wait_60_seconds]
 }
 
 resource "google_project_service" "compute" {
   project = google_project.project.project_id
   service = "compute.googleapis.com"
+  depends_on = [google_project_service.apigee]
 }
 
 resource "google_project_service" "servicenetworking" {
   project = google_project.project.project_id
   service = "servicenetworking.googleapis.com"
+  depends_on = [google_project_service.compute]
 }
 
 resource "google_compute_network" "apigee_network" {
@@ -186,7 +197,10 @@ func TestAccApigeeOrganization_apigeeOrganizationCloudFullTestExample(t *testing
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
-		CheckDestroy:             testAccCheckApigeeOrganizationDestroyProducer(t),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccCheckApigeeOrganizationDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccApigeeOrganization_apigeeOrganizationCloudFullTestExample(context),
@@ -213,11 +227,17 @@ resource "google_project" "project" {
   deletion_policy = "DELETE"
 }
 
+resource "time_sleep" "wait_60_seconds" {
+  create_duration = "60s"
+  depends_on = [google_project.project]
+}
+
 resource "google_project_service" "apigee" {
   provider = google-beta
 
   project = google_project.project.project_id
   service = "apigee.googleapis.com"
+  depends_on = [time_sleep.wait_60_seconds]
 }
 
 resource "google_project_service" "compute" {
@@ -225,6 +245,7 @@ resource "google_project_service" "compute" {
 
   project = google_project.project.project_id
   service = "compute.googleapis.com"
+  depends_on = [google_project_service.apigee]
 }
 
 resource "google_project_service" "servicenetworking" {
@@ -232,6 +253,7 @@ resource "google_project_service" "servicenetworking" {
 
   project = google_project.project.project_id
   service = "servicenetworking.googleapis.com"
+  depends_on = [google_project_service.compute]
 }
 
 resource "google_project_service" "kms" {
@@ -239,6 +261,7 @@ resource "google_project_service" "kms" {
 
   project = google_project.project.project_id
   service = "cloudkms.googleapis.com"
+  depends_on = [google_project_service.servicenetworking]
 }
 
 resource "google_compute_network" "apigee_network" {
@@ -343,7 +366,10 @@ func TestAccApigeeOrganization_apigeeOrganizationCloudFullDisableVpcPeeringTestE
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
-		CheckDestroy:             testAccCheckApigeeOrganizationDestroyProducer(t),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccCheckApigeeOrganizationDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccApigeeOrganization_apigeeOrganizationCloudFullDisableVpcPeeringTestExample(context),
@@ -370,11 +396,17 @@ resource "google_project" "project" {
   deletion_policy = "DELETE"
 }
 
+resource "time_sleep" "wait_60_seconds" {
+  create_duration = "60s"
+  depends_on = [google_project.project]
+}
+
 resource "google_project_service" "apigee" {
   provider = google-beta
 
   project = google_project.project.project_id
   service = "apigee.googleapis.com"
+  depends_on = [time_sleep.wait_60_seconds]
 }
 
 resource "google_project_service" "compute" {
@@ -382,6 +414,7 @@ resource "google_project_service" "compute" {
 
   project = google_project.project.project_id
   service = "compute.googleapis.com"
+  depends_on = [google_project_service.apigee]
 }
 
 resource "google_project_service" "kms" {
@@ -389,6 +422,7 @@ resource "google_project_service" "kms" {
 
   project = google_project.project.project_id
   service = "cloudkms.googleapis.com"
+  depends_on = [google_project_service.compute]
 }
 
 resource "google_kms_key_ring" "apigee_keyring" {
@@ -464,7 +498,10 @@ func TestAccApigeeOrganization_apigeeOrganizationRetentionTestExample(t *testing
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
-		CheckDestroy:             testAccCheckApigeeOrganizationDestroyProducer(t),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccCheckApigeeOrganizationDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccApigeeOrganization_apigeeOrganizationRetentionTestExample(context),
@@ -491,11 +528,17 @@ resource "google_project" "project" {
   deletion_policy = "DELETE"
 }
 
+resource "time_sleep" "wait_60_seconds" {
+  create_duration = "60s"
+  depends_on = [google_project.project]
+}
+
 resource "google_project_service" "apigee" {
   provider = google-beta
 
   project = google_project.project.project_id
   service = "apigee.googleapis.com"
+  depends_on = [time_sleep.wait_60_seconds]
 }
 
 resource "google_project_service" "compute" {
@@ -503,6 +546,7 @@ resource "google_project_service" "compute" {
 
   project = google_project.project.project_id
   service = "compute.googleapis.com"
+  depends_on = [google_project_service.apigee]
 }
 
 resource "google_project_service" "servicenetworking" {
@@ -510,6 +554,7 @@ resource "google_project_service" "servicenetworking" {
 
   project = google_project.project.project_id
   service = "servicenetworking.googleapis.com"
+  depends_on = [google_project_service.compute]
 }
 
 resource "google_project_service" "kms" {
@@ -517,6 +562,7 @@ resource "google_project_service" "kms" {
 
   project = google_project.project.project_id
   service = "cloudkms.googleapis.com"
+  depends_on = [google_project_service.servicenetworking]
 }
 
 resource "google_compute_network" "apigee_network" {
@@ -611,7 +657,10 @@ func TestAccApigeeOrganization_apigeeOrganizationDrzTestExample(t *testing.T) {
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
-		CheckDestroy:             testAccCheckApigeeOrganizationDestroyProducer(t),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccCheckApigeeOrganizationDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccApigeeOrganization_apigeeOrganizationDrzTestExample(context),
@@ -642,11 +691,17 @@ resource "google_project" "project" {
   deletion_policy = "DELETE"
 }
 
+resource "time_sleep" "wait_60_seconds" {
+  create_duration = "60s"
+  depends_on = [google_project.project]
+}
+
 resource "google_project_service" "apigee" {
   provider = google-beta
 
   project = google_project.project.project_id
   service = "apigee.googleapis.com"
+  depends_on = [time_sleep.wait_60_seconds]
 }
 
 resource "google_project_service" "compute" {
@@ -654,6 +709,7 @@ resource "google_project_service" "compute" {
 
   project = google_project.project.project_id
   service = "compute.googleapis.com"
+  depends_on = [google_project_service.apigee]
 }
 
 resource "google_project_service" "servicenetworking" {
@@ -661,6 +717,7 @@ resource "google_project_service" "servicenetworking" {
 
   project = google_project.project.project_id
   service = "servicenetworking.googleapis.com"
+  depends_on = [google_project_service.compute]
 }
 
 resource "google_project_service" "kms" {
@@ -668,6 +725,7 @@ resource "google_project_service" "kms" {
 
   project = google_project.project.project_id
   service = "cloudkms.googleapis.com"
+  depends_on = [google_project_service.servicenetworking]
 }
 
 resource "google_compute_network" "apigee_network" {
