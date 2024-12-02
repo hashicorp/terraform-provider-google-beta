@@ -16,7 +16,7 @@ import (
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
-// Custom Module tests cannot be run in parallel without running into 409 Conflict reponses.
+// Custom Module tests cannot be run in parallel without running into 409 Conflict responses.
 // Run them as individual steps of an update test instead.
 func testAccSecurityCenterManagementFolderSecurityHealthAnalyticsCustomModule(t *testing.T) {
 
@@ -26,6 +26,9 @@ func testAccSecurityCenterManagementFolderSecurityHealthAnalyticsCustomModule(t 
 		"sleep":         true,
 		"random_suffix": acctest.RandString(t, 10),
 	}
+
+	// Log the organization ID for debugging purposes
+	t.Logf("Using Organization ID: %s", context["org_id"])
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -76,10 +79,9 @@ resource "google_folder" "folder" {
   deletion_protection = false
 }
 
-resource "time_sleep" "wait_1_minute" {
+resource "time_sleep" "wait_5_minute" {
 	depends_on = [google_folder.folder]
-
-	create_duration = "2m"
+	create_duration = "5m"
 }
 
 resource "google_scc_management_folder_security_health_analytics_custom_module" "example" {
@@ -102,8 +104,7 @@ resource "google_scc_management_folder_security_health_analytics_custom_module" 
 		severity = "MEDIUM"
 	}
 
-
-	depends_on = [time_sleep.wait_1_minute]
+	depends_on = [time_sleep.wait_5_minute]
 }
 `, context)
 }
@@ -115,6 +116,11 @@ resource "google_folder" "folder" {
   parent       = "organizations/%{org_id}"
   display_name = "tf-test-folder-name%{random_suffix}"
   deletion_protection = false
+}
+
+resource "time_sleep" "wait_5_minute" {
+	depends_on = [google_folder.folder]
+	create_duration = "5m"
 }
 
 resource "google_scc_management_folder_security_health_analytics_custom_module" "example" {
@@ -150,6 +156,8 @@ resource "google_scc_management_folder_security_health_analytics_custom_module" 
 		description = "Description of the custom module"
 		recommendation = "Steps to resolve violation"
 	}
+
+	depends_on = [time_sleep.wait_5_minute]
 }
 `, context)
 }
@@ -161,6 +169,11 @@ resource "google_folder" "folder" {
   parent       = "organizations/%{org_id}"
   display_name = "tf-test-folder-name%{random_suffix}"
   deletion_protection = false
+}
+
+resource "time_sleep" "wait_3_minute" {
+	depends_on = [google_folder.folder]
+	create_duration = "3m"
 }
 
 resource "google_scc_management_folder_security_health_analytics_custom_module" "example" {
@@ -196,6 +209,9 @@ resource "google_scc_management_folder_security_health_analytics_custom_module" 
 		description = "Updated description of the custom module"
 		recommendation = "Updated steps to resolve violation"
 	}
+
+	depends_on = [time_sleep.wait_3_minute]
+
 }
 `, context)
 }
