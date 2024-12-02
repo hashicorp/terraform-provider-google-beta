@@ -9,6 +9,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
+	"github.com/hashicorp/terraform-plugin-framework/ephemeral"
 	"github.com/hashicorp/terraform-plugin-framework/function"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
@@ -20,6 +21,7 @@ import (
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/functions"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/fwmodels"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/fwvalidators"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebase"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager"
 	"github.com/hashicorp/terraform-provider-google-beta/version"
@@ -29,9 +31,10 @@ import (
 
 // Ensure the implementation satisfies the expected interfaces
 var (
-	_ provider.Provider               = &FrameworkProvider{}
-	_ provider.ProviderWithMetaSchema = &FrameworkProvider{}
-	_ provider.ProviderWithFunctions  = &FrameworkProvider{}
+	_ provider.Provider                       = &FrameworkProvider{}
+	_ provider.ProviderWithMetaSchema         = &FrameworkProvider{}
+	_ provider.ProviderWithFunctions          = &FrameworkProvider{}
+	_ provider.ProviderWithEphemeralResources = &FrameworkProvider{}
 )
 
 // New is a helper function to simplify provider server and testing implementation.
@@ -80,8 +83,8 @@ func (p *FrameworkProvider) Schema(_ context.Context, _ provider.SchemaRequest, 
 					stringvalidator.ConflictsWith(path.Expressions{
 						path.MatchRoot("access_token"),
 					}...),
-					CredentialsValidator(),
-					NonEmptyStringValidator(),
+					fwvalidators.CredentialsValidator(),
+					fwvalidators.NonEmptyStringValidator(),
 				},
 			},
 			"access_token": schema.StringAttribute{
@@ -90,13 +93,13 @@ func (p *FrameworkProvider) Schema(_ context.Context, _ provider.SchemaRequest, 
 					stringvalidator.ConflictsWith(path.Expressions{
 						path.MatchRoot("credentials"),
 					}...),
-					NonEmptyStringValidator(),
+					fwvalidators.NonEmptyStringValidator(),
 				},
 			},
 			"impersonate_service_account": schema.StringAttribute{
 				Optional: true,
 				Validators: []validator.String{
-					NonEmptyStringValidator(),
+					fwvalidators.NonEmptyStringValidator(),
 				},
 			},
 			"impersonate_service_account_delegates": schema.ListAttribute{
@@ -106,25 +109,25 @@ func (p *FrameworkProvider) Schema(_ context.Context, _ provider.SchemaRequest, 
 			"project": schema.StringAttribute{
 				Optional: true,
 				Validators: []validator.String{
-					NonEmptyStringValidator(),
+					fwvalidators.NonEmptyStringValidator(),
 				},
 			},
 			"billing_project": schema.StringAttribute{
 				Optional: true,
 				Validators: []validator.String{
-					NonEmptyStringValidator(),
+					fwvalidators.NonEmptyStringValidator(),
 				},
 			},
 			"region": schema.StringAttribute{
 				Optional: true,
 				Validators: []validator.String{
-					NonEmptyStringValidator(),
+					fwvalidators.NonEmptyStringValidator(),
 				},
 			},
 			"zone": schema.StringAttribute{
 				Optional: true,
 				Validators: []validator.String{
-					NonEmptyStringValidator(),
+					fwvalidators.NonEmptyStringValidator(),
 				},
 			},
 			"scopes": schema.ListAttribute{
@@ -137,8 +140,8 @@ func (p *FrameworkProvider) Schema(_ context.Context, _ provider.SchemaRequest, 
 			"request_timeout": schema.StringAttribute{
 				Optional: true,
 				Validators: []validator.String{
-					NonEmptyStringValidator(),
-					NonNegativeDurationValidator(),
+					fwvalidators.NonEmptyStringValidator(),
+					fwvalidators.NonNegativeDurationValidator(),
 				},
 			},
 			"request_reason": schema.StringAttribute{
@@ -1088,7 +1091,7 @@ func (p *FrameworkProvider) Schema(_ context.Context, _ provider.SchemaRequest, 
 						"send_after": schema.StringAttribute{
 							Optional: true,
 							Validators: []validator.String{
-								NonNegativeDurationValidator(),
+								fwvalidators.NonNegativeDurationValidator(),
 							},
 						},
 						"enable_batching": schema.BoolAttribute{
@@ -1129,6 +1132,7 @@ func (p *FrameworkProvider) Configure(ctx context.Context, req provider.Configur
 	meta := p.Primary.Meta().(*transport_tpg.Config)
 	resp.DataSourceData = meta
 	resp.ResourceData = meta
+	resp.EphemeralResourceData = meta
 }
 
 // DataSources defines the data sources implemented in the provider.
@@ -1156,5 +1160,15 @@ func (p *FrameworkProvider) Functions(_ context.Context) []func() function.Funct
 		functions.NewRegionFromIdFunction,
 		functions.NewRegionFromZoneFunction,
 		functions.NewZoneFromIdFunction,
+	}
+}
+
+// EphemeralResources defines the resources that are of ephemeral type implemented in the provider.
+func (p *FrameworkProvider) EphemeralResources(_ context.Context) []func() ephemeral.EphemeralResource {
+	return []func() ephemeral.EphemeralResource{
+		resourcemanager.GoogleEphemeralServiceAccountAccessToken,
+		resourcemanager.GoogleEphemeralServiceAccountIdToken,
+		resourcemanager.GoogleEphemeralServiceAccountJwt,
+		resourcemanager.GoogleEphemeralServiceAccountKey,
 	}
 }
