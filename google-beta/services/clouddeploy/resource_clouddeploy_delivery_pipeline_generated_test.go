@@ -319,6 +319,11 @@ resource "google_clouddeploy_delivery_pipeline" "primary" {
                 http_route         = "example-http-route"
                 service            = "example-service"
                 pod_selector_label = "example.com/app-name"
+
+                route_destinations {
+                  destination_ids   = ["example-destination-id"]
+                  propagate_service = true
+                }
               }
             }
           }
