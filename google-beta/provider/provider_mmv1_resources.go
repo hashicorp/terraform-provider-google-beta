@@ -433,6 +433,7 @@ var generatedIAMDatasources = map[string]*schema.Resource{
 	"google_dataproc_metastore_federation_iam_policy":        tpgiamresource.DataSourceIamPolicy(dataprocmetastore.DataprocMetastoreFederationIamSchema, dataprocmetastore.DataprocMetastoreFederationIamUpdaterProducer),
 	"google_dataproc_metastore_service_iam_policy":           tpgiamresource.DataSourceIamPolicy(dataprocmetastore.DataprocMetastoreServiceIamSchema, dataprocmetastore.DataprocMetastoreServiceIamUpdaterProducer),
 	"google_dns_managed_zone_iam_policy":                     tpgiamresource.DataSourceIamPolicy(dns.DNSManagedZoneIamSchema, dns.DNSManagedZoneIamUpdaterProducer),
+	"google_gemini_repository_group_iam_policy":              tpgiamresource.DataSourceIamPolicy(gemini.GeminiRepositoryGroupIamSchema, gemini.GeminiRepositoryGroupIamUpdaterProducer),
 	"google_gke_backup_backup_plan_iam_policy":               tpgiamresource.DataSourceIamPolicy(gkebackup.GKEBackupBackupPlanIamSchema, gkebackup.GKEBackupBackupPlanIamUpdaterProducer),
 	"google_gke_backup_restore_plan_iam_policy":              tpgiamresource.DataSourceIamPolicy(gkebackup.GKEBackupRestorePlanIamSchema, gkebackup.GKEBackupRestorePlanIamUpdaterProducer),
 	"google_gke_hub_membership_iam_policy":                   tpgiamresource.DataSourceIamPolicy(gkehub.GKEHubMembershipIamSchema, gkehub.GKEHubMembershipIamUpdaterProducer),
@@ -508,9 +509,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 563
-// Generated IAM resources: 291
-// Total generated resources: 854
+// Generated resources: 564
+// Generated IAM resources: 294
+// Total generated resources: 858
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -978,6 +979,10 @@ var generatedResources = map[string]*schema.Resource{
 	"google_firestore_field":                                                     firestore.ResourceFirestoreField(),
 	"google_firestore_index":                                                     firestore.ResourceFirestoreIndex(),
 	"google_gemini_code_repository_index":                                        gemini.ResourceGeminiCodeRepositoryIndex(),
+	"google_gemini_repository_group":                                             gemini.ResourceGeminiRepositoryGroup(),
+	"google_gemini_repository_group_iam_binding":                                 tpgiamresource.ResourceIamBinding(gemini.GeminiRepositoryGroupIamSchema, gemini.GeminiRepositoryGroupIamUpdaterProducer, gemini.GeminiRepositoryGroupIdParseFunc),
+	"google_gemini_repository_group_iam_member":                                  tpgiamresource.ResourceIamMember(gemini.GeminiRepositoryGroupIamSchema, gemini.GeminiRepositoryGroupIamUpdaterProducer, gemini.GeminiRepositoryGroupIdParseFunc),
+	"google_gemini_repository_group_iam_policy":                                  tpgiamresource.ResourceIamPolicy(gemini.GeminiRepositoryGroupIamSchema, gemini.GeminiRepositoryGroupIamUpdaterProducer, gemini.GeminiRepositoryGroupIdParseFunc),
 	"google_gke_backup_backup_plan":                                              gkebackup.ResourceGKEBackupBackupPlan(),
 	"google_gke_backup_backup_plan_iam_binding":                                  tpgiamresource.ResourceIamBinding(gkebackup.GKEBackupBackupPlanIamSchema, gkebackup.GKEBackupBackupPlanIamUpdaterProducer, gkebackup.GKEBackupBackupPlanIdParseFunc),
 	"google_gke_backup_backup_plan_iam_member":                                   tpgiamresource.ResourceIamMember(gkebackup.GKEBackupBackupPlanIamSchema, gkebackup.GKEBackupBackupPlanIamUpdaterProducer, gkebackup.GKEBackupBackupPlanIdParseFunc),
