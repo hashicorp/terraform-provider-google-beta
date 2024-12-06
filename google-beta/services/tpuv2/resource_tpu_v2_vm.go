@@ -235,9 +235,13 @@ false, the specified subnetwork or network should have Private Google Access ena
 							Optional: true,
 							ForceNew: true,
 							Description: `The name of the network for the TPU node. It must be a preexisting Google Compute Engine
-network. If both network and subnetwork are specified, the given subnetwork must belong
-to the given network. If network is not specified, it will be looked up from the
-subnetwork if one is provided, or otherwise use "default".`,
+network. If none is provided, "default" will be used.`,
+						},
+						"queue_count": {
+							Type:        schema.TypeInt,
+							Optional:    true,
+							ForceNew:    true,
+							Description: `Specifies networking queue count for TPU VM instance's network interface.`,
 						},
 						"subnetwork": {
 							Type:     schema.TypeString,
@@ -245,12 +249,59 @@ subnetwork if one is provided, or otherwise use "default".`,
 							Optional: true,
 							ForceNew: true,
 							Description: `The name of the subnetwork for the TPU node. It must be a preexisting Google Compute
-Engine subnetwork. If both network and subnetwork are specified, the given subnetwork
-must belong to the given network. If subnetwork is not specified, the subnetwork with the
-same name as the network will be used.`,
+Engine subnetwork. If none is provided, "default" will be used.`,
 						},
 					},
 				},
+				ConflictsWith: []string{"network_configs"},
+			},
+			"network_configs": {
+				Type:     schema.TypeList,
+				Optional: true,
+				ForceNew: true,
+				Description: `Repeated network configurations for the TPU node. This field is used to specify multiple
+network configs for the TPU node.`,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"can_ip_forward": {
+							Type:     schema.TypeBool,
+							Optional: true,
+							ForceNew: true,
+							Description: `Allows the TPU node to send and receive packets with non-matching destination or source
+IPs. This is required if you plan to use the TPU workers to forward routes.`,
+						},
+						"enable_external_ips": {
+							Type:     schema.TypeBool,
+							Optional: true,
+							ForceNew: true,
+							Description: `Indicates that external IP addresses would be associated with the TPU workers. If set to
+false, the specified subnetwork or network should have Private Google Access enabled.`,
+						},
+						"network": {
+							Type:     schema.TypeString,
+							Computed: true,
+							Optional: true,
+							ForceNew: true,
+							Description: `The name of the network for the TPU node. It must be a preexisting Google Compute Engine
+network. If none is provided, "default" will be used.`,
+						},
+						"queue_count": {
+							Type:        schema.TypeInt,
+							Optional:    true,
+							ForceNew:    true,
+							Description: `Specifies networking queue count for TPU VM instance's network interface.`,
+						},
+						"subnetwork": {
+							Type:     schema.TypeString,
+							Computed: true,
+							Optional: true,
+							ForceNew: true,
+							Description: `The name of the subnetwork for the TPU node. It must be a preexisting Google Compute
+Engine subnetwork. If none is provided, "default" will be used.`,
+						},
+					},
+				},
+				ConflictsWith: []string{"network_config"},
 			},
 			"scheduling_config": {
 				Type:        schema.TypeList,
@@ -500,6 +551,12 @@ func resourceTpuV2VmCreate(d *schema.ResourceData, meta interface{}) error {
 	} else if v, ok := d.GetOkExists("network_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(networkConfigProp)) && (ok || !reflect.DeepEqual(v, networkConfigProp)) {
 		obj["networkConfig"] = networkConfigProp
 	}
+	networkConfigsProp, err := expandTpuV2VmNetworkConfigs(d.Get("network_configs"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("network_configs"); !tpgresource.IsEmptyValue(reflect.ValueOf(networkConfigsProp)) && (ok || !reflect.DeepEqual(v, networkConfigsProp)) {
+		obj["networkConfigs"] = networkConfigsProp
+	}
 	serviceAccountProp, err := expandTpuV2VmServiceAccount(d.Get("service_account"), d, config)
 	if err != nil {
 		return err
@@ -677,6 +734,9 @@ func resourceTpuV2VmRead(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("Error reading Vm: %s", err)
 	}
 	if err := d.Set("network_config", flattenTpuV2VmNetworkConfig(res["networkConfig"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Vm: %s", err)
+	}
+	if err := d.Set("network_configs", flattenTpuV2VmNetworkConfigs(res["networkConfigs"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Vm: %s", err)
 	}
 	if err := d.Set("service_account", flattenTpuV2VmServiceAccount(res["serviceAccount"], d, config)); err != nil {
@@ -972,6 +1032,8 @@ func flattenTpuV2VmNetworkConfig(v interface{}, d *schema.ResourceData, config *
 		flattenTpuV2VmNetworkConfigEnableExternalIps(original["enableExternalIps"], d, config)
 	transformed["can_ip_forward"] =
 		flattenTpuV2VmNetworkConfigCanIpForward(original["canIpForward"], d, config)
+	transformed["queue_count"] =
+		flattenTpuV2VmNetworkConfigQueueCount(original["queueCount"], d, config)
 	return []interface{}{transformed}
 }
 func flattenTpuV2VmNetworkConfigNetwork(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -988,6 +1050,78 @@ func flattenTpuV2VmNetworkConfigEnableExternalIps(v interface{}, d *schema.Resou
 
 func flattenTpuV2VmNetworkConfigCanIpForward(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
+}
+
+func flattenTpuV2VmNetworkConfigQueueCount(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	// Handles the string fixed64 format
+	if strVal, ok := v.(string); ok {
+		if intVal, err := tpgresource.StringToFixed64(strVal); err == nil {
+			return intVal
+		}
+	}
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
+}
+
+func flattenTpuV2VmNetworkConfigs(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+	l := v.([]interface{})
+	transformed := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		original := raw.(map[string]interface{})
+		if len(original) < 1 {
+			// Do not include empty json objects coming back from the api
+			continue
+		}
+		transformed = append(transformed, map[string]interface{}{
+			"network":             flattenTpuV2VmNetworkConfigsNetwork(original["network"], d, config),
+			"subnetwork":          flattenTpuV2VmNetworkConfigsSubnetwork(original["subnetwork"], d, config),
+			"enable_external_ips": flattenTpuV2VmNetworkConfigsEnableExternalIps(original["enableExternalIps"], d, config),
+			"can_ip_forward":      flattenTpuV2VmNetworkConfigsCanIpForward(original["canIpForward"], d, config),
+			"queue_count":         flattenTpuV2VmNetworkConfigsQueueCount(original["queueCount"], d, config),
+		})
+	}
+	return transformed
+}
+func flattenTpuV2VmNetworkConfigsNetwork(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenTpuV2VmNetworkConfigsSubnetwork(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenTpuV2VmNetworkConfigsEnableExternalIps(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenTpuV2VmNetworkConfigsCanIpForward(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenTpuV2VmNetworkConfigsQueueCount(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	// Handles the string fixed64 format
+	if strVal, ok := v.(string); ok {
+		if intVal, err := tpgresource.StringToFixed64(strVal); err == nil {
+			return intVal
+		}
+	}
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
 }
 
 func flattenTpuV2VmServiceAccount(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -1321,6 +1455,13 @@ func expandTpuV2VmNetworkConfig(v interface{}, d tpgresource.TerraformResourceDa
 		transformed["canIpForward"] = transformedCanIpForward
 	}
 
+	transformedQueueCount, err := expandTpuV2VmNetworkConfigQueueCount(original["queue_count"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedQueueCount); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["queueCount"] = transformedQueueCount
+	}
+
 	return transformed, nil
 }
 
@@ -1337,6 +1478,80 @@ func expandTpuV2VmNetworkConfigEnableExternalIps(v interface{}, d tpgresource.Te
 }
 
 func expandTpuV2VmNetworkConfigCanIpForward(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandTpuV2VmNetworkConfigQueueCount(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandTpuV2VmNetworkConfigs(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	req := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		if raw == nil {
+			continue
+		}
+		original := raw.(map[string]interface{})
+		transformed := make(map[string]interface{})
+
+		transformedNetwork, err := expandTpuV2VmNetworkConfigsNetwork(original["network"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedNetwork); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["network"] = transformedNetwork
+		}
+
+		transformedSubnetwork, err := expandTpuV2VmNetworkConfigsSubnetwork(original["subnetwork"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedSubnetwork); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["subnetwork"] = transformedSubnetwork
+		}
+
+		transformedEnableExternalIps, err := expandTpuV2VmNetworkConfigsEnableExternalIps(original["enable_external_ips"], d, config)
+		if err != nil {
+			return nil, err
+		} else {
+			transformed["enableExternalIps"] = transformedEnableExternalIps
+		}
+
+		transformedCanIpForward, err := expandTpuV2VmNetworkConfigsCanIpForward(original["can_ip_forward"], d, config)
+		if err != nil {
+			return nil, err
+		} else {
+			transformed["canIpForward"] = transformedCanIpForward
+		}
+
+		transformedQueueCount, err := expandTpuV2VmNetworkConfigsQueueCount(original["queue_count"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedQueueCount); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["queueCount"] = transformedQueueCount
+		}
+
+		req = append(req, transformed)
+	}
+	return req, nil
+}
+
+func expandTpuV2VmNetworkConfigsNetwork(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandTpuV2VmNetworkConfigsSubnetwork(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandTpuV2VmNetworkConfigsEnableExternalIps(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandTpuV2VmNetworkConfigsCanIpForward(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandTpuV2VmNetworkConfigsQueueCount(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
