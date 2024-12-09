@@ -31,7 +31,6 @@ IMPROVEMENTS:
 * cloudbuild: added `private_service_connect` field to `google_cloudbuild_worker_pool` resource ([#8827](https://github.com/hashicorp/terraform-provider-google-beta/pull/8827))
 * clouddeploy: added `associated_entities` field to `google_clouddeploy_target` resource ([#8827](https://github.com/hashicorp/terraform-provider-google-beta/pull/8827))
 * clouddeploy: added `serial_pipeline.strategy.canary.runtime_config.kubernetes.gateway_service_mesh.route_destinations` field to `google_clouddeploy_delivery_pipeline` resource ([#8827](https://github.com/hashicorp/terraform-provider-google-beta/pull/8827))
-* composer: added multiple composer 3 related fields to `google_composer_environment` (GA) ([#8784](https://github.com/hashicorp/terraform-provider-google-beta/pull/8784))
 * compute: `google_compute_instance`, `google_compute_instance_template`, `google_compute_region_instance_template` now supports `advanced_machine_features.enable_uefi_networking` field ([#8805](https://github.com/hashicorp/terraform-provider-google-beta/pull/8805))
 * compute: added support for specifying storage pool with name or partial url ([#8794](https://github.com/hashicorp/terraform-provider-google-beta/pull/8794))
 * compute: added `numeric_id` to the `google_compute_network` data source ([#8821](https://github.com/hashicorp/terraform-provider-google-beta/pull/8821))
