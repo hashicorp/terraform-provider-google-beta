@@ -509,9 +509,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 567
+// Generated resources: 568
 // Generated IAM resources: 294
-// Total generated resources: 861
+// Total generated resources: 862
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -1143,6 +1143,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_network_security_firewall_endpoint_association":                      networksecurity.ResourceNetworkSecurityFirewallEndpointAssociation(),
 	"google_network_security_gateway_security_policy":                            networksecurity.ResourceNetworkSecurityGatewaySecurityPolicy(),
 	"google_network_security_gateway_security_policy_rule":                       networksecurity.ResourceNetworkSecurityGatewaySecurityPolicyRule(),
+	"google_network_security_intercept_deployment":                               networksecurity.ResourceNetworkSecurityInterceptDeployment(),
 	"google_network_security_intercept_deployment_group":                         networksecurity.ResourceNetworkSecurityInterceptDeploymentGroup(),
 	"google_network_security_mirroring_deployment":                               networksecurity.ResourceNetworkSecurityMirroringDeployment(),
 	"google_network_security_mirroring_deployment_group":                         networksecurity.ResourceNetworkSecurityMirroringDeploymentGroup(),
