@@ -2,7 +2,6 @@
 
 NOTES:
 * New [ephemeral resources](https://developer.hashicorp.com/terraform/language/v1.10.x/resources/ephemeral) `google_service_account_access_token`, `google_service_account_id_token`, `google_service_account_jwt`, `google_service_account_key` now support [ephemeral values](https://developer.hashicorp.com/terraform/language/v1.10.x/values/variables#exclude-values-from-state).
-* iam3: promoted resources `google_iam_principal_access_boundary_policy`, `google_iam_organizations_policy_binding`, `google_iam_folders_policy_binding` and `google_iam_projects_policy_binding` to GA ([#8782](https://github.com/hashicorp/terraform-provider-google-beta/pull/8782))
 DEPRECATIONS:
 * gkehub: deprecated `configmanagement.config_sync.metrics_gcp_service_account_email` in `google_gke_hub_feature_membership` resource ([#8827](https://github.com/hashicorp/terraform-provider-google-beta/pull/8827))
 
