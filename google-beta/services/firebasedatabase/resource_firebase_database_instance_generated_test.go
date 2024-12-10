@@ -118,7 +118,10 @@ func TestAccFirebaseDatabaseInstance_firebaseDatabaseInstanceDefaultDatabaseExam
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
-		CheckDestroy:             testAccCheckFirebaseDatabaseInstanceDestroyProducer(t),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccCheckFirebaseDatabaseInstanceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccFirebaseDatabaseInstance_firebaseDatabaseInstanceDefaultDatabaseExample(context),
@@ -146,15 +149,32 @@ resource "google_project" "default" {
   }
 }
 
+resource "google_project_service" "firebase" {
+  provider = google-beta
+  project  = google_project.default.project_id
+  service  = "firebase.googleapis.com"
+
+  disable_on_destroy = false
+}
+
 resource "google_firebase_project" "default" {
   provider = google-beta
   project  = google_project.default.project_id
+
+  depends_on = [google_project_service.firebase]
 }
 
 resource "google_project_service" "firebase_database" {
   provider = google-beta
   project  = google_firebase_project.default.project
   service  = "firebasedatabase.googleapis.com"
+
+  disable_on_destroy = false
+}
+
+resource "time_sleep" "wait_60_seconds" {
+  create_duration = "60s"
+  depends_on = [google_project_service.firebase_database]
 }
 
 resource "google_firebase_database_instance" "default" {
@@ -163,7 +183,7 @@ resource "google_firebase_database_instance" "default" {
   region   = "us-central1"
   instance_id = "tf-test-rtdb-project%{random_suffix}-default-rtdb"
   type     = "DEFAULT_DATABASE"
-  depends_on = [google_project_service.firebase_database]
+  depends_on = [time_sleep.wait_60_seconds]
 }
 `, context)
 }
