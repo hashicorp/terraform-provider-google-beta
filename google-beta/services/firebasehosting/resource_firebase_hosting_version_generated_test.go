@@ -80,6 +80,118 @@ resource "google_firebase_hosting_release" "default" {
 `, context)
 }
 
+func TestAccFirebaseHostingVersion_firebasehostingVersionHeadersExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"project_id":    envvar.GetTestProjectFromEnv(),
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccFirebaseHostingVersion_firebasehostingVersionHeadersExample(context),
+			},
+			{
+				ResourceName:            "google_firebase_hosting_version.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"site_id", "version_id"},
+			},
+		},
+	})
+}
+
+func testAccFirebaseHostingVersion_firebasehostingVersionHeadersExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_firebase_hosting_site" "default" {
+  provider = google-beta
+  project  = "%{project_id}"
+  site_id  = "tf-test-site-id%{random_suffix}"
+}
+
+resource "google_firebase_hosting_version" "default" {
+  provider = google-beta
+  site_id  = google_firebase_hosting_site.default.site_id
+  config {
+    headers {
+      # Also okay to use regex
+      glob = "/headers/**"
+      headers = {
+        my-header = "my-value"
+      }
+    }
+  }
+}
+
+resource "google_firebase_hosting_release" "default" {
+  provider     = google-beta
+  site_id      = google_firebase_hosting_site.default.site_id
+  version_name = google_firebase_hosting_version.default.name
+  message      = "With custom headers"
+}
+`, context)
+}
+
+func TestAccFirebaseHostingVersion_firebasehostingVersionHeadersRegexExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"project_id":    envvar.GetTestProjectFromEnv(),
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccFirebaseHostingVersion_firebasehostingVersionHeadersRegexExample(context),
+			},
+			{
+				ResourceName:            "google_firebase_hosting_version.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"site_id", "version_id"},
+			},
+		},
+	})
+}
+
+func testAccFirebaseHostingVersion_firebasehostingVersionHeadersRegexExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_firebase_hosting_site" "default" {
+  provider = google-beta
+  project  = "%{project_id}"
+  site_id  = "tf-test-site-id%{random_suffix}"
+}
+
+resource "google_firebase_hosting_version" "default" {
+  provider = google-beta
+  site_id  = google_firebase_hosting_site.default.site_id
+  config {
+    headers {
+      # Also okay to use glob
+      regex = "^~/headers$"
+      headers = {
+        my-header = "my-value"
+      }
+    }
+  }
+}
+
+resource "google_firebase_hosting_release" "default" {
+  provider     = google-beta
+  site_id      = google_firebase_hosting_site.default.site_id
+  version_name = google_firebase_hosting_version.default.name
+  message      = "With custom headers"
+}
+`, context)
+}
+
 func TestAccFirebaseHostingVersion_firebasehostingVersionPathExample(t *testing.T) {
 	t.Parallel()
 
