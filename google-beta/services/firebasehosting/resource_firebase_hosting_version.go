@@ -61,6 +61,36 @@ func ResourceFirebaseHostingVersion() *schema.Resource {
 				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"headers": {
+							Type:     schema.TypeList,
+							Optional: true,
+							ForceNew: true,
+							Description: `An array of objects, where each object specifies a URL pattern that, if matched to the request URL path,
+triggers Hosting to apply the specified custom response headers.`,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"headers": {
+										Type:        schema.TypeMap,
+										Required:    true,
+										ForceNew:    true,
+										Description: `The additional headers to add to the response. Example: { "name": "wrench", "mass": "1.3kg", "count": "3" }.`,
+										Elem:        &schema.Schema{Type: schema.TypeString},
+									},
+									"glob": {
+										Type:        schema.TypeString,
+										Optional:    true,
+										ForceNew:    true,
+										Description: `The user-supplied glob to match against the request URL path.`,
+									},
+									"regex": {
+										Type:        schema.TypeString,
+										Optional:    true,
+										ForceNew:    true,
+										Description: `The user-supplied RE2 regular expression to match against the request URL path.`,
+									},
+								},
+							},
+						},
 						"redirects": {
 							Type:     schema.TypeList,
 							Optional: true,
@@ -92,18 +122,16 @@ redirects {
 										Description: `The status HTTP code to return in the response. It must be a valid 3xx status code.`,
 									},
 									"glob": {
-										Type:         schema.TypeString,
-										Optional:     true,
-										ForceNew:     true,
-										Description:  `The user-supplied glob to match against the request URL path.`,
-										ExactlyOneOf: []string{},
+										Type:        schema.TypeString,
+										Optional:    true,
+										ForceNew:    true,
+										Description: `The user-supplied glob to match against the request URL path.`,
 									},
 									"regex": {
-										Type:         schema.TypeString,
-										Optional:     true,
-										ForceNew:     true,
-										Description:  `The user-supplied RE2 regular expression to match against the request URL path.`,
-										ExactlyOneOf: []string{},
+										Type:        schema.TypeString,
+										Optional:    true,
+										ForceNew:    true,
+										Description: `The user-supplied RE2 regular expression to match against the request URL path.`,
 									},
 								},
 							},
@@ -117,32 +145,28 @@ request URL path, triggers Hosting to respond as if the service were given the s
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"function": {
-										Type:         schema.TypeString,
-										Optional:     true,
-										ForceNew:     true,
-										Description:  `The function to proxy requests to. Must match the exported function name exactly.`,
-										ExactlyOneOf: []string{},
+										Type:        schema.TypeString,
+										Optional:    true,
+										ForceNew:    true,
+										Description: `The function to proxy requests to. Must match the exported function name exactly.`,
 									},
 									"glob": {
-										Type:         schema.TypeString,
-										Optional:     true,
-										ForceNew:     true,
-										Description:  `The user-supplied glob to match against the request URL path.`,
-										ExactlyOneOf: []string{},
+										Type:        schema.TypeString,
+										Optional:    true,
+										ForceNew:    true,
+										Description: `The user-supplied glob to match against the request URL path.`,
 									},
 									"path": {
-										Type:         schema.TypeString,
-										Optional:     true,
-										ForceNew:     true,
-										Description:  `The URL path to rewrite the request to.`,
-										ExactlyOneOf: []string{},
+										Type:        schema.TypeString,
+										Optional:    true,
+										ForceNew:    true,
+										Description: `The URL path to rewrite the request to.`,
 									},
 									"regex": {
-										Type:         schema.TypeString,
-										Optional:     true,
-										ForceNew:     true,
-										Description:  `The user-supplied RE2 regular expression to match against the request URL path.`,
-										ExactlyOneOf: []string{},
+										Type:        schema.TypeString,
+										Optional:    true,
+										ForceNew:    true,
+										Description: `The user-supplied RE2 regular expression to match against the request URL path.`,
 									},
 									"run": {
 										Type:        schema.TypeList,
@@ -166,7 +190,6 @@ request URL path, triggers Hosting to respond as if the service were given the s
 												},
 											},
 										},
-										ExactlyOneOf: []string{},
 									},
 								},
 							},
@@ -387,6 +410,8 @@ func flattenFirebaseHostingVersionConfig(v interface{}, d *schema.ResourceData, 
 		flattenFirebaseHostingVersionConfigRewrites(original["rewrites"], d, config)
 	transformed["redirects"] =
 		flattenFirebaseHostingVersionConfigRedirects(original["redirects"], d, config)
+	transformed["headers"] =
+		flattenFirebaseHostingVersionConfigHeaders(original["headers"], d, config)
 	return []interface{}{transformed}
 }
 func flattenFirebaseHostingVersionConfigRewrites(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -500,6 +525,38 @@ func flattenFirebaseHostingVersionConfigRedirectsLocation(v interface{}, d *sche
 	return v
 }
 
+func flattenFirebaseHostingVersionConfigHeaders(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+	l := v.([]interface{})
+	transformed := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		original := raw.(map[string]interface{})
+		if len(original) < 1 {
+			// Do not include empty json objects coming back from the api
+			continue
+		}
+		transformed = append(transformed, map[string]interface{}{
+			"glob":    flattenFirebaseHostingVersionConfigHeadersGlob(original["glob"], d, config),
+			"regex":   flattenFirebaseHostingVersionConfigHeadersRegex(original["regex"], d, config),
+			"headers": flattenFirebaseHostingVersionConfigHeadersHeaders(original["headers"], d, config),
+		})
+	}
+	return transformed
+}
+func flattenFirebaseHostingVersionConfigHeadersGlob(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenFirebaseHostingVersionConfigHeadersRegex(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenFirebaseHostingVersionConfigHeadersHeaders(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func expandFirebaseHostingVersionConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
@@ -521,6 +578,13 @@ func expandFirebaseHostingVersionConfig(v interface{}, d tpgresource.TerraformRe
 		return nil, err
 	} else if val := reflect.ValueOf(transformedRedirects); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["redirects"] = transformedRedirects
+	}
+
+	transformedHeaders, err := expandFirebaseHostingVersionConfigHeaders(original["headers"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedHeaders); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["headers"] = transformedHeaders
 	}
 
 	return transformed, nil
@@ -683,6 +747,61 @@ func expandFirebaseHostingVersionConfigRedirectsStatusCode(v interface{}, d tpgr
 
 func expandFirebaseHostingVersionConfigRedirectsLocation(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func expandFirebaseHostingVersionConfigHeaders(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	req := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		if raw == nil {
+			continue
+		}
+		original := raw.(map[string]interface{})
+		transformed := make(map[string]interface{})
+
+		transformedGlob, err := expandFirebaseHostingVersionConfigHeadersGlob(original["glob"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedGlob); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["glob"] = transformedGlob
+		}
+
+		transformedRegex, err := expandFirebaseHostingVersionConfigHeadersRegex(original["regex"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedRegex); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["regex"] = transformedRegex
+		}
+
+		transformedHeaders, err := expandFirebaseHostingVersionConfigHeadersHeaders(original["headers"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedHeaders); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["headers"] = transformedHeaders
+		}
+
+		req = append(req, transformed)
+	}
+	return req, nil
+}
+
+func expandFirebaseHostingVersionConfigHeadersGlob(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandFirebaseHostingVersionConfigHeadersRegex(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandFirebaseHostingVersionConfigHeadersHeaders(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+	if v == nil {
+		return map[string]string{}, nil
+	}
+	m := make(map[string]string)
+	for k, val := range v.(map[string]interface{}) {
+		m[k] = val.(string)
+	}
+	return m, nil
 }
 
 func resourceFirebaseHostingVersionDecoder(d *schema.ResourceData, meta interface{}, res map[string]interface{}) (map[string]interface{}, error) {
