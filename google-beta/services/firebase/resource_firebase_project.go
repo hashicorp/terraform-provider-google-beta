@@ -86,7 +86,7 @@ func ResourceFirebaseProject() *schema.Resource {
 			"project_number": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: `The number of the google project that firebase is enabled on.`,
+				Description: `The number of the Google Project that Firebase is enabled on.`,
 			},
 			"project": {
 				Type:     schema.TypeString,
