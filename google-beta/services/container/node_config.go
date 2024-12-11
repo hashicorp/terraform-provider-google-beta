@@ -1579,10 +1579,8 @@ func flattenResourceManagerTags(c *container.ResourceManagerTags) map[string]int
 
 	rmt := make(map[string]interface{})
 
-	if c != nil {
-		for k, v := range c.Tags {
-			rmt[k] = v
-		}
+	for k, v := range c.Tags {
+		rmt[k] = v
 	}
 
 	return rmt
