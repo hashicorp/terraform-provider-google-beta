@@ -405,7 +405,7 @@ OWNERSHIP_ACTIVE:
 			"reconciling": {
 				Type:     schema.TypeBool,
 				Computed: true,
-				Description: `if true, indicates that Hosting's systems are attmepting to
+				Description: `if true, indicates that Hosting's systems are attempting to
 make the 'CustomDomain''s state match your preferred state. This is most
 frequently 'true' when initially provisioning a 'CustomDomain' or when creating
 a new SSL certificate to match an updated 'cert_preference'`,
