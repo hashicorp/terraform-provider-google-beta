@@ -19,6 +19,7 @@ IMPROVEMENTS:
 * tpuv2: added `network_configs` and `network_config.queue_count` fields to `google_tpu_v2_vm` resource ([#8865](https://github.com/hashicorp/terraform-provider-google-beta/pull/8865))
 
 BUG FIXES:
+* accesscontextmanager: fixed an update bug in `google_access_context_manager_perimeter` by removing the broken output-only `etag` field in `google_access_context_manager_perimeter` and `google_access_context_manager_perimeters` ([#8891](https://github.com/hashicorp/terraform-provider-google-beta/pull/8911))
 * compute: fixed permadiff on the `recaptcha_options` field for `google_compute_security_policy` resource ([#8861](https://github.com/hashicorp/terraform-provider-google-beta/pull/8861))
 * compute: fixed issue where updating labels on `resource_google_compute_resource_policy` would fail because of a patch error with `guest_flush` ([#8874](https://github.com/hashicorp/terraform-provider-google-beta/pull/8874))
 * networkconnectivity: fixed `linked_router_appliance_instances.instances.virtual_machine` and `linked_router_appliance_instances.instances.ip_address` attributes in `google_network_connectivity_spoke` to be correctly marked as required. Otherwise the request to create the resource will fail. ([#8883](https://github.com/hashicorp/terraform-provider-google-beta/pull/8883))
