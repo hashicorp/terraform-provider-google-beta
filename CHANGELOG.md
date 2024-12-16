@@ -13,7 +13,7 @@ IMPROVEMENTS:
 * compute: added `CA_ENTERPRISE_ANNUAL` option for field `cloud_armor_tier` in `google_compute_project_cloud_armor_tier` resource ([#8848](https://github.com/hashicorp/terraform-provider-google-beta/pull/8848))
 * compute: added `network_tier` field to `google_compute_global_forwarding_rule` resource ([#8838](https://github.com/hashicorp/terraform-provider-google-beta/pull/8838))
 * compute: made `metadata_startup_script` able to be updated via graceful switch in `google_compute_instance` ([#8888](https://github.com/hashicorp/terraform-provider-google-beta/pull/8888))
-* firebasehosting: added `headers` field in `google_firebase_hosting_version` resource (beta) ([#8887](https://github.com/hashicorp/terraform-provider-google-beta/pull/8887))
+* firebasehosting: added `headers` field in `google_firebase_hosting_version` resource ([#8887](https://github.com/hashicorp/terraform-provider-google-beta/pull/8887))
 * identityplatform: marked `quota.0.sign_up_quota_config` subfields conditionally required in `google_identity_platform_config` to move errors from apply time up to plan time, and clarified the rule in documentation ([#8869](https://github.com/hashicorp/terraform-provider-google-beta/pull/8869))
 * networkconnectivity: added support for updating `linked_vpn_tunnels.include_import_ranges`, `linked_interconnect_attachments.include_import_ranges`, `linked_router_appliance_instances. instances` and `linked_router_appliance_instances.include_import_ranges` in `google_network_connectivity_spoke` ([#8883](https://github.com/hashicorp/terraform-provider-google-beta/pull/8883))
 * orgpolicy: added `parameters` fields to `google_org_policy_policy` resource ([#8881](https://github.com/hashicorp/terraform-provider-google-beta/pull/8881))
