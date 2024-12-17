@@ -109,6 +109,13 @@ Please refer to the field 'effective_annotations' for all of the annotations pre
 Please refer to the field 'effective_labels' for all of the labels present on the resource.`,
 				Elem: &schema.Schema{Type: schema.TypeString},
 			},
+			"source_workstation": {
+				Type:     schema.TypeString,
+				Optional: true,
+				ForceNew: true,
+				Description: `Full resource name of the source workstation from which the workstation's persistent
+directories will be cloned from during creation.`,
+			},
 			"create_time": {
 				Type:        schema.TypeString,
 				Computed:    true,
@@ -185,6 +192,12 @@ func resourceWorkstationsWorkstationCreate(d *schema.ResourceData, meta interfac
 		return err
 	} else if v, ok := d.GetOkExists("env"); !tpgresource.IsEmptyValue(reflect.ValueOf(envProp)) && (ok || !reflect.DeepEqual(v, envProp)) {
 		obj["env"] = envProp
+	}
+	source_workstationProp, err := expandWorkstationsWorkstationSourceWorkstation(d.Get("source_workstation"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("source_workstation"); !tpgresource.IsEmptyValue(reflect.ValueOf(source_workstationProp)) && (ok || !reflect.DeepEqual(v, source_workstationProp)) {
+		obj["source_workstation"] = source_workstationProp
 	}
 	labelsProp, err := expandWorkstationsWorkstationEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
@@ -322,6 +335,9 @@ func resourceWorkstationsWorkstationRead(d *schema.ResourceData, meta interface{
 		return fmt.Errorf("Error reading Workstation: %s", err)
 	}
 	if err := d.Set("state", flattenWorkstationsWorkstationState(res["state"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Workstation: %s", err)
+	}
+	if err := d.Set("source_workstation", flattenWorkstationsWorkstationSourceWorkstation(res["source_workstation"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Workstation: %s", err)
 	}
 	if err := d.Set("terraform_labels", flattenWorkstationsWorkstationTerraformLabels(res["labels"], d, config)); err != nil {
@@ -579,6 +595,10 @@ func flattenWorkstationsWorkstationState(v interface{}, d *schema.ResourceData, 
 	return v
 }
 
+func flattenWorkstationsWorkstationSourceWorkstation(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenWorkstationsWorkstationTerraformLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
@@ -615,6 +635,10 @@ func expandWorkstationsWorkstationEnv(v interface{}, d tpgresource.TerraformReso
 		m[k] = val.(string)
 	}
 	return m, nil
+}
+
+func expandWorkstationsWorkstationSourceWorkstation(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
 }
 
 func expandWorkstationsWorkstationEffectiveLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
