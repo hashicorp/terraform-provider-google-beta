@@ -30,6 +30,76 @@ import (
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
+func TestAccParallelstoreInstance_parallelstoreInstanceBasicBetaExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckParallelstoreInstanceDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccParallelstoreInstance_parallelstoreInstanceBasicBetaExample(context),
+			},
+			{
+				ResourceName:            "google_parallelstore_instance.instance",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"instance_id", "labels", "location", "terraform_labels"},
+			},
+		},
+	})
+}
+
+func testAccParallelstoreInstance_parallelstoreInstanceBasicBetaExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_parallelstore_instance" "instance" {
+  provider = google-beta
+  instance_id = "instance%{random_suffix}"
+  location = "us-central1-a"
+  description = "test instance"
+  capacity_gib = 12000
+  network = google_compute_network.network.name
+  file_stripe_level = "FILE_STRIPE_LEVEL_MIN"
+  directory_stripe_level = "DIRECTORY_STRIPE_LEVEL_MIN"
+  deployment_type = "SCRATCH"
+  labels = {
+    test = "value"
+  }
+  depends_on = [google_service_networking_connection.default]
+}
+
+resource "google_compute_network" "network" {
+  provider = google-beta
+  name                    = "network%{random_suffix}"
+  auto_create_subnetworks = true
+  mtu = 8896
+}
+
+# Create an IP address
+resource "google_compute_global_address" "private_ip_alloc" {
+  provider = google-beta
+  name          = "address%{random_suffix}"
+  purpose       = "VPC_PEERING"
+  address_type  = "INTERNAL"
+  prefix_length = 24
+  network       = google_compute_network.network.id
+}
+
+# Create a private connection
+resource "google_service_networking_connection" "default" {
+  provider = google-beta
+  network                 = google_compute_network.network.id
+  service                 = "servicenetworking.googleapis.com"
+  reserved_peering_ranges = [google_compute_global_address.private_ip_alloc.name]
+}
+`, context)
+}
+
 func TestAccParallelstoreInstance_parallelstoreInstanceBasicExample(t *testing.T) {
 	t.Parallel()
 
