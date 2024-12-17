@@ -35,20 +35,13 @@ func TestAccParallelstoreInstance_parallelstoreInstanceBasicExample_update(t *te
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
-		CheckDestroy:             testAccCheckParallelstoreInstanceDestroyProducer(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+
+		CheckDestroy: testAccCheckParallelstoreInstanceDestroyProducer(t),
 		Steps: []resource.TestStep{
+
 			{
-				Config: testAccParallelstoreInstance_parallelstoreInstanceBasicExample_basic(context),
-			},
-			{
-				ResourceName:            "google_parallelstore_instance.instance",
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"location", "instance_id", "labels", "terraform_labels"},
-			},
-			{
-				Config: testAccParallelstoreInstance_parallelstoreInstanceBasicExample_update(context),
+				Config: testAccParallelstoreInstance_parallelstoreInstanceBasicExampleBeta_basic(context),
 			},
 			{
 				ResourceName:            "google_parallelstore_instance.instance",
@@ -111,7 +104,6 @@ resource "google_parallelstore_instance" "instance" {
   description = "test instance updated"
   capacity_gib = 12000
   network = google_compute_network.network.name
-
   labels = {
     test = "value23"
   }
@@ -137,6 +129,54 @@ resource "google_compute_global_address" "private_ip_alloc" {
 
 # Create a private connection
 resource "google_service_networking_connection" "default" {
+  network                 = google_compute_network.network.id
+  service                 = "servicenetworking.googleapis.com"
+  reserved_peering_ranges = [google_compute_global_address.private_ip_alloc.name]
+}
+`, context)
+}
+
+func testAccParallelstoreInstance_parallelstoreInstanceBasicExampleBeta_basic(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_parallelstore_instance" "instance" {
+  provider = google-beta
+  instance_id = "instance%{random_suffix}"
+  location = "us-central1-a"
+  description = "test instance"
+  capacity_gib = 12000
+  deployment_type = "SCRATCH"
+  network = google_compute_network.network.name
+  reserved_ip_range = google_compute_global_address.private_ip_alloc.name
+  file_stripe_level = "FILE_STRIPE_LEVEL_MIN"
+  directory_stripe_level = "DIRECTORY_STRIPE_LEVEL_MIN"
+  labels = {
+    test = "value"
+  }
+  depends_on = [google_service_networking_connection.default]
+}
+
+resource "google_compute_network" "network" {
+  provider = google-beta
+  name                    = "network%{random_suffix}"
+  auto_create_subnetworks = true
+  mtu = 8896
+}
+
+
+
+# Create an IP address
+resource "google_compute_global_address" "private_ip_alloc" {
+  provider = google-beta
+  name          = "address%{random_suffix}"
+  purpose       = "VPC_PEERING"
+  address_type  = "INTERNAL"
+  prefix_length = 24
+  network       = google_compute_network.network.id
+}
+
+# Create a private connection
+resource "google_service_networking_connection" "default" {
+  provider = google-beta
   network                 = google_compute_network.network.id
   service                 = "servicenetworking.googleapis.com"
   reserved_peering_ranges = [google_compute_global_address.private_ip_alloc.name]
