@@ -1,4 +1,32 @@
-## 6.14.0 (Unreleased)
+## 6.15.0 (Unreleased)
+
+## 6.14.0 (December 16, 2024)
+
+FEATURES:
+* **New Resource:** `google_network_security_intercept_deployment_group` ([#8859](https://github.com/hashicorp/terraform-provider-google-beta/pull/8859))
+* **New Resource:** `google_network_security_intercept_deployment` ([#8876](https://github.com/hashicorp/terraform-provider-google-beta/pull/8876))
+* **New Resource:** `google_network_security_authz_policy` ([#8847](https://github.com/hashicorp/terraform-provider-google-beta/pull/8847))
+* **New Resource:** `google_network_services_authz_extension` ([#8847](https://github.com/hashicorp/terraform-provider-google-beta/pull/8847))
+
+IMPROVEMENTS:
+* compute: `google_compute_instance` is no longer recreated when changing `boot_disk.auto_delete` ([#8837](https://github.com/hashicorp/terraform-provider-google-beta/pull/8837))
+* compute: added `CA_ENTERPRISE_ANNUAL` option for field `cloud_armor_tier` in `google_compute_project_cloud_armor_tier` resource ([#8848](https://github.com/hashicorp/terraform-provider-google-beta/pull/8848))
+* compute: added `network_tier` field to `google_compute_global_forwarding_rule` resource ([#8838](https://github.com/hashicorp/terraform-provider-google-beta/pull/8838))
+* compute: made `metadata_startup_script` able to be updated via graceful switch in `google_compute_instance` ([#8888](https://github.com/hashicorp/terraform-provider-google-beta/pull/8888))
+* firebasehosting: added `headers` field in `google_firebase_hosting_version` resource ([#8887](https://github.com/hashicorp/terraform-provider-google-beta/pull/8887))
+* identityplatform: marked `quota.0.sign_up_quota_config` subfields conditionally required in `google_identity_platform_config` to move errors from apply time up to plan time, and clarified the rule in documentation ([#8869](https://github.com/hashicorp/terraform-provider-google-beta/pull/8869))
+* networkconnectivity: added support for updating `linked_vpn_tunnels.include_import_ranges`, `linked_interconnect_attachments.include_import_ranges`, `linked_router_appliance_instances. instances` and `linked_router_appliance_instances.include_import_ranges` in `google_network_connectivity_spoke` ([#8883](https://github.com/hashicorp/terraform-provider-google-beta/pull/8883))
+* orgpolicy: added `parameters` fields to `google_org_policy_policy` resource ([#8881](https://github.com/hashicorp/terraform-provider-google-beta/pull/8881))
+* storage: added `hdfs_data_source` field to `google_storage_transfer_job` resource ([#8839](https://github.com/hashicorp/terraform-provider-google-beta/pull/8839))
+* tpuv2: added `network_configs` and `network_config.queue_count` fields to `google_tpu_v2_vm` resource ([#8865](https://github.com/hashicorp/terraform-provider-google-beta/pull/8865))
+
+BUG FIXES:
+* accesscontextmanager: fixed an update bug in `google_access_context_manager_perimeter` by removing the broken output-only `etag` field in `google_access_context_manager_perimeter` and `google_access_context_manager_perimeters` ([#8891](https://github.com/hashicorp/terraform-provider-google-beta/pull/8911))
+* compute: fixed permadiff on the `recaptcha_options` field for `google_compute_security_policy` resource ([#8861](https://github.com/hashicorp/terraform-provider-google-beta/pull/8861))
+* compute: fixed issue where updating labels on `resource_google_compute_resource_policy` would fail because of a patch error with `guest_flush` ([#8874](https://github.com/hashicorp/terraform-provider-google-beta/pull/8874))
+* networkconnectivity: fixed `linked_router_appliance_instances.instances.virtual_machine` and `linked_router_appliance_instances.instances.ip_address` attributes in `google_network_connectivity_spoke` to be correctly marked as required. Otherwise the request to create the resource will fail. ([#8883](https://github.com/hashicorp/terraform-provider-google-beta/pull/8883))
+* privateca: fixed an issue which causes error when updating labels for activated sub-CA ([#8872](https://github.com/hashicorp/terraform-provider-google-beta/pull/8872))
+* sql: fixed permadiff when 'settings.data_cache_config' is set to false for 'google_sql_database_instance' resource ([#8889](https://github.com/hashicorp/terraform-provider-google-beta/pull/8889))
 
 ## 6.13.0 (December 9, 2024)
 
