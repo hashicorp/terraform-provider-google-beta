@@ -793,17 +793,6 @@ func expandFirebaseHostingVersionConfigHeadersRegex(v interface{}, d tpgresource
 	return v, nil
 }
 
-func expandFirebaseHostingVersionConfigHeadersHeaders(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
-	if v == nil {
-		return map[string]string{}, nil
-	}
-	m := make(map[string]string)
-	for k, val := range v.(map[string]interface{}) {
-		m[k] = val.(string)
-	}
-	return m, nil
-}
-
 func resourceFirebaseHostingVersionDecoder(d *schema.ResourceData, meta interface{}, res map[string]interface{}) (map[string]interface{}, error) {
 	if err := d.Set("version_id", tpgresource.GetResourceNameFromSelfLink(res["name"].(string))); err != nil {
 		return nil, err
