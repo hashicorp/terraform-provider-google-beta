@@ -1,3 +1,8 @@
+## 6.14.1 (Unreleased)
+
+BUG FIXES:
+* compute: fixed an issue where `google_compute_firewall_policy_rule` was incorrectly removed from the Terraform state ([#8940](https://github.com/hashicorp/terraform-provider-google-beta/pull/8940))
+
 ## 6.14.0 (December 16, 2024)
 
 FEATURES:
