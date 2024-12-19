@@ -113,11 +113,13 @@ Possible values:
 						},
 						"app_installation_id": {
 							Type:        schema.TypeString,
+							Computed:    true,
 							Optional:    true,
 							Description: `Optional. GitHub App installation id.`,
 						},
 						"authorizer_credential": {
 							Type:     schema.TypeList,
+							Computed: true,
 							Optional: true,
 							Description: `Represents an OAuth token of the account that authorized the Connection,and
 associated metadata.`,

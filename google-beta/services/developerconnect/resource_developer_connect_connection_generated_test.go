@@ -26,14 +26,16 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
-func TestAccDeveloperConnectConnection_developerConnectConnectionBasicExample(t *testing.T) {
+func TestAccDeveloperConnectConnection_developerConnectConnectionNewExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
+		"project":       envvar.GetTestProjectFromEnv(),
 		"random_suffix": acctest.RandString(t, 10),
 	}
 
@@ -43,7 +45,7 @@ func TestAccDeveloperConnectConnection_developerConnectConnectionBasicExample(t 
 		CheckDestroy:             testAccCheckDeveloperConnectConnectionDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDeveloperConnectConnection_developerConnectConnectionBasicExample(context),
+				Config: testAccDeveloperConnectConnection_developerConnectConnectionNewExample(context),
 			},
 			{
 				ResourceName:            "google_developer_connect_connection.my-connection",
@@ -55,20 +57,87 @@ func TestAccDeveloperConnectConnection_developerConnectConnectionBasicExample(t 
 	})
 }
 
-func testAccDeveloperConnectConnection_developerConnectConnectionBasicExample(context map[string]interface{}) string {
+func testAccDeveloperConnectConnection_developerConnectConnectionNewExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_developer_connect_connection" "my-connection" {
   provider = google-beta
   location = "us-central1"
-  connection_id = "tf-test-tf-test-connection%{random_suffix}"
+  connection_id = "tf-test-tf-test-connection-new%{random_suffix}"
+
+  github_config {
+    github_app = "FIREBASE"
+  }
+
+  depends_on = [google_project_iam_member.devconnect-secret]
+}
+
+output "next_steps" {
+  description = "Follow the action_uri if present to continue setup"
+  value = google_developer_connect_connection.my-connection.installation_state
+}
+
+# Setup permissions. Only needed once per project
+resource "google_project_service_identity" "devconnect-p4sa" {
+  provider = google-beta
+
+  service = "developerconnect.googleapis.com"
+}
+
+resource "google_project_iam_member" "devconnect-secret" {
+  provider = google-beta
+
+  project  = "%{project}"
+  role     = "roles/secretmanager.admin"
+  member   = google_project_service_identity.devconnect-p4sa.member
+}
+`, context)
+}
+
+func TestAccDeveloperConnectConnection_developerConnectConnectionExistingCredentialsExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"secret_name":   "projects/devconnect-terraform-creds/secrets/tf-test-do-not-change-github-oauthtoken-e0b9e7/versions/1",
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckDeveloperConnectConnectionDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccDeveloperConnectConnection_developerConnectConnectionExistingCredentialsExample(context),
+			},
+			{
+				ResourceName:            "google_developer_connect_connection.my-connection",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"annotations", "connection_id", "labels", "location", "terraform_labels"},
+			},
+		},
+	})
+}
+
+func testAccDeveloperConnectConnection_developerConnectConnectionExistingCredentialsExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_developer_connect_connection" "my-connection" {
+  provider = google-beta
+  location = "us-central1"
+  connection_id = "tf-test-tf-test-connection-cred%{random_suffix}"
 
   github_config {
     github_app = "DEVELOPER_CONNECT"
 
     authorizer_credential {
-      oauth_token_secret_version = "projects/devconnect-terraform-creds/secrets/tf-test-do-not-change-github-oauthtoken-e0b9e7/versions/1"
+      oauth_token_secret_version = "%{secret_name}"
     }
   }
+}
+
+output "next_steps" {
+  description = "Follow the action_uri if present to continue setup"
+  value = google_developer_connect_connection.my-connection.installation_state
 }
 `, context)
 }
