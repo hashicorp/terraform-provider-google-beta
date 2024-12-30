@@ -213,6 +213,7 @@ type Config struct {
 	BinaryAuthorizationBasePath      string
 	BlockchainNodeEngineBasePath     string
 	CertificateManagerBasePath       string
+	ChronicleBasePath                string
 	CloudAssetBasePath               string
 	CloudBuildBasePath               string
 	Cloudbuildv2BasePath             string
@@ -375,6 +376,7 @@ const BillingBasePathKey = "Billing"
 const BinaryAuthorizationBasePathKey = "BinaryAuthorization"
 const BlockchainNodeEngineBasePathKey = "BlockchainNodeEngine"
 const CertificateManagerBasePathKey = "CertificateManager"
+const ChronicleBasePathKey = "Chronicle"
 const CloudAssetBasePathKey = "CloudAsset"
 const CloudBuildBasePathKey = "CloudBuild"
 const Cloudbuildv2BasePathKey = "Cloudbuildv2"
@@ -531,6 +533,7 @@ var DefaultBasePaths = map[string]string{
 	BinaryAuthorizationBasePathKey:      "https://binaryauthorization.googleapis.com/v1/",
 	BlockchainNodeEngineBasePathKey:     "https://blockchainnodeengine.googleapis.com/v1/",
 	CertificateManagerBasePathKey:       "https://certificatemanager.googleapis.com/v1/",
+	ChronicleBasePathKey:                "https://{{location}}-chronicle.googleapis.com/v1beta/",
 	CloudAssetBasePathKey:               "https://cloudasset.googleapis.com/v1/",
 	CloudBuildBasePathKey:               "https://cloudbuild.googleapis.com/v1/",
 	Cloudbuildv2BasePathKey:             "https://cloudbuild.googleapis.com/v2/",
@@ -849,6 +852,11 @@ func SetEndpointDefaults(d *schema.ResourceData) error {
 		d.Set("certificate_manager_custom_endpoint", MultiEnvDefault([]string{
 			"GOOGLE_CERTIFICATE_MANAGER_CUSTOM_ENDPOINT",
 		}, DefaultBasePaths[CertificateManagerBasePathKey]))
+	}
+	if d.Get("chronicle_custom_endpoint") == "" {
+		d.Set("chronicle_custom_endpoint", MultiEnvDefault([]string{
+			"GOOGLE_CHRONICLE_CUSTOM_ENDPOINT",
+		}, DefaultBasePaths[ChronicleBasePathKey]))
 	}
 	if d.Get("cloud_asset_custom_endpoint") == "" {
 		d.Set("cloud_asset_custom_endpoint", MultiEnvDefault([]string{
@@ -2414,6 +2422,7 @@ func ConfigureBasePaths(c *Config) {
 	c.BinaryAuthorizationBasePath = DefaultBasePaths[BinaryAuthorizationBasePathKey]
 	c.BlockchainNodeEngineBasePath = DefaultBasePaths[BlockchainNodeEngineBasePathKey]
 	c.CertificateManagerBasePath = DefaultBasePaths[CertificateManagerBasePathKey]
+	c.ChronicleBasePath = DefaultBasePaths[ChronicleBasePathKey]
 	c.CloudAssetBasePath = DefaultBasePaths[CloudAssetBasePathKey]
 	c.CloudBuildBasePath = DefaultBasePaths[CloudBuildBasePathKey]
 	c.Cloudbuildv2BasePath = DefaultBasePaths[Cloudbuildv2BasePathKey]
