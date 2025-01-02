@@ -85,6 +85,7 @@ func BootstrapKMSKeyWithPurposeInLocation(t *testing.T, purpose, locationID stri
 }
 
 type BootstrappedKMSAutokey struct {
+	*cloudkms.AutokeyConfig
 	*cloudkms.KeyHandle
 }
 
@@ -96,6 +97,7 @@ func BootstrapKMSAutokeyKeyHandleWithLocation(t *testing.T, locationID string) B
 	config := BootstrapConfig(t)
 	if config == nil {
 		return BootstrappedKMSAutokey{
+			&cloudkms.AutokeyConfig{},
 			&cloudkms.KeyHandle{},
 		}
 	}
@@ -105,7 +107,7 @@ func BootstrapKMSAutokeyKeyHandleWithLocation(t *testing.T, locationID string) B
 	// Enable autokey on autokey test folder
 	kmsClient := config.NewKmsClient(config.UserAgent)
 	autokeyConfigID := fmt.Sprintf("%s/autokeyConfig", autokeyFolder.Name)
-	_, err := kmsClient.Folders.UpdateAutokeyConfig(autokeyConfigID, &cloudkms.AutokeyConfig{
+	autokeyConfig, err := kmsClient.Folders.UpdateAutokeyConfig(autokeyConfigID, &cloudkms.AutokeyConfig{
 		KeyProject: fmt.Sprintf("projects/%s", kmsProject.ProjectId),
 	}).UpdateMask("keyProject").Do()
 	if err != nil {
@@ -154,6 +156,7 @@ func BootstrapKMSAutokeyKeyHandleWithLocation(t *testing.T, locationID string) B
 	}
 
 	return BootstrappedKMSAutokey{
+		autokeyConfig,
 		keyHandle,
 	}
 }
