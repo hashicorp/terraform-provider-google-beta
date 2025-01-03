@@ -51,7 +51,7 @@ func TestAccChronicleWatchlist_chronicleWatchlistBasicExample(t *testing.T) {
 				ResourceName:            "google_chronicle_watchlist.example",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"instance", "location", "watchlist_id"},
+				ImportStateVerifyIgnore: []string{"instance", "location"},
 			},
 		},
 	})
@@ -63,7 +63,48 @@ resource "google_chronicle_watchlist" "example" {
   provider = "google-beta"
   location = "us"
   instance = "%{chronicle_id}"
-  watchlist_id = "tf-test-watchlist-name%{random_suffix}"
+  watchlist_id = "tf-test-watchlist-id%{random_suffix}"
+  description = "tf-test-watchlist-description%{random_suffix}"
+  display_name = "tf_test_watchlist_name%{random_suffix}"
+  multiplying_factor = 1
+  entity_population_mechanism {
+    manual {
+
+    }
+  }
+  watchlist_user_preferences {
+    pinned = true
+  }
+}
+`, context)
+}
+
+func TestAccChronicleWatchlist_chronicleWatchlistWithoutIdExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"chronicle_id":  envvar.GetTestChronicleInstanceIdFromEnv(t),
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckChronicleWatchlistDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccChronicleWatchlist_chronicleWatchlistWithoutIdExample(context),
+			},
+		},
+	})
+}
+
+func testAccChronicleWatchlist_chronicleWatchlistWithoutIdExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_chronicle_watchlist" "example" {
+  provider = "google-beta"
+  location = "us"
+  instance = "%{chronicle_id}"
   description = "tf-test-watchlist-description%{random_suffix}"
   display_name = "tf-test-watchlist-name%{random_suffix}"
   multiplying_factor = 1

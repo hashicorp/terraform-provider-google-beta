@@ -93,15 +93,6 @@ Note that it must be at least one character and less than 63 characters
 				ForceNew:    true,
 				Description: `The location of the resource. This is the geographical region where the Chronicle instance resides, such as "us" or "europe-west2".`,
 			},
-			"watchlist_id": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
-				Description: `Optional. The ID to use for the watchlist,
-which will become the final component of the watchlist's resource name.
-This value should be 4-63 characters, and valid characters
-are /a-z-/.`,
-			},
 			"description": {
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -113,6 +104,16 @@ are /a-z-/.`,
 				Description: `Optional. Weight applied to the risk score for entities
 in this watchlist.
 The default is 1.0 if it is not specified.`,
+			},
+			"watchlist_id": {
+				Type:     schema.TypeString,
+				Computed: true,
+				Optional: true,
+				ForceNew: true,
+				Description: `Optional. The ID to use for the watchlist,
+which will become the final component of the watchlist's resource name.
+This value should be 4-63 characters, and valid characters
+are /a-z-/.`,
 			},
 			"watchlist_user_preferences": {
 				Type:        schema.TypeList,
@@ -215,6 +216,17 @@ func resourceChronicleWatchlistCreate(d *schema.ResourceData, meta interface{}) 
 	} else if v, ok := d.GetOkExists("watchlist_user_preferences"); !tpgresource.IsEmptyValue(reflect.ValueOf(watchlistUserPreferencesProp)) && (ok || !reflect.DeepEqual(v, watchlistUserPreferencesProp)) {
 		obj["watchlistUserPreferences"] = watchlistUserPreferencesProp
 	}
+	watchlistIdProp, err := expandChronicleWatchlistWatchlistId(d.Get("watchlist_id"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("watchlist_id"); !tpgresource.IsEmptyValue(reflect.ValueOf(watchlistIdProp)) && (ok || !reflect.DeepEqual(v, watchlistIdProp)) {
+		obj["watchlistId"] = watchlistIdProp
+	}
+
+	obj, err = resourceChronicleWatchlistEncoder(d, meta, obj)
+	if err != nil {
+		return err
+	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{ChronicleBasePath}}projects/{{project}}/locations/{{location}}/instances/{{instance}}/watchlists?watchlistId={{watchlist_id}}")
 	if err != nil {
@@ -259,6 +271,14 @@ func resourceChronicleWatchlistCreate(d *schema.ResourceData, meta interface{}) 
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
 	d.SetId(id)
+
+	if tpgresource.IsEmptyValue(reflect.ValueOf(d.Get("watchlist_id"))) {
+		// watchlist id is set by API when unset and required to GET the connection
+		// it is set by reading the "name" field rather than a field in the response
+		if err := d.Set("watchlist_id", flattenChronicleWatchlistWatchlistId("", d, config)); err != nil {
+			return fmt.Errorf("Error reading Watchlist ID: %s", err)
+		}
+	}
 
 	log.Printf("[DEBUG] Finished creating Watchlist %q: %#v", d.Id(), res)
 
@@ -334,6 +354,9 @@ func resourceChronicleWatchlistRead(d *schema.ResourceData, meta interface{}) er
 	if err := d.Set("watchlist_user_preferences", flattenChronicleWatchlistWatchlistUserPreferences(res["watchlistUserPreferences"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Watchlist: %s", err)
 	}
+	if err := d.Set("watchlist_id", flattenChronicleWatchlistWatchlistId(res["watchlistId"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Watchlist: %s", err)
+	}
 
 	return nil
 }
@@ -383,6 +406,11 @@ func resourceChronicleWatchlistUpdate(d *schema.ResourceData, meta interface{}) 
 		return err
 	} else if v, ok := d.GetOkExists("watchlist_user_preferences"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, watchlistUserPreferencesProp)) {
 		obj["watchlistUserPreferences"] = watchlistUserPreferencesProp
+	}
+
+	obj, err = resourceChronicleWatchlistEncoder(d, meta, obj)
+	if err != nil {
+		return err
 	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{ChronicleBasePath}}projects/{{project}}/locations/{{location}}/instances/{{instance}}/watchlists/{{watchlist_id}}")
@@ -628,6 +656,11 @@ func flattenChronicleWatchlistWatchlistUserPreferencesPinned(v interface{}, d *s
 	return v
 }
 
+func flattenChronicleWatchlistWatchlistId(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	parts := strings.Split(d.Get("name").(string), "/")
+	return parts[len(parts)-1]
+}
+
 func expandChronicleWatchlistMultiplyingFactor(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
@@ -695,4 +728,14 @@ func expandChronicleWatchlistWatchlistUserPreferences(v interface{}, d tpgresour
 
 func expandChronicleWatchlistWatchlistUserPreferencesPinned(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func expandChronicleWatchlistWatchlistId(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func resourceChronicleWatchlistEncoder(d *schema.ResourceData, meta interface{}, obj map[string]interface{}) (map[string]interface{}, error) {
+	// watchlist_id is needed to qualify the URL but cannot be sent in the body
+	delete(obj, "watchlistId")
+	return obj, nil
 }
