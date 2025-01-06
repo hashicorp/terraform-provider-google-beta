@@ -39,7 +39,7 @@ func TestAccDeveloperConnectGitRepositoryLink_developerConnectGitRepositoryLinkG
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckDeveloperConnectGitRepositoryLinkDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -58,7 +58,6 @@ func TestAccDeveloperConnectGitRepositoryLink_developerConnectGitRepositoryLinkG
 func testAccDeveloperConnectGitRepositoryLink_developerConnectGitRepositoryLinkGithubExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_developer_connect_git_repository_link" "primary" {
-  provider = google-beta
   git_repository_link_id              = "tf-test-my-repository%{random_suffix}"
   parent_connection = google_developer_connect_connection.github_conn.connection_id
   clone_uri        = "https://github.com/gcb-developerconnect-robot/tf-demo.git"
@@ -68,7 +67,6 @@ resource "google_developer_connect_git_repository_link" "primary" {
 
 resource "google_developer_connect_connection" "github_conn" {
   
-  provider = google-beta
   location = "us-central1"
   connection_id     = "tf-test-my-connection%{random_suffix}"
   disabled = false
