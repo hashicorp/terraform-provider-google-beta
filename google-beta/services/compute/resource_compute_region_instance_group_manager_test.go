@@ -396,6 +396,7 @@ func TestAccRegionInstanceGroupManager_stateful(t *testing.T) {
 		},
 	})
 }
+
 func TestAccRegionInstanceGroupManager_stoppedSuspendedTargetSize(t *testing.T) {
 	t.Parallel()
 
@@ -1850,6 +1851,7 @@ resource "google_compute_region_instance_group_manager" "igm-basic" {
 }
 `, context)
 }
+
 func testAccRegionInstanceGroupManager_stoppedSuspendedTargetSize(network, template, igm string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {

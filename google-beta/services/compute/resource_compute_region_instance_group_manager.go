@@ -323,6 +323,7 @@ func ResourceComputeRegionInstanceGroupManager() *schema.Resource {
 					},
 				},
 			},
+
 			"standby_policy": {
 				Type:        schema.TypeList,
 				Computed:    true,
@@ -960,6 +961,7 @@ func resourceComputeRegionInstanceGroupManagerUpdate(d *schema.ResourceData, met
 		updatedManager.DistributionPolicy = expandDistributionPolicyForUpdate(d)
 		change = true
 	}
+
 	if d.HasChange("standby_policy") {
 		updatedManager.StandbyPolicy = expandStandbyPolicy(d)
 		change = true
