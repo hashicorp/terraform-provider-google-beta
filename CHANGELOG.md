@@ -17,7 +17,6 @@ FEATURES:
 * **New Resource:** `google_storage_folder` ([#8961](https://github.com/hashicorp/terraform-provider-google-beta/pull/8961))
 
 IMPROVEMENTS:
-* accesscontextmanager: added `etag` to `google_access_context_manager_service_perimeter` and `google_access_context_manager_service_perimeters` (reverts) ([#8911](https://github.com/hashicorp/terraform-provider-google-beta/pull/8911))
 * artifactregistry: added `vulnerability_scanning_config` field to `google_artifact_registry_repository` resource ([#8934](https://github.com/hashicorp/terraform-provider-google-beta/pull/8934))
 * bigquery: added `condition` field to `google_bigquery_dataset_access` resource ([#8921](https://github.com/hashicorp/terraform-provider-google-beta/pull/8921))
 * bigquery: added `condition` field to `google_bigquery_dataset` resource ([#8921](https://github.com/hashicorp/terraform-provider-google-beta/pull/8921))
