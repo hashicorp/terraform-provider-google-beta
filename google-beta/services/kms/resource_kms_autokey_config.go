@@ -127,6 +127,11 @@ func resourceKMSAutokeyConfigCreate(d *schema.ResourceData, meta interface{}) er
 	}
 	d.SetId(id)
 
+	// This is useful if the resource in question doesn't have a perfectly consistent API
+	// That is, the Operation for Create might return before the Get operation shows the
+	// completed state of the resource.
+	time.Sleep(5 * time.Second)
+
 	log.Printf("[DEBUG] Finished creating AutokeyConfig %q: %#v", d.Id(), res)
 
 	return resourceKMSAutokeyConfigRead(d, meta)
@@ -220,6 +225,10 @@ func resourceKMSAutokeyConfigUpdate(d *schema.ResourceData, meta interface{}) er
 		log.Printf("[DEBUG] Finished updating AutokeyConfig %q: %#v", d.Id(), res)
 	}
 
+	// This is useful if the resource in question doesn't have a perfectly consistent API
+	// That is, the Operation for Create might return before the Get operation shows the
+	// completed state of the resource.
+	time.Sleep(5 * time.Second)
 	return resourceKMSAutokeyConfigRead(d, meta)
 }
 
