@@ -543,7 +543,7 @@ var DefaultBasePaths = map[string]string{
 	Cloudfunctions2BasePathKey:          "https://cloudfunctions.googleapis.com/v2beta/",
 	CloudIdentityBasePathKey:            "https://cloudidentity.googleapis.com/v1beta1/",
 	CloudIdsBasePathKey:                 "https://ids.googleapis.com/v1/",
-	CloudQuotasBasePathKey:              "https://cloudquotas.googleapis.com/v1/",
+	CloudQuotasBasePathKey:              "https://cloudquotas.googleapis.com/v1beta/",
 	CloudRunBasePathKey:                 "https://{{location}}-run.googleapis.com/",
 	CloudRunV2BasePathKey:               "https://run.googleapis.com/v2/",
 	CloudSchedulerBasePathKey:           "https://cloudscheduler.googleapis.com/v1/",

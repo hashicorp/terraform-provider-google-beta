@@ -513,9 +513,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 576
+// Generated resources: 577
 // Generated IAM resources: 294
-// Total generated resources: 870
+// Total generated resources: 871
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -682,6 +682,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_cloud_identity_group":                                                cloudidentity.ResourceCloudIdentityGroup(),
 	"google_cloud_identity_group_membership":                                     cloudidentity.ResourceCloudIdentityGroupMembership(),
 	"google_cloud_ids_endpoint":                                                  cloudids.ResourceCloudIdsEndpoint(),
+	"google_cloud_quotas_quota_adjuster_settings":                                cloudquotas.ResourceCloudQuotasQuotaAdjusterSettings(),
 	"google_cloud_quotas_quota_preference":                                       cloudquotas.ResourceCloudQuotasQuotaPreference(),
 	"google_cloud_run_domain_mapping":                                            cloudrun.ResourceCloudRunDomainMapping(),
 	"google_cloud_run_service":                                                   cloudrun.ResourceCloudRunService(),
