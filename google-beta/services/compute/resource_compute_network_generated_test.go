@@ -145,7 +145,7 @@ func TestAccComputeNetwork_networkBgpBestPathSelectionModeExample(t *testing.T) 
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeNetworkDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -163,7 +163,6 @@ func TestAccComputeNetwork_networkBgpBestPathSelectionModeExample(t *testing.T) 
 func testAccComputeNetwork_networkBgpBestPathSelectionModeExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_network" "vpc_network" {
-  provider                                  = google-beta
   project                                   = "%{project}"
   name                                      = "tf-test-vpc-network%{random_suffix}"
   routing_mode                              = "GLOBAL"
@@ -181,7 +180,7 @@ func TestAccComputeNetwork_networkBgpBestPathSelectionModeStandardExample(t *tes
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeNetworkDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -199,7 +198,6 @@ func TestAccComputeNetwork_networkBgpBestPathSelectionModeStandardExample(t *tes
 func testAccComputeNetwork_networkBgpBestPathSelectionModeStandardExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_network" "vpc_network" {
-  provider                                  = google-beta
   project                                   = "%{project}"
   name                                      = "tf-test-vpc-network%{random_suffix}"
   routing_mode                              = "GLOBAL"
@@ -218,7 +216,7 @@ func TestAccComputeNetwork_networkBgpBestPathSelectionModeStandardCustomFieldsEx
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeNetworkDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -236,7 +234,6 @@ func TestAccComputeNetwork_networkBgpBestPathSelectionModeStandardCustomFieldsEx
 func testAccComputeNetwork_networkBgpBestPathSelectionModeStandardCustomFieldsExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_network" "vpc_network" {
-  provider                                  = google-beta
   project                                   = "%{project}"
   name                                      = "tf-test-vpc-network%{random_suffix}"
   routing_mode                              = "GLOBAL"
