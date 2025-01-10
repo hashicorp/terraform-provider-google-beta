@@ -297,6 +297,7 @@ type Config struct {
 	OSConfigBasePath                 string
 	OSLoginBasePath                  string
 	ParallelstoreBasePath            string
+	ParameterManagerBasePath         string
 	ParameterManagerRegionalBasePath string
 	PrivatecaBasePath                string
 	PrivilegedAccessManagerBasePath  string
@@ -461,6 +462,7 @@ const OrgPolicyBasePathKey = "OrgPolicy"
 const OSConfigBasePathKey = "OSConfig"
 const OSLoginBasePathKey = "OSLogin"
 const ParallelstoreBasePathKey = "Parallelstore"
+const ParameterManagerBasePathKey = "ParameterManager"
 const ParameterManagerRegionalBasePathKey = "ParameterManagerRegional"
 const PrivatecaBasePathKey = "Privateca"
 const PrivilegedAccessManagerBasePathKey = "PrivilegedAccessManager"
@@ -619,6 +621,7 @@ var DefaultBasePaths = map[string]string{
 	OSConfigBasePathKey:                 "https://osconfig.googleapis.com/v1beta/",
 	OSLoginBasePathKey:                  "https://oslogin.googleapis.com/v1/",
 	ParallelstoreBasePathKey:            "https://parallelstore.googleapis.com/v1beta/",
+	ParameterManagerBasePathKey:         "https://parametermanager.googleapis.com/v1/",
 	ParameterManagerRegionalBasePathKey: "https://parametermanager.{{location}}.rep.googleapis.com/v1/",
 	PrivatecaBasePathKey:                "https://privateca.googleapis.com/v1/",
 	PrivilegedAccessManagerBasePathKey:  "https://privilegedaccessmanager.googleapis.com/v1beta/",
@@ -1275,6 +1278,11 @@ func SetEndpointDefaults(d *schema.ResourceData) error {
 		d.Set("parallelstore_custom_endpoint", MultiEnvDefault([]string{
 			"GOOGLE_PARALLELSTORE_CUSTOM_ENDPOINT",
 		}, DefaultBasePaths[ParallelstoreBasePathKey]))
+	}
+	if d.Get("parameter_manager_custom_endpoint") == "" {
+		d.Set("parameter_manager_custom_endpoint", MultiEnvDefault([]string{
+			"GOOGLE_PARAMETER_MANAGER_CUSTOM_ENDPOINT",
+		}, DefaultBasePaths[ParameterManagerBasePathKey]))
 	}
 	if d.Get("parameter_manager_regional_custom_endpoint") == "" {
 		d.Set("parameter_manager_regional_custom_endpoint", MultiEnvDefault([]string{
@@ -2527,6 +2535,7 @@ func ConfigureBasePaths(c *Config) {
 	c.OSConfigBasePath = DefaultBasePaths[OSConfigBasePathKey]
 	c.OSLoginBasePath = DefaultBasePaths[OSLoginBasePathKey]
 	c.ParallelstoreBasePath = DefaultBasePaths[ParallelstoreBasePathKey]
+	c.ParameterManagerBasePath = DefaultBasePaths[ParameterManagerBasePathKey]
 	c.ParameterManagerRegionalBasePath = DefaultBasePaths[ParameterManagerRegionalBasePathKey]
 	c.PrivatecaBasePath = DefaultBasePaths[PrivatecaBasePathKey]
 	c.PrivilegedAccessManagerBasePath = DefaultBasePaths[PrivilegedAccessManagerBasePathKey]
