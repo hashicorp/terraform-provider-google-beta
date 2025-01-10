@@ -122,6 +122,12 @@ SUSPENDED`,
 				Computed:    true,
 				Description: `Output only. Update time stamp.`,
 			},
+			"force_destroy": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: `If set to true, will allow deletion of the CodeRepositoryIndex even if there are existing RepositoryGroups for the resource. These RepositoryGroups will also be deleted.`,
+				Default:     false,
+			},
 			"project": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -271,6 +277,12 @@ func resourceGeminiCodeRepositoryIndexRead(d *schema.ResourceData, meta interfac
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("GeminiCodeRepositoryIndex %q", d.Id()))
 	}
 
+	// Explicitly set virtual fields to default values if unset
+	if _, ok := d.GetOkExists("force_destroy"); !ok {
+		if err := d.Set("force_destroy", false); err != nil {
+			return fmt.Errorf("Error setting force_destroy: %s", err)
+		}
+	}
 	if err := d.Set("project", project); err != nil {
 		return fmt.Errorf("Error reading CodeRepositoryIndex: %s", err)
 	}
@@ -424,6 +436,12 @@ func resourceGeminiCodeRepositoryIndexDelete(d *schema.ResourceData, meta interf
 	}
 
 	headers := make(http.Header)
+	obj = make(map[string]interface{})
+	if v, ok := d.GetOk("force_destroy"); ok {
+		if v == true {
+			obj["force"] = true
+		}
+	}
 
 	log.Printf("[DEBUG] Deleting CodeRepositoryIndex %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
@@ -469,6 +487,11 @@ func resourceGeminiCodeRepositoryIndexImport(d *schema.ResourceData, meta interf
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}
 	d.SetId(id)
+
+	// Explicitly set virtual fields to default values on import
+	if err := d.Set("force_destroy", false); err != nil {
+		return nil, fmt.Errorf("Error setting force_destroy: %s", err)
+	}
 
 	return []*schema.ResourceData{d}, nil
 }
