@@ -15,7 +15,7 @@
 //
 // ----------------------------------------------------------------------------
 
-package parametermanagerregional
+package parametermanager
 
 import (
 	"fmt"
@@ -33,15 +33,15 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 )
 
-func ResourceParameterManagerRegionalRegionalParameter() *schema.Resource {
+func ResourceParameterManagerParameter() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceParameterManagerRegionalRegionalParameterCreate,
-		Read:   resourceParameterManagerRegionalRegionalParameterRead,
-		Update: resourceParameterManagerRegionalRegionalParameterUpdate,
-		Delete: resourceParameterManagerRegionalRegionalParameterDelete,
+		Create: resourceParameterManagerParameterCreate,
+		Read:   resourceParameterManagerParameterRead,
+		Update: resourceParameterManagerParameterUpdate,
+		Delete: resourceParameterManagerParameterDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: resourceParameterManagerRegionalRegionalParameterImport,
+			State: resourceParameterManagerParameterImport,
 		},
 
 		Timeouts: &schema.ResourceTimeout{
@@ -56,12 +56,6 @@ func ResourceParameterManagerRegionalRegionalParameter() *schema.Resource {
 		),
 
 		Schema: map[string]*schema.Schema{
-			"location": {
-				Type:        schema.TypeString,
-				Required:    true,
-				ForceNew:    true,
-				Description: `The location of the regional parameter. eg us-central1`,
-			},
 			"parameter_id": {
 				Type:        schema.TypeString,
 				Required:    true,
@@ -73,13 +67,13 @@ func ResourceParameterManagerRegionalRegionalParameter() *schema.Resource {
 				Optional:     true,
 				ForceNew:     true,
 				ValidateFunc: verify.ValidateEnum([]string{"UNFORMATTED", "YAML", "JSON", ""}),
-				Description:  `The format type of the regional parameter. Default value: "UNFORMATTED" Possible values: ["UNFORMATTED", "YAML", "JSON"]`,
+				Description:  `The format type of the parameter resource. Default value: "UNFORMATTED" Possible values: ["UNFORMATTED", "YAML", "JSON"]`,
 				Default:      "UNFORMATTED",
 			},
 			"labels": {
 				Type:     schema.TypeMap,
 				Optional: true,
-				Description: `The labels assigned to this regional Parameter.
+				Description: `The labels assigned to this Parameter.
 
 Label keys must be between 1 and 63 characters long, have a UTF-8 encoding of maximum 128 bytes,
 and must conform to the following PCRE regular expression: [\p{Ll}\p{Lo}][\p{Ll}\p{Lo}\p{N}_-]{0,62}
@@ -100,7 +94,7 @@ Please refer to the field 'effective_labels' for all of the labels present on th
 			"create_time": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: `The time at which the regional Parameter was created.`,
+				Description: `The time at which the Parameter was created.`,
 			},
 			"effective_labels": {
 				Type:        schema.TypeMap,
@@ -111,29 +105,30 @@ Please refer to the field 'effective_labels' for all of the labels present on th
 			"name": {
 				Type:     schema.TypeString,
 				Computed: true,
-				Description: `The resource name of the regional Parameter. Format:
-'projects/{{project}}/locations/{{location}}/parameters/{{parameter_id}}'`,
+				Description: `The resource name of the Parameter. Format:
+'projects/{{project}}/locations/global/parameters/{{parameter_id}}'`,
 			},
 			"policy_member": {
 				Type:        schema.TypeList,
 				Computed:    true,
-				Description: `An object containing a unique resource identity tied to the regional parameter.`,
+				Description: `Policy member strings of a Google Cloud resource.`,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"iam_policy_name_principal": {
 							Type:     schema.TypeString,
 							Computed: true,
-							Description: `IAM policy binding member referring to a Google Cloud resource by user-assigned name. If a resource is
-deleted and recreated with the same name, the binding will be applicable to the new resource. Format:
-'principal://parametermanager.googleapis.com/projects/{{project}}/name/locations/{{location}}/parameters/{{parameter_id}}'`,
+							Description: `IAM policy binding member referring to a Google Cloud resource by user-assigned name. If a
+resource is deleted and recreated with the same name, the binding will be applicable to the
+new resource. Format:
+'principal://parametermanager.googleapis.com/projects/{{project}}/name/locations/global/parameters/{{parameter_id}}'`,
 						},
 						"iam_policy_uid_principal": {
 							Type:     schema.TypeString,
 							Computed: true,
-							Description: `IAM policy binding member referring to a Google Cloud resource by system-assigned unique identifier. If
-a resource is deleted and recreated with the same name, the binding will not be applicable to the new
-resource. Format:
-'principal://parametermanager.googleapis.com/projects/{{project}}/uid/locations/{{location}}/parameters/{{uid}}'`,
+							Description: `IAM policy binding member referring to a Google Cloud resource by system-assigned unique identifier.
+If a resource is deleted and recreated with the same name, the binding will not be applicable to the
+new resource. Format:
+'principal://parametermanager.googleapis.com/projects/{{project}}/uid/locations/global/parameters/{{uid}}'`,
 						},
 					},
 				},
@@ -148,7 +143,7 @@ resource. Format:
 			"update_time": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: `The time at which the regional Parameter was updated.`,
+				Description: `The time at which the Parameter was updated.`,
 			},
 			"project": {
 				Type:     schema.TypeString,
@@ -161,7 +156,7 @@ resource. Format:
 	}
 }
 
-func resourceParameterManagerRegionalRegionalParameterCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceParameterManagerParameterCreate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
 	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
@@ -169,30 +164,30 @@ func resourceParameterManagerRegionalRegionalParameterCreate(d *schema.ResourceD
 	}
 
 	obj := make(map[string]interface{})
-	formatProp, err := expandParameterManagerRegionalRegionalParameterFormat(d.Get("format"), d, config)
+	formatProp, err := expandParameterManagerParameterFormat(d.Get("format"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("format"); !tpgresource.IsEmptyValue(reflect.ValueOf(formatProp)) && (ok || !reflect.DeepEqual(v, formatProp)) {
 		obj["format"] = formatProp
 	}
-	labelsProp, err := expandParameterManagerRegionalRegionalParameterEffectiveLabels(d.Get("effective_labels"), d, config)
+	labelsProp, err := expandParameterManagerParameterEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
 		obj["labels"] = labelsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{ParameterManagerRegionalBasePath}}projects/{{project}}/locations/{{location}}/parameters?parameter_id={{parameter_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{ParameterManagerBasePath}}projects/{{project}}/locations/global/parameters?parameter_id={{parameter_id}}")
 	if err != nil {
 		return err
 	}
 
-	log.Printf("[DEBUG] Creating new RegionalParameter: %#v", obj)
+	log.Printf("[DEBUG] Creating new Parameter: %#v", obj)
 	billingProject := ""
 
 	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
-		return fmt.Errorf("Error fetching project for RegionalParameter: %s", err)
+		return fmt.Errorf("Error fetching project for Parameter: %s", err)
 	}
 	billingProject = project
 
@@ -213,32 +208,32 @@ func resourceParameterManagerRegionalRegionalParameterCreate(d *schema.ResourceD
 		Headers:   headers,
 	})
 	if err != nil {
-		return fmt.Errorf("Error creating RegionalParameter: %s", err)
+		return fmt.Errorf("Error creating Parameter: %s", err)
 	}
-	if err := d.Set("name", flattenParameterManagerRegionalRegionalParameterName(res["name"], d, config)); err != nil {
+	if err := d.Set("name", flattenParameterManagerParameterName(res["name"], d, config)); err != nil {
 		return fmt.Errorf(`Error setting computed identity field "name": %s`, err)
 	}
 
 	// Store the ID now
-	id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/locations/{{location}}/parameters/{{parameter_id}}")
+	id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/locations/global/parameters/{{parameter_id}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
 	d.SetId(id)
 
-	log.Printf("[DEBUG] Finished creating RegionalParameter %q: %#v", d.Id(), res)
+	log.Printf("[DEBUG] Finished creating Parameter %q: %#v", d.Id(), res)
 
-	return resourceParameterManagerRegionalRegionalParameterRead(d, meta)
+	return resourceParameterManagerParameterRead(d, meta)
 }
 
-func resourceParameterManagerRegionalRegionalParameterRead(d *schema.ResourceData, meta interface{}) error {
+func resourceParameterManagerParameterRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
 	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{ParameterManagerRegionalBasePath}}projects/{{project}}/locations/{{location}}/parameters/{{parameter_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{ParameterManagerBasePath}}projects/{{project}}/locations/global/parameters/{{parameter_id}}")
 	if err != nil {
 		return err
 	}
@@ -247,7 +242,7 @@ func resourceParameterManagerRegionalRegionalParameterRead(d *schema.ResourceDat
 
 	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
-		return fmt.Errorf("Error fetching project for RegionalParameter: %s", err)
+		return fmt.Errorf("Error fetching project for Parameter: %s", err)
 	}
 	billingProject = project
 
@@ -266,42 +261,42 @@ func resourceParameterManagerRegionalRegionalParameterRead(d *schema.ResourceDat
 		Headers:   headers,
 	})
 	if err != nil {
-		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("ParameterManagerRegionalRegionalParameter %q", d.Id()))
+		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("ParameterManagerParameter %q", d.Id()))
 	}
 
 	if err := d.Set("project", project); err != nil {
-		return fmt.Errorf("Error reading RegionalParameter: %s", err)
+		return fmt.Errorf("Error reading Parameter: %s", err)
 	}
 
-	if err := d.Set("name", flattenParameterManagerRegionalRegionalParameterName(res["name"], d, config)); err != nil {
-		return fmt.Errorf("Error reading RegionalParameter: %s", err)
+	if err := d.Set("name", flattenParameterManagerParameterName(res["name"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Parameter: %s", err)
 	}
-	if err := d.Set("create_time", flattenParameterManagerRegionalRegionalParameterCreateTime(res["createTime"], d, config)); err != nil {
-		return fmt.Errorf("Error reading RegionalParameter: %s", err)
+	if err := d.Set("create_time", flattenParameterManagerParameterCreateTime(res["createTime"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Parameter: %s", err)
 	}
-	if err := d.Set("update_time", flattenParameterManagerRegionalRegionalParameterUpdateTime(res["updateTime"], d, config)); err != nil {
-		return fmt.Errorf("Error reading RegionalParameter: %s", err)
+	if err := d.Set("update_time", flattenParameterManagerParameterUpdateTime(res["updateTime"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Parameter: %s", err)
 	}
-	if err := d.Set("policy_member", flattenParameterManagerRegionalRegionalParameterPolicyMember(res["policyMember"], d, config)); err != nil {
-		return fmt.Errorf("Error reading RegionalParameter: %s", err)
+	if err := d.Set("policy_member", flattenParameterManagerParameterPolicyMember(res["policyMember"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Parameter: %s", err)
 	}
-	if err := d.Set("labels", flattenParameterManagerRegionalRegionalParameterLabels(res["labels"], d, config)); err != nil {
-		return fmt.Errorf("Error reading RegionalParameter: %s", err)
+	if err := d.Set("labels", flattenParameterManagerParameterLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Parameter: %s", err)
 	}
-	if err := d.Set("format", flattenParameterManagerRegionalRegionalParameterFormat(res["format"], d, config)); err != nil {
-		return fmt.Errorf("Error reading RegionalParameter: %s", err)
+	if err := d.Set("format", flattenParameterManagerParameterFormat(res["format"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Parameter: %s", err)
 	}
-	if err := d.Set("terraform_labels", flattenParameterManagerRegionalRegionalParameterTerraformLabels(res["labels"], d, config)); err != nil {
-		return fmt.Errorf("Error reading RegionalParameter: %s", err)
+	if err := d.Set("terraform_labels", flattenParameterManagerParameterTerraformLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Parameter: %s", err)
 	}
-	if err := d.Set("effective_labels", flattenParameterManagerRegionalRegionalParameterEffectiveLabels(res["labels"], d, config)); err != nil {
-		return fmt.Errorf("Error reading RegionalParameter: %s", err)
+	if err := d.Set("effective_labels", flattenParameterManagerParameterEffectiveLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Parameter: %s", err)
 	}
 
 	return nil
 }
 
-func resourceParameterManagerRegionalRegionalParameterUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceParameterManagerParameterUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
 	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
@@ -312,24 +307,24 @@ func resourceParameterManagerRegionalRegionalParameterUpdate(d *schema.ResourceD
 
 	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
-		return fmt.Errorf("Error fetching project for RegionalParameter: %s", err)
+		return fmt.Errorf("Error fetching project for Parameter: %s", err)
 	}
 	billingProject = project
 
 	obj := make(map[string]interface{})
-	labelsProp, err := expandParameterManagerRegionalRegionalParameterEffectiveLabels(d.Get("effective_labels"), d, config)
+	labelsProp, err := expandParameterManagerParameterEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
 		obj["labels"] = labelsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{ParameterManagerRegionalBasePath}}projects/{{project}}/locations/{{location}}/parameters/{{parameter_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{ParameterManagerBasePath}}projects/{{project}}/locations/global/parameters/{{parameter_id}}")
 	if err != nil {
 		return err
 	}
 
-	log.Printf("[DEBUG] Updating RegionalParameter %q: %#v", d.Id(), obj)
+	log.Printf("[DEBUG] Updating Parameter %q: %#v", d.Id(), obj)
 	headers := make(http.Header)
 	updateMask := []string{}
 
@@ -362,17 +357,17 @@ func resourceParameterManagerRegionalRegionalParameterUpdate(d *schema.ResourceD
 		})
 
 		if err != nil {
-			return fmt.Errorf("Error updating RegionalParameter %q: %s", d.Id(), err)
+			return fmt.Errorf("Error updating Parameter %q: %s", d.Id(), err)
 		} else {
-			log.Printf("[DEBUG] Finished updating RegionalParameter %q: %#v", d.Id(), res)
+			log.Printf("[DEBUG] Finished updating Parameter %q: %#v", d.Id(), res)
 		}
 
 	}
 
-	return resourceParameterManagerRegionalRegionalParameterRead(d, meta)
+	return resourceParameterManagerParameterRead(d, meta)
 }
 
-func resourceParameterManagerRegionalRegionalParameterDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceParameterManagerParameterDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
 	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
@@ -383,11 +378,11 @@ func resourceParameterManagerRegionalRegionalParameterDelete(d *schema.ResourceD
 
 	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
-		return fmt.Errorf("Error fetching project for RegionalParameter: %s", err)
+		return fmt.Errorf("Error fetching project for Parameter: %s", err)
 	}
 	billingProject = project
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{ParameterManagerRegionalBasePath}}projects/{{project}}/locations/{{location}}/parameters/{{parameter_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{ParameterManagerBasePath}}projects/{{project}}/locations/global/parameters/{{parameter_id}}")
 	if err != nil {
 		return err
 	}
@@ -401,7 +396,7 @@ func resourceParameterManagerRegionalRegionalParameterDelete(d *schema.ResourceD
 
 	headers := make(http.Header)
 
-	log.Printf("[DEBUG] Deleting RegionalParameter %q", d.Id())
+	log.Printf("[DEBUG] Deleting Parameter %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "DELETE",
@@ -413,25 +408,25 @@ func resourceParameterManagerRegionalRegionalParameterDelete(d *schema.ResourceD
 		Headers:   headers,
 	})
 	if err != nil {
-		return transport_tpg.HandleNotFoundError(err, d, "RegionalParameter")
+		return transport_tpg.HandleNotFoundError(err, d, "Parameter")
 	}
 
-	log.Printf("[DEBUG] Finished deleting RegionalParameter %q: %#v", d.Id(), res)
+	log.Printf("[DEBUG] Finished deleting Parameter %q: %#v", d.Id(), res)
 	return nil
 }
 
-func resourceParameterManagerRegionalRegionalParameterImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+func resourceParameterManagerParameterImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*transport_tpg.Config)
 	if err := tpgresource.ParseImportId([]string{
-		"^projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/parameters/(?P<parameter_id>[^/]+)$",
-		"^(?P<project>[^/]+)/(?P<location>[^/]+)/(?P<parameter_id>[^/]+)$",
-		"^(?P<location>[^/]+)/(?P<parameter_id>[^/]+)$",
+		"^projects/(?P<project>[^/]+)/locations/global/parameters/(?P<parameter_id>[^/]+)$",
+		"^(?P<project>[^/]+)/(?P<parameter_id>[^/]+)$",
+		"^(?P<parameter_id>[^/]+)$",
 	}, d, config); err != nil {
 		return nil, err
 	}
 
 	// Replace import id for the resource id
-	id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/locations/{{location}}/parameters/{{parameter_id}}")
+	id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/locations/global/parameters/{{parameter_id}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -440,19 +435,19 @@ func resourceParameterManagerRegionalRegionalParameterImport(d *schema.ResourceD
 	return []*schema.ResourceData{d}, nil
 }
 
-func flattenParameterManagerRegionalRegionalParameterName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+func flattenParameterManagerParameterName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenParameterManagerRegionalRegionalParameterCreateTime(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+func flattenParameterManagerParameterCreateTime(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenParameterManagerRegionalRegionalParameterUpdateTime(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+func flattenParameterManagerParameterUpdateTime(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenParameterManagerRegionalRegionalParameterPolicyMember(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+func flattenParameterManagerParameterPolicyMember(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
 	}
@@ -462,20 +457,20 @@ func flattenParameterManagerRegionalRegionalParameterPolicyMember(v interface{},
 	}
 	transformed := make(map[string]interface{})
 	transformed["iam_policy_uid_principal"] =
-		flattenParameterManagerRegionalRegionalParameterPolicyMemberIamPolicyUidPrincipal(original["iamPolicyUidPrincipal"], d, config)
+		flattenParameterManagerParameterPolicyMemberIamPolicyUidPrincipal(original["iamPolicyUidPrincipal"], d, config)
 	transformed["iam_policy_name_principal"] =
-		flattenParameterManagerRegionalRegionalParameterPolicyMemberIamPolicyNamePrincipal(original["iamPolicyNamePrincipal"], d, config)
+		flattenParameterManagerParameterPolicyMemberIamPolicyNamePrincipal(original["iamPolicyNamePrincipal"], d, config)
 	return []interface{}{transformed}
 }
-func flattenParameterManagerRegionalRegionalParameterPolicyMemberIamPolicyUidPrincipal(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+func flattenParameterManagerParameterPolicyMemberIamPolicyUidPrincipal(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenParameterManagerRegionalRegionalParameterPolicyMemberIamPolicyNamePrincipal(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+func flattenParameterManagerParameterPolicyMemberIamPolicyNamePrincipal(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenParameterManagerRegionalRegionalParameterLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+func flattenParameterManagerParameterLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
 	}
@@ -490,11 +485,11 @@ func flattenParameterManagerRegionalRegionalParameterLabels(v interface{}, d *sc
 	return transformed
 }
 
-func flattenParameterManagerRegionalRegionalParameterFormat(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+func flattenParameterManagerParameterFormat(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func flattenParameterManagerRegionalRegionalParameterTerraformLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+func flattenParameterManagerParameterTerraformLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
 	}
@@ -509,15 +504,15 @@ func flattenParameterManagerRegionalRegionalParameterTerraformLabels(v interface
 	return transformed
 }
 
-func flattenParameterManagerRegionalRegionalParameterEffectiveLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+func flattenParameterManagerParameterEffectiveLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
-func expandParameterManagerRegionalRegionalParameterFormat(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+func expandParameterManagerParameterFormat(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
-func expandParameterManagerRegionalRegionalParameterEffectiveLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+func expandParameterManagerParameterEffectiveLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
 	}
