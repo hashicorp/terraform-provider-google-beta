@@ -516,9 +516,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 583
+// Generated resources: 584
 // Generated IAM resources: 294
-// Total generated resources: 877
+// Total generated resources: 878
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -655,6 +655,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_chronicle_data_access_label":                                         chronicle.ResourceChronicleDataAccessLabel(),
 	"google_chronicle_data_access_scope":                                         chronicle.ResourceChronicleDataAccessScope(),
 	"google_chronicle_rule":                                                      chronicle.ResourceChronicleRule(),
+	"google_chronicle_rule_deployment":                                           chronicle.ResourceChronicleRuleDeployment(),
 	"google_chronicle_watchlist":                                                 chronicle.ResourceChronicleWatchlist(),
 	"google_cloud_asset_folder_feed":                                             cloudasset.ResourceCloudAssetFolderFeed(),
 	"google_cloud_asset_organization_feed":                                       cloudasset.ResourceCloudAssetOrganizationFeed(),
