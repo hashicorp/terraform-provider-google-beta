@@ -42,6 +42,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/cloudrunv2"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/cloudscheduler"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/cloudtasks"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/colab"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/composer"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/compute"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/containeranalysis"
@@ -516,9 +517,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 585
+// Generated resources: 586
 // Generated IAM resources: 294
-// Total generated resources: 879
+// Total generated resources: 880
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -710,6 +711,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_cloud_tasks_queue_iam_binding":                                       tpgiamresource.ResourceIamBinding(cloudtasks.CloudTasksQueueIamSchema, cloudtasks.CloudTasksQueueIamUpdaterProducer, cloudtasks.CloudTasksQueueIdParseFunc),
 	"google_cloud_tasks_queue_iam_member":                                        tpgiamresource.ResourceIamMember(cloudtasks.CloudTasksQueueIamSchema, cloudtasks.CloudTasksQueueIamUpdaterProducer, cloudtasks.CloudTasksQueueIdParseFunc),
 	"google_cloud_tasks_queue_iam_policy":                                        tpgiamresource.ResourceIamPolicy(cloudtasks.CloudTasksQueueIamSchema, cloudtasks.CloudTasksQueueIamUpdaterProducer, cloudtasks.CloudTasksQueueIdParseFunc),
+	"google_colab_runtime_template":                                              colab.ResourceColabRuntimeTemplate(),
 	"google_composer_user_workloads_config_map":                                  composer.ResourceComposerUserWorkloadsConfigMap(),
 	"google_compute_address":                                                     compute.ResourceComputeAddress(),
 	"google_compute_autoscaler":                                                  compute.ResourceComputeAutoscaler(),
