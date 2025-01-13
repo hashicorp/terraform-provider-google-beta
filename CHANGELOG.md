@@ -1,4 +1,27 @@
-## 6.16.0 (Unreleased)
+## 6.17.0 (Unreleased)
+
+## 6.16.0 (January 13, 2025)
+
+FEATURES:
+* **New Data Source:** `google_kms_autokey_config` ([#8986](https://github.com/hashicorp/terraform-provider-google-beta/pull/8986))
+* **New Resource:** `google_beyondcorp_security_gateway` ([#9017](https://github.com/hashicorp/terraform-provider-google-beta/pull/9017))
+* **New Resource:** `google_chronicle_data_access_label` ([#8999](https://github.com/hashicorp/terraform-provider-google-beta/pull/8999))
+* **New Resource:** `google_chronicle_data_access_scope` ([#9000](https://github.com/hashicorp/terraform-provider-google-beta/pull/9000))
+* **New Resource:** `google_cloud_quotas_quota_adjuster_settings` ([#9005](https://github.com/hashicorp/terraform-provider-google-beta/pull/9005))
+
+IMPROVEMENTS:
+* chronicle: updated `watchlist_id` field to be optional in `google_chronicle_watchlist` resource ([#8988](https://github.com/hashicorp/terraform-provider-google-beta/pull/8988))
+* developerconnect: added `crypto_key_config`, `github_enterprise_config`, `gitlab_config` , and `gitlab_enterprise_config` fields to `google_developer_connect_connection` resource ([#8998](https://github.com/hashicorp/terraform-provider-google-beta/pull/8998))
+* dns: added `health_check` and `external_endpoints` fields to `google_dns_record_set` resource ([#9016](https://github.com/hashicorp/terraform-provider-google-beta/pull/9016))
+* sql: added `server_ca_pool` field to `google_sql_database_instance` resource ([#9008](https://github.com/hashicorp/terraform-provider-google-beta/pull/9008))
+* vmwareengine: allowed import of non-STANDARD private clouds in `google_vmwareengine_private_cloud` ([#9006](https://github.com/hashicorp/terraform-provider-google-beta/pull/9006))
+
+BUG FIXES:
+* dataproc: fixed boolean fields in `shielded_instance_config` in the `google_dataproc_cluster` resource ([#9003](https://github.com/hashicorp/terraform-provider-google-beta/pull/9003))
+* gkeonprem: fixed permadiff on `vcenter` field in `google_gkeonprem_vmware_cluster` resource ([#9011](https://github.com/hashicorp/terraform-provider-google-beta/pull/9011))
+* kms: fixed permadiff on `google_kms_autokey_config` by introducing a 5 second sleep post-create / post-update ([#8992](https://github.com/hashicorp/terraform-provider-google-beta/pull/8992))
+* networkservices: fixed `google_network_services_gateway` resource so that it correctly waits for the router to be deleted on `terraform destroy` ([#8993](https://github.com/hashicorp/terraform-provider-google-beta/pull/8993))
+* provider: fixed issue where `GOOGLE_CLOUD_QUOTA_PROJECT` env var would override explicit `billing_project` ([#9012](https://github.com/hashicorp/terraform-provider-google-beta/pull/9012))
 
 ## 6.15.0 (January 6, 2025)
 
