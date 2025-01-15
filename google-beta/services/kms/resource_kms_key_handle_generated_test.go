@@ -27,7 +27,6 @@ import (
 )
 
 func TestAccKMSKeyHandle_kmsKeyHandleBasicExample(t *testing.T) {
-	acctest.SkipIfVcr(t)
 	t.Parallel()
 
 	context := map[string]interface{}{
