@@ -1,5 +1,40 @@
 ## 6.17.0 (Unreleased)
 
+NOTES:
+* workbench: Changed `container_image` field of `google_workbench_instance` resource to modifiable. ([#9046](https://github.com/hashicorp/terraform-provider-google-beta/pull/9046))
+
+FEATURES:
+* **New Data Source:** `google_parameter_manager_regional_parameter` (beta) ([#9030](https://github.com/hashicorp/terraform-provider-google-beta/pull/9030))
+* **New Resource:** `google_apigee_environment_addons_config` ([#9021](https://github.com/hashicorp/terraform-provider-google-beta/pull/9021))
+* **New Resource:** `google_beyondcorp_security_gateway` ([#9017](https://github.com/hashicorp/terraform-provider-google-beta/pull/9017))
+* **New Resource:** `google_chronicle_reference_list` (beta) ([#9047](https://github.com/hashicorp/terraform-provider-google-beta/pull/9047))
+* **New Resource:** `google_chronicle_rule_deployment` ([#9043](https://github.com/hashicorp/terraform-provider-google-beta/pull/9043))
+* **New Resource:** `google_chronicle_rule` ([#9032](https://github.com/hashicorp/terraform-provider-google-beta/pull/9032))
+* **New Resource:** `google_colab_runtime_template` ([#9050](https://github.com/hashicorp/terraform-provider-google-beta/pull/9050))
+* **New Resource:** `google_edgenetwork_interconnect_attachment` ([#9024](https://github.com/hashicorp/terraform-provider-google-beta/pull/9024))
+* **New Resource:** `google_parameter_manager_parameter` ([#9041](https://github.com/hashicorp/terraform-provider-google-beta/pull/9041))
+* **New Resource:** `google_parameter_manager_regional_parameter_version` ([#9062](https://github.com/hashicorp/terraform-provider-google-beta/pull/9062))
+* **New Resource:** `google_parameter_manager_regional_parameter` ([#9026](https://github.com/hashicorp/terraform-provider-google-beta/pull/9026))
+
+IMPROVEMENTS:
+* accesscontextmanager: added `etag` to `google_access_context_manager_service_perimeter_resource` to prevent overriding list of resources ([#9058](https://github.com/hashicorp/terraform-provider-google-beta/pull/9058))
+* compute: added `BPS_100G` enum value to `bandwidth` field of `google_compute_interconnect_attachment`. ([#9040](https://github.com/hashicorp/terraform-provider-google-beta/pull/9040))
+* compute: added support for `IPV6_ONLY` stack_type to `google_compute_subnetwork`, `google_compute_instance`, `google_compute_instance_template` and `google_compute_region_instance_template`. ([#9020](https://github.com/hashicorp/terraform-provider-google-beta/pull/9020))
+* compute: promoted `bgp_best_path_selection_mode `,`bgp_bps_always_compare_med` and `bgp_bps_inter_region_cost ` fields in `google_compute_network` from Beta to Ga ([#9029](https://github.com/hashicorp/terraform-provider-google-beta/pull/9029))
+* compute: promoted `next_hop_origin `,`next_hop_med ` and `next_hop_inter_region_cost ` output fields in `google_compute_route` form Beta to GA ([#9029](https://github.com/hashicorp/terraform-provider-google-beta/pull/9029))
+* discoveryengine: added `advanced_site_search_config` field to `google_discovery_engine_data_store` resource ([#9060](https://github.com/hashicorp/terraform-provider-google-beta/pull/9060))
+* gemini: added `force_destroy` field to resource `google_code_repository_index`, enabling deletion of the resource even when it has dependent RepositoryGroups ([#9036](https://github.com/hashicorp/terraform-provider-google-beta/pull/9036))
+* networkservices: added in-place update support for `ports` field on `google_network_services_gateway` resource ([#9056](https://github.com/hashicorp/terraform-provider-google-beta/pull/9056))
+* sql: `sql_source_representation_instance` now uses `string` representation of `databaseVersion` ([#9027](https://github.com/hashicorp/terraform-provider-google-beta/pull/9027))
+* sql: added `replication_cluster` field to `google_sql_database_instance` resource ([#9044](https://github.com/hashicorp/terraform-provider-google-beta/pull/9044))
+* sql: added support of switchover for MySQL and PostgreSQL in `google_sql_database_instance` resource ([#9044](https://github.com/hashicorp/terraform-provider-google-beta/pull/9044))
+
+BUG FIXES:
+* apigee: fixed error 404 for `organization` update requests. ([#9022](https://github.com/hashicorp/terraform-provider-google-beta/pull/9022))
+* artifactregistry: fix `artifact_registry_repository` not accepting durations with 'm', 'h' or 'd' ([#9054](https://github.com/hashicorp/terraform-provider-google-beta/pull/9054))
+* networkservices: fixed bug where `google_network_services_gateway` could not be updated in place ([#9056](https://github.com/hashicorp/terraform-provider-google-beta/pull/9056))
+* storagetransfer: fixed a permadiff with `transfer_spec.aws_s3_data_source.aws_access_key` in `google_storage_transfer_job` ([#9019](https://github.com/hashicorp/terraform-provider-google-beta/pull/9019))
+
 ## 6.16.0 (January 13, 2025)
 
 FEATURES:
