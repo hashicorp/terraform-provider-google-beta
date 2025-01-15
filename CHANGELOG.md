@@ -1,8 +1,5 @@
 ## 6.17.0 (Unreleased)
 
-NOTES:
-* workbench: Changed `container_image` field of `google_workbench_instance` resource to modifiable. ([#9046](https://github.com/hashicorp/terraform-provider-google-beta/pull/9046))
-
 FEATURES:
 * **New Data Source:** `google_parameter_manager_regional_parameter` (beta) ([#9030](https://github.com/hashicorp/terraform-provider-google-beta/pull/9030))
 * **New Resource:** `google_apigee_environment_addons_config` ([#9021](https://github.com/hashicorp/terraform-provider-google-beta/pull/9021))
@@ -28,10 +25,11 @@ IMPROVEMENTS:
 * sql: `sql_source_representation_instance` now uses `string` representation of `databaseVersion` ([#9027](https://github.com/hashicorp/terraform-provider-google-beta/pull/9027))
 * sql: added `replication_cluster` field to `google_sql_database_instance` resource ([#9044](https://github.com/hashicorp/terraform-provider-google-beta/pull/9044))
 * sql: added support of switchover for MySQL and PostgreSQL in `google_sql_database_instance` resource ([#9044](https://github.com/hashicorp/terraform-provider-google-beta/pull/9044))
+* workbench: changed `container_image` field of `google_workbench_instance` resource to modifiable. ([#9046](https://github.com/hashicorp/terraform-provider-google-beta/pull/9046))
 
 BUG FIXES:
 * apigee: fixed error 404 for `organization` update requests. ([#9022](https://github.com/hashicorp/terraform-provider-google-beta/pull/9022))
-* artifactregistry: fix `artifact_registry_repository` not accepting durations with 'm', 'h' or 'd' ([#9054](https://github.com/hashicorp/terraform-provider-google-beta/pull/9054))
+* artifactregistry: fixed `artifact_registry_repository` not accepting durations with 'm', 'h' or 'd' ([#9054](https://github.com/hashicorp/terraform-provider-google-beta/pull/9054))
 * networkservices: fixed bug where `google_network_services_gateway` could not be updated in place ([#9056](https://github.com/hashicorp/terraform-provider-google-beta/pull/9056))
 * storagetransfer: fixed a permadiff with `transfer_spec.aws_s3_data_source.aws_access_key` in `google_storage_transfer_job` ([#9019](https://github.com/hashicorp/terraform-provider-google-beta/pull/9019))
 
