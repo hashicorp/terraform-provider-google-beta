@@ -2384,6 +2384,28 @@ func expandNetworkServicesHttpRouteRulesActionRequestHeaderModifier(v interface{
 	return transformed, nil
 }
 
+func expandNetworkServicesHttpRouteRulesActionRequestHeaderModifierSet(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+	if v == nil {
+		return map[string]string{}, nil
+	}
+	m := make(map[string]string)
+	for k, val := range v.(map[string]interface{}) {
+		m[k] = val.(string)
+	}
+	return m, nil
+}
+
+func expandNetworkServicesHttpRouteRulesActionRequestHeaderModifierAdd(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+	if v == nil {
+		return map[string]string{}, nil
+	}
+	m := make(map[string]string)
+	for k, val := range v.(map[string]interface{}) {
+		m[k] = val.(string)
+	}
+	return m, nil
+}
+
 func expandNetworkServicesHttpRouteRulesActionRequestHeaderModifierRemove(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
@@ -2419,6 +2441,28 @@ func expandNetworkServicesHttpRouteRulesActionResponseHeaderModifier(v interface
 	}
 
 	return transformed, nil
+}
+
+func expandNetworkServicesHttpRouteRulesActionResponseHeaderModifierSet(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+	if v == nil {
+		return map[string]string{}, nil
+	}
+	m := make(map[string]string)
+	for k, val := range v.(map[string]interface{}) {
+		m[k] = val.(string)
+	}
+	return m, nil
+}
+
+func expandNetworkServicesHttpRouteRulesActionResponseHeaderModifierAdd(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+	if v == nil {
+		return map[string]string{}, nil
+	}
+	m := make(map[string]string)
+	for k, val := range v.(map[string]interface{}) {
+		m[k] = val.(string)
+	}
+	return m, nil
 }
 
 func expandNetworkServicesHttpRouteRulesActionResponseHeaderModifierRemove(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
