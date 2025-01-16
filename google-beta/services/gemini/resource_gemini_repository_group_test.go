@@ -24,7 +24,7 @@ func TestAccGeminiRepositoryGroup_update(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccGeminiRepositoryGroup_basic(context),
@@ -56,7 +56,7 @@ func TestAccGeminiRepositoryGroup_noBootstrap(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccGeminiRepositoryGroup_noBootstrap(context),
@@ -74,7 +74,6 @@ func TestAccGeminiRepositoryGroup_noBootstrap(t *testing.T) {
 func testAccGeminiRepositoryGroup_basic(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_gemini_repository_group" "example" {
-  provider = google-beta
   location = "us-central1"
   code_repository_index = "%{code_repository_index}"
   repository_group_id = "tf-test-rg-repository-group-id-%{random_suffix}" 
@@ -86,7 +85,6 @@ resource "google_gemini_repository_group" "example" {
 }
 
 resource "google_developer_connect_git_repository_link" "conn" {
-  provider = google-beta
   git_repository_link_id = "tf-test-repository-conn"
   parent_connection = google_developer_connect_connection.github_conn.connection_id
   clone_uri = "https://github.com/CC-R-github-robot/tf-test.git"
@@ -95,7 +93,6 @@ resource "google_developer_connect_git_repository_link" "conn" {
 }
 
 resource "google_developer_connect_connection" "github_conn" {
-  provider = google-beta
   location = "us-central1"
   connection_id = "tf-test-cloudaicompanion2-%{random_suffix}"
   disabled = false
@@ -114,7 +111,6 @@ resource "google_developer_connect_connection" "github_conn" {
 func testAccGeminiRepositoryGroup_update(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_gemini_repository_group" "example" {
-  provider = google-beta
   location = "us-central1"
   code_repository_index = "%{code_repository_index}"
   repository_group_id = "tf-test-rg-repository-group-id-%{random_suffix}"
@@ -126,7 +122,6 @@ resource "google_gemini_repository_group" "example" {
 }
 
 resource "google_developer_connect_git_repository_link" "conn" {
-  provider = google-beta
   git_repository_link_id = "tf-test-repository-conn"
   parent_connection = google_developer_connect_connection.github_conn.connection_id
   clone_uri = "https://github.com/CC-R-github-robot/tf-test.git"
@@ -135,7 +130,6 @@ resource "google_developer_connect_git_repository_link" "conn" {
 }
 
 resource "google_developer_connect_connection" "github_conn" {
-  provider = google-beta
   location = "us-central1"
   connection_id = "tf-test-cloudaicompanion3-%{random_suffix}"
   disabled = false
@@ -155,14 +149,12 @@ resource "google_developer_connect_connection" "github_conn" {
 func testAccGeminiRepositoryGroup_noBootstrap(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_gemini_code_repository_index" "cri" {
-  provider = google-beta
   labels = {"ccfe_debug_note": "terraform_e2e_should_be_deleted"}
   location = "us-central1"
   code_repository_index_id = "tf-test-rg-index-example-%{random_suffix}"
 }
 
 resource "google_gemini_repository_group" "example_a" {
-  provider = google-beta
   location = "us-central1"
   code_repository_index = google_gemini_code_repository_index.cri.code_repository_index_id
   repository_group_id = "tf-test-rg-nb-repository-group-id1-%{random_suffix}"
@@ -174,7 +166,6 @@ resource "google_gemini_repository_group" "example_a" {
 }
 
 resource "google_gemini_repository_group" "example_b" {
-  provider = google-beta
   location = "us-central1"
   code_repository_index = google_gemini_code_repository_index.cri.code_repository_index_id
   repository_group_id = "tf-test-rg-nb-repository-group-id2-%{random_suffix}"
@@ -186,7 +177,6 @@ resource "google_gemini_repository_group" "example_b" {
 }
 
 resource "google_gemini_repository_group" "example_c" {
-  provider = google-beta
   location = "us-central1"
   code_repository_index = google_gemini_code_repository_index.cri.code_repository_index_id
   repository_group_id = "tf-test-rg-nb-repository-group-id3-%{random_suffix}"
@@ -198,7 +188,6 @@ resource "google_gemini_repository_group" "example_c" {
 }
 
 resource "google_gemini_repository_group" "example_d" {
-  provider = google-beta
   location = "us-central1"
   code_repository_index = google_gemini_code_repository_index.cri.code_repository_index_id
   repository_group_id = "tf-test-rg-nb-repository-group-id4-%{random_suffix}"
@@ -210,7 +199,6 @@ resource "google_gemini_repository_group" "example_d" {
 }
 
 resource "google_gemini_repository_group" "example_e" {
-  provider = google-beta
   location = "us-central1"
   code_repository_index = google_gemini_code_repository_index.cri.code_repository_index_id
   repository_group_id = "tf-test-rg-nb-repository-group-id5-%{random_suffix}"
@@ -222,7 +210,6 @@ resource "google_gemini_repository_group" "example_e" {
 }
 
 resource "google_developer_connect_git_repository_link" "conn" {
-  provider = google-beta
   git_repository_link_id = "tf-test-repository-conn"
   parent_connection = google_developer_connect_connection.github_conn.connection_id
   clone_uri = "https://github.com/CC-R-github-robot/tf-test.git"
@@ -231,7 +218,6 @@ resource "google_developer_connect_git_repository_link" "conn" {
 }
 
 resource "google_developer_connect_connection" "github_conn" {
-  provider = google-beta
   location = "us-central1"
   connection_id = "tf-test-cloudaicompanion1-%{random_suffix}"
   disabled = false

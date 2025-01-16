@@ -72,7 +72,7 @@ func ResourceGeminiCodeRepositoryIndex() *schema.Resource {
 				Optional: true,
 				ForceNew: true,
 				Description: `Optional. Immutable. Customer-managed encryption key name, in the format
-projects/*/locations/*/keyRings/*/cryptoKeys/*.`,
+'projects/*/locations/*/keyRings/*/cryptoKeys/*'.`,
 			},
 			"labels": {
 				Type:     schema.TypeMap,
@@ -103,12 +103,7 @@ Please refer to the field 'effective_labels' for all of the labels present on th
 				Type:     schema.TypeString,
 				Computed: true,
 				Description: `Output only. Code Repository Index instance State.
-Possible values:
-STATE_UNSPECIFIED
-CREATING
-ACTIVE
-DELETING
-SUSPENDED`,
+Possible values are: 'STATE_UNSPECIFIED', 'CREATING', 'ACTIVE', 'DELETING', 'SUSPENDED'.`,
 			},
 			"terraform_labels": {
 				Type:     schema.TypeMap,
