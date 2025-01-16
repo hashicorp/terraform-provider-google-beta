@@ -22,7 +22,7 @@ func TestAccGeminiCodeRepositoryIndex_update(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccGeminiCodeRepositoryIndex_basic(context),
@@ -62,7 +62,7 @@ func TestAccGeminiCodeRepositoryIndex_delete(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccGeminiCodeRepositoryIndex_withChildren_basic(context),
@@ -85,7 +85,6 @@ func TestAccGeminiCodeRepositoryIndex_delete(t *testing.T) {
 func testAccGeminiCodeRepositoryIndex_withChildren_basic(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_gemini_code_repository_index" "example" {
-  provider = google-beta
   labels = {"ccfe_debug_note": "terraform_e2e_should_be_deleted"}
   location = "us-central1"
   code_repository_index_id = "%{cri_id}"
@@ -93,7 +92,6 @@ resource "google_gemini_code_repository_index" "example" {
 }
 
 resource "google_gemini_repository_group" "example" {
-  provider = google-beta
   location = "us-central1"
   code_repository_index = "%{cri_id}"
   repository_group_id = "tf-test-rg-repository-group-id-%{random_suffix}"
@@ -108,7 +106,6 @@ resource "google_gemini_repository_group" "example" {
 }
 
 resource "google_developer_connect_git_repository_link" "conn" {
-  provider = google-beta
   git_repository_link_id = "tf-test-repository-conn-delete"
   parent_connection = google_developer_connect_connection.github_conn.connection_id
   clone_uri = "https://github.com/CC-R-github-robot/tf-test.git"
@@ -117,7 +114,6 @@ resource "google_developer_connect_git_repository_link" "conn" {
 }
 
 resource "google_developer_connect_connection" "github_conn" {
-  provider = google-beta
   location = "us-central1"
   connection_id = "tf-test-cloudaicompanion-delete-%{random_suffix}"
   disabled = false
@@ -138,7 +134,6 @@ resource "google_developer_connect_connection" "github_conn" {
 func testAccGeminiCodeRepositoryIndex_withChildren_delete(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_gemini_repository_group" "example" {
-  provider = google-beta
   location = "us-central1"
   code_repository_index = "%{cri_id}"
   repository_group_id = "tf-test-rg-repository-group-id-%{random_suffix}"
@@ -150,7 +145,6 @@ resource "google_gemini_repository_group" "example" {
 }
 
 resource "google_developer_connect_git_repository_link" "conn" {
-  provider = google-beta
   git_repository_link_id = "tf-test-repository-conn-delete"
   parent_connection = google_developer_connect_connection.github_conn.connection_id
   clone_uri = "https://github.com/CC-R-github-robot/tf-test.git"
@@ -159,7 +153,6 @@ resource "google_developer_connect_git_repository_link" "conn" {
 }
 
 resource "google_developer_connect_connection" "github_conn" {
-  provider = google-beta
   location = "us-central1"
   connection_id = "tf-test-cloudaicompanion-delete-%{random_suffix}"
   disabled = false
@@ -179,7 +172,6 @@ resource "google_developer_connect_connection" "github_conn" {
 func testAccGeminiCodeRepositoryIndex_basic(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_gemini_code_repository_index" "example" {
-  provider = google-beta
   labels = {"ccfe_debug_note": "terraform_e2e_should_be_deleted"}
   location = "us-central1"
   code_repository_index_id = "tf-test-cri-index-example-%{random_suffix}"
@@ -188,11 +180,9 @@ resource "google_gemini_code_repository_index" "example" {
 }
 
 data "google_project" "project" {
-  provider = google-beta
 }
 
 resource "google_kms_crypto_key_iam_binding" "crypto_key_binding" {
-  provider = google-beta
   crypto_key_id = "%{kms_key}"
   role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
   members = [
@@ -205,7 +195,6 @@ resource "google_kms_crypto_key_iam_binding" "crypto_key_binding" {
 func testAccGeminiCodeRepositoryIndex_update(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_gemini_code_repository_index" "example" {
-  provider = google-beta
   labels = {"ccfe_debug_note": "terraform_e2e_should_be_deleted", "new_label": "new_val"}
   location = "us-central1"
   code_repository_index_id = "tf-test-cri-index-example-%{random_suffix}"

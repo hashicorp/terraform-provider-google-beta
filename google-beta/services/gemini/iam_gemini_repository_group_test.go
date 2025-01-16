@@ -34,7 +34,7 @@ func TestAccGeminiRepositoryGroupIamBinding(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccGeminiRepositoryGroupIamBinding_basic(context),
@@ -78,7 +78,7 @@ func TestAccGeminiRepositoryGroupIamMember(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
 				// Test Iam Member creation (no update for member, no need to test)
@@ -113,7 +113,7 @@ func TestAccGeminiRepositoryGroupIamPolicy(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccGeminiRepositoryGroupIamPolicy_basic(context),
@@ -141,7 +141,6 @@ func TestAccGeminiRepositoryGroupIamPolicy(t *testing.T) {
 func testAccGeminiRepositoryGroupIamMember_basic(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_gemini_repository_group_iam_member" "foo" {
-  provider = google-beta
   project = "%{project}"
   location = "%{location}"
   code_repository_index = "%{code_repository_index}"
@@ -151,7 +150,6 @@ resource "google_gemini_repository_group_iam_member" "foo" {
 }
 
 resource "google_gemini_repository_group" "example" {
-  provider = google-beta
   location = "us-central1"
   code_repository_index = "%{code_repository_index}"
   repository_group_id = "%{repository_group_id}"
@@ -167,7 +165,6 @@ resource "google_gemini_repository_group" "example" {
 func testAccGeminiRepositoryGroupIamPolicy_basic(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 data "google_iam_policy" "foo" {
-  provider = google-beta
   binding {
     role = "%{role}"
     members = ["user:admin@hashicorptest.com"]
@@ -175,7 +172,6 @@ data "google_iam_policy" "foo" {
 }
 
 resource "google_gemini_repository_group_iam_policy" "foo" {
-  provider = google-beta
   project = "%{project}"
   location = "%{location}"
   code_repository_index = "%{code_repository_index}"
@@ -184,7 +180,6 @@ resource "google_gemini_repository_group_iam_policy" "foo" {
 }
 
 data "google_gemini_repository_group_iam_policy" "foo" {
-  provider = google-beta
   project = "%{project}"
   location = "%{location}"
   code_repository_index = "%{code_repository_index}"
@@ -195,7 +190,6 @@ data "google_gemini_repository_group_iam_policy" "foo" {
 }
 
 resource "google_gemini_repository_group" "example" {
-  provider = google-beta
   location = "us-central1"
   code_repository_index = "%{code_repository_index}"
   repository_group_id = "%{repository_group_id}"
@@ -211,11 +205,9 @@ resource "google_gemini_repository_group" "example" {
 func testAccGeminiRepositoryGroupIamPolicy_emptyBinding(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 data "google_iam_policy" "foo" {
-  provider = google-beta
 }
 
 resource "google_gemini_repository_group_iam_policy" "foo" {
-  provider = google-beta
   project = "%{project}"
   location = "%{location}"
   code_repository_index = "%{code_repository_index}"
@@ -224,7 +216,6 @@ resource "google_gemini_repository_group_iam_policy" "foo" {
 }
 
 resource "google_gemini_repository_group" "example" {
-  provider = google-beta
   location = "us-central1"
   code_repository_index = "%{code_repository_index}"
   repository_group_id = "%{repository_group_id}"
@@ -240,7 +231,6 @@ resource "google_gemini_repository_group" "example" {
 func testAccGeminiRepositoryGroupIamBinding_basic(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_gemini_repository_group_iam_binding" "foo" {
-  provider = google-beta
   project = "%{project}"
   location = "%{location}"
   code_repository_index = "%{code_repository_index}"
@@ -250,7 +240,6 @@ resource "google_gemini_repository_group_iam_binding" "foo" {
 }
 
 resource "google_gemini_repository_group" "example" {
-  provider = google-beta
   location = "us-central1"
   code_repository_index = "%{code_repository_index}"
   repository_group_id = "%{repository_group_id}"
@@ -266,7 +255,6 @@ resource "google_gemini_repository_group" "example" {
 func testAccGeminiRepositoryGroupIamBinding_update(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_gemini_repository_group_iam_binding" "foo" {
-  provider = google-beta
   project = "%{project}"
   location = "%{location}"
   code_repository_index = "%{code_repository_index}"
@@ -276,7 +264,6 @@ resource "google_gemini_repository_group_iam_binding" "foo" {
 }
 
 resource "google_gemini_repository_group" "example" {
-  provider = google-beta
   location = "us-central1"
   code_repository_index = "%{code_repository_index}"
   repository_group_id = "%{repository_group_id}"

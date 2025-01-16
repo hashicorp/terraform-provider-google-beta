@@ -70,7 +70,7 @@ func ResourceGeminiRepositoryGroup() *schema.Resource {
 			"repositories": {
 				Type:        schema.TypeList,
 				Required:    true,
-				Description: `Required. List of repositories to group`,
+				Description: `Required. List of repositories to group.`,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"branch_pattern": {
@@ -97,7 +97,7 @@ or resource URL to be indexed.`,
 			"labels": {
 				Type:     schema.TypeMap,
 				Optional: true,
-				Description: `Optional. Labels as key value pairs
+				Description: `Optional. Labels as key value pairs.
 
 **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
 Please refer to the field 'effective_labels' for all of the labels present on the resource.`,
@@ -106,7 +106,7 @@ Please refer to the field 'effective_labels' for all of the labels present on th
 			"create_time": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: `Output only. Create time stamp`,
+				Description: `Output only. Create time stamp.`,
 			},
 			"effective_labels": {
 				Type:        schema.TypeMap,
@@ -117,7 +117,7 @@ Please refer to the field 'effective_labels' for all of the labels present on th
 			"name": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: `Immutable. Identifier. name of resource`,
+				Description: `Immutable. Identifier. Name of Repository Group.`,
 			},
 			"terraform_labels": {
 				Type:     schema.TypeMap,
@@ -129,7 +129,7 @@ Please refer to the field 'effective_labels' for all of the labels present on th
 			"update_time": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: `Output only. Update time stamp`,
+				Description: `Output only. Update time stamp.`,
 			},
 			"project": {
 				Type:     schema.TypeString,
