@@ -415,6 +415,7 @@ var generatedIAMDatasources = map[string]*schema.Resource{
 	"google_cloud_run_v2_job_iam_policy":                     tpgiamresource.DataSourceIamPolicy(cloudrunv2.CloudRunV2JobIamSchema, cloudrunv2.CloudRunV2JobIamUpdaterProducer),
 	"google_cloud_run_v2_service_iam_policy":                 tpgiamresource.DataSourceIamPolicy(cloudrunv2.CloudRunV2ServiceIamSchema, cloudrunv2.CloudRunV2ServiceIamUpdaterProducer),
 	"google_cloud_tasks_queue_iam_policy":                    tpgiamresource.DataSourceIamPolicy(cloudtasks.CloudTasksQueueIamSchema, cloudtasks.CloudTasksQueueIamUpdaterProducer),
+	"google_colab_runtime_template_iam_policy":               tpgiamresource.DataSourceIamPolicy(colab.ColabRuntimeTemplateIamSchema, colab.ColabRuntimeTemplateIamUpdaterProducer),
 	"google_compute_backend_bucket_iam_policy":               tpgiamresource.DataSourceIamPolicy(compute.ComputeBackendBucketIamSchema, compute.ComputeBackendBucketIamUpdaterProducer),
 	"google_compute_backend_service_iam_policy":              tpgiamresource.DataSourceIamPolicy(compute.ComputeBackendServiceIamSchema, compute.ComputeBackendServiceIamUpdaterProducer),
 	"google_compute_disk_iam_policy":                         tpgiamresource.DataSourceIamPolicy(compute.ComputeDiskIamSchema, compute.ComputeDiskIamUpdaterProducer),
@@ -522,8 +523,8 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 
 // Resources
 // Generated resources: 590
-// Generated IAM resources: 297
-// Total generated resources: 887
+// Generated IAM resources: 300
+// Total generated resources: 890
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -719,6 +720,9 @@ var generatedResources = map[string]*schema.Resource{
 	"google_cloud_tasks_queue_iam_policy":                                        tpgiamresource.ResourceIamPolicy(cloudtasks.CloudTasksQueueIamSchema, cloudtasks.CloudTasksQueueIamUpdaterProducer, cloudtasks.CloudTasksQueueIdParseFunc),
 	"google_colab_runtime":                                                       colab.ResourceColabRuntime(),
 	"google_colab_runtime_template":                                              colab.ResourceColabRuntimeTemplate(),
+	"google_colab_runtime_template_iam_binding":                                  tpgiamresource.ResourceIamBinding(colab.ColabRuntimeTemplateIamSchema, colab.ColabRuntimeTemplateIamUpdaterProducer, colab.ColabRuntimeTemplateIdParseFunc),
+	"google_colab_runtime_template_iam_member":                                   tpgiamresource.ResourceIamMember(colab.ColabRuntimeTemplateIamSchema, colab.ColabRuntimeTemplateIamUpdaterProducer, colab.ColabRuntimeTemplateIdParseFunc),
+	"google_colab_runtime_template_iam_policy":                                   tpgiamresource.ResourceIamPolicy(colab.ColabRuntimeTemplateIamSchema, colab.ColabRuntimeTemplateIamUpdaterProducer, colab.ColabRuntimeTemplateIdParseFunc),
 	"google_composer_user_workloads_config_map":                                  composer.ResourceComposerUserWorkloadsConfigMap(),
 	"google_compute_address":                                                     compute.ResourceComputeAddress(),
 	"google_compute_autoscaler":                                                  compute.ResourceComputeAutoscaler(),
