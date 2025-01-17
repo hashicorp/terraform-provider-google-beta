@@ -36,6 +36,7 @@ type ProviderModel struct {
 	AlloydbCustomEndpoint                  types.String `tfsdk:"alloydb_custom_endpoint"`
 	ApiGatewayCustomEndpoint               types.String `tfsdk:"api_gateway_custom_endpoint"`
 	ApigeeCustomEndpoint                   types.String `tfsdk:"apigee_custom_endpoint"`
+	ApihubCustomEndpoint                   types.String `tfsdk:"apihub_custom_endpoint"`
 	AppEngineCustomEndpoint                types.String `tfsdk:"app_engine_custom_endpoint"`
 	ApphubCustomEndpoint                   types.String `tfsdk:"apphub_custom_endpoint"`
 	ArtifactRegistryCustomEndpoint         types.String `tfsdk:"artifact_registry_custom_endpoint"`
