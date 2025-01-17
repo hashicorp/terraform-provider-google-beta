@@ -48,7 +48,7 @@ func TestAccComputeFirewallPolicyWithRules_computeFirewallPolicyWithRulesFullExa
 				Config: testAccComputeFirewallPolicyWithRules_computeFirewallPolicyWithRulesFullExample(context),
 			},
 			{
-				ResourceName:      "google_compute_firewall_policy_with_rules.firewall-policy-with-rules",
+				ResourceName:      "google_compute_firewall_policy_with_rules.primary",
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -62,71 +62,116 @@ data "google_project" "project" {
   provider = google-beta
 }
 
-resource "google_compute_firewall_policy_with_rules" "firewall-policy-with-rules" {
-  short_name = "tf-test-tf-fw-org-policy-with-rules%{random_suffix}"
+resource "google_compute_firewall_policy_with_rules" "primary" {
+  provider    = google-beta
+  short_name  = "tf-test-fw-policy%{random_suffix}"
   description = "Terraform test"
-  parent = "organizations/%{org_id}"
-  provider = google-beta
+  parent      = "organizations/%{org_id}"
 
   rule {
-    description    = "tcp rule"
-    priority       = 1000
-    enable_logging = true
-    action         = "allow"
-    direction      = "EGRESS"
+    description      = "tcp rule"
+    priority         = 1000
+    enable_logging   = true
+    action           = "allow"
+    direction        = "EGRESS"
+    target_resources = ["https://www.googleapis.com/compute/beta/projects/${data.google_project.project.name}/global/networks/default"]
+
     match {
+      dest_ip_ranges            = ["11.100.0.1/32"]
+      dest_fqdns                = ["www.yyy.com", "www.zzz.com"]
+      dest_region_codes         = ["HK", "IN"]
+      dest_threat_intelligences = ["iplist-search-engines-crawlers", "iplist-tor-exit-nodes"]
+      dest_address_groups       = [google_network_security_address_group.address_group_1.id]
+
       layer4_config {
         ip_protocol = "tcp"
         ports       = [8080, 7070]
       }
-      dest_ip_ranges = ["11.100.0.1/32"]
-      dest_fqdns = ["www.yyy.com", "www.zzz.com"]
-      dest_region_codes = ["HK", "IN"]
-      dest_threat_intelligences = ["iplist-search-engines-crawlers", "iplist-tor-exit-nodes"]
-      dest_address_groups = [google_network_security_address_group.address_group_1.id]
     }
-    target_resources = ["https://www.googleapis.com/compute/beta/projects/${data.google_project.project.name}/global/networks/default"]
   }
+
   rule {
     description    = "udp rule"
     priority       = 2000
     enable_logging = false
     action         = "deny"
     direction      = "INGRESS"
+    disabled       = true
+
     match {
+      src_ip_ranges            = ["0.0.0.0/0"]
+      src_fqdns                = ["www.abc.com", "www.def.com"]
+      src_region_codes         = ["US", "CA"]
+      src_threat_intelligences = ["iplist-known-malicious-ips", "iplist-public-clouds"]
+      src_address_groups       = [google_network_security_address_group.address_group_1.id]
+
       layer4_config {
         ip_protocol = "udp"
       }
-      src_ip_ranges = ["0.0.0.0/0"]
-      src_fqdns = ["www.abc.com", "www.def.com"]
-      src_region_codes = ["US", "CA"]
-      src_threat_intelligences = ["iplist-known-malicious-ips", "iplist-public-clouds"]
-      src_address_groups = [google_network_security_address_group.address_group_1.id]
     }
-    disabled = true
   }
+
   rule {
-    description    = "security profile group rule"
-    rule_name      = "tcp rule"
-    priority       = 3000
-    enable_logging = false
-    action         = "apply_security_profile_group"
-    direction      = "INGRESS"
+    description             = "security profile group rule"
+    rule_name               = "tcp rule"
+    priority                = 3000
+    enable_logging          = false
+    action                  = "apply_security_profile_group"
+    direction               = "INGRESS"
+    target_service_accounts = ["test@google.com"]
+    security_profile_group  = "//networksecurity.googleapis.com/${google_network_security_security_profile_group.security_profile_group_1.id}"
+    tls_inspect             = true
+
     match {
+      src_ip_ranges = ["0.0.0.0/0"]
+
       layer4_config {
         ip_protocol = "tcp"
       }
-      src_ip_ranges = ["0.0.0.0/0"]
     }
-    target_service_accounts = ["test@google.com"]
-    security_profile_group = "//networksecurity.googleapis.com/${google_network_security_security_profile_group.security_profile_group_1.id}"
-    tls_inspect = true
+  }
+
+  rule {
+    description    = "network scope rule 1"
+    rule_name      = "network scope 1"
+    priority       = 4000
+    enable_logging = false
+    action         = "allow"
+    direction      = "INGRESS"
+    match {
+      src_ip_ranges     = ["11.100.0.1/32"]
+      src_network_scope = "VPC_NETWORKS"
+      src_networks      = [google_compute_network.network.id]
+
+      layer4_config {
+        ip_protocol = "tcp"
+        ports       = [8080]
+      }
+    }
+  }
+
+  rule {
+    description    = "network scope rule 2"
+    rule_name      = "network scope 2"
+    priority       = 5000
+    enable_logging = false
+    action         = "allow"
+    direction      = "EGRESS"
+    match {
+      dest_ip_ranges     = ["0.0.0.0/0"]
+      dest_network_scope = "INTERNET"
+
+      layer4_config {
+        ip_protocol = "tcp"
+        ports       = [8080]
+      }
+    }
   }
 }
 
 resource "google_network_security_address_group" "address_group_1" {
   provider    = google-beta
-  name        = "tf-test-tf-address-group%{random_suffix}"
+  name        = "tf-test-address-group%{random_suffix}"
   parent      = "organizations/%{org_id}"
   description = "Global address group"
   location    = "global"
@@ -137,7 +182,7 @@ resource "google_network_security_address_group" "address_group_1" {
 
 resource "google_network_security_security_profile_group" "security_profile_group_1" {
   provider                  = google-beta
-  name                      = "tf-test-tf-security-profile-group%{random_suffix}"
+  name                      = "spg%{random_suffix}"
   parent                    = "organizations/%{org_id}"
   description               = "my description"
   threat_prevention_profile = google_network_security_security_profile.security_profile_1.id
@@ -145,10 +190,16 @@ resource "google_network_security_security_profile_group" "security_profile_grou
 
 resource "google_network_security_security_profile" "security_profile_1" {
   provider    = google-beta
-  name        = "tf-test-tf-security-profile%{random_suffix}"
+  name        = "sp%{random_suffix}"
   type        = "THREAT_PREVENTION"
   parent      = "organizations/%{org_id}"
   location    = "global"
+}
+
+resource "google_compute_network" "network" {
+  provider                = google-beta
+  name                    = "network%{random_suffix}"
+  auto_create_subnetworks = false
 }
 `, context)
 }

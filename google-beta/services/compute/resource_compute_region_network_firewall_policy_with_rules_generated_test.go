@@ -48,7 +48,7 @@ func TestAccComputeRegionNetworkFirewallPolicyWithRules_computeRegionNetworkFire
 				Config: testAccComputeRegionNetworkFirewallPolicyWithRules_computeRegionNetworkFirewallPolicyWithRulesFullExample(context),
 			},
 			{
-				ResourceName:            "google_compute_region_network_firewall_policy_with_rules.region-network-firewall-policy-with-rules",
+				ResourceName:            "google_compute_region_network_firewall_policy_with_rules.primary",
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"region"},
@@ -63,11 +63,11 @@ data "google_project" "project" {
   provider = google-beta
 }
 
-resource "google_compute_region_network_firewall_policy_with_rules" "region-network-firewall-policy-with-rules" {
-  name        = "tf-test-tf-region-fw-policy-with-rules%{random_suffix}"
+resource "google_compute_region_network_firewall_policy_with_rules" "primary" {
+  provider    = google-beta
+  name        = "tf-test-fw-policy%{random_suffix}"
   region      = "us-west2"
   description = "Terraform test"
-  provider    = google-beta 
 
   rule {
     description    = "tcp rule"
@@ -75,48 +75,94 @@ resource "google_compute_region_network_firewall_policy_with_rules" "region-netw
     enable_logging = true
     action         = "allow"
     direction      = "EGRESS"
+
     match {
+      dest_ip_ranges            = ["11.100.0.1/32"]
+      dest_fqdns                = ["www.yyy.com", "www.zzz.com"]
+      dest_region_codes         = ["HK", "IN"]
+      dest_threat_intelligences = ["iplist-search-engines-crawlers", "iplist-tor-exit-nodes"]
+      dest_address_groups       = [google_network_security_address_group.address_group_1.id]
+
       layer4_config {
         ip_protocol = "tcp"
         ports       = [8080, 7070]
       }
-      dest_ip_ranges = ["11.100.0.1/32"]
-      dest_fqdns = ["www.yyy.com", "www.zzz.com"]
-      dest_region_codes = ["HK", "IN"]
-      dest_threat_intelligences = ["iplist-search-engines-crawlers", "iplist-tor-exit-nodes"]
-      dest_address_groups = [google_network_security_address_group.address_group_1.id]
     }
+
     target_secure_tag {
       name = google_tags_tag_value.secure_tag_value_1.id
     }
   }
+
   rule {
-      description    = "udp rule"
-      rule_name      = "test-rule"
-      priority       = 2000
-      enable_logging = false
-      action         = "deny"
-      direction      = "INGRESS"
-      match {
-        layer4_config {
-          ip_protocol = "udp"
-        }
-        src_ip_ranges = ["0.0.0.0/0"]
-        src_fqdns = ["www.abc.com", "www.def.com"]
-        src_region_codes = ["US", "CA"]
-        src_threat_intelligences = ["iplist-known-malicious-ips", "iplist-public-clouds"]
-        src_address_groups = [google_network_security_address_group.address_group_1.id]
-        src_secure_tag {
-          name = google_tags_tag_value.secure_tag_value_1.id
-        }
+    description    = "udp rule"
+    rule_name      = "test-rule"
+    priority       = 2000
+    enable_logging = false
+    action         = "deny"
+    direction      = "INGRESS"
+    disabled       = true
+
+    match {
+      src_ip_ranges            = ["0.0.0.0/0"]
+      src_fqdns                = ["www.abc.com", "www.def.com"]
+      src_region_codes         = ["US", "CA"]
+      src_threat_intelligences = ["iplist-known-malicious-ips", "iplist-public-clouds"]
+      src_address_groups       = [google_network_security_address_group.address_group_1.id]
+
+      src_secure_tag {
+        name = google_tags_tag_value.secure_tag_value_1.id
       }
-      disabled = true
+
+      layer4_config {
+        ip_protocol = "udp"
+      }
     }
+  }
+
+  rule {
+    description    = "network scope rule 1"
+    rule_name      = "network scope 1"
+    priority       = 4000
+    enable_logging = false
+    action         = "allow"
+    direction      = "INGRESS"
+
+    match {
+      src_ip_ranges     = ["11.100.0.1/32"]
+      src_network_scope = "VPC_NETWORKS"
+      src_networks      = [google_compute_network.network.id]
+
+      layer4_config {
+        ip_protocol = "tcp"
+        ports       = [8080]
+      }
+    }
+  }
+
+  rule {
+    description    = "network scope rule 2"
+    rule_name      = "network scope 2"
+    priority       = 5000
+    enable_logging = false
+    action         = "allow"
+    direction      = "EGRESS"
+
+    match {
+      dest_ip_ranges     = ["0.0.0.0/0"]
+      dest_network_scope = "NON_INTERNET"
+
+      layer4_config {
+        ip_protocol = "tcp"
+        ports       = [8080]
+      }
+    }
+  }
 }
 
 resource "google_network_security_address_group" "address_group_1" {
-  provider  = google-beta 
-  name        = "tf-test-tf-address-group%{random_suffix}"
+  provider    = google-beta 
+  name        = "tf-test-address-group%{random_suffix}"
   parent      = data.google_project.project.id
   description = "Regional address group"
   location    = "us-west2"
@@ -130,7 +176,7 @@ resource "google_tags_tag_key" "secure_tag_key_1" {
   description = "Tag key"
   parent      = data.google_project.project.id
   purpose     = "GCE_FIREWALL"
-  short_name  = "tf-test-tf-tag-key%{random_suffix}"
+  short_name  = "tf-test-tag-key%{random_suffix}"
   purpose_data = {
     network = "${data.google_project.project.name}/default"
   }
@@ -140,7 +186,13 @@ resource "google_tags_tag_value" "secure_tag_value_1" {
   provider    = google-beta
   description = "Tag value"
   parent      = google_tags_tag_key.secure_tag_key_1.id
-  short_name  = "tf-test-tf-tag-value%{random_suffix}"
+  short_name  = "tf-test-tag-value%{random_suffix}"
+}
+
+resource "google_compute_network" "network" {
+  provider                = google-beta
+  name                    = "network%{random_suffix}"
+  auto_create_subnetworks = false
 }
 `, context)
 }
