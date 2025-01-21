@@ -125,6 +125,72 @@ func TestAccComputeGlobalForwardingRule_labels(t *testing.T) {
 	})
 }
 
+func TestAccComputeGlobalForwardingRule_allApisLabels(t *testing.T) {
+	t.Parallel()
+
+	fr := fmt.Sprintf("frtest%s", acctest.RandString(t, 10))
+	address := fmt.Sprintf("forwardrule-test-%s", acctest.RandString(t, 10))
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckComputeGlobalForwardingRuleDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeGlobalForwardingRule_allApisLabels(fr, address),
+			},
+			{
+				ResourceName:            "google_compute_global_forwarding_rule.forwarding_rule",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"port_range", "target", "labels", "terraform_labels"},
+			},
+			{
+				Config: testAccComputeGlobalForwardingRule_allApisLabelsUpdated(fr, address),
+			},
+			{
+				ResourceName:            "google_compute_global_forwarding_rule.forwarding_rule",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"port_range", "target", "labels", "terraform_labels"},
+			},
+		},
+	})
+}
+
+func TestAccComputeGlobalForwardingRule_vpcscLabels(t *testing.T) {
+	t.Parallel()
+
+	fr := fmt.Sprintf("frtest%s", acctest.RandString(t, 10))
+	address := fmt.Sprintf("forwardrule-test-%s", acctest.RandString(t, 10))
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckComputeGlobalForwardingRuleDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeGlobalForwardingRule_vpcscLabels(fr, address),
+			},
+			{
+				ResourceName:            "google_compute_global_forwarding_rule.forwarding_rule",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"port_range", "target", "labels", "terraform_labels"},
+			},
+			{
+				Config: testAccComputeGlobalForwardingRule_vpcscLabelsUpdated(fr, address),
+			},
+			{
+				ResourceName:            "google_compute_global_forwarding_rule.forwarding_rule",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"port_range", "labels", "terraform_labels"},
+			},
+		},
+	})
+}
+
 func TestAccComputeGlobalForwardingRule_internalLoadBalancing(t *testing.T) {
 	t.Parallel()
 
@@ -467,6 +533,106 @@ resource "google_compute_url_map" "urlmap" {
   }
 }
 `, fr, proxy, backend, hc, urlmap)
+}
+
+func testAccComputeGlobalForwardingRule_allApisLabels(fr, address string) string {
+	return fmt.Sprintf(`
+resource "google_compute_global_forwarding_rule" "forwarding_rule" {
+  name                  = "%s"
+  network               = "default"
+  target                = "all-apis"
+  ip_address            = google_compute_global_address.default.id
+  load_balancing_scheme = ""
+  labels = {
+    my-label          = "a-value"
+    a-different-label = "my-second-label-value"
+  }
+}
+
+resource "google_compute_global_address" "default" {
+  name          = "%s"
+  address_type  = "INTERNAL"
+  purpose       = "PRIVATE_SERVICE_CONNECT"
+  network       = "default"
+  address       = "100.100.100.105"
+}
+
+`, fr, address)
+}
+
+func testAccComputeGlobalForwardingRule_allApisLabelsUpdated(fr, address string) string {
+	return fmt.Sprintf(`
+resource "google_compute_global_forwarding_rule" "forwarding_rule" {
+  name                  = "%s"
+  network               = "default"
+  target                = "all-apis"
+  ip_address            = google_compute_global_address.default.id
+  load_balancing_scheme = ""
+  labels = {
+    my-label          = "a-value"
+    a-different-label = "my-third-label-value"
+  }
+}
+
+resource "google_compute_global_address" "default" {
+  name          = "%s"
+  address_type  = "INTERNAL"
+  purpose       = "PRIVATE_SERVICE_CONNECT"
+  network       = "default"
+  address       = "100.100.100.105"
+}
+
+`, fr, address)
+}
+
+func testAccComputeGlobalForwardingRule_vpcscLabels(fr, address string) string {
+	return fmt.Sprintf(`
+resource "google_compute_global_forwarding_rule" "forwarding_rule" {
+  name                  = "%s"
+  network               = "default"
+  target                = "vpc-sc"
+  ip_address            = google_compute_global_address.default.id
+  load_balancing_scheme = ""
+  labels = {
+    my-label          = "a-value"
+    a-different-label = "my-second-label-value"
+  }
+}
+
+resource "google_compute_global_address" "default" {
+  name          = "%s"
+  address_type  = "INTERNAL"
+  purpose       = "PRIVATE_SERVICE_CONNECT"
+  network       = "default"
+  address       = "100.100.100.106"
+}
+
+`, fr, address)
+}
+
+func testAccComputeGlobalForwardingRule_vpcscLabelsUpdated(fr, address string) string {
+	return fmt.Sprintf(`
+resource "google_compute_global_forwarding_rule" "forwarding_rule" {
+  name                  = "%s"
+  network               = "default"
+  target                = "vpc-sc"
+  ip_address            = google_compute_global_address.default.id
+  load_balancing_scheme = ""
+  labels = {
+    my-label          = "a-value"
+    a-different-label = "my-third-label-value"
+  }
+}
+
+resource "google_compute_global_address" "default" {
+  name          = "%s"
+  address_type  = "INTERNAL"
+  purpose       = "PRIVATE_SERVICE_CONNECT"
+  network       = "default"
+  address       = "100.100.100.106"
+}
+
+`, fr, address)
 }
 
 func testAccComputeGlobalForwardingRule_ipv6(fr, proxy, backend, hc, urlmap string) string {
