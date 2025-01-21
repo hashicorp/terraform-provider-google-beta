@@ -289,6 +289,7 @@ var handwrittenDatasources = map[string]*schema.Resource{
 	"google_kms_key_rings":                                 kms.DataSourceGoogleKmsKeyRings(),
 	"google_kms_key_handle":                                kms.DataSourceGoogleKmsKeyHandle(),
 	"google_kms_autokey_config":                            kms.DataSourceGoogleKmsAutokeyConfig(),
+	"google_kms_key_handles":                               kms.DataSourceGoogleKmsKeyHandles(),
 	"google_kms_secret":                                    kms.DataSourceGoogleKmsSecret(),
 	"google_kms_secret_ciphertext":                         kms.DataSourceGoogleKmsSecretCiphertext(),
 	"google_kms_secret_asymmetric":                         kms.DataSourceGoogleKmsSecretAsymmetric(),
