@@ -3,3 +3,18 @@ generation_type: 'mmv1'
 api_service_name: 'chronicle.googleapis.com'
 api_version: 'v1beta'
 api_resource_type_kind: 'Retrohunt'
+fields:
+  - field: 'execution_interval.end_time'
+  - field: 'execution_interval.start_time'
+  - field: 'instance'
+    provider_only: true
+  - field: 'location'
+    provider_only: true
+  - field: 'name'
+  - field: 'process_interval.end_time'
+  - field: 'process_interval.start_time'
+  - field: 'progress_percentage'
+  - field: 'retrohunt'
+  - field: 'rule'
+    provider_only: true
+  - field: 'state'

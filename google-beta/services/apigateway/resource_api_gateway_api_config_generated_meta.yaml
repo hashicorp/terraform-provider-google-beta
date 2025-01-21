@@ -3,3 +3,25 @@ generation_type: 'mmv1'
 api_service_name: 'apigateway.googleapis.com'
 api_version: 'v1beta'
 api_resource_type_kind: 'ApiConfig'
+fields:
+  - field: 'api'
+    provider_only: true
+  - field: 'api_config_id'
+    provider_only: true
+  - field: 'display_name'
+  - field: 'effective_labels'
+    provider_only: true
+  - field: 'gateway_config.backend_config.google_service_account'
+  - field: 'grpc_services.file_descriptor_set.contents'
+  - field: 'grpc_services.file_descriptor_set.path'
+  - field: 'grpc_services.source.contents'
+  - field: 'grpc_services.source.path'
+  - field: 'labels'
+  - field: 'managed_service_configs.contents'
+  - field: 'managed_service_configs.path'
+  - field: 'name'
+  - field: 'openapi_documents.document.contents'
+  - field: 'openapi_documents.document.path'
+  - field: 'service_config_id'
+  - field: 'terraform_labels'
+    provider_only: true

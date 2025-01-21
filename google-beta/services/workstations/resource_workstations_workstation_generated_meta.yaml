@@ -3,3 +3,28 @@ generation_type: 'mmv1'
 api_service_name: 'workstations.googleapis.com'
 api_version: 'v1beta'
 api_resource_type_kind: 'Workstation'
+fields:
+  - field: 'annotations'
+  - field: 'create_time'
+  - field: 'display_name'
+  - field: 'effective_annotations'
+    provider_only: true
+  - field: 'effective_labels'
+    provider_only: true
+  - field: 'env'
+  - field: 'host'
+  - field: 'labels'
+  - field: 'location'
+    provider_only: true
+  - field: 'name'
+  - field: 'source_workstation'
+  - field: 'state'
+  - field: 'terraform_labels'
+    provider_only: true
+  - field: 'uid'
+  - field: 'workstation_cluster_id'
+    provider_only: true
+  - field: 'workstation_config_id'
+    provider_only: true
+  - field: 'workstation_id'
+    provider_only: true

@@ -3,3 +3,33 @@ generation_type: 'mmv1'
 api_service_name: 'workstations.googleapis.com'
 api_version: 'v1beta'
 api_resource_type_kind: 'WorkstationCluster'
+fields:
+  - field: 'annotations'
+  - field: 'conditions.code'
+  - field: 'conditions.details'
+  - field: 'conditions.message'
+  - field: 'control_plane_ip'
+  - field: 'create_time'
+  - field: 'degraded'
+  - field: 'display_name'
+  - field: 'domain_config.domain'
+  - field: 'effective_annotations'
+    provider_only: true
+  - field: 'effective_labels'
+    provider_only: true
+  - field: 'etag'
+  - field: 'labels'
+  - field: 'location'
+    provider_only: true
+  - field: 'name'
+  - field: 'network'
+  - field: 'private_cluster_config.allowed_projects'
+  - field: 'private_cluster_config.cluster_hostname'
+  - field: 'private_cluster_config.enable_private_endpoint'
+  - field: 'private_cluster_config.service_attachment_uri'
+  - field: 'subnetwork'
+  - field: 'terraform_labels'
+    provider_only: true
+  - field: 'uid'
+  - field: 'workstation_cluster_id'
+    provider_only: true

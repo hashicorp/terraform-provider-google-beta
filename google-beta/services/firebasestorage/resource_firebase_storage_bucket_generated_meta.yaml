@@ -3,3 +3,7 @@ generation_type: 'mmv1'
 api_service_name: 'firebasestorage.googleapis.com'
 api_version: 'v1beta'
 api_resource_type_kind: 'Bucket'
+fields:
+  - field: 'bucket_id'
+    provider_only: true
+  - field: 'name'

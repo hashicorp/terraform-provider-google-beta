@@ -3,3 +3,19 @@ generation_type: 'mmv1'
 api_service_name: 'networkservices.googleapis.com'
 api_version: 'v1'
 api_resource_type_kind: 'ServiceLbPolicy'
+fields:
+  - field: 'auto_capacity_drain.enable'
+  - field: 'create_time'
+  - field: 'description'
+  - field: 'effective_labels'
+    provider_only: true
+  - field: 'failover_config.failover_health_threshold'
+  - field: 'labels'
+  - field: 'load_balancing_algorithm'
+  - field: 'location'
+    provider_only: true
+  - field: 'name'
+    provider_only: true
+  - field: 'terraform_labels'
+    provider_only: true
+  - field: 'update_time'

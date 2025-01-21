@@ -3,3 +3,17 @@ generation_type: 'mmv1'
 api_service_name: 'firebasehosting.googleapis.com'
 api_version: 'v1beta1'
 api_resource_type_kind: 'Channel'
+fields:
+  - field: 'channel_id'
+    provider_only: true
+  - field: 'effective_labels'
+    provider_only: true
+  - field: 'expire_time'
+  - field: 'labels'
+  - field: 'name'
+  - field: 'retained_release_count'
+  - field: 'site_id'
+    provider_only: true
+  - field: 'terraform_labels'
+    provider_only: true
+  - field: 'ttl'

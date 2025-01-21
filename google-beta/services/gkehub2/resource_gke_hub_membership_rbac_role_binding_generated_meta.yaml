@@ -3,3 +3,18 @@ generation_type: 'mmv1'
 api_service_name: 'gkehub.googleapis.com'
 api_version: 'v1beta'
 api_resource_type_kind: 'RBACRoleBinding'
+fields:
+  - field: 'create_time'
+  - field: 'delete_time'
+  - field: 'location'
+    provider_only: true
+  - field: 'membership_id'
+    provider_only: true
+  - field: 'membership_rbac_role_binding_id'
+    provider_only: true
+  - field: 'name'
+  - field: 'role.predefined_role'
+  - field: 'state.code'
+  - field: 'uid'
+  - field: 'update_time'
+  - field: 'user'
