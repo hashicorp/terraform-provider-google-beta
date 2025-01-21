@@ -3,3 +3,9 @@ generation_type: 'mmv1'
 api_service_name: 'compute.googleapis.com'
 api_version: 'beta'
 api_resource_type_kind: 'SecurityPolicy'
+fields:
+  - field: 'attachment_id'
+  - field: 'display_name'
+  - field: 'name'
+  - field: 'policy_id'
+    provider_only: true

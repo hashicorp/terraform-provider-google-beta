@@ -3,3 +3,9 @@ generation_type: 'mmv1'
 api_service_name: 'cloudquotas.googleapis.com'
 api_version: 'v1beta'
 api_resource_type_kind: 'QuotaAdjusterSettings'
+fields:
+  - field: 'effective_container'
+  - field: 'effective_enablement'
+  - field: 'enablement'
+  - field: 'parent'
+    provider_only: true

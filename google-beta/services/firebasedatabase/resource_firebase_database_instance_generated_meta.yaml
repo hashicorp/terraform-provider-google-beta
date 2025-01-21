@@ -3,3 +3,14 @@ generation_type: 'mmv1'
 api_service_name: 'firebasedatabase.googleapis.com'
 api_version: 'v1beta'
 api_resource_type_kind: 'Instance'
+fields:
+  - field: 'database_url'
+  - field: 'desired_state'
+    provider_only: true
+  - field: 'instance_id'
+    provider_only: true
+  - field: 'name'
+  - field: 'region'
+    provider_only: true
+  - field: 'state'
+  - field: 'type'

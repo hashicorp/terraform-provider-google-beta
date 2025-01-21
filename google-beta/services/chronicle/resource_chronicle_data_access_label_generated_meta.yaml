@@ -3,3 +3,18 @@ generation_type: 'mmv1'
 api_service_name: 'chronicle.googleapis.com'
 api_version: 'v1beta'
 api_resource_type_kind: 'DataAccessLabel'
+fields:
+  - field: 'author'
+  - field: 'create_time'
+  - field: 'data_access_label_id'
+    provider_only: true
+  - field: 'description'
+  - field: 'display_name'
+  - field: 'instance'
+    provider_only: true
+  - field: 'last_editor'
+  - field: 'location'
+    provider_only: true
+  - field: 'name'
+  - field: 'udm_query'
+  - field: 'update_time'

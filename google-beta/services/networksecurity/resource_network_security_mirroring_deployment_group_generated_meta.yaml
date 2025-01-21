@@ -3,3 +3,20 @@ generation_type: 'mmv1'
 api_service_name: 'networksecurity.googleapis.com'
 api_version: 'v1beta1'
 api_resource_type_kind: 'MirroringDeploymentGroup'
+fields:
+  - field: 'connected_endpoint_groups.name'
+  - field: 'create_time'
+  - field: 'effective_labels'
+    provider_only: true
+  - field: 'labels'
+  - field: 'location'
+    provider_only: true
+  - field: 'mirroring_deployment_group_id'
+    provider_only: true
+  - field: 'name'
+  - field: 'network'
+  - field: 'reconciling'
+  - field: 'state'
+  - field: 'terraform_labels'
+    provider_only: true
+  - field: 'update_time'

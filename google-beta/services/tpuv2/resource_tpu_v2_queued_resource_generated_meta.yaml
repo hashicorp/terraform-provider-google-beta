@@ -3,3 +3,12 @@ generation_type: 'mmv1'
 api_service_name: 'tpu.googleapis.com'
 api_version: 'v2'
 api_resource_type_kind: 'QueuedResource'
+fields:
+  - field: 'name'
+  - field: 'tpu.node_spec.node.accelerator_type'
+  - field: 'tpu.node_spec.node.description'
+  - field: 'tpu.node_spec.node.runtime_version'
+  - field: 'tpu.node_spec.node_id'
+  - field: 'tpu.node_spec.parent'
+  - field: 'zone'
+    provider_only: true
