@@ -83,9 +83,14 @@ resource "google_compute_machine_image" "image" {
 
 func TestAccComputeMachineImage_computeMachineImageKmsExample(t *testing.T) {
 	t.Parallel()
+	acctest.BootstrapIamMembers(t, []acctest.IamMember{
+		{
+			Member: "serviceAccount:service-{project_number}@compute-system.iam.gserviceaccount.com",
+			Role:   "roles/cloudkms.cryptoKeyEncrypterDecrypter",
+		},
+	})
 
 	context := map[string]interface{}{
-		"policyChanged": acctest.BootstrapPSARole(t, "service-", "compute-system", "roles/cloudkms.cryptoKeyEncrypterDecrypter"),
 		"random_suffix": acctest.RandString(t, 10),
 	}
 
