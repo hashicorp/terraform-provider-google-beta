@@ -76,7 +76,6 @@ func TestAccParameterManagerRegionalRegionalParameterVersion_regionalParameterVe
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"data":          "./test-fixtures/parameter_data_json_format.json",
 		"random_suffix": acctest.RandString(t, 10),
 	}
 
@@ -111,7 +110,10 @@ resource "google_parameter_manager_regional_parameter_version" "regional-paramet
   provider = google-beta
   parameter = google_parameter_manager_regional_parameter.regional-parameter-basic.id
   parameter_version_id = "tf_test_regional_parameter_version%{random_suffix}"
-  parameter_data = file("%{data}")
+  parameter_data = jsonencode({
+    "key1": "val1",
+    "key2": "val2"
+  })
 }
 `, context)
 }
@@ -120,7 +122,6 @@ func TestAccParameterManagerRegionalRegionalParameterVersion_regionalParameterVe
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"data":          "./test-fixtures/parameter_data_yaml_format.yaml",
 		"random_suffix": acctest.RandString(t, 10),
 	}
 
@@ -155,7 +156,10 @@ resource "google_parameter_manager_regional_parameter_version" "regional-paramet
   provider = google-beta
   parameter = google_parameter_manager_regional_parameter.regional-parameter-basic.id
   parameter_version_id = "tf_test_regional_parameter_version%{random_suffix}"
-  parameter_data = file("%{data}")
+  parameter_data = yamlencode({
+    "key1": "val1",
+    "key2": "val2"
+  })
 }
 `, context)
 }
