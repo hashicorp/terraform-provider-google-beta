@@ -524,9 +524,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 591
+// Generated resources: 592
 // Generated IAM resources: 300
-// Total generated resources: 891
+// Total generated resources: 892
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -1231,6 +1231,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_os_login_ssh_public_key":                                             oslogin.ResourceOSLoginSSHPublicKey(),
 	"google_parallelstore_instance":                                              parallelstore.ResourceParallelstoreInstance(),
 	"google_parameter_manager_parameter":                                         parametermanager.ResourceParameterManagerParameter(),
+	"google_parameter_manager_parameter_version":                                 parametermanager.ResourceParameterManagerParameterVersion(),
 	"google_parameter_manager_regional_parameter":                                parametermanagerregional.ResourceParameterManagerRegionalRegionalParameter(),
 	"google_parameter_manager_regional_parameter_version":                        parametermanagerregional.ResourceParameterManagerRegionalRegionalParameterVersion(),
 	"google_privateca_ca_pool":                                                   privateca.ResourcePrivatecaCaPool(),
