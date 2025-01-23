@@ -658,7 +658,7 @@ var DefaultBasePaths = map[string]string{
 	StorageTransferBasePathKey:          "https://storagetransfer.googleapis.com/v1/",
 	TagsBasePathKey:                     "https://cloudresourcemanager.googleapis.com/v3/",
 	TPUBasePathKey:                      "https://tpu.googleapis.com/v1/",
-	TpuV2BasePathKey:                    "https://tpu.googleapis.com/v2/",
+	TpuV2BasePathKey:                    "https://tpu.googleapis.com/v2alpha1/",
 	TranscoderBasePathKey:               "https://transcoder.googleapis.com/v1/",
 	VertexAIBasePathKey:                 "https://{{region}}-aiplatform.googleapis.com/v1beta1/",
 	VmwareengineBasePathKey:             "https://vmwareengine.googleapis.com/v1/",
