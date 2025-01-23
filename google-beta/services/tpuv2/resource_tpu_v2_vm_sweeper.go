@@ -64,7 +64,7 @@ func testSweepTpuV2Vm(region string) error {
 		},
 	}
 
-	listTemplate := strings.Split("https://tpu.googleapis.com/v2/projects/{{project}}/locations/{{zone}}/nodes", "?")[0]
+	listTemplate := strings.Split("https://tpu.googleapis.com/v2alpha1/projects/{{project}}/locations/{{zone}}/nodes", "?")[0]
 	listUrl, err := tpgresource.ReplaceVars(d, config, listTemplate)
 	if err != nil {
 		log.Printf("[INFO][SWEEPER_LOG] error preparing sweeper list url: %s", err)
@@ -108,7 +108,7 @@ func testSweepTpuV2Vm(region string) error {
 			continue
 		}
 
-		deleteTemplate := "https://tpu.googleapis.com/v2/projects/{{project}}/locations/{{zone}}/nodes/{{name}}"
+		deleteTemplate := "https://tpu.googleapis.com/v2alpha1/projects/{{project}}/locations/{{zone}}/nodes/{{name}}"
 		deleteUrl, err := tpgresource.ReplaceVars(d, config, deleteTemplate)
 		if err != nil {
 			log.Printf("[INFO][SWEEPER_LOG] error preparing delete url: %s", err)
