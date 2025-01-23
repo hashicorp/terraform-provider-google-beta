@@ -131,7 +131,7 @@ with varying MTUs.`,
 				Description: `A full or partial URL of the network profile to apply to this network.
 This field can be set only at resource creation time. For example, the
 following are valid URLs:
-* https://www.googleapis.com/compute/beta/projects/{projectId}/global/networkProfiles/{network_profile_name}
+* https://www.googleapis.com/compute/v1/projects/{projectId}/global/networkProfiles/{network_profile_name}
 * projects/{projectId}/global/networkProfiles/{network_profile_name}`,
 			},
 			"bgp_always_compare_med": {
