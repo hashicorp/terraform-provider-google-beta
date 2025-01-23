@@ -174,6 +174,6 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/sweeper"
 )
 
-func TestSweepers(t *testing.T) {
+func TestAccExecuteSweepers(t *testing.T) {
 	sweeper.ExecuteSweepers(t)
 }
