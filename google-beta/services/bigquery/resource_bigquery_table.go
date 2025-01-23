@@ -97,7 +97,11 @@ func jsonCompareWithMapKeyOverride(key string, a, b interface{}, compareMapKeyVa
 		for subKey := range objectB {
 			unionOfKeys[subKey] = true
 		}
-
+		// Disregard "type" and "fields" if "foreignTypeDefinition" is present since they may have been modified by the server.
+		if _, ok := unionOfKeys["foreignTypeDefinition"]; ok {
+			delete(unionOfKeys, "type")
+			delete(unionOfKeys, "fields")
+		}
 		for subKey := range unionOfKeys {
 			eq := compareMapKeyVal(subKey, objectA, objectB)
 			if !eq {
@@ -324,6 +328,11 @@ func resourceBigQueryTableSchemaIsChangeable(old, new interface{}, isExternalTab
 		}
 		for key := range objectNew {
 			unionOfKeys[key] = true
+		}
+		// Disregard "type" and "fields" if "foreignTypeDefinition" is present since they may have been modified by the server.
+		if _, ok := unionOfKeys["foreignTypeDefinition"]; ok {
+			delete(unionOfKeys, "type")
+			delete(unionOfKeys, "fields")
 		}
 		for key := range unionOfKeys {
 			valOld := objectOld[key]
@@ -994,6 +1003,24 @@ func ResourceBigQueryTable() *schema.Resource {
 				DiffSuppressFunc: bigQueryTableSchemaDiffSuppress,
 				Description:      `A JSON schema for the table.`,
 			},
+			// SchemaForeignTypeInfo: [Optional] Specifies metadata of the foreign data type definition in field schema.
+			"schema_foreign_type_info": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				ForceNew:    true,
+				MaxItems:    1,
+				Description: "Specifies metadata of the foreign data type definition in field schema.",
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						// TypeSystem: [Required] Specifies the system which defines the foreign data type.
+						"type_system": {
+							Type:        schema.TypeString,
+							Required:    true,
+							Description: `Specifies the system which defines the foreign data type.`,
+						},
+					},
+				},
+			},
 			// View: [Optional] If specified, configures this table as a view.
 			"view": {
 				Type:        schema.TypeList,
@@ -1626,7 +1653,11 @@ func resourceTable(d *schema.ResourceData, meta interface{}) (*bigquery.Table, e
 		}
 		table.Schema = schema
 	}
-
+	if v, ok := d.GetOk("schema_foreign_type_info"); ok {
+		if table.Schema != nil {
+			table.Schema.ForeignTypeInfo = expandForeignTypeInfo(v)
+		}
+	}
 	if v, ok := d.GetOk("time_partitioning"); ok {
 		table.TimePartitioning = expandTimePartitioning(v)
 	}
@@ -1925,6 +1956,12 @@ func resourceBigQueryTableRead(d *schema.ResourceData, meta interface{}) error {
 		}
 		if err := d.Set("schema", schema); err != nil {
 			return fmt.Errorf("Error setting schema: %s", err)
+		}
+		if res.Schema.ForeignTypeInfo != nil {
+			foreignTypeInfo := flattenForeignTypeInfo(res.Schema.ForeignTypeInfo)
+			if err := d.Set("schema_foreign_type_info", foreignTypeInfo); err != nil {
+				return fmt.Errorf("Error setting schema_foreign_type_info: %s", err)
+			}
 		}
 	}
 
@@ -2724,7 +2761,29 @@ func schemaHasRequiredFields(schema *bigquery.TableSchema) bool {
 	}
 	return false
 }
+func expandForeignTypeInfo(configured interface{}) *bigquery.ForeignTypeInfo {
+	if len(configured.([]interface{})) == 0 {
+		return nil
+	}
 
+	raw := configured.([]interface{})[0].(map[string]interface{})
+	fti := &bigquery.ForeignTypeInfo{}
+
+	if v, ok := raw["type_system"]; ok {
+		fti.TypeSystem = v.(string)
+	}
+
+	return fti
+}
+
+func flattenForeignTypeInfo(fti *bigquery.ForeignTypeInfo) []map[string]interface{} {
+	if fti == nil {
+		return nil
+	}
+
+	result := map[string]interface{}{"type_system": fti.TypeSystem}
+	return []map[string]interface{}{result}
+}
 func expandTimePartitioning(configured interface{}) *bigquery.TimePartitioning {
 	raw := configured.([]interface{})[0].(map[string]interface{})
 	tp := &bigquery.TimePartitioning{Type: raw["type"].(string)}
