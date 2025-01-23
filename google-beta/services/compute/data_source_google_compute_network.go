@@ -47,6 +47,7 @@ func DataSourceGoogleComputeNetwork() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+
 			"network_profile": {
 				Type:     schema.TypeString,
 				Optional: true,
