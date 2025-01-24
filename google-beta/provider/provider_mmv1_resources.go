@@ -323,6 +323,7 @@ var handwrittenDatasources = map[string]*schema.Resource{
 	"google_organization":                                  resourcemanager.DataSourceGoogleOrganization(),
 	"google_organizations":                                 resourcemanager.DataSourceGoogleOrganizations(),
 	"google_parameter_manager_parameter":                   parametermanager.DataSourceParameterManagerParameter(),
+	"google_parameter_manager_parameters":                  parametermanager.DataSourceParameterManagerParameters(),
 	"google_parameter_manager_regional_parameter":          parametermanagerregional.DataSourceParameterManagerRegionalRegionalParameter(),
 	"google_parameter_manager_regional_parameters":         parametermanagerregional.DataSourceParameterManagerRegionalRegionalParameters(),
 	"google_privateca_certificate_authority":               privateca.DataSourcePrivatecaCertificateAuthority(),
