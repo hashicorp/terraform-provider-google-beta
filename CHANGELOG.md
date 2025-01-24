@@ -30,7 +30,7 @@ IMPROVEMENTS:
 * compute: added `dest_network_scope`, `src_network_scope` and `src_networks` fields to `google_compute_region_network_firewall_policy_rule` resource (beta) ([#9082](https://github.com/hashicorp/terraform-provider-google-beta/pull/9082))
 * compute: added `dest_network_scope`, `src_network_scope` and `src_networks` fields to `google_compute_region_network_firewall_policy_with_rules` resource (beta) ([#9082](https://github.com/hashicorp/terraform-provider-google-beta/pull/9082))
 * compute: added `pdp_scope` field to `google_compute_public_advertised_prefix` resource ([#9096](https://github.com/hashicorp/terraform-provider-google-beta/pull/9096))
-* compute: adding `labels` field to resource_compute_interconnect_attachment ([#9095](https://github.com/hashicorp/terraform-provider-google-beta/pull/9095))
+* compute: adding `labels` field to `google_compute_interconnect_attachment` ([#9095](https://github.com/hashicorp/terraform-provider-google-beta/pull/9095))
 * compute: fixed a issue where `custom_learned_route_priority` was accidentally set to 0 during updates in 'google_compute_router_peer' ([#9083](https://github.com/hashicorp/terraform-provider-google-beta/pull/9083))
 * filestore: added support for `tags` field to `google_filestore_instance` resource ([#9086](https://github.com/hashicorp/terraform-provider-google-beta/pull/9086))
 * networksecurity: added `custom_mirroring_profile` and `custom_intercept_profile` fields to `google_network_security_security_profile` and `google_network_security_security_profile_group`  resources ([#9110](https://github.com/hashicorp/terraform-provider-google-beta/pull/9110))
