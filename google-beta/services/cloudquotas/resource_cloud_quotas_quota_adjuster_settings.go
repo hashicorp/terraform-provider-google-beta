@@ -56,24 +56,23 @@ func ResourceCloudQuotasQuotaAdjusterSettings() *schema.Resource {
 				Description:  `Required. The configured value of the enablement at the given resource. Possible values: ["ENABLED", "DISABLED"]`,
 			},
 			"parent": {
-				Type:         schema.TypeString,
-				Computed:     true,
-				Optional:     true,
-				ForceNew:     true,
-				ValidateFunc: verify.ValidateRegexp(`^(projects|folders|organizations)/([^/]+)$`),
-				Description:  `The parent of the quota preference. Allowed parents are "projects/[project-id / number]" or "folders/[folder-id / number]" or "organizations/[org-id / number]".`,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Optional:    true,
+				ForceNew:    true,
+				Description: `The parent of the quota preference. Allowed parent format is "projects/[project-id / number]".`,
 			},
 			"effective_container": {
 				Type:     schema.TypeString,
 				Computed: true,
-				Description: `Fields to capture the hierarchy enablement.
-The container (org/folder/project) that determines if the quota adjuster is set for this project/folder/org. We use the nearest-ancestor to determine the effective container.
-The nearest ancestor (including this container) with 'enabled' set (either true or false) will be returned.`,
+				Description: `The resource container that determines if the quota adjuster is set for this project.
+Expect this field to be empty currently.`,
 			},
 			"effective_enablement": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: `Based on the effective container's setting above, determines Whether this container has the quota adjuster enabled.`,
+				Type:     schema.TypeString,
+				Computed: true,
+				Description: `Based on the effective container's setting above, determines Whether this resource container has the quota adjuster enabled.
+Expect this field to be empty currently.`,
 			},
 		},
 		UseJSONNumber: true,
