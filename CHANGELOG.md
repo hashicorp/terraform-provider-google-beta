@@ -1,4 +1,135 @@
-## 6.17.0 (Unreleased)
+## 6.19.0 (Unreleased)
+
+NOTES:
+* tpuv2: used the v2alpha1 Cloud TPU API version in the google-beta provider. ([#9131](https://github.com/hashicorp/terraform-provider-google-beta/pull/9131))
+
+DEPRECATIONS:
+* beyondcorp: deprecated `location` on `google_beyondcorp_security_gateway`. The only valid value is `global`, which is now also the default value. The field will be removed in a future major release. ([#9121](https://github.com/hashicorp/terraform-provider-google-beta/pull/9121))
+
+FEATURES:
+* **New Data Source:** `google_parameter_manager_parameter_version` ([#9154](https://github.com/hashicorp/terraform-provider-google-beta/pull/9154))
+* **New Data Source:** `google_parameter_manager_parameters` ([#9148](https://github.com/hashicorp/terraform-provider-google-beta/pull/9148))
+* **New Data Source:** `google_parameter_manager_regional_parameter_version` ([#9165](https://github.com/hashicorp/terraform-provider-google-beta/pull/9165))
+* **New Resource:** `google_beyondcorp_security_gateway_iam_binding` ([#9169](https://github.com/hashicorp/terraform-provider-google-beta/pull/9169))
+* **New Resource:** `google_beyondcorp_security_gateway_iam_member` ([#9169](https://github.com/hashicorp/terraform-provider-google-beta/pull/9169))
+* **New Resource:** `google_beyondcorp_security_gateway_iam_policy` ([#9169](https://github.com/hashicorp/terraform-provider-google-beta/pull/9169))
+
+IMPROVEMENTS:
+* accesscontextmanager: added `etag` to `google_access_context_manager_service_perimeter_dry_run_resource` to prevent overriding list of resources ([#9120](https://github.com/hashicorp/terraform-provider-google-beta/pull/9120))
+* bigquery: added `schema_foreign_type_info` field and related schema handling to `google_bigquery_table` resource (beta) ([#9122](https://github.com/hashicorp/terraform-provider-google-beta/pull/9122))
+* compute: allowed parallelization of `google_compute_(region_)per_instance_config` by not locking on the parent resource, but including instance name. ([#9116](https://github.com/hashicorp/terraform-provider-google-beta/pull/9116))
+* compute: added `network_profile` field to `google_compute_network` resource. ([#9135](https://github.com/hashicorp/terraform-provider-google-beta/pull/9135))
+* compute: added `zero_advertised_route_priority` field to `google_compute_router_peer` ([#9133](https://github.com/hashicorp/terraform-provider-google-beta/pull/9133))
+* container: added `max_run_duration` to `node_config` in `google_container_cluster` and `google_container_node_pool` ([#9163](https://github.com/hashicorp/terraform-provider-google-beta/pull/9163))
+* dataproc: added `encryption_config` to `google_dataproc_workflow_template` ([#9168](https://github.com/hashicorp/terraform-provider-google-beta/pull/9168))
+* gkehub2: added support for `fleet_default_member_config.config_management.config_sync.metrics_gcp_service_account_email` field to `google_gke_hub_feature` resource ([#9147](https://github.com/hashicorp/terraform-provider-google-beta/pull/9147))
+* iam: added `prefix` and `regex` fields to `google_service_accounts` data source ([#9129](https://github.com/hashicorp/terraform-provider-google-beta/pull/9129))
+* pubsub: added `ingestion_data_source_settings.aws_msk` and `ingestion_data_source_settings.confluent_cloud` fields to `google_pubsub_topic` resource ([#9114](https://github.com/hashicorp/terraform-provider-google-beta/pull/9114))
+* spanner: added `encryption_config` field to  `google_spanner_backup_schedule` ([#9161](https://github.com/hashicorp/terraform-provider-google-beta/pull/9161))
+* workflows: added `tags` and `workflow_tags` fields to `google_workflows_workflow` resource ([#9152](https://github.com/hashicorp/terraform-provider-google-beta/pull/9152))
+
+BUG FIXES:
+* alloydb: marked `google_alloydb_user.password` as sensitive ([#9124](https://github.com/hashicorp/terraform-provider-google-beta/pull/9124))
+* beyondcorp: corrected `location` to always be global in `google_beyondcorp_security_gateway` ([#9121](https://github.com/hashicorp/terraform-provider-google-beta/pull/9121))
+* cloudquotas: removed validation for `parent` in `google_cloud_quotas_quota_adjuster_settings` ([#9153](https://github.com/hashicorp/terraform-provider-google-beta/pull/9153))
+* compute: made `google_compute_router_peer.advertised_route_priority` use server-side default if unset. To set the value to `0` you must also set `zero_advertised_route_priority = true`. ([#9133](https://github.com/hashicorp/terraform-provider-google-beta/pull/9133))
+* container: fixed a diff caused by server-side set values for `node_config.resource_labels` ([#9171](https://github.com/hashicorp/terraform-provider-google-beta/pull/9171))
+* container: marked `cluster_autoscaling.resource_limits.maximum` as required as requests would fail if it was not set ([#9151](https://github.com/hashicorp/terraform-provider-google-beta/pull/9151))
+* firestore: fixed deletion of wildcard fields in `google_firestore_field` ([#9140](https://github.com/hashicorp/terraform-provider-google-beta/pull/9140))
+* netapp: fixed an issue where a diff on `zone` would be found if it was unspecified in `google_netapp_storage_pool` ([#9157](https://github.com/hashicorp/terraform-provider-google-beta/pull/9157))
+* networksecurity: fixed sporadic-diff in `google_network_security_security_profile` ([#9162](https://github.com/hashicorp/terraform-provider-google-beta/pull/9162))
+* spanner: fixed bug with `google_spanner_instance.force_destroy` not setting `billing_project` value correctly ([#9132](https://github.com/hashicorp/terraform-provider-google-beta/pull/9132))
+* storage: fixed an issue where plans with a dependency on the `content` field in the `google_storage_bucket_object_content` data source could erroneously fail ([#9166](https://github.com/hashicorp/terraform-provider-google-beta/pull/9166))
+
+## 6.18.1 (January 29, 2025)
+
+BUG FIXES:
+* container: fixed a diff caused by server-side set values for `node_config.resource_labels` ([#9171](https://github.com/hashicorp/terraform-provider-google-beta/pull/9171))
+
+## 6.18.0 (January 27, 2025)
+
+FEATURES:
+* **New Data Source:** `google_compute_instance_template_iam_policy` ([#9085](https://github.com/hashicorp/terraform-provider-google-beta/pull/9085))
+* **New Data Source:** `google_kms_key_handles` ([#9105](https://github.com/hashicorp/terraform-provider-google-beta/pull/9105))
+* **New Data Source:** `google_organizations` ([#9093](https://github.com/hashicorp/terraform-provider-google-beta/pull/9093))
+* **New Data Source:** `google_parameter_manager_parameter` ([#9084](https://github.com/hashicorp/terraform-provider-google-beta/pull/9084))
+* **New Data Source:** `google_parameter_manager_regional_parameters` ([#9089](https://github.com/hashicorp/terraform-provider-google-beta/pull/9089))
+* **New Resource:** `google_apihub_api_hub_instance` ([#9080](https://github.com/hashicorp/terraform-provider-google-beta/pull/9080))
+* **New Resource:** `google_chronicle_retrohunt` ([#9090](https://github.com/hashicorp/terraform-provider-google-beta/pull/9090))
+* **New Resource:** `google_colab_runtime` ([#9076](https://github.com/hashicorp/terraform-provider-google-beta/pull/9076))
+* **New Resource:** `google_colab_runtime_template_iam_binding` ([#9091](https://github.com/hashicorp/terraform-provider-google-beta/pull/9091))
+* **New Resource:** `google_colab_runtime_template_iam_member` ([#9091](https://github.com/hashicorp/terraform-provider-google-beta/pull/9091))
+* **New Resource:** `google_colab_runtime_template_iam_policy` ([#9091](https://github.com/hashicorp/terraform-provider-google-beta/pull/9091))
+* **New Resource:** `google_compute_instance_template_iam_binding` ([#9085](https://github.com/hashicorp/terraform-provider-google-beta/pull/9085))
+* **New Resource:** `google_compute_instance_template_iam_member` ([#9085](https://github.com/hashicorp/terraform-provider-google-beta/pull/9085))
+* **New Resource:** `google_compute_instance_template_iam_policy` ([#9085](https://github.com/hashicorp/terraform-provider-google-beta/pull/9085))
+* **New Resource:** `google_parameter_manager_parameter_version` ([#9111](https://github.com/hashicorp/terraform-provider-google-beta/pull/9111))
+* **New Resource:** `google_redis_cluster_user_created_connections` ([#9099](https://github.com/hashicorp/terraform-provider-google-beta/pull/9099))
+
+IMPROVEMENTS:
+* alloydb: added support for `skip_await_major_version_upgrade` field in `google_alloydb_cluster` resource, allowing for `major_version` to be updated ([#9066](https://github.com/hashicorp/terraform-provider-google-beta/pull/9066))
+* apigee: added `properties` field to `google_apigee_environment` resource ([#9072](https://github.com/hashicorp/terraform-provider-google-beta/pull/9072))
+* bug: added support for setting `custom_learned_route_priority` to 0 in 'google_compute_router_peer' by adding the `zero_custom_learned_route_priority` field ([#9083](https://github.com/hashicorp/terraform-provider-google-beta/pull/9083))
+* cloudrunv2: added `build_config` to `google_cloud_run_v2_service` ([#9100](https://github.com/hashicorp/terraform-provider-google-beta/pull/9100))
+* compute: added `dest_network_scope`, `src_network_scope` and `src_networks` fields to `google_compute_firewall_policy_rule` resource (beta) ([#9082](https://github.com/hashicorp/terraform-provider-google-beta/pull/9082))
+* compute: added `dest_network_scope`, `src_network_scope` and `src_networks` fields to `google_compute_firewall_policy_with_rules` resource (beta) ([#9082](https://github.com/hashicorp/terraform-provider-google-beta/pull/9082))
+* compute: added `dest_network_scope`, `src_network_scope` and `src_networks` fields to `google_compute_network_firewall_policy_rule` resource (beta) ([#9082](https://github.com/hashicorp/terraform-provider-google-beta/pull/9082))
+* compute: added `dest_network_scope`, `src_network_scope` and `src_networks` fields to `google_compute_network_firewall_policy_with_rules` resource (beta) ([#9082](https://github.com/hashicorp/terraform-provider-google-beta/pull/9082))
+* compute: added `dest_network_scope`, `src_network_scope` and `src_networks` fields to `google_compute_region_network_firewall_policy_rule` resource (beta) ([#9082](https://github.com/hashicorp/terraform-provider-google-beta/pull/9082))
+* compute: added `dest_network_scope`, `src_network_scope` and `src_networks` fields to `google_compute_region_network_firewall_policy_with_rules` resource (beta) ([#9082](https://github.com/hashicorp/terraform-provider-google-beta/pull/9082))
+* compute: added `pdp_scope` field to `google_compute_public_advertised_prefix` resource ([#9096](https://github.com/hashicorp/terraform-provider-google-beta/pull/9096))
+* compute: adding `labels` field to `google_compute_interconnect_attachment` ([#9095](https://github.com/hashicorp/terraform-provider-google-beta/pull/9095))
+* compute: fixed a issue where `custom_learned_route_priority` was accidentally set to 0 during updates in 'google_compute_router_peer' ([#9083](https://github.com/hashicorp/terraform-provider-google-beta/pull/9083))
+* filestore: added support for `tags` field to `google_filestore_instance` resource ([#9086](https://github.com/hashicorp/terraform-provider-google-beta/pull/9086))
+* networksecurity: added `custom_mirroring_profile` and `custom_intercept_profile` fields to `google_network_security_security_profile` and `google_network_security_security_profile_group`  resources ([#9110](https://github.com/hashicorp/terraform-provider-google-beta/pull/9110))
+* pubsub: added `enforce_in_transit` fields to `google_pubsub_topic` resource ([#9069](https://github.com/hashicorp/terraform-provider-google-beta/pull/9069))
+* pubsub: added `ingestion_data_source_settings.azure_event_hubs` field to `google_pubsub_topic` resource ([#9065](https://github.com/hashicorp/terraform-provider-google-beta/pull/9065))
+* redis: added `psc_service_attachments` field to `google_redis_cluster` resource, to enable use of the fine-grained resource `google_redis_cluster_user_created_connections` ([#9099](https://github.com/hashicorp/terraform-provider-google-beta/pull/9099))
+
+BUG FIXES:
+* apigee: fixed `properties` field update on `google_apigee_environment` resource ([#9107](https://github.com/hashicorp/terraform-provider-google-beta/pull/9107))
+* artifactregistry: fixed perma-diff in `google_artifact_registry_repository` ([#9109](https://github.com/hashicorp/terraform-provider-google-beta/pull/9109))
+* compute: fixed failure when creating `google_compute_global_forwarding_rule` with labels targeting PSC endpoint ([#9106](https://github.com/hashicorp/terraform-provider-google-beta/pull/9106))
+* container: fixed `additive_vpc_scope_dns_domain` being ignored in Autopilot cluster definition ([#9075](https://github.com/hashicorp/terraform-provider-google-beta/pull/9075))
+* container: fixed propagation of `node_pool_defaults.node_config_defaults.insecure_kubelet_readonly_port_enabled` in node config. ([#9074](https://github.com/hashicorp/terraform-provider-google-beta/pull/9074))
+* iam: fixed missing result by adding pagination for data source `google_service_accounts`. ([#9094](https://github.com/hashicorp/terraform-provider-google-beta/pull/9094))
+* metastore: increased timeout on google_dataproc_metastore_service operations to 75m from 60m. This will expose server-returned reasons for operation failure instead of masking them with a Terraform timeout. ([#9102](https://github.com/hashicorp/terraform-provider-google-beta/pull/9102))
+* resourcemanager: added a slightly longer wait (two 10s checks bumped to 15s) for issues with billing associations in `google_project`. Default network deletion should succeed more often. ([#9103](https://github.com/hashicorp/terraform-provider-google-beta/pull/9103))
+
+## 6.17.0 (January 21, 2025)
+
+FEATURES:
+* **New Data Source:** `google_parameter_manager_regional_parameter` (beta) ([#9030](https://github.com/hashicorp/terraform-provider-google-beta/pull/9030))
+* **New Resource:** `google_apigee_environment_addons_config` ([#9021](https://github.com/hashicorp/terraform-provider-google-beta/pull/9021))
+* **New Resource:** `google_beyondcorp_security_gateway` ([#9017](https://github.com/hashicorp/terraform-provider-google-beta/pull/9017))
+* **New Resource:** `google_chronicle_reference_list` (beta) ([#9047](https://github.com/hashicorp/terraform-provider-google-beta/pull/9047))
+* **New Resource:** `google_chronicle_rule_deployment` ([#9043](https://github.com/hashicorp/terraform-provider-google-beta/pull/9043))
+* **New Resource:** `google_chronicle_rule` ([#9032](https://github.com/hashicorp/terraform-provider-google-beta/pull/9032))
+* **New Resource:** `google_colab_runtime_template` ([#9050](https://github.com/hashicorp/terraform-provider-google-beta/pull/9050))
+* **New Resource:** `google_edgenetwork_interconnect_attachment` ([#9024](https://github.com/hashicorp/terraform-provider-google-beta/pull/9024))
+* **New Resource:** `google_parameter_manager_parameter` ([#9041](https://github.com/hashicorp/terraform-provider-google-beta/pull/9041))
+* **New Resource:** `google_parameter_manager_regional_parameter_version` ([#9062](https://github.com/hashicorp/terraform-provider-google-beta/pull/9062))
+* **New Resource:** `google_parameter_manager_regional_parameter` ([#9026](https://github.com/hashicorp/terraform-provider-google-beta/pull/9026))
+
+IMPROVEMENTS:
+* accesscontextmanager: added `etag` to `google_access_context_manager_service_perimeter_resource` to prevent overriding list of resources ([#9058](https://github.com/hashicorp/terraform-provider-google-beta/pull/9058))
+* compute: added `BPS_100G` enum value to `bandwidth` field of `google_compute_interconnect_attachment`. ([#9040](https://github.com/hashicorp/terraform-provider-google-beta/pull/9040))
+* compute: added support for `IPV6_ONLY` stack_type to `google_compute_subnetwork`, `google_compute_instance`, `google_compute_instance_template` and `google_compute_region_instance_template`. ([#9020](https://github.com/hashicorp/terraform-provider-google-beta/pull/9020))
+* compute: promoted `bgp_best_path_selection_mode `,`bgp_bps_always_compare_med` and `bgp_bps_inter_region_cost ` fields in `google_compute_network` from Beta to Ga ([#9029](https://github.com/hashicorp/terraform-provider-google-beta/pull/9029))
+* compute: promoted `next_hop_origin `,`next_hop_med ` and `next_hop_inter_region_cost ` output fields in `google_compute_route` form Beta to GA ([#9029](https://github.com/hashicorp/terraform-provider-google-beta/pull/9029))
+* discoveryengine: added `advanced_site_search_config` field to `google_discovery_engine_data_store` resource ([#9060](https://github.com/hashicorp/terraform-provider-google-beta/pull/9060))
+* gemini: added `force_destroy` field to resource `google_code_repository_index`, enabling deletion of the resource even when it has dependent RepositoryGroups ([#9036](https://github.com/hashicorp/terraform-provider-google-beta/pull/9036))
+* networkservices: added in-place update support for `ports` field on `google_network_services_gateway` resource ([#9056](https://github.com/hashicorp/terraform-provider-google-beta/pull/9056))
+* sql: `sql_source_representation_instance` now uses `string` representation of `databaseVersion` ([#9027](https://github.com/hashicorp/terraform-provider-google-beta/pull/9027))
+* sql: added `replication_cluster` field to `google_sql_database_instance` resource ([#9044](https://github.com/hashicorp/terraform-provider-google-beta/pull/9044))
+* sql: added support of switchover for MySQL and PostgreSQL in `google_sql_database_instance` resource ([#9044](https://github.com/hashicorp/terraform-provider-google-beta/pull/9044))
+* workbench: changed `container_image` field of `google_workbench_instance` resource to modifiable. ([#9046](https://github.com/hashicorp/terraform-provider-google-beta/pull/9046))
+
+BUG FIXES:
+* apigee: fixed error 404 for `organization` update requests. ([#9022](https://github.com/hashicorp/terraform-provider-google-beta/pull/9022))
+* artifactregistry: fixed `artifact_registry_repository` not accepting durations with 'm', 'h' or 'd' ([#9054](https://github.com/hashicorp/terraform-provider-google-beta/pull/9054))
+* networkservices: fixed bug where `google_network_services_gateway` could not be updated in place ([#9056](https://github.com/hashicorp/terraform-provider-google-beta/pull/9056))
+* storagetransfer: fixed a permadiff with `transfer_spec.aws_s3_data_source.aws_access_key` in `google_storage_transfer_job` ([#9019](https://github.com/hashicorp/terraform-provider-google-beta/pull/9019))
 
 ## 6.16.0 (January 13, 2025)
 
