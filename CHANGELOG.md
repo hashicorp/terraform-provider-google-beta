@@ -1,7 +1,7 @@
 ## 6.19.0 (Unreleased)
 
 NOTES:
-* tpuv2: used the v2alpha1 Cloud TPU API version in the google-beta provider. ([#9131](https://github.com/hashicorp/terraform-provider-google-beta/pull/9131))
+* tpuv2: made service use the v2alpha1 Cloud TPU API version ([#9131](https://github.com/hashicorp/terraform-provider-google-beta/pull/9131))
 
 DEPRECATIONS:
 * beyondcorp: deprecated `location` on `google_beyondcorp_security_gateway`. The only valid value is `global`, which is now also the default value. The field will be removed in a future major release. ([#9121](https://github.com/hashicorp/terraform-provider-google-beta/pull/9121))
