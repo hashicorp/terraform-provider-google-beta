@@ -5,6 +5,14 @@
 BUG FIXES:
 * container: fixed a diff caused by server-side set values for `node_config.resource_labels` ([#9171](https://github.com/hashicorp/terraform-provider-google-beta/pull/9171))
 
+## 5.45.1 (January 29, 2025)
+
+NOTES:
+* 5.45.1 is a backport release, responding to a new GKE label being applied that can cause unwanted diffs in node pools. The changes in this release will be available in 6.18.1 and users upgrading to 6.X should upgrade to that version or higher.
+
+BUG FIXES:
+* container: fixed a diff caused by server-side set values for `node_config.resource_labels` ([#9171](https://github.com/hashicorp/terraform-provider-google-beta/pull/9171))
+
 ## 6.18.0 (January 27, 2025)
 
 FEATURES:
