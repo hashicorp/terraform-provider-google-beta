@@ -1,5 +1,6 @@
 resource: 'google_compute_network_firewall_policy_packet_mirroring_rule'
 generation_type: 'mmv1'
+source_file: 'products/compute/NetworkFirewallPolicyPacketMirroringRule.yaml'
 api_service_name: 'compute.googleapis.com'
 api_version: 'beta'
 api_resource_type_kind: 'FirewallPolicy'

@@ -1,5 +1,6 @@
 resource: 'google_firebase_storage_bucket'
 generation_type: 'mmv1'
+source_file: 'products/firebasestorage/Bucket.yaml'
 api_service_name: 'firebasestorage.googleapis.com'
 api_version: 'v1beta'
 api_resource_type_kind: 'Bucket'
