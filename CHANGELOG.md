@@ -1,6 +1,6 @@
 ## 6.20.0 (Unreleased)
 
-## 6.19.0
+## 6.19.0 (Feb 3, 2025)
 NOTES:
 * tpuv2: made service use the v2alpha1 Cloud TPU API version, which is used for Public Preview features ([#9131](https://github.com/hashicorp/terraform-provider-google-beta/pull/9131))
 
