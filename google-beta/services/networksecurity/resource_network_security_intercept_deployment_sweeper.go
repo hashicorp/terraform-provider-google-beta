@@ -37,7 +37,9 @@ func testSweepNetworkSecurityInterceptDeployment(_ string) error {
 	var deletionerror error
 	resourceName := "NetworkSecurityInterceptDeployment"
 	log.Printf("[INFO][SWEEPER_LOG] Starting sweeper for %s", resourceName)
-	regions := []string{"us-central1"}
+	regions := []string{
+		"us-central1-a",
+	}
 
 	// Iterate through each region
 	for _, region := range regions {

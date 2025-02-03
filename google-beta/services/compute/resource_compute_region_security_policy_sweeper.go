@@ -38,7 +38,15 @@ func testSweepComputeRegionSecurityPolicy(_ string) error {
 	var deletionerror error
 	resourceName := "ComputeRegionSecurityPolicy"
 	log.Printf("[INFO][SWEEPER_LOG] Starting sweeper for %s", resourceName)
-	regions := []string{"us-central1"}
+	regions := []string{
+		"asia-southeast1",
+		"us-central1",
+		"us-west1",
+		"southamerica-west1",
+		"europe-west1",
+		"us-west2",
+		"us-south1",
+	}
 
 	// Iterate through each region
 	for _, region := range regions {
