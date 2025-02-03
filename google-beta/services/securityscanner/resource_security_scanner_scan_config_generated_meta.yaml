@@ -1,5 +1,6 @@
 resource: 'google_security_scanner_scan_config'
 generation_type: 'mmv1'
+source_file: 'products/securityscanner/ScanConfig.yaml'
 api_service_name: 'websecurityscanner.googleapis.com'
 api_version: 'v1beta'
 api_resource_type_kind: 'ScanConfig'

@@ -1,5 +1,6 @@
 resource: 'google_api_gateway_api_config'
 generation_type: 'mmv1'
+source_file: 'products/apigateway/ApiConfig.yaml'
 api_service_name: 'apigateway.googleapis.com'
 api_version: 'v1beta'
 api_resource_type_kind: 'ApiConfig'

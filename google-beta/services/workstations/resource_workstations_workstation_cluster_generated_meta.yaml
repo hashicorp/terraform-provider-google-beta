@@ -1,5 +1,6 @@
 resource: 'google_workstations_workstation_cluster'
 generation_type: 'mmv1'
+source_file: 'products/workstations/WorkstationCluster.yaml'
 api_service_name: 'workstations.googleapis.com'
 api_version: 'v1beta'
 api_resource_type_kind: 'WorkstationCluster'

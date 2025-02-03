@@ -1,5 +1,6 @@
 resource: 'google_active_directory_peering'
 generation_type: 'mmv1'
+source_file: 'products/activedirectory/Peering.yaml'
 api_service_name: 'managedidentities.googleapis.com'
 api_version: 'v1beta1'
 api_resource_type_kind: 'Peering'
