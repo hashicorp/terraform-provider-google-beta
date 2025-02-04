@@ -530,9 +530,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 598
+// Generated resources: 599
 // Generated IAM resources: 306
-// Total generated resources: 904
+// Total generated resources: 905
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -740,6 +740,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_colab_runtime_template_iam_binding":                                  tpgiamresource.ResourceIamBinding(colab.ColabRuntimeTemplateIamSchema, colab.ColabRuntimeTemplateIamUpdaterProducer, colab.ColabRuntimeTemplateIdParseFunc),
 	"google_colab_runtime_template_iam_member":                                   tpgiamresource.ResourceIamMember(colab.ColabRuntimeTemplateIamSchema, colab.ColabRuntimeTemplateIamUpdaterProducer, colab.ColabRuntimeTemplateIdParseFunc),
 	"google_colab_runtime_template_iam_policy":                                   tpgiamresource.ResourceIamPolicy(colab.ColabRuntimeTemplateIamSchema, colab.ColabRuntimeTemplateIamUpdaterProducer, colab.ColabRuntimeTemplateIdParseFunc),
+	"google_colab_schedule":                                                      colab.ResourceColabSchedule(),
 	"google_composer_user_workloads_config_map":                                  composer.ResourceComposerUserWorkloadsConfigMap(),
 	"google_compute_address":                                                     compute.ResourceComputeAddress(),
 	"google_compute_autoscaler":                                                  compute.ResourceComputeAutoscaler(),
