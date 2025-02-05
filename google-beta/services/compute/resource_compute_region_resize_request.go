@@ -64,13 +64,6 @@ func ResourceComputeRegionResizeRequest() *schema.Resource {
 				ForceNew:    true,
 				Description: `The name of this resize request. The name must be 1-63 characters long, and comply with RFC1035.`,
 			},
-			"region": {
-				Type:             schema.TypeString,
-				Required:         true,
-				ForceNew:         true,
-				DiffSuppressFunc: tpgresource.CompareSelfLinkOrResourceName,
-				Description:      `The reference of the compute region scoping this request.`,
-			},
 			"resize_by": {
 				Type:        schema.TypeInt,
 				Required:    true,
@@ -82,6 +75,14 @@ func ResourceComputeRegionResizeRequest() *schema.Resource {
 				Optional:    true,
 				ForceNew:    true,
 				Description: `An optional description of this resize-request.`,
+			},
+			"region": {
+				Type:             schema.TypeString,
+				Computed:         true,
+				Optional:         true,
+				ForceNew:         true,
+				DiffSuppressFunc: tpgresource.CompareSelfLinkOrResourceName,
+				Description:      `The reference of the compute region scoping this request. If it is not provided, the provider region is used.`,
 			},
 			"requested_run_duration": {
 				Type:        schema.TypeList,
@@ -485,6 +486,12 @@ func resourceComputeRegionResizeRequestCreate(d *schema.ResourceData, meta inter
 	} else if v, ok := d.GetOkExists("requested_run_duration"); !tpgresource.IsEmptyValue(reflect.ValueOf(requestedRunDurationProp)) && (ok || !reflect.DeepEqual(v, requestedRunDurationProp)) {
 		obj["requestedRunDuration"] = requestedRunDurationProp
 	}
+	regionProp, err := expandComputeRegionResizeRequestRegion(d.Get("region"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("region"); !tpgresource.IsEmptyValue(reflect.ValueOf(regionProp)) && (ok || !reflect.DeepEqual(v, regionProp)) {
+		obj["region"] = regionProp
+	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/instanceGroupManagers/{{instance_group_manager}}/resizeRequests")
 	if err != nil {
@@ -603,6 +610,9 @@ func resourceComputeRegionResizeRequestRead(d *schema.ResourceData, meta interfa
 		return fmt.Errorf("Error reading RegionResizeRequest: %s", err)
 	}
 	if err := d.Set("status", flattenComputeRegionResizeRequestStatus(res["status"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RegionResizeRequest: %s", err)
+	}
+	if err := d.Set("region", flattenComputeRegionResizeRequestRegion(res["region"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionResizeRequest: %s", err)
 	}
 
@@ -1256,6 +1266,13 @@ func flattenComputeRegionResizeRequestStatusLastAttemptErrorErrorsErrorDetailsLo
 	return v
 }
 
+func flattenComputeRegionResizeRequestRegion(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+	return tpgresource.NameFromSelfLinkStateFunc(v)
+}
+
 func expandComputeRegionResizeRequestName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
@@ -1300,4 +1317,12 @@ func expandComputeRegionResizeRequestRequestedRunDurationSeconds(v interface{}, 
 
 func expandComputeRegionResizeRequestRequestedRunDurationNanos(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func expandComputeRegionResizeRequestRegion(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	f, err := tpgresource.ParseGlobalFieldValue("regions", v.(string), "project", d, config, true)
+	if err != nil {
+		return nil, fmt.Errorf("Invalid value for region: %s", err)
+	}
+	return f.RelativeLink(), nil
 }
