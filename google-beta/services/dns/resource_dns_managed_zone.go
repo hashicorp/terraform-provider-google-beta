@@ -1667,8 +1667,7 @@ func expandDNSManagedZoneServiceDirectoryConfigNamespaceNamespaceUrl(v interface
 	} else if strings.HasPrefix(v.(string), "https://") {
 		return v, nil
 	}
-	// v1 is the only version in use
-	url, err := tpgresource.ReplaceVars(d, config, "https://servicedirectory.googleapis.com/v1/"+v.(string))
+	url, err := tpgresource.ReplaceVars(d, config, "{{ServiceDirectoryBasePath}}"+v.(string))
 	if err != nil {
 		return "", err
 	}
