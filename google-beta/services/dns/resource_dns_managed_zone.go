@@ -1671,7 +1671,9 @@ func expandDNSManagedZoneServiceDirectoryConfigNamespaceNamespaceUrl(v interface
 	if err != nil {
 		return "", err
 	}
-	return url, nil
+
+	// v1 is the only version in use, replace the first occurrence of v1beta with v1 in the URL
+	return strings.Replace(url, "/v1beta1/", "/v1/", 1), nil
 }
 
 func expandDNSManagedZoneCloudLoggingConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
