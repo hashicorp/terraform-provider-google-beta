@@ -110,7 +110,6 @@ BUG FIXES:
 FEATURES:
 * **New Data Source:** `google_parameter_manager_regional_parameter` (beta) ([#9030](https://github.com/hashicorp/terraform-provider-google-beta/pull/9030))
 * **New Resource:** `google_apigee_environment_addons_config` ([#9021](https://github.com/hashicorp/terraform-provider-google-beta/pull/9021))
-* **New Resource:** `google_beyondcorp_security_gateway` ([#9017](https://github.com/hashicorp/terraform-provider-google-beta/pull/9017))
 * **New Resource:** `google_chronicle_reference_list` (beta) ([#9047](https://github.com/hashicorp/terraform-provider-google-beta/pull/9047))
 * **New Resource:** `google_chronicle_rule_deployment` ([#9043](https://github.com/hashicorp/terraform-provider-google-beta/pull/9043))
 * **New Resource:** `google_chronicle_rule` ([#9032](https://github.com/hashicorp/terraform-provider-google-beta/pull/9032))
