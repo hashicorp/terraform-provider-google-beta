@@ -151,7 +151,7 @@ func TestAccColabNotebookExecution_colabNotebookExecutionFullExample(t *testing.
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckColabNotebookExecutionDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -170,6 +170,7 @@ func TestAccColabNotebookExecution_colabNotebookExecutionFullExample(t *testing.
 func testAccColabNotebookExecution_colabNotebookExecutionFullExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_colab_runtime_template" "my_runtime_template" {
+  provider = google-beta
   name = "tf-test-runtime-template-name%{random_suffix}"
   display_name = "Runtime template"
   location = "us-central1"
@@ -184,6 +185,7 @@ resource "google_colab_runtime_template" "my_runtime_template" {
 }
 
 resource "google_storage_bucket" "output_bucket" {
+  provider = google-beta
   name          = "tf_test_my_bucket%{random_suffix}"
   location      = "US"
   force_destroy = true
@@ -191,6 +193,7 @@ resource "google_storage_bucket" "output_bucket" {
 }
 
 resource "google_storage_bucket_object" "notebook" {
+  provider = google-beta
   name   = "hello_world.ipynb"
   bucket = google_storage_bucket.output_bucket.name
   content = <<EOF
@@ -232,6 +235,7 @@ resource "google_storage_bucket_object" "notebook" {
 }
 
 resource "google_colab_notebook_execution" "notebook-execution" {
+  provider = google-beta
   notebook_execution_job_id = "tf-test-colab-notebook-execution%{random_suffix}"
   display_name = "Notebook execution full"
   location = "us-central1"
@@ -275,7 +279,7 @@ func TestAccColabNotebookExecution_colabNotebookExecutionDataformExample(t *test
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckColabNotebookExecutionDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -294,6 +298,7 @@ func TestAccColabNotebookExecution_colabNotebookExecutionDataformExample(t *test
 func testAccColabNotebookExecution_colabNotebookExecutionDataformExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_colab_runtime_template" "my_runtime_template" {
+  provider = google-beta
   name = "tf-test-runtime-template-name%{random_suffix}"
   display_name = "Runtime template"
   location = "us-central1"
@@ -308,6 +313,7 @@ resource "google_colab_runtime_template" "my_runtime_template" {
 }
 
 resource "google_storage_bucket" "output_bucket" {
+  provider = google-beta
   name          = "tf_test_my_bucket%{random_suffix}"
   location      = "US"
   force_destroy = true
@@ -315,6 +321,7 @@ resource "google_storage_bucket" "output_bucket" {
 }
 
 resource "google_secret_manager_secret" "secret" {
+  provider = google-beta
   secret_id = "secret%{random_suffix}"
 
   replication {
@@ -323,12 +330,14 @@ resource "google_secret_manager_secret" "secret" {
 }
 
 resource "google_secret_manager_secret_version" "secret_version" {
+  provider = google-beta
   secret = google_secret_manager_secret.secret.id
 
   secret_data = "secret-data"
 }
 
 resource "google_dataform_repository" "dataform_repository" {
+  provider = google-beta
   name = "tf-test-dataform-repository%{random_suffix}"
   display_name = "dataform_repository"
   npmrc_environment_variables_secret_version = google_secret_manager_secret_version.secret_version.id
@@ -353,6 +362,7 @@ resource "google_dataform_repository" "dataform_repository" {
 }
 
 resource "google_colab_notebook_execution" "notebook-execution" {
+  provider = google-beta
   display_name = "Notebook execution Dataform"
   location = "us-central1"
 
