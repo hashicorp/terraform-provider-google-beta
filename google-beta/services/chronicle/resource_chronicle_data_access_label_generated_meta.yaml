@@ -4,6 +4,7 @@ source_file: 'products/chronicle/DataAccessLabel.yaml'
 api_service_name: 'chronicle.googleapis.com'
 api_version: 'v1beta'
 api_resource_type_kind: 'DataAccessLabel'
+autogen_status: true
 fields:
   - field: 'author'
   - field: 'create_time'

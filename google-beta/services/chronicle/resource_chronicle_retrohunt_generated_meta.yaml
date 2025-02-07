@@ -4,6 +4,7 @@ source_file: 'products/chronicle/Retrohunt.yaml'
 api_service_name: 'chronicle.googleapis.com'
 api_version: 'v1beta'
 api_resource_type_kind: 'Retrohunt'
+autogen_status: true
 fields:
   - field: 'execution_interval.end_time'
   - field: 'execution_interval.start_time'

@@ -4,6 +4,7 @@ source_file: 'products/chronicle/Rule.yaml'
 api_service_name: 'chronicle.googleapis.com'
 api_version: 'v1beta'
 api_resource_type_kind: 'Rule'
+autogen_status: true
 fields:
   - field: 'allowed_run_frequencies'
   - field: 'author'

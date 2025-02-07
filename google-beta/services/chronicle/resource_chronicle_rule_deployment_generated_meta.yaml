@@ -4,6 +4,7 @@ source_file: 'products/chronicle/RuleDeployment.yaml'
 api_service_name: 'chronicle.googleapis.com'
 api_version: 'v1beta'
 api_resource_type_kind: 'RuleDeployment'
+autogen_status: true
 fields:
   - field: 'alerting'
   - field: 'archive_time'
