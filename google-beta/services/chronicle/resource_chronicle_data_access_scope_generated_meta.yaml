@@ -4,6 +4,7 @@ source_file: 'products/chronicle/DataAccessScope.yaml'
 api_service_name: 'chronicle.googleapis.com'
 api_version: 'v1beta'
 api_resource_type_kind: 'DataAccessScope'
+autogen_status: true
 fields:
   - field: 'allow_all'
   - field: 'allowed_data_access_labels.asset_namespace'
