@@ -99,7 +99,6 @@ resource "google_compute_firewall_policy_rule" "primary" {
     dest_threat_intelligences = ["iplist-known-malicious-ips"]
     src_address_groups        = []
     dest_address_groups       = [google_network_security_address_group.basic_global_networksecurity_address_group.id]
-    dest_network_scope        = "INTERNET"
 
     layer4_configs {
       ip_protocol = "tcp"
@@ -125,7 +124,7 @@ func TestAccComputeFirewallPolicyRule_firewallPolicyRuleNetworkScopeExample(t *t
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckComputeFirewallPolicyRuleDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -144,18 +143,21 @@ func TestAccComputeFirewallPolicyRule_firewallPolicyRuleNetworkScopeExample(t *t
 func testAccComputeFirewallPolicyRule_firewallPolicyRuleNetworkScopeExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_folder" "folder" {
+  provider = google-beta
   display_name        = "folder%{random_suffix}"
   parent              = "organizations/%{org_id}"
   deletion_protection = false
 }
 
 resource "google_compute_firewall_policy" "default" {
+  provider = google-beta
   parent      = google_folder.folder.id
   short_name  = "tf-test-fw-policy%{random_suffix}"
   description = "Firewall policy"
 }
 
 resource "google_compute_firewall_policy_rule" "primary" {
+  provider = google-beta
   firewall_policy = google_compute_firewall_policy.default.name
   description     = "Firewall policy rule with network scope"
   priority        = 9000
@@ -181,6 +183,7 @@ resource "google_compute_firewall_policy_rule" "primary" {
 }
 
 resource "google_compute_network" "network" {
+  provider = google-beta
   name                    = "network%{random_suffix}"
   auto_create_subnetworks = false
 }

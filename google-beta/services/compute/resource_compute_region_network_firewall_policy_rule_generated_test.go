@@ -143,7 +143,7 @@ func TestAccComputeRegionNetworkFirewallPolicyRule_regionNetworkFirewallPolicyRu
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckComputeRegionNetworkFirewallPolicyRuleDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -162,6 +162,7 @@ func TestAccComputeRegionNetworkFirewallPolicyRule_regionNetworkFirewallPolicyRu
 func testAccComputeRegionNetworkFirewallPolicyRule_regionNetworkFirewallPolicyRuleNetworkScopeEgressExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_region_network_firewall_policy" "basic_regional_network_firewall_policy" {
+  provider = google-beta
   name        = "tf-test-fw-policy%{random_suffix}"
   description = "Sample regional network firewall policy"
   project     = "%{project_name}"
@@ -169,6 +170,7 @@ resource "google_compute_region_network_firewall_policy" "basic_regional_network
 }
 
 resource "google_compute_region_network_firewall_policy_rule" "primary" {
+  provider = google-beta
   action          = "allow"
   description     = "This is a simple rule description"
   direction       = "EGRESS"
@@ -203,7 +205,7 @@ func TestAccComputeRegionNetworkFirewallPolicyRule_regionNetworkFirewallPolicyRu
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckComputeRegionNetworkFirewallPolicyRuleDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -222,6 +224,7 @@ func TestAccComputeRegionNetworkFirewallPolicyRule_regionNetworkFirewallPolicyRu
 func testAccComputeRegionNetworkFirewallPolicyRule_regionNetworkFirewallPolicyRuleNetworkScopeIngressExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_region_network_firewall_policy" "basic_regional_network_firewall_policy" {
+  provider = google-beta
   name        = "tf-test-fw-policy%{random_suffix}"
   description = "Sample regional network firewall policy"
   project     = "%{project_name}"
@@ -229,6 +232,7 @@ resource "google_compute_region_network_firewall_policy" "basic_regional_network
 }
 
 resource "google_compute_region_network_firewall_policy_rule" "primary" {
+  provider = google-beta
   action          = "allow"
   description     = "This is a simple rule description"
   direction       = "INGRESS"
@@ -251,6 +255,7 @@ resource "google_compute_region_network_firewall_policy_rule" "primary" {
 }
 
 resource "google_compute_network" "network" {
+  provider = google-beta
   name     = "network%{random_suffix}"
 }
 `, context)
