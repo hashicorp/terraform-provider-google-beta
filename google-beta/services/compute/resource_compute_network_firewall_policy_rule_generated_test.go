@@ -138,7 +138,7 @@ func TestAccComputeNetworkFirewallPolicyRule_networkFirewallPolicyRuleNetworkSco
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckComputeNetworkFirewallPolicyRuleDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -157,12 +157,14 @@ func TestAccComputeNetworkFirewallPolicyRule_networkFirewallPolicyRuleNetworkSco
 func testAccComputeNetworkFirewallPolicyRule_networkFirewallPolicyRuleNetworkScopeEgressExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_network_firewall_policy" "basic_network_firewall_policy" {
+  provider = google-beta
   name        = "tf-test-fw-policy%{random_suffix}"
   description = "Sample global network firewall policy"
   project     = "%{project_name}"
 }
 
 resource "google_compute_network_firewall_policy_rule" "primary" {
+  provider = google-beta
   action          = "allow"
   description     = "This is a simple rule description"
   direction       = "EGRESS"
@@ -194,7 +196,7 @@ func TestAccComputeNetworkFirewallPolicyRule_networkFirewallPolicyRuleNetworkSco
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckComputeNetworkFirewallPolicyRuleDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -213,12 +215,14 @@ func TestAccComputeNetworkFirewallPolicyRule_networkFirewallPolicyRuleNetworkSco
 func testAccComputeNetworkFirewallPolicyRule_networkFirewallPolicyRuleNetworkScopeIngressExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_network_firewall_policy" "basic_network_firewall_policy" {
+  provider = google-beta
   name        = "tf-test-fw-policy%{random_suffix}"
   description = "Sample global network firewall policy"
   project     = "%{project_name}"
 }
 
 resource "google_compute_network_firewall_policy_rule" "primary" {
+  provider = google-beta
   action          = "allow"
   description     = "This is a simple rule description"
   direction       = "INGRESS"
@@ -240,6 +244,7 @@ resource "google_compute_network_firewall_policy_rule" "primary" {
 }
 
 resource "google_compute_network" "network" {
+  provider = google-beta
   name     = "network%{random_suffix}"
 }
 `, context)
