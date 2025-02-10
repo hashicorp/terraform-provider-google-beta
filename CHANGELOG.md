@@ -1,4 +1,41 @@
-## 6.20.0 (Unreleased)
+## 6.21.0 (Unreleased)
+
+## 6.20.0 (Feb 10, 2025)
+
+NOTES:
+* provider: The Terraform Provider for Google Cloud's regular release date will move from Monday to Tuesday in early March. The 2025/03/10 release will be made on 2025/03/11.
+* compute: `google_compute_firewall_policy` now uses MMv1 engine instead of DCL. ([#9228](https://github.com/hashicorp/terraform-provider-google-beta/pull/9228))
+
+FEATURES:
+* **New Data Source:** `google_beyondcorp_application_iam_policy` ([#9205](https://github.com/hashicorp/terraform-provider-google-beta/pull/9205))
+* **New Data Source:** `google_parameter_manager_parameter_version_render` ([#9190](https://github.com/hashicorp/terraform-provider-google-beta/pull/9190))
+* **New Data Source:** `google_parameter_manager_regional_parameter_version_render` ([#9232](https://github.com/hashicorp/terraform-provider-google-beta/pull/9232))
+* **New Resource:** `google_beyondcorp_application` ([#9205](https://github.com/hashicorp/terraform-provider-google-beta/pull/9205))
+* **New Resource:** `google_beyondcorp_application_iam_binding`  ([#9205](https://github.com/hashicorp/terraform-provider-google-beta/pull/9205))
+* **New Resource:** `google_beyondcorp_application_iam_member`  ([#9205](https://github.com/hashicorp/terraform-provider-google-beta/pull/9205))
+* **New Resource:** `google_beyondcorp_application_iam_policy`  ([#9205](https://github.com/hashicorp/terraform-provider-google-beta/pull/9205))
+* **New Resource:** `google_bigquery_analytics_hub_listing_subscription` ([#9195](https://github.com/hashicorp/terraform-provider-google-beta/pull/9195))
+* **New Resource:** `google_colab_notebook_execution` ([#9186](https://github.com/hashicorp/terraform-provider-google-beta/pull/9186))
+* **New Resource:** `google_colab_schedule` ([#9226](https://github.com/hashicorp/terraform-provider-google-beta/pull/9226))
+* **New Resource:** `google_compute_network_firewall_policy_packet_mirroring_rule` ([#9202](https://github.com/hashicorp/terraform-provider-google-beta/pull/9202))
+* **New Resource:** `google_gemini_logging_setting` ([#9198](https://github.com/hashicorp/terraform-provider-google-beta/pull/9198))
+* **New Resource:** `google_gemini_release_channel_setting` ([#9207](https://github.com/hashicorp/terraform-provider-google-beta/pull/9207))
+
+IMPROVEMENTS:
+* accesscontextmanager: added `resource` to `sources` in `egress_from` under resources `google_access_context_manager_service_perimeter`, `google_access_context_manager_service_perimeters`, `google_access_context_manager_service_perimeter_egress_policy`, `google_access_context_manager_service_perimeter_dry_run_egress_policy` ([#9196](https://github.com/hashicorp/terraform-provider-google-beta/pull/9196))
+* cloudrunv2: added `base_image_uri` and `build_info` to `google_cloud_run_v2_service` ([#9229](https://github.com/hashicorp/terraform-provider-google-beta/pull/9229))
+* colab: added `auto_upgrade` field to `google_colab_runtime` ([#9216](https://github.com/hashicorp/terraform-provider-google-beta/pull/9216))
+* colab: added `software_config.post_startup_script_config` field to `google_colab_runtime_template` ([#9206](https://github.com/hashicorp/terraform-provider-google-beta/pull/9206))
+* colab: added `desired_state` field to `google_colab_runtime`, making it startable/stoppable ([#9209](https://github.com/hashicorp/terraform-provider-google-beta/pull/9209))
+* compute: added `ip_collection` field to `google_compute_forwarding_rule ` resource ([#9194](https://github.com/hashicorp/terraform-provider-google-beta/pull/9194))
+* compute: added `mode` and `allocatable_prefix_length` fields to `google_compute_public_delegated_prefix` resource ([#9218](https://github.com/hashicorp/terraform-provider-google-beta/pull/9218))
+* compute: allow parallelization of `google_compute_per_instance_config` and `google_compute_region_per_instance_config` deletions by not locking on the parent resource, but including instance name. ([#9181](https://github.com/hashicorp/terraform-provider-google-beta/pull/9181))
+* container: added `auto_monitoring_config` field and subfields to the `google_container_cluster` resource ([#9224](https://github.com/hashicorp/terraform-provider-google-beta/pull/9224))
+* filestore: added `initial_replication` field for peer instance configuration and `effective_replication` output for replication configuration output to `google_filestore_instance` ([#9200](https://github.com/hashicorp/terraform-provider-google-beta/pull/9200))
+* memorystore: added `CLUSTER_DISABLED`  to `mode` field  in  `google_memorystore_instance` ([#9178](https://github.com/hashicorp/terraform-provider-google-beta/pull/9178))
+* networkservices: added `compression_mode` and `allowed_methods` fields to `google_network_services_edge_cache_service` resource ([#9201](https://github.com/hashicorp/terraform-provider-google-beta/pull/9201))
+* privateca: added `user_defined_access_urls` and subfields to `google_privateca_certificate_authority` resource to add support for custom CDP AIA URLs ([#9221](https://github.com/hashicorp/terraform-provider-google-beta/pull/9221))
+* workbench: added `enable_third_party_identity` field to `google_workbench_instance` resource ([#9236](https://github.com/hashicorp/terraform-provider-google-beta/pull/9236))
 
 ## 6.19.0 (Feb 3, 2025)
 NOTES:
