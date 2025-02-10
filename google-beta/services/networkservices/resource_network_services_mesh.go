@@ -18,6 +18,7 @@
 package networkservices
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net/http"
@@ -30,6 +31,7 @@ import (
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 )
 
 func ResourceNetworkServicesMesh() *schema.Resource {
@@ -49,6 +51,15 @@ func ResourceNetworkServicesMesh() *schema.Resource {
 			Delete: schema.DefaultTimeout(30 * time.Minute),
 		},
 
+		SchemaVersion: 1,
+
+		StateUpgraders: []schema.StateUpgrader{
+			{
+				Type:    resourceNetworkServicesMeshResourceV0().CoreConfigSchema().ImpliedType(),
+				Upgrade: ResourceNetworkServicesMeshUpgradeV0,
+				Version: 0,
+			},
+		},
 		CustomizeDiff: customdiff.All(
 			tpgresource.SetLabelsDiff,
 			tpgresource.DefaultProviderProject,
@@ -82,6 +93,14 @@ deployments.`,
 **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
 Please refer to the field 'effective_labels' for all of the labels present on the resource.`,
 				Elem: &schema.Schema{Type: schema.TypeString},
+			},
+			"location": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ForceNew:     true,
+				ValidateFunc: verify.ValidateRegexp(`^global$`),
+				Description:  `Location (region) of the Mesh resource to be created. Only the value 'global' is currently allowed; defaults to 'global' if omitted.`,
+				Default:      "global",
 			},
 			"create_time": {
 				Type:        schema.TypeString,
@@ -149,7 +168,7 @@ func resourceNetworkServicesMeshCreate(d *schema.ResourceData, meta interface{})
 		obj["labels"] = labelsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/meshes?meshId={{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/{{location}}/meshes?meshId={{name}}")
 	if err != nil {
 		return err
 	}
@@ -184,7 +203,7 @@ func resourceNetworkServicesMeshCreate(d *schema.ResourceData, meta interface{})
 	}
 
 	// Store the ID now
-	id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/locations/global/meshes/{{name}}")
+	id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/locations/{{location}}/meshes/{{name}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -212,7 +231,7 @@ func resourceNetworkServicesMeshRead(d *schema.ResourceData, meta interface{}) e
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/meshes/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/{{location}}/meshes/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -310,7 +329,7 @@ func resourceNetworkServicesMeshUpdate(d *schema.ResourceData, meta interface{})
 		obj["labels"] = labelsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/meshes/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/{{location}}/meshes/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -388,7 +407,7 @@ func resourceNetworkServicesMeshDelete(d *schema.ResourceData, meta interface{})
 	}
 	billingProject = project
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/meshes/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/{{location}}/meshes/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -432,15 +451,15 @@ func resourceNetworkServicesMeshDelete(d *schema.ResourceData, meta interface{})
 func resourceNetworkServicesMeshImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*transport_tpg.Config)
 	if err := tpgresource.ParseImportId([]string{
-		"^projects/(?P<project>[^/]+)/locations/global/meshes/(?P<name>[^/]+)$",
-		"^(?P<project>[^/]+)/(?P<name>[^/]+)$",
-		"^(?P<name>[^/]+)$",
+		"^projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/meshes/(?P<name>[^/]+)$",
+		"^(?P<project>[^/]+)/(?P<location>[^/]+)/(?P<name>[^/]+)$",
+		"^(?P<location>[^/]+)/(?P<name>[^/]+)$",
 	}, d, config); err != nil {
 		return nil, err
 	}
 
 	// Replace import id for the resource id
-	id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/locations/global/meshes/{{name}}")
+	id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/locations/{{location}}/meshes/{{name}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -533,4 +552,103 @@ func expandNetworkServicesMeshEffectiveLabels(v interface{}, d tpgresource.Terra
 		m[k] = val.(string)
 	}
 	return m, nil
+}
+
+func resourceNetworkServicesMeshResourceV0() *schema.Resource {
+	return &schema.Resource{
+		Create: resourceNetworkServicesMeshCreate,
+		Read:   resourceNetworkServicesMeshRead,
+		Update: resourceNetworkServicesMeshUpdate,
+		Delete: resourceNetworkServicesMeshDelete,
+
+		Importer: &schema.ResourceImporter{
+			State: resourceNetworkServicesMeshImport,
+		},
+
+		Timeouts: &schema.ResourceTimeout{
+			Create: schema.DefaultTimeout(30 * time.Minute),
+			Update: schema.DefaultTimeout(30 * time.Minute),
+			Delete: schema.DefaultTimeout(30 * time.Minute),
+		},
+
+		CustomizeDiff: customdiff.All(
+			tpgresource.SetLabelsDiff,
+			tpgresource.DefaultProviderProject,
+		),
+
+		Schema: map[string]*schema.Schema{
+			"name": {
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: `Short name of the Mesh resource to be created.`,
+			},
+			"description": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: `A free-text description of the resource. Max length 1024 characters.`,
+			},
+			"interception_port": {
+				Type:     schema.TypeInt,
+				Optional: true,
+				Description: `Optional. If set to a valid TCP port (1-65535), instructs the SIDECAR proxy to listen on the
+specified port of localhost (127.0.0.1) address. The SIDECAR proxy will expect all traffic to
+be redirected to this port regardless of its actual ip:port destination. If unset, a port
+'15001' is used as the interception port. This will is applicable only for sidecar proxy
+deployments.`,
+			},
+			"labels": {
+				Type:     schema.TypeMap,
+				Optional: true,
+				Description: `Set of label tags associated with the Mesh resource.
+
+**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+Please refer to the field 'effective_labels' for all of the labels present on the resource.`,
+				Elem: &schema.Schema{Type: schema.TypeString},
+			},
+			"create_time": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: `Time the Mesh was created in UTC.`,
+			},
+			"effective_labels": {
+				Type:        schema.TypeMap,
+				Computed:    true,
+				Description: `All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.`,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
+			"self_link": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: `Server-defined URL of this resource.`,
+			},
+			"terraform_labels": {
+				Type:     schema.TypeMap,
+				Computed: true,
+				Description: `The combination of labels configured directly on the resource
+ and default labels configured on the provider.`,
+				Elem: &schema.Schema{Type: schema.TypeString},
+			},
+			"update_time": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: `Time the Mesh was updated in UTC.`,
+			},
+			"project": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+				ForceNew: true,
+			},
+		},
+		UseJSONNumber: true,
+	}
+}
+
+func ResourceNetworkServicesMeshUpgradeV0(_ context.Context, rawState map[string]interface{}, meta interface{}) (map[string]interface{}, error) {
+	log.Printf("[DEBUG] Attributes before migration: %#v", rawState)
+	if _, ok := rawState["location"]; !ok {
+		rawState["location"] = "global"
+	}
+	log.Printf("[DEBUG] Attributes after migration: %#v", rawState)
+	return rawState, nil
 }

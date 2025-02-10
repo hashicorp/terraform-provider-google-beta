@@ -68,7 +68,7 @@ func testSweepNetworkServicesMesh(_ string) error {
 			},
 		}
 
-		listTemplate := strings.Split("https://networkservices.googleapis.com/v1/projects/{{project}}/locations/global/meshes", "?")[0]
+		listTemplate := strings.Split("https://networkservices.googleapis.com/v1/projects/{{project}}/locations/{{location}}/meshes", "?")[0]
 		listUrl, err := tpgresource.ReplaceVars(d, config, listTemplate)
 		if err != nil {
 			log.Printf("[INFO][SWEEPER_LOG] error preparing sweeper list url: %s", err)
@@ -112,7 +112,7 @@ func testSweepNetworkServicesMesh(_ string) error {
 				continue
 			}
 
-			deleteTemplate := "https://networkservices.googleapis.com/v1/projects/{{project}}/locations/global/meshes/{{name}}"
+			deleteTemplate := "https://networkservices.googleapis.com/v1/projects/{{project}}/locations/{{location}}/meshes/{{name}}"
 
 			deleteUrl, err := tpgresource.ReplaceVars(d, config, deleteTemplate)
 			if err != nil {
