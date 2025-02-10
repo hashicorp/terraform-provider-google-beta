@@ -1,4 +1,12 @@
-## 5.45.1 (Unreleased)
+## 5.45.2 (Unreleased)
+
+NOTES:
+* 5.45.2 is a backport release. The changes in this release will be available in 6.20.0 and users upgrading to 6.X should upgrade to that version or higher.
+
+BUG FIXES:
+* dns: fixed a bug where `google_dns_managed_zone` is unable to update with `service_directory_config` specified ([#9171](https://github.com/hashicorp/terraform-provider-google-beta/pull/9239))
+
+## 5.45.1 (January 29, 2024)
 
 NOTES:
 * 5.45.1 is a backport release, responding to a new GKE label being applied that can cause unwanted diffs in node pools. The changes in this release will be available in 6.18.1 and users upgrading to 6.X should upgrade to that version or higher.
@@ -6,7 +14,7 @@ NOTES:
 BUG FIXES:
 * container: fixed a diff caused by server-side set values for `node_config.resource_labels` ([#9171](https://github.com/hashicorp/terraform-provider-google-beta/pull/9171))
 
-## 5.45.0 (Unreleased)
+## 5.45.0 (November 11, 2024)
 
 NOTES:
 * 5.45.0 is a backport release, responding to a new Spanner feature that may result in creation of unwanted backups for users. The changes in this release will be available in 6.11.0 and users upgrading to 6.X should upgrade to that version or higher.
