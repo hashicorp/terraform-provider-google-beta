@@ -90,7 +90,7 @@ func testSweepBackupDRManagementServer(_ string) error {
 		resourceList, ok := res["managementServers"]
 		if !ok {
 			log.Printf("[INFO][SWEEPER_LOG] Nothing found in response.")
-			return nil
+			continue
 		}
 		rl := resourceList.([]interface{})
 
