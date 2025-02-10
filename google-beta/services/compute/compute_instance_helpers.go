@@ -178,6 +178,15 @@ func expandScheduling(v interface{}) (*compute.Scheduling, error) {
 	if v, ok := original["maintenance_interval"]; ok {
 		scheduling.MaintenanceInterval = v.(string)
 	}
+
+	if v, ok := original["graceful_shutdown"]; ok {
+		transformedGracefulShutdown, err := expandGracefulShutdown(v)
+		if err != nil {
+			return nil, err
+		}
+		scheduling.GracefulShutdown = transformedGracefulShutdown
+		scheduling.ForceSendFields = append(scheduling.ForceSendFields, "GracefulShutdown")
+	}
 	if v, ok := original["local_ssd_recovery_timeout"]; ok {
 		transformedLocalSsdRecoveryTimeout, err := expandComputeLocalSsdRecoveryTimeout(v)
 		if err != nil {
@@ -273,6 +282,52 @@ func expandComputeLocalSsdRecoveryTimeoutNanos(v interface{}) (interface{}, erro
 func expandComputeLocalSsdRecoveryTimeoutSeconds(v interface{}) (interface{}, error) {
 	return v, nil
 }
+func expandGracefulShutdown(v interface{}) (*compute.SchedulingGracefulShutdown, error) {
+	l := v.([]interface{})
+	gracefulShutdown := compute.SchedulingGracefulShutdown{}
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+
+	originalMaxDuration := original["max_duration"].([]interface{})
+	maxDuration, err := expandGracefulShutdownMaxDuration(originalMaxDuration)
+	if err != nil {
+		return nil, err
+	}
+	if maxDuration != nil {
+		gracefulShutdown.MaxDuration = maxDuration
+	}
+
+	gracefulShutdown.Enabled = original["enabled"].(bool)
+	gracefulShutdown.ForceSendFields = append(gracefulShutdown.ForceSendFields, "Enabled")
+	return &gracefulShutdown, nil
+}
+
+func expandGracefulShutdownMaxDuration(v interface{}) (*compute.Duration, error) {
+	l := v.([]interface{})
+	duration := compute.Duration{}
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+
+	maxDurationMap := raw.(map[string]interface{})
+	transformedNanos := maxDurationMap["nanos"]
+	transformedSeconds := maxDurationMap["seconds"]
+
+	if val := reflect.ValueOf(transformedNanos); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		duration.Nanos = int64(transformedNanos.(int))
+	}
+	if val := reflect.ValueOf(transformedSeconds); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		duration.Seconds = int64(transformedSeconds.(int))
+	}
+
+	duration.ForceSendFields = append(duration.ForceSendFields, "Seconds")
+
+	return &duration, nil
+}
 
 func flattenScheduling(resp *compute.Scheduling) []map[string]interface{} {
 	schedulingMap := map[string]interface{}{
@@ -302,6 +357,10 @@ func flattenScheduling(resp *compute.Scheduling) []map[string]interface{} {
 
 	if resp.MaintenanceInterval != "" {
 		schedulingMap["maintenance_interval"] = resp.MaintenanceInterval
+	}
+
+	if resp.GracefulShutdown != nil {
+		schedulingMap["graceful_shutdown"] = flattenGracefulShutdown(resp.GracefulShutdown)
 	}
 
 	if resp.LocalSsdRecoveryTimeout != nil {
@@ -341,6 +400,26 @@ func flattenOnInstanceStopAction(v *compute.SchedulingOnInstanceStopAction) []in
 }
 
 func flattenComputeLocalSsdRecoveryTimeout(v *compute.Duration) []interface{} {
+	if v == nil {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["nanos"] = v.Nanos
+	transformed["seconds"] = v.Seconds
+	return []interface{}{transformed}
+}
+
+func flattenGracefulShutdown(v *compute.SchedulingGracefulShutdown) []interface{} {
+	if v == nil {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["enabled"] = v.Enabled
+	transformed["max_duration"] = flattenGracefulShutdownMaxDuration(v.MaxDuration)
+	return []interface{}{transformed}
+}
+
+func flattenGracefulShutdownMaxDuration(v *compute.Duration) []interface{} {
 	if v == nil {
 		return nil
 	}
@@ -695,7 +774,9 @@ func schedulingHasChangeRequiringReboot(d *schema.ResourceData) bool {
 	oScheduling := o.([]interface{})[0].(map[string]interface{})
 	newScheduling := n.([]interface{})[0].(map[string]interface{})
 
-	return hasNodeAffinitiesChanged(oScheduling, newScheduling) || hasMaxRunDurationChanged(oScheduling, newScheduling)
+	return hasNodeAffinitiesChanged(oScheduling, newScheduling) ||
+		hasMaxRunDurationChanged(oScheduling, newScheduling) ||
+		hasGracefulShutdownChangedWithReboot(d, oScheduling, newScheduling)
 }
 
 // Terraform doesn't correctly calculate changes on schema.Set, so we do it manually
@@ -737,6 +818,61 @@ func schedulingHasChangeWithoutReboot(d *schema.ResourceData) bool {
 		return true
 	}
 	if oScheduling["host_error_timeout_seconds"] != newScheduling["host_error_timeout_seconds"] {
+		return true
+	}
+
+	if hasGracefulShutdownChanged(oScheduling, newScheduling) {
+		return true
+	}
+
+	return false
+}
+
+func hasGracefulShutdownChangedWithReboot(d *schema.ResourceData, oScheduling, nScheduling map[string]interface{}) bool {
+	allow_stopping_for_update := d.Get("allow_stopping_for_update").(bool)
+	if !allow_stopping_for_update {
+		return false
+	}
+	return hasGracefulShutdownChanged(oScheduling, nScheduling)
+}
+
+func hasGracefulShutdownChanged(oScheduling, nScheduling map[string]interface{}) bool {
+	oGrShut := oScheduling["graceful_shutdown"].([]interface{})
+	nGrShut := nScheduling["graceful_shutdown"].([]interface{})
+
+	if (len(oGrShut) == 0 || oGrShut[0] == nil) && (len(nGrShut) == 0 || nGrShut[0] == nil) {
+		return false
+	}
+	if (len(oGrShut) == 0 || oGrShut[0] == nil) || (len(nGrShut) == 0 || nGrShut[0] == nil) {
+		return true
+	}
+
+	oldGrShut := oGrShut[0].(map[string]interface{})
+	newGrShut := nGrShut[0].(map[string]interface{})
+	oldMaxDuration := oldGrShut["max_duration"].([]interface{})
+	newMaxDuration := newGrShut["max_duration"].([]interface{})
+	var oldMaxDurationMap map[string]interface{}
+	var newMaxDurationMap map[string]interface{}
+
+	if len(oldMaxDuration) > 0 && oldMaxDuration[0] != nil {
+		oldMaxDurationMap = oldMaxDuration[0].(map[string]interface{})
+	} else {
+		oldMaxDurationMap = nil
+	}
+
+	if len(newMaxDuration) > 0 && newMaxDuration[0] != nil {
+		newMaxDurationMap = newMaxDuration[0].(map[string]interface{})
+	} else {
+		newMaxDurationMap = nil
+	}
+
+	if oldGrShut["enabled"] != newGrShut["enabled"] {
+		return true
+	}
+	if oldMaxDurationMap["seconds"] != newMaxDurationMap["seconds"] {
+		return true
+	}
+	if oldMaxDurationMap["nanos"] != newMaxDurationMap["nanos"] {
 		return true
 	}
 
