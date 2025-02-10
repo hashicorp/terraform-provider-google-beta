@@ -71,6 +71,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/edgecontainer"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/edgenetwork"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/essentialcontacts"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/eventarc"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/filestore"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebase"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebaseappcheck"
@@ -531,9 +532,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 603
+// Generated resources: 604
 // Generated IAM resources: 306
-// Total generated resources: 909
+// Total generated resources: 910
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -1006,6 +1007,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_edgenetwork_network":                                                 edgenetwork.ResourceEdgenetworkNetwork(),
 	"google_edgenetwork_subnet":                                                  edgenetwork.ResourceEdgenetworkSubnet(),
 	"google_essential_contacts_contact":                                          essentialcontacts.ResourceEssentialContactsContact(),
+	"google_eventarc_trigger":                                                    eventarc.ResourceEventarcTrigger(),
 	"google_filestore_backup":                                                    filestore.ResourceFilestoreBackup(),
 	"google_filestore_instance":                                                  filestore.ResourceFilestoreInstance(),
 	"google_filestore_snapshot":                                                  filestore.ResourceFilestoreSnapshot(),

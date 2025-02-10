@@ -70,6 +70,7 @@ import (
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/edgecontainer"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/edgenetwork"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/essentialcontacts"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/eventarc"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/filestore"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebase"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebaseappcheck"
