@@ -37,6 +37,14 @@ IMPROVEMENTS:
 * privateca: added `user_defined_access_urls` and subfields to `google_privateca_certificate_authority` resource to add support for custom CDP AIA URLs ([#9221](https://github.com/hashicorp/terraform-provider-google-beta/pull/9221))
 * workbench: added `enable_third_party_identity` field to `google_workbench_instance` resource ([#9236](https://github.com/hashicorp/terraform-provider-google-beta/pull/9236))
 
+## 5.45.2 (Feb 10, 2025)
+
+NOTES:
+* 5.45.2 is a backport release. The changes in this release will be available in 6.20.0 and users upgrading to 6.X should upgrade to that version or higher.
+
+BUG FIXES:
+* dns: fixed a bug where `google_dns_managed_zone` is unable to update with `service_directory_config` specified ([#9171](https://github.com/hashicorp/terraform-provider-google-beta/pull/9239))
+
 ## 6.19.0 (Feb 3, 2025)
 NOTES:
 * tpuv2: made service use the v2alpha1 Cloud TPU API version, which is used for Public Preview features ([#9131](https://github.com/hashicorp/terraform-provider-google-beta/pull/9131))
