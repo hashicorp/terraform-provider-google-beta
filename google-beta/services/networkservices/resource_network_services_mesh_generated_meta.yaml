@@ -11,6 +11,8 @@ fields:
     provider_only: true
   - field: 'interception_port'
   - field: 'labels'
+  - field: 'location'
+    provider_only: true
   - field: 'name'
     provider_only: true
   - field: 'self_link'
