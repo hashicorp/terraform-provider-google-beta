@@ -56,22 +56,20 @@ func ResourceGeminiDataSharingWithGoogleSetting() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"data_sharing_with_google_setting_id": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
-				Description: `Required. Id of the requesting object.
-If auto-generating Id server-side, remove this field and
-data_sharing_with_google_setting_id from the method_signature of Create RPC`,
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
+				Description: `Id of the Data Sharing With Google Setting.`,
 			},
 			"enable_preview_data_sharing": {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Description: `Optional. Whether preview data sharing should be enabled.`,
+				Description: `Whether preview data sharing should be enabled.`,
 			},
 			"labels": {
 				Type:     schema.TypeMap,
 				Optional: true,
-				Description: `Optional. Labels as key value pairs.
+				Description: `Labels as key value pairs.
 
 **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
 Please refer to the field 'effective_labels' for all of the labels present on the resource.`,
@@ -86,7 +84,7 @@ Please refer to the field 'effective_labels' for all of the labels present on th
 			"create_time": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: `Output only. [Output only] Create time stamp.`,
+				Description: `Create time stamp.`,
 			},
 			"effective_labels": {
 				Type:        schema.TypeMap,
@@ -110,7 +108,7 @@ Format:projects/{project}/locations/{location}/dataSharingWithGoogleSettings/{da
 			"update_time": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: `Output only. [Output only] Update time stamp.`,
+				Description: `Update time stamp.`,
 			},
 			"project": {
 				Type:     schema.TypeString,
