@@ -76,6 +76,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebase"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebaseappcheck"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebasedatabase"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebasedataconnect"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebaseextensions"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebasehosting"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebasestorage"
@@ -532,9 +533,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 606
+// Generated resources: 607
 // Generated IAM resources: 306
-// Total generated resources: 912
+// Total generated resources: 913
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -1023,6 +1024,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_firebase_app_check_recaptcha_v3_config":                              firebaseappcheck.ResourceFirebaseAppCheckRecaptchaV3Config(),
 	"google_firebase_app_check_service_config":                                   firebaseappcheck.ResourceFirebaseAppCheckServiceConfig(),
 	"google_firebase_database_instance":                                          firebasedatabase.ResourceFirebaseDatabaseInstance(),
+	"google_firebase_data_connect_service":                                       firebasedataconnect.ResourceFirebaseDataConnectService(),
 	"google_firebase_extensions_instance":                                        firebaseextensions.ResourceFirebaseExtensionsInstance(),
 	"google_firebase_hosting_channel":                                            firebasehosting.ResourceFirebaseHostingChannel(),
 	"google_firebase_hosting_custom_domain":                                      firebasehosting.ResourceFirebaseHostingCustomDomain(),
