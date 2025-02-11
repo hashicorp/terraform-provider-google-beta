@@ -39,7 +39,7 @@ func TestAccGeminiGeminiGcpEnablementSetting_geminiGeminiGcpEnablementSettingBas
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckGeminiGeminiGcpEnablementSettingDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -58,7 +58,6 @@ func TestAccGeminiGeminiGcpEnablementSetting_geminiGeminiGcpEnablementSettingBas
 func testAccGeminiGeminiGcpEnablementSetting_geminiGeminiGcpEnablementSettingBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_gemini_gemini_gcp_enablement_setting" "example" {
-    provider = google-beta
     gemini_gcp_enablement_setting_id = "tf-test-ls1-tf%{random_suffix}"
     location = "global"
     enable_customer_data_sharing = true
