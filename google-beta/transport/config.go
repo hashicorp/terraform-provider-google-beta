@@ -262,6 +262,7 @@ type Config struct {
 	FirebaseBasePath                 string
 	FirebaseAppCheckBasePath         string
 	FirebaseDatabaseBasePath         string
+	FirebaseDataConnectBasePath      string
 	FirebaseExtensionsBasePath       string
 	FirebaseHostingBasePath          string
 	FirebaseStorageBasePath          string
@@ -430,6 +431,7 @@ const FilestoreBasePathKey = "Filestore"
 const FirebaseBasePathKey = "Firebase"
 const FirebaseAppCheckBasePathKey = "FirebaseAppCheck"
 const FirebaseDatabaseBasePathKey = "FirebaseDatabase"
+const FirebaseDataConnectBasePathKey = "FirebaseDataConnect"
 const FirebaseExtensionsBasePathKey = "FirebaseExtensions"
 const FirebaseHostingBasePathKey = "FirebaseHosting"
 const FirebaseStorageBasePathKey = "FirebaseStorage"
@@ -592,6 +594,7 @@ var DefaultBasePaths = map[string]string{
 	FirebaseBasePathKey:                 "https://firebase.googleapis.com/v1beta1/",
 	FirebaseAppCheckBasePathKey:         "https://firebaseappcheck.googleapis.com/v1beta/",
 	FirebaseDatabaseBasePathKey:         "https://firebasedatabase.googleapis.com/v1beta/",
+	FirebaseDataConnectBasePathKey:      "https://firebasedataconnect.googleapis.com/v1beta/",
 	FirebaseExtensionsBasePathKey:       "https://firebaseextensions.googleapis.com/v1beta/",
 	FirebaseHostingBasePathKey:          "https://firebasehosting.googleapis.com/v1beta1/",
 	FirebaseStorageBasePathKey:          "https://firebasestorage.googleapis.com/v1beta/",
@@ -1112,6 +1115,11 @@ func SetEndpointDefaults(d *schema.ResourceData) error {
 		d.Set("firebase_database_custom_endpoint", MultiEnvDefault([]string{
 			"GOOGLE_FIREBASE_DATABASE_CUSTOM_ENDPOINT",
 		}, DefaultBasePaths[FirebaseDatabaseBasePathKey]))
+	}
+	if d.Get("firebase_data_connect_custom_endpoint") == "" {
+		d.Set("firebase_data_connect_custom_endpoint", MultiEnvDefault([]string{
+			"GOOGLE_FIREBASE_DATA_CONNECT_CUSTOM_ENDPOINT",
+		}, DefaultBasePaths[FirebaseDataConnectBasePathKey]))
 	}
 	if d.Get("firebase_extensions_custom_endpoint") == "" {
 		d.Set("firebase_extensions_custom_endpoint", MultiEnvDefault([]string{
@@ -2524,6 +2532,7 @@ func ConfigureBasePaths(c *Config) {
 	c.FirebaseBasePath = DefaultBasePaths[FirebaseBasePathKey]
 	c.FirebaseAppCheckBasePath = DefaultBasePaths[FirebaseAppCheckBasePathKey]
 	c.FirebaseDatabaseBasePath = DefaultBasePaths[FirebaseDatabaseBasePathKey]
+	c.FirebaseDataConnectBasePath = DefaultBasePaths[FirebaseDataConnectBasePathKey]
 	c.FirebaseExtensionsBasePath = DefaultBasePaths[FirebaseExtensionsBasePathKey]
 	c.FirebaseHostingBasePath = DefaultBasePaths[FirebaseHostingBasePathKey]
 	c.FirebaseStorageBasePath = DefaultBasePaths[FirebaseStorageBasePathKey]
