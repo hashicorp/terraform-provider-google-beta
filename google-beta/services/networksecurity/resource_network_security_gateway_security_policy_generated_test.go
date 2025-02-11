@@ -74,7 +74,7 @@ func TestAccNetworkSecurityGatewaySecurityPolicy_networkSecurityGatewaySecurityP
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckNetworkSecurityGatewaySecurityPolicyDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -93,7 +93,6 @@ func TestAccNetworkSecurityGatewaySecurityPolicy_networkSecurityGatewaySecurityP
 func testAccNetworkSecurityGatewaySecurityPolicy_networkSecurityGatewaySecurityPolicyTlsInspectionBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_privateca_ca_pool" "default" {
-  provider = google-beta
   name      = "tf-test-my-basic-ca-pool%{random_suffix}"
   location  = "us-central1"
   tier     = "DEVOPS"
@@ -117,9 +116,7 @@ resource "google_privateca_ca_pool" "default" {
   }
 }
 
-
 resource "google_privateca_certificate_authority" "default" {
-  provider = google-beta
   pool = google_privateca_ca_pool.default.name
   certificate_authority_id = "tf-test-my-basic-certificate-authority%{random_suffix}"
   location = "us-central1"
@@ -156,19 +153,15 @@ resource "google_privateca_certificate_authority" "default" {
 }
 
 data "google_project" "project" {
-  provider = google-beta
 }
 
 resource "google_privateca_ca_pool_iam_member" "tls_inspection_permission" {
-  provider = google-beta
-
   ca_pool = google_privateca_ca_pool.default.id
   role = "roles/privateca.certificateManager"
   member = "serviceAccount:service-${data.google_project.project.number}@gcp-sa-networksecurity.iam.gserviceaccount.com"
 }
 
 resource "google_network_security_tls_inspection_policy" "default" {
-  provider = google-beta
   name     = "tf-test-my-tls-inspection-policy%{random_suffix}"
   location = "us-central1"
   ca_pool  = google_privateca_ca_pool.default.id
@@ -176,7 +169,6 @@ resource "google_network_security_tls_inspection_policy" "default" {
 }
 
 resource "google_network_security_gateway_security_policy" "default" {
-  provider    = google-beta
   name        = "tf-test-my-gateway-security-policy%{random_suffix}"
   location    = "us-central1"
   description = "my description"
