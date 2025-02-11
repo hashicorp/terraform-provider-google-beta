@@ -61,6 +61,7 @@ resource "google_gemini_logging_setting" "example" {
     provider = google-beta
     logging_setting_id = "tf-test-ls1-tf%{random_suffix}"
     location = "global"
+    labels = {"my_key": "my_value"}
     log_prompts_and_responses = true
     log_metadata = true
 }
