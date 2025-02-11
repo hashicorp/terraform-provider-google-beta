@@ -61,6 +61,7 @@ resource "google_gemini_release_channel_setting" "example" {
     provider = google-beta
     release_channel_setting_id = "tf-test-ls1-tf%{random_suffix}"
     location = "global"
+    labels = {"my_key": "my_value"}
     release_channel = "EXPERIMENTAL"
 }
 `, context)

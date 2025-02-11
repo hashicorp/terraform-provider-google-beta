@@ -3,6 +3,7 @@
 package gemini_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
@@ -13,7 +14,7 @@ import (
 func TestAccGeminiReleaseChannelSetting_geminiReleaseChannelSettingBasicExample_update(t *testing.T) {
 	t.Parallel()
 	context := map[string]interface{}{
-		"setting_id": "ls-tf1",
+		"setting_id": fmt.Sprintf("tf-test-ls-%s", acctest.RandString(t, 10)),
 	}
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -61,6 +62,7 @@ resource "google_gemini_release_channel_setting" "example" {
     provider = google-beta
     release_channel_setting_id = "%{setting_id}"
     location = "global"
+    labels = {"my_key" = "my_value"}
     release_channel = "STABLE"
 }
 `, context)
