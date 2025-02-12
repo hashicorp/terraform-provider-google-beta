@@ -16,13 +16,7 @@ test: lint testnolint
 
 # Used in CI to prevent lint failures from being interpreted as test failures
 testnolint: analyze
-	@dirs=""; \
-	for pkg in $$(go list -e $(TEST)); do \
-		dir=$$(go list -f '{{.Dir}}' "$$pkg"); \
-		if [ -d "$$dir" ]; then \
-			dirs+="$$dir "; \
-		fi; \
-	done; \
+	@dirs=$$(go list -e $(TEST) | xargs -I {} go list -f '{{.Dir}}' {} | tr '\n' ' ' ); \
 	results=$$(./scripts/package-needs-unit-testing/pnut $$dirs); \
 	testable_packages=""; \
 	for result in $$results; do \
