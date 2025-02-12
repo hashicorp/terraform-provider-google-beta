@@ -40,7 +40,7 @@ testnolint: analyze
 	wait; \
 	packages="$$(grep "^TESTABLE:" "$$tmpfile" | cut -d':' -f2 | tr '\n' ' ')"; \
 	if [ -n "$$packages" ]; then \
-		go test -timeout=30s $$packages; \
+		go test -p=1 -timeout=30s $$packages; \
 	else \
 		echo "No packages to test."; \
 	fi; \
