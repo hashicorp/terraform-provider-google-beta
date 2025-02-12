@@ -16,35 +16,32 @@ test: lint testnolint
 
 # Used in CI to prevent lint failures from being interpreted as test failures
 testnolint: analyze
-	@tmpfile=$$(mktemp -t testnolint.XXXXXX); \
+	@dirs=""; \
 	for pkg in $$(go list -e $(TEST)); do \
 		dir=$$(go list -f '{{.Dir}}' "$$pkg"); \
 		if [ -d "$$dir" ]; then \
-			( \
-				./scripts/package-needs-unit-testing/pnut "$$dir" | { \
-					read line; \
-					case "$$line" in \
-						TESTABLE:*) \
-							package_path=$$(echo "$$line" | cut -d':' -f2); \
-							echo "TESTABLE:$$package_path" >> "$$tmpfile"; \
-							;; \
-						SKIPPED:*) \
-							package_path=$$(echo "$$line" | cut -d':' -f2); \
-							echo "Skipping tests for $$package_path (all tests use acctest.VcrTest)"; \
-							;; \
-					esac; \
-				} \
-			) & \
+			dirs+="$$dir "; \
 		fi; \
 	done; \
-	wait; \
-	packages="$$(grep "^TESTABLE:" "$$tmpfile" | cut -d':' -f2 | tr '\n' ' ')"; \
-	if [ -n "$$packages" ]; then \
-		go test -timeout=30s $$packages; \
+	results=$$(./scripts/package-needs-unit-testing/pnut $$dirs); \
+	testable_packages=""; \
+	for result in $$results; do \
+		case "$$result" in \
+			TESTABLE:*) \
+				package_path=$$(echo "$$result" | cut -d':' -f2); \
+				testable_packages+="$$package_path ";\
+				;; \
+			SKIPPED:*) \
+				package_path=$$(echo "$$result" | cut -d':' -f2); \
+				echo "Skipping tests for $$package_path (all tests use acctest.VcrTest)"; \
+				;; \
+		esac; \
+	done; \
+	if [ -n "$$testable_packages" ]; then \
+		go test -timeout=30s $$testable_packages; \
 	else \
 		echo "No packages to test."; \
-	fi; \
-	rm -f "$$tmpfile"
+	fi
 
 testacc: lint
 	TF_ACC=1 TF_SCHEMA_PANIC_ON_ERROR=1 go test $(TEST) -v $(TESTARGS) -timeout 240m -ldflags="-X=github.com/hashicorp/terraform-provider-google-beta/version.ProviderVersion=acc"

@@ -11,20 +11,28 @@ import (
 )
 
 func main() {
-	if len(os.Args) != 2 {
-		fmt.Fprintf(os.Stderr, "Usage: %s <package_path>\n", os.Args[0])
+	if len(os.Args) == 1 {
+		fmt.Println(os.Args)
+		fmt.Fprintf(os.Stderr, "Usage: %s <package_paths>\n", os.Args[0])
 		os.Exit(1)
 	}
 
-	packagePath := os.Args[1]
+	packagePaths := os.Args[1:] // All arguments are now package paths
 
+	for _, packagePath := range packagePaths {
+		processPackage(packagePath)
+	}
+
+}
+
+func processPackage(packagePath string) {
 	fset := token.NewFileSet()
 	pkgs, err := parser.ParseDir(fset, packagePath, func(info os.FileInfo) bool {
 		return !info.IsDir() && filepath.Ext(info.Name()) == ".go" && filepath.Base(info.Name()) != "skip_test.go"
 	}, parser.ParseComments)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error parsing package: %v\n", err)
-		os.Exit(1)
+		return
 	}
 
 	nonVcrTests := []string{} // Keep track of test function names
@@ -50,6 +58,7 @@ func main() {
 		fmt.Printf("SKIPPED:%s\n", packagePath)
 	}
 }
+
 func isTestFunc(fn *ast.FuncDecl) bool {
 	return fn.Name != nil && fn.Name.Name != "" && len(fn.Name.Name) > 4 && fn.Name.Name[:4] == "Test"
 }
