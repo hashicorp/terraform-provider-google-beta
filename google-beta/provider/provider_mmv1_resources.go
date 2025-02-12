@@ -534,9 +534,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 607
+// Generated resources: 608
 // Generated IAM resources: 306
-// Total generated resources: 913
+// Total generated resources: 914
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -1009,6 +1009,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_edgenetwork_network":                                                 edgenetwork.ResourceEdgenetworkNetwork(),
 	"google_edgenetwork_subnet":                                                  edgenetwork.ResourceEdgenetworkSubnet(),
 	"google_essential_contacts_contact":                                          essentialcontacts.ResourceEssentialContactsContact(),
+	"google_eventarc_google_channel_config":                                      eventarc.ResourceEventarcGoogleChannelConfig(),
 	"google_eventarc_trigger":                                                    eventarc.ResourceEventarcTrigger(),
 	"google_filestore_backup":                                                    filestore.ResourceFilestoreBackup(),
 	"google_filestore_instance":                                                  filestore.ResourceFilestoreInstance(),
