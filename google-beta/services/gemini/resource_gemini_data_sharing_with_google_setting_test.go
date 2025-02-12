@@ -18,7 +18,7 @@ func TestAccGeminiDataSharingWithGoogleSetting_geminiDataSharingWithGoogleSettin
 	}
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccGeminiDataSharingWithGoogleSetting_geminiDataSharingWithGoogleSettingBasicExample_basic(context),
@@ -49,7 +49,6 @@ func TestAccGeminiDataSharingWithGoogleSetting_geminiDataSharingWithGoogleSettin
 func testAccGeminiDataSharingWithGoogleSetting_geminiDataSharingWithGoogleSettingBasicExample_basic(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_gemini_data_sharing_with_google_setting" "example" {
-    provider = google-beta
     data_sharing_with_google_setting_id = "%{setting_id}"
     location = "global"
     enable_preview_data_sharing = true
@@ -59,7 +58,6 @@ resource "google_gemini_data_sharing_with_google_setting" "example" {
 func testAccGeminiDataSharingWithGoogleSetting_geminiDataSharingWithGoogleSettingBasicExample_update(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_gemini_data_sharing_with_google_setting" "example" {
-    provider = google-beta
     data_sharing_with_google_setting_id = "%{setting_id}"
     location = "global"
     enable_preview_data_sharing = false
