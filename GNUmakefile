@@ -29,7 +29,7 @@ testnolint: analyze
 		case "$$result" in \
 			TESTABLE:*) \
 				package_path=$$(echo "$$result" | cut -d':' -f2); \
-				testable_packages+="$$package_path ";\
+				testable_packages="$${testable_packages} $$package_path"; \
 				;; \
 			SKIPPED:*) \
 				package_path=$$(echo "$$result" | cut -d':' -f2); \
