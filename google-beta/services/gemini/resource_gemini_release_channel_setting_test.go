@@ -18,7 +18,7 @@ func TestAccGeminiReleaseChannelSetting_geminiReleaseChannelSettingBasicExample_
 	}
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccGeminiReleaseChannelSetting_geminiReleaseChannelSettingBasicExample_basic(context),
@@ -49,7 +49,6 @@ func TestAccGeminiReleaseChannelSetting_geminiReleaseChannelSettingBasicExample_
 func testAccGeminiReleaseChannelSetting_geminiReleaseChannelSettingBasicExample_basic(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_gemini_release_channel_setting" "example" {
-    provider = google-beta
     release_channel_setting_id = "%{setting_id}"
     location = "global"
     release_channel = "EXPERIMENTAL"
@@ -59,7 +58,6 @@ resource "google_gemini_release_channel_setting" "example" {
 func testAccGeminiReleaseChannelSetting_geminiReleaseChannelSettingBasicExample_update(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_gemini_release_channel_setting" "example" {
-    provider = google-beta
     release_channel_setting_id = "%{setting_id}"
     location = "global"
     labels = {"my_key" = "my_value"}

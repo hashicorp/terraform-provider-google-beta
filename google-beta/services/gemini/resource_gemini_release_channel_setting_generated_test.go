@@ -39,7 +39,7 @@ func TestAccGeminiReleaseChannelSetting_geminiReleaseChannelSettingBasicExample(
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckGeminiReleaseChannelSettingDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -58,7 +58,6 @@ func TestAccGeminiReleaseChannelSetting_geminiReleaseChannelSettingBasicExample(
 func testAccGeminiReleaseChannelSetting_geminiReleaseChannelSettingBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_gemini_release_channel_setting" "example" {
-    provider = google-beta
     release_channel_setting_id = "tf-test-ls1-tf%{random_suffix}"
     location = "global"
     labels = {"my_key": "my_value"}
