@@ -503,7 +503,6 @@ Please refer to the field 'effective_labels' for all of the labels present on th
 										Type:        schema.TypeString,
 										Computed:    true,
 										Optional:    true,
-										ForceNew:    true,
 										Description: `The type of the persistent disk for the home directory. Defaults to 'pd-standard'.`,
 									},
 									"fs_type": {
@@ -523,7 +522,6 @@ Please refer to the field 'effective_labels' for all of the labels present on th
 										Type:     schema.TypeInt,
 										Computed: true,
 										Optional: true,
-										ForceNew: true,
 										Description: `The GB capacity of a persistent home directory for each workstation created with this configuration. Must be empty if 'sourceSnapshot' is set.
 Valid values are '10', '50', '100', '200', '500', or '1000'. Defaults to '200'. If less than '200' GB, the 'diskType' must be 'pd-balanced' or 'pd-ssd'.`,
 									},
