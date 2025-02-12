@@ -8,11 +8,43 @@ default: build
 build: lint
 	go install
 
+# Compile the analyzer
+analyze:
+	go build -o ./scripts/package-needs-unit-testing/pnut ./scripts/package-needs-unit-testing/main.go
+
 test: lint testnolint
 
 # Used in CI to prevent lint failures from being interpreted as test failures
-testnolint:
-	go test $(TESTARGS) -timeout=30s $(TEST)
+testnolint: analyze
+	@tmpfile=$$(mktemp -t testnolint.XXXXXX); \
+	for pkg in $$(go list -e $(TEST)); do \
+		dir=$$(go list -f '{{.Dir}}' "$$pkg"); \
+		if [ -d "$$dir" ]; then \
+			( \
+				./scripts/package-needs-unit-testing/pnut "$$dir" | { \
+					read line; \
+					case "$$line" in \
+						TESTABLE:*) \
+							package_path=$$(echo "$$line" | cut -d':' -f2); \
+							echo "TESTABLE:$$package_path" >> "$$tmpfile"; \
+							;; \
+						SKIPPED:*) \
+							package_path=$$(echo "$$line" | cut -d':' -f2); \
+							echo "Skipping tests for $$package_path (all tests use acctest.VcrTest)"; \
+							;; \
+					esac; \
+				} \
+			) & \
+		fi; \
+	done; \
+	wait; \
+	packages="$$(grep "^TESTABLE:" "$$tmpfile" | cut -d':' -f2 | tr '\n' ' ')"; \
+	if [ -n "$$packages" ]; then \
+		go test -p=1 -timeout=30s $$packages; \
+	else \
+		echo "No packages to test."; \
+	fi; \
+	rm -f "$$tmpfile"
 
 testacc: lint
 	TF_ACC=1 TF_SCHEMA_PANIC_ON_ERROR=1 go test $(TEST) -v $(TESTARGS) -timeout 240m -ldflags="-X=github.com/hashicorp/terraform-provider-google-beta/version.ProviderVersion=acc"
@@ -48,5 +80,4 @@ endif
 docscheck:
 	@sh -c "'$(CURDIR)/scripts/docscheck.sh'"
 
-.PHONY: build test testnolint testacc fmt fmtcheck vet lint  errcheck test-compile website website-test docscheck
-
+.PHONY: build test testnolint testacc fmt fmtcheck vet lint  errcheck test-compile website website-test docscheck analyze
