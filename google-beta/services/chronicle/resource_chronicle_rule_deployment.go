@@ -196,7 +196,7 @@ func resourceChronicleRuleDeploymentCreate(d *schema.ResourceData, meta interfac
 		obj["runFrequency"] = runFrequencyProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{ChronicleBasePath}}projects/{{project}}/locations/{{location}}/instances/{{instance}}/rules/{{rule}}/deployment?updateMask=enabled,alerting,archived,runFrequency")
+	url, err := tpgresource.ReplaceVars(d, config, "{{ChronicleBasePath}}projects/{{project}}/locations/{{location}}/instances/{{instance}}/rules/{{rule}}/deployment")
 	if err != nil {
 		return err
 	}
@@ -216,6 +216,23 @@ func resourceChronicleRuleDeploymentCreate(d *schema.ResourceData, meta interfac
 	}
 
 	headers := make(http.Header)
+	// Read the config and update the mask only if set by the user in terraform code
+
+	params := []string{"enabled", "alerting", "archived", "run_frequency"}
+	var existingParams []string
+
+	// Populating existingParams with the params that exist
+	for _, param := range params {
+		if _, ok := d.GetOk(param); ok {
+			existingParams = append(existingParams, param)
+		}
+	}
+
+	// Updating the url to have updateMask
+	url, err = transport_tpg.AddQueryParams(url, map[string]string{"updateMask": strings.Join(existingParams, ",")})
+	if err != nil {
+		return err
+	}
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "PATCH",
