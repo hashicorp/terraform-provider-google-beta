@@ -18,7 +18,7 @@ func TestAccGeminiLoggingSetting_geminiLoggingSettingBasicExample_update(t *test
 	}
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccGeminiLoggingSetting_geminiLoggingSettingBasicExample_basic(context),
@@ -49,18 +49,16 @@ func TestAccGeminiLoggingSetting_geminiLoggingSettingBasicExample_update(t *test
 func testAccGeminiLoggingSetting_geminiLoggingSettingBasicExample_basic(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_gemini_logging_setting" "example" {
-    provider = google-beta
     logging_setting_id = "%{setting_id}"
     location = "global"
-	log_prompts_and_responses = true
-	log_metadata = true
+    log_prompts_and_responses = true
+    log_metadata = true
 }
 `, context)
 }
 func testAccGeminiLoggingSetting_geminiLoggingSettingBasicExample_update(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_gemini_logging_setting" "example" {
-    provider = google-beta
     logging_setting_id = "%{setting_id}"
     location = "global"
 	labels = {"my_key" = "my_value"}
