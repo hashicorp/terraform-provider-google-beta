@@ -1,6 +1,7 @@
 ## 6.21.0 (Unreleased)
 
 NOTES:
+* provider: The Terraform Provider for Google Cloud's regular release date will move from Monday to Tuesday in early March. The 2025/03/10 release will be made on 2025/03/11.
 * eventarc: `google_eventarc_google_channel_config` now uses MMv1 engine instead of DCL. ([#9315](https://github.com/hashicorp/terraform-provider-google-beta/pull/9315))
 * eventarc: `google_eventarc_trigger` now uses MMv1 engine instead of DCL. ([#9276](https://github.com/hashicorp/terraform-provider-google-beta/pull/9276))
 
