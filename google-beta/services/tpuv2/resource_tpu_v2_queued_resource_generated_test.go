@@ -82,6 +82,81 @@ resource "google_tpu_v2_queued_resource" "qr" {
 `, context)
 }
 
+func TestAccTpuV2QueuedResource_tpuV2QueuedResourceFullExample(t *testing.T) {
+	acctest.SkipIfVcr(t)
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"project":       envvar.GetTestProjectFromEnv(),
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckTpuV2QueuedResourceDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccTpuV2QueuedResource_tpuV2QueuedResourceFullExample(context),
+			},
+			{
+				ResourceName:            "google_tpu_v2_queued_resource.qr",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"zone"},
+			},
+		},
+	})
+}
+
+func testAccTpuV2QueuedResource_tpuV2QueuedResourceFullExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_tpu_v2_queued_resource" "qr" {
+  provider = google-beta
+
+  name    = "tf-test-test-qr%{random_suffix}"
+  zone    = "us-central1-c"
+  project = "%{project}"
+
+  tpu {
+    node_spec {
+      parent  = "projects/%{project}/locations/us-central1-c"
+      node_id = "tf-test-test-tpu%{random_suffix}"
+      node {
+        runtime_version  = "tpu-vm-tf-2.13.0"
+        accelerator_type = "v2-8"
+        description      = "Text description of the TPU."
+
+        network_config {
+          can_ip_forward      = true
+          enable_external_ips = true
+          network             = google_compute_network.network.id
+          subnetwork          = google_compute_subnetwork.subnet.id
+	  queue_count         = 32
+        }
+      }
+    }
+  }
+}
+
+resource "google_compute_subnetwork" "subnet" {
+  provider = google-beta
+
+  name          = "tf-test-tpu-subnet%{random_suffix}"
+  ip_cidr_range = "10.0.0.0/16"
+  region        = "us-central1"
+  network       = google_compute_network.network.id
+}
+
+resource "google_compute_network" "network" {
+  provider = google-beta
+
+  name                    = "tf-test-tpu-net%{random_suffix}"
+  auto_create_subnetworks = false
+}
+`, context)
+}
+
 func testAccCheckTpuV2QueuedResourceDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		for name, rs := range s.RootModule().Resources {
