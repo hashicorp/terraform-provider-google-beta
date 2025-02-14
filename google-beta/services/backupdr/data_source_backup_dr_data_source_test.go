@@ -11,6 +11,9 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 )
 
+// this test cannot be ran locally without seeding your environment with a backup vault and scheduling the backup of a compute instance
+// to generate a unique datasourceId, that this test would need to be modified to use. the values in this test correspond to those used
+// in our testing processes.
 func TestAccDataSourceGoogleCloudBackupDRDataSource_basic(t *testing.T) {
 	t.Parallel()
 
@@ -51,6 +54,7 @@ data "google_backup_dr_data_source" "foo" {
   location      = "us-central1"
   backup_vault_id = "bv-test"
   data_source_id = "ds-test"
+  
 }
 
 `, context)
