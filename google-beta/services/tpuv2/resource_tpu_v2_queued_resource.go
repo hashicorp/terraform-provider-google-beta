@@ -99,6 +99,54 @@ func ResourceTpuV2QueuedResource() *schema.Resource {
 													ForceNew:    true,
 													Description: `Text description of the TPU.`,
 												},
+												"network_config": {
+													Type:        schema.TypeList,
+													Computed:    true,
+													Optional:    true,
+													ForceNew:    true,
+													Description: `Network configurations for the TPU node.`,
+													MaxItems:    1,
+													Elem: &schema.Resource{
+														Schema: map[string]*schema.Schema{
+															"can_ip_forward": {
+																Type:     schema.TypeBool,
+																Optional: true,
+																ForceNew: true,
+																Description: `Allows the TPU node to send and receive packets with non-matching destination or source
+IPs. This is required if you plan to use the TPU workers to forward routes.`,
+															},
+															"enable_external_ips": {
+																Type:     schema.TypeBool,
+																Optional: true,
+																ForceNew: true,
+																Description: `Indicates that external IP addresses would be associated with the TPU workers. If set to
+false, the specified subnetwork or network should have Private Google Access enabled.`,
+															},
+															"network": {
+																Type:     schema.TypeString,
+																Computed: true,
+																Optional: true,
+																ForceNew: true,
+																Description: `The name of the network for the TPU node. It must be a preexisting Google Compute Engine
+network. If none is provided, "default" will be used.`,
+															},
+															"queue_count": {
+																Type:        schema.TypeInt,
+																Optional:    true,
+																ForceNew:    true,
+																Description: `Specifies networking queue count for TPU VM instance's network interface.`,
+															},
+															"subnetwork": {
+																Type:     schema.TypeString,
+																Computed: true,
+																Optional: true,
+																ForceNew: true,
+																Description: `The name of the subnetwork for the TPU node. It must be a preexisting Google Compute
+Engine subnetwork. If none is provided, "default" will be used.`,
+															},
+														},
+													},
+												},
 											},
 										},
 									},
@@ -422,6 +470,8 @@ func flattenTpuV2QueuedResourceTpuNodeSpecNode(v interface{}, d *schema.Resource
 		flattenTpuV2QueuedResourceTpuNodeSpecNodeAcceleratorType(original["acceleratorType"], d, config)
 	transformed["description"] =
 		flattenTpuV2QueuedResourceTpuNodeSpecNodeDescription(original["description"], d, config)
+	transformed["network_config"] =
+		flattenTpuV2QueuedResourceTpuNodeSpecNodeNetworkConfig(original["networkConfig"], d, config)
 	return []interface{}{transformed}
 }
 func flattenTpuV2QueuedResourceTpuNodeSpecNodeRuntimeVersion(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -434,6 +484,60 @@ func flattenTpuV2QueuedResourceTpuNodeSpecNodeAcceleratorType(v interface{}, d *
 
 func flattenTpuV2QueuedResourceTpuNodeSpecNodeDescription(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
+}
+
+func flattenTpuV2QueuedResourceTpuNodeSpecNodeNetworkConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["network"] =
+		flattenTpuV2QueuedResourceTpuNodeSpecNodeNetworkConfigNetwork(original["network"], d, config)
+	transformed["subnetwork"] =
+		flattenTpuV2QueuedResourceTpuNodeSpecNodeNetworkConfigSubnetwork(original["subnetwork"], d, config)
+	transformed["enable_external_ips"] =
+		flattenTpuV2QueuedResourceTpuNodeSpecNodeNetworkConfigEnableExternalIps(original["enableExternalIps"], d, config)
+	transformed["can_ip_forward"] =
+		flattenTpuV2QueuedResourceTpuNodeSpecNodeNetworkConfigCanIpForward(original["canIpForward"], d, config)
+	transformed["queue_count"] =
+		flattenTpuV2QueuedResourceTpuNodeSpecNodeNetworkConfigQueueCount(original["queueCount"], d, config)
+	return []interface{}{transformed}
+}
+func flattenTpuV2QueuedResourceTpuNodeSpecNodeNetworkConfigNetwork(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenTpuV2QueuedResourceTpuNodeSpecNodeNetworkConfigSubnetwork(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenTpuV2QueuedResourceTpuNodeSpecNodeNetworkConfigEnableExternalIps(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenTpuV2QueuedResourceTpuNodeSpecNodeNetworkConfigCanIpForward(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenTpuV2QueuedResourceTpuNodeSpecNodeNetworkConfigQueueCount(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	// Handles the string fixed64 format
+	if strVal, ok := v.(string); ok {
+		if intVal, err := tpgresource.StringToFixed64(strVal); err == nil {
+			return intVal
+		}
+	}
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
 }
 
 func expandTpuV2QueuedResourceName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
@@ -533,6 +637,13 @@ func expandTpuV2QueuedResourceTpuNodeSpecNode(v interface{}, d tpgresource.Terra
 		transformed["description"] = transformedDescription
 	}
 
+	transformedNetworkConfig, err := expandTpuV2QueuedResourceTpuNodeSpecNodeNetworkConfig(original["network_config"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedNetworkConfig); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["networkConfig"] = transformedNetworkConfig
+	}
+
 	return transformed, nil
 }
 
@@ -545,5 +656,72 @@ func expandTpuV2QueuedResourceTpuNodeSpecNodeAcceleratorType(v interface{}, d tp
 }
 
 func expandTpuV2QueuedResourceTpuNodeSpecNodeDescription(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandTpuV2QueuedResourceTpuNodeSpecNodeNetworkConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedNetwork, err := expandTpuV2QueuedResourceTpuNodeSpecNodeNetworkConfigNetwork(original["network"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedNetwork); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["network"] = transformedNetwork
+	}
+
+	transformedSubnetwork, err := expandTpuV2QueuedResourceTpuNodeSpecNodeNetworkConfigSubnetwork(original["subnetwork"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedSubnetwork); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["subnetwork"] = transformedSubnetwork
+	}
+
+	transformedEnableExternalIps, err := expandTpuV2QueuedResourceTpuNodeSpecNodeNetworkConfigEnableExternalIps(original["enable_external_ips"], d, config)
+	if err != nil {
+		return nil, err
+	} else {
+		transformed["enableExternalIps"] = transformedEnableExternalIps
+	}
+
+	transformedCanIpForward, err := expandTpuV2QueuedResourceTpuNodeSpecNodeNetworkConfigCanIpForward(original["can_ip_forward"], d, config)
+	if err != nil {
+		return nil, err
+	} else {
+		transformed["canIpForward"] = transformedCanIpForward
+	}
+
+	transformedQueueCount, err := expandTpuV2QueuedResourceTpuNodeSpecNodeNetworkConfigQueueCount(original["queue_count"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedQueueCount); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["queueCount"] = transformedQueueCount
+	}
+
+	return transformed, nil
+}
+
+func expandTpuV2QueuedResourceTpuNodeSpecNodeNetworkConfigNetwork(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandTpuV2QueuedResourceTpuNodeSpecNodeNetworkConfigSubnetwork(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandTpuV2QueuedResourceTpuNodeSpecNodeNetworkConfigEnableExternalIps(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandTpuV2QueuedResourceTpuNodeSpecNodeNetworkConfigCanIpForward(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandTpuV2QueuedResourceTpuNodeSpecNodeNetworkConfigQueueCount(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
