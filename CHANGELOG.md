@@ -29,7 +29,7 @@ IMPROVEMENTS:
 
 BUG FIXES:
 * chronicle: fixed creation issues when optional fields were missing for `google_chronicle_rule_deployment` resource ([#9312](https://github.com/hashicorp/terraform-provider-google-beta/pull/9312))
-* dns: fixed a bug where `google_dns_managed_zone` is unable to update with `service_directory_config` specified (beta) ([#9239](https://github.com/hashicorp/terraform-provider-google-beta/pull/9239))
+* dns: fixed a bug where `google_dns_managed_zone` is unable to update with `service_directory_config` specified ([#9239](https://github.com/hashicorp/terraform-provider-google-beta/pull/9239))
 * databasemigrationservice: fixed error details type on `google_database_migration_service_migration_job` ([#9244](https://github.com/hashicorp/terraform-provider-google-beta/pull/9244))
 * networkservices: fixed a bug with `google_network_services_authz_extension.wire_format` sending an invalid default value by removing the Terraform default and letting the API set the default. ([#9245](https://github.com/hashicorp/terraform-provider-google-beta/pull/9245))
 
