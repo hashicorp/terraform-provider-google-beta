@@ -15,7 +15,7 @@ func TestAccDataSourceGoogleBackupDRBackupPlanAssociation_basic(t *testing.T) {
 	}
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDataSourceGoogleBackupDRBackupPlanAssociation_basic(context),
@@ -34,13 +34,11 @@ func testAccDataSourceGoogleBackupDRBackupPlanAssociation_basic(context map[stri
 	return acctest.Nprintf(`
 
 resource "google_service_account" "default" {
-  provider = google-beta
   account_id   = "tf-test-my-custom-%{random_suffix}"
   display_name = "Custom SA for VM Instance"
 }
 
 resource "google_compute_instance" "default" {
-  provider = google-beta
   name         = "tf-test-compute-instance-%{random_suffix}"
   machine_type = "n2-standard-2"
   zone         = "us-central1-a"
@@ -70,7 +68,6 @@ resource "google_compute_instance" "default" {
   }
 }
 resource "google_backup_dr_backup_vault" "my-backup-vault" {
-    provider = google-beta
     location ="us-central1"
     backup_vault_id    = "tf-test-bv-%{random_suffix}"
     description = "This is a second backup vault built by Terraform."
@@ -89,7 +86,6 @@ resource "google_backup_dr_backup_vault" "my-backup-vault" {
 }
 
 resource "google_backup_dr_backup_plan" "foo" {
-  provider = google-beta
   location       = "us-central1"
   backup_plan_id = "tf-test-bp-test-%{random_suffix}"
   resource_type  = "compute.googleapis.com/Instance"
@@ -113,7 +109,6 @@ resource "google_backup_dr_backup_plan" "foo" {
 }
 
 resource "google_backup_dr_backup_plan_association" "bpa" { 
-  provider = google-beta
   location = "us-central1" 
   backup_plan_association_id = "tf-test-bpa-test-%{random_suffix}"
   resource =   google_compute_instance.default.id
@@ -122,7 +117,6 @@ resource "google_backup_dr_backup_plan_association" "bpa" {
 }
 
 data "google_backup_dr_backup_plan_association" "bpa-test" {
-  provider = google-beta
   location =  "us-central1"
   backup_plan_association_id="tf-test-bpa-test-%{random_suffix}"
   depends_on= [ google_backup_dr_backup_plan_association.bpa ]

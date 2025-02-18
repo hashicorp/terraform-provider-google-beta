@@ -41,7 +41,7 @@ func TestAccBackupDRBackupPlanAssociation_backupDrBpaExample(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckBackupDRBackupPlanAssociationDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -60,13 +60,11 @@ func TestAccBackupDRBackupPlanAssociation_backupDrBpaExample(t *testing.T) {
 func testAccBackupDRBackupPlanAssociation_backupDrBpaExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
  resource "google_service_account" "mySA" {
-  provider = google-beta
   account_id   = "tf-test-my-custom%{random_suffix}"
   display_name = "Custom SA for VM Instance"
 }
 
 resource "google_compute_instance" "myinstance" {
-  provider = google-beta
   name         = "tf-test-test-instance%{random_suffix}"
   machine_type = "n2-standard-2"
   zone         = "us-central1-a"
@@ -95,7 +93,6 @@ resource "google_compute_instance" "myinstance" {
 }
 
 resource "google_backup_dr_backup_vault" "bv1" {
-  provider                                      = google-beta
   location                                      = "us-central1"
   backup_vault_id                               = "tf-test-bv-bpa%{random_suffix}"
   backup_minimum_enforced_retention_duration    = "100000s"
@@ -103,7 +100,6 @@ resource "google_backup_dr_backup_vault" "bv1" {
 }
 
 resource "google_backup_dr_backup_plan" "bp1" {
-  provider       = google-beta
   location       = "us-central1"
   backup_plan_id = "tf-test-bp-bpa-test%{random_suffix}"
   resource_type  = "compute.googleapis.com/Instance"
@@ -126,7 +122,6 @@ resource "google_backup_dr_backup_plan" "bp1" {
   }
 }
 resource "google_backup_dr_backup_plan_association" "my-backup-plan-association" {
-  provider = google-beta
   location = "us-central1"
   resource_type= "compute.googleapis.com/Instance"
   backup_plan_association_id          = "tf-test-my-bpa%{random_suffix}"
