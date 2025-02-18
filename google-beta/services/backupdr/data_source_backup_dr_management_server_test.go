@@ -48,7 +48,7 @@ func testAccCheckBackupDRManagementServerDestroyProducer(t *testing.T) func(s *t
 
 			config := acctest.GoogleProviderConfig(t)
 
-			url, err := tpgresource.ReplaceVarsForTest(config, rs, "{{BackupDRBasePath}}projects/{{project}}/locations/{{location}}/managementServers/{{name}}")
+			url, err := tpgresource.ReplaceVarsForTest(config, rs, `{{BackupDRBasePath}}projects/{{project}}/locations/{{location}}/managementServers`)
 			if err != nil {
 				return err
 			}

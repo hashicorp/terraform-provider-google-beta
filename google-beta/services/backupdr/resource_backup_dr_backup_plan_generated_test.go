@@ -39,7 +39,7 @@ func TestAccBackupDRBackupPlan_backupDrBackupPlanSimpleExample(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckBackupDRBackupPlanDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -58,14 +58,12 @@ func TestAccBackupDRBackupPlan_backupDrBackupPlanSimpleExample(t *testing.T) {
 func testAccBackupDRBackupPlan_backupDrBackupPlanSimpleExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_backup_dr_backup_vault" "my_backup_vault" {
-  provider                                      = google-beta
   location                                      = "us-central1"
   backup_vault_id                               = "tf-test-backup-vault-simple-test%{random_suffix}"
   backup_minimum_enforced_retention_duration    = "100000s"
 }
 
 resource "google_backup_dr_backup_plan" "my-backup-plan-1" {
-  provider       = google-beta
   location       = "us-central1"
   backup_plan_id = "tf-test-backup-plan-simple-test%{random_suffix}"
   resource_type  = "compute.googleapis.com/Instance"
