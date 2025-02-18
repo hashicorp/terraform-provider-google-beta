@@ -172,38 +172,11 @@ func resourceChronicleRuleDeploymentCreate(d *schema.ResourceData, meta interfac
 		return err
 	}
 
-	obj := make(map[string]interface{})
-	enabledProp, err := expandChronicleRuleDeploymentEnabled(d.Get("enabled"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("enabled"); !tpgresource.IsEmptyValue(reflect.ValueOf(enabledProp)) && (ok || !reflect.DeepEqual(v, enabledProp)) {
-		obj["enabled"] = enabledProp
-	}
-	alertingProp, err := expandChronicleRuleDeploymentAlerting(d.Get("alerting"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("alerting"); !tpgresource.IsEmptyValue(reflect.ValueOf(alertingProp)) && (ok || !reflect.DeepEqual(v, alertingProp)) {
-		obj["alerting"] = alertingProp
-	}
-	archivedProp, err := expandChronicleRuleDeploymentArchived(d.Get("archived"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("archived"); !tpgresource.IsEmptyValue(reflect.ValueOf(archivedProp)) && (ok || !reflect.DeepEqual(v, archivedProp)) {
-		obj["archived"] = archivedProp
-	}
-	runFrequencyProp, err := expandChronicleRuleDeploymentRunFrequency(d.Get("run_frequency"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("run_frequency"); !tpgresource.IsEmptyValue(reflect.ValueOf(runFrequencyProp)) && (ok || !reflect.DeepEqual(v, runFrequencyProp)) {
-		obj["runFrequency"] = runFrequencyProp
-	}
-
 	url, err := tpgresource.ReplaceVars(d, config, "{{ChronicleBasePath}}projects/{{project}}/locations/{{location}}/instances/{{instance}}/rules/{{rule}}/deployment")
 	if err != nil {
 		return err
 	}
 
-	log.Printf("[DEBUG] Creating new RuleDeployment: %#v", obj)
 	billingProject := ""
 
 	project, err := tpgresource.GetProject(d, config)
@@ -218,36 +191,141 @@ func resourceChronicleRuleDeploymentCreate(d *schema.ResourceData, meta interfac
 	}
 
 	headers := make(http.Header)
-	// Read the config and update the mask only if set by the user in terraform code
-
-	params := []string{"enabled", "alerting", "archived", "run_frequency"}
-	var existingParams []string
-
-	// Populating existingParams with the params that exist
-	for _, param := range params {
-		if _, ok := d.GetOk(param); ok {
-			existingParams = append(existingParams, param)
-		}
+	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
+		Config:    config,
+		Method:    "GET",
+		Project:   billingProject,
+		RawURL:    url,
+		UserAgent: userAgent,
+		Headers:   headers,
+	})
+	if err != nil {
+		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("ChronicleRuleDeployment %q", d.Id()))
 	}
 
-	// Updating the url to have updateMask
-	url, err = transport_tpg.AddQueryParams(url, map[string]string{"updateMask": strings.Join(existingParams, ",")})
+	obj := make(map[string]interface{})
+	updateMask := []string{}
+
+	enabledProp, err := expandChronicleRuleDeploymentEnabled(d.Get("enabled"), d, config)
 	if err != nil {
 		return err
 	}
-	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
+	alertingProp, err := expandChronicleRuleDeploymentAlerting(d.Get("alerting"), d, config)
+	if err != nil {
+		return err
+	}
+	archivedProp, err := expandChronicleRuleDeploymentArchived(d.Get("archived"), d, config)
+	if err != nil {
+		return err
+	}
+	runFrequencyProp, err := expandChronicleRuleDeploymentRunFrequency(d.Get("run_frequency"), d, config)
+	if err != nil {
+		return err
+	}
+
+	if res != nil {
+		enabledValue, enabledExists := res["enabled"]
+		if enabledExists {
+			enabled := flattenChronicleRuleDeploymentEnabled(enabledValue, d, config)
+			if !reflect.DeepEqual(enabledProp, enabled) {
+				obj["enabled"] = enabledProp
+				updateMask = append(updateMask, "enabled")
+			}
+		} else {
+			// Handle the case where "enabled" is missing from the API response
+			if v, ok := d.GetOkExists("enabled"); ok && !tpgresource.IsEmptyValue(reflect.ValueOf(v)) {
+				obj["enabled"] = enabledProp
+				updateMask = append(updateMask, "enabled")
+			}
+		}
+
+		alertingValue, alertingExists := res["alerting"]
+		if alertingExists {
+			alerting := flattenChronicleRuleDeploymentAlerting(alertingValue, d, config)
+			if !reflect.DeepEqual(alertingProp, alerting) {
+				obj["alerting"] = alertingProp
+				updateMask = append(updateMask, "alerting")
+			}
+		} else {
+			// Handle the case where "alerting" is missing from the API response
+			if v, ok := d.GetOkExists("alerting"); ok && !tpgresource.IsEmptyValue(reflect.ValueOf(v)) {
+				obj["alerting"] = alertingProp
+				updateMask = append(updateMask, "alerting")
+			}
+		}
+
+		archivedValue, archivedExists := res["archived"]
+		if archivedExists {
+			archived := flattenChronicleRuleDeploymentArchived(archivedValue, d, config)
+			if !reflect.DeepEqual(archivedProp, archived) {
+				obj["archived"] = archivedProp
+				updateMask = append(updateMask, "archived")
+			}
+		} else {
+			// Handle the case where "archived" is missing from the API response
+			if v, ok := d.GetOkExists("archived"); ok && !tpgresource.IsEmptyValue(reflect.ValueOf(v)) {
+				obj["archived"] = archivedProp
+				updateMask = append(updateMask, "archived")
+			}
+		}
+
+		runFrequencyValue, runFrequencyExists := res["runFrequency"]
+		if runFrequencyExists {
+			runFrequency := flattenChronicleRuleDeploymentRunFrequency(runFrequencyValue, d, config)
+			if !reflect.DeepEqual(runFrequencyProp, runFrequency) {
+				obj["runFrequency"] = runFrequencyProp
+				updateMask = append(updateMask, "runFrequency")
+			}
+		} else {
+			// Handle the case where "run_frequency" is missing from the API response
+			if v, ok := d.GetOkExists("run_frequency"); ok && !tpgresource.IsEmptyValue(reflect.ValueOf(v)) {
+				obj["runFrequency"] = runFrequencyProp
+				updateMask = append(updateMask, "runFrequency")
+			}
+		}
+	} else {
+		if v, ok := d.GetOkExists("enabled"); ok && !tpgresource.IsEmptyValue(reflect.ValueOf(v)) {
+			obj["enabled"] = enabledProp
+			updateMask = append(updateMask, "enabled")
+		}
+		if v, ok := d.GetOkExists("alerting"); ok && !tpgresource.IsEmptyValue(reflect.ValueOf(v)) {
+			obj["alerting"] = alertingProp
+			updateMask = append(updateMask, "alerting")
+		}
+		if v, ok := d.GetOkExists("archived"); ok && !tpgresource.IsEmptyValue(reflect.ValueOf(v)) {
+			obj["archived"] = archivedProp
+			updateMask = append(updateMask, "archived")
+		}
+		if v, ok := d.GetOkExists("run_frequency"); ok && !tpgresource.IsEmptyValue(reflect.ValueOf(v)) {
+			obj["runFrequency"] = runFrequencyProp
+			updateMask = append(updateMask, "runFrequency")
+		}
+	}
+
+	url, err = transport_tpg.AddQueryParams(url, map[string]string{"updateMask": strings.Join(updateMask, ",")})
+	if err != nil {
+		return err
+	}
+
+	log.Printf("[DEBUG] Updating RuleDeployment %q: %#v", d.Id(), obj)
+
+	res, err = transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "PATCH",
 		Project:   billingProject,
 		RawURL:    url,
 		UserAgent: userAgent,
 		Body:      obj,
-		Timeout:   d.Timeout(schema.TimeoutCreate),
+		Timeout:   d.Timeout(schema.TimeoutUpdate),
 		Headers:   headers,
 	})
+
 	if err != nil {
-		return fmt.Errorf("Error creating RuleDeployment: %s", err)
+		return fmt.Errorf("Error updating RuleDeployment %q: %s", d.Id(), err)
+	} else {
+		log.Printf("[DEBUG] Finished updating RuleDeployment %q: %#v", d.Id(), res)
 	}
+
 	if err := d.Set("name", flattenChronicleRuleDeploymentName(res["name"], d, config)); err != nil {
 		return fmt.Errorf(`Error setting computed identity field "name": %s`, err)
 	}
