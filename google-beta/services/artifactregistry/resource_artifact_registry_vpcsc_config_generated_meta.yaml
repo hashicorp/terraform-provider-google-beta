@@ -3,7 +3,7 @@ generation_type: 'mmv1'
 source_file: 'products/artifactregistry/VPCSCConfig.yaml'
 api_service_name: 'artifactregistry.googleapis.com'
 api_version: 'v1'
-api_resource_type_kind: 'VpcscConfig'
+api_resource_type_kind: 'VPCSCConfig'
 fields:
   - field: 'location'
     provider_only: true
