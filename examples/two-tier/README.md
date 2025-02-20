@@ -6,7 +6,7 @@ a load balancer serving traffic.
 
 To simplify the example, this intentionally ignores deploying and
 getting your application onto the servers. However, you could do so either via
-[startup script](http://terraform.io/docs/providers/google/r/compute_instance.html#metadata_startup_script) or
+[startup script](http://terraform.io/docs/providers/google/r/compute_instance.html#metadata_startup_script-1) or
 [provisioners](https://www.terraform.io/docs/provisioners/) and a configuration
 management tool, or by pre-baking configured images with
 [Packer](https://packer.io/docs/builders/googlecompute.html).
