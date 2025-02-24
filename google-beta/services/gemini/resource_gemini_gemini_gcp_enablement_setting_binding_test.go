@@ -22,7 +22,7 @@ func TestAccGeminiGeminiGcpEnablementSettingBinding_update(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccGeminiGeminiGcpEnablementSettingBinding_basic(context),
@@ -54,11 +54,9 @@ func TestAccGeminiGeminiGcpEnablementSettingBinding_update(t *testing.T) {
 func testAccGeminiGeminiGcpEnablementSettingBinding_basic(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 data "google_project" "project" {
-    provider = google-beta
 }
 
 resource "google_gemini_gemini_gcp_enablement_setting" "basic" {
-    provider = google-beta
     gemini_gcp_enablement_setting_id = "%{gemini_gcp_enablement_setting_id}"
     location = "global"
     labels = {"my_key": "my_value"}
@@ -66,7 +64,6 @@ resource "google_gemini_gemini_gcp_enablement_setting" "basic" {
 }
 
 resource "google_gemini_gemini_gcp_enablement_setting_binding" "basic_binding" {
-    provider = google-beta
     gemini_gcp_enablement_setting_id = google_gemini_gemini_gcp_enablement_setting.basic.gemini_gcp_enablement_setting_id
     setting_binding_id = "%{setting_binding_id}"
     location = "global"
@@ -78,11 +75,9 @@ resource "google_gemini_gemini_gcp_enablement_setting_binding" "basic_binding" {
 func testAccGeminiGeminiGcpEnablementSettingBinding_update(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 data "google_project" "project" {
-    provider = google-beta
 }
 
 resource "google_gemini_gemini_gcp_enablement_setting" "basic" {
-    provider = google-beta
     gemini_gcp_enablement_setting_id = "%{gemini_gcp_enablement_setting_id}"
     location = "global"
     labels = {"my_key" = "my_value"}
@@ -90,13 +85,12 @@ resource "google_gemini_gemini_gcp_enablement_setting" "basic" {
 }
 
 resource "google_gemini_gemini_gcp_enablement_setting_binding" "basic_binding" {
-    provider = google-beta
     gemini_gcp_enablement_setting_id = google_gemini_gemini_gcp_enablement_setting.basic.gemini_gcp_enablement_setting_id
     setting_binding_id = "%{setting_binding_id}"
     location = "global"
     target = "projects/${data.google_project.project.number}"
     labels = {"my_key" = "my_value"}
-    product = "GEMINI_CODE_ASSIST"
+    product = "GEMINI_IN_BIGQUERY"
 }
 `, context)
 }
