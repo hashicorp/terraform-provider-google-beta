@@ -388,6 +388,7 @@ var handwrittenDatasources = map[string]*schema.Resource{
 	"google_tpu_v2_runtime_versions":                             tpuv2.DataSourceTpuV2RuntimeVersions(),
 	"google_tpu_v2_accelerator_types":                            tpuv2.DataSourceTpuV2AcceleratorTypes(),
 	"google_vpc_access_connector":                                vpcaccess.DataSourceVPCAccessConnector(),
+	"google_memorystore_instance":                                memorystore.DataSourceMemorystoreInstance(),
 	"google_redis_instance":                                      redis.DataSourceGoogleRedisInstance(),
 	"google_vertex_ai_index":                                     vertexai.DataSourceVertexAIIndex(),
 	"google_vmwareengine_cluster":                                vmwareengine.DataSourceVmwareengineCluster(),
