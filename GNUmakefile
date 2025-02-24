@@ -8,11 +8,34 @@ default: build
 build: lint
 	go install
 
+# Compile the analyzer
+analyze:
+	go build -o ./scripts/package-needs-unit-testing/pnut ./scripts/package-needs-unit-testing/main.go
+
 test: lint testnolint
 
 # Used in CI to prevent lint failures from being interpreted as test failures
-testnolint:
-	go test $(TESTARGS) -timeout=30s $(TEST)
+testnolint: analyze
+	@dirs=$$(go list -e $(TEST) | xargs -I {} go list -f '{{.Dir}}' {} | tr '\n' ' ' ); \
+	results=$$(./scripts/package-needs-unit-testing/pnut $$dirs); \
+	testable_packages=""; \
+	for result in $$results; do \
+		case "$$result" in \
+			TESTABLE:*) \
+				package_path=$$(echo "$$result" | cut -d':' -f2); \
+				testable_packages="$${testable_packages} $$package_path"; \
+				;; \
+			SKIPPED:*) \
+				package_path=$$(echo "$$result" | cut -d':' -f2); \
+				echo "Skipping tests for $$package_path (all tests use acctest.VcrTest)"; \
+				;; \
+		esac; \
+	done; \
+	if [ -n "$$testable_packages" ]; then \
+		go test -timeout=30s $$testable_packages; \
+	else \
+		echo "No packages to test."; \
+	fi
 
 testacc: lint
 	TF_ACC=1 TF_SCHEMA_PANIC_ON_ERROR=1 go test $(TEST) -v $(TESTARGS) -timeout 240m -ldflags="-X=github.com/hashicorp/terraform-provider-google-beta/version.ProviderVersion=acc"
@@ -48,5 +71,4 @@ endif
 docscheck:
 	@sh -c "'$(CURDIR)/scripts/docscheck.sh'"
 
-.PHONY: build test testnolint testacc fmt fmtcheck vet lint  errcheck test-compile website website-test docscheck
-
+.PHONY: build test testnolint testacc fmt fmtcheck vet lint  errcheck test-compile website website-test docscheck analyze
