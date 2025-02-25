@@ -121,3 +121,51 @@ resource "google_chronicle_rule_deployment" "example" {
 }
 `, context)
 }
+
+func TestAccChronicleRuleDeployment_chronicleRuledeploymentRunFrequencyMissingExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"chronicle_id":  envvar.GetTestChronicleInstanceIdFromEnv(t),
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccChronicleRuleDeployment_chronicleRuledeploymentRunFrequencyMissingExample(context),
+			},
+			{
+				ResourceName:            "google_chronicle_rule_deployment.example",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"instance", "location", "rule"},
+			},
+		},
+	})
+}
+
+func testAccChronicleRuleDeployment_chronicleRuledeploymentRunFrequencyMissingExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_chronicle_rule" "my-rule" {
+ provider = "google-beta"
+ location = "us"
+ instance = "%{chronicle_id}"
+ text = <<-EOT
+             rule test_rule { meta: events:  $userid = $e.principal.user.userid  match: $userid over 10m condition: $e }
+         EOT
+}
+
+resource "google_chronicle_rule_deployment" "example" {
+ provider = "google-beta"
+ location = "us"
+ instance = "%{chronicle_id}"
+ rule = element(split("/", resource.google_chronicle_rule.my-rule.name), length(split("/", resource.google_chronicle_rule.my-rule.name)) - 1)
+ enabled = true
+ alerting = true
+ archived = false
+}
+`, context)
+}

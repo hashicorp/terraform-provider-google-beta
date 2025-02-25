@@ -34,6 +34,13 @@ import (
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
+func chronicleRuleDeploymentNilRunFrequencyDiffSuppressFunc(_, old, new string, _ *schema.ResourceData) bool {
+	if new == "" {
+		return true
+	}
+	return false
+}
+
 func ResourceChronicleRuleDeployment() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceChronicleRuleDeploymentCreate,
@@ -97,8 +104,9 @@ updated.`,
 				Description: `Whether the rule is currently deployed continuously against incoming data.`,
 			},
 			"run_frequency": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:             schema.TypeString,
+				Optional:         true,
+				DiffSuppressFunc: chronicleRuleDeploymentNilRunFrequencyDiffSuppressFunc,
 				Description: `The run frequency of the rule deployment.
 Possible values:
 LIVE
@@ -274,7 +282,8 @@ func resourceChronicleRuleDeploymentCreate(d *schema.ResourceData, meta interfac
 		runFrequencyValue, runFrequencyExists := res["runFrequency"]
 		if runFrequencyExists {
 			runFrequency := flattenChronicleRuleDeploymentRunFrequency(runFrequencyValue, d, config)
-			if !reflect.DeepEqual(runFrequencyProp, runFrequency) {
+			_, ok := d.GetOkExists("run_frequency")
+			if !reflect.DeepEqual(runFrequencyProp, runFrequency) && ok {
 				obj["runFrequency"] = runFrequencyProp
 				updateMask = append(updateMask, "runFrequency")
 			}
@@ -490,6 +499,26 @@ func resourceChronicleRuleDeploymentUpdate(d *schema.ResourceData, meta interfac
 	url, err = transport_tpg.AddQueryParams(url, map[string]string{"updateMask": strings.Join(updateMask, ",")})
 	if err != nil {
 		return err
+	}
+	// removeRunFrequencyFromUpdateMask removes 'runFrequency' from the updateMask in a URL.
+	removeRunFrequencyFromUpdateMask := func(url string) string {
+		// Remove "runFrequency" and handle commas.
+		url = strings.ReplaceAll(url, "%2CrunFrequency", "")
+		url = strings.ReplaceAll(url, "runFrequency%2C", "")
+		url = strings.ReplaceAll(url, "runFrequency", "")
+
+		// Remove extra commas.
+		url = strings.ReplaceAll(url, "%2C%2C", "%2C")
+
+		//Remove trailing commas.
+		url = strings.TrimSuffix(url, "%2C")
+
+		return url
+	}
+
+	// Remove "runFrequency" and handle commas if run_frequency not configured by user
+	if _, ok := d.GetOk("run_frequency"); !ok {
+		url = removeRunFrequencyFromUpdateMask(url)
 	}
 
 	// err == nil indicates that the billing_project value was found
