@@ -4395,16 +4395,20 @@ func testAccCheckComputeInstanceUpdateMachineType(t *testing.T, n string) resour
 func TestAccComputeInstance_NetworkAttachment(t *testing.T) {
 	t.Parallel()
 	suffix := fmt.Sprintf("%s", acctest.RandString(t, 10))
+	envRegion := envvar.GetTestRegionFromEnv()
 	var instance compute.Instance
+
+	providerVersion := "beta"
 
 	testNetworkAttachmentName := fmt.Sprintf("tf-test-network-attachment-%s", suffix)
 
 	// Need to have the full network attachment name in the format project/{project_id}/regions/{region_id}/networkAttachments/{testNetworkAttachmentName}
-	fullFormNetworkAttachmentName := fmt.Sprintf("projects/%s/regions/%s/networkAttachments/%s", envvar.GetTestProjectFromEnv(), envvar.GetTestRegionFromEnv(), testNetworkAttachmentName)
+	fullFormNetworkAttachmentName := fmt.Sprintf("projects/%s/regions/%s/networkAttachments/%s", envvar.GetTestProjectFromEnv(), envRegion, testNetworkAttachmentName)
 
 	context := map[string]interface{}{
 		"suffix":                  (acctest.RandString(t, 10)),
 		"network_attachment_name": testNetworkAttachmentName,
+		"region":                  envRegion,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -4417,7 +4421,7 @@ func TestAccComputeInstance_NetworkAttachment(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
-					testAccCheckComputeInstanceHasNetworkAttachment(&instance, fmt.Sprintf("https://www.googleapis.com/compute/beta/%s", fullFormNetworkAttachmentName)),
+					testAccCheckComputeInstanceHasNetworkAttachment(&instance, fmt.Sprintf("https://www.googleapis.com/compute/%s/%s", providerVersion, fullFormNetworkAttachmentName)),
 				),
 			},
 		},
@@ -11214,6 +11218,7 @@ resource "google_compute_network_attachment" "test_network_attachment" {
 resource "google_compute_instance" "foobar" {
   name         = "tf-test-instance-%{suffix}"
   machine_type = "e2-medium"
+  zone         = "%{region}-a"
 
 	boot_disk {
 		initialize_params {
@@ -11225,7 +11230,7 @@ resource "google_compute_instance" "foobar" {
 		network = "default"
 	}
 
-	network_interface{
+	network_interface {
 		network_attachment = google_compute_network_attachment.test_network_attachment.self_link
 	}
 
@@ -11305,7 +11310,7 @@ resource "google_compute_instance" "foobar" {
 		network = "default"
 	}
 
-	network_interface{
+	network_interface {
 		network_attachment = %s
 	}
 
