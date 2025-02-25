@@ -138,6 +138,7 @@ data "google_compute_instance" "baz" {
 }
 `, instanceName)
 }
+
 func TestAccDataSourceComputeInstance_networkAttachmentUsageExample(t *testing.T) {
 	t.Parallel()
 
@@ -145,7 +146,7 @@ func TestAccDataSourceComputeInstance_networkAttachmentUsageExample(t *testing.T
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeInstanceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -159,7 +160,6 @@ func TestAccDataSourceComputeInstance_networkAttachmentUsageExample(t *testing.T
 func testAccDataSourceComputeInstance_networkAttachmentUsageConfig(instanceName string) string {
 	return fmt.Sprintf(`
 resource "google_compute_instance" "foo" {
-  provider = google-beta
   name           = "%s"
   machine_type   = "n1-standard-1"   // can't be e2 because of local-ssd
   zone           = "us-central1-a"
@@ -199,23 +199,19 @@ resource "google_compute_instance" "foo" {
 }
 
 data "google_compute_instance" "bar" {
-  provider = google-beta
   name = google_compute_instance.foo.name
   zone = "us-central1-a"
 }
 
 data "google_compute_instance" "baz" {
-  provider = google-beta
   self_link = google_compute_instance.foo.self_link
 }
 resource "google_compute_network" "net_att_default" {   
-  provider = google-beta
   name = "%s"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "subnet_att_default" {    
-  provider = google-beta
   name   = "%s" 
   region = "us-central1"  
   network       = google_compute_network.net_att_default.id
@@ -223,7 +219,6 @@ resource "google_compute_subnetwork" "subnet_att_default" {
 }
 
 resource "google_compute_network_attachment" "net_attar_default" {   
-  provider = google-beta 
   name   = "%s"
   region = "us-central1"
   subnetworks = [google_compute_subnetwork.subnet_att_default.id]
