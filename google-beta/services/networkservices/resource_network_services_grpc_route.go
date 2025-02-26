@@ -20,6 +20,7 @@
 package networkservices
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net/http"
@@ -52,6 +53,15 @@ func ResourceNetworkServicesGrpcRoute() *schema.Resource {
 			Delete: schema.DefaultTimeout(30 * time.Minute),
 		},
 
+		SchemaVersion: 1,
+
+		StateUpgraders: []schema.StateUpgrader{
+			{
+				Type:    resourceNetworkServicesGrpcRouteResourceV0().CoreConfigSchema().ImpliedType(),
+				Upgrade: ResourceNetworkServicesGrpcRouteUpgradeV0,
+				Version: 0,
+			},
+		},
 		CustomizeDiff: customdiff.All(
 			tpgresource.SetLabelsDiff,
 			tpgresource.DefaultProviderProject,
@@ -272,6 +282,14 @@ func ResourceNetworkServicesGrpcRoute() *schema.Resource {
 Please refer to the field 'effective_labels' for all of the labels present on the resource.`,
 				Elem: &schema.Schema{Type: schema.TypeString},
 			},
+			"location": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ForceNew:     true,
+				ValidateFunc: verify.ValidateRegexp(`^global$`),
+				Description:  `Location (region) of the GRPCRoute resource to be created. Only the value 'global' is currently allowed; defaults to 'global' if omitted.`,
+				Default:      "global",
+			},
 			"meshes": {
 				Type:        schema.TypeList,
 				Optional:    true,
@@ -364,7 +382,7 @@ func resourceNetworkServicesGrpcRouteCreate(d *schema.ResourceData, meta interfa
 		obj["labels"] = labelsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/grpcRoutes?grpcRouteId={{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/{{location}}/grpcRoutes?grpcRouteId={{name}}")
 	if err != nil {
 		return err
 	}
@@ -399,7 +417,7 @@ func resourceNetworkServicesGrpcRouteCreate(d *schema.ResourceData, meta interfa
 	}
 
 	// Store the ID now
-	id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/locations/global/grpcRoutes/{{name}}")
+	id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/locations/{{location}}/grpcRoutes/{{name}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -427,7 +445,7 @@ func resourceNetworkServicesGrpcRouteRead(d *schema.ResourceData, meta interface
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/grpcRoutes/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/{{location}}/grpcRoutes/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -552,7 +570,7 @@ func resourceNetworkServicesGrpcRouteUpdate(d *schema.ResourceData, meta interfa
 		obj["labels"] = labelsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/grpcRoutes/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/{{location}}/grpcRoutes/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -642,7 +660,7 @@ func resourceNetworkServicesGrpcRouteDelete(d *schema.ResourceData, meta interfa
 	}
 	billingProject = project
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/grpcRoutes/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/{{location}}/grpcRoutes/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -686,15 +704,15 @@ func resourceNetworkServicesGrpcRouteDelete(d *schema.ResourceData, meta interfa
 func resourceNetworkServicesGrpcRouteImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*transport_tpg.Config)
 	if err := tpgresource.ParseImportId([]string{
-		"^projects/(?P<project>[^/]+)/locations/global/grpcRoutes/(?P<name>[^/]+)$",
-		"^(?P<project>[^/]+)/(?P<name>[^/]+)$",
-		"^(?P<name>[^/]+)$",
+		"^projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/grpcRoutes/(?P<name>[^/]+)$",
+		"^(?P<project>[^/]+)/(?P<location>[^/]+)/(?P<name>[^/]+)$",
+		"^(?P<location>[^/]+)/(?P<name>[^/]+)$",
 	}, d, config); err != nil {
 		return nil, err
 	}
 
 	// Replace import id for the resource id
-	id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/locations/global/grpcRoutes/{{name}}")
+	id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/locations/{{location}}/grpcRoutes/{{name}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -1448,4 +1466,297 @@ func expandNetworkServicesGrpcRouteEffectiveLabels(v interface{}, d tpgresource.
 		m[k] = val.(string)
 	}
 	return m, nil
+}
+
+func resourceNetworkServicesGrpcRouteResourceV0() *schema.Resource {
+	return &schema.Resource{
+		Create: resourceNetworkServicesGrpcRouteCreate,
+		Read:   resourceNetworkServicesGrpcRouteRead,
+		Update: resourceNetworkServicesGrpcRouteUpdate,
+		Delete: resourceNetworkServicesGrpcRouteDelete,
+
+		Importer: &schema.ResourceImporter{
+			State: resourceNetworkServicesGrpcRouteImport,
+		},
+
+		Timeouts: &schema.ResourceTimeout{
+			Create: schema.DefaultTimeout(30 * time.Minute),
+			Update: schema.DefaultTimeout(30 * time.Minute),
+			Delete: schema.DefaultTimeout(30 * time.Minute),
+		},
+
+		CustomizeDiff: customdiff.All(
+			tpgresource.SetLabelsDiff,
+			tpgresource.DefaultProviderProject,
+		),
+
+		Schema: map[string]*schema.Schema{
+			"hostnames": {
+				Type:        schema.TypeList,
+				Required:    true,
+				Description: `Required. Service hostnames with an optional port for which this route describes traffic.`,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
+			"name": {
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
+				Description: `Name of the GrpcRoute resource.`,
+			},
+			"rules": {
+				Type:        schema.TypeList,
+				Required:    true,
+				Description: `Rules that define how traffic is routed and handled.`,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"action": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							Description: `Required. A detailed rule defining how to route traffic.`,
+							MaxItems:    1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"destinations": {
+										Type:        schema.TypeList,
+										Optional:    true,
+										Description: `The destination to which traffic should be forwarded.`,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"service_name": {
+													Type:        schema.TypeString,
+													Optional:    true,
+													Description: `The URL of a BackendService to route traffic to.`,
+												},
+												"weight": {
+													Type:        schema.TypeInt,
+													Optional:    true,
+													Description: `Specifies the proportion of requests forwarded to the backend referenced by the serviceName field.`,
+												},
+											},
+										},
+									},
+									"fault_injection_policy": {
+										Type:        schema.TypeList,
+										Optional:    true,
+										Description: `The specification for fault injection introduced into traffic to test the resiliency of clients to backend service failure.`,
+										MaxItems:    1,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"abort": {
+													Type:        schema.TypeList,
+													Optional:    true,
+													Description: `Specification of how client requests are aborted as part of fault injection before being sent to a destination.`,
+													MaxItems:    1,
+													Elem: &schema.Resource{
+														Schema: map[string]*schema.Schema{
+															"http_status": {
+																Type:        schema.TypeInt,
+																Optional:    true,
+																Description: `The HTTP status code used to abort the request.`,
+															},
+															"percentage": {
+																Type:        schema.TypeInt,
+																Optional:    true,
+																Description: `The percentage of traffic which will be aborted.`,
+															},
+														},
+													},
+												},
+												"delay": {
+													Type:        schema.TypeList,
+													Optional:    true,
+													Description: `Specification of how client requests are delayed as part of fault injection before being sent to a destination.`,
+													MaxItems:    1,
+													Elem: &schema.Resource{
+														Schema: map[string]*schema.Schema{
+															"fixed_delay": {
+																Type:        schema.TypeString,
+																Optional:    true,
+																Description: `Specify a fixed delay before forwarding the request.`,
+															},
+															"percentage": {
+																Type:        schema.TypeInt,
+																Optional:    true,
+																Description: `The percentage of traffic on which delay will be injected.`,
+															},
+														},
+													},
+												},
+											},
+										},
+									},
+									"retry_policy": {
+										Type:        schema.TypeList,
+										Optional:    true,
+										Description: `Specifies the retry policy associated with this route.`,
+										MaxItems:    1,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"num_retries": {
+													Type:        schema.TypeInt,
+													Optional:    true,
+													Description: `Specifies the allowed number of retries.`,
+												},
+												"retry_conditions": {
+													Type:        schema.TypeList,
+													Optional:    true,
+													Description: `Specifies one or more conditions when this retry policy applies. Possible values: ["connect-failure", "refused-stream", "cancelled", "deadline-exceeded", "resource-exhausted", "unavailable"]`,
+													Elem: &schema.Schema{
+														Type:         schema.TypeString,
+														ValidateFunc: verify.ValidateEnum([]string{"connect-failure", "refused-stream", "cancelled", "deadline-exceeded", "resource-exhausted", "unavailable"}),
+													},
+												},
+											},
+										},
+									},
+									"timeout": {
+										Type:        schema.TypeString,
+										Optional:    true,
+										Description: `Specifies the timeout for selected route.`,
+									},
+								},
+							},
+						},
+						"matches": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							Description: `Matches define conditions used for matching the rule against incoming gRPC requests.`,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"headers": {
+										Type:        schema.TypeList,
+										Optional:    true,
+										Description: `Specifies a list of HTTP request headers to match against.`,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"key": {
+													Type:        schema.TypeString,
+													Required:    true,
+													Description: `Required. The key of the header.`,
+												},
+												"value": {
+													Type:        schema.TypeString,
+													Required:    true,
+													Description: `Required. The value of the header.`,
+												},
+												"type": {
+													Type:         schema.TypeString,
+													Optional:     true,
+													ValidateFunc: verify.ValidateEnum([]string{"TYPE_UNSPECIFIED", "EXACT", "REGULAR_EXPRESSION", ""}),
+													Description:  `The type of match. Default value: "EXACT" Possible values: ["TYPE_UNSPECIFIED", "EXACT", "REGULAR_EXPRESSION"]`,
+													Default:      "EXACT",
+												},
+											},
+										},
+									},
+									"method": {
+										Type:        schema.TypeList,
+										Optional:    true,
+										Description: `A gRPC method to match against. If this field is empty or omitted, will match all methods.`,
+										MaxItems:    1,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"grpc_method": {
+													Type:        schema.TypeString,
+													Required:    true,
+													Description: `Required. Name of the method to match against.`,
+												},
+												"grpc_service": {
+													Type:        schema.TypeString,
+													Required:    true,
+													Description: `Required. Name of the service to match against.`,
+												},
+												"case_sensitive": {
+													Type:        schema.TypeBool,
+													Optional:    true,
+													Description: `Specifies that matches are case sensitive. The default value is true.`,
+													Default:     true,
+												},
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			"description": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: `A free-text description of the resource. Max length 1024 characters.`,
+			},
+			"gateways": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: `List of gateways this GrpcRoute is attached to, as one of the routing rules to route the requests served by the gateway.`,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
+			"labels": {
+				Type:     schema.TypeMap,
+				Optional: true,
+				Description: `Set of label tags associated with the GrpcRoute resource.
+
+**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+Please refer to the field 'effective_labels' for all of the labels present on the resource.`,
+				Elem: &schema.Schema{Type: schema.TypeString},
+			},
+			"meshes": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: `List of meshes this GrpcRoute is attached to, as one of the routing rules to route the requests served by the mesh.`,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
+			"create_time": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: `Time the GrpcRoute was created in UTC.`,
+			},
+			"effective_labels": {
+				Type:        schema.TypeMap,
+				Computed:    true,
+				Description: `All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.`,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
+			"self_link": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: `Server-defined URL of this resource.`,
+			},
+			"terraform_labels": {
+				Type:     schema.TypeMap,
+				Computed: true,
+				Description: `The combination of labels configured directly on the resource
+ and default labels configured on the provider.`,
+				Elem: &schema.Schema{Type: schema.TypeString},
+			},
+			"update_time": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: `Time the GrpcRoute was updated in UTC.`,
+			},
+			"project": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+				ForceNew: true,
+			},
+		},
+		UseJSONNumber: true,
+	}
+}
+
+func ResourceNetworkServicesGrpcRouteUpgradeV0(_ context.Context, rawState map[string]interface{}, meta interface{}) (map[string]interface{}, error) {
+	log.Printf("[DEBUG] Attributes before migration: %#v", rawState)
+	if _, ok := rawState["location"]; !ok {
+		rawState["location"] = "global"
+	}
+	log.Printf("[DEBUG] Attributes after migration: %#v", rawState)
+	return rawState, nil
 }

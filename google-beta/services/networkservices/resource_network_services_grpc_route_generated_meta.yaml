@@ -12,6 +12,8 @@ fields:
   - field: 'gateways'
   - field: 'hostnames'
   - field: 'labels'
+  - field: 'location'
+    provider_only: true
   - field: 'meshes'
   - field: 'name'
     provider_only: true
