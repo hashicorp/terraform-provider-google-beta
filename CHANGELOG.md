@@ -1,5 +1,31 @@
-## 6.22.0 (Unreleased)
+## 6.23.0 (Unreleased)
 
+## 6.22.0 (Feb 24, 2025)
+
+NOTES:
+* provider: The Terraform Provider for Google Cloud's regular release date will move from Monday to Tuesday in early March. The 2025/03/10 release will be made on 2025/03/11.
+
+DEPRECATIONS:
+* datacatalog: deprecated `google_data_catalog_tag_template`. Use `google_dataplex_aspect_type` instead. For steps to transition your Data Catalog users, workloads, and content to Dataplex Catalog, see https://cloud.google.com/dataplex/docs/transition-to-dataplex-catalog. ([#9347](https://github.com/hashicorp/terraform-provider-google-beta/pull/9347))
+* datacatalog: deperecated `google_data_catalog_entry_group`. Use `google_dataplex_entry_group` instead. For steps to transition your Data Catalog users, workloads, and content to Dataplex Catalog, see https://cloud.google.com/dataplex/docs/transition-to-dataplex-catalog. ([#9349](https://github.com/hashicorp/terraform-provider-google-beta/pull/9349))
+
+FEATURES:
+* **New Data Source:** `google_alloydb_cluster` ([#9361](https://github.com/hashicorp/terraform-provider-google-beta/pull/9361))
+* **New Data Source:** `google_project_ancestry` ([#9326](https://github.com/hashicorp/terraform-provider-google-beta/pull/9326))
+* **New Resource:** `google_gemini_data_sharing_with_google_setting_binding` ([#9356](https://github.com/hashicorp/terraform-provider-google-beta/pull/9356))
+* **New Resource:** `google_spanner_instance_partition` ([#9354](https://github.com/hashicorp/terraform-provider-google-beta/pull/9354))
+
+IMPROVEMENTS:
+* compute: added `import_subnet_routes_with_public_ip` and `export_subnet_routes_with_public_ip` fields to `google_compute_network_peering_routes_config` resource ([#9320](https://github.com/hashicorp/terraform-provider-google-beta/pull/9320))
+* developerconnect: added `bitbucket_cloud_config` and `bitbucket_data_center_config` fields to `google_developer_connect_connection` resource (ga) ([#9338](https://github.com/hashicorp/terraform-provider-google-beta/pull/9338))
+* iam: added `extra_attributes_oauth2_client` field to `google_iam_workforce_pool_provider` resource ([#9336](https://github.com/hashicorp/terraform-provider-google-beta/pull/9336))
+* redis: added `kms_key` field to `google_redis_cluster` resource ([#9334](https://github.com/hashicorp/terraform-provider-google-beta/pull/9334))
+* tpuv2: added `network_config` field to `google_tpu_v2_queued_resource` resource ([#9332](https://github.com/hashicorp/terraform-provider-google-beta/pull/9332))
+
+BUG FIXES:
+* apigee: fixed error when deleting `google_apigee_organization` ([#9352](https://github.com/hashicorp/terraform-provider-google-beta/pull/9352))
+* bigtable: fixed a bug where sometimes updating an instance's cluster list could result in an error if there was an existing cluster with autoscaling enabled ([#9368](https://github.com/hashicorp/terraform-provider-google-beta/pull/9368))
+* chronicle: fixed bug setting `enabled` on creation in `google_chronicle_rule_deployment` ([#9343](https://github.com/hashicorp/terraform-provider-google-beta/pull/9343))
 ## 6.21.0 (Feb 18, 2025)
 
 NOTES:
