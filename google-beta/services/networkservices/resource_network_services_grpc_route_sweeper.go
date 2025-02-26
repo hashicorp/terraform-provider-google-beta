@@ -86,7 +86,7 @@ func testSweepNetworkServicesGrpcRoute(_ string) error {
 			},
 		}
 
-		listTemplate := strings.Split("https://networkservices.googleapis.com/v1/projects/{{project}}/locations/global/grpcRoutes", "?")[0]
+		listTemplate := strings.Split("https://networkservices.googleapis.com/v1/projects/{{project}}/locations/{{location}}/grpcRoutes", "?")[0]
 		listUrl, err := tpgresource.ReplaceVars(d, config, listTemplate)
 		if err != nil {
 			log.Printf("[INFO][SWEEPER_LOG] error preparing sweeper list url: %s", err)
@@ -130,7 +130,7 @@ func testSweepNetworkServicesGrpcRoute(_ string) error {
 				continue
 			}
 
-			deleteTemplate := "https://networkservices.googleapis.com/v1/projects/{{project}}/locations/global/grpcRoutes/{{name}}"
+			deleteTemplate := "https://networkservices.googleapis.com/v1/projects/{{project}}/locations/{{location}}/grpcRoutes/{{name}}"
 
 			deleteUrl, err := tpgresource.ReplaceVars(d, config, deleteTemplate)
 			if err != nil {
