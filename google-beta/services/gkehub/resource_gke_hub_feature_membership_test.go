@@ -377,7 +377,6 @@ resource "google_gke_hub_membership" "membership" {
       resource_link = "//container.googleapis.com/${google_container_cluster.primary.id}"
     }
   }
-  description = "test resource."
 }
 
 resource "google_gke_hub_feature" "feature" {
@@ -435,7 +434,6 @@ resource "google_gke_hub_membership" "membership" {
       resource_link = "//container.googleapis.com/${google_container_cluster.primary.id}"
     }
   }
-  description = "test resource."
 }
 
 resource "google_gke_hub_feature" "feature" {
@@ -493,7 +491,6 @@ resource "google_gke_hub_membership" "membership" {
       resource_link = "//container.googleapis.com/${google_container_cluster.primary.id}"
     }
   }
-  description = "test resource."
 }
 
 resource "google_gke_hub_feature" "feature" {
@@ -776,7 +773,6 @@ resource "google_gke_hub_membership" "membership" {
       resource_link = "//container.googleapis.com/${google_container_cluster.primary.id}"
     }
   }
-  description = "test resource."
 }
 
 resource "google_gke_hub_feature" "feature" {
@@ -827,7 +823,6 @@ resource "google_gke_hub_membership" "membership" {
       resource_link = "//container.googleapis.com/${google_container_cluster.primary.id}"
     }
   }
-  description = "test resource."
 }
 
 resource "google_gke_hub_feature" "feature" {
@@ -877,7 +872,6 @@ resource "google_gke_hub_membership" "membership" {
       resource_link = "//container.googleapis.com/${google_container_cluster.primary.id}"
     }
   }
-  description = "test resource."
 }
 
 resource "google_gke_hub_feature" "feature" {
@@ -1158,7 +1152,6 @@ resource "google_gke_hub_membership" "membership" {
       resource_link = "//container.googleapis.com/${google_container_cluster.primary.id}"
     }
   }
-  description = "test resource."
 }
 
 resource "google_gke_hub_membership" "membership_second" {
@@ -1169,7 +1162,6 @@ resource "google_gke_hub_membership" "membership_second" {
       resource_link = "//container.googleapis.com/${google_container_cluster.secondary.id}"
     }
   }
-  description = "test resource."
 }
 
 resource "google_gke_hub_membership" "membership_third" {
@@ -1180,7 +1172,6 @@ resource "google_gke_hub_membership" "membership_third" {
       resource_link = "//container.googleapis.com/${google_container_cluster.tertiary.id}"
     }
   }
-  description = "test resource."
 }
 
 resource "google_gke_hub_membership" "membership_fourth" {
@@ -1191,7 +1182,6 @@ resource "google_gke_hub_membership" "membership_fourth" {
       resource_link = "//container.googleapis.com/${google_container_cluster.quarternary.id}"
     }
   }
-  description = "test resource."
 }
 `, context)
 }
@@ -1224,7 +1214,6 @@ resource "google_gke_hub_membership" "membership_acmoci" {
       resource_link = "//container.googleapis.com/${google_container_cluster.container_acmoci.id}"
     }
   }
-  description = "test resource."
 }
 `, context)
 }
