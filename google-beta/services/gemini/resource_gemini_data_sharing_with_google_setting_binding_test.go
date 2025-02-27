@@ -22,7 +22,7 @@ func TestAccGeminiDataSharingWithGoogleSettingBinding_update(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccGeminiDataSharingWithGoogleSettingBinding_basic(context),
@@ -54,11 +54,9 @@ func TestAccGeminiDataSharingWithGoogleSettingBinding_update(t *testing.T) {
 func testAccGeminiDataSharingWithGoogleSettingBinding_basic(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 data "google_project" "project" {
-    provider = google-beta
 }
 
 resource "google_gemini_data_sharing_with_google_setting" "basic" {
-    provider = google-beta
     data_sharing_with_google_setting_id = "%{data_sharing_with_google_setting_id}"
     location = "global"
     labels = {"my_key" = "my_value"}
@@ -66,7 +64,6 @@ resource "google_gemini_data_sharing_with_google_setting" "basic" {
 }
 
 resource "google_gemini_data_sharing_with_google_setting_binding" "basic_binding" {
-    provider = google-beta
     data_sharing_with_google_setting_id = google_gemini_data_sharing_with_google_setting.basic.data_sharing_with_google_setting_id
     setting_binding_id = "%{setting_binding_id}"
     location = "global"
@@ -78,11 +75,9 @@ resource "google_gemini_data_sharing_with_google_setting_binding" "basic_binding
 func testAccGeminiDataSharingWithGoogleSettingBinding_update(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 data "google_project" "project" {
-    provider = google-beta
 }
 
 resource "google_gemini_data_sharing_with_google_setting" "basic" {
-    provider = google-beta
     data_sharing_with_google_setting_id = "%{data_sharing_with_google_setting_id}"
     location = "global"
     labels = {"my_key" = "my_value"}
@@ -90,13 +85,12 @@ resource "google_gemini_data_sharing_with_google_setting" "basic" {
 }
 
 resource "google_gemini_data_sharing_with_google_setting_binding" "basic_binding" {
-    provider = google-beta
     data_sharing_with_google_setting_id = google_gemini_data_sharing_with_google_setting.basic.data_sharing_with_google_setting_id
     setting_binding_id = "%{setting_binding_id}"
     location = "global"
     target = "projects/${data.google_project.project.number}"
     labels = {"my_key" = "my_value"}
-    product = "GEMINI_CODE_ASSIST"
+	product = "GEMINI_CLOUD_ASSIST"
 }
 `, context)
 }
