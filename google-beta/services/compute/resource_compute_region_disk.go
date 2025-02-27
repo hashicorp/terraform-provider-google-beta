@@ -30,6 +30,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	compute "google.golang.org/api/compute/v0.beta"
 	"google.golang.org/api/googleapi"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -142,6 +143,15 @@ you do not need to provide a key to use the disk later.`,
 							ForceNew: true,
 							Description: `Specifies a 256-bit customer-supplied encryption key, encoded in
 RFC 4648 base64 to either encrypt or decrypt this resource.`,
+							Sensitive: true,
+						},
+						"rsa_encrypted_key": {
+							Type:     schema.TypeString,
+							Optional: true,
+							ForceNew: true,
+							Description: `Specifies an RFC 4648 base64 encoded, RSA-wrapped 2048-bit
+customer-supplied encryption key to either encrypt or decrypt
+this resource. You can provide either the rawKey or the rsaEncryptedKey.`,
 							Sensitive: true,
 						},
 						"sha256": {
@@ -354,6 +364,19 @@ project/zones/zone/instances/instance`,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
+			},
+			"create_snapshot_before_destroy": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Description: `If set to true, a snapshot of the disk will be created before it is destroyed.
+If your disk is encrypted with customer managed encryption keys these will be reused for the snapshot creation.
+The name of the snapshot by default will be '{{disk-name}}-YYYYMMDD-HHmm'`,
+				Default: false,
+			},
+			"create_snapshot_before_destroy_prefix": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: `This will set a custom name prefix for the snapshot that's created when the disk is deleted.`,
 			},
 			"project": {
 				Type:     schema.TypeString,
@@ -600,6 +623,12 @@ func resourceComputeRegionDiskRead(d *schema.ResourceData, meta interface{}) err
 		return nil
 	}
 
+	// Explicitly set virtual fields to default values if unset
+	if _, ok := d.GetOkExists("create_snapshot_before_destroy"); !ok {
+		if err := d.Set("create_snapshot_before_destroy", false); err != nil {
+			return fmt.Errorf("Error setting create_snapshot_before_destroy: %s", err)
+		}
+	}
 	if err := d.Set("project", project); err != nil {
 		return fmt.Errorf("Error reading RegionDisk: %s", err)
 	}
@@ -841,6 +870,53 @@ func resourceComputeRegionDiskDelete(d *schema.ResourceData, meta interface{}) e
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("ComputeDisk %q", d.Id()))
 	}
 
+	// if the create_snapshot_before_destroy is set to true then create a snapshot before deleting the disk
+	if d.Get("create_snapshot_before_destroy").(bool) {
+		instanceName := d.Get("name").(string)
+		nameOrigin := "disk"
+		if d.Get("create_snapshot_before_destroy_prefix").(string) != "" {
+			instanceName = d.Get("create_snapshot_before_destroy_prefix").(string)
+			nameOrigin = "create_snapshot_before_destroy_prefix"
+		}
+
+		if len(instanceName) > 48 {
+			return fmt.Errorf(`Your %s name is too long to perform this action. The max is 48 characters. Please use "create_snapshot_before_destroy_prefix" to set a custom name for the snapshot.`, nameOrigin)
+		}
+
+		snapshotObj := &compute.Snapshot{
+			Name:       fmt.Sprintf("%s-%s", instanceName, time.Now().Format("20060102-150405")),
+			SourceDisk: d.Get("self_link").(string),
+		}
+
+		//Handling encryption
+		if d.Get("disk_encryption_key.0.raw_key").(string) != "" {
+			snapshotObj.SourceDiskEncryptionKey = &compute.CustomerEncryptionKey{
+				RawKey: d.Get("disk_encryption_key.0.raw_key").(string),
+			}
+			snapshotObj.SnapshotEncryptionKey = &compute.CustomerEncryptionKey{
+				RawKey: d.Get("disk_encryption_key.0.raw_key").(string),
+			}
+		}
+
+		if d.Get("disk_encryption_key.0.rsa_encrypted_key").(string) != "" {
+			snapshotObj.SourceDiskEncryptionKey = &compute.CustomerEncryptionKey{
+				RsaEncryptedKey: d.Get("disk_encryption_key.0.rsa_encrypted_key").(string),
+			}
+			snapshotObj.SnapshotEncryptionKey = &compute.CustomerEncryptionKey{
+				RsaEncryptedKey: d.Get("disk_encryption_key.0.rsa_encrypted_key").(string),
+			}
+		}
+
+		snapshot, err := config.NewComputeClient(userAgent).Snapshots.Insert(project, snapshotObj).Do()
+		if err != nil {
+			return fmt.Errorf("Error creating snapshot: %s", err)
+		}
+		err = ComputeOperationWaitTime(config, snapshot, project, "Creating Snapshot", userAgent, d.Timeout(schema.TimeoutCreate))
+		if err != nil {
+			return err
+		}
+	}
+
 	// if disks are attached to instances, they must be detached before the disk can be deleted
 	if v, ok := readRes["users"].([]interface{}); ok {
 		type detachArgs struct{ project, zone, instance, deviceName string }
@@ -937,6 +1013,11 @@ func resourceComputeRegionDiskImport(d *schema.ResourceData, meta interface{}) (
 	}
 	d.SetId(id)
 
+	// Explicitly set virtual fields to default values on import
+	if err := d.Set("create_snapshot_before_destroy", false); err != nil {
+		return nil, fmt.Errorf("Error setting create_snapshot_before_destroy: %s", err)
+	}
+
 	return []*schema.ResourceData{d}, nil
 }
 
@@ -951,6 +1032,8 @@ func flattenComputeRegionDiskDiskEncryptionKey(v interface{}, d *schema.Resource
 	transformed := make(map[string]interface{})
 	transformed["raw_key"] =
 		flattenComputeRegionDiskDiskEncryptionKeyRawKey(original["rawKey"], d, config)
+	transformed["rsa_encrypted_key"] =
+		flattenComputeRegionDiskDiskEncryptionKeyRsaEncryptedKey(original["rsaEncryptedKey"], d, config)
 	transformed["sha256"] =
 		flattenComputeRegionDiskDiskEncryptionKeySha256(original["sha256"], d, config)
 	transformed["kms_key_name"] =
@@ -958,6 +1041,10 @@ func flattenComputeRegionDiskDiskEncryptionKey(v interface{}, d *schema.Resource
 	return []interface{}{transformed}
 }
 func flattenComputeRegionDiskDiskEncryptionKeyRawKey(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenComputeRegionDiskDiskEncryptionKeyRsaEncryptedKey(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -1199,6 +1286,13 @@ func expandComputeRegionDiskDiskEncryptionKey(v interface{}, d tpgresource.Terra
 		transformed["rawKey"] = transformedRawKey
 	}
 
+	transformedRsaEncryptedKey, err := expandComputeRegionDiskDiskEncryptionKeyRsaEncryptedKey(original["rsa_encrypted_key"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedRsaEncryptedKey); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["rsaEncryptedKey"] = transformedRsaEncryptedKey
+	}
+
 	transformedSha256, err := expandComputeRegionDiskDiskEncryptionKeySha256(original["sha256"], d, config)
 	if err != nil {
 		return nil, err
@@ -1217,6 +1311,10 @@ func expandComputeRegionDiskDiskEncryptionKey(v interface{}, d tpgresource.Terra
 }
 
 func expandComputeRegionDiskDiskEncryptionKeyRawKey(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeRegionDiskDiskEncryptionKeyRsaEncryptedKey(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
