@@ -29,6 +29,7 @@ fields:
   - field: 'private_cluster_config.enable_private_endpoint'
   - field: 'private_cluster_config.service_attachment_uri'
   - field: 'subnetwork'
+  - field: 'tags'
   - field: 'terraform_labels'
     provider_only: true
   - field: 'uid'
