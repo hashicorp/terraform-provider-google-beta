@@ -6,8 +6,7 @@ NOTES:
 * iam: added member value to the error message when member validation fails for google_project_iam_* ([#9406](https://github.com/hashicorp/terraform-provider-google-beta/pull/9406))
 
 DEPRECATIONS:
-* Deprecated google_data_catalog_tag ([#9416](https://github.com/hashicorp/terraform-provider-google-beta/pull/9416))
-* datacatalog: deprecated `google_data_catalog_entry` resource. For steps to transition your Data Catalog users, workloads, and content to Dataplex Catalog, see https://cloud.google.com/dataplex/docs/transition-to-dataplex-catalog. ([#9393](https://github.com/hashicorp/terraform-provider-google-beta/pull/9393))
+* datacatalog: deprecated `google_data_catalog_entry` and `google_data_catalog_tag` resources. For steps to transition your Data Catalog users, workloads, and content to Dataplex Catalog, see https://cloud.google.com/dataplex/docs/transition-to-dataplex-catalog. ([#9393](https://github.com/hashicorp/terraform-provider-google-beta/pull/9393))
 * notebooks: deprecated non-functional `google_notebooks_location` resource ([#9373](https://github.com/hashicorp/terraform-provider-google-beta/pull/9373))
 
 FEATURES:
