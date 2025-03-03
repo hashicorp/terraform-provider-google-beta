@@ -39,7 +39,7 @@ func TestAccNetworkServicesTcpRoute_networkServicesTcpRouteBasicExample(t *testi
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckNetworkServicesTcpRouteDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -58,13 +58,11 @@ func TestAccNetworkServicesTcpRoute_networkServicesTcpRouteBasicExample(t *testi
 func testAccNetworkServicesTcpRoute_networkServicesTcpRouteBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_backend_service" "default" {
-  provider               = google-beta
   name          = "tf-test-my-backend-service%{random_suffix}"
   health_checks = [google_compute_http_health_check.default.id]
 }
 
 resource "google_compute_http_health_check" "default" {
-  provider               = google-beta
   name               = "tf-test-backend-service-health-check%{random_suffix}"
   request_path       = "/"
   check_interval_sec = 1
@@ -72,7 +70,6 @@ resource "google_compute_http_health_check" "default" {
 }
 
 resource "google_network_services_tcp_route" "default" {
-  provider               = google-beta
   name                   = "tf-test-my-tcp-route%{random_suffix}"
   labels                 = {
     foo = "bar"
@@ -104,7 +101,7 @@ func TestAccNetworkServicesTcpRoute_networkServicesTcpRouteActionsExample(t *tes
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckNetworkServicesTcpRouteDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -123,13 +120,11 @@ func TestAccNetworkServicesTcpRoute_networkServicesTcpRouteActionsExample(t *tes
 func testAccNetworkServicesTcpRoute_networkServicesTcpRouteActionsExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_backend_service" "default" {
-  provider               = google-beta
   name          = "tf-test-my-backend-service%{random_suffix}"
   health_checks = [google_compute_http_health_check.default.id]
 }
 
 resource "google_compute_http_health_check" "default" {
-  provider               = google-beta
   name               = "tf-test-backend-service-health-check%{random_suffix}"
   request_path       = "/"
   check_interval_sec = 1
@@ -137,7 +132,6 @@ resource "google_compute_http_health_check" "default" {
 }
 
 resource "google_network_services_tcp_route" "default" {
-  provider               = google-beta
   name                   = "tf-test-my-tcp-route%{random_suffix}"
   labels                 = {
     foo = "bar"
@@ -166,7 +160,7 @@ func TestAccNetworkServicesTcpRoute_networkServicesTcpRouteMeshBasicExample(t *t
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckNetworkServicesTcpRouteDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -185,13 +179,11 @@ func TestAccNetworkServicesTcpRoute_networkServicesTcpRouteMeshBasicExample(t *t
 func testAccNetworkServicesTcpRoute_networkServicesTcpRouteMeshBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_backend_service" "default" {
-  provider               = google-beta
   name          = "tf-test-my-backend-service%{random_suffix}"
   health_checks = [google_compute_http_health_check.default.id]
 }
 
 resource "google_compute_http_health_check" "default" {
-  provider               = google-beta
   name               = "tf-test-backend-service-health-check%{random_suffix}"
   request_path       = "/"
   check_interval_sec = 1
@@ -199,7 +191,6 @@ resource "google_compute_http_health_check" "default" {
 }
 
 resource "google_network_services_mesh" "default" {
-  provider    = google-beta
   name        = "tf-test-my-tcp-route%{random_suffix}"
   labels      = {
     foo = "bar"
@@ -209,7 +200,6 @@ resource "google_network_services_mesh" "default" {
 
 
 resource "google_network_services_tcp_route" "default" {
-  provider               = google-beta
   name                   = "tf-test-my-tcp-route%{random_suffix}"
   labels                 = {
     foo = "bar"
@@ -244,7 +234,7 @@ func TestAccNetworkServicesTcpRoute_networkServicesTcpRouteGatewayBasicExample(t
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckNetworkServicesTcpRouteDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -263,13 +253,11 @@ func TestAccNetworkServicesTcpRoute_networkServicesTcpRouteGatewayBasicExample(t
 func testAccNetworkServicesTcpRoute_networkServicesTcpRouteGatewayBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_backend_service" "default" {
-  provider               = google-beta
   name          = "tf-test-my-backend-service%{random_suffix}"
   health_checks = [google_compute_http_health_check.default.id]
 }
 
 resource "google_compute_http_health_check" "default" {
-  provider               = google-beta
   name               = "tf-test-backend-service-health-check%{random_suffix}"
   request_path       = "/"
   check_interval_sec = 1
@@ -277,7 +265,6 @@ resource "google_compute_http_health_check" "default" {
 }
 
 resource "google_network_services_gateway" "default" {
-  provider    = google-beta
   name        = "tf-test-my-tcp-route%{random_suffix}"
   labels      = {
     foo = "bar"
@@ -290,7 +277,6 @@ resource "google_network_services_gateway" "default" {
 
 
 resource "google_network_services_tcp_route" "default" {
-  provider               = google-beta
   name                   = "tf-test-my-tcp-route%{random_suffix}"
   labels                 = {
     foo = "bar"

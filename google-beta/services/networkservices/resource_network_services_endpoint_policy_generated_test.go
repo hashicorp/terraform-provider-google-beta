@@ -39,7 +39,7 @@ func TestAccNetworkServicesEndpointPolicy_networkServicesEndpointPolicyBasicExam
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckNetworkServicesEndpointPolicyDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -58,7 +58,6 @@ func TestAccNetworkServicesEndpointPolicy_networkServicesEndpointPolicyBasicExam
 func testAccNetworkServicesEndpointPolicy_networkServicesEndpointPolicyBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_network_services_endpoint_policy" "default" {
-  provider               = google-beta
   name                   = "tf-test-my-endpoint-policy%{random_suffix}"
   labels                 = {
     foo = "bar"
@@ -91,7 +90,7 @@ func TestAccNetworkServicesEndpointPolicy_networkServicesEndpointPolicyEmptyMatc
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckNetworkServicesEndpointPolicyDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -110,7 +109,6 @@ func TestAccNetworkServicesEndpointPolicy_networkServicesEndpointPolicyEmptyMatc
 func testAccNetworkServicesEndpointPolicy_networkServicesEndpointPolicyEmptyMatchExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_network_services_endpoint_policy" "default" {
-  provider               = google-beta
   name                   = "tf-test-my-endpoint-policy%{random_suffix}"
   labels                 = {
     foo = "bar"

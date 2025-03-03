@@ -39,7 +39,7 @@ func TestAccNetworkServicesGrpcRoute_networkServicesGrpcRouteBasicExample(t *tes
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckNetworkServicesGrpcRouteDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -58,7 +58,6 @@ func TestAccNetworkServicesGrpcRoute_networkServicesGrpcRouteBasicExample(t *tes
 func testAccNetworkServicesGrpcRoute_networkServicesGrpcRouteBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_network_services_grpc_route" "default" {
-  provider               = google-beta
   name                   = "tf-test-my-grpc-route%{random_suffix}"
   labels                 = {
     foo = "bar"
@@ -92,7 +91,7 @@ func TestAccNetworkServicesGrpcRoute_networkServicesGrpcRouteMatchesAndActionsEx
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckNetworkServicesGrpcRouteDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -111,7 +110,6 @@ func TestAccNetworkServicesGrpcRoute_networkServicesGrpcRouteMatchesAndActionsEx
 func testAccNetworkServicesGrpcRoute_networkServicesGrpcRouteMatchesAndActionsExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_network_services_grpc_route" "default" {
-  provider               = google-beta
   name                   = "tf-test-my-grpc-route%{random_suffix}"
   labels                 = {
     foo = "bar"
@@ -166,7 +164,7 @@ func TestAccNetworkServicesGrpcRoute_networkServicesGrpcRouteActionsExample(t *t
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckNetworkServicesGrpcRouteDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -185,7 +183,6 @@ func TestAccNetworkServicesGrpcRoute_networkServicesGrpcRouteActionsExample(t *t
 func testAccNetworkServicesGrpcRoute_networkServicesGrpcRouteActionsExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_network_services_grpc_route" "default" {
-  provider               = google-beta
   name                   = "tf-test-my-grpc-route%{random_suffix}"
   labels                 = {
     foo = "bar"

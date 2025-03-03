@@ -39,7 +39,7 @@ func TestAccNetworkServicesServiceBinding_networkServicesServiceBindingBasicExam
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckNetworkServicesServiceBindingDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -58,13 +58,11 @@ func TestAccNetworkServicesServiceBinding_networkServicesServiceBindingBasicExam
 func testAccNetworkServicesServiceBinding_networkServicesServiceBindingBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_service_directory_namespace" "default" {
-  provider     = google-beta
   namespace_id = "tf-test-my-namespace%{random_suffix}"
   location     = "us-central1"
 }
 
 resource "google_service_directory_service" "default" {
-  provider   = google-beta
   service_id = "tf-test-my-service%{random_suffix}"
   namespace  = google_service_directory_namespace.default.id
 
@@ -75,7 +73,6 @@ resource "google_service_directory_service" "default" {
 }
 
 resource "google_network_services_service_binding" "default" {
-  provider    = google-beta
   name        = "tf-test-my-service-binding%{random_suffix}"
   labels      = {
     foo = "bar"

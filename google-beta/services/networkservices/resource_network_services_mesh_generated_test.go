@@ -39,7 +39,7 @@ func TestAccNetworkServicesMesh_networkServicesMeshBasicExample(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckNetworkServicesMeshDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -58,7 +58,6 @@ func TestAccNetworkServicesMesh_networkServicesMeshBasicExample(t *testing.T) {
 func testAccNetworkServicesMesh_networkServicesMeshBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_network_services_mesh" "default" {
-  provider    = google-beta
   name        = "tf-test-my-mesh%{random_suffix}"
   labels      = {
     foo = "bar"
@@ -78,7 +77,7 @@ func TestAccNetworkServicesMesh_networkServicesMeshNoPortExample(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckNetworkServicesMeshDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -97,7 +96,6 @@ func TestAccNetworkServicesMesh_networkServicesMeshNoPortExample(t *testing.T) {
 func testAccNetworkServicesMesh_networkServicesMeshNoPortExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_network_services_mesh" "default" {
-  provider    = google-beta
   name        = "tf-test-my-mesh-noport%{random_suffix}"
   labels      = {
     foo = "bar"
@@ -116,7 +114,7 @@ func TestAccNetworkServicesMesh_networkServicesMeshLocationExample(t *testing.T)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckNetworkServicesMeshDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -135,7 +133,6 @@ func TestAccNetworkServicesMesh_networkServicesMeshLocationExample(t *testing.T)
 func testAccNetworkServicesMesh_networkServicesMeshLocationExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_network_services_mesh" "default" {
-  provider    = google-beta
   name        = "tf-test-my-mesh%{random_suffix}"
   location    = "global"
 }
