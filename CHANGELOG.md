@@ -4,6 +4,7 @@ NOTES:
 * gemini: removed unsupported value `GEMINI_CLOUD_ASSIST` for field `product` in `google_gemini_logging_setting_binding` resource ([#9438](https://github.com/hashicorp/terraform-provider-google-beta/pull/9438))
 * gemini: removed unsupported value `GEMINI_CODE_ASSIST` for field `product` in `google_gemini_data_sharing_with_google_setting_binding` resource (Beta) ([#9437](https://github.com/hashicorp/terraform-provider-google-beta/pull/9437))
 * iam: added member value to the error message when member validation fails for google_project_iam_* ([#9406](https://github.com/hashicorp/terraform-provider-google-beta/pull/9406))
+
 DEPRECATIONS:
 * Deprecated google_data_catalog_tag ([#9416](https://github.com/hashicorp/terraform-provider-google-beta/pull/9416))
 * datacatalog: deprecated `google_data_catalog_entry` resource. For steps to transition your Data Catalog users, workloads, and content to Dataplex Catalog, see https://cloud.google.com/dataplex/docs/transition-to-dataplex-catalog. ([#9393](https://github.com/hashicorp/terraform-provider-google-beta/pull/9393))
@@ -20,11 +21,8 @@ FEATURES:
 * **New Resource:** `google_storage_anywhere_cache` ([#9389](https://github.com/hashicorp/terraform-provider-google-beta/pull/9389))
 
 IMPROVEMENTS:
-* alloydb: promote Major Version Upgrade feature to GA ([#9403](https://github.com/hashicorp/terraform-provider-google-beta/pull/9403))
 * compute: added `creation_timestamp`, `next_hop_peering`, ` warnings.code`, `warnings.message`, `warnings.data.key`, `warnings.data.value`, `next_hop_hub`, `route_type`, `as_paths.path_segment_type`, `as_paths.as_lists` and `route_status`  fields to `google_compute_route` resource ([#9386](https://github.com/hashicorp/terraform-provider-google-beta/pull/9386))
 * compute: added `max_stream_duration` field to `google_compute_url_map` resource ([#9387](https://github.com/hashicorp/terraform-provider-google-beta/pull/9387))
-* compute: added `network_interface.network_attachment` field to `google_compute_instance` resource (ga) ([#9418](https://github.com/hashicorp/terraform-provider-google-beta/pull/9418))
-* compute: added `network_interface.network_attachment` to `google_compute_instance` data source (ga) ([#9418](https://github.com/hashicorp/terraform-provider-google-beta/pull/9418))
 * compute: added fields `architecture`, `source_instant_snapshot`, `source_storage_object`, `resource_manager_tags`  to `google_compute_disk`. ([#9412](https://github.com/hashicorp/terraform-provider-google-beta/pull/9412))
 * container: added enum  value `UPGRADE_INFO_EVENT` for GKE notification filter in `google_container_cluster` resource ([#9421](https://github.com/hashicorp/terraform-provider-google-beta/pull/9421))
 * iam: added `AZURE_AD_GROUPS_ID` field to `google_iam_workforce_pool_provider.extra_attributes_oauth2_client.attributes_type` resource ([#9433](https://github.com/hashicorp/terraform-provider-google-beta/pull/9433))
@@ -38,7 +36,7 @@ BUG FIXES:
 * discoveryengine: fixed bug preventing creation of `google_discovery_engine_target_site` resources ([#9436](https://github.com/hashicorp/terraform-provider-google-beta/pull/9436))
 * eventarc: fixed an issue where `google_eventarc_trigger` creation failed due to the region could not be parsed from the trigger's name ([#9383](https://github.com/hashicorp/terraform-provider-google-beta/pull/9383))
 * gemini: fixed permadiff on `product` field in `google_gemini_data_sharing_with_google_setting_binding` resource (Beta) ([#9437](https://github.com/hashicorp/terraform-provider-google-beta/pull/9437))
-* publicca: encode b64_mac_key in base64url, not in base64 ([#9424](https://github.com/hashicorp/terraform-provider-google-beta/pull/9424))
+* publicca: encoded `b64_mac_key` in base64url, instead of base64 in `google_public_ca_external_account_key` ([#9424](https://github.com/hashicorp/terraform-provider-google-beta/pull/9424))
 * storage: fixed a 412 error returned on some `google_storage_bucket_iam_policy` deletions ([#9434](https://github.com/hashicorp/terraform-provider-google-beta/pull/9434))
 
 ## 6.23.0 (Feb 26, 2025)
