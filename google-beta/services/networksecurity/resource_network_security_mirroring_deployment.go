@@ -61,44 +61,45 @@ func ResourceNetworkSecurityMirroringDeployment() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
-				Description: `Required. Immutable. The regional load balancer which the mirrored traffic should be forwarded
-to. Format is:
-projects/{project}/regions/{region}/forwardingRules/{forwardingRule}`,
+				Description: `The regional forwarding rule that fronts the mirroring collectors, for
+example: 'projects/123456789/regions/us-central1/forwardingRules/my-rule'.
+See https://google.aip.dev/124.`,
 			},
 			"location": {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: `Resource ID segment making up resource 'name'. It identifies the resource within its parent collection as described in https://google.aip.dev/122. See documentation for resource type 'networksecurity.googleapis.com/MirroringDeployment'.`,
+				Description: `The cloud location of the deployment, e.g. 'us-central1-a' or 'asia-south1-b'.`,
 			},
 			"mirroring_deployment_group": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
-				Description: `Required. Immutable. The Mirroring Deployment Group that this resource is part of. Format is:
-'projects/{project}/locations/global/mirroringDeploymentGroups/{mirroringDeploymentGroup}'`,
+				Description: `The deployment group that this deployment is a part of, for example:
+'projects/123456789/locations/global/mirroringDeploymentGroups/my-dg'.
+See https://google.aip.dev/124.`,
 			},
 			"mirroring_deployment_id": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
-				Description: `Required. Id of the requesting object
-If auto-generating Id server-side, remove this field and
-mirroring_deployment_id from the method_signature of Create RPC`,
+				Description: `The ID to use for the new deployment, which will become the final
+component of the deployment's resource name.`,
 			},
 			"labels": {
 				Type:     schema.TypeMap,
 				Optional: true,
-				Description: `Optional. Labels as key value pairs 
+				Description: `Labels are key/value pairs that help to organize and filter resources.
 
 **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
 Please refer to the field 'effective_labels' for all of the labels present on the resource.`,
 				Elem: &schema.Schema{Type: schema.TypeString},
 			},
 			"create_time": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: `Output only. [Output only] Create time stamp`,
+				Type:     schema.TypeString,
+				Computed: true,
+				Description: `The timestamp when the resource was created.
+See https://google.aip.dev/148#timestamps.`,
 			},
 			"effective_labels": {
 				Type:        schema.TypeMap,
@@ -107,22 +108,27 @@ Please refer to the field 'effective_labels' for all of the labels present on th
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"name": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: `Immutable. Identifier. The name of the MirroringDeployment.`,
+				Type:     schema.TypeString,
+				Computed: true,
+				Description: `The resource name of this deployment, for example:
+'projects/123456789/locations/us-central1-a/mirroringDeployments/my-dep'.
+See https://google.aip.dev/122 for more details.`,
 			},
 			"reconciling": {
 				Type:     schema.TypeBool,
 				Computed: true,
-				Description: `Output only. Whether reconciling is in progress, recommended per
-https://google.aip.dev/128.`,
+				Description: `The current state of the resource does not match the user's intended state,
+and the system is working to reconcile them. This part of the normal
+operation (e.g. linking a new association to the parent group).
+See https://google.aip.dev/128.`,
 			},
 			"state": {
 				Type:     schema.TypeString,
 				Computed: true,
-				Description: `Output only. Current state of the deployment. 
- Possible values:
- STATE_UNSPECIFIED
+				Description: `The current state of the deployment.
+See https://google.aip.dev/216.
+Possible values:
+STATE_UNSPECIFIED
 ACTIVE
 CREATING
 DELETING
@@ -137,9 +143,10 @@ DELETE_FAILED`,
 				Elem: &schema.Schema{Type: schema.TypeString},
 			},
 			"update_time": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: `Output only. [Output only] Update time stamp`,
+				Type:     schema.TypeString,
+				Computed: true,
+				Description: `The timestamp when the resource was most recently updated.
+See https://google.aip.dev/148#timestamps.`,
 			},
 			"project": {
 				Type:     schema.TypeString,
