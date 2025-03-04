@@ -61,27 +61,27 @@ func ResourceNetworkSecurityInterceptDeploymentGroup() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
-				Description: `Required. Id of the requesting object
-If auto-generating Id server-side, remove this field and
-intercept_deployment_group_id from the method_signature of Create RPC`,
+				Description: `The ID to use for the new deployment group, which will become the final
+component of the deployment group's resource name.`,
 			},
 			"location": {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: `Resource ID segment making up resource 'name'. It identifies the resource within its parent collection as described in https://google.aip.dev/122. See documentation for resource type 'networksecurity.googleapis.com/InterceptDeploymentGroup'.`,
+				Description: `The cloud location of the deployment group, currently restricted to 'global'.`,
 			},
 			"network": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
-				Description: `Required. Immutable. The network that is being used for the deployment. Format is:
-projects/{project}/global/networks/{network}.`,
+				Description: `The network that will be used for all child deployments, for example:
+'projects/{project}/global/networks/{network}'.
+See https://google.aip.dev/124.`,
 			},
 			"labels": {
 				Type:     schema.TypeMap,
 				Optional: true,
-				Description: `Optional. Labels as key value pairs 
+				Description: `Labels are key/value pairs that help to organize and filter resources.
 
 **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
 Please refer to the field 'effective_labels' for all of the labels present on the resource.`,
@@ -90,21 +90,24 @@ Please refer to the field 'effective_labels' for all of the labels present on th
 			"connected_endpoint_groups": {
 				Type:        schema.TypeList,
 				Computed:    true,
-				Description: `Output only. The list of Intercept Endpoint Groups that are connected to this resource.`,
+				Description: `The list of endpoint groups that are connected to this resource.`,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"name": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: `Output only. A connected intercept endpoint group.`,
+							Type:     schema.TypeString,
+							Computed: true,
+							Description: `The connected endpoint group's resource name, for example:
+'projects/123456789/locations/global/interceptEndpointGroups/my-eg'.
+See https://google.aip.dev/124.`,
 						},
 					},
 				},
 			},
 			"create_time": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: `Output only. [Output only] Create time stamp`,
+				Type:     schema.TypeString,
+				Computed: true,
+				Description: `The timestamp when the resource was created.
+See https://google.aip.dev/148#timestamps.`,
 			},
 			"effective_labels": {
 				Type:        schema.TypeMap,
@@ -113,22 +116,27 @@ Please refer to the field 'effective_labels' for all of the labels present on th
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"name": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: `Output only. Identifier. Then name of the InterceptDeploymentGroup.`,
+				Type:     schema.TypeString,
+				Computed: true,
+				Description: `The resource name of this deployment group, for example:
+'projects/123456789/locations/global/interceptDeploymentGroups/my-dg'.
+See https://google.aip.dev/122 for more details.`,
 			},
 			"reconciling": {
 				Type:     schema.TypeBool,
 				Computed: true,
-				Description: `Output only. Whether reconciling is in progress, recommended per
-https://google.aip.dev/128.`,
+				Description: `The current state of the resource does not match the user's intended state,
+and the system is working to reconcile them. This is part of the normal
+operation (e.g. adding a new deployment to the group)
+See https://google.aip.dev/128.`,
 			},
 			"state": {
 				Type:     schema.TypeString,
 				Computed: true,
-				Description: `Output only. Current state of the deployment group. 
- Possible values:
- STATE_UNSPECIFIED
+				Description: `The current state of the deployment group.
+See https://google.aip.dev/216.
+Possible values:
+STATE_UNSPECIFIED
 ACTIVE
 CREATING
 DELETING`,
@@ -141,9 +149,10 @@ DELETING`,
 				Elem: &schema.Schema{Type: schema.TypeString},
 			},
 			"update_time": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: `Output only. [Output only] Update time stamp`,
+				Type:     schema.TypeString,
+				Computed: true,
+				Description: `The timestamp when the resource was most recently updated.
+See https://google.aip.dev/148#timestamps.`,
 			},
 			"project": {
 				Type:     schema.TypeString,
