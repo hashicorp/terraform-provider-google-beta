@@ -61,35 +61,37 @@ func ResourceNetworkSecurityInterceptEndpointGroup() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
-				Description: `Immutable. The Intercept Deployment Group that this resource is connected to. Format
-is:
-'projects/{project}/locations/global/interceptDeploymentGroups/{interceptDeploymentGroup}'`,
+				Description: `The deployment group that this endpoint group is connected to, for example:
+'projects/123456789/locations/global/interceptDeploymentGroups/my-dg'.
+See https://google.aip.dev/124.`,
 			},
 			"intercept_endpoint_group_id": {
-				Type:        schema.TypeString,
-				Required:    true,
-				ForceNew:    true,
-				Description: `ID of the Intercept Endpoint Group.`,
+				Type:     schema.TypeString,
+				Required: true,
+				ForceNew: true,
+				Description: `The ID to use for the endpoint group, which will become the final component
+of the endpoint group's resource name.`,
 			},
 			"location": {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: `The location of the Intercept Endpoint Group, currently restricted to 'global'.`,
+				Description: `The cloud location of the endpoint group, currently restricted to 'global'.`,
 			},
 			"labels": {
 				Type:     schema.TypeMap,
 				Optional: true,
-				Description: `Optional. Labels as key value pairs
+				Description: `Labels are key/value pairs that help to organize and filter resources.
 
 **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
 Please refer to the field 'effective_labels' for all of the labels present on the resource.`,
 				Elem: &schema.Schema{Type: schema.TypeString},
 			},
 			"create_time": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: `Create time stamp.`,
+				Type:     schema.TypeString,
+				Computed: true,
+				Description: `The timestamp when the resource was created.
+See https://google.aip.dev/148#timestamps.`,
 			},
 			"effective_labels": {
 				Type:        schema.TypeMap,
@@ -98,27 +100,33 @@ Please refer to the field 'effective_labels' for all of the labels present on th
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"name": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: `Identifier. The name of the Intercept Endpoint Group.`,
+				Type:     schema.TypeString,
+				Computed: true,
+				Description: `The resource name of this endpoint group, for example:
+'projects/123456789/locations/global/interceptEndpointGroups/my-eg'.
+See https://google.aip.dev/122 for more details.`,
 			},
 			"reconciling": {
 				Type:     schema.TypeBool,
 				Computed: true,
-				Description: `Whether reconciling is in progress, recommended per
-https://google.aip.dev/128.`,
+				Description: `The current state of the resource does not match the user's intended state,
+and the system is working to reconcile them. This is part of the normal
+operation (e.g. adding a new association to the group).
+See https://google.aip.dev/128.`,
 			},
 			"state": {
 				Type:     schema.TypeString,
 				Computed: true,
-				Description: `Current state of the endpoint group. 
- Possible values:
- STATE_UNSPECIFIED
+				Description: `The current state of the endpoint group.
+See https://google.aip.dev/216.
+Possible values:
+STATE_UNSPECIFIED
 ACTIVE
 CLOSED
 CREATING
 DELETING
-OUT_OF_SYNC`,
+OUT_OF_SYNC
+DELETE_FAILED`,
 			},
 			"terraform_labels": {
 				Type:     schema.TypeMap,
@@ -128,9 +136,10 @@ OUT_OF_SYNC`,
 				Elem: &schema.Schema{Type: schema.TypeString},
 			},
 			"update_time": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: `Update time stamp.`,
+				Type:     schema.TypeString,
+				Computed: true,
+				Description: `The timestamp when the resource was most recently updated.
+See https://google.aip.dev/148#timestamps.`,
 			},
 			"project": {
 				Type:     schema.TypeString,

@@ -61,42 +61,46 @@ func ResourceNetworkSecurityInterceptEndpointGroupAssociation() *schema.Resource
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
-				Description: `Immutable. The Intercept Endpoint Group that this resource is connected to. Format
-is:
-'projects/{project}/locations/global/interceptEndpointGroups/{interceptEndpointGroup}'.`,
+				Description: `The endpoint group that this association is connected to, for example:
+'projects/123456789/locations/global/interceptEndpointGroups/my-eg'.
+See https://google.aip.dev/124.`,
 			},
 			"location": {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: `The location of the Intercept Endpoint Group Association, currently restricted to 'global'.`,
+				Description: `The cloud location of the association, currently restricted to 'global'.`,
 			},
 			"network": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
-				Description: `Immutable. The VPC network associated. Format:
-'projects/{project}/global/networks/{network}'.`,
+				Description: `The VPC network that is associated. for example:
+'projects/123456789/global/networks/my-network'.
+See https://google.aip.dev/124.`,
 			},
 			"intercept_endpoint_group_association_id": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				ForceNew:    true,
-				Description: `ID of the Intercept Endpoint Group Association.`,
+				Type:     schema.TypeString,
+				Optional: true,
+				ForceNew: true,
+				Description: `The ID to use for the new association, which will become the final
+component of the endpoint group's resource name. If not provided, the
+server will generate a unique ID.`,
 			},
 			"labels": {
 				Type:     schema.TypeMap,
 				Optional: true,
-				Description: `Optional. Labels as key value pairs.
+				Description: `Labels are key/value pairs that help to organize and filter resources.
 
 **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
 Please refer to the field 'effective_labels' for all of the labels present on the resource.`,
 				Elem: &schema.Schema{Type: schema.TypeString},
 			},
 			"create_time": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: `Create time stamp.`,
+				Type:     schema.TypeString,
+				Computed: true,
+				Description: `The timestamp when the resource was created.
+See https://google.aip.dev/148#timestamps.`,
 			},
 			"effective_labels": {
 				Type:        schema.TypeMap,
@@ -105,22 +109,24 @@ Please refer to the field 'effective_labels' for all of the labels present on th
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"locations_details": {
-				Type:        schema.TypeList,
-				Computed:    true,
-				Description: `The list of locations that are currently supported by the associated Intercept Deployment Group and their state.`,
+				Type:     schema.TypeList,
+				Computed: true,
+				Description: `The list of locations where the association is present. This information
+is retrieved from the linked endpoint group, and not configured as part
+of the association itself.`,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"location": {
 							Type:        schema.TypeString,
 							Computed:    true,
-							Description: `Location supported by the Intercept Deployment Group, for example 'us-central1-a'`,
+							Description: `The cloud location, e.g. 'us-central1-a' or 'asia-south1'.`,
 						},
 						"state": {
 							Type:     schema.TypeString,
 							Computed: true,
-							Description: `The association state in this location. 
- Possible values:
- STATE_UNSPECIFIED
+							Description: `The current state of the association in this location.
+Possible values:
+STATE_UNSPECIFIED
 ACTIVE
 OUT_OF_SYNC`,
 						},
@@ -128,21 +134,26 @@ OUT_OF_SYNC`,
 				},
 			},
 			"name": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: `Identifier. The name of the Intercept Endpoint Group Association.`,
+				Type:     schema.TypeString,
+				Computed: true,
+				Description: `The resource name of this endpoint group association, for example:
+'projects/123456789/locations/global/interceptEndpointGroupAssociations/my-eg-association'.
+See https://google.aip.dev/122 for more details.`,
 			},
 			"reconciling": {
-				Type:        schema.TypeBool,
-				Computed:    true,
-				Description: `Whether reconciling is in progress.`,
+				Type:     schema.TypeBool,
+				Computed: true,
+				Description: `The current state of the resource does not match the user's intended state,
+and the system is working to reconcile them. This part of the normal
+operation (e.g. adding a new location to the target deployment group).
+See https://google.aip.dev/128.`,
 			},
 			"state": {
 				Type:     schema.TypeString,
 				Computed: true,
-				Description: `Current state of the Intercept Endpoint Group Association. 
- Possible values:
- STATE_UNSPECIFIED
+				Description: `Current state of the endpoint group association.
+Possible values:
+STATE_UNSPECIFIED
 ACTIVE
 CREATING
 DELETING
@@ -158,9 +169,10 @@ DELETE_FAILED`,
 				Elem: &schema.Schema{Type: schema.TypeString},
 			},
 			"update_time": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: `Update time stamp.`,
+				Type:     schema.TypeString,
+				Computed: true,
+				Description: `The timestamp when the resource was most recently updated.
+See https://google.aip.dev/148#timestamps.`,
 			},
 			"project": {
 				Type:     schema.TypeString,
