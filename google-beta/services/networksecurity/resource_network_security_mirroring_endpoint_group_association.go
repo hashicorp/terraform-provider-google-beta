@@ -61,27 +61,28 @@ func ResourceNetworkSecurityMirroringEndpointGroupAssociation() *schema.Resource
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: `Resource ID segment making up resource 'name'. It identifies the resource within its parent collection as described in https://google.aip.dev/122. See documentation for resource type 'networksecurity.googleapis.com/MirroringEndpointGroupAssociation'.`,
+				Description: `The cloud location of the association, currently restricted to 'global'.`,
 			},
 			"mirroring_endpoint_group": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
-				Description: `Required. Immutable. The Mirroring Endpoint Group that this resource is connected to. Format
-is:
-'projects/{project}/locations/global/mirroringEndpointGroups/{mirroringEndpointGroup}'`,
+				Description: `The endpoint group that this association is connected to, for example:
+'projects/123456789/locations/global/mirroringEndpointGroups/my-eg'.
+See https://google.aip.dev/124.`,
 			},
 			"network": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
-				Description: `Required. Immutable. The VPC network associated. Format:
-projects/{project}/global/networks/{network}.`,
+				Description: `The VPC network that is associated. for example:
+'projects/123456789/global/networks/my-network'.
+See https://google.aip.dev/124.`,
 			},
 			"labels": {
 				Type:     schema.TypeMap,
 				Optional: true,
-				Description: `Optional. Labels as key value pairs 
+				Description: `Labels are key/value pairs that help to organize and filter resources.
 
 **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
 Please refer to the field 'effective_labels' for all of the labels present on the resource.`,
@@ -91,15 +92,15 @@ Please refer to the field 'effective_labels' for all of the labels present on th
 				Type:     schema.TypeString,
 				Optional: true,
 				ForceNew: true,
-				Description: `Optional. Id of the requesting object
-If auto-generating Id server-side, remove this field and
-mirroring_endpoint_group_association_id from the method_signature of Create
-RPC`,
+				Description: `The ID to use for the new association, which will become the final
+component of the endpoint group's resource name. If not provided, the
+server will generate a unique ID.`,
 			},
 			"create_time": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: `Output only. [Output only] Create time stamp`,
+				Type:     schema.TypeString,
+				Computed: true,
+				Description: `The timestamp when the resource was created.
+See https://google.aip.dev/148#timestamps.`,
 			},
 			"effective_labels": {
 				Type:        schema.TypeMap,
@@ -108,22 +109,24 @@ RPC`,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"locations_details": {
-				Type:        schema.TypeList,
-				Computed:    true,
-				Description: `Output only. The list of locations that this association is in and its details.`,
+				Type:     schema.TypeList,
+				Computed: true,
+				Description: `The list of locations where the association is present. This information
+is retrieved from the linked endpoint group, and not configured as part
+of the association itself.`,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"location": {
 							Type:        schema.TypeString,
 							Computed:    true,
-							Description: `Output only. The cloud location.`,
+							Description: `The cloud location, e.g. 'us-central1-a' or 'asia-south1'.`,
 						},
 						"state": {
 							Type:     schema.TypeString,
 							Computed: true,
-							Description: `Output only. The association state in this location. 
- Possible values:
- STATE_UNSPECIFIED
+							Description: `The current state of the association in this location.
+Possible values:
+STATE_UNSPECIFIED
 ACTIVE
 OUT_OF_SYNC`,
 						},
@@ -131,22 +134,26 @@ OUT_OF_SYNC`,
 				},
 			},
 			"name": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: `Immutable. Identifier. The name of the MirroringEndpointGroupAssociation.`,
+				Type:     schema.TypeString,
+				Computed: true,
+				Description: `The resource name of this endpoint group association, for example:
+'projects/123456789/locations/global/mirroringEndpointGroupAssociations/my-eg-association'.
+See https://google.aip.dev/122 for more details.`,
 			},
 			"reconciling": {
 				Type:     schema.TypeBool,
 				Computed: true,
-				Description: `Output only. Whether reconciling is in progress, recommended per
-https://google.aip.dev/128.`,
+				Description: `The current state of the resource does not match the user's intended state,
+and the system is working to reconcile them. This part of the normal
+operation (e.g. adding a new location to the target deployment group).
+See https://google.aip.dev/128.`,
 			},
 			"state": {
 				Type:     schema.TypeString,
 				Computed: true,
-				Description: `Output only. Current state of the endpoint group association. 
- Possible values:
- STATE_UNSPECIFIED
+				Description: `Current state of the endpoint group association.
+Possible values:
+STATE_UNSPECIFIED
 ACTIVE
 CREATING
 DELETING
@@ -162,9 +169,10 @@ DELETE_FAILED`,
 				Elem: &schema.Schema{Type: schema.TypeString},
 			},
 			"update_time": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: `Output only. [Output only] Update time stamp`,
+				Type:     schema.TypeString,
+				Computed: true,
+				Description: `The timestamp when the resource was most recently updated.
+See https://google.aip.dev/148#timestamps.`,
 			},
 			"project": {
 				Type:     schema.TypeString,
