@@ -38,6 +38,7 @@ fields:
   - field: 'runtime_version'
   - field: 'scheduling_config.preemptible'
   - field: 'scheduling_config.reserved'
+  - field: 'scheduling_config.spot'
   - field: 'service_account.email'
   - field: 'service_account.scope'
   - field: 'shielded_instance_config.enable_secure_boot'

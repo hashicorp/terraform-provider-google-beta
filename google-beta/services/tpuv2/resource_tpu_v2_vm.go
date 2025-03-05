@@ -325,6 +325,12 @@ Engine subnetwork. If none is provided, "default" will be used.`,
 							ForceNew:    true,
 							Description: `Whether the node is created under a reservation.`,
 						},
+						"spot": {
+							Type:        schema.TypeBool,
+							Optional:    true,
+							ForceNew:    true,
+							Description: `Optional. Defines whether the node is Spot VM.`,
+						},
 					},
 				},
 			},
@@ -1162,6 +1168,8 @@ func flattenTpuV2VmSchedulingConfig(v interface{}, d *schema.ResourceData, confi
 		flattenTpuV2VmSchedulingConfigPreemptible(original["preemptible"], d, config)
 	transformed["reserved"] =
 		flattenTpuV2VmSchedulingConfigReserved(original["reserved"], d, config)
+	transformed["spot"] =
+		flattenTpuV2VmSchedulingConfigSpot(original["spot"], d, config)
 	return []interface{}{transformed}
 }
 func flattenTpuV2VmSchedulingConfigPreemptible(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -1169,6 +1177,10 @@ func flattenTpuV2VmSchedulingConfigPreemptible(v interface{}, d *schema.Resource
 }
 
 func flattenTpuV2VmSchedulingConfigReserved(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenTpuV2VmSchedulingConfigSpot(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -1614,6 +1626,13 @@ func expandTpuV2VmSchedulingConfig(v interface{}, d tpgresource.TerraformResourc
 		transformed["reserved"] = transformedReserved
 	}
 
+	transformedSpot, err := expandTpuV2VmSchedulingConfigSpot(original["spot"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedSpot); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["spot"] = transformedSpot
+	}
+
 	return transformed, nil
 }
 
@@ -1622,6 +1641,10 @@ func expandTpuV2VmSchedulingConfigPreemptible(v interface{}, d tpgresource.Terra
 }
 
 func expandTpuV2VmSchedulingConfigReserved(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandTpuV2VmSchedulingConfigSpot(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

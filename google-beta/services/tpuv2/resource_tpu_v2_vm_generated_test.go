@@ -139,6 +139,7 @@ resource "google_tpu_v2_vm" "tpu" {
   
   scheduling_config {
     preemptible = true
+    spot = true
   }
 
   shielded_instance_config {
