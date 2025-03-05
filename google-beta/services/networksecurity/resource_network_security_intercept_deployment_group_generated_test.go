@@ -62,6 +62,7 @@ resource "google_network_security_intercept_deployment_group" "default" {
   intercept_deployment_group_id = "tf-test-example-dg%{random_suffix}"
   location                      = "global"
   network                       = google_compute_network.network.id
+  description                   = "initial description"
   labels = {
     foo = "bar"
   }
@@ -82,6 +83,7 @@ resource "google_network_security_intercept_deployment_group" "default" {
   intercept_deployment_group_id = "tf-test-example-dg%{random_suffix}"
   location                      = "global"
   network                       = google_compute_network.network.id
+  description                   = "updated description"
   labels = {
     foo = "goo"
   }

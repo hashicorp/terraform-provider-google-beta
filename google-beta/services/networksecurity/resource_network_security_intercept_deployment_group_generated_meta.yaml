@@ -7,6 +7,7 @@ api_resource_type_kind: 'InterceptDeploymentGroup'
 fields:
   - field: 'connected_endpoint_groups.name'
   - field: 'create_time'
+  - field: 'description'
   - field: 'effective_labels'
     provider_only: true
   - field: 'intercept_deployment_group_id'
