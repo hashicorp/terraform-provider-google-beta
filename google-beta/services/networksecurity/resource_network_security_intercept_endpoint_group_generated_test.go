@@ -69,6 +69,7 @@ resource "google_network_security_intercept_endpoint_group" "default" {
   intercept_endpoint_group_id   = "tf-test-example-eg%{random_suffix}"
   location                      = "global"
   intercept_deployment_group    = google_network_security_intercept_deployment_group.deployment_group.id
+  description                   = "initial description"
   labels = {
     foo = "bar"
   }
@@ -96,6 +97,7 @@ resource "google_network_security_intercept_endpoint_group" "default" {
   intercept_endpoint_group_id   = "tf-test-example-eg%{random_suffix}"
   location                      = "global"
   intercept_deployment_group    = google_network_security_intercept_deployment_group.deployment_group.id
+  description                   = "updated description"
   labels = {
     foo = "goo"
   }

@@ -78,6 +78,12 @@ component of the deployment group's resource name.`,
 'projects/{project}/global/networks/{network}'.
 See https://google.aip.dev/124.`,
 			},
+			"description": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Description: `User-provided description of the deployment group.
+Used as additional context for the deployment group.`,
+			},
 			"labels": {
 				Type:     schema.TypeMap,
 				Optional: true,
@@ -178,6 +184,12 @@ func resourceNetworkSecurityInterceptDeploymentGroupCreate(d *schema.ResourceDat
 		return err
 	} else if v, ok := d.GetOkExists("network"); !tpgresource.IsEmptyValue(reflect.ValueOf(networkProp)) && (ok || !reflect.DeepEqual(v, networkProp)) {
 		obj["network"] = networkProp
+	}
+	descriptionProp, err := expandNetworkSecurityInterceptDeploymentGroupDescription(d.Get("description"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("description"); !tpgresource.IsEmptyValue(reflect.ValueOf(descriptionProp)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
+		obj["description"] = descriptionProp
 	}
 	labelsProp, err := expandNetworkSecurityInterceptDeploymentGroupEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
@@ -322,6 +334,9 @@ func resourceNetworkSecurityInterceptDeploymentGroupRead(d *schema.ResourceData,
 	if err := d.Set("reconciling", flattenNetworkSecurityInterceptDeploymentGroupReconciling(res["reconciling"], d, config)); err != nil {
 		return fmt.Errorf("Error reading InterceptDeploymentGroup: %s", err)
 	}
+	if err := d.Set("description", flattenNetworkSecurityInterceptDeploymentGroupDescription(res["description"], d, config)); err != nil {
+		return fmt.Errorf("Error reading InterceptDeploymentGroup: %s", err)
+	}
 	if err := d.Set("terraform_labels", flattenNetworkSecurityInterceptDeploymentGroupTerraformLabels(res["labels"], d, config)); err != nil {
 		return fmt.Errorf("Error reading InterceptDeploymentGroup: %s", err)
 	}
@@ -348,6 +363,12 @@ func resourceNetworkSecurityInterceptDeploymentGroupUpdate(d *schema.ResourceDat
 	billingProject = project
 
 	obj := make(map[string]interface{})
+	descriptionProp, err := expandNetworkSecurityInterceptDeploymentGroupDescription(d.Get("description"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("description"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
+		obj["description"] = descriptionProp
+	}
 	labelsProp, err := expandNetworkSecurityInterceptDeploymentGroupEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
@@ -363,6 +384,10 @@ func resourceNetworkSecurityInterceptDeploymentGroupUpdate(d *schema.ResourceDat
 	log.Printf("[DEBUG] Updating InterceptDeploymentGroup %q: %#v", d.Id(), obj)
 	headers := make(http.Header)
 	updateMask := []string{}
+
+	if d.HasChange("description") {
+		updateMask = append(updateMask, "description")
+	}
 
 	if d.HasChange("effective_labels") {
 		updateMask = append(updateMask, "labels")
@@ -547,6 +572,10 @@ func flattenNetworkSecurityInterceptDeploymentGroupReconciling(v interface{}, d 
 	return v
 }
 
+func flattenNetworkSecurityInterceptDeploymentGroupDescription(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenNetworkSecurityInterceptDeploymentGroupTerraformLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
@@ -567,6 +596,10 @@ func flattenNetworkSecurityInterceptDeploymentGroupEffectiveLabels(v interface{}
 }
 
 func expandNetworkSecurityInterceptDeploymentGroupNetwork(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandNetworkSecurityInterceptDeploymentGroupDescription(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
