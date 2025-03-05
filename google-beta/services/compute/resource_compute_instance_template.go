@@ -34,6 +34,7 @@ var (
 		"scheduling.0.availability_domain",
 		"scheduling.0.max_run_duration",
 		"scheduling.0.on_instance_stop_action",
+		"scheduling.0.termination_time",
 		"scheduling.0.maintenance_interval",
 		"scheduling.0.host_error_timeout_seconds",
 		"scheduling.0.graceful_shutdown",
@@ -765,6 +766,15 @@ be from 0 to 999,999,999 inclusive.`,
 									},
 								},
 							},
+						},
+						"termination_time": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ForceNew:     true,
+							AtLeastOneOf: schedulingKeys,
+							Description: `Specifies the timestamp, when the instance will be terminated,
+in RFC3339 text format. If specified, the instance termination action
+will be performed at the termination time.`,
 						},
 						"host_error_timeout_seconds": {
 							Type:        schema.TypeInt,
