@@ -109,6 +109,7 @@ resource "google_network_security_mirroring_deployment" "default" {
   location                   = "us-central1-a"
   forwarding_rule            = google_compute_forwarding_rule.forwarding_rule.id
   mirroring_deployment_group = google_network_security_mirroring_deployment_group.deployment_group.id
+  description                = "initial description"
   labels = {
     foo = "bar"
   }
@@ -176,6 +177,7 @@ resource "google_network_security_mirroring_deployment" "default" {
   location                   = "us-central1-a"
   forwarding_rule            = google_compute_forwarding_rule.forwarding_rule.id
   mirroring_deployment_group = google_network_security_mirroring_deployment_group.deployment_group.id
+  description                = "updated description"
   labels = {
     foo = "goo"
   }
