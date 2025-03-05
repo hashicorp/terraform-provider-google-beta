@@ -78,6 +78,12 @@ See https://google.aip.dev/124.`,
 				Description: `The ID to use for the endpoint group, which will become the final component
 of the endpoint group's resource name.`,
 			},
+			"description": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Description: `User-provided description of the endpoint group.
+Used as additional context for the endpoint group.`,
+			},
 			"labels": {
 				Type:     schema.TypeMap,
 				Optional: true,
@@ -165,6 +171,12 @@ func resourceNetworkSecurityMirroringEndpointGroupCreate(d *schema.ResourceData,
 		return err
 	} else if v, ok := d.GetOkExists("mirroring_deployment_group"); !tpgresource.IsEmptyValue(reflect.ValueOf(mirroringDeploymentGroupProp)) && (ok || !reflect.DeepEqual(v, mirroringDeploymentGroupProp)) {
 		obj["mirroringDeploymentGroup"] = mirroringDeploymentGroupProp
+	}
+	descriptionProp, err := expandNetworkSecurityMirroringEndpointGroupDescription(d.Get("description"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("description"); !tpgresource.IsEmptyValue(reflect.ValueOf(descriptionProp)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
+		obj["description"] = descriptionProp
 	}
 	labelsProp, err := expandNetworkSecurityMirroringEndpointGroupEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
@@ -306,6 +318,9 @@ func resourceNetworkSecurityMirroringEndpointGroupRead(d *schema.ResourceData, m
 	if err := d.Set("reconciling", flattenNetworkSecurityMirroringEndpointGroupReconciling(res["reconciling"], d, config)); err != nil {
 		return fmt.Errorf("Error reading MirroringEndpointGroup: %s", err)
 	}
+	if err := d.Set("description", flattenNetworkSecurityMirroringEndpointGroupDescription(res["description"], d, config)); err != nil {
+		return fmt.Errorf("Error reading MirroringEndpointGroup: %s", err)
+	}
 	if err := d.Set("terraform_labels", flattenNetworkSecurityMirroringEndpointGroupTerraformLabels(res["labels"], d, config)); err != nil {
 		return fmt.Errorf("Error reading MirroringEndpointGroup: %s", err)
 	}
@@ -332,6 +347,12 @@ func resourceNetworkSecurityMirroringEndpointGroupUpdate(d *schema.ResourceData,
 	billingProject = project
 
 	obj := make(map[string]interface{})
+	descriptionProp, err := expandNetworkSecurityMirroringEndpointGroupDescription(d.Get("description"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("description"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
+		obj["description"] = descriptionProp
+	}
 	labelsProp, err := expandNetworkSecurityMirroringEndpointGroupEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
@@ -347,6 +368,10 @@ func resourceNetworkSecurityMirroringEndpointGroupUpdate(d *schema.ResourceData,
 	log.Printf("[DEBUG] Updating MirroringEndpointGroup %q: %#v", d.Id(), obj)
 	headers := make(http.Header)
 	updateMask := []string{}
+
+	if d.HasChange("description") {
+		updateMask = append(updateMask, "description")
+	}
 
 	if d.HasChange("effective_labels") {
 		updateMask = append(updateMask, "labels")
@@ -509,6 +534,10 @@ func flattenNetworkSecurityMirroringEndpointGroupReconciling(v interface{}, d *s
 	return v
 }
 
+func flattenNetworkSecurityMirroringEndpointGroupDescription(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenNetworkSecurityMirroringEndpointGroupTerraformLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
@@ -529,6 +558,10 @@ func flattenNetworkSecurityMirroringEndpointGroupEffectiveLabels(v interface{}, 
 }
 
 func expandNetworkSecurityMirroringEndpointGroupMirroringDeploymentGroup(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandNetworkSecurityMirroringEndpointGroupDescription(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

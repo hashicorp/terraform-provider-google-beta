@@ -86,6 +86,12 @@ See https://google.aip.dev/124.`,
 				Description: `The ID to use for the new deployment, which will become the final
 component of the deployment's resource name.`,
 			},
+			"description": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Description: `User-provided description of the deployment.
+Used as additional context for the deployment.`,
+			},
 			"labels": {
 				Type:     schema.TypeMap,
 				Optional: true,
@@ -178,6 +184,12 @@ func resourceNetworkSecurityMirroringDeploymentCreate(d *schema.ResourceData, me
 		return err
 	} else if v, ok := d.GetOkExists("mirroring_deployment_group"); !tpgresource.IsEmptyValue(reflect.ValueOf(mirroringDeploymentGroupProp)) && (ok || !reflect.DeepEqual(v, mirroringDeploymentGroupProp)) {
 		obj["mirroringDeploymentGroup"] = mirroringDeploymentGroupProp
+	}
+	descriptionProp, err := expandNetworkSecurityMirroringDeploymentDescription(d.Get("description"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("description"); !tpgresource.IsEmptyValue(reflect.ValueOf(descriptionProp)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
+		obj["description"] = descriptionProp
 	}
 	labelsProp, err := expandNetworkSecurityMirroringDeploymentEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
@@ -322,6 +334,9 @@ func resourceNetworkSecurityMirroringDeploymentRead(d *schema.ResourceData, meta
 	if err := d.Set("reconciling", flattenNetworkSecurityMirroringDeploymentReconciling(res["reconciling"], d, config)); err != nil {
 		return fmt.Errorf("Error reading MirroringDeployment: %s", err)
 	}
+	if err := d.Set("description", flattenNetworkSecurityMirroringDeploymentDescription(res["description"], d, config)); err != nil {
+		return fmt.Errorf("Error reading MirroringDeployment: %s", err)
+	}
 	if err := d.Set("terraform_labels", flattenNetworkSecurityMirroringDeploymentTerraformLabels(res["labels"], d, config)); err != nil {
 		return fmt.Errorf("Error reading MirroringDeployment: %s", err)
 	}
@@ -348,6 +363,12 @@ func resourceNetworkSecurityMirroringDeploymentUpdate(d *schema.ResourceData, me
 	billingProject = project
 
 	obj := make(map[string]interface{})
+	descriptionProp, err := expandNetworkSecurityMirroringDeploymentDescription(d.Get("description"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("description"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
+		obj["description"] = descriptionProp
+	}
 	labelsProp, err := expandNetworkSecurityMirroringDeploymentEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
@@ -363,6 +384,10 @@ func resourceNetworkSecurityMirroringDeploymentUpdate(d *schema.ResourceData, me
 	log.Printf("[DEBUG] Updating MirroringDeployment %q: %#v", d.Id(), obj)
 	headers := make(http.Header)
 	updateMask := []string{}
+
+	if d.HasChange("description") {
+		updateMask = append(updateMask, "description")
+	}
 
 	if d.HasChange("effective_labels") {
 		updateMask = append(updateMask, "labels")
@@ -529,6 +554,10 @@ func flattenNetworkSecurityMirroringDeploymentReconciling(v interface{}, d *sche
 	return v
 }
 
+func flattenNetworkSecurityMirroringDeploymentDescription(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenNetworkSecurityMirroringDeploymentTerraformLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
@@ -553,6 +582,10 @@ func expandNetworkSecurityMirroringDeploymentForwardingRule(v interface{}, d tpg
 }
 
 func expandNetworkSecurityMirroringDeploymentMirroringDeploymentGroup(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandNetworkSecurityMirroringDeploymentDescription(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
