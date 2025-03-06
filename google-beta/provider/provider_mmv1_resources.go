@@ -539,9 +539,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 618
+// Generated resources: 619
 // Generated IAM resources: 306
-// Total generated resources: 924
+// Total generated resources: 925
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -1114,6 +1114,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_iam_workload_identity_pool":                                          iambeta.ResourceIAMBetaWorkloadIdentityPool(),
 	"google_iam_workload_identity_pool_provider":                                 iambeta.ResourceIAMBetaWorkloadIdentityPoolProvider(),
 	"google_iam_oauth_client":                                                    iamworkforcepool.ResourceIAMWorkforcePoolOauthClient(),
+	"google_iam_oauth_client_credential":                                         iamworkforcepool.ResourceIAMWorkforcePoolOauthClientCredential(),
 	"google_iam_workforce_pool":                                                  iamworkforcepool.ResourceIAMWorkforcePoolWorkforcePool(),
 	"google_iam_workforce_pool_provider":                                         iamworkforcepool.ResourceIAMWorkforcePoolWorkforcePoolProvider(),
 	"google_iap_app_engine_service_iam_binding":                                  tpgiamresource.ResourceIamBinding(iap.IapAppEngineServiceIamSchema, iap.IapAppEngineServiceIamUpdaterProducer, iap.IapAppEngineServiceIdParseFunc),
