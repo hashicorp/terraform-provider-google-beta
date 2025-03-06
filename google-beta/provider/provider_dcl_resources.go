@@ -28,7 +28,6 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/containerazure"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/dataplex"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/dataproc"
-	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/eventarc"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebaserules"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/gkehub"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/recaptchaenterprise"
@@ -49,7 +48,6 @@ var dclResources = map[string]*schema.Resource{
 	"google_dataplex_lake":                 dataplex.ResourceDataplexLake(),
 	"google_dataplex_zone":                 dataplex.ResourceDataplexZone(),
 	"google_dataproc_workflow_template":    dataproc.ResourceDataprocWorkflowTemplate(),
-	"google_eventarc_channel":              eventarc.ResourceEventarcChannel(),
 	"google_firebaserules_release":         firebaserules.ResourceFirebaserulesRelease(),
 	"google_firebaserules_ruleset":         firebaserules.ResourceFirebaserulesRuleset(),
 	"google_gke_hub_feature_membership":    gkehub.ResourceGkeHubFeatureMembership(),
