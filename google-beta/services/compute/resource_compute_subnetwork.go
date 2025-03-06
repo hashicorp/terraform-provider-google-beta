@@ -169,6 +169,20 @@ Provide this property when you create the subnetwork. For example,
 non-overlapping within a network. Only IPv4 is supported.
 Field is optional when 'reserved_internal_range' is defined, otherwise required.`,
 			},
+			"ip_collection": {
+				Type:     schema.TypeString,
+				Optional: true,
+				ForceNew: true,
+				Description: `Resource reference of a PublicDelegatedPrefix. The PDP must be a sub-PDP
+in EXTERNAL_IPV6_SUBNETWORK_CREATION mode.
+Use one of the following formats to specify a sub-PDP when creating an
+IPv6 NetLB forwarding rule using BYOIP:
+Full resource URL, as in:
+  * 'https://www.googleapis.com/compute/v1/projects/{{projectId}}/regions/{{region}}/publicDelegatedPrefixes/{{sub-pdp-name}}'
+Partial URL, as in:
+  * 'projects/{{projectId}}/regions/region/publicDelegatedPrefixes/{{sub-pdp-name}}'
+  * 'regions/{{region}}/publicDelegatedPrefixes/{{sub-pdp-name}}'`,
+			},
 			"ipv6_access_type": {
 				Type:         schema.TypeString,
 				Optional:     true,
@@ -366,6 +380,15 @@ outside this subnetwork.`,
 				Computed:    true,
 				Description: `The range of internal IPv6 addresses that are owned by this subnetwork.`,
 			},
+			"ipv6_gce_endpoint": {
+				Type:     schema.TypeString,
+				Computed: true,
+				Description: `Possible endpoints of this subnetwork. It can be one of the following:
+  * VM_ONLY: The subnetwork can be used for creating instances and IPv6 addresses with VM endpoint type. Such a subnetwork
+  gets external IPv6 ranges from a public delegated prefix and cannot be used to create NetLb.
+  * VM_AND_FR: The subnetwork can be used for creating both VM instances and Forwarding Rules. It can also be used to reserve
+  IPv6 addresses with both VM and FR endpoint types. Such a subnetwork gets its IPv6 range from Google IP Pool directly.`,
+			},
 			"subnetwork_id": {
 				Type:        schema.TypeInt,
 				Computed:    true,
@@ -542,6 +565,12 @@ func resourceComputeSubnetworkCreate(d *schema.ResourceData, meta interface{}) e
 	} else if v, ok := d.GetOkExists("external_ipv6_prefix"); !tpgresource.IsEmptyValue(reflect.ValueOf(externalIpv6PrefixProp)) && (ok || !reflect.DeepEqual(v, externalIpv6PrefixProp)) {
 		obj["externalIpv6Prefix"] = externalIpv6PrefixProp
 	}
+	ipCollectionProp, err := expandComputeSubnetworkIpCollection(d.Get("ip_collection"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("ip_collection"); !tpgresource.IsEmptyValue(reflect.ValueOf(ipCollectionProp)) && (ok || !reflect.DeepEqual(v, ipCollectionProp)) {
+		obj["ipCollection"] = ipCollectionProp
+	}
 	allowSubnetCidrRoutesOverlapProp, err := expandComputeSubnetworkAllowSubnetCidrRoutesOverlap(d.Get("allow_subnet_cidr_routes_overlap"), d, config)
 	if err != nil {
 		return err
@@ -706,6 +735,9 @@ func resourceComputeSubnetworkRead(d *schema.ResourceData, meta interface{}) err
 		return fmt.Errorf("Error reading Subnetwork: %s", err)
 	}
 	if err := d.Set("external_ipv6_prefix", flattenComputeSubnetworkExternalIpv6Prefix(res["externalIpv6Prefix"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Subnetwork: %s", err)
+	}
+	if err := d.Set("ipv6_gce_endpoint", flattenComputeSubnetworkIpv6GceEndpoint(res["ipv6GceEndpoint"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Subnetwork: %s", err)
 	}
 	if err := d.Set("allow_subnet_cidr_routes_overlap", flattenComputeSubnetworkAllowSubnetCidrRoutesOverlap(res["allowSubnetCidrRoutesOverlap"], d, config)); err != nil {
@@ -1502,6 +1534,10 @@ func flattenComputeSubnetworkExternalIpv6Prefix(v interface{}, d *schema.Resourc
 	return v
 }
 
+func flattenComputeSubnetworkIpv6GceEndpoint(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenComputeSubnetworkAllowSubnetCidrRoutesOverlap(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
@@ -1642,6 +1678,10 @@ func expandComputeSubnetworkIpv6AccessType(v interface{}, d tpgresource.Terrafor
 }
 
 func expandComputeSubnetworkExternalIpv6Prefix(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeSubnetworkIpCollection(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
