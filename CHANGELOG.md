@@ -12,7 +12,7 @@ FEATURES:
 * **New Resource:** `google_network_security_backend_authentication_config` ([#9481](https://github.com/hashicorp/terraform-provider-google-beta/pull/9481))
 
 IMPROVEMENTS:
-* alloydb: added `psc_instance_config.psc_interface_configs` field to ``google_alloydb_instance` resource ([#9469](https://github.com/hashicorp/terraform-provider-google-beta/pull/9469))
+* alloydb: added `psc_instance_config.psc_interface_configs` field to `google_alloydb_instance` resource ([#9469](https://github.com/hashicorp/terraform-provider-google-beta/pull/9469))
 * compute: added `create_snapshot_before_destroy` to `google_compute_disk` and `google_compute_region_disk` to enable creating a snapshot before disk deletion ([#9442](https://github.com/hashicorp/terraform-provider-google-beta/pull/9442))
 * compute: added `custom_metrics` field to `google_compute_backend_service` and `google_compute_region_backend_service` ([#9473](https://github.com/hashicorp/terraform-provider-google-beta/pull/9473))
 * compute: added `ip_collection` and `ipv6_gce_endpoint` fields to `google_compute_subnetwork` resource ([#9490](https://github.com/hashicorp/terraform-provider-google-beta/pull/9490))
@@ -30,7 +30,7 @@ IMPROVEMENTS:
 * workstations: added `tags` field to `google_workstations_workstation_cluster` resource ([#9441](https://github.com/hashicorp/terraform-provider-google-beta/pull/9441))
 
 BUG FIXES:
-* backup_dr: added missing SUNDAY option for `google_backup_dr_backup_plan.days_of_week` ([#9446](https://github.com/hashicorp/terraform-provider-google-beta/pull/9446))
+* backupdr: added missing SUNDAY option for `google_backup_dr_backup_plan.days_of_week` ([#9446](https://github.com/hashicorp/terraform-provider-google-beta/pull/9446))
 * compute: fixed `compute_instance.network_interface.internal_ipv6_prefix_length` not being set or read in Terraform state ([#9444](https://github.com/hashicorp/terraform-provider-google-beta/pull/9444))
 * compute: fixed bug in `google_compute_router_nat` where `max_ports_per_vm` couldn't be unset once set. ([#9483](https://github.com/hashicorp/terraform-provider-google-beta/pull/9483))
 * container: fixed perma-diff in `google_container_cluster` when `cluster_dns_scope` is unspecified ([#9443](https://github.com/hashicorp/terraform-provider-google-beta/pull/9443))
