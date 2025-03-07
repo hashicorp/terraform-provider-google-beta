@@ -23,15 +23,15 @@ IMPROVEMENTS:
 * compute: made `purpose` field updatable in `google_compute_subnetwork`. ([#9489](https://github.com/hashicorp/terraform-provider-google-beta/pull/9489))
 * container: added "JOBSET" as a supported value for `enable_components` in `google_container_cluster` resource ([#9453](https://github.com/hashicorp/terraform-provider-google-beta/pull/9453))
 * datastream: added support for creating connection profiles for Salesforce in `google_datastream_connection_profile` ([#9482](https://github.com/hashicorp/terraform-provider-google-beta/pull/9482))
-* firebasedataconnect: added `deletion_policy` support to `google_firebase_data_connect_service` resource ([#9496](https://github.com/hashicorp/terraform-provider-google-beta/pull/9496))
+* firebasedataconnect: added `deletion_policy` field to `google_firebase_data_connect_service` resource ([#9496](https://github.com/hashicorp/terraform-provider-google-beta/pull/9496))
 * networksecurity: added `description` field to `google_network_security_intercept_deployment`, `google_network_security_intercept_deployment_group`, `google_network_security_intercept_endpoint_group` resources ([#9474](https://github.com/hashicorp/terraform-provider-google-beta/pull/9474))
 * networksecurity: added `description` field to `google_network_security_mirroring_deployment`, `google_network_security_mirroring_deployment_group`, `google_network_security_mirroring_endpoint_group` resources ([#9476](https://github.com/hashicorp/terraform-provider-google-beta/pull/9476))
 * tpuv2: added `spot` field to `google_tpu_v2_vm` resource ([#9478](https://github.com/hashicorp/terraform-provider-google-beta/pull/9478))
 * workstations: added `tags` field to `google_workstations_workstation_cluster` resource ([#9441](https://github.com/hashicorp/terraform-provider-google-beta/pull/9441))
 
 BUG FIXES:
-* backupdr: added missing SUNDAY option for `google_backup_dr_backup_plan.days_of_week` ([#9446](https://github.com/hashicorp/terraform-provider-google-beta/pull/9446))
-* compute: fixed `compute_instance.network_interface.internal_ipv6_prefix_length` not being set or read in Terraform state ([#9444](https://github.com/hashicorp/terraform-provider-google-beta/pull/9444))
+* backupdr: added missing `SUNDAY` option to `days_of_week` field in `google_backup_dr_backup_plan` resource ([#9446](https://github.com/hashicorp/terraform-provider-google-beta/pull/9446))
+* compute: fixed `network_interface.internal_ipv6_prefix_length` not being set or read in Terraform state in `google_compute_instance` resource ([#9444](https://github.com/hashicorp/terraform-provider-google-beta/pull/9444))
 * compute: fixed bug in `google_compute_router_nat` where `max_ports_per_vm` couldn't be unset once set. ([#9483](https://github.com/hashicorp/terraform-provider-google-beta/pull/9483))
 * container: fixed perma-diff in `google_container_cluster` when `cluster_dns_scope` is unspecified ([#9443](https://github.com/hashicorp/terraform-provider-google-beta/pull/9443))
 * networksecurity: added wait time on `google_network_security_gateway_security_policy_rule` resource when creating and deleting to prevent race conditions ([#9448](https://github.com/hashicorp/terraform-provider-google-beta/pull/9448))
