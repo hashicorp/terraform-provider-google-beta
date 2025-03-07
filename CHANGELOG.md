@@ -26,7 +26,6 @@ IMPROVEMENTS:
 * firebasedataconnect: added `deletion_policy` support to `google_firebase_data_connect_service` resource ([#9496](https://github.com/hashicorp/terraform-provider-google-beta/pull/9496))
 * networksecurity: added `description` field to `google_network_security_intercept_deployment`, `google_network_security_intercept_deployment_group`, `google_network_security_intercept_endpoint_group` resources ([#9474](https://github.com/hashicorp/terraform-provider-google-beta/pull/9474))
 * networksecurity: added `description` field to `google_network_security_mirroring_deployment`, `google_network_security_mirroring_deployment_group`, `google_network_security_mirroring_endpoint_group` resources ([#9476](https://github.com/hashicorp/terraform-provider-google-beta/pull/9476))
-* networksecurity: added wait time on `google_network_security_gateway_security_policy_rule` resource when creating and deleting to prevent race conditions ([#9448](https://github.com/hashicorp/terraform-provider-google-beta/pull/9448))
 * tpuv2: added `spot` field to `google_tpu_v2_vm` resource ([#9478](https://github.com/hashicorp/terraform-provider-google-beta/pull/9478))
 * workstations: added `tags` field to `google_workstations_workstation_cluster` resource ([#9441](https://github.com/hashicorp/terraform-provider-google-beta/pull/9441))
 
@@ -35,6 +34,7 @@ BUG FIXES:
 * compute: fixed `compute_instance.network_interface.internal_ipv6_prefix_length` not being set or read in Terraform state ([#9444](https://github.com/hashicorp/terraform-provider-google-beta/pull/9444))
 * compute: fixed bug in `google_compute_router_nat` where `max_ports_per_vm` couldn't be unset once set. ([#9483](https://github.com/hashicorp/terraform-provider-google-beta/pull/9483))
 * container: fixed perma-diff in `google_container_cluster` when `cluster_dns_scope` is unspecified ([#9443](https://github.com/hashicorp/terraform-provider-google-beta/pull/9443))
+* networksecurity: added wait time on `google_network_security_gateway_security_policy_rule` resource when creating and deleting to prevent race conditions ([#9448](https://github.com/hashicorp/terraform-provider-google-beta/pull/9448))
 
 ## 6.24.0 (March 3, 2025)
 
