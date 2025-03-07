@@ -1,4 +1,42 @@
-## 6.24.0 (Unreleased)
+## 6.25.0 (Unreleased)
+
+NOTES:
+* eventarc: `google_eventarc_channel` now uses MMv1 engine instead of DCL. ([#9488](https://github.com/hashicorp/terraform-provider-google-beta/pull/9488))
+* workbench: increased create timeout for `google_workbench_instance` to 40mins. ([#9468](https://github.com/hashicorp/terraform-provider-google-beta/pull/9468))
+
+FEATURES:
+* **New Data Source:** `google_compute_region_ssl_policy` ([#9439](https://github.com/hashicorp/terraform-provider-google-beta/pull/9439))
+* **New Resource:** `google_eventarc_google_api_source` ([#9492](https://github.com/hashicorp/terraform-provider-google-beta/pull/9492))
+* **New Resource:** `google_iam_oauth_client_credential` ([#9491](https://github.com/hashicorp/terraform-provider-google-beta/pull/9491))
+* **New Resource:** `google_iam_oauth_client` ([#9456](https://github.com/hashicorp/terraform-provider-google-beta/pull/9456))
+* **New Resource:** `google_network_security_backend_authentication_config` ([#9481](https://github.com/hashicorp/terraform-provider-google-beta/pull/9481))
+
+IMPROVEMENTS:
+* alloydb: added `psc_instance_config.psc_interface_configs` field to ``google_alloydb_instance` resource ([#9469](https://github.com/hashicorp/terraform-provider-google-beta/pull/9469))
+* compute: added `create_snapshot_before_destroy` to `google_compute_disk` and `google_compute_region_disk` to enable creating a snapshot before disk deletion ([#9442](https://github.com/hashicorp/terraform-provider-google-beta/pull/9442))
+* compute: added `custom_metrics` field to `google_compute_backend_service` and `google_compute_region_backend_service` ([#9473](https://github.com/hashicorp/terraform-provider-google-beta/pull/9473))
+* compute: added `ip_collection` and `ipv6_gce_endpoint` fields to `google_compute_subnetwork` resource ([#9490](https://github.com/hashicorp/terraform-provider-google-beta/pull/9490))
+* compute: added `log_config.optional_mode` and `log_config.optional_fields` fields to `google_compute_region_backend_service` resource ([#9484](https://github.com/hashicorp/terraform-provider-google-beta/pull/9484))
+* compute: added `rsa_encrypted_key` to `google_compute_region_disk` ([#9442](https://github.com/hashicorp/terraform-provider-google-beta/pull/9442))
+* compute: added `scheduling.termination_time` field to `google_compute_instance`, `google_compute_instance_from_machine_image`, `google_compute_instance_from_template`, `google_compute_instance_template`, and `google_compute_region_instance_template` resources ([#9479](https://github.com/hashicorp/terraform-provider-google-beta/pull/9479))
+* compute: added update support for `firewall_policy`  in `google_compute_firewall_policy_association` resource. It is recommended to only perform this operation in combination with a protective lifecycle tag such as "create_before_destroy" or "prevent_destroy" on your previous `firewall_policy` resource in order to prevent situations where a target attachment has no associated policy. ([#9495](https://github.com/hashicorp/terraform-provider-google-beta/pull/9495))
+* compute: made `purpose` field updatable in `google_compute_subnetwork`. ([#9489](https://github.com/hashicorp/terraform-provider-google-beta/pull/9489))
+* container: added "JOBSET" as a supported value for `enable_components` in `google_container_cluster` resource ([#9453](https://github.com/hashicorp/terraform-provider-google-beta/pull/9453))
+* datastream: added support for creating connection profiles for Salesforce in `google_datastream_connection_profile` ([#9482](https://github.com/hashicorp/terraform-provider-google-beta/pull/9482))
+* firebasedataconnect: added `deletion_policy` support to `google_firebase_data_connect_service` resource ([#9496](https://github.com/hashicorp/terraform-provider-google-beta/pull/9496))
+* networksecurity: added `description` field to `google_network_security_intercept_deployment`, `google_network_security_intercept_deployment_group`, `google_network_security_intercept_endpoint_group` resources ([#9474](https://github.com/hashicorp/terraform-provider-google-beta/pull/9474))
+* networksecurity: added `description` field to `google_network_security_mirroring_deployment`, `google_network_security_mirroring_deployment_group`, `google_network_security_mirroring_endpoint_group` resources ([#9476](https://github.com/hashicorp/terraform-provider-google-beta/pull/9476))
+* networksecurity: added wait time on `google_network_security_gateway_security_policy_rule` resource when creating and deleting to prevent race conditions ([#9448](https://github.com/hashicorp/terraform-provider-google-beta/pull/9448))
+* tpuv2: added `spot` field to `google_tpu_v2_vm` resource ([#9478](https://github.com/hashicorp/terraform-provider-google-beta/pull/9478))
+* workstations: added `tags` field to `google_workstations_workstation_cluster` resource ([#9441](https://github.com/hashicorp/terraform-provider-google-beta/pull/9441))
+
+BUG FIXES:
+* backup_dr: added missing SUNDAY option for `google_backup_dr_backup_plan.days_of_week` ([#9446](https://github.com/hashicorp/terraform-provider-google-beta/pull/9446))
+* compute: fixed `compute_instance.network_interface.internal_ipv6_prefix_length` not being set or read in Terraform state ([#9444](https://github.com/hashicorp/terraform-provider-google-beta/pull/9444))
+* compute: fixed bug in `google_compute_router_nat` where `max_ports_per_vm` couldn't be unset once set. ([#9483](https://github.com/hashicorp/terraform-provider-google-beta/pull/9483))
+* container: fixed perma-diff in `google_container_cluster` when `cluster_dns_scope` is unspecified ([#9443](https://github.com/hashicorp/terraform-provider-google-beta/pull/9443))
+
+## 6.24.0 (March 3, 2025)
 
 NOTES:
 * gemini: removed unsupported value `GEMINI_CLOUD_ASSIST` for field `product` in `google_gemini_logging_setting_binding` resource ([#9438](https://github.com/hashicorp/terraform-provider-google-beta/pull/9438))
