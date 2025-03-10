@@ -1,4 +1,54 @@
-## 6.23.0 (Unreleased)
+## 6.24.0 (Unreleased)
+
+NOTES:
+* gemini: removed unsupported value `GEMINI_CLOUD_ASSIST` for field `product` in `google_gemini_logging_setting_binding` resource ([#9438](https://github.com/hashicorp/terraform-provider-google-beta/pull/9438))
+* gemini: removed unsupported value `GEMINI_CODE_ASSIST` for field `product` in `google_gemini_data_sharing_with_google_setting_binding` resource (Beta) ([#9437](https://github.com/hashicorp/terraform-provider-google-beta/pull/9437))
+* iam: added member value to the error message when member validation fails for google_project_iam_* ([#9406](https://github.com/hashicorp/terraform-provider-google-beta/pull/9406))
+
+DEPRECATIONS:
+* datacatalog: deprecated `google_data_catalog_entry` and `google_data_catalog_tag` resources. For steps to transition your Data Catalog users, workloads, and content to Dataplex Catalog, see https://cloud.google.com/dataplex/docs/transition-to-dataplex-catalog. ([#9393](https://github.com/hashicorp/terraform-provider-google-beta/pull/9393))
+* notebooks: deprecated non-functional `google_notebooks_location` resource ([#9373](https://github.com/hashicorp/terraform-provider-google-beta/pull/9373))
+
+FEATURES:
+* **New Data Source:** `google_memorystore_instance` ([#9400](https://github.com/hashicorp/terraform-provider-google-beta/pull/9400))
+* **New Resource:** `google_apihub_host_project_registration` ([#9419](https://github.com/hashicorp/terraform-provider-google-beta/pull/9419))
+* **New Resource:** `google_compute_instant_snapshot` ([#9412](https://github.com/hashicorp/terraform-provider-google-beta/pull/9412))
+* **New Resource:** `google_eventarc_message_bus` ([#9423](https://github.com/hashicorp/terraform-provider-google-beta/pull/9423))
+* **New Resource:** `google_gemini_data_sharing_with_google_setting_binding` (GA) ([#9437](https://github.com/hashicorp/terraform-provider-google-beta/pull/9437))
+* **New Resource:** `google_gemini_gcp_enablement_setting_binding` (GA) ([#9407](https://github.com/hashicorp/terraform-provider-google-beta/pull/9407))
+* **New Resource:** `google_gemini_gemini_gcp_enablement_setting_binding` ([#9392](https://github.com/hashicorp/terraform-provider-google-beta/pull/9392))
+* **New Resource:** `google_storage_anywhere_cache` ([#9389](https://github.com/hashicorp/terraform-provider-google-beta/pull/9389))
+
+IMPROVEMENTS:
+* compute: added `creation_timestamp`, `next_hop_peering`, ` warnings.code`, `warnings.message`, `warnings.data.key`, `warnings.data.value`, `next_hop_hub`, `route_type`, `as_paths.path_segment_type`, `as_paths.as_lists` and `route_status`  fields to `google_compute_route` resource ([#9386](https://github.com/hashicorp/terraform-provider-google-beta/pull/9386))
+* compute: added `max_stream_duration` field to `google_compute_url_map` resource ([#9387](https://github.com/hashicorp/terraform-provider-google-beta/pull/9387))
+* compute: added fields `architecture`, `source_instant_snapshot`, `source_storage_object`, `resource_manager_tags`  to `google_compute_disk`. ([#9412](https://github.com/hashicorp/terraform-provider-google-beta/pull/9412))
+* container: added enum  value `UPGRADE_INFO_EVENT` for GKE notification filter in `google_container_cluster` resource ([#9421](https://github.com/hashicorp/terraform-provider-google-beta/pull/9421))
+* iam: added `AZURE_AD_GROUPS_ID` field to `google_iam_workforce_pool_provider.extra_attributes_oauth2_client.attributes_type` resource ([#9433](https://github.com/hashicorp/terraform-provider-google-beta/pull/9433))
+* networkconnectivity: added `policy_mode` field to `google_network_connectivity_hub` resource ([#9409](https://github.com/hashicorp/terraform-provider-google-beta/pull/9409))
+* networkservices: added `location` field to `google_network_services_grpc_route` resource ([#9429](https://github.com/hashicorp/terraform-provider-google-beta/pull/9429))
+* storagetransfer: added `logging_config` field to `google_storage_transfer_job` resource ([#9378](https://github.com/hashicorp/terraform-provider-google-beta/pull/9378))
+
+BUG FIXES:
+* bigquery: updated the `max_staleness` field in `google_bigquery_table` to be a computed field ([#9411](https://github.com/hashicorp/terraform-provider-google-beta/pull/9411))
+* chronicle: fixed an error during resource creation with certain `run_frequency` configurations in `google_chronicle_rule_deployment` ([#9422](https://github.com/hashicorp/terraform-provider-google-beta/pull/9422))
+* discoveryengine: fixed bug preventing creation of `google_discovery_engine_target_site` resources ([#9436](https://github.com/hashicorp/terraform-provider-google-beta/pull/9436))
+* eventarc: fixed an issue where `google_eventarc_trigger` creation failed due to the region could not be parsed from the trigger's name ([#9383](https://github.com/hashicorp/terraform-provider-google-beta/pull/9383))
+* gemini: fixed permadiff on `product` field in `google_gemini_data_sharing_with_google_setting_binding` resource (Beta) ([#9437](https://github.com/hashicorp/terraform-provider-google-beta/pull/9437))
+* publicca: encoded `b64_mac_key` in base64url, instead of base64 in `google_public_ca_external_account_key` ([#9424](https://github.com/hashicorp/terraform-provider-google-beta/pull/9424))
+* storage: fixed a 412 error returned on some `google_storage_bucket_iam_policy` deletions ([#9434](https://github.com/hashicorp/terraform-provider-google-beta/pull/9434))
+
+## 6.23.0 (Feb 26, 2025)
+
+NOTES:
+* The `google_sql_user` resource now supports `password_wo` [write-only arguments](https://developer.hashicorp.com/terraform/language/v1.11.x/resources/ephemeral#write-only-arguments)
+* The `google_bigquery_data_transfer_config` resource now supports `secret_access_key_wo` [write-only arguments](https://developer.hashicorp.com/terraform/language/v1.11.x/resources/ephemeral#write-only-arguments)
+* The `google_secret_version` resource now supports `secret_data_wo` [write-only arguments](https://developer.hashicorp.com/terraform/language/v1.11.x/resources/ephemeral#write-only-arguments)
+
+IMPROVEMENTS:
+* sql: added `password_wo` and `password_wo_version` fields to `google_sql_user` resource ([#21616](https://github.com/hashicorp/terraform-provider-google/pull/21616))
+* bigquerydatatransfer: added `secret_access_key_wo` and `secret_access_key_wo_version` fields to `google_bigquery_data_transfer_config` resource ([#21617](https://github.com/hashicorp/terraform-provider-google/pull/21617))
+* secretmanager: added `secret_data_wo` and `secret_data_wo_version` fields to `google_secret_version` resource ([#21618](https://github.com/hashicorp/terraform-provider-google/pull/21618))
 
 ## 6.22.0 (Feb 24, 2025)
 
