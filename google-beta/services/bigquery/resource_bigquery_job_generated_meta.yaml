@@ -60,6 +60,7 @@ fields:
   - field: 'configuration.load.time_partitioning.type'
   - field: 'configuration.load.write_disposition'
   - field: 'configuration.query.allow_large_results'
+  - field: 'configuration.query.continuous'
   - field: 'configuration.query.create_disposition'
   - field: 'configuration.query.default_dataset.dataset_id'
   - field: 'configuration.query.default_dataset.project_id'

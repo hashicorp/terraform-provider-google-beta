@@ -92,6 +92,45 @@ resource "google_bigquery_job" "job" {
 `, context)
 }
 
+func TestAccBigQueryJob_bigqueryJobQueryContinuousExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccBigQueryJob_bigqueryJobQueryContinuousExample(context),
+			},
+			{
+				ResourceName:            "google_bigquery_job.job",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"etag", "labels", "status.0.state", "terraform_labels"},
+			},
+		},
+	})
+}
+
+func testAccBigQueryJob_bigqueryJobQueryContinuousExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_bigquery_job" "job" {
+  provider = google-beta
+
+  job_id     = "tf_test_job_query_continuous%{random_suffix}"
+
+  query {
+    query = "SELECT state FROM [lookerdata:cdc.project_tycho_reports]"
+    continuous = true
+  }
+}
+`, context)
+}
+
 func TestAccBigQueryJob_bigqueryJobQueryTableReferenceExample(t *testing.T) {
 	t.Parallel()
 
