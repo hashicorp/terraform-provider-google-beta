@@ -666,6 +666,12 @@ Creation, truncation and append actions occur as one atomic update upon job comp
 Requires destinationTable to be set. For standard SQL queries, this flag is ignored and large results are always allowed.
 However, you must still set destinationTable when result size exceeds the allowed maximum response size.`,
 						},
+						"continuous": {
+							Type:        schema.TypeBool,
+							Optional:    true,
+							ForceNew:    true,
+							Description: `Whether to run the query as continuous or a regular query.`,
+						},
 						"create_disposition": {
 							Type:         schema.TypeString,
 							Optional:     true,
@@ -1353,6 +1359,8 @@ func flattenBigQueryJobConfigurationQuery(v interface{}, d *schema.ResourceData,
 		flattenBigQueryJobConfigurationQueryDestinationEncryptionConfiguration(original["destinationEncryptionConfiguration"], d, config)
 	transformed["script_options"] =
 		flattenBigQueryJobConfigurationQueryScriptOptions(original["scriptOptions"], d, config)
+	transformed["continuous"] =
+		flattenBigQueryJobConfigurationQueryContinuous(original["continuous"], d, config)
 	return []interface{}{transformed}
 }
 func flattenBigQueryJobConfigurationQueryQuery(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -1533,6 +1541,10 @@ func flattenBigQueryJobConfigurationQueryScriptOptionsStatementByteBudget(v inte
 }
 
 func flattenBigQueryJobConfigurationQueryScriptOptionsKeyResultStatement(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenBigQueryJobConfigurationQueryContinuous(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -2296,6 +2308,13 @@ func expandBigQueryJobConfigurationQuery(v interface{}, d tpgresource.TerraformR
 		transformed["scriptOptions"] = transformedScriptOptions
 	}
 
+	transformedContinuous, err := expandBigQueryJobConfigurationQueryContinuous(original["continuous"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedContinuous); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["continuous"] = transformedContinuous
+	}
+
 	return transformed, nil
 }
 
@@ -2534,6 +2553,10 @@ func expandBigQueryJobConfigurationQueryScriptOptionsStatementByteBudget(v inter
 }
 
 func expandBigQueryJobConfigurationQueryScriptOptionsKeyResultStatement(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandBigQueryJobConfigurationQueryContinuous(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
