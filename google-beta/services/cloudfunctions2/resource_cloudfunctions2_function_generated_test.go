@@ -83,7 +83,7 @@ resource "google_cloudfunctions2_function" "function" {
   description = "a new function"
  
   build_config {
-    runtime = "nodejs16"
+    runtime = "nodejs20"
     entry_point = "helloHttp"  # Set the entry point 
     source {
       storage_source {
@@ -164,7 +164,7 @@ resource "google_cloudfunctions2_function" "function" {
   description = "a new function"
  
   build_config {
-    runtime = "nodejs16"
+    runtime = "nodejs20"
     entry_point = "helloPubSub"  # Set the entry point 
     environment_variables = {
         BUILD_CONFIG_TEST = "build_test"
@@ -305,7 +305,7 @@ resource "google_cloudfunctions2_function" "function" {
   description = "a new function"
  
   build_config {
-    runtime     = "nodejs12"
+    runtime     = "nodejs20"
     entry_point = "entryPoint" # Set the entry point in the code
     environment_variables = {
       BUILD_CONFIG_TEST = "build_test"
@@ -442,7 +442,7 @@ resource "google_cloudfunctions2_function" "function" {
   description = "a new function"
  
   build_config {
-    runtime     = "nodejs12"
+    runtime     = "nodejs20"
     entry_point = "entryPoint" # Set the entry point in the code
     environment_variables = {
       BUILD_CONFIG_TEST = "build_test"
@@ -581,7 +581,7 @@ resource "google_cloudfunctions2_function" "function" {
   description = "a new function"
  
   build_config {
-    runtime = "nodejs16"
+    runtime = "nodejs20"
     entry_point = "helloHttp"  # Set the entry point 
     source {
       storage_source {
@@ -661,7 +661,7 @@ resource "google_cloudfunctions2_function" "function" {
   description = "a new function"
  
   build_config {
-    runtime = "nodejs16"
+    runtime = "nodejs20"
     entry_point = "helloHttp"  # Set the entry point 
     source {
       storage_source {
@@ -765,7 +765,7 @@ resource "google_cloudfunctions2_function" "function" {
   description = "a new function"
  
   build_config {
-    runtime = "nodejs16"
+    runtime = "nodejs20"
     entry_point = "helloHttp"  # Set the entry point 
     source {
       storage_source {
@@ -872,7 +872,7 @@ resource "google_cloudfunctions2_function" "function" {
   description = "a new function"
  
   build_config {
-    runtime = "nodejs16"
+    runtime = "nodejs20"
     entry_point = "helloHttp"  # Set the entry point 
     source {
       storage_source {
@@ -1043,7 +1043,7 @@ resource "google_cloudfunctions2_function" "function" {
   kms_key_name = "%{kms_key_name}"
 
   build_config {
-    runtime = "nodejs16"
+    runtime = "nodejs20"
     entry_point = "helloHttp"  # Set the entry point
     docker_repository = google_artifact_registry_repository.encoded-ar-repo.id
 
@@ -1139,7 +1139,7 @@ resource "google_cloudfunctions2_function" "function" {
   description = "a new function"
  
   build_config {
-    runtime = "nodejs16"
+    runtime = "nodejs20"
     entry_point = "helloPubSub"  # Set the entry point 
     environment_variables = {
         BUILD_CONFIG_TEST = "build_test"
@@ -1245,7 +1245,7 @@ resource "google_cloudfunctions2_function" "function" {
   description = "a new function"
  
   build_config {
-    runtime = "nodejs16"
+    runtime = "nodejs20"
     entry_point = "helloPubSub"  # Set the entry point 
     environment_variables = {
         BUILD_CONFIG_TEST = "build_test"
