@@ -88,6 +88,16 @@ func sendSecondaryIpRangeIfEmptyDiff(_ context.Context, diff *schema.ResourceDif
 	return nil
 }
 
+// DiffSuppressFunc for fields inside `log_config`.
+func subnetworkLogConfigDiffSuppress(k, old, new string, d *schema.ResourceData) bool {
+	// If the enable_flow_logs is not enabled, we don't need to check for differences.
+	if enable_flow_logs := d.Get("enable_flow_logs"); !enable_flow_logs.(bool) {
+		return true
+	}
+
+	return false
+}
+
 func ResourceComputeSubnetwork() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceComputeSubnetworkCreate,
@@ -151,6 +161,15 @@ via BGP even if their destinations match existing subnet ranges.`,
 you create the resource. This field can be set only at resource
 creation time.`,
 			},
+			"enable_flow_logs": {
+				Type:     schema.TypeBool,
+				Computed: true,
+				Optional: true,
+				Description: `Whether to enable flow logging for this subnetwork. If this field is not explicitly set,
+it will not appear in get listings. If not set the default behavior is determined by the
+org policy, if there is no org policy specified, then it will default to disabled.
+This field isn't supported if the subnet purpose field is set to REGIONAL_MANAGED_PROXY.`,
+			},
 			"external_ipv6_prefix": {
 				Type:        schema.TypeString,
 				Computed:    true,
@@ -192,8 +211,10 @@ or the first time the subnet is updated into IPV4_IPV6 dual stack. If the ipv6_t
 cannot enable direct path. Possible values: ["EXTERNAL", "INTERNAL"]`,
 			},
 			"log_config": {
-				Type:     schema.TypeList,
-				Optional: true,
+				Type:             schema.TypeList,
+				Computed:         true,
+				Optional:         true,
+				DiffSuppressFunc: subnetworkLogConfigDiffSuppress,
 				Description: `This field denotes the VPC flow logging options for this subnetwork. If
 logging is enabled, logs are exported to Cloud Logging. Flow logging
 isn't supported if the subnet 'purpose' field is set to subnetwork is
@@ -389,6 +410,14 @@ outside this subnetwork.`,
   * VM_AND_FR: The subnetwork can be used for creating both VM instances and Forwarding Rules. It can also be used to reserve
   IPv6 addresses with both VM and FR endpoint types. Such a subnetwork gets its IPv6 range from Google IP Pool directly.`,
 			},
+			"state": {
+				Type:     schema.TypeString,
+				Computed: true,
+				Description: `'The state of the subnetwork, which can be one of the following values:
+ READY: Subnetwork is created and ready to use DRAINING: only applicable to subnetworks that have the purpose
+ set to INTERNAL_HTTPS_LOAD_BALANCER and indicates that connections to the load balancer are being drained.
+ A subnetwork that is draining cannot be used or modified until it reaches a status of READY'`,
+			},
 			"subnetwork_id": {
 				Type:        schema.TypeInt,
 				Computed:    true,
@@ -577,6 +606,12 @@ func resourceComputeSubnetworkCreate(d *schema.ResourceData, meta interface{}) e
 	} else if v, ok := d.GetOkExists("allow_subnet_cidr_routes_overlap"); ok || !reflect.DeepEqual(v, allowSubnetCidrRoutesOverlapProp) {
 		obj["allowSubnetCidrRoutesOverlap"] = allowSubnetCidrRoutesOverlapProp
 	}
+	enableFlowLogsProp, err := expandComputeSubnetworkEnableFlowLogs(d.Get("enable_flow_logs"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("enable_flow_logs"); ok || !reflect.DeepEqual(v, enableFlowLogsProp) {
+		obj["enableFlowLogs"] = enableFlowLogsProp
+	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/subnetworks")
 	if err != nil {
@@ -743,6 +778,12 @@ func resourceComputeSubnetworkRead(d *schema.ResourceData, meta interface{}) err
 	if err := d.Set("allow_subnet_cidr_routes_overlap", flattenComputeSubnetworkAllowSubnetCidrRoutesOverlap(res["allowSubnetCidrRoutesOverlap"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Subnetwork: %s", err)
 	}
+	if err := d.Set("enable_flow_logs", flattenComputeSubnetworkEnableFlowLogs(res["enableFlowLogs"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Subnetwork: %s", err)
+	}
+	if err := d.Set("state", flattenComputeSubnetworkState(res["state"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Subnetwork: %s", err)
+	}
 	if err := d.Set("self_link", tpgresource.ConvertSelfLinkToV1(res["selfLink"].(string))); err != nil {
 		return fmt.Errorf("Error reading Subnetwork: %s", err)
 	}
@@ -857,7 +898,7 @@ func resourceComputeSubnetworkUpdate(d *schema.ResourceData, meta interface{}) e
 			return err
 		}
 	}
-	if d.HasChange("private_ipv6_google_access") || d.HasChange("stack_type") || d.HasChange("ipv6_access_type") || d.HasChange("allow_subnet_cidr_routes_overlap") {
+	if d.HasChange("private_ipv6_google_access") || d.HasChange("stack_type") || d.HasChange("ipv6_access_type") || d.HasChange("allow_subnet_cidr_routes_overlap") || d.HasChange("enable_flow_logs") {
 		obj := make(map[string]interface{})
 
 		getUrl, err := tpgresource.ReplaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/subnetworks/{{name}}")
@@ -906,6 +947,12 @@ func resourceComputeSubnetworkUpdate(d *schema.ResourceData, meta interface{}) e
 			return err
 		} else if v, ok := d.GetOkExists("allow_subnet_cidr_routes_overlap"); ok || !reflect.DeepEqual(v, allowSubnetCidrRoutesOverlapProp) {
 			obj["allowSubnetCidrRoutesOverlap"] = allowSubnetCidrRoutesOverlapProp
+		}
+		enableFlowLogsProp, err := expandComputeSubnetworkEnableFlowLogs(d.Get("enable_flow_logs"), d, config)
+		if err != nil {
+			return err
+		} else if v, ok := d.GetOkExists("enable_flow_logs"); ok || !reflect.DeepEqual(v, enableFlowLogsProp) {
+			obj["enableFlowLogs"] = enableFlowLogsProp
 		}
 
 		url, err := tpgresource.ReplaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/subnetworks/{{name}}")
@@ -1542,6 +1589,14 @@ func flattenComputeSubnetworkAllowSubnetCidrRoutesOverlap(v interface{}, d *sche
 	return v
 }
 
+func flattenComputeSubnetworkEnableFlowLogs(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenComputeSubnetworkState(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func expandComputeSubnetworkDescription(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
@@ -1648,8 +1703,10 @@ func expandComputeSubnetworkLogConfig(v interface{}, d tpgresource.TerraformReso
 			// Subnetworks for regional L7 ILB/XLB or cross-regional L7 ILB do not accept any values for logConfig
 			return nil, nil
 		}
-		// send enable = false to ensure logging is disabled if there is no config
-		transformed["enable"] = false
+
+		// set enable field basing on the enable_flow_logs field. It's needed for case when enable_flow_logs
+		// is set to true to avoid conflict with the API. In that case API will return default values for log_config
+		transformed["enable"] = d.Get("enable_flow_logs")
 		return transformed, nil
 	}
 
@@ -1686,5 +1743,9 @@ func expandComputeSubnetworkIpCollection(v interface{}, d tpgresource.TerraformR
 }
 
 func expandComputeSubnetworkAllowSubnetCidrRoutesOverlap(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeSubnetworkEnableFlowLogs(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
