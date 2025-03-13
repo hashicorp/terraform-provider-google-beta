@@ -2282,7 +2282,7 @@ func TestAccComputeBackendService_backendServiceCustomMetrics_update(t *testing.
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeBackendServiceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -2310,13 +2310,11 @@ func TestAccComputeBackendService_backendServiceCustomMetrics_update(t *testing.
 func testAccComputeBackendService_backendServiceCustomMetrics_full(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_network" "default" {
-  provider = google-beta
   name                    = "network%{random_suffix}"
 }
 
 // Zonal NEG with GCE_VM_IP_PORT
 resource "google_compute_network_endpoint_group" "default" {
-  provider = google-beta
   name                  = "tf-test-network-endpoint%{random_suffix}"
   network               = google_compute_network.default.id
   default_port          = "90"
@@ -2325,7 +2323,6 @@ resource "google_compute_network_endpoint_group" "default" {
 }
 
 resource "google_compute_backend_service" "default" {
-  provider = google-beta
   name                  = "tf-test-backend-service%{random_suffix}"
   health_checks = [google_compute_health_check.default.id]
 
@@ -2355,7 +2352,6 @@ resource "google_compute_backend_service" "default" {
 }
 
 resource "google_compute_health_check" "default" {
-  provider = google-beta
   name               = "tf-test-health-check%{random_suffix}"
   timeout_sec        = 1
   check_interval_sec = 1
@@ -2370,13 +2366,11 @@ resource "google_compute_health_check" "default" {
 func testAccComputeBackendService_backendServiceCustomMetrics_update(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_network" "default" {
-  provider = google-beta
   name                    = "network%{random_suffix}"
 }
 
 // Zonal NEG with GCE_VM_IP_PORT
 resource "google_compute_network_endpoint_group" "default" {
-  provider = google-beta
   name                  = "tf-test-network-endpoint%{random_suffix}"
   network               = google_compute_network.default.id
   default_port          = "90"
@@ -2385,7 +2379,6 @@ resource "google_compute_network_endpoint_group" "default" {
 }
 
 resource "google_compute_backend_service" "default" {
-  provider = google-beta
   name                  = "tf-test-backend-service%{random_suffix}"
   health_checks = [google_compute_health_check.default.id]
 
@@ -2415,7 +2408,6 @@ resource "google_compute_backend_service" "default" {
 }
 
 resource "google_compute_health_check" "default" {
-  provider = google-beta
   name               = "tf-test-health-check%{random_suffix}"
   timeout_sec        = 1
   check_interval_sec = 1
