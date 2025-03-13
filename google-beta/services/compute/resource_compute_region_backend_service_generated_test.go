@@ -651,7 +651,7 @@ func TestAccComputeRegionBackendService_regionBackendServiceIlbCustomMetricsExam
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeRegionBackendServiceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -670,13 +670,11 @@ func TestAccComputeRegionBackendService_regionBackendServiceIlbCustomMetricsExam
 func testAccComputeRegionBackendService_regionBackendServiceIlbCustomMetricsExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_network" "default" {
-  provider = google-beta
   name                    = "network%{random_suffix}"
 }
 
 // Zonal NEG with GCE_VM_IP_PORT
 resource "google_compute_network_endpoint_group" "default" {
-  provider = google-beta
   name                  = "tf-test-network-endpoint%{random_suffix}"
   network               = google_compute_network.default.id
   default_port          = "90"
@@ -685,8 +683,6 @@ resource "google_compute_network_endpoint_group" "default" {
 }
 
 resource "google_compute_region_backend_service" "default" {
-  provider = google-beta
-
   region = "us-central1"
   name = "tf-test-region-service%{random_suffix}"
   health_checks = [google_compute_health_check.health_check.id]
@@ -714,7 +710,6 @@ resource "google_compute_region_backend_service" "default" {
 }
 
 resource "google_compute_health_check" "health_check" {
-  provider = google-beta
   name               = "tf-test-rbs-health-check%{random_suffix}"
   http_health_check {
     port = 80
