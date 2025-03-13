@@ -31,6 +31,7 @@ import (
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
 )
 
 func ResourceDataformRepository() *schema.Resource {
@@ -190,6 +191,13 @@ Please refer to the field 'effective_labels' for all of the labels present on th
  and default labels configured on the provider.`,
 				Elem: &schema.Schema{Type: schema.TypeString},
 			},
+			"deletion_policy": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: verify.ValidateEnum([]string{"DELETE", "FORCE", ""}),
+				Description:  `Policy to control how the repository and its child resources are deleted. When set to 'FORCE', any child resources of this repository will also be deleted. Possible values: 'DELETE', 'FORCE'. Defaults to 'DELETE'. Default value: "DELETE" Possible values: ["DELETE", "FORCE"]`,
+				Default:      "DELETE",
+			},
 			"project": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -342,6 +350,12 @@ func resourceDataformRepositoryRead(d *schema.ResourceData, meta interface{}) er
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("DataformRepository %q", d.Id()))
 	}
 
+	// Explicitly set virtual fields to default values if unset
+	if _, ok := d.GetOkExists("deletion_policy"); !ok {
+		if err := d.Set("deletion_policy", "DELETE"); err != nil {
+			return fmt.Errorf("Error setting deletion_policy: %s", err)
+		}
+	}
 	if err := d.Set("project", project); err != nil {
 		return fmt.Errorf("Error reading Repository: %s", err)
 	}
@@ -500,6 +514,16 @@ func resourceDataformRepositoryDelete(d *schema.ResourceData, meta interface{}) 
 	}
 
 	headers := make(http.Header)
+	// force delete resources
+	if v, ok := d.GetOk("deletion_policy"); ok {
+		deletion_policy := v.(string)
+		if deletion_policy == "FORCE" {
+			url, err = transport_tpg.AddQueryParams(url, map[string]string{"force": "true"})
+			if err != nil {
+				return err
+			}
+		}
+	}
 
 	log.Printf("[DEBUG] Deleting Repository %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
@@ -537,6 +561,11 @@ func resourceDataformRepositoryImport(d *schema.ResourceData, meta interface{}) 
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}
 	d.SetId(id)
+
+	// Explicitly set virtual fields to default values on import
+	if err := d.Set("deletion_policy", "DELETE"); err != nil {
+		return nil, fmt.Errorf("Error setting deletion_policy: %s", err)
+	}
 
 	return []*schema.ResourceData{d}, nil
 }

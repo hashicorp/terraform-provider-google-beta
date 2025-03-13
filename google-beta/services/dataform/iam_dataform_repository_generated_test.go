@@ -183,6 +183,7 @@ resource "google_dataform_repository" "dataform_repository" {
   display_name = "tf_test_dataform_repository%{random_suffix}"
   npmrc_environment_variables_secret_version = google_secret_manager_secret_version.secret_version.id
   kms_key_name = google_kms_crypto_key.example_key.id
+  deletion_policy = "FORCE"
 
   labels = {
     label_foo1 = "label-bar1"
@@ -274,6 +275,7 @@ resource "google_dataform_repository" "dataform_repository" {
   display_name = "tf_test_dataform_repository%{random_suffix}"
   npmrc_environment_variables_secret_version = google_secret_manager_secret_version.secret_version.id
   kms_key_name = google_kms_crypto_key.example_key.id
+  deletion_policy = "FORCE"
 
   labels = {
     label_foo1 = "label-bar1"
@@ -382,6 +384,7 @@ resource "google_dataform_repository" "dataform_repository" {
   display_name = "tf_test_dataform_repository%{random_suffix}"
   npmrc_environment_variables_secret_version = google_secret_manager_secret_version.secret_version.id
   kms_key_name = google_kms_crypto_key.example_key.id
+  deletion_policy = "FORCE"
 
   labels = {
     label_foo1 = "label-bar1"
@@ -476,6 +479,7 @@ resource "google_dataform_repository" "dataform_repository" {
   display_name = "tf_test_dataform_repository%{random_suffix}"
   npmrc_environment_variables_secret_version = google_secret_manager_secret_version.secret_version.id
   kms_key_name = google_kms_crypto_key.example_key.id
+  deletion_policy = "FORCE"
 
   labels = {
     label_foo1 = "label-bar1"
@@ -567,6 +571,7 @@ resource "google_dataform_repository" "dataform_repository" {
   display_name = "tf_test_dataform_repository%{random_suffix}"
   npmrc_environment_variables_secret_version = google_secret_manager_secret_version.secret_version.id
   kms_key_name = google_kms_crypto_key.example_key.id
+  deletion_policy = "FORCE"
 
   labels = {
     label_foo1 = "label-bar1"
