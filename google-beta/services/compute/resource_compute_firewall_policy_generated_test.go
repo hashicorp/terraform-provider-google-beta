@@ -41,7 +41,7 @@ func TestAccComputeFirewallPolicy_firewallPolicyExample(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeFirewallPolicyDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -59,8 +59,6 @@ func TestAccComputeFirewallPolicy_firewallPolicyExample(t *testing.T) {
 func testAccComputeFirewallPolicy_firewallPolicyExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_firewall_policy" "default" {
-  provider = google-beta
-  
   parent      = "organizations/%{org_id}"
   short_name  = "tf-test-my-policy%{random_suffix}"
   description = "Example Resource"
