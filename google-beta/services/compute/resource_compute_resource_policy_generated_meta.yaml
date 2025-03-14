@@ -9,6 +9,7 @@ fields:
   - field: 'disk_consistency_group_policy.enabled'
   - field: 'group_placement_policy.availability_domain_count'
   - field: 'group_placement_policy.collocation'
+  - field: 'group_placement_policy.gpu_topology'
   - field: 'group_placement_policy.max_distance'
   - field: 'group_placement_policy.vm_count'
   - field: 'instance_schedule_policy.expiration_time'

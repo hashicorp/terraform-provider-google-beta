@@ -118,10 +118,18 @@ Specify 'COLLOCATED' to enable collocation. Can only be specified with 'vm_count
 with a COLLOCATED policy, then exactly 'vm_count' instances must be created at the same time with the resource policy
 attached. Possible values: ["COLLOCATED"]`,
 						},
+						"gpu_topology": {
+							Type:          schema.TypeString,
+							Optional:      true,
+							ForceNew:      true,
+							Description:   `Specifies the shape of the GPU slice, in slice based GPU families eg. A4X.`,
+							ConflictsWith: []string{"group_placement_policy.0.max_distance"},
+						},
 						"max_distance": {
-							Type:        schema.TypeInt,
-							Optional:    true,
-							Description: `Specifies the number of max logical switches.`,
+							Type:          schema.TypeInt,
+							Optional:      true,
+							Description:   `Specifies the number of max logical switches.`,
+							ConflictsWith: []string{"group_placement_policy.0.gpu_topology"},
 						},
 						"vm_count": {
 							Type:     schema.TypeInt,
@@ -989,6 +997,8 @@ func flattenComputeResourcePolicyGroupPlacementPolicy(v interface{}, d *schema.R
 		flattenComputeResourcePolicyGroupPlacementPolicyCollocation(original["collocation"], d, config)
 	transformed["max_distance"] =
 		flattenComputeResourcePolicyGroupPlacementPolicyMaxDistance(original["maxDistance"], d, config)
+	transformed["gpu_topology"] =
+		flattenComputeResourcePolicyGroupPlacementPolicyGpuTopology(original["gpuTopology"], d, config)
 	return []interface{}{transformed}
 }
 func flattenComputeResourcePolicyGroupPlacementPolicyVmCount(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -1044,6 +1054,10 @@ func flattenComputeResourcePolicyGroupPlacementPolicyMaxDistance(v interface{}, 
 	}
 
 	return v // let terraform core handle it otherwise
+}
+
+func flattenComputeResourcePolicyGroupPlacementPolicyGpuTopology(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
 }
 
 func flattenComputeResourcePolicyInstanceSchedulePolicy(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -1456,6 +1470,13 @@ func expandComputeResourcePolicyGroupPlacementPolicy(v interface{}, d tpgresourc
 		transformed["maxDistance"] = transformedMaxDistance
 	}
 
+	transformedGpuTopology, err := expandComputeResourcePolicyGroupPlacementPolicyGpuTopology(original["gpu_topology"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedGpuTopology); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["gpuTopology"] = transformedGpuTopology
+	}
+
 	return transformed, nil
 }
 
@@ -1472,6 +1493,10 @@ func expandComputeResourcePolicyGroupPlacementPolicyCollocation(v interface{}, d
 }
 
 func expandComputeResourcePolicyGroupPlacementPolicyMaxDistance(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeResourcePolicyGroupPlacementPolicyGpuTopology(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
