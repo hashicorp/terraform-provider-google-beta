@@ -365,6 +365,11 @@ There must be at least one IP address available in the subnet's primary range. T
 											},
 										},
 									},
+									"autoscaling_factor": {
+										Type:        schema.TypeFloat,
+										Computed:    true,
+										Description: `Output only. The scaling factor of a service with autoscaling enabled.`,
+									},
 								},
 							},
 						},
@@ -1140,11 +1145,17 @@ func flattenDataprocMetastoreServiceScalingConfigAutoscalingConfig(v interface{}
 	transformed := make(map[string]interface{})
 	transformed["autoscaling_enabled"] =
 		flattenDataprocMetastoreServiceScalingConfigAutoscalingConfigAutoscalingEnabled(original["autoscalingEnabled"], d, config)
+	transformed["autoscaling_factor"] =
+		flattenDataprocMetastoreServiceScalingConfigAutoscalingConfigAutoscalingFactor(original["autoscalingFactor"], d, config)
 	transformed["limit_config"] =
 		flattenDataprocMetastoreServiceScalingConfigAutoscalingConfigLimitConfig(original["limitConfig"], d, config)
 	return []interface{}{transformed}
 }
 func flattenDataprocMetastoreServiceScalingConfigAutoscalingConfigAutoscalingEnabled(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenDataprocMetastoreServiceScalingConfigAutoscalingConfigAutoscalingFactor(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -1555,6 +1566,13 @@ func expandDataprocMetastoreServiceScalingConfigAutoscalingConfig(v interface{},
 		transformed["autoscalingEnabled"] = transformedAutoscalingEnabled
 	}
 
+	transformedAutoscalingFactor, err := expandDataprocMetastoreServiceScalingConfigAutoscalingConfigAutoscalingFactor(original["autoscaling_factor"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedAutoscalingFactor); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["autoscalingFactor"] = transformedAutoscalingFactor
+	}
+
 	transformedLimitConfig, err := expandDataprocMetastoreServiceScalingConfigAutoscalingConfigLimitConfig(original["limit_config"], d, config)
 	if err != nil {
 		return nil, err
@@ -1566,6 +1584,10 @@ func expandDataprocMetastoreServiceScalingConfigAutoscalingConfig(v interface{},
 }
 
 func expandDataprocMetastoreServiceScalingConfigAutoscalingConfigAutoscalingEnabled(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandDataprocMetastoreServiceScalingConfigAutoscalingConfigAutoscalingFactor(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
