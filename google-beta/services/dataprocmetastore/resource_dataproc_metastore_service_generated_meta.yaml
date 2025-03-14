@@ -35,6 +35,7 @@ fields:
   - field: 'port'
   - field: 'release_channel'
   - field: 'scaling_config.autoscaling_config.autoscaling_enabled'
+  - field: 'scaling_config.autoscaling_config.autoscaling_factor'
   - field: 'scaling_config.autoscaling_config.limit_config.max_scaling_factor'
   - field: 'scaling_config.autoscaling_config.limit_config.min_scaling_factor'
   - field: 'scaling_config.instance_size'
