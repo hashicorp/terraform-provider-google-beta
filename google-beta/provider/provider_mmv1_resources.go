@@ -143,6 +143,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/spanner"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/sql"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/storage"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/storagecontrol"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/storageinsights"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/storagetransfer"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/tags"
@@ -384,6 +385,7 @@ var handwrittenDatasources = map[string]*schema.Resource{
 	"google_storage_bucket_object_content":                       storage.DataSourceGoogleStorageBucketObjectContent(),
 	"google_storage_object_signed_url":                           storage.DataSourceGoogleSignedUrl(),
 	"google_storage_project_service_account":                     storage.DataSourceGoogleStorageProjectServiceAccount(),
+	"google_storage_control_project_intelligence_config":         storagecontrol.DataSourceGoogleStorageControlProjectIntelligenceConfig(),
 	"google_storage_transfer_project_service_account":            storagetransfer.DataSourceGoogleStorageTransferProjectServiceAccount(),
 	"google_tags_tag_key":                                        tags.DataSourceGoogleTagsTagKey(),
 	"google_tags_tag_keys":                                       tags.DataSourceGoogleTagsTagKeys(),
@@ -543,9 +545,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 624
+// Generated resources: 625
 // Generated IAM resources: 306
-// Total generated resources: 930
+// Total generated resources: 931
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -1414,6 +1416,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_storage_hmac_key":                                                    storage.ResourceStorageHmacKey(),
 	"google_storage_managed_folder":                                              storage.ResourceStorageManagedFolder(),
 	"google_storage_object_access_control":                                       storage.ResourceStorageObjectAccessControl(),
+	"google_storage_control_project_intelligence_config":                         storagecontrol.ResourceStorageControlProjectIntelligenceConfig(),
 	"google_storage_insights_report_config":                                      storageinsights.ResourceStorageInsightsReportConfig(),
 	"google_storage_transfer_agent_pool":                                         storagetransfer.ResourceStorageTransferAgentPool(),
 	"google_tags_tag_binding":                                                    tags.ResourceTagsTagBinding(),
