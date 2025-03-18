@@ -121,6 +121,13 @@ See https://google.aip.dev/148#timestamps.`,
 				Description: `All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.`,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
+			"locations": {
+				Type:        schema.TypeSet,
+				Computed:    true,
+				Description: `The list of locations where the deployment group is present.`,
+				Elem:        networksecurityInterceptDeploymentGroupLocationsSchema(),
+				// Default schema.HashSchema is used.
+			},
 			"name": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -168,6 +175,27 @@ See https://google.aip.dev/148#timestamps.`,
 			},
 		},
 		UseJSONNumber: true,
+	}
+}
+
+func networksecurityInterceptDeploymentGroupLocationsSchema() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"location": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: `The cloud location, e.g. 'us-central1-a' or 'asia-south1-b'.`,
+			},
+			"state": {
+				Type:     schema.TypeString,
+				Computed: true,
+				Description: `The current state of the association in this location.
+Possible values:
+STATE_UNSPECIFIED
+ACTIVE
+OUT_OF_SYNC`,
+			},
+		},
 	}
 }
 
@@ -335,6 +363,9 @@ func resourceNetworkSecurityInterceptDeploymentGroupRead(d *schema.ResourceData,
 		return fmt.Errorf("Error reading InterceptDeploymentGroup: %s", err)
 	}
 	if err := d.Set("description", flattenNetworkSecurityInterceptDeploymentGroupDescription(res["description"], d, config)); err != nil {
+		return fmt.Errorf("Error reading InterceptDeploymentGroup: %s", err)
+	}
+	if err := d.Set("locations", flattenNetworkSecurityInterceptDeploymentGroupLocations(res["locations"], d, config)); err != nil {
 		return fmt.Errorf("Error reading InterceptDeploymentGroup: %s", err)
 	}
 	if err := d.Set("terraform_labels", flattenNetworkSecurityInterceptDeploymentGroupTerraformLabels(res["labels"], d, config)); err != nil {
@@ -573,6 +604,33 @@ func flattenNetworkSecurityInterceptDeploymentGroupReconciling(v interface{}, d 
 }
 
 func flattenNetworkSecurityInterceptDeploymentGroupDescription(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenNetworkSecurityInterceptDeploymentGroupLocations(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+	l := v.([]interface{})
+	transformed := schema.NewSet(schema.HashResource(networksecurityInterceptDeploymentGroupLocationsSchema()), []interface{}{})
+	for _, raw := range l {
+		original := raw.(map[string]interface{})
+		if len(original) < 1 {
+			// Do not include empty json objects coming back from the api
+			continue
+		}
+		transformed.Add(map[string]interface{}{
+			"state":    flattenNetworkSecurityInterceptDeploymentGroupLocationsState(original["state"], d, config),
+			"location": flattenNetworkSecurityInterceptDeploymentGroupLocationsLocation(original["location"], d, config),
+		})
+	}
+	return transformed
+}
+func flattenNetworkSecurityInterceptDeploymentGroupLocationsState(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenNetworkSecurityInterceptDeploymentGroupLocationsLocation(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
