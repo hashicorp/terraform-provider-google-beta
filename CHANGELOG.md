@@ -1,5 +1,41 @@
 ## 6.26.0 (Unreleased)
 
+FEATURES:
+* **New Data Source:** `google_project_iam_custom_role` ([#9551](https://github.com/hashicorp/terraform-provider-google-beta/pull/9551))
+* **New Data Source:** `google_project_iam_custom_roles` ([#9519](https://github.com/hashicorp/terraform-provider-google-beta/pull/9519))
+* **New Resource:** `google_eventarc_pipeline` ([#9508](https://github.com/hashicorp/terraform-provider-google-beta/pull/9508))
+* **New Resource:** `google_firebase_app_hosting_backend` ([#9531](https://github.com/hashicorp/terraform-provider-google-beta/pull/9531))
+* **New Resource:** `google_managed_kafka_connect_cluster` ([#9552](https://github.com/hashicorp/terraform-provider-google-beta/pull/9552))
+* **New Resource:** `google_managed_kafka_connector` ([#9552](https://github.com/hashicorp/terraform-provider-google-beta/pull/9552))
+
+IMPROVEMENTS:
+* alloydb: added `psc_config` field to ``google_alloydb_cluster` resource ([#9548](https://github.com/hashicorp/terraform-provider-google-beta/pull/9548))
+* bigquery: added `table_metadata_view` query param to `google_bigquery_table` ([#9530](https://github.com/hashicorp/terraform-provider-google-beta/pull/9530))
+* bigquery: added support for continuous query to `google_bigquery_job` ([#9520](https://github.com/hashicorp/terraform-provider-google-beta/pull/9520))
+* clouddeploy: added `dns_endpoint` field to to `google_clouddeploy_target` resource ([#9553](https://github.com/hashicorp/terraform-provider-google-beta/pull/9553))
+* compute: added `UNRESTRICTED` option to the `tls_early_data` field in the `google_compute_target_https_proxy` resource ([#9527](https://github.com/hashicorp/terraform-provider-google-beta/pull/9527))
+* compute: added `enable_flow_logs` and `state` fields to `google_compute_subnetwork` resource ([#9541](https://github.com/hashicorp/terraform-provider-google-beta/pull/9541))
+* container: added additional value `KCP_HPA` for `logging_config.enable_components` field in `google_container_cluster` resource ([#9529](https://github.com/hashicorp/terraform-provider-google-beta/pull/9529))
+* dataform: added `deletion_policy` field to `google_dataform_repository` resource. Default value is `DELETE`. Setting `deletion_policy` to `FORCE` will delete any child resources of this repository as well. ([#9549](https://github.com/hashicorp/terraform-provider-google-beta/pull/9549))
+* memorystore: added update support for `engine_version` field in `google_memorystore_instance` resource ([#9534](https://github.com/hashicorp/terraform-provider-google-beta/pull/9534))
+* metastore: added `create_time` and `update_time` fields to `google_dataproc_metastore_federation` resource ([#9528](https://github.com/hashicorp/terraform-provider-google-beta/pull/9528))
+* metastore: added `create_time` and `update_time` fields to `google_dataproc_metastore_service` resource ([#9523](https://github.com/hashicorp/terraform-provider-google-beta/pull/9523))
+* networksecurity: added `not_operations` field to `google_network_security_authz_policy` resource ([#9511](https://github.com/hashicorp/terraform-provider-google-beta/pull/9511))
+* networkservices: added `ip_version` and `envoy_headers` fields to `google_network_services_gateway` resource ([#9514](https://github.com/hashicorp/terraform-provider-google-beta/pull/9514))
+* sql: increased `settings.insights_config.query_string_length` and `settings.insights_config.query_string_length` limits for Enterprise Plus edition `sql_database_instance` resource. ([#9539](https://github.com/hashicorp/terraform-provider-google-beta/pull/9539))
+* storageinsights: added `parquet_options` field to `google_storage_insights_report_config` resource ([#9522](https://github.com/hashicorp/terraform-provider-google-beta/pull/9522))
+* workflows: added `execution_history_level` field to `google_workflows_workflow` resource ([#9509](https://github.com/hashicorp/terraform-provider-google-beta/pull/9509))
+
+BUG FIXES:
+* accesscontextmanager: fixed panic on empty `access_policies` in `google_access_context_manager_access_policy` ([#9536](https://github.com/hashicorp/terraform-provider-google-beta/pull/9536))
+* compute: adjusted mapped image names that were preventing usage of `fedora-coreos` in `google_compute_image` resource ([#9513](https://github.com/hashicorp/terraform-provider-google-beta/pull/9513))
+* container: re-added `DNS_SCOPE_UNSPECIFIED` value to the `dns_config.cluster_dns_scope` field in `google_container_cluster` resource and suppressed diffs between `DNS_SCOPE_UNSPECIFIED` in config and empty/null in state ([#9547](https://github.com/hashicorp/terraform-provider-google-beta/pull/9547))
+* discoveryengine: changed field `dataStoreIds` to mutable in `google_discovery_engine_search_engine` ([#9506](https://github.com/hashicorp/terraform-provider-google-beta/pull/9506))
+* networksecurity: `min_tls_version` and `tls_feature_profile` fields updated to use the server assigned default and prevent a permadiff in `google_network_security_tls_inspection_policy` resource. ([#9514](https://github.com/hashicorp/terraform-provider-google-beta/pull/9514))
+* oslogin: added a wait after creating `google_os_login_ssh_public_key` to allow for propagation ([#9546](https://github.com/hashicorp/terraform-provider-google-beta/pull/9546))
+* spanner: fixed issue with disabling autoscaling in `google_spanner_instance` ([#9542](https://github.com/hashicorp/terraform-provider-google-beta/pull/9542))
+
+
 ## 6.25.0 (Mar 11, 2025)
 
 NOTES:
