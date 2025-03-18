@@ -15,7 +15,6 @@ IMPROVEMENTS:
 * clouddeploy: added `dns_endpoint` field to to `google_clouddeploy_target` resource ([#9553](https://github.com/hashicorp/terraform-provider-google-beta/pull/9553))
 * compute: added `UNRESTRICTED` option to the `tls_early_data` field in the `google_compute_target_https_proxy` resource ([#9527](https://github.com/hashicorp/terraform-provider-google-beta/pull/9527))
 * compute: added `enable_flow_logs` and `state` fields to `google_compute_subnetwork` resource ([#9541](https://github.com/hashicorp/terraform-provider-google-beta/pull/9541))
-* compute: added `tls_settings` field to `google_compute_backend_service` resource ([#9540](https://github.com/hashicorp/terraform-provider-google-beta/pull/9540))
 * container: added additional value `KCP_HPA` for `logging_config.enable_components` field in `google_container_cluster` resource ([#9529](https://github.com/hashicorp/terraform-provider-google-beta/pull/9529))
 * dataform: added `deletion_policy` field to `google_dataform_repository` resource. Default value is `DELETE`. Setting `deletion_policy` to `FORCE` will delete any child resources of this repository as well. ([#9549](https://github.com/hashicorp/terraform-provider-google-beta/pull/9549))
 * memorystore: added update support for `engine_version` field in `google_memorystore_instance` resource ([#9534](https://github.com/hashicorp/terraform-provider-google-beta/pull/9534))
@@ -28,8 +27,8 @@ IMPROVEMENTS:
 * workflows: added `execution_history_level` field to `google_workflows_workflow` resource ([#9509](https://github.com/hashicorp/terraform-provider-google-beta/pull/9509))
 
 BUG FIXES:
-* accesscontextmanager: fix panic on empty `access_policies` in `google_access_context_manager_access_policy` ([#9536](https://github.com/hashicorp/terraform-provider-google-beta/pull/9536))
-* compute: adjust mapped image names that were preventing usage of `fedora-coreos` in `google_compute_image` resource ([#9513](https://github.com/hashicorp/terraform-provider-google-beta/pull/9513))
+* accesscontextmanager: fixed panic on empty `access_policies` in `google_access_context_manager_access_policy` ([#9536](https://github.com/hashicorp/terraform-provider-google-beta/pull/9536))
+* compute: adjusted mapped image names that were preventing usage of `fedora-coreos` in `google_compute_image` resource ([#9513](https://github.com/hashicorp/terraform-provider-google-beta/pull/9513))
 * container: re-added `DNS_SCOPE_UNSPECIFIED` value to the `dns_config.cluster_dns_scope` field in `google_container_cluster` resource and suppressed diffs between `DNS_SCOPE_UNSPECIFIED` in config and empty/null in state ([#9547](https://github.com/hashicorp/terraform-provider-google-beta/pull/9547))
 * discoveryengine: changed field `dataStoreIds` to mutable in `google_discovery_engine_search_engine` ([#9506](https://github.com/hashicorp/terraform-provider-google-beta/pull/9506))
 * networksecurity: `min_tls_version` and `tls_feature_profile` fields updated to use the server assigned default and prevent a permadiff in `google_network_security_tls_inspection_policy` resource. ([#9514](https://github.com/hashicorp/terraform-provider-google-beta/pull/9514))
