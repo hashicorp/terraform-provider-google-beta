@@ -93,6 +93,36 @@ Used as additional context for the endpoint group.`,
 Please refer to the field 'effective_labels' for all of the labels present on the resource.`,
 				Elem: &schema.Schema{Type: schema.TypeString},
 			},
+			"associations": {
+				Type:        schema.TypeSet,
+				Computed:    true,
+				Description: `List of associations to this endpoint group.`,
+				Elem:        networksecurityInterceptEndpointGroupAssociationsSchema(),
+				// Default schema.HashSchema is used.
+			},
+			"connected_deployment_group": {
+				Type:        schema.TypeList,
+				Computed:    true,
+				Description: `The endpoint group's view of a connected deployment group.`,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"locations": {
+							Type:        schema.TypeSet,
+							Computed:    true,
+							Description: `The list of locations where the deployment group is present.`,
+							Elem:        networksecurityInterceptEndpointGroupConnectedDeploymentGroupLocationsSchema(),
+							// Default schema.HashSchema is used.
+						},
+						"name": {
+							Type:     schema.TypeString,
+							Computed: true,
+							Description: `The connected deployment group's resource name, for example:
+'projects/123456789/locations/global/interceptDeploymentGroups/my-dg'.
+See https://google.aip.dev/124.`,
+						},
+					},
+				},
+			},
 			"create_time": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -155,6 +185,61 @@ See https://google.aip.dev/148#timestamps.`,
 			},
 		},
 		UseJSONNumber: true,
+	}
+}
+
+func networksecurityInterceptEndpointGroupAssociationsSchema() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"name": {
+				Type:     schema.TypeString,
+				Computed: true,
+				Description: `The connected association's resource name, for example:
+'projects/123456789/locations/global/interceptEndpointGroupAssociations/my-ega'.
+See https://google.aip.dev/124.`,
+			},
+			"network": {
+				Type:     schema.TypeString,
+				Computed: true,
+				Description: `The associated network, for example:
+projects/123456789/global/networks/my-network.
+See https://google.aip.dev/124.`,
+			},
+			"state": {
+				Type:     schema.TypeString,
+				Computed: true,
+				Description: `Most recent known state of the association.
+Possible values:
+STATE_UNSPECIFIED
+ACTIVE
+CREATING
+DELETING
+CLOSED
+OUT_OF_SYNC
+DELETE_FAILED`,
+			},
+		},
+	}
+}
+
+func networksecurityInterceptEndpointGroupConnectedDeploymentGroupLocationsSchema() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"location": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: `The cloud location, e.g. 'us-central1-a' or 'asia-south1-b'.`,
+			},
+			"state": {
+				Type:     schema.TypeString,
+				Computed: true,
+				Description: `The current state of the association in this location.
+Possible values:
+STATE_UNSPECIFIED
+ACTIVE
+OUT_OF_SYNC`,
+			},
+		},
 	}
 }
 
@@ -319,6 +404,12 @@ func resourceNetworkSecurityInterceptEndpointGroupRead(d *schema.ResourceData, m
 		return fmt.Errorf("Error reading InterceptEndpointGroup: %s", err)
 	}
 	if err := d.Set("description", flattenNetworkSecurityInterceptEndpointGroupDescription(res["description"], d, config)); err != nil {
+		return fmt.Errorf("Error reading InterceptEndpointGroup: %s", err)
+	}
+	if err := d.Set("associations", flattenNetworkSecurityInterceptEndpointGroupAssociations(res["associations"], d, config)); err != nil {
+		return fmt.Errorf("Error reading InterceptEndpointGroup: %s", err)
+	}
+	if err := d.Set("connected_deployment_group", flattenNetworkSecurityInterceptEndpointGroupConnectedDeploymentGroup(res["connectedDeploymentGroup"], d, config)); err != nil {
 		return fmt.Errorf("Error reading InterceptEndpointGroup: %s", err)
 	}
 	if err := d.Set("terraform_labels", flattenNetworkSecurityInterceptEndpointGroupTerraformLabels(res["labels"], d, config)); err != nil {
@@ -535,6 +626,84 @@ func flattenNetworkSecurityInterceptEndpointGroupReconciling(v interface{}, d *s
 }
 
 func flattenNetworkSecurityInterceptEndpointGroupDescription(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenNetworkSecurityInterceptEndpointGroupAssociations(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+	l := v.([]interface{})
+	transformed := schema.NewSet(schema.HashResource(networksecurityInterceptEndpointGroupAssociationsSchema()), []interface{}{})
+	for _, raw := range l {
+		original := raw.(map[string]interface{})
+		if len(original) < 1 {
+			// Do not include empty json objects coming back from the api
+			continue
+		}
+		transformed.Add(map[string]interface{}{
+			"name":    flattenNetworkSecurityInterceptEndpointGroupAssociationsName(original["name"], d, config),
+			"network": flattenNetworkSecurityInterceptEndpointGroupAssociationsNetwork(original["network"], d, config),
+			"state":   flattenNetworkSecurityInterceptEndpointGroupAssociationsState(original["state"], d, config),
+		})
+	}
+	return transformed
+}
+func flattenNetworkSecurityInterceptEndpointGroupAssociationsName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenNetworkSecurityInterceptEndpointGroupAssociationsNetwork(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenNetworkSecurityInterceptEndpointGroupAssociationsState(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenNetworkSecurityInterceptEndpointGroupConnectedDeploymentGroup(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["name"] =
+		flattenNetworkSecurityInterceptEndpointGroupConnectedDeploymentGroupName(original["name"], d, config)
+	transformed["locations"] =
+		flattenNetworkSecurityInterceptEndpointGroupConnectedDeploymentGroupLocations(original["locations"], d, config)
+	return []interface{}{transformed}
+}
+func flattenNetworkSecurityInterceptEndpointGroupConnectedDeploymentGroupName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenNetworkSecurityInterceptEndpointGroupConnectedDeploymentGroupLocations(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+	l := v.([]interface{})
+	transformed := schema.NewSet(schema.HashResource(networksecurityInterceptEndpointGroupConnectedDeploymentGroupLocationsSchema()), []interface{}{})
+	for _, raw := range l {
+		original := raw.(map[string]interface{})
+		if len(original) < 1 {
+			// Do not include empty json objects coming back from the api
+			continue
+		}
+		transformed.Add(map[string]interface{}{
+			"location": flattenNetworkSecurityInterceptEndpointGroupConnectedDeploymentGroupLocationsLocation(original["location"], d, config),
+			"state":    flattenNetworkSecurityInterceptEndpointGroupConnectedDeploymentGroupLocationsState(original["state"], d, config),
+		})
+	}
+	return transformed
+}
+func flattenNetworkSecurityInterceptEndpointGroupConnectedDeploymentGroupLocationsLocation(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenNetworkSecurityInterceptEndpointGroupConnectedDeploymentGroupLocationsState(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
