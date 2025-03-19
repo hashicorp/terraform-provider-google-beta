@@ -113,6 +113,7 @@ import (
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/oracledatabase"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/orgpolicy"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/osconfig"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/osconfigv2"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/oslogin"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/parallelstore"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/parametermanager"
