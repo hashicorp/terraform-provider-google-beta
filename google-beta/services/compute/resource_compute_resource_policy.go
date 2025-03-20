@@ -365,6 +365,40 @@ with RFC1035.`,
 				},
 				ConflictsWith: []string{"group_placement_policy", "instance_schedule_policy", "disk_consistency_group_policy"},
 			},
+			"workload_policy": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: `Represents the workload policy.`,
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"type": {
+							Type:         schema.TypeString,
+							Required:     true,
+							ForceNew:     true,
+							ValidateFunc: verify.ValidateEnum([]string{"HIGH_AVAILABILITY", "HIGH_THROUGHPUT"}),
+							Description:  `The type of workload policy. Possible values: ["HIGH_AVAILABILITY", "HIGH_THROUGHPUT"]`,
+						},
+						"accelerator_topology": {
+							Type:     schema.TypeString,
+							Optional: true,
+							ForceNew: true,
+							Description: `The accelerator topology. This field can be set only when the workload policy type is HIGH_THROUGHPUT
+and cannot be set if max topology distance is set.`,
+							ConflictsWith: []string{"workload_policy.0.max_topology_distance"},
+						},
+						"max_topology_distance": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ForceNew:     true,
+							ValidateFunc: verify.ValidateEnum([]string{"BLOCK", "CLUSTER", "SUBBLOCK", ""}),
+							Description: `The maximum topology distance. This field can be set only when the workload policy type is HIGH_THROUGHPUT
+and cannot be set if accelerator topology is set. Possible values: ["BLOCK", "CLUSTER", "SUBBLOCK"]`,
+							ConflictsWith: []string{"workload_policy.0.accelerator_topology"},
+						},
+					},
+				},
+			},
 			"project": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -442,6 +476,12 @@ func resourceComputeResourcePolicyCreate(d *schema.ResourceData, meta interface{
 		return err
 	} else if v, ok := d.GetOkExists("disk_consistency_group_policy"); ok || !reflect.DeepEqual(v, diskConsistencyGroupPolicyProp) {
 		obj["diskConsistencyGroupPolicy"] = diskConsistencyGroupPolicyProp
+	}
+	workloadPolicyProp, err := expandComputeResourcePolicyWorkloadPolicy(d.Get("workload_policy"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("workload_policy"); !tpgresource.IsEmptyValue(reflect.ValueOf(workloadPolicyProp)) && (ok || !reflect.DeepEqual(v, workloadPolicyProp)) {
+		obj["workloadPolicy"] = workloadPolicyProp
 	}
 	regionProp, err := expandComputeResourcePolicyRegion(d.Get("region"), d, config)
 	if err != nil {
@@ -574,6 +614,9 @@ func resourceComputeResourcePolicyRead(d *schema.ResourceData, meta interface{})
 	if err := d.Set("disk_consistency_group_policy", flattenComputeResourcePolicyDiskConsistencyGroupPolicy(res["diskConsistencyGroupPolicy"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ResourcePolicy: %s", err)
 	}
+	if err := d.Set("workload_policy", flattenComputeResourcePolicyWorkloadPolicy(res["workloadPolicy"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ResourcePolicy: %s", err)
+	}
 	if err := d.Set("self_link", tpgresource.ConvertSelfLinkToV1(res["selfLink"].(string))); err != nil {
 		return fmt.Errorf("Error reading ResourcePolicy: %s", err)
 	}
@@ -632,6 +675,12 @@ func resourceComputeResourcePolicyUpdate(d *schema.ResourceData, meta interface{
 		return err
 	} else if v, ok := d.GetOkExists("disk_consistency_group_policy"); ok || !reflect.DeepEqual(v, diskConsistencyGroupPolicyProp) {
 		obj["diskConsistencyGroupPolicy"] = diskConsistencyGroupPolicyProp
+	}
+	workloadPolicyProp, err := expandComputeResourcePolicyWorkloadPolicy(d.Get("workload_policy"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("workload_policy"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, workloadPolicyProp)) {
+		obj["workloadPolicy"] = workloadPolicyProp
 	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/resourcePolicies/{{name}}")
@@ -1136,6 +1185,35 @@ func flattenComputeResourcePolicyDiskConsistencyGroupPolicy(v interface{}, d *sc
 	return []interface{}{transformed}
 }
 
+func flattenComputeResourcePolicyWorkloadPolicy(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["type"] =
+		flattenComputeResourcePolicyWorkloadPolicyType(original["type"], d, config)
+	transformed["max_topology_distance"] =
+		flattenComputeResourcePolicyWorkloadPolicyMaxTopologyDistance(original["maxTopologyDistance"], d, config)
+	transformed["accelerator_topology"] =
+		flattenComputeResourcePolicyWorkloadPolicyAcceleratorTopology(original["acceleratorTopology"], d, config)
+	return []interface{}{transformed}
+}
+func flattenComputeResourcePolicyWorkloadPolicyType(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenComputeResourcePolicyWorkloadPolicyMaxTopologyDistance(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenComputeResourcePolicyWorkloadPolicyAcceleratorTopology(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func expandComputeResourcePolicyName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
@@ -1620,6 +1698,51 @@ func expandComputeResourcePolicyDiskConsistencyGroupPolicy(v interface{}, d tpgr
 	}
 	transformed := make(map[string]interface{})
 	return transformed, nil
+}
+
+func expandComputeResourcePolicyWorkloadPolicy(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedType, err := expandComputeResourcePolicyWorkloadPolicyType(original["type"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedType); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["type"] = transformedType
+	}
+
+	transformedMaxTopologyDistance, err := expandComputeResourcePolicyWorkloadPolicyMaxTopologyDistance(original["max_topology_distance"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedMaxTopologyDistance); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["maxTopologyDistance"] = transformedMaxTopologyDistance
+	}
+
+	transformedAcceleratorTopology, err := expandComputeResourcePolicyWorkloadPolicyAcceleratorTopology(original["accelerator_topology"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedAcceleratorTopology); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["acceleratorTopology"] = transformedAcceleratorTopology
+	}
+
+	return transformed, nil
+}
+
+func expandComputeResourcePolicyWorkloadPolicyType(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeResourcePolicyWorkloadPolicyMaxTopologyDistance(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeResourcePolicyWorkloadPolicyAcceleratorTopology(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
 }
 
 func expandComputeResourcePolicyRegion(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {

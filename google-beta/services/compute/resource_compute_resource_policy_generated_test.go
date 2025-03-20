@@ -381,6 +381,122 @@ resource "google_compute_resource_policy" "cgroup" {
 `, context)
 }
 
+func TestAccComputeResourcePolicy_resourcePolicyWorkloadPolicyExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckComputeResourcePolicyDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeResourcePolicy_resourcePolicyWorkloadPolicyExample(context),
+			},
+			{
+				ResourceName:            "google_compute_resource_policy.bar",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"region"},
+			},
+		},
+	})
+}
+
+func testAccComputeResourcePolicy_resourcePolicyWorkloadPolicyExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_compute_resource_policy" "bar" {
+  name   = "tf-test-gce-policy%{random_suffix}"
+  region = "europe-west1"
+  provider = google-beta
+  workload_policy {
+    type = "HIGH_AVAILABILITY"
+  }
+}
+`, context)
+}
+
+func TestAccComputeResourcePolicy_resourcePolicyWorkloadPolicyAcceleratorTopologyExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckComputeResourcePolicyDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeResourcePolicy_resourcePolicyWorkloadPolicyAcceleratorTopologyExample(context),
+			},
+			{
+				ResourceName:            "google_compute_resource_policy.bar",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"region"},
+			},
+		},
+	})
+}
+
+func testAccComputeResourcePolicy_resourcePolicyWorkloadPolicyAcceleratorTopologyExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_compute_resource_policy" "bar" {
+  name   = "tf-test-gce-policy%{random_suffix}"
+  region = "europe-west1"
+  provider = google-beta
+  workload_policy {
+    type = "HIGH_THROUGHPUT"
+    accelerator_topology = "SOME NEW TOPOLOGY"
+  }
+}
+`, context)
+}
+
+func TestAccComputeResourcePolicy_resourcePolicyWorkloadPolicyMaxTopologyDistanceExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckComputeResourcePolicyDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeResourcePolicy_resourcePolicyWorkloadPolicyMaxTopologyDistanceExample(context),
+			},
+			{
+				ResourceName:            "google_compute_resource_policy.bar",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"region"},
+			},
+		},
+	})
+}
+
+func testAccComputeResourcePolicy_resourcePolicyWorkloadPolicyMaxTopologyDistanceExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_compute_resource_policy" "bar" {
+  name   = "tf-test-gce-policy%{random_suffix}"
+  region = "europe-west1"
+  provider = google-beta
+  workload_policy {
+    type = "HIGH_THROUGHPUT"
+    max_topology_distance = "BLOCK"
+  }
+}
+`, context)
+}
+
 func TestAccComputeResourcePolicy_resourcePolicyPlacementPolicyGpuTopologyExample(t *testing.T) {
 	t.Parallel()
 
