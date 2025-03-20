@@ -41,7 +41,7 @@ func TestAccChronicleDataAccessLabel_chronicleDataaccesslabelBasicExample(t *tes
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckChronicleDataAccessLabelDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -60,7 +60,6 @@ func TestAccChronicleDataAccessLabel_chronicleDataaccesslabelBasicExample(t *tes
 func testAccChronicleDataAccessLabel_chronicleDataaccesslabelBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_chronicle_data_access_label" "example" {
-  provider = "google-beta"
   location = "us" 
   instance = "%{chronicle_id}"
   data_access_label_id = "tf-test-label-id%{random_suffix}"
