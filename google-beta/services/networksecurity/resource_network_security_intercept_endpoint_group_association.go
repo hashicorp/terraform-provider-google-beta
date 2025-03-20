@@ -108,9 +108,18 @@ See https://google.aip.dev/148#timestamps.`,
 				Description: `All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.`,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
-			"locations_details": {
-				Type:     schema.TypeList,
+			"locations": {
+				Type:     schema.TypeSet,
 				Computed: true,
+				Description: `The list of locations where the association is configured. This information
+is retrieved from the linked endpoint group.`,
+				Elem: networksecurityInterceptEndpointGroupAssociationLocationsSchema(),
+				// Default schema.HashSchema is used.
+			},
+			"locations_details": {
+				Type:       schema.TypeList,
+				Computed:   true,
+				Deprecated: "`locationsDetails` is deprecated and will be removed in a future major release. Use `locations` instead.",
 				Description: `The list of locations where the association is present. This information
 is retrieved from the linked endpoint group, and not configured as part
 of the association itself.`,
@@ -182,6 +191,27 @@ See https://google.aip.dev/148#timestamps.`,
 			},
 		},
 		UseJSONNumber: true,
+	}
+}
+
+func networksecurityInterceptEndpointGroupAssociationLocationsSchema() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"location": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: `The cloud location, e.g. 'us-central1-a' or 'asia-south1-b'.`,
+			},
+			"state": {
+				Type:     schema.TypeString,
+				Computed: true,
+				Description: `The current state of the association in this location.
+Possible values:
+STATE_UNSPECIFIED
+ACTIVE
+OUT_OF_SYNC`,
+			},
+		},
 	}
 }
 
@@ -349,6 +379,9 @@ func resourceNetworkSecurityInterceptEndpointGroupAssociationRead(d *schema.Reso
 		return fmt.Errorf("Error reading InterceptEndpointGroupAssociation: %s", err)
 	}
 	if err := d.Set("reconciling", flattenNetworkSecurityInterceptEndpointGroupAssociationReconciling(res["reconciling"], d, config)); err != nil {
+		return fmt.Errorf("Error reading InterceptEndpointGroupAssociation: %s", err)
+	}
+	if err := d.Set("locations", flattenNetworkSecurityInterceptEndpointGroupAssociationLocations(res["locations"], d, config)); err != nil {
 		return fmt.Errorf("Error reading InterceptEndpointGroupAssociation: %s", err)
 	}
 	if err := d.Set("terraform_labels", flattenNetworkSecurityInterceptEndpointGroupAssociationTerraformLabels(res["labels"], d, config)); err != nil {
@@ -582,6 +615,33 @@ func flattenNetworkSecurityInterceptEndpointGroupAssociationState(v interface{},
 }
 
 func flattenNetworkSecurityInterceptEndpointGroupAssociationReconciling(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenNetworkSecurityInterceptEndpointGroupAssociationLocations(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+	l := v.([]interface{})
+	transformed := schema.NewSet(schema.HashResource(networksecurityInterceptEndpointGroupAssociationLocationsSchema()), []interface{}{})
+	for _, raw := range l {
+		original := raw.(map[string]interface{})
+		if len(original) < 1 {
+			// Do not include empty json objects coming back from the api
+			continue
+		}
+		transformed.Add(map[string]interface{}{
+			"location": flattenNetworkSecurityInterceptEndpointGroupAssociationLocationsLocation(original["location"], d, config),
+			"state":    flattenNetworkSecurityInterceptEndpointGroupAssociationLocationsState(original["state"], d, config),
+		})
+	}
+	return transformed
+}
+func flattenNetworkSecurityInterceptEndpointGroupAssociationLocationsLocation(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenNetworkSecurityInterceptEndpointGroupAssociationLocationsState(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
