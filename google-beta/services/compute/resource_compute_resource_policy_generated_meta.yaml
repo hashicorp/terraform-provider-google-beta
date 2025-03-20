@@ -31,3 +31,6 @@ fields:
   - field: 'snapshot_schedule_policy.snapshot_properties.guest_flush'
   - field: 'snapshot_schedule_policy.snapshot_properties.labels'
   - field: 'snapshot_schedule_policy.snapshot_properties.storage_locations'
+  - field: 'workload_policy.accelerator_topology'
+  - field: 'workload_policy.max_topology_distance'
+  - field: 'workload_policy.type'
