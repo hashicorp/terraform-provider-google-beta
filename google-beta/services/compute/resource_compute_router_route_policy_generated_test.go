@@ -39,7 +39,7 @@ func TestAccComputeRouterRoutePolicy_routerRoutePolicyExportExample(t *testing.T
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeRouterRoutePolicyDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -58,13 +58,11 @@ func TestAccComputeRouterRoutePolicy_routerRoutePolicyExportExample(t *testing.T
 func testAccComputeRouterRoutePolicy_routerRoutePolicyExportExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_network" "net" {
-  provider = google-beta
   name                    = "tf-test-my-network%{random_suffix}"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "subnet" {
-  provider = google-beta
   name          = "tf-test-my-subnetwork%{random_suffix}"
   network       = google_compute_network.net.id
   ip_cidr_range = "10.0.0.0/16"
@@ -72,14 +70,12 @@ resource "google_compute_subnetwork" "subnet" {
 }
 
 resource "google_compute_router" "router" {
-  provider = google-beta
   name    = "tf-test-my-router%{random_suffix}"
   region  = google_compute_subnetwork.subnet.region
   network = google_compute_network.net.id
 }
 
 resource "google_compute_router_route_policy" "rp-export" {
-  provider = google-beta
   router = google_compute_router.router.name
   region = google_compute_router.router.region
 	name = "tf-test-my-rp1%{random_suffix}"
@@ -106,7 +102,7 @@ func TestAccComputeRouterRoutePolicy_routerRoutePolicyImportExample(t *testing.T
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeRouterRoutePolicyDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -125,13 +121,11 @@ func TestAccComputeRouterRoutePolicy_routerRoutePolicyImportExample(t *testing.T
 func testAccComputeRouterRoutePolicy_routerRoutePolicyImportExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_network" "net" {
-  provider = google-beta
   name                    = "tf-test-my-network%{random_suffix}"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "subnet" {
-  provider = google-beta
   name          = "tf-test-my-subnetwork%{random_suffix}"
   network       = google_compute_network.net.id
   ip_cidr_range = "10.0.0.0/16"
@@ -139,15 +133,13 @@ resource "google_compute_subnetwork" "subnet" {
 }
 
 resource "google_compute_router" "router" {
-  provider = google-beta
   name    = "tf-test-my-router%{random_suffix}"
   region  = google_compute_subnetwork.subnet.region
   network = google_compute_network.net.id
 }
 
 resource "google_compute_router_route_policy" "rp-import" {
-  provider = google-beta
-	name = "tf-test-my-rp2%{random_suffix}"
+  name = "tf-test-my-rp2%{random_suffix}"
   router = google_compute_router.router.name
   region = google_compute_router.router.region
 	type = "ROUTE_POLICY_TYPE_IMPORT"

@@ -312,10 +312,7 @@ assigns unused addresses from the 2600:2d00:0:2::/64 or 2600:2d00:0:3::/64 range
 				Type:     schema.TypeList,
 				Optional: true,
 				Description: `routers.list of export policies applied to this peer, in the order they must be evaluated. 
-The name must correspond to an existing policy that has ROUTE_POLICY_TYPE_EXPORT type.
-
-Note that Route Policies are currently available in preview. 
-Please use Beta API to use Route Policies.`,
+The name must correspond to an existing policy that has ROUTE_POLICY_TYPE_EXPORT type.`,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
@@ -324,10 +321,7 @@ Please use Beta API to use Route Policies.`,
 				Type:     schema.TypeList,
 				Optional: true,
 				Description: `routers.list of import policies applied to this peer, in the order they must be evaluated. 
-The name must correspond to an existing policy that has ROUTE_POLICY_TYPE_IMPORT type.
-
-Note that Route Policies are currently available in preview. 
-Please use Beta API to use Route Policies.`,
+The name must correspond to an existing policy that has ROUTE_POLICY_TYPE_IMPORT type.`,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
@@ -1344,6 +1338,7 @@ func flattenNestedComputeRouterBgpPeerIpv4NexthopAddress(v interface{}, d *schem
 func flattenNestedComputeRouterBgpPeerPeerIpv4NexthopAddress(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
+
 func flattenNestedComputeRouterBgpPeerExportPolicies(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
@@ -1578,6 +1573,7 @@ func expandNestedComputeRouterBgpPeerIpv4NexthopAddress(v interface{}, d tpgreso
 func expandNestedComputeRouterBgpPeerPeerIpv4NexthopAddress(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
+
 func expandNestedComputeRouterBgpPeerExportPolicies(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
