@@ -6976,6 +6976,7 @@ func flattenManagedPrometheusConfig(c *container.ManagedPrometheusConfig) []map[
 
 	result := make(map[string]interface{})
 	result["enabled"] = c.Enabled
+
 	autoMonitoringList := []map[string]interface{}{}
 	if c.AutoMonitoringConfig != nil && c.AutoMonitoringConfig.Scope != "" {
 		autoMonitoringMap := map[string]interface{}{
