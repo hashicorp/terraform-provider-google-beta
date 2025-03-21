@@ -1,11 +1,5 @@
 ## 6.27.0 (Unreleased)
 
-NOTES:
-* Promote google_chronicle_data_access_label resource of chronicle to GA ([#9594](https://github.com/hashicorp/terraform-provider-google-beta/pull/9594))
-* cloudrunv2: removed "by-invitation only" language for invokerIamDisabled; feature is now generally available ([#9592](https://github.com/hashicorp/terraform-provider-google-beta/pull/9592))
-* google_compute_router_route_policy (GA) ([#9589](https://github.com/hashicorp/terraform-provider-google-beta/pull/9589))
-* upgrade google.golang.org/api to v0.226.0 ([#9588](https://github.com/hashicorp/terraform-provider-google-beta/pull/9588))
-
 FEATURES:
 * **New Data Source:** `google_compute_images` ([#9556](https://github.com/hashicorp/terraform-provider-google-beta/pull/9556))
 * **New Data Source:** `google_organization_iam_custom_role` ([#9577](https://github.com/hashicorp/terraform-provider-google-beta/pull/9577))
@@ -16,8 +10,9 @@ FEATURES:
 IMPROVEMENTS:
 * bigquery: added support for the managed disaster recovery feature in google_bigquery_reservation ([#9575](https://github.com/hashicorp/terraform-provider-google-beta/pull/9575))
 * clouddeploy: added `dns_endpoint` field to to `google_clouddeploy_target` resource ([#9553](https://github.com/hashicorp/terraform-provider-google-beta/pull/9553))
-* compute: Add `group_placement_policy.0.gpu_topology` field to  `google_compute_resource_policy` resource (beta) ([#9555](https://github.com/hashicorp/terraform-provider-google-beta/pull/9555))
-* compute: Added `shieldedInstanceInitialState` structure to `google_compute_image` resource ([#9583](https://github.com/hashicorp/terraform-provider-google-beta/pull/9583))
+* cloudrunv2: removed "by-invitation only" language for invokerIamDisabled; feature is now generally available ([#9592](https://github.com/hashicorp/terraform-provider-google-beta/pull/9592))
+* compute: added `group_placement_policy.0.gpu_topology` field to  `google_compute_resource_policy` resource (beta) ([#9555](https://github.com/hashicorp/terraform-provider-google-beta/pull/9555))
+* compute: added `shieldedInstanceInitialState` structure to `google_compute_image` resource ([#9583](https://github.com/hashicorp/terraform-provider-google-beta/pull/9583))
 * compute: added `LINK_TYPE_ETHERNET_400G_LR4` enum value to `link_type` field in `google_compute_interconnect` resource ([#9571](https://github.com/hashicorp/terraform-provider-google-beta/pull/9571))
 * compute: added `architecture` and `guest_os_features` to `google_compute_instance` ([#9558](https://github.com/hashicorp/terraform-provider-google-beta/pull/9558))
 * compute: added `instance_lifecycle_policy.on_failed_health_check` field in resources `google_compute_instance_group_manager` and `google_compute_region_instance_group_manager` (beta) ([#9598](https://github.com/hashicorp/terraform-provider-google-beta/pull/9598))
