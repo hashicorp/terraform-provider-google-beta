@@ -21,7 +21,7 @@ func TestAccChronicleWatchlist_chronicleWatchlistBasicExample_update(t *testing.
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckChronicleWatchlistDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -49,7 +49,6 @@ func TestAccChronicleWatchlist_chronicleWatchlistBasicExample_update(t *testing.
 func testAccChronicleWatchlist_chronicleWatchlistBasicExample_basic(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_chronicle_watchlist" "example" {
-  provider = "google-beta"
   location = "us"
   instance = "%{chronicle_id}"
   watchlist_id = "tf-test-watchlist-name%{random_suffix}"
@@ -68,7 +67,6 @@ resource "google_chronicle_watchlist" "example" {
 func testAccChronicleWatchlist_chronicleWatchlistBasicExample_update(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_chronicle_watchlist" "example" {
-  provider = "google-beta"
   location = "us"
   instance = "%{chronicle_id}"
   watchlist_id = "tf-test-watchlist-name%{random_suffix}"

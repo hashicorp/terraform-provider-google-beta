@@ -41,7 +41,7 @@ func TestAccChronicleWatchlist_chronicleWatchlistBasicExample(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckChronicleWatchlistDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -60,7 +60,6 @@ func TestAccChronicleWatchlist_chronicleWatchlistBasicExample(t *testing.T) {
 func testAccChronicleWatchlist_chronicleWatchlistBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_chronicle_watchlist" "example" {
-  provider = "google-beta"
   location = "us"
   instance = "%{chronicle_id}"
   watchlist_id = "tf-test-watchlist-id%{random_suffix}"
@@ -89,7 +88,7 @@ func TestAccChronicleWatchlist_chronicleWatchlistWithoutIdExample(t *testing.T) 
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckChronicleWatchlistDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -102,7 +101,6 @@ func TestAccChronicleWatchlist_chronicleWatchlistWithoutIdExample(t *testing.T) 
 func testAccChronicleWatchlist_chronicleWatchlistWithoutIdExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_chronicle_watchlist" "example" {
-  provider = "google-beta"
   location = "us"
   instance = "%{chronicle_id}"
   description = "tf-test-watchlist-description%{random_suffix}"
