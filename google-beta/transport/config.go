@@ -285,6 +285,7 @@ type Config struct {
 	KMSBasePath                      string
 	LoggingBasePath                  string
 	LookerBasePath                   string
+	LustreBasePath                   string
 	ManagedKafkaBasePath             string
 	MemcacheBasePath                 string
 	MemorystoreBasePath              string
@@ -457,6 +458,7 @@ const IntegrationsBasePathKey = "Integrations"
 const KMSBasePathKey = "KMS"
 const LoggingBasePathKey = "Logging"
 const LookerBasePathKey = "Looker"
+const LustreBasePathKey = "Lustre"
 const ManagedKafkaBasePathKey = "ManagedKafka"
 const MemcacheBasePathKey = "Memcache"
 const MemorystoreBasePathKey = "Memorystore"
@@ -623,6 +625,7 @@ var DefaultBasePaths = map[string]string{
 	KMSBasePathKey:                      "https://cloudkms.googleapis.com/v1/",
 	LoggingBasePathKey:                  "https://logging.googleapis.com/v2/",
 	LookerBasePathKey:                   "https://looker.googleapis.com/v1/",
+	LustreBasePathKey:                   "https://lustre.googleapis.com/v1/",
 	ManagedKafkaBasePathKey:             "https://managedkafka.googleapis.com/v1/",
 	MemcacheBasePathKey:                 "https://memcache.googleapis.com/v1beta2/",
 	MemorystoreBasePathKey:              "https://memorystore.googleapis.com/v1beta/",
@@ -1239,6 +1242,11 @@ func SetEndpointDefaults(d *schema.ResourceData) error {
 		d.Set("looker_custom_endpoint", MultiEnvDefault([]string{
 			"GOOGLE_LOOKER_CUSTOM_ENDPOINT",
 		}, DefaultBasePaths[LookerBasePathKey]))
+	}
+	if d.Get("lustre_custom_endpoint") == "" {
+		d.Set("lustre_custom_endpoint", MultiEnvDefault([]string{
+			"GOOGLE_LUSTRE_CUSTOM_ENDPOINT",
+		}, DefaultBasePaths[LustreBasePathKey]))
 	}
 	if d.Get("managed_kafka_custom_endpoint") == "" {
 		d.Set("managed_kafka_custom_endpoint", MultiEnvDefault([]string{
@@ -2579,6 +2587,7 @@ func ConfigureBasePaths(c *Config) {
 	c.KMSBasePath = DefaultBasePaths[KMSBasePathKey]
 	c.LoggingBasePath = DefaultBasePaths[LoggingBasePathKey]
 	c.LookerBasePath = DefaultBasePaths[LookerBasePathKey]
+	c.LustreBasePath = DefaultBasePaths[LustreBasePathKey]
 	c.ManagedKafkaBasePath = DefaultBasePaths[ManagedKafkaBasePathKey]
 	c.MemcacheBasePath = DefaultBasePaths[MemcacheBasePathKey]
 	c.MemorystoreBasePath = DefaultBasePaths[MemorystoreBasePathKey]

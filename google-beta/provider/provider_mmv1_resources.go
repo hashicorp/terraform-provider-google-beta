@@ -99,6 +99,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/kms"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/logging"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/looker"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/lustre"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/managedkafka"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/memcache"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/memorystore"
@@ -547,9 +548,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 626
+// Generated resources: 627
 // Generated IAM resources: 306
-// Total generated resources: 932
+// Total generated resources: 933
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -1196,6 +1197,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_logging_metric":                                                      logging.ResourceLoggingMetric(),
 	"google_logging_organization_settings":                                       logging.ResourceLoggingOrganizationSettings(),
 	"google_looker_instance":                                                     looker.ResourceLookerInstance(),
+	"google_lustre_instance":                                                     lustre.ResourceLustreInstance(),
 	"google_managed_kafka_cluster":                                               managedkafka.ResourceManagedKafkaCluster(),
 	"google_managed_kafka_connect_cluster":                                       managedkafka.ResourceManagedKafkaConnectCluster(),
 	"google_managed_kafka_connector":                                             managedkafka.ResourceManagedKafkaConnector(),

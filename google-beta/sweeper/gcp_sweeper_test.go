@@ -98,6 +98,7 @@ import (
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/kms"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/logging"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/looker"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/lustre"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/managedkafka"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/memcache"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/memorystore"
