@@ -577,7 +577,7 @@ func resourceComputeRegionSecurityPolicyRuleCreate(d *schema.ResourceData, meta 
 	previewProp, err := expandComputeRegionSecurityPolicyRulePreview(d.Get("preview"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("preview"); !tpgresource.IsEmptyValue(reflect.ValueOf(previewProp)) && (ok || !reflect.DeepEqual(v, previewProp)) {
+	} else if v, ok := d.GetOkExists("preview"); ok || !reflect.DeepEqual(v, previewProp) {
 		obj["preview"] = previewProp
 	}
 	networkMatchProp, err := expandComputeRegionSecurityPolicyRuleNetworkMatch(d.Get("network_match"), d, config)
@@ -779,7 +779,7 @@ func resourceComputeRegionSecurityPolicyRuleUpdate(d *schema.ResourceData, meta 
 	previewProp, err := expandComputeRegionSecurityPolicyRulePreview(d.Get("preview"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("preview"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, previewProp)) {
+	} else if v, ok := d.GetOkExists("preview"); ok || !reflect.DeepEqual(v, previewProp) {
 		obj["preview"] = previewProp
 	}
 	networkMatchProp, err := expandComputeRegionSecurityPolicyRuleNetworkMatch(d.Get("network_match"), d, config)

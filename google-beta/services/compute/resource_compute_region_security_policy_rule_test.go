@@ -38,6 +38,14 @@ func TestAccComputeRegionSecurityPolicyRule_regionSecurityPolicyRuleBasicUpdate(
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
+			{
+				Config: testAccComputeRegionSecurityPolicyRule_regionSecurityPolicyRulePreUpdate(context),
+			},
+			{
+				ResourceName:      "google_compute_region_security_policy_rule.policy_rule",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }
