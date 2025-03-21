@@ -21,7 +21,7 @@ func TestAccChronicleDataAccessScope_chronicleDataaccessscopeBasicExample_update
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckChronicleDataAccessScopeDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -50,7 +50,6 @@ func TestAccChronicleDataAccessScope_chronicleDataaccessscopeBasicExample_update
 func testAccChronicleDataAccessScope_chronicleDataaccessscopeBasicExample_full(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_chronicle_data_access_label" "custom_data_access_label" {
-  provider = "google-beta"
   location = "us"
   instance = "%{chronicle_id}"
   data_access_label_id = "tf-test-label-id%{random_suffix}"
@@ -58,7 +57,6 @@ resource "google_chronicle_data_access_label" "custom_data_access_label" {
 }
 
 resource "google_chronicle_data_access_scope" "example" {
-  provider = "google-beta"
   location = "us"
   instance = "%{chronicle_id}"
   data_access_scope_id = "tf-test-scope-id%{random_suffix}"
@@ -89,7 +87,6 @@ resource "google_chronicle_data_access_scope" "example" {
 func testAccChronicleDataAccessScope_chronicleDataaccessscopeBasicExample_update(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_chronicle_data_access_label" "custom_data_access_label" {
-  provider = "google-beta"
   location = "us"
   instance = "%{chronicle_id}"
   data_access_label_id = "tf-test-label-id%{random_suffix}"
@@ -97,7 +94,6 @@ resource "google_chronicle_data_access_label" "custom_data_access_label" {
 }
 
 resource "google_chronicle_data_access_scope" "example" {
-  provider = "google-beta"
   location = "us"
   instance = "%{chronicle_id}"
   data_access_scope_id = "tf-test-scope-id%{random_suffix}"
