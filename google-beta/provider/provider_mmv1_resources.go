@@ -386,9 +386,10 @@ var handwrittenDatasources = map[string]*schema.Resource{
 	"google_storage_bucket_object":                               storage.DataSourceGoogleStorageBucketObject(),
 	"google_storage_bucket_objects":                              storage.DataSourceGoogleStorageBucketObjects(),
 	"google_storage_bucket_object_content":                       storage.DataSourceGoogleStorageBucketObjectContent(),
+	"google_storage_control_organization_intelligence_config":    storagecontrol.DataSourceGoogleStorageControlOrganizationIntelligenceConfig(),
+	"google_storage_control_project_intelligence_config":         storagecontrol.DataSourceGoogleStorageControlProjectIntelligenceConfig(),
 	"google_storage_object_signed_url":                           storage.DataSourceGoogleSignedUrl(),
 	"google_storage_project_service_account":                     storage.DataSourceGoogleStorageProjectServiceAccount(),
-	"google_storage_control_project_intelligence_config":         storagecontrol.DataSourceGoogleStorageControlProjectIntelligenceConfig(),
 	"google_storage_transfer_project_service_account":            storagetransfer.DataSourceGoogleStorageTransferProjectServiceAccount(),
 	"google_tags_tag_key":                                        tags.DataSourceGoogleTagsTagKey(),
 	"google_tags_tag_keys":                                       tags.DataSourceGoogleTagsTagKeys(),
@@ -550,9 +551,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 628
+// Generated resources: 629
 // Generated IAM resources: 309
-// Total generated resources: 937
+// Total generated resources: 938
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -1427,6 +1428,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_storage_hmac_key":                                                    storage.ResourceStorageHmacKey(),
 	"google_storage_managed_folder":                                              storage.ResourceStorageManagedFolder(),
 	"google_storage_object_access_control":                                       storage.ResourceStorageObjectAccessControl(),
+	"google_storage_control_organization_intelligence_config":                    storagecontrol.ResourceStorageControlOrganizationIntelligenceConfig(),
 	"google_storage_control_project_intelligence_config":                         storagecontrol.ResourceStorageControlProjectIntelligenceConfig(),
 	"google_storage_insights_report_config":                                      storageinsights.ResourceStorageInsightsReportConfig(),
 	"google_storage_transfer_agent_pool":                                         storagetransfer.ResourceStorageTransferAgentPool(),
