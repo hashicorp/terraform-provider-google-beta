@@ -11241,6 +11241,7 @@ resource "google_container_cluster" "primary" {
 }
 `, name, networkName, subnetworkName)
 }
+
 func testAccContainerCluster_withMonitoringConfigScopeAll(name, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
