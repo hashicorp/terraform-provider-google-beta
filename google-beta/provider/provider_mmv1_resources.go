@@ -333,6 +333,7 @@ var handwrittenDatasources = map[string]*schema.Resource{
 	"google_organization":                                        resourcemanager.DataSourceGoogleOrganization(),
 	"google_organizations":                                       resourcemanager.DataSourceGoogleOrganizations(),
 	"google_organization_iam_custom_role":                        resourcemanager.DataSourceGoogleOrganizationIamCustomRole(),
+	"google_organization_iam_custom_roles":                       resourcemanager.DataSourceGoogleOrganizationIamCustomRoles(),
 	"google_parameter_manager_parameter":                         parametermanager.DataSourceParameterManagerParameter(),
 	"google_parameter_manager_parameters":                        parametermanager.DataSourceParameterManagerParameters(),
 	"google_parameter_manager_parameter_version":                 parametermanager.DataSourceParameterManagerParameterVersion(),
