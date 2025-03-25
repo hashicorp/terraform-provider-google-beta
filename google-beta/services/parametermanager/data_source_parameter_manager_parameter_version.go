@@ -53,6 +53,10 @@ func DataSourceParameterManagerParameterVersion() *schema.Resource {
 				Type:     schema.TypeBool,
 				Computed: true,
 			},
+			"kms_key_version": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
 		},
 	}
 }
@@ -145,6 +149,12 @@ func dataSourceParameterManagerParameterVersionRead(d *schema.ResourceData, meta
 
 	if err := d.Set("create_time", parameterVersion["createTime"].(string)); err != nil {
 		return fmt.Errorf("error setting create_time: %s", err)
+	}
+
+	if parameterVersion["kmsKeyVersion"] != nil {
+		if err := d.Set("kms_key_version", parameterVersion["kmsKeyVersion"].(string)); err != nil {
+			return fmt.Errorf("error setting kms_key_version: %s", err)
+		}
 	}
 
 	data := parameterVersion["payload"].(map[string]interface{})

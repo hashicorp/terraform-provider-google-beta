@@ -141,6 +141,53 @@ resource "google_parameter_manager_parameter" "parameter-with-labels" {
 `, context)
 }
 
+func TestAccParameterManagerParameter_parameterWithKmsKeyExample(t *testing.T) {
+	t.Parallel()
+	acctest.BootstrapIamMembers(t, []acctest.IamMember{
+		{
+			Member: "serviceAccount:service-{project_number}@gcp-sa-pm.iam.gserviceaccount.com",
+			Role:   "roles/cloudkms.cryptoKeyEncrypterDecrypter",
+		},
+	})
+
+	context := map[string]interface{}{
+		"kms_key":       acctest.BootstrapKMSKey(t).CryptoKey.Name,
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckParameterManagerParameterDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccParameterManagerParameter_parameterWithKmsKeyExample(context),
+			},
+			{
+				ResourceName:            "google_parameter_manager_parameter.parameter-with-kms-key",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"labels", "parameter_id", "terraform_labels"},
+			},
+		},
+	})
+}
+
+func testAccParameterManagerParameter_parameterWithKmsKeyExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+data "google_project" "project" {
+  provider = google-beta
+}
+
+resource "google_parameter_manager_parameter" "parameter-with-kms-key" {
+  provider  = google-beta
+  parameter_id = "parameter%{random_suffix}"
+
+  kms_key = "%{kms_key}"
+}
+`, context)
+}
+
 func testAccCheckParameterManagerParameterDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		for name, rs := range s.RootModule().Resources {
