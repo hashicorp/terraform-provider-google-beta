@@ -488,6 +488,11 @@ If not specified, defaults to the same value as container.ports[0].containerPort
 							ValidateFunc: verify.ValidateEnum([]string{"EXECUTION_ENVIRONMENT_GEN1", "EXECUTION_ENVIRONMENT_GEN2", ""}),
 							Description:  `The sandbox environment to host this Revision. Possible values: ["EXECUTION_ENVIRONMENT_GEN1", "EXECUTION_ENVIRONMENT_GEN2"]`,
 						},
+						"gpu_zonal_redundancy_disabled": {
+							Type:        schema.TypeBool,
+							Optional:    true,
+							Description: `True if GPU zonal redundancy is disabled on this revision.`,
+						},
 						"labels": {
 							Type:     schema.TypeMap,
 							Optional: true,
@@ -2050,6 +2055,8 @@ func flattenCloudRunV2ServiceTemplate(v interface{}, d *schema.ResourceData, con
 		flattenCloudRunV2ServiceTemplateServiceMesh(original["serviceMesh"], d, config)
 	transformed["node_selector"] =
 		flattenCloudRunV2ServiceTemplateNodeSelector(original["nodeSelector"], d, config)
+	transformed["gpu_zonal_redundancy_disabled"] =
+		flattenCloudRunV2ServiceTemplateGpuZonalRedundancyDisabled(original["gpuZonalRedundancyDisabled"], d, config)
 	return []interface{}{transformed}
 }
 func flattenCloudRunV2ServiceTemplateRevision(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -3127,6 +3134,10 @@ func flattenCloudRunV2ServiceTemplateNodeSelectorAccelerator(v interface{}, d *s
 	return v
 }
 
+func flattenCloudRunV2ServiceTemplateGpuZonalRedundancyDisabled(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenCloudRunV2ServiceTraffic(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
@@ -3676,6 +3687,13 @@ func expandCloudRunV2ServiceTemplate(v interface{}, d tpgresource.TerraformResou
 		return nil, err
 	} else if val := reflect.ValueOf(transformedNodeSelector); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["nodeSelector"] = transformedNodeSelector
+	}
+
+	transformedGpuZonalRedundancyDisabled, err := expandCloudRunV2ServiceTemplateGpuZonalRedundancyDisabled(original["gpu_zonal_redundancy_disabled"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedGpuZonalRedundancyDisabled); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["gpuZonalRedundancyDisabled"] = transformedGpuZonalRedundancyDisabled
 	}
 
 	return transformed, nil
@@ -5043,6 +5061,10 @@ func expandCloudRunV2ServiceTemplateNodeSelector(v interface{}, d tpgresource.Te
 }
 
 func expandCloudRunV2ServiceTemplateNodeSelectorAccelerator(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandCloudRunV2ServiceTemplateGpuZonalRedundancyDisabled(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

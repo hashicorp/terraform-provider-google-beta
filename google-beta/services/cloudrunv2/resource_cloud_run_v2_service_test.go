@@ -1344,7 +1344,6 @@ resource "google_cloud_run_v2_service" "default" {
   description = "description creating"
   location = "us-central1"
   deletion_protection = false
-  launch_stage = "BETA"
   annotations = {
     generated-by = "magic-modules"
   }
@@ -1369,6 +1368,7 @@ resource "google_cloud_run_v2_service" "default" {
     node_selector {
       accelerator = "nvidia-l4"
     }
+    gpu_zonal_redundancy_disabled = true
     scaling {
       max_instance_count = 1
     }
