@@ -1484,7 +1484,7 @@ func TestAccCloudRunService_resourcesRequirements(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudRunV2Service_cloudrunServiceWithoutGpu(name, project),
@@ -1520,7 +1520,6 @@ func TestAccCloudRunService_resourcesRequirements(t *testing.T) {
 func testAccCloudRunV2Service_cloudrunServiceWithoutGpu(name, project string) string {
 	return fmt.Sprintf(`
 resource "google_cloud_run_service" "default" {
-  provider = google-beta
   name     = "%s"
   location = "us-central1"
 
@@ -1554,15 +1553,11 @@ resource "google_cloud_run_service" "default" {
 func testAccCloudRunV2Service_cloudrunServiceWithGpu(name, project string) string {
 	return fmt.Sprintf(`
 resource "google_cloud_run_service" "default" {
-  provider = google-beta
   name     = "%s"
   location = "us-central1"
 
   metadata {
     namespace = "%s"
-    annotations = {
-      "run.googleapis.com/launch-stage" = "BETA"
-    }
   }
 
   template {
@@ -1570,6 +1565,7 @@ resource "google_cloud_run_service" "default" {
       annotations = {
         "autoscaling.knative.dev/maxScale": "1"
         "run.googleapis.com/cpu-throttling": "false"
+        "run.googleapis.com/gpu-zonal-redundancy-disabled" = "true"
       }
     }
     spec {

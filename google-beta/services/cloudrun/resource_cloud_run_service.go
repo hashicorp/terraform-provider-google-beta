@@ -869,10 +869,14 @@ keys to configure features on a Revision template:
   for connections to the Revision.
 - 'run.googleapis.com/startup-cpu-boost' sets whether to allocate extra CPU to containers on startup.
   See https://cloud.google.com/sdk/gcloud/reference/run/deploy#--[no-]cpu-boost.
+- 'run.googleapis.com/network-interfaces' sets [Direct VPC egress](https://cloud.google.com/run/docs/configuring/vpc-direct-vpc#yaml)
+  for the Revision.
 - 'run.googleapis.com/vpc-access-connector' sets a [VPC connector](https://cloud.google.com/run/docs/configuring/connecting-vpc#terraform_1)
   for the Revision.
 - 'run.googleapis.com/vpc-access-egress' sets the outbound traffic to send through the VPC connector for this resource.
-  See https://cloud.google.com/sdk/gcloud/reference/run/deploy#--vpc-egress.`,
+  See https://cloud.google.com/sdk/gcloud/reference/run/deploy#--vpc-egress.
+- 'run.googleapis.com/gpu-zonal-redundancy-disabled' sets
+  [GPU zonal redundancy](https://cloud.google.com/run/docs/configuring/services/gpu-zonal-redundancy) for the Revision.`,
 										Elem: &schema.Schema{Type: schema.TypeString},
 									},
 									"labels": {
