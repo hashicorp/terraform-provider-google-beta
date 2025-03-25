@@ -1,5 +1,44 @@
 ## 6.27.0 (Unreleased)
 
+FEATURES:
+* **New Data Source:** `google_compute_images` ([#9556](https://github.com/hashicorp/terraform-provider-google-beta/pull/9556))
+* **New Data Source:** `google_organization_iam_custom_role` ([#9577](https://github.com/hashicorp/terraform-provider-google-beta/pull/9577))
+* **New Resource:** `google_lustre_instance` ([#9601](https://github.com/hashicorp/terraform-provider-google-beta/pull/9601))
+* **New Resource:** `google_os_config_v2_policy_orchestrator` ([#9579](https://github.com/hashicorp/terraform-provider-google-beta/pull/9579))
+* **New Resource:** `google_storage_control_project_intelligence_config` ([#9570](https://github.com/hashicorp/terraform-provider-google-beta/pull/9570))
+
+IMPROVEMENTS:
+* bigquery: added `secondary_location` and `replication_status` fields to support managed disaster recovery feature in `google_bigquery_reservation` ([#9575](https://github.com/hashicorp/terraform-provider-google-beta/pull/9575))
+* clouddeploy: added `dns_endpoint` field to to `google_clouddeploy_target` resource ([#9553](https://github.com/hashicorp/terraform-provider-google-beta/pull/9553))
+* compute: added `group_placement_policy.0.gpu_topology` field to  `google_compute_resource_policy` resource ([#9555](https://github.com/hashicorp/terraform-provider-google-beta/pull/9555))
+* compute: added `shielded_instance_initial_state` structure to `google_compute_image` resource ([#9583](https://github.com/hashicorp/terraform-provider-google-beta/pull/9583))
+* compute: added `LINK_TYPE_ETHERNET_400G_LR4` enum value to `link_type` field in `google_compute_interconnect` resource ([#9571](https://github.com/hashicorp/terraform-provider-google-beta/pull/9571))
+* compute: added `architecture` and `guest_os_features` to `google_compute_instance` ([#9558](https://github.com/hashicorp/terraform-provider-google-beta/pull/9558))
+* compute: added `instance_lifecycle_policy.on_failed_health_check` field in resources `google_compute_instance_group_manager` and `google_compute_region_instance_group_manager` ([#9598](https://github.com/hashicorp/terraform-provider-google-beta/pull/9598))
+* compute: added `workload_policy.type`, `workload_policy.max_topology_distance` and `workload_policy.accelerator_topology` fields to `google_compute_resource_policy` resource ([#9599](https://github.com/hashicorp/terraform-provider-google-beta/pull/9599))
+* container: added `ip_endpoints_config` field to `google_container_cluster` resource ([#9597](https://github.com/hashicorp/terraform-provider-google-beta/pull/9597))
+* container: added `node_config.windows_node_config` field to `google_container_node_pool` resource. ([#9559](https://github.com/hashicorp/terraform-provider-google-beta/pull/9559))
+* container: added `pod_autoscaling` field to `google_container_cluster` resource ([#9574](https://github.com/hashicorp/terraform-provider-google-beta/pull/9574))
+* memorystore: added the `maintenance_policy` field to the `google_memorystore_instance` resource ([#9595](https://github.com/hashicorp/terraform-provider-google-beta/pull/9595))
+* memorystore: enabled update support for `node_type` field in `google_memorystore_instance` resource ([#9568](https://github.com/hashicorp/terraform-provider-google-beta/pull/9568))
+* networkmanagement: added `destination.forwarding_rule`, `destination.gke_master_cluster`, `destination.fqdn`, `destination.cloud_sql_instance`, `destination.redis_instance`, `destination.redis_cluster`,  fields to `google_network_management_connectivity_test` resource ([#9591](https://github.com/hashicorp/terraform-provider-google-beta/pull/9591))
+* networkmanagement: added `round_trip`, `bypass_firewall_checks` fields to `google_network_management_connectivity_test` resource ([#9591](https://github.com/hashicorp/terraform-provider-google-beta/pull/9591))
+* networkmanagement: added `source.gke_master_cluster`,  `source.cloud_sql_instance`, `source.cloud_function`, `source.app_engine_version`, `source.cloud_run_revision` fields to `google_network_management_connectivity_test` resource ([#9591](https://github.com/hashicorp/terraform-provider-google-beta/pull/9591))
+* networksecurity: added `connected_deployment_group` and `associations` fields to `google_network_security_intercept_endpoint_group` resource ([#9586](https://github.com/hashicorp/terraform-provider-google-beta/pull/9586))
+* networksecurity: added `locations` field to `google_network_security_intercept_deployment_group` resource ([#9578](https://github.com/hashicorp/terraform-provider-google-beta/pull/9578))
+* networksecurity: added `locations` field to `google_network_security_intercept_endpoint_group_association` resource ([#9600](https://github.com/hashicorp/terraform-provider-google-beta/pull/9600))
+* redis: added update support for `google_redis_cluster` `node_type` ([#9554](https://github.com/hashicorp/terraform-provider-google-beta/pull/9554))
+* storage: added metadata_options in `google_storage_transfer_job` ([#9567](https://github.com/hashicorp/terraform-provider-google-beta/pull/9567))
+
+BUG FIXES:
+* bigqueryanalyticshub: fixed a bug in `google_bigquery_analytics_hub_listing_subscription` where a subscription using a different project than the dataset would not work ([#9596](https://github.com/hashicorp/terraform-provider-google-beta/pull/9596))
+* cloudrun: fixed the perma-diffs for unchanged `template.spec.containers.env` in `google_cloud_run_service` resource ([#9572](https://github.com/hashicorp/terraform-provider-google-beta/pull/9572))
+* cloudrunv2: fixed the perma-diffs for unchanged `template.containers.env` in `google_cloud_run_v2_service` resource ([#9572](https://github.com/hashicorp/terraform-provider-google-beta/pull/9572))
+* compute: fixed the issue that user can't use regional disk in `google_compute_instance_template` ([#9569](https://github.com/hashicorp/terraform-provider-google-beta/pull/9569))
+* dataflow: fixed a permadiff on `template_gcs_path` in `google_dataflow_job` resource ([#9564](https://github.com/hashicorp/terraform-provider-google-beta/pull/9564))
+* storage: lowered the minimum required items for `custom_placement_config.data_locations` from 2 to 1, and removed the Terraform-enforced maximum item limit for the field in `google_storage_bucket` ([#9562](https://github.com/hashicorp/terraform-provider-google-beta/pull/9562))
+
+
 ## 6.26.0 (Mar 18, 2025)
 
 FEATURES:
