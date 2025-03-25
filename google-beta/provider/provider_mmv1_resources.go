@@ -553,9 +553,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 632
+// Generated resources: 633
 // Generated IAM resources: 309
-// Total generated resources: 941
+// Total generated resources: 942
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -1060,6 +1060,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_firebase_app_check_recaptcha_v3_config":                              firebaseappcheck.ResourceFirebaseAppCheckRecaptchaV3Config(),
 	"google_firebase_app_check_service_config":                                   firebaseappcheck.ResourceFirebaseAppCheckServiceConfig(),
 	"google_firebase_app_hosting_backend":                                        firebaseapphosting.ResourceFirebaseAppHostingBackend(),
+	"google_firebase_app_hosting_build":                                          firebaseapphosting.ResourceFirebaseAppHostingBuild(),
 	"google_firebase_database_instance":                                          firebasedatabase.ResourceFirebaseDatabaseInstance(),
 	"google_firebase_data_connect_service":                                       firebasedataconnect.ResourceFirebaseDataConnectService(),
 	"google_firebase_extensions_instance":                                        firebaseextensions.ResourceFirebaseExtensionsInstance(),
