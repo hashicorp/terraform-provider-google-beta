@@ -72,6 +72,12 @@ func ResourceParameterManagerParameter() *schema.Resource {
 				Description:  `The format type of the parameter resource. Default value: "UNFORMATTED" Possible values: ["UNFORMATTED", "YAML", "JSON"]`,
 				Default:      "UNFORMATTED",
 			},
+			"kms_key": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Description: `The resource name of the Cloud KMS CryptoKey used to encrypt parameter version payload. Format
+'projects/{{project}}/locations/global/keyRings/{{key_ring}}/cryptoKeys/{{crypto_key}}'`,
+			},
 			"labels": {
 				Type:     schema.TypeMap,
 				Optional: true,
@@ -171,6 +177,12 @@ func resourceParameterManagerParameterCreate(d *schema.ResourceData, meta interf
 		return err
 	} else if v, ok := d.GetOkExists("format"); !tpgresource.IsEmptyValue(reflect.ValueOf(formatProp)) && (ok || !reflect.DeepEqual(v, formatProp)) {
 		obj["format"] = formatProp
+	}
+	kmsKeyProp, err := expandParameterManagerParameterKmsKey(d.Get("kms_key"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("kms_key"); !tpgresource.IsEmptyValue(reflect.ValueOf(kmsKeyProp)) && (ok || !reflect.DeepEqual(v, kmsKeyProp)) {
+		obj["kmsKey"] = kmsKeyProp
 	}
 	labelsProp, err := expandParameterManagerParameterEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
@@ -288,6 +300,9 @@ func resourceParameterManagerParameterRead(d *schema.ResourceData, meta interfac
 	if err := d.Set("format", flattenParameterManagerParameterFormat(res["format"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Parameter: %s", err)
 	}
+	if err := d.Set("kms_key", flattenParameterManagerParameterKmsKey(res["kmsKey"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Parameter: %s", err)
+	}
 	if err := d.Set("terraform_labels", flattenParameterManagerParameterTerraformLabels(res["labels"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Parameter: %s", err)
 	}
@@ -314,6 +329,12 @@ func resourceParameterManagerParameterUpdate(d *schema.ResourceData, meta interf
 	billingProject = project
 
 	obj := make(map[string]interface{})
+	kmsKeyProp, err := expandParameterManagerParameterKmsKey(d.Get("kms_key"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("kms_key"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, kmsKeyProp)) {
+		obj["kmsKey"] = kmsKeyProp
+	}
 	labelsProp, err := expandParameterManagerParameterEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
@@ -329,6 +350,10 @@ func resourceParameterManagerParameterUpdate(d *schema.ResourceData, meta interf
 	log.Printf("[DEBUG] Updating Parameter %q: %#v", d.Id(), obj)
 	headers := make(http.Header)
 	updateMask := []string{}
+
+	if d.HasChange("kms_key") {
+		updateMask = append(updateMask, "kmsKey")
+	}
 
 	if d.HasChange("effective_labels") {
 		updateMask = append(updateMask, "labels")
@@ -491,6 +516,10 @@ func flattenParameterManagerParameterFormat(v interface{}, d *schema.ResourceDat
 	return v
 }
 
+func flattenParameterManagerParameterKmsKey(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenParameterManagerParameterTerraformLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
@@ -511,6 +540,10 @@ func flattenParameterManagerParameterEffectiveLabels(v interface{}, d *schema.Re
 }
 
 func expandParameterManagerParameterFormat(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandParameterManagerParameterKmsKey(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

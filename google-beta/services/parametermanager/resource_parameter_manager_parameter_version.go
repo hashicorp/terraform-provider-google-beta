@@ -86,6 +86,12 @@ func ResourceParameterManagerParameterVersion() *schema.Resource {
 				Computed:    true,
 				Description: `The time at which the Parameter Version was created.`,
 			},
+			"kms_key_version": {
+				Type:     schema.TypeString,
+				Computed: true,
+				Description: `The resource name of the Cloud KMS CryptoKeyVersion used to decrypt parameter version payload. Format
+'projects/{{project}}/locations/global/keyRings/{{key_ring}}/cryptoKeys/{{crypto_key}}/cryptoKeyVersions/{{crypto_key_version}}'`,
+			},
 			"name": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -224,6 +230,9 @@ func resourceParameterManagerParameterVersionRead(d *schema.ResourceData, meta i
 				}
 			}
 		}
+	}
+	if err := d.Set("kms_key_version", flattenParameterManagerParameterVersionKmsKeyVersion(res["kmsKeyVersion"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ParameterVersion: %s", err)
 	}
 
 	return nil
@@ -396,6 +405,10 @@ func flattenParameterManagerParameterVersionPayload(v interface{}, d *schema.Res
 	}
 	transformed["parameter_data"] = string(data)
 	return []interface{}{transformed}
+}
+
+func flattenParameterManagerParameterVersionKmsKeyVersion(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
 }
 
 func expandParameterManagerParameterVersionDisabled(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {

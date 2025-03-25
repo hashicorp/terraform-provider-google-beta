@@ -116,6 +116,60 @@ resource "google_parameter_manager_parameter_version" "parameter-version-with-js
 `, context)
 }
 
+func TestAccParameterManagerParameterVersion_parameterVersionWithKmsKeyExample(t *testing.T) {
+	t.Parallel()
+	acctest.BootstrapIamMembers(t, []acctest.IamMember{
+		{
+			Member: "serviceAccount:service-{project_number}@gcp-sa-pm.iam.gserviceaccount.com",
+			Role:   "roles/cloudkms.cryptoKeyEncrypterDecrypter",
+		},
+	})
+
+	context := map[string]interface{}{
+		"kms_key":       acctest.BootstrapKMSKey(t).CryptoKey.Name,
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckParameterManagerParameterVersionDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccParameterManagerParameterVersion_parameterVersionWithKmsKeyExample(context),
+			},
+			{
+				ResourceName:            "google_parameter_manager_parameter_version.parameter-version-with-kms-key",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"parameter", "parameter_version_id"},
+			},
+		},
+	})
+}
+
+func testAccParameterManagerParameterVersion_parameterVersionWithKmsKeyExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+data "google_project" "project" {
+  provider = google-beta
+}
+
+resource "google_parameter_manager_parameter" "parameter-basic" {
+  provider  = google-beta
+  parameter_id = "parameter%{random_suffix}"
+
+  kms_key = "%{kms_key}"
+}
+
+resource "google_parameter_manager_parameter_version" "parameter-version-with-kms-key" {
+  provider = google-beta
+  parameter = google_parameter_manager_parameter.parameter-basic.id
+  parameter_version_id = "tf_test_parameter_version%{random_suffix}"
+  parameter_data = "app-parameter-version-data"
+}
+`, context)
+}
+
 func TestAccParameterManagerParameterVersion_parameterVersionWithYamlFormatExample(t *testing.T) {
 	t.Parallel()
 
