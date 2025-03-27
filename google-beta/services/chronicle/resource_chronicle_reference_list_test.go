@@ -21,7 +21,7 @@ func TestAccChronicleReferenceList_chronicleReferencelistBasicExample_update(t *
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccChronicleReferenceList_chronicleReferencelistBasicExample_basic(context),
@@ -48,7 +48,6 @@ func TestAccChronicleReferenceList_chronicleReferencelistBasicExample_update(t *
 func testAccChronicleReferenceList_chronicleReferencelistBasicExample_basic(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_chronicle_reference_list" "example" {
- provider = "google-beta"
  location = "us"
  instance = "%{chronicle_id}"
  reference_list_id = "tf_test_reference_list_id%{random_suffix}"
@@ -64,7 +63,6 @@ resource "google_chronicle_reference_list" "example" {
 func testAccChronicleReferenceList_chronicleReferencelistBasicExample_update(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_chronicle_reference_list" "example" {
- provider = "google-beta"
  location = "us"
  instance = "%{chronicle_id}"
  reference_list_id = "tf_test_reference_list_id%{random_suffix}"
