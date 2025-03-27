@@ -36,7 +36,7 @@ func TestAccChronicleRuleDeployment_chronicleRuledeploymentBasicExample(t *testi
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccChronicleRuleDeployment_chronicleRuledeploymentBasicExample(context),
@@ -54,7 +54,6 @@ func TestAccChronicleRuleDeployment_chronicleRuledeploymentBasicExample(t *testi
 func testAccChronicleRuleDeployment_chronicleRuledeploymentBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_chronicle_rule" "my-rule" {
- provider = "google-beta"
  location = "us"
  instance = "%{chronicle_id}"
  text = <<-EOT
@@ -63,7 +62,6 @@ resource "google_chronicle_rule" "my-rule" {
 }
 
 resource "google_chronicle_rule_deployment" "example" {
- provider = "google-beta"
  location = "us"
  instance = "%{chronicle_id}"
  rule = element(split("/", resource.google_chronicle_rule.my-rule.name), length(split("/", resource.google_chronicle_rule.my-rule.name)) - 1)
@@ -85,7 +83,7 @@ func TestAccChronicleRuleDeployment_chronicleRuledeploymentDisabledExample(t *te
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccChronicleRuleDeployment_chronicleRuledeploymentDisabledExample(context),
@@ -103,7 +101,6 @@ func TestAccChronicleRuleDeployment_chronicleRuledeploymentDisabledExample(t *te
 func testAccChronicleRuleDeployment_chronicleRuledeploymentDisabledExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_chronicle_rule" "my-rule" {
- provider = "google-beta"
  location = "us"
  instance = "%{chronicle_id}"
  text = <<-EOT
@@ -112,7 +109,6 @@ resource "google_chronicle_rule" "my-rule" {
 }
 
 resource "google_chronicle_rule_deployment" "example" {
- provider = "google-beta"
  location = "us"
  instance = "%{chronicle_id}"
  rule = element(split("/", resource.google_chronicle_rule.my-rule.name), length(split("/", resource.google_chronicle_rule.my-rule.name)) - 1)
@@ -132,7 +128,7 @@ func TestAccChronicleRuleDeployment_chronicleRuledeploymentRunFrequencyMissingEx
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccChronicleRuleDeployment_chronicleRuledeploymentRunFrequencyMissingExample(context),
@@ -150,7 +146,6 @@ func TestAccChronicleRuleDeployment_chronicleRuledeploymentRunFrequencyMissingEx
 func testAccChronicleRuleDeployment_chronicleRuledeploymentRunFrequencyMissingExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_chronicle_rule" "my-rule" {
- provider = "google-beta"
  location = "us"
  instance = "%{chronicle_id}"
  text = <<-EOT
@@ -159,7 +154,6 @@ resource "google_chronicle_rule" "my-rule" {
 }
 
 resource "google_chronicle_rule_deployment" "example" {
- provider = "google-beta"
  location = "us"
  instance = "%{chronicle_id}"
  rule = element(split("/", resource.google_chronicle_rule.my-rule.name), length(split("/", resource.google_chronicle_rule.my-rule.name)) - 1)
