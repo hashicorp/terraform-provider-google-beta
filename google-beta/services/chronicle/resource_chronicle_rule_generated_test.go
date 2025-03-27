@@ -41,7 +41,7 @@ func TestAccChronicleRule_chronicleRuleBasicExample(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckChronicleRuleDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -54,7 +54,6 @@ func TestAccChronicleRule_chronicleRuleBasicExample(t *testing.T) {
 func testAccChronicleRule_chronicleRuleBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_chronicle_rule" "example" {
- provider = "google-beta"
  location = "us"
  instance = "%{chronicle_id}"
  deletion_policy = "DEFAULT"
@@ -75,7 +74,7 @@ func TestAccChronicleRule_chronicleRuleWithForceDeletionExample(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckChronicleRuleDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -88,7 +87,6 @@ func TestAccChronicleRule_chronicleRuleWithForceDeletionExample(t *testing.T) {
 func testAccChronicleRule_chronicleRuleWithForceDeletionExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_chronicle_rule" "example" {
- provider = "google-beta"
  location = "us"
  instance = "%{chronicle_id}"
  deletion_policy = "FORCE"
@@ -109,7 +107,7 @@ func TestAccChronicleRule_chronicleRuleWithDataAccessScopeExample(t *testing.T) 
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckChronicleRuleDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -122,7 +120,6 @@ func TestAccChronicleRule_chronicleRuleWithDataAccessScopeExample(t *testing.T) 
 func testAccChronicleRule_chronicleRuleWithDataAccessScopeExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_chronicle_data_access_scope" "data_access_scope_test" {
- provider = "google-beta"
  location = "us"
  instance = "%{chronicle_id}"
  data_access_scope_id = "tf-test-scope-name%{random_suffix}"
@@ -133,7 +130,6 @@ resource "google_chronicle_data_access_scope" "data_access_scope_test" {
 }
 
 resource "google_chronicle_rule" "example" {
- provider = "google-beta"
  location = "us"
  instance = "%{chronicle_id}"
  scope = resource.google_chronicle_data_access_scope.data_access_scope_test.name
