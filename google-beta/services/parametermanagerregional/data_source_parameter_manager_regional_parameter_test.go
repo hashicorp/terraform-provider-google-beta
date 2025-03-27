@@ -18,7 +18,7 @@ func TestAccDataSourceParameterManagerRegionalRegionalParameter_basic(t *testing
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckParameterManagerRegionalRegionalParameterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -37,7 +37,6 @@ func TestAccDataSourceParameterManagerRegionalRegionalParameter_basic(t *testing
 func testAccDataSourceParameterManagerRegionalRegionalParameter_basic(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_parameter_manager_regional_parameter" "regional-parameter" {
-  provider = google-beta
   parameter_id = "tf_test_parameter%{random_suffix}"
   location = "us-central1"
   format = "YAML"
@@ -52,7 +51,6 @@ resource "google_parameter_manager_regional_parameter" "regional-parameter" {
 }
 
 data "google_parameter_manager_regional_parameter" "regional-parameter-datasource" {
-  provider = google-beta
   parameter_id = google_parameter_manager_regional_parameter.regional-parameter.parameter_id
   location = google_parameter_manager_regional_parameter.regional-parameter.location
 }

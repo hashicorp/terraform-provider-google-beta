@@ -39,7 +39,7 @@ func TestAccParameterManagerParameterVersion_parameterVersionBasicExample(t *tes
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckParameterManagerParameterVersionDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -58,12 +58,10 @@ func TestAccParameterManagerParameterVersion_parameterVersionBasicExample(t *tes
 func testAccParameterManagerParameterVersion_parameterVersionBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_parameter_manager_parameter" "parameter-basic" {
-  provider = google-beta
   parameter_id = "parameter%{random_suffix}"
 }
 
 resource "google_parameter_manager_parameter_version" "parameter-version-basic" {
-  provider = google-beta
   parameter = google_parameter_manager_parameter.parameter-basic.id
   parameter_version_id = "tf_test_parameter_version%{random_suffix}"
   parameter_data = "app-parameter-version-data"
@@ -80,7 +78,7 @@ func TestAccParameterManagerParameterVersion_parameterVersionWithJsonFormatExamp
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckParameterManagerParameterVersionDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -99,13 +97,11 @@ func TestAccParameterManagerParameterVersion_parameterVersionWithJsonFormatExamp
 func testAccParameterManagerParameterVersion_parameterVersionWithJsonFormatExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_parameter_manager_parameter" "parameter-basic" {
-  provider = google-beta
   parameter_id = "parameter%{random_suffix}"
   format = "JSON"
 }
 
 resource "google_parameter_manager_parameter_version" "parameter-version-with-json-format" {
-  provider = google-beta
   parameter = google_parameter_manager_parameter.parameter-basic.id
   parameter_version_id = "tf_test_parameter_version%{random_suffix}"
   parameter_data = jsonencode({
@@ -132,7 +128,7 @@ func TestAccParameterManagerParameterVersion_parameterVersionWithKmsKeyExample(t
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckParameterManagerParameterVersionDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -150,19 +146,14 @@ func TestAccParameterManagerParameterVersion_parameterVersionWithKmsKeyExample(t
 
 func testAccParameterManagerParameterVersion_parameterVersionWithKmsKeyExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
-data "google_project" "project" {
-  provider = google-beta
-}
+data "google_project" "project" {}
 
 resource "google_parameter_manager_parameter" "parameter-basic" {
-  provider  = google-beta
   parameter_id = "parameter%{random_suffix}"
-
   kms_key = "%{kms_key}"
 }
 
 resource "google_parameter_manager_parameter_version" "parameter-version-with-kms-key" {
-  provider = google-beta
   parameter = google_parameter_manager_parameter.parameter-basic.id
   parameter_version_id = "tf_test_parameter_version%{random_suffix}"
   parameter_data = "app-parameter-version-data"
@@ -179,7 +170,7 @@ func TestAccParameterManagerParameterVersion_parameterVersionWithYamlFormatExamp
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckParameterManagerParameterVersionDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -198,13 +189,11 @@ func TestAccParameterManagerParameterVersion_parameterVersionWithYamlFormatExamp
 func testAccParameterManagerParameterVersion_parameterVersionWithYamlFormatExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_parameter_manager_parameter" "parameter-basic" {
-  provider = google-beta
   parameter_id = "parameter%{random_suffix}"
   format = "YAML"
 }
 
 resource "google_parameter_manager_parameter_version" "parameter-version-with-yaml-format" {
-  provider = google-beta
   parameter = google_parameter_manager_parameter.parameter-basic.id
   parameter_version_id = "tf_test_parameter_version%{random_suffix}"
   parameter_data = yamlencode({

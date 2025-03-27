@@ -39,7 +39,7 @@ func TestAccParameterManagerRegionalRegionalParameter_regionalParameterBasicExam
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckParameterManagerRegionalRegionalParameterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -58,7 +58,6 @@ func TestAccParameterManagerRegionalRegionalParameter_regionalParameterBasicExam
 func testAccParameterManagerRegionalRegionalParameter_regionalParameterBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_parameter_manager_regional_parameter" "regional-parameter-basic" {
-  provider = google-beta
   parameter_id = "tf_test_regional_parameter%{random_suffix}"
   location = "us-central1"
 }
@@ -74,7 +73,7 @@ func TestAccParameterManagerRegionalRegionalParameter_regionalParameterWithForma
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckParameterManagerRegionalRegionalParameterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -93,7 +92,6 @@ func TestAccParameterManagerRegionalRegionalParameter_regionalParameterWithForma
 func testAccParameterManagerRegionalRegionalParameter_regionalParameterWithFormatExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_parameter_manager_regional_parameter" "regional-parameter-with-format" {
-  provider = google-beta
   parameter_id = "tf_test_regional_parameter%{random_suffix}"
   location = "us-central1"
   format = "JSON"
@@ -110,7 +108,7 @@ func TestAccParameterManagerRegionalRegionalParameter_regionalParameterWithLabel
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckParameterManagerRegionalRegionalParameterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -129,7 +127,6 @@ func TestAccParameterManagerRegionalRegionalParameter_regionalParameterWithLabel
 func testAccParameterManagerRegionalRegionalParameter_regionalParameterWithLabelsExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_parameter_manager_regional_parameter" "regional-parameter-with-labels" {
-  provider = google-beta
   parameter_id = "tf_test_regional_parameter%{random_suffix}"
   location = "us-central1"
 

@@ -39,7 +39,7 @@ func TestAccParameterManagerParameter_parameterConfigBasicExample(t *testing.T) 
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckParameterManagerParameterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -58,7 +58,6 @@ func TestAccParameterManagerParameter_parameterConfigBasicExample(t *testing.T) 
 func testAccParameterManagerParameter_parameterConfigBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_parameter_manager_parameter" "parameter-basic" {
-  provider = google-beta
   parameter_id = "parameter%{random_suffix}"
 }
 `, context)
@@ -73,7 +72,7 @@ func TestAccParameterManagerParameter_parameterWithFormatExample(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckParameterManagerParameterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -92,7 +91,6 @@ func TestAccParameterManagerParameter_parameterWithFormatExample(t *testing.T) {
 func testAccParameterManagerParameter_parameterWithFormatExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_parameter_manager_parameter" "parameter-with-format" {
-  provider = google-beta
   parameter_id = "parameter%{random_suffix}"
   format = "JSON"
 }
@@ -108,7 +106,7 @@ func TestAccParameterManagerParameter_parameterWithLabelsExample(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckParameterManagerParameterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -127,7 +125,6 @@ func TestAccParameterManagerParameter_parameterWithLabelsExample(t *testing.T) {
 func testAccParameterManagerParameter_parameterWithLabelsExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_parameter_manager_parameter" "parameter-with-labels" {
-  provider = google-beta
   parameter_id = "parameter%{random_suffix}"
 
   labels = {
@@ -157,7 +154,7 @@ func TestAccParameterManagerParameter_parameterWithKmsKeyExample(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckParameterManagerParameterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -175,14 +172,10 @@ func TestAccParameterManagerParameter_parameterWithKmsKeyExample(t *testing.T) {
 
 func testAccParameterManagerParameter_parameterWithKmsKeyExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
-data "google_project" "project" {
-  provider = google-beta
-}
+data "google_project" "project" {}
 
 resource "google_parameter_manager_parameter" "parameter-with-kms-key" {
-  provider  = google-beta
   parameter_id = "parameter%{random_suffix}"
-
   kms_key = "%{kms_key}"
 }
 `, context)

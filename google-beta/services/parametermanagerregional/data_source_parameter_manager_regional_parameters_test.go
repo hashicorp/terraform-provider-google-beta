@@ -22,7 +22,7 @@ func TestAccDataSourceParameterManagerRegionalRegionalParameters_basic(t *testin
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckParameterManagerRegionalRegionalParameterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -44,12 +44,11 @@ func TestAccDataSourceParameterManagerRegionalRegionalParameters_basic(t *testin
 
 func testAccDataSourceParameterManagerRegionalRegionalParameters_basic(context map[string]interface{}) string {
 	return acctest.Nprintf(`
-provider "google-beta" {
+provider "google" {
   add_terraform_attribution_label = false
 }
 
 resource "google_parameter_manager_regional_parameter" "regional-parameters" {
-  provider = google-beta
   parameter_id = "tf_test_regional_parameter%{random_suffix}"
   format = "YAML"
   location = "us-central1"
@@ -64,7 +63,6 @@ resource "google_parameter_manager_regional_parameter" "regional-parameters" {
 }
 
 data "google_parameter_manager_regional_parameters" "regional-parameters-datasource" {
-  provider = google-beta
   depends_on = [
     google_parameter_manager_regional_parameter.regional-parameters
   ]
@@ -82,7 +80,7 @@ func TestAccDataSourceParameterManagerRegionalRegionalParameters_filter(t *testi
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckParameterManagerRegionalRegionalParameterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -105,12 +103,11 @@ func TestAccDataSourceParameterManagerRegionalRegionalParameters_filter(t *testi
 
 func testAccDataSourceParameterManagerRegionalRegionalParameters_filter(context map[string]interface{}) string {
 	return acctest.Nprintf(`
-provider "google-beta" {
+provider "google" {
   add_terraform_attribution_label = false
 }
 
 resource "google_parameter_manager_regional_parameter" "regional-parameters-1" {
-  provider = google-beta
   parameter_id = "tf_test_regional_parameter%{random_suffix}"
   format = "JSON"
   location = "us-central1"
@@ -121,7 +118,6 @@ resource "google_parameter_manager_regional_parameter" "regional-parameters-1" {
 }
 
 resource "google_parameter_manager_regional_parameter" "regional-parameters-2" {
-  provider = google-beta
   parameter_id = "tf_test_regional_parameter_2_%{random_suffix}"
   format = "YAML"
   location = "us-central1"
@@ -132,7 +128,6 @@ resource "google_parameter_manager_regional_parameter" "regional-parameters-2" {
 }
 
 data "google_parameter_manager_regional_parameters" "regional-parameters-datasource-filter" {
-  provider = google-beta
   filter = "format:JSON"
   location = "us-central1"
 

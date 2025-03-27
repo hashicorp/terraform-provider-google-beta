@@ -19,7 +19,7 @@ func TestAccParameterManagerParameter_labelsUpdate(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckParameterManagerParameterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -65,7 +65,6 @@ func TestAccParameterManagerParameter_labelsUpdate(t *testing.T) {
 func testAccParameterManagerParameter_withoutLabels(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_parameter_manager_parameter" "parameter-with-labels" {
-  provider = google-beta
   parameter_id = "tf_test_parameter%{random_suffix}"
   format = "JSON"
 }
@@ -75,7 +74,6 @@ resource "google_parameter_manager_parameter" "parameter-with-labels" {
 func testAccParameterManagerParameter_labelsUpdate(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_parameter_manager_parameter" "parameter-with-labels" {
-  provider = google-beta
   parameter_id = "tf_test_parameter%{random_suffix}"
   format = "JSON"
 
@@ -93,7 +91,6 @@ resource "google_parameter_manager_parameter" "parameter-with-labels" {
 func testAccParameterManagerParameter_labelsUpdateOther(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_parameter_manager_parameter" "parameter-with-labels" {
-  provider = google-beta
   parameter_id = "tf_test_parameter%{random_suffix}"
   format = "JSON"
 
@@ -125,7 +122,7 @@ func TestAccParameterManagerParameter_kmsKeyUpdate(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckParameterManagerParameterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -185,12 +182,9 @@ func TestAccParameterManagerParameter_kmsKeyUpdate(t *testing.T) {
 
 func testAccParameterManagerParameter_withoutkmsKey(context map[string]interface{}) string {
 	return acctest.Nprintf(`
-data "google_project" "project" {
-	provider = google-beta
-}
+data "google_project" "project" {}
 
 resource "google_parameter_manager_parameter" "parameter-with-kms-key" {
-  provider = google-beta
   parameter_id = "tf_test_parameter%{random_suffix}"
   format = "JSON"
 }
@@ -199,12 +193,9 @@ resource "google_parameter_manager_parameter" "parameter-with-kms-key" {
 
 func testAccParameterManagerParameter_kmsKeyUpdate(context map[string]interface{}) string {
 	return acctest.Nprintf(`
-data "google_project" "project" {
-  provider = google-beta
-}
+data "google_project" "project" {}
 
 resource "google_parameter_manager_parameter" "parameter-with-kms-key" {
-  provider = google-beta
   parameter_id = "tf_test_parameter%{random_suffix}"
   format = "JSON"
 
@@ -215,12 +206,9 @@ resource "google_parameter_manager_parameter" "parameter-with-kms-key" {
 
 func testAccParameterManagerParameter_kmsKeyUpdateOther(context map[string]interface{}) string {
 	return acctest.Nprintf(`
-data "google_project" "project" {
-  provider = google-beta
-}
+data "google_project" "project" {}
 
 resource "google_parameter_manager_parameter" "parameter-with-kms-key" {
-  provider = google-beta
   parameter_id = "tf_test_parameter%{random_suffix}"
   format = "JSON"
 
