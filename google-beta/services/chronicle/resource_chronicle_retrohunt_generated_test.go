@@ -40,7 +40,7 @@ func TestAccChronicleRetrohunt_chronicleRetrohuntBasicExample(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccChronicleRetrohunt_chronicleRetrohuntBasicExample(context),
@@ -52,7 +52,6 @@ func TestAccChronicleRetrohunt_chronicleRetrohuntBasicExample(t *testing.T) {
 func testAccChronicleRetrohunt_chronicleRetrohuntBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_chronicle_rule" "my-rule" {
- provider = "google-beta"
  location = "us"
  instance = "%{chronicle_id}"
  deletion_policy = "FORCE"
@@ -62,7 +61,6 @@ resource "google_chronicle_rule" "my-rule" {
 }
 
 resource "google_chronicle_retrohunt" "example" {
- provider = "google-beta"
  location = "us"
  instance = "%{chronicle_id}"
  rule = element(split("/", resource.google_chronicle_rule.my-rule.name), length(split("/", resource.google_chronicle_rule.my-rule.name)) - 1)
