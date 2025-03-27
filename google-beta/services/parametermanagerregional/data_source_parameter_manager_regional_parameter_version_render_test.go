@@ -23,7 +23,7 @@ func TestAccDataSourceParameterManagerRegionalRegionalParameterVersionRender_bas
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckParameterManagerRegionalRegionalParameterVersionDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -49,26 +49,22 @@ func TestAccDataSourceParameterManagerRegionalRegionalParameterVersionRender_bas
 func testAccParameterManagerRegionalRegionalParameterVersionRender_basicWithResourceReferenceWithoutDatasource(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_parameter_manager_regional_parameter" "regional-parameter-basic" {
-  provider = google-beta
   parameter_id = "tf_test_parameter%{random_suffix}"
   location = "us-central1"
   format = "YAML"
 }
 
 resource "google_secret_manager_regional_secret" "secret-basic" {
-  provider = google-beta
   secret_id = "tf_temp_secret%{random_suffix}"
   location = "us-central1"
 }
 
 resource "google_secret_manager_regional_secret_version" "secret-version-basic" {
-  provider = google-beta
   secret = google_secret_manager_regional_secret.secret-basic.id
   secret_data = "regional-parameter-version-data"
 }
 
 resource "google_secret_manager_regional_secret_iam_member" "member" {
-  provider = google-beta
   secret_id = google_secret_manager_regional_secret.secret-basic.secret_id
   location = google_secret_manager_regional_secret.secret-basic.location
   role = "roles/secretmanager.secretAccessor"
@@ -76,7 +72,6 @@ resource "google_secret_manager_regional_secret_iam_member" "member" {
 }
 
 resource "google_parameter_manager_regional_parameter_version" "regional-parameter-version-basic" {
-  provider = google-beta
   parameter = google_parameter_manager_regional_parameter.regional-parameter-basic.id
   parameter_version_id = "tf_test_parameter_version%{random_suffix}"
   parameter_data = yamlencode({
@@ -89,26 +84,22 @@ resource "google_parameter_manager_regional_parameter_version" "regional-paramet
 func testAccParameterManagerRegionalRegionalParameterVersionRender_basicWithResourceReferenceWithDatasource(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_parameter_manager_regional_parameter" "regional-parameter-basic" {
-  provider = google-beta
   parameter_id = "tf_test_parameter%{random_suffix}"
   location = "us-central1"
   format = "YAML"
 }
 
 resource "google_secret_manager_regional_secret" "secret-basic" {
-  provider = google-beta
   secret_id = "tf_temp_secret%{random_suffix}"
   location = "us-central1"
 }
 
 resource "google_secret_manager_regional_secret_version" "secret-version-basic" {
-  provider = google-beta
   secret = google_secret_manager_regional_secret.secret-basic.id
   secret_data = "regional-parameter-version-data"
 }
 
 resource "google_secret_manager_regional_secret_iam_member" "member" {
-  provider = google-beta
   secret_id = google_secret_manager_regional_secret.secret-basic.secret_id
   location = google_secret_manager_regional_secret.secret-basic.location
   role = "roles/secretmanager.secretAccessor"
@@ -116,7 +107,6 @@ resource "google_secret_manager_regional_secret_iam_member" "member" {
 }
 
 resource "google_parameter_manager_regional_parameter_version" "regional-parameter-version-basic" {
-  provider = google-beta
   parameter = google_parameter_manager_regional_parameter.regional-parameter-basic.id
   parameter_version_id = "tf_test_parameter_version%{random_suffix}"
   parameter_data = yamlencode({
@@ -125,7 +115,6 @@ resource "google_parameter_manager_regional_parameter_version" "regional-paramet
 }
 
 data "google_parameter_manager_regional_parameter_version_render" "regional-parameter-version-basic" {
-  provider = google-beta
   parameter = google_parameter_manager_regional_parameter_version.regional-parameter-version-basic.parameter
   parameter_version_id = google_parameter_manager_regional_parameter_version.regional-parameter-version-basic.parameter_version_id
 }
@@ -141,7 +130,7 @@ func TestAccDataSourceParameterManagerRegionalRegionalParameterVersionRender_wit
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckParameterManagerRegionalRegionalParameterVersionDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -167,26 +156,22 @@ func TestAccDataSourceParameterManagerRegionalRegionalParameterVersionRender_wit
 func testAccParameterManagerRegionalRegionalParameterVersionRender_withJsonDataWithoutDatasource(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_parameter_manager_regional_parameter" "regional-parameter-basic" {
-  provider = google-beta
   parameter_id = "tf_test_parameter%{random_suffix}"
   location = "us-central1"
   format = "JSON"
 }
 
 resource "google_secret_manager_regional_secret" "secret-basic" {
-  provider = google-beta
   secret_id = "tf_temp_secret_json_data%{random_suffix}"
   location = "us-central1"
 }
 
 resource "google_secret_manager_regional_secret_version" "secret-version-basic" {
-  provider = google-beta
   secret = google_secret_manager_regional_secret.secret-basic.id
   secret_data = "regional-parameter-version-data"
 }
 
 resource "google_secret_manager_regional_secret_iam_member" "member" {
-  provider = google-beta
   secret_id = google_secret_manager_regional_secret.secret-basic.secret_id
   location = google_secret_manager_regional_secret.secret-basic.location
   role = "roles/secretmanager.secretAccessor"
@@ -194,7 +179,6 @@ resource "google_secret_manager_regional_secret_iam_member" "member" {
 }
 
 resource "google_parameter_manager_regional_parameter_version" "regional-parameter-version-with-json-data" {
-  provider = google-beta
   parameter = google_parameter_manager_regional_parameter.regional-parameter-basic.id
   parameter_version_id = "tf_test_parameter_version%{random_suffix}"
   parameter_data = jsonencode({
@@ -207,26 +191,22 @@ resource "google_parameter_manager_regional_parameter_version" "regional-paramet
 func testAccParameterManagerRegionalRegionalParameterVersionRender_withJsonDataWithDatasource(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_parameter_manager_regional_parameter" "regional-parameter-basic" {
-  provider = google-beta
   parameter_id = "tf_test_parameter%{random_suffix}"
   location = "us-central1"
   format = "JSON"
 }
 
 resource "google_secret_manager_regional_secret" "secret-basic" {
-  provider = google-beta
   secret_id = "tf_temp_secret_json_data%{random_suffix}"
   location = "us-central1"
 }
 
 resource "google_secret_manager_regional_secret_version" "secret-version-basic" {
-  provider = google-beta
   secret = google_secret_manager_regional_secret.secret-basic.id
   secret_data = "regional-parameter-version-data"
 }
 
 resource "google_secret_manager_regional_secret_iam_member" "member" {
-  provider = google-beta
   secret_id = google_secret_manager_regional_secret.secret-basic.secret_id
   location = google_secret_manager_regional_secret.secret-basic.location
   role = "roles/secretmanager.secretAccessor"
@@ -234,7 +214,6 @@ resource "google_secret_manager_regional_secret_iam_member" "member" {
 }
 
 resource "google_parameter_manager_regional_parameter_version" "regional-parameter-version-with-json-data" {
-  provider = google-beta
   parameter = google_parameter_manager_regional_parameter.regional-parameter-basic.id
   parameter_version_id = "tf_test_parameter_version%{random_suffix}"
   parameter_data = jsonencode({
@@ -243,7 +222,6 @@ resource "google_parameter_manager_regional_parameter_version" "regional-paramet
 }
 
 data "google_parameter_manager_regional_parameter_version_render" "regional-parameter-version-with-json-data" {
-  provider = google-beta
   parameter = google_parameter_manager_regional_parameter.regional-parameter-basic.parameter_id
   parameter_version_id = google_parameter_manager_regional_parameter_version.regional-parameter-version-with-json-data.parameter_version_id
   location = "us-central1"
@@ -260,7 +238,7 @@ func TestAccDataSourceParameterManagerRegionalRegionalParameterVersionRender_wit
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckParameterManagerRegionalRegionalParameterVersionDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -286,26 +264,22 @@ func TestAccDataSourceParameterManagerRegionalRegionalParameterVersionRender_wit
 func testAccParameterManagerRegionalRegionalParameterVersionRender_withYamlDataWithoutDatasource(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_parameter_manager_regional_parameter" "regional-parameter-basic" {
-  provider = google-beta
   parameter_id = "tf_test_parameter%{random_suffix}"
   location = "us-central1"
   format = "YAML"
 }
 
 resource "google_secret_manager_regional_secret" "secret-basic" {
-  provider = google-beta
   secret_id = "tf_temp_secret_yaml_data%{random_suffix}"
   location = "us-central1"
 }
 
 resource "google_secret_manager_regional_secret_version" "secret-version-basic" {
-  provider = google-beta
   secret = google_secret_manager_regional_secret.secret-basic.id
   secret_data = "regional-parameter-version-data"
 }
 
 resource "google_secret_manager_regional_secret_iam_member" "member" {
-  provider = google-beta
   secret_id = google_secret_manager_regional_secret.secret-basic.secret_id
   location = google_secret_manager_regional_secret.secret-basic.location
   role = "roles/secretmanager.secretAccessor"
@@ -313,7 +287,6 @@ resource "google_secret_manager_regional_secret_iam_member" "member" {
 }
 
 resource "google_parameter_manager_regional_parameter_version" "regional-parameter-version-with-yaml-data" {
-  provider = google-beta
   parameter = google_parameter_manager_regional_parameter.regional-parameter-basic.id
   parameter_version_id = "tf_test_parameter_version%{random_suffix}"
   parameter_data = yamlencode({
@@ -326,26 +299,22 @@ resource "google_parameter_manager_regional_parameter_version" "regional-paramet
 func testAccParameterManagerRegionalRegionalParameterVersionRender_withYamlDataWithDatasource(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_parameter_manager_regional_parameter" "regional-parameter-basic" {
-  provider = google-beta
   parameter_id = "tf_test_parameter%{random_suffix}"
   location = "us-central1"
   format = "YAML"
 }
 
 resource "google_secret_manager_regional_secret" "secret-basic" {
-  provider = google-beta
   secret_id = "tf_temp_secret_yaml_data%{random_suffix}"
   location = "us-central1"
 }
 
 resource "google_secret_manager_regional_secret_version" "secret-version-basic" {
-  provider = google-beta
   secret = google_secret_manager_regional_secret.secret-basic.id
   secret_data = "regional-parameter-version-data"
 }
 
 resource "google_secret_manager_regional_secret_iam_member" "member" {
-  provider = google-beta
   secret_id = google_secret_manager_regional_secret.secret-basic.secret_id
   location = google_secret_manager_regional_secret.secret-basic.location
   role = "roles/secretmanager.secretAccessor"
@@ -353,7 +322,6 @@ resource "google_secret_manager_regional_secret_iam_member" "member" {
 }
 
 resource "google_parameter_manager_regional_parameter_version" "regional-parameter-version-with-yaml-data" {
-  provider = google-beta
   parameter = google_parameter_manager_regional_parameter.regional-parameter-basic.id
   parameter_version_id = "tf_test_parameter_version%{random_suffix}"
   parameter_data = yamlencode({
@@ -362,7 +330,6 @@ resource "google_parameter_manager_regional_parameter_version" "regional-paramet
 }
 
 data "google_parameter_manager_regional_parameter_version_render" "regional-parameter-version-with-yaml-data" {
-  provider = google-beta
   parameter = google_parameter_manager_regional_parameter.regional-parameter-basic.parameter_id
   parameter_version_id = google_parameter_manager_regional_parameter_version.regional-parameter-version-with-yaml-data.parameter_version_id
   location = "us-central1"

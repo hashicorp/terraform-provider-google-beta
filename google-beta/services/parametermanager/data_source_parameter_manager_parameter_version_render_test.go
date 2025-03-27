@@ -22,7 +22,7 @@ func TestAccDataSourceParameterManagerParameterVersionRender_basicWithResourceRe
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckParameterManagerParameterVersionDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -39,13 +39,11 @@ func TestAccDataSourceParameterManagerParameterVersionRender_basicWithResourceRe
 func testAccParameterManagerParameterVersionRender_basicWithResourceReference(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_parameter_manager_parameter" "parameter-basic" {
-  provider = google-beta
   parameter_id = "tf_test_parameter%{random_suffix}"
   format = "YAML"
 }
 
 resource "google_secret_manager_secret" "secret-basic" {
-  provider = google-beta
   secret_id = "tf-temp-secret-basic%{random_suffix}"
   replication {
     auto {}
@@ -53,20 +51,17 @@ resource "google_secret_manager_secret" "secret-basic" {
 }
 
 resource "google_secret_manager_secret_version" "secret-version-basic" {
-  provider = google-beta
   secret = google_secret_manager_secret.secret-basic.id
   secret_data = "parameter-version-data"
 }
 
 resource "google_secret_manager_secret_iam_member" "member" {
-  provider = google-beta
   secret_id = google_secret_manager_secret.secret-basic.secret_id
   role = "roles/secretmanager.secretAccessor"
   member = "${google_parameter_manager_parameter.parameter-basic.policy_member[0].iam_policy_uid_principal}"
 }
 
 resource "google_parameter_manager_parameter_version" "parameter-version-basic" {
-  provider = google-beta
   parameter = google_parameter_manager_parameter.parameter-basic.id
   parameter_version_id = "tf_test_parameter_version%{random_suffix}"
   parameter_data = yamlencode({
@@ -75,7 +70,6 @@ resource "google_parameter_manager_parameter_version" "parameter-version-basic" 
 }
 
 data "google_parameter_manager_parameter_version_render" "parameter-version-basic" {
-  provider = google-beta
   parameter = google_parameter_manager_parameter_version.parameter-version-basic.parameter
   parameter_version_id = google_parameter_manager_parameter_version.parameter-version-basic.parameter_version_id
 }
@@ -91,7 +85,7 @@ func TestAccDataSourceParameterManagerParameterVersionRender_withJsonData(t *tes
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckParameterManagerParameterVersionDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -108,13 +102,11 @@ func TestAccDataSourceParameterManagerParameterVersionRender_withJsonData(t *tes
 func testAccParameterManagerParameterVersionRender_withJsonData(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_parameter_manager_parameter" "parameter-basic" {
-  provider = google-beta
   parameter_id = "tf_test_parameter%{random_suffix}"
   format = "JSON"
 }
 
 resource "google_secret_manager_secret" "secret-basic" {
-  provider = google-beta
   secret_id = "tf-temp-secret-json-data%{random_suffix}"
   replication {
     auto {}
@@ -122,20 +114,17 @@ resource "google_secret_manager_secret" "secret-basic" {
 }
 
 resource "google_secret_manager_secret_version" "secret-version-basic" {
-  provider = google-beta
   secret = google_secret_manager_secret.secret-basic.id
   secret_data = "parameter-version-data"
 }
 
 resource "google_secret_manager_secret_iam_member" "member" {
-  provider = google-beta
   secret_id = google_secret_manager_secret.secret-basic.secret_id
   role = "roles/secretmanager.secretAccessor"
   member = "${google_parameter_manager_parameter.parameter-basic.policy_member[0].iam_policy_uid_principal}"
 }
 
 resource "google_parameter_manager_parameter_version" "parameter-version-with-json-data" {
-  provider = google-beta
   parameter = google_parameter_manager_parameter.parameter-basic.id
   parameter_version_id = "tf_test_parameter_version%{random_suffix}"
   parameter_data = jsonencode({
@@ -144,7 +133,6 @@ resource "google_parameter_manager_parameter_version" "parameter-version-with-js
 }
 
 data "google_parameter_manager_parameter_version_render" "parameter-version-with-json-data" {
-  provider = google-beta
   parameter = google_parameter_manager_parameter.parameter-basic.parameter_id
   parameter_version_id = google_parameter_manager_parameter_version.parameter-version-with-json-data.parameter_version_id
 }
@@ -160,7 +148,7 @@ func TestAccDataSourceParameterManagerParameterVersionRender_withYamlData(t *tes
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckParameterManagerParameterVersionDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -177,13 +165,11 @@ func TestAccDataSourceParameterManagerParameterVersionRender_withYamlData(t *tes
 func testAccParameterManagerParameterVersionRender_withYamlData(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_parameter_manager_parameter" "parameter-basic" {
-  provider = google-beta
   parameter_id = "tf_test_parameter%{random_suffix}"
   format = "YAML"
 }
 
 resource "google_secret_manager_secret" "secret-basic" {
-  provider = google-beta
   secret_id = "tf-temp-secret-yaml-data%{random_suffix}"
   replication {
     auto {}
@@ -191,20 +177,17 @@ resource "google_secret_manager_secret" "secret-basic" {
 }
 
 resource "google_secret_manager_secret_version" "secret-version-basic" {
-  provider = google-beta
   secret = google_secret_manager_secret.secret-basic.id
   secret_data = "parameter-version-data"
 }
 
 resource "google_secret_manager_secret_iam_member" "member" {
-  provider = google-beta
   secret_id = google_secret_manager_secret.secret-basic.secret_id
   role = "roles/secretmanager.secretAccessor"
   member = "${google_parameter_manager_parameter.parameter-basic.policy_member[0].iam_policy_uid_principal}"
 }
 
 resource "google_parameter_manager_parameter_version" "parameter-version-with-yaml-data" {
-  provider = google-beta
   parameter = google_parameter_manager_parameter.parameter-basic.id
   parameter_version_id = "tf_test_parameter_version%{random_suffix}"
   parameter_data = yamlencode({
@@ -213,7 +196,6 @@ resource "google_parameter_manager_parameter_version" "parameter-version-with-ya
 }
 
 data "google_parameter_manager_parameter_version_render" "parameter-version-with-yaml-data" {
-  provider = google-beta
   parameter = google_parameter_manager_parameter.parameter-basic.parameter_id
   parameter_version_id = google_parameter_manager_parameter_version.parameter-version-with-yaml-data.parameter_version_id
 }

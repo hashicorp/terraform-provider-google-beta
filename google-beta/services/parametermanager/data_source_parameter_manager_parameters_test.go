@@ -22,7 +22,7 @@ func TestAccDataSourceParameterManagerParameters_basic(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckParameterManagerParameterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -44,12 +44,11 @@ func TestAccDataSourceParameterManagerParameters_basic(t *testing.T) {
 
 func testAccDataSourceParameterManagerParameters_basic(context map[string]interface{}) string {
 	return acctest.Nprintf(`
-provider "google-beta" {
+provider "google" {
   add_terraform_attribution_label = false
 }
 
 resource "google_parameter_manager_parameter" "parameters" {
-  provider = google-beta
   parameter_id = "tf_test_parameter%{random_suffix}"
   format = "YAML"
 
@@ -63,7 +62,6 @@ resource "google_parameter_manager_parameter" "parameters" {
 }
 
 data "google_parameter_manager_parameters" "parameters-datasource" {
-  provider = google-beta
   depends_on = [
     google_parameter_manager_parameter.parameters
   ]
@@ -80,7 +78,7 @@ func TestAccDataSourceParameterManagerParameters_filter(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckParameterManagerParameterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -103,12 +101,11 @@ func TestAccDataSourceParameterManagerParameters_filter(t *testing.T) {
 
 func testAccDataSourceParameterManagerParameters_filter(context map[string]interface{}) string {
 	return acctest.Nprintf(`
-provider "google-beta" {
+provider "google" {
   add_terraform_attribution_label = false
 }
 
 resource "google_parameter_manager_parameter" "parameters-1" {
-  provider = google-beta
   parameter_id = "tf_test_parameter%{random_suffix}"
   format = "JSON"
 
@@ -118,7 +115,6 @@ resource "google_parameter_manager_parameter" "parameters-1" {
 }
 
 resource "google_parameter_manager_parameter" "parameters-2" {
-  provider = google-beta
   parameter_id = "tf_test_parameter_2_%{random_suffix}"
   format = "YAML"
 
@@ -128,7 +124,6 @@ resource "google_parameter_manager_parameter" "parameters-2" {
 }
 
 data "google_parameter_manager_parameters" "parameters-datasource-filter" {
-  provider = google-beta
   filter = "format:JSON"
   depends_on = [
     google_parameter_manager_parameter.parameters-1,
