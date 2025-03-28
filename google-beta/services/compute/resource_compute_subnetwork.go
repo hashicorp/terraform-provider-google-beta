@@ -88,11 +88,13 @@ func sendSecondaryIpRangeIfEmptyDiff(_ context.Context, diff *schema.ResourceDif
 	return nil
 }
 
-// DiffSuppressFunc for fields inside `log_config`.
+// DiffSuppressFunc for `log_config`.
 func subnetworkLogConfigDiffSuppress(k, old, new string, d *schema.ResourceData) bool {
-	// If the enable_flow_logs is not enabled, we don't need to check for differences.
-	if enable_flow_logs := d.Get("enable_flow_logs"); !enable_flow_logs.(bool) {
-		return true
+	// If enable_flow_logs is enabled and log_config is not set, ignore the diff
+	if enable_flow_logs := d.Get("enable_flow_logs"); enable_flow_logs.(bool) {
+		logConfig := d.GetRawConfig().GetAttr("log_config")
+		logConfigIsEmpty := logConfig.IsNull() || logConfig.LengthInt() == 0
+		return logConfigIsEmpty
 	}
 
 	return false
@@ -162,9 +164,11 @@ you create the resource. This field can be set only at resource
 creation time.`,
 			},
 			"enable_flow_logs": {
-				Type:     schema.TypeBool,
-				Computed: true,
-				Optional: true,
+				Type:       schema.TypeBool,
+				Computed:   true,
+				Optional:   true,
+				Deprecated: "This field is being removed in favor of log_config. If log_config is present, flow logs are enabled.",
+				ForceNew:   true,
 				Description: `Whether to enable flow logging for this subnetwork. If this field is not explicitly set,
 it will not appear in get listings. If not set the default behavior is determined by the
 org policy, if there is no org policy specified, then it will default to disabled.
@@ -212,7 +216,6 @@ cannot enable direct path. Possible values: ["EXTERNAL", "INTERNAL"]`,
 			},
 			"log_config": {
 				Type:             schema.TypeList,
-				Computed:         true,
 				Optional:         true,
 				DiffSuppressFunc: subnetworkLogConfigDiffSuppress,
 				Description: `This field denotes the VPC flow logging options for this subnetwork. If
@@ -609,7 +612,7 @@ func resourceComputeSubnetworkCreate(d *schema.ResourceData, meta interface{}) e
 	enableFlowLogsProp, err := expandComputeSubnetworkEnableFlowLogs(d.Get("enable_flow_logs"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("enable_flow_logs"); ok || !reflect.DeepEqual(v, enableFlowLogsProp) {
+	} else if v, ok := d.GetOkExists("enable_flow_logs"); !tpgresource.IsEmptyValue(reflect.ValueOf(enableFlowLogsProp)) && (ok || !reflect.DeepEqual(v, enableFlowLogsProp)) {
 		obj["enableFlowLogs"] = enableFlowLogsProp
 	}
 
@@ -898,7 +901,7 @@ func resourceComputeSubnetworkUpdate(d *schema.ResourceData, meta interface{}) e
 			return err
 		}
 	}
-	if d.HasChange("private_ipv6_google_access") || d.HasChange("stack_type") || d.HasChange("ipv6_access_type") || d.HasChange("allow_subnet_cidr_routes_overlap") || d.HasChange("enable_flow_logs") {
+	if d.HasChange("private_ipv6_google_access") || d.HasChange("stack_type") || d.HasChange("ipv6_access_type") || d.HasChange("allow_subnet_cidr_routes_overlap") {
 		obj := make(map[string]interface{})
 
 		getUrl, err := tpgresource.ReplaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/subnetworks/{{name}}")
@@ -947,12 +950,6 @@ func resourceComputeSubnetworkUpdate(d *schema.ResourceData, meta interface{}) e
 			return err
 		} else if v, ok := d.GetOkExists("allow_subnet_cidr_routes_overlap"); ok || !reflect.DeepEqual(v, allowSubnetCidrRoutesOverlapProp) {
 			obj["allowSubnetCidrRoutesOverlap"] = allowSubnetCidrRoutesOverlapProp
-		}
-		enableFlowLogsProp, err := expandComputeSubnetworkEnableFlowLogs(d.Get("enable_flow_logs"), d, config)
-		if err != nil {
-			return err
-		} else if v, ok := d.GetOkExists("enable_flow_logs"); ok || !reflect.DeepEqual(v, enableFlowLogsProp) {
-			obj["enableFlowLogs"] = enableFlowLogsProp
 		}
 
 		url, err := tpgresource.ReplaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/subnetworks/{{name}}")
@@ -1704,9 +1701,8 @@ func expandComputeSubnetworkLogConfig(v interface{}, d tpgresource.TerraformReso
 			return nil, nil
 		}
 
-		// set enable field basing on the enable_flow_logs field. It's needed for case when enable_flow_logs
-		// is set to true to avoid conflict with the API. In that case API will return default values for log_config
-		transformed["enable"] = d.Get("enable_flow_logs")
+		// send enable = false to ensure logging is disabled if there is no config
+		transformed["enable"] = false
 		return transformed, nil
 	}
 
