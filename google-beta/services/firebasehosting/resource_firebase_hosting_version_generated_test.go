@@ -369,19 +369,30 @@ resource "google_storage_bucket_object" "object" {
   source = "%{zip_path}"  # Add path to the zipped function source code
 }
 
-resource "google_cloudfunctions_function" "function" {
+resource "google_cloudfunctions2_function" "function" {
   provider = google-beta
   project  = "%{project_id}"
 
   name        = "tf-test-cloud-function-via-hosting%{random_suffix}"
+  location    = "us-central1"
   description = "A Cloud Function connected to Firebase Hosing"
-  runtime     = "nodejs20"
 
-  available_memory_mb   = 128
-  source_archive_bucket = google_storage_bucket.bucket.name
-  source_archive_object = google_storage_bucket_object.object.name
-  trigger_http          = true
-  entry_point           = "helloHttp"
+  build_config {
+    runtime = "nodejs22"
+    entry_point = "helloHttp"  # Set the entry point 
+    source {
+      storage_source {
+        bucket = google_storage_bucket.bucket.name
+        object = google_storage_bucket_object.object.name
+      }
+    }
+  }
+
+  service_config {
+    max_instance_count  = 1
+    available_memory    = "256M"
+    timeout_seconds     = 60
+  }
 }
 
 resource "google_firebase_hosting_version" "default" {
@@ -390,7 +401,7 @@ resource "google_firebase_hosting_version" "default" {
   config {
     rewrites {
       glob = "/hello/**"
-      function = google_cloudfunctions_function.function.name
+      function = google_cloudfunctions2_function.function.name
     }
   }
 }
