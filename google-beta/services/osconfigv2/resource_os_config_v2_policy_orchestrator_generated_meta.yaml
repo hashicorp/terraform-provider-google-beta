@@ -4,6 +4,8 @@ source_file: 'products/osconfigv2/PolicyOrchestrator.yaml'
 api_service_name: 'osconfig.googleapis.com'
 api_version: 'v2beta'
 api_resource_type_kind: 'PolicyOrchestrator'
+api_variant_patterns:
+  - 'projects/{project}/locations/{location}/policyOrchestrators/{policyOrchestrator}'
 autogen_status: true
 fields:
   - field: 'action'
