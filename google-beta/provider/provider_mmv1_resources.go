@@ -554,9 +554,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 634
+// Generated resources: 635
 // Generated IAM resources: 312
-// Total generated resources: 946
+// Total generated resources: 947
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -726,6 +726,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_clouddeploy_delivery_pipeline_iam_binding":                           tpgiamresource.ResourceIamBinding(clouddeploy.ClouddeployDeliveryPipelineIamSchema, clouddeploy.ClouddeployDeliveryPipelineIamUpdaterProducer, clouddeploy.ClouddeployDeliveryPipelineIdParseFunc),
 	"google_clouddeploy_delivery_pipeline_iam_member":                            tpgiamresource.ResourceIamMember(clouddeploy.ClouddeployDeliveryPipelineIamSchema, clouddeploy.ClouddeployDeliveryPipelineIamUpdaterProducer, clouddeploy.ClouddeployDeliveryPipelineIdParseFunc),
 	"google_clouddeploy_delivery_pipeline_iam_policy":                            tpgiamresource.ResourceIamPolicy(clouddeploy.ClouddeployDeliveryPipelineIamSchema, clouddeploy.ClouddeployDeliveryPipelineIamUpdaterProducer, clouddeploy.ClouddeployDeliveryPipelineIdParseFunc),
+	"google_clouddeploy_deploy_policy":                                           clouddeploy.ResourceClouddeployDeployPolicy(),
 	"google_clouddeploy_target_iam_binding":                                      tpgiamresource.ResourceIamBinding(clouddeploy.ClouddeployTargetIamSchema, clouddeploy.ClouddeployTargetIamUpdaterProducer, clouddeploy.ClouddeployTargetIdParseFunc),
 	"google_clouddeploy_target_iam_member":                                       tpgiamresource.ResourceIamMember(clouddeploy.ClouddeployTargetIamSchema, clouddeploy.ClouddeployTargetIamUpdaterProducer, clouddeploy.ClouddeployTargetIdParseFunc),
 	"google_clouddeploy_target_iam_policy":                                       tpgiamresource.ResourceIamPolicy(clouddeploy.ClouddeployTargetIamSchema, clouddeploy.ClouddeployTargetIamUpdaterProducer, clouddeploy.ClouddeployTargetIdParseFunc),
