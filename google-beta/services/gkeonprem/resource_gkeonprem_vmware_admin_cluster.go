@@ -742,6 +742,11 @@ indicate real problems requiring user intervention.`,
 				Description: `All of annotations (key/value pairs) present on the resource in GCP, including the annotations configured through Terraform, other clients and services.`,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
+			"enable_advanced_cluster": {
+				Type:        schema.TypeBool,
+				Computed:    true,
+				Description: `If set, the advanced cluster feature is enabled.`,
+			},
 			"endpoint": {
 				Type:        schema.TypeString,
 				Computed:    true,
@@ -1138,6 +1143,9 @@ func resourceGkeonpremVmwareAdminClusterRead(d *schema.ResourceData, meta interf
 		return fmt.Errorf("Error reading VmwareAdminCluster: %s", err)
 	}
 	if err := d.Set("status", flattenGkeonpremVmwareAdminClusterStatus(res["status"], d, config)); err != nil {
+		return fmt.Errorf("Error reading VmwareAdminCluster: %s", err)
+	}
+	if err := d.Set("enable_advanced_cluster", flattenGkeonpremVmwareAdminClusterEnableAdvancedCluster(res["enableAdvancedCluster"], d, config)); err != nil {
 		return fmt.Errorf("Error reading VmwareAdminCluster: %s", err)
 	}
 	if err := d.Set("effective_annotations", flattenGkeonpremVmwareAdminClusterEffectiveAnnotations(res["annotations"], d, config)); err != nil {
@@ -2336,6 +2344,10 @@ func flattenGkeonpremVmwareAdminClusterStatusConditionsLastTransitionTime(v inte
 }
 
 func flattenGkeonpremVmwareAdminClusterStatusConditionsState(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenGkeonpremVmwareAdminClusterEnableAdvancedCluster(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
