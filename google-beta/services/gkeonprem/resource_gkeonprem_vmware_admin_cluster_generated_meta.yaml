@@ -18,6 +18,7 @@ fields:
   - field: 'description'
   - field: 'effective_annotations'
     provider_only: true
+  - field: 'enable_advanced_cluster'
   - field: 'endpoint'
   - field: 'etag'
   - field: 'fleet.membership'
