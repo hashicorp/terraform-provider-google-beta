@@ -537,6 +537,46 @@ resource "google_compute_resource_policy" "baz" {
 `, context)
 }
 
+func TestAccComputeResourcePolicy_resourcePolicyPlacementPolicyTpuTopologyExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckComputeResourcePolicyDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeResourcePolicy_resourcePolicyPlacementPolicyTpuTopologyExample(context),
+			},
+			{
+				ResourceName:            "google_compute_resource_policy.baz",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"region"},
+			},
+		},
+	})
+}
+
+func testAccComputeResourcePolicy_resourcePolicyPlacementPolicyTpuTopologyExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_compute_resource_policy" "baz" {
+  name   = "tf-test-gce-policy%{random_suffix}"
+  region = "us-central1"
+  provider = google-beta
+  group_placement_policy {
+    vm_count = 2
+    collocation = "COLLOCATED"
+    tpu_topology = "4x4"
+  }
+}
+`, context)
+}
+
 func testAccCheckComputeResourcePolicyDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		for name, rs := range s.RootModule().Resources {
