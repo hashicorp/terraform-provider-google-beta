@@ -380,15 +380,15 @@ If this field is used then the 'client_certificate' and the
 							MaxItems:    1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
-									"client_id": {
-										Type:        schema.TypeString,
-										Optional:    true,
-										Description: `Client ID to use for authentication.`,
-									},
 									"client_secret": {
 										Type:        schema.TypeString,
 										Optional:    true,
 										Description: `Client secret to use for authentication.`,
+									},
+									"client_id": {
+										Type:        schema.TypeString,
+										Optional:    true,
+										Description: `Client ID to use for authentication.`,
 									},
 									"secret_manager_stored_client_secret": {
 										Type:        schema.TypeString,
@@ -1317,11 +1317,11 @@ func flattenDatastreamConnectionProfileSalesforceProfileUserCredentials(v interf
 	transformed["password"] =
 		flattenDatastreamConnectionProfileSalesforceProfileUserCredentialsPassword(original["password"], d, config)
 	transformed["security_token"] =
-		flattenDatastreamConnectionProfileSalesforceProfileUserCredentialsSecurityToken(original["security_token"], d, config)
+		flattenDatastreamConnectionProfileSalesforceProfileUserCredentialsSecurityToken(original["securityToken"], d, config)
 	transformed["secret_manager_stored_password"] =
-		flattenDatastreamConnectionProfileSalesforceProfileUserCredentialsSecretManagerStoredPassword(original["secret_manager_stored_password"], d, config)
+		flattenDatastreamConnectionProfileSalesforceProfileUserCredentialsSecretManagerStoredPassword(original["secretManagerStoredPassword"], d, config)
 	transformed["secret_manager_stored_security_token"] =
-		flattenDatastreamConnectionProfileSalesforceProfileUserCredentialsSecretManagerStoredSecurityToken(original["secret_manager_stored_security_token"], d, config)
+		flattenDatastreamConnectionProfileSalesforceProfileUserCredentialsSecretManagerStoredSecurityToken(original["secretManagerStoredSecurityToken"], d, config)
 	return []interface{}{transformed}
 }
 func flattenDatastreamConnectionProfileSalesforceProfileUserCredentialsUsername(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -1356,9 +1356,9 @@ func flattenDatastreamConnectionProfileSalesforceProfileOauth2ClientCredentials(
 	transformed["client_id"] =
 		flattenDatastreamConnectionProfileSalesforceProfileOauth2ClientCredentialsClientId(original["client_id"], d, config)
 	transformed["client_secret"] =
-		flattenDatastreamConnectionProfileSalesforceProfileOauth2ClientCredentialsClientSecret(original["client_secret"], d, config)
+		flattenDatastreamConnectionProfileSalesforceProfileOauth2ClientCredentialsClientSecret(original["clientSecret"], d, config)
 	transformed["secret_manager_stored_client_secret"] =
-		flattenDatastreamConnectionProfileSalesforceProfileOauth2ClientCredentialsSecretManagerStoredClientSecret(original["secret_manager_stored_client_secret"], d, config)
+		flattenDatastreamConnectionProfileSalesforceProfileOauth2ClientCredentialsSecretManagerStoredClientSecret(original["secretManagerStoredClientSecret"], d, config)
 	return []interface{}{transformed}
 }
 func flattenDatastreamConnectionProfileSalesforceProfileOauth2ClientCredentialsClientId(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -1966,21 +1966,21 @@ func expandDatastreamConnectionProfileSalesforceProfileUserCredentials(v interfa
 	if err != nil {
 		return nil, err
 	} else if val := reflect.ValueOf(transformedSecurityToken); val.IsValid() && !tpgresource.IsEmptyValue(val) {
-		transformed["security_token"] = transformedSecurityToken
+		transformed["securityToken"] = transformedSecurityToken
 	}
 
 	transformedSecretManagerStoredPassword, err := expandDatastreamConnectionProfileSalesforceProfileUserCredentialsSecretManagerStoredPassword(original["secret_manager_stored_password"], d, config)
 	if err != nil {
 		return nil, err
 	} else if val := reflect.ValueOf(transformedSecretManagerStoredPassword); val.IsValid() && !tpgresource.IsEmptyValue(val) {
-		transformed["secret_manager_stored_password"] = transformedSecretManagerStoredPassword
+		transformed["secretManagerStoredPassword"] = transformedSecretManagerStoredPassword
 	}
 
 	transformedSecretManagerStoredSecurityToken, err := expandDatastreamConnectionProfileSalesforceProfileUserCredentialsSecretManagerStoredSecurityToken(original["secret_manager_stored_security_token"], d, config)
 	if err != nil {
 		return nil, err
 	} else if val := reflect.ValueOf(transformedSecretManagerStoredSecurityToken); val.IsValid() && !tpgresource.IsEmptyValue(val) {
-		transformed["secret_manager_stored_security_token"] = transformedSecretManagerStoredSecurityToken
+		transformed["secretManagerStoredSecurityToken"] = transformedSecretManagerStoredSecurityToken
 	}
 
 	return transformed, nil
@@ -2026,14 +2026,14 @@ func expandDatastreamConnectionProfileSalesforceProfileOauth2ClientCredentials(v
 	if err != nil {
 		return nil, err
 	} else if val := reflect.ValueOf(transformedClientSecret); val.IsValid() && !tpgresource.IsEmptyValue(val) {
-		transformed["client_secret"] = transformedClientSecret
+		transformed["clientSecret"] = transformedClientSecret
 	}
 
 	transformedSecretManagerStoredClientSecret, err := expandDatastreamConnectionProfileSalesforceProfileOauth2ClientCredentialsSecretManagerStoredClientSecret(original["secret_manager_stored_client_secret"], d, config)
 	if err != nil {
 		return nil, err
 	} else if val := reflect.ValueOf(transformedSecretManagerStoredClientSecret); val.IsValid() && !tpgresource.IsEmptyValue(val) {
-		transformed["secret_manager_stored_client_secret"] = transformedSecretManagerStoredClientSecret
+		transformed["secretManagerStoredClientSecret"] = transformedSecretManagerStoredClientSecret
 	}
 
 	return transformed, nil
