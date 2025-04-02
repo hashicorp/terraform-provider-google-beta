@@ -56,7 +56,7 @@ IMPROVEMENTS:
 BUG FIXES:
 * alloydb: added a mutex to `google_alloydb_cluster` to prevent conflicts among multiple cluster operations ([#9604](https://github.com/hashicorp/terraform-provider-google-beta/pull/9604))
 * artifactregistry: fixed type assertion panic in `google_artifact_registry_repository` resource ([#9672](https://github.com/hashicorp/terraform-provider-google-beta/pull/9672))
-* bigtable: fixied `automated_backup_policy` field for `google_bigtable_table` resource ([#9627](https://github.com/hashicorp/terraform-provider-google-beta/pull/9627))
+* bigtable: fixed `automated_backup_policy` field for `google_bigtable_table` resource ([#9627](https://github.com/hashicorp/terraform-provider-google-beta/pull/9627))
 * cloudrunv2: fixed the diffs for unchanged `template.template.containers.env` in `google_cloud_run_v2_job` resource ([#9681](https://github.com/hashicorp/terraform-provider-google-beta/pull/9681))
 * compute: fixed a regression in `google_compute_subnetwork` where setting `log_config` would not enable flow logs without `enable_flow_logs` also being set to true. To enable or disable flow logs, please use `log_config`. `enable_flow_logs` is now deprecated and will be removed in the next major release. ([#9679](https://github.com/hashicorp/terraform-provider-google-beta/pull/9679))
 * compute: fixed unable to update the `preview` field for `google_compute_region_security_policy_rule` resource ([#9614](https://github.com/hashicorp/terraform-provider-google-beta/pull/9614))
