@@ -11,6 +11,7 @@ fields:
   - field: 'group_placement_policy.collocation'
   - field: 'group_placement_policy.gpu_topology'
   - field: 'group_placement_policy.max_distance'
+  - field: 'group_placement_policy.tpu_topology'
   - field: 'group_placement_policy.vm_count'
   - field: 'instance_schedule_policy.expiration_time'
   - field: 'instance_schedule_policy.start_time'

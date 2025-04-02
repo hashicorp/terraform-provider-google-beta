@@ -131,6 +131,12 @@ attached. Possible values: ["COLLOCATED"]`,
 							Description:   `Specifies the number of max logical switches.`,
 							ConflictsWith: []string{"group_placement_policy.0.gpu_topology"},
 						},
+						"tpu_topology": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							ForceNew:    true,
+							Description: `Specifies the shape of the TPU slice.`,
+						},
 						"vm_count": {
 							Type:     schema.TypeInt,
 							Optional: true,
@@ -1048,6 +1054,8 @@ func flattenComputeResourcePolicyGroupPlacementPolicy(v interface{}, d *schema.R
 		flattenComputeResourcePolicyGroupPlacementPolicyMaxDistance(original["maxDistance"], d, config)
 	transformed["gpu_topology"] =
 		flattenComputeResourcePolicyGroupPlacementPolicyGpuTopology(original["gpuTopology"], d, config)
+	transformed["tpu_topology"] =
+		flattenComputeResourcePolicyGroupPlacementPolicyTpuTopology(original["tpuTopology"], d, config)
 	return []interface{}{transformed}
 }
 func flattenComputeResourcePolicyGroupPlacementPolicyVmCount(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -1106,6 +1114,10 @@ func flattenComputeResourcePolicyGroupPlacementPolicyMaxDistance(v interface{}, 
 }
 
 func flattenComputeResourcePolicyGroupPlacementPolicyGpuTopology(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenComputeResourcePolicyGroupPlacementPolicyTpuTopology(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -1555,6 +1567,13 @@ func expandComputeResourcePolicyGroupPlacementPolicy(v interface{}, d tpgresourc
 		transformed["gpuTopology"] = transformedGpuTopology
 	}
 
+	transformedTpuTopology, err := expandComputeResourcePolicyGroupPlacementPolicyTpuTopology(original["tpu_topology"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedTpuTopology); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["tpuTopology"] = transformedTpuTopology
+	}
+
 	return transformed, nil
 }
 
@@ -1575,6 +1594,10 @@ func expandComputeResourcePolicyGroupPlacementPolicyMaxDistance(v interface{}, d
 }
 
 func expandComputeResourcePolicyGroupPlacementPolicyGpuTopology(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeResourcePolicyGroupPlacementPolicyTpuTopology(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
