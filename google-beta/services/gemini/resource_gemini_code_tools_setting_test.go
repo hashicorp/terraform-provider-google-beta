@@ -18,7 +18,7 @@ func TestAccGeminiCodeToolsSetting_geminiCodeToolsSettingBasicExample_update(t *
 	}
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccGeminiCodeToolsSetting_geminiCodeToolsSettingBasicExample_basic(context),
@@ -49,7 +49,6 @@ func TestAccGeminiCodeToolsSetting_geminiCodeToolsSettingBasicExample_update(t *
 func testAccGeminiCodeToolsSetting_geminiCodeToolsSettingBasicExample_basic(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_gemini_code_tools_setting" "example" {
-    provider = google-beta
     code_tools_setting_id = "%{setting_id}"
     location = "global"
     enabled_tool {
@@ -68,7 +67,6 @@ resource "google_gemini_code_tools_setting" "example" {
 func testAccGeminiCodeToolsSetting_geminiCodeToolsSettingBasicExample_update(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_gemini_code_tools_setting" "example" {
-    provider = google-beta
     code_tools_setting_id = "%{setting_id}"
     location = "global"
     labels = {"my_key" = "my_value"}
