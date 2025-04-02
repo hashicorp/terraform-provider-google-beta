@@ -690,6 +690,9 @@ func resourceComputeFirewallPolicyWithRulesCreate(d *schema.ResourceData, meta i
 	if err != nil {
 		return fmt.Errorf("Error creating FirewallPolicyWithRules: %s", err)
 	}
+	if err := d.Set("policy_id", flattenComputeFirewallPolicyWithRulesPolicyId(res["id"], d, config)); err != nil {
+		return fmt.Errorf(`Error setting computed identity field "policy_id": %s`, err)
+	}
 
 	// Store the ID now
 	id, err := tpgresource.ReplaceVars(d, config, "locations/global/firewallPolicies/{{policy_id}}")

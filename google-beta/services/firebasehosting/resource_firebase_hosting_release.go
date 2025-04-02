@@ -24,6 +24,7 @@ import (
 	"log"
 	"net/http"
 	"reflect"
+	"strings"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -156,8 +157,12 @@ func resourceFirebaseHostingReleaseCreate(d *schema.ResourceData, meta interface
 	if err != nil {
 		return fmt.Errorf("Error creating Release: %s", err)
 	}
+	// Setting `name` field so that `id_from_name` flattener will work properly.
 	if err := d.Set("name", flattenFirebaseHostingReleaseName(res["name"], d, config)); err != nil {
 		return fmt.Errorf(`Error setting computed identity field "name": %s`, err)
+	}
+	if err := d.Set("release_id", flattenFirebaseHostingReleaseReleaseId(res["release_id"], d, config)); err != nil {
+		return fmt.Errorf(`Error setting computed identity field "release_id": %s`, err)
 	}
 
 	// Store the ID now
@@ -211,19 +216,10 @@ func resourceFirebaseHostingReleaseRead(d *schema.ResourceData, meta interface{}
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("FirebaseHostingRelease %q", d.Id()))
 	}
 
-	res, err = resourceFirebaseHostingReleaseDecoder(d, meta, res)
-	if err != nil {
-		return err
-	}
-
-	if res == nil {
-		// Decoding the object has resulted in it being gone. It may be marked deleted
-		log.Printf("[DEBUG] Removing FirebaseHostingRelease because it no longer exists.")
-		d.SetId("")
-		return nil
-	}
-
 	if err := d.Set("name", flattenFirebaseHostingReleaseName(res["name"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Release: %s", err)
+	}
+	if err := d.Set("release_id", flattenFirebaseHostingReleaseReleaseId(res["release_id"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Release: %s", err)
 	}
 	if err := d.Set("type", flattenFirebaseHostingReleaseType(res["type"], d, config)); err != nil {
@@ -270,6 +266,11 @@ func flattenFirebaseHostingReleaseName(v interface{}, d *schema.ResourceData, co
 	return v
 }
 
+func flattenFirebaseHostingReleaseReleaseId(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	parts := strings.Split(d.Get("name").(string), "/")
+	return parts[len(parts)-1]
+}
+
 func flattenFirebaseHostingReleaseType(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
@@ -284,12 +285,4 @@ func expandFirebaseHostingReleaseType(v interface{}, d tpgresource.TerraformReso
 
 func expandFirebaseHostingReleaseMessage(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
-}
-
-func resourceFirebaseHostingReleaseDecoder(d *schema.ResourceData, meta interface{}, res map[string]interface{}) (map[string]interface{}, error) {
-	if err := d.Set("release_id", tpgresource.GetResourceNameFromSelfLink(res["name"].(string))); err != nil {
-		return nil, err
-	}
-
-	return res, nil
 }

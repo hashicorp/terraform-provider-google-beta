@@ -257,8 +257,12 @@ func resourceFirebaseHostingVersionCreate(d *schema.ResourceData, meta interface
 	if err != nil {
 		return fmt.Errorf("Error creating Version: %s", err)
 	}
+	// Setting `name` field so that `id_from_name` flattener will work properly.
 	if err := d.Set("name", flattenFirebaseHostingVersionName(res["name"], d, config)); err != nil {
 		return fmt.Errorf(`Error setting computed identity field "name": %s`, err)
+	}
+	if err := d.Set("version_id", flattenFirebaseHostingVersionVersionId(res["version_id"], d, config)); err != nil {
+		return fmt.Errorf(`Error setting computed identity field "version_id": %s`, err)
 	}
 
 	// Store the ID now
@@ -268,17 +272,10 @@ func resourceFirebaseHostingVersionCreate(d *schema.ResourceData, meta interface
 	}
 	d.SetId(id)
 
-	// Store the name as ID
-	d.SetId(res["name"].(string))
-
-	if err = d.Set("version_id", tpgresource.GetResourceNameFromSelfLink(res["name"].(string))); err != nil {
-		return fmt.Errorf("Error setting version_id: %s", err)
-	}
-
 	obj = make(map[string]interface{})
 	obj["status"] = "FINALIZED"
 
-	url, err = tpgresource.ReplaceVars(d, config, "{{FirebaseHostingBasePath}}{{name}}")
+	url, err = tpgresource.ReplaceVars(d, config, "{{FirebaseHostingBasePath}}sites/{{site_id}}/versions/{{version_id}}")
 	if err != nil {
 		return err
 	}
@@ -345,19 +342,10 @@ func resourceFirebaseHostingVersionRead(d *schema.ResourceData, meta interface{}
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("FirebaseHostingVersion %q", d.Id()))
 	}
 
-	res, err = resourceFirebaseHostingVersionDecoder(d, meta, res)
-	if err != nil {
-		return err
-	}
-
-	if res == nil {
-		// Decoding the object has resulted in it being gone. It may be marked deleted
-		log.Printf("[DEBUG] Removing FirebaseHostingVersion because it no longer exists.")
-		d.SetId("")
-		return nil
-	}
-
 	if err := d.Set("name", flattenFirebaseHostingVersionName(res["name"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Version: %s", err)
+	}
+	if err := d.Set("version_id", flattenFirebaseHostingVersionVersionId(res["version_id"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Version: %s", err)
 	}
 	if err := d.Set("config", flattenFirebaseHostingVersionConfig(res["config"], d, config)); err != nil {
@@ -397,6 +385,11 @@ func resourceFirebaseHostingVersionImport(d *schema.ResourceData, meta interface
 
 func flattenFirebaseHostingVersionName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
+}
+
+func flattenFirebaseHostingVersionVersionId(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	parts := strings.Split(d.Get("name").(string), "/")
+	return parts[len(parts)-1]
 }
 
 func flattenFirebaseHostingVersionConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -804,12 +797,4 @@ func expandFirebaseHostingVersionConfigHeadersHeaders(v interface{}, d tpgresour
 		m[k] = val.(string)
 	}
 	return m, nil
-}
-
-func resourceFirebaseHostingVersionDecoder(d *schema.ResourceData, meta interface{}, res map[string]interface{}) (map[string]interface{}, error) {
-	if err := d.Set("version_id", tpgresource.GetResourceNameFromSelfLink(res["name"].(string))); err != nil {
-		return nil, err
-	}
-
-	return res, nil
 }
