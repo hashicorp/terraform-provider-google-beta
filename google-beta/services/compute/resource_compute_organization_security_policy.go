@@ -161,6 +161,9 @@ func resourceComputeOrganizationSecurityPolicyCreate(d *schema.ResourceData, met
 	if err != nil {
 		return fmt.Errorf("Error creating OrganizationSecurityPolicy: %s", err)
 	}
+	if err := d.Set("policy_id", flattenComputeOrganizationSecurityPolicyPolicyId(res["id"], d, config)); err != nil {
+		return fmt.Errorf(`Error setting computed identity field "policy_id": %s`, err)
+	}
 
 	// Store the ID now
 	id, err := tpgresource.ReplaceVars(d, config, "locations/global/securityPolicies/{{policy_id}}")

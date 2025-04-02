@@ -186,9 +186,6 @@ func resourceFirebaseHostingChannelCreate(d *schema.ResourceData, meta interface
 	if err != nil {
 		return fmt.Errorf("Error creating Channel: %s", err)
 	}
-	if err := d.Set("name", flattenFirebaseHostingChannelName(res["name"], d, config)); err != nil {
-		return fmt.Errorf(`Error setting computed identity field "name": %s`, err)
-	}
 
 	// Store the ID now
 	id, err := tpgresource.ReplaceVars(d, config, "sites/{{site_id}}/channels/{{channel_id}}")

@@ -45,7 +45,7 @@ func TestAccFirebaseHostingVersion_firebasehostingVersionRedirectExample(t *test
 				ResourceName:            "google_firebase_hosting_version.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"site_id", "version_id"},
+				ImportStateVerifyIgnore: []string{"site_id"},
 			},
 		},
 	})
@@ -99,7 +99,7 @@ func TestAccFirebaseHostingVersion_firebasehostingVersionHeadersExample(t *testi
 				ResourceName:            "google_firebase_hosting_version.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"site_id", "version_id"},
+				ImportStateVerifyIgnore: []string{"site_id"},
 			},
 		},
 	})
@@ -155,7 +155,7 @@ func TestAccFirebaseHostingVersion_firebasehostingVersionHeadersRegexExample(t *
 				ResourceName:            "google_firebase_hosting_version.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"site_id", "version_id"},
+				ImportStateVerifyIgnore: []string{"site_id"},
 			},
 		},
 	})
@@ -211,7 +211,7 @@ func TestAccFirebaseHostingVersion_firebasehostingVersionPathExample(t *testing.
 				ResourceName:            "google_firebase_hosting_version.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"site_id", "version_id"},
+				ImportStateVerifyIgnore: []string{"site_id"},
 			},
 		},
 	})
@@ -265,7 +265,7 @@ func TestAccFirebaseHostingVersion_firebasehostingVersionCloudRunExample(t *test
 				ResourceName:            "google_firebase_hosting_version.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"deletion_protection", "site_id", "version_id"},
+				ImportStateVerifyIgnore: []string{"deletion_protection", "site_id"},
 			},
 		},
 	})
@@ -340,7 +340,7 @@ func TestAccFirebaseHostingVersion_firebasehostingVersionCloudFunctionsExample(t
 				ResourceName:            "google_firebase_hosting_version.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"site_id", "version_id"},
+				ImportStateVerifyIgnore: []string{"site_id"},
 			},
 		},
 	})
