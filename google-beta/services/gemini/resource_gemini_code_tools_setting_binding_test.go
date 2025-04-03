@@ -22,7 +22,7 @@ func TestAccGeminiCodeToolsSettingBinding_update(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccGeminiCodeToolsSettingBinding_basic(context),
@@ -54,11 +54,9 @@ func TestAccGeminiCodeToolsSettingBinding_update(t *testing.T) {
 func testAccGeminiCodeToolsSettingBinding_basic(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 data "google_project" "project" {
-    provider = google-beta
 }
 
 resource "google_gemini_code_tools_setting" "basic" {
-    provider = google-beta
     code_tools_setting_id = "%{code_tools_setting_id}"
     location = "global"
     labels = {"my_key" = "my_value"}
@@ -75,7 +73,6 @@ resource "google_gemini_code_tools_setting" "basic" {
 }
 
 resource "google_gemini_code_tools_setting_binding" "basic_binding" {
-    provider = google-beta
     code_tools_setting_id = google_gemini_code_tools_setting.basic.code_tools_setting_id
     setting_binding_id = "%{setting_binding_id}"
     location = "global"
@@ -87,11 +84,9 @@ resource "google_gemini_code_tools_setting_binding" "basic_binding" {
 func testAccGeminiCodeToolsSettingBinding_update(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 data "google_project" "project" {
-    provider = google-beta
 }
 
 resource "google_gemini_code_tools_setting" "basic" {
-    provider = google-beta
     code_tools_setting_id = "%{code_tools_setting_id}"
     location = "global"
     labels = {"my_key" = "my_value"}
@@ -108,7 +103,6 @@ resource "google_gemini_code_tools_setting" "basic" {
 }
 
 resource "google_gemini_code_tools_setting_binding" "basic_binding" {
-    provider = google-beta
     code_tools_setting_id = google_gemini_code_tools_setting.basic.code_tools_setting_id
     setting_binding_id = "%{setting_binding_id}"
     location = "global"
