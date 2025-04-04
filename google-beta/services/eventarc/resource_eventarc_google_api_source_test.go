@@ -16,6 +16,8 @@ import (
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
+// This test is beta-only due to the dependency on google_project_service_identity,
+// but enables testing updates to the message_bus field in GoogleApiSource.
 func TestAccEventarcGoogleApiSource_update(t *testing.T) {
 	t.Parallel()
 
@@ -29,7 +31,7 @@ func TestAccEventarcGoogleApiSource_update(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckEventarcGoogleApiSourceDestroyProducer(t),
 		ExternalProviders: map[string]resource.ExternalProvider{
 			"time": {},
@@ -81,6 +83,7 @@ func TestAccEventarcGoogleApiSource_update(t *testing.T) {
 func testAccEventarcGoogleApiSource_full(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_project" "project" {
+  provider        = google-beta
   project_id      = "tf-test%{random_suffix}"
   name            = "tf-test%{random_suffix}"
   org_id          = "%{org_id}"
@@ -94,24 +97,28 @@ resource "time_sleep" "wait_create_project" {
 }
 
 resource "google_project_service" "compute" {
+  provider   = google-beta
   project    = google_project.project.project_id
   service    = "compute.googleapis.com"
   depends_on = [time_sleep.wait_create_project]
 }
 
 resource "google_project_service" "servicenetworking" {
-  project   = google_project.project.project_id
-  service   = "servicenetworking.googleapis.com"
+  provider   = google-beta
+  project    = google_project.project.project_id
+  service    = "servicenetworking.googleapis.com"
   depends_on = [google_project_service.compute]
 }
 
 resource "google_project_service" "kms" {
+  provider   = google-beta
   project    = google_project.project.project_id
   service    = "cloudkms.googleapis.com"
   depends_on = [google_project_service.servicenetworking]
 }
 
 resource "google_project_service" "eventarc" {
+  provider   = google-beta
   project    = google_project.project.project_id
   service    = "eventarc.googleapis.com"
   depends_on = [google_project_service.kms]
@@ -123,6 +130,7 @@ resource "time_sleep" "wait_enable_service" {
 }
 
 resource "google_kms_key_ring" "keyring" {
+  provider   = google-beta
   name       = "keyring"
   location   = "%{region}"
   project    = google_project.project.project_id
@@ -130,11 +138,13 @@ resource "google_kms_key_ring" "keyring" {
 }
 
 resource "google_kms_crypto_key" "key" {
+  provider = google-beta
   name     = "key1"
   key_ring = google_kms_key_ring.keyring.id
 }
 
 resource "google_project_service_identity" "eventarc_sa" {
+  provider   = google-beta
   service    = "eventarc.googleapis.com"
   project    = google_project.project.project_id
   depends_on = [time_sleep.wait_enable_service]
@@ -146,6 +156,7 @@ resource "time_sleep" "wait_create_sa" {
 }
 
 resource "google_kms_crypto_key_iam_member" "eventarc_sa_keyuser" {
+  provider      = google-beta
   crypto_key_id = google_kms_crypto_key.key.id
   role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
   member        = google_project_service_identity.eventarc_sa.member
@@ -158,6 +169,7 @@ resource "time_sleep" "wait_propagate_iam" {
 }
 
 resource "google_eventarc_message_bus" "message_bus" {
+  provider       = google-beta
   location       = "%{region}"
   message_bus_id = "tf-test-messagebus%{random_suffix}"
   project        = google_project.project.project_id
@@ -165,6 +177,7 @@ resource "google_eventarc_message_bus" "message_bus" {
 }
 
 resource "google_eventarc_google_api_source" "primary" {
+  provider             = google-beta
   location             = "%{region}"
   google_api_source_id = "tf-test-googleapisource%{random_suffix}"
   project              = google_project.project.project_id
@@ -189,6 +202,7 @@ resource "google_eventarc_google_api_source" "primary" {
 func testAccEventarcGoogleApiSource_update(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_project" "project" {
+  provider        = google-beta
   project_id      = "tf-test%{random_suffix}"
   name            = "tf-test%{random_suffix}"
   org_id          = "%{org_id}"
@@ -197,29 +211,34 @@ resource "google_project" "project" {
 }
 
 resource "google_project_service" "compute" {
+  provider   = google-beta
   project    = google_project.project.project_id
   service    = "compute.googleapis.com"
 }
 
 resource "google_project_service" "servicenetworking" {
-  project   = google_project.project.project_id
-  service   = "servicenetworking.googleapis.com"
+  provider   = google-beta
+  project    = google_project.project.project_id
+  service    = "servicenetworking.googleapis.com"
   depends_on = [google_project_service.compute]
 }
 
 resource "google_project_service" "kms" {
+  provider   = google-beta
   project    = google_project.project.project_id
   service    = "cloudkms.googleapis.com"
   depends_on = [google_project_service.servicenetworking]
 }
 
 resource "google_project_service" "eventarc" {
+  provider   = google-beta
   project    = google_project.project.project_id
   service    = "eventarc.googleapis.com"
   depends_on = [google_project_service.kms]
 }
 
 resource "google_kms_key_ring" "keyring" {
+  provider   = google-beta
   name       = "keyring"
   location   = "%{region}"
   project    = google_project.project.project_id
@@ -227,28 +246,33 @@ resource "google_kms_key_ring" "keyring" {
 }
 
 resource "google_kms_crypto_key" "key" {
+  provider = google-beta
   name     = "key1"
   key_ring = google_kms_key_ring.keyring.id
 }
 
 resource "google_kms_crypto_key" "key_update" {
+  provider = google-beta
   name     = "key2"
   key_ring = google_kms_key_ring.keyring.id
 }
 
 resource "google_project_service_identity" "eventarc_sa" {
+  provider   = google-beta
   service    = "eventarc.googleapis.com"
   project    = google_project.project.project_id
   depends_on = [google_project_service.eventarc]
 }
 
 resource "google_kms_crypto_key_iam_member" "eventarc_sa_keyuser" {
+  provider      = google-beta
   crypto_key_id = google_kms_crypto_key.key.id
   role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
   member        = google_project_service_identity.eventarc_sa.member
 }
 
 resource "google_kms_crypto_key_iam_member" "eventarc_sa_keyuser_update" {
+  provider      = google-beta
   crypto_key_id = google_kms_crypto_key.key_update.id
   role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
   member        = google_project_service_identity.eventarc_sa.member
@@ -261,6 +285,7 @@ resource "time_sleep" "wait_propagate_iam_update" {
 
 # Create a separate project to contain another MessageBus.
 resource "google_project" "project_update" {
+  provider        = google-beta
   project_id      = "tf-test2%{random_suffix}"
   name            = "tf-test2%{random_suffix}"
   org_id          = "%{org_id}"
@@ -274,6 +299,7 @@ resource "time_sleep" "wait_create_project_update" {
 }
 
 resource "google_project_service" "eventarc_update" {
+  provider   = google-beta
   project    = google_project.project_update.project_id
   service    = "eventarc.googleapis.com"
   depends_on = [time_sleep.wait_create_project_update]
@@ -285,6 +311,7 @@ resource "time_sleep" "wait_enable_service_update" {
 }
 
 resource "google_project_service_identity" "eventarc_sa_update" {
+  provider   = google-beta
   project    = google_project.project_update.project_id
   service    = "eventarc.googleapis.com"
   depends_on = [time_sleep.wait_enable_service_update]
@@ -296,6 +323,7 @@ resource "time_sleep" "wait_create_sa_update" {
 }
 
 resource "google_eventarc_message_bus" "message_bus_update" {
+  provider       = google-beta
   location       = "%{region}"
   message_bus_id = "tf-test-messagebus2%{random_suffix}"
   project        = google_project.project_update.project_id
@@ -303,6 +331,7 @@ resource "google_eventarc_message_bus" "message_bus_update" {
 }
 
 resource "google_eventarc_google_api_source" "primary" {
+  provider             = google-beta
   location             = "%{region}"
   google_api_source_id = "tf-test-googleapisource%{random_suffix}"
   project              = google_project.project.project_id
@@ -327,6 +356,7 @@ resource "google_eventarc_google_api_source" "primary" {
 func testAccEventarcGoogleApiSource_unset(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_project" "project" {
+  provider        = google-beta
   project_id      = "tf-test%{random_suffix}"
   name            = "tf-test%{random_suffix}"
   org_id          = "%{org_id}"
@@ -335,29 +365,34 @@ resource "google_project" "project" {
 }
 
 resource "google_project_service" "compute" {
+  provider   = google-beta
   project    = google_project.project.project_id
   service    = "compute.googleapis.com"
 }
 
 resource "google_project_service" "servicenetworking" {
-  project   = google_project.project.project_id
-  service   = "servicenetworking.googleapis.com"
+  provider   = google-beta
+  project    = google_project.project.project_id
+  service    = "servicenetworking.googleapis.com"
   depends_on = [google_project_service.compute]
 }
 
 resource "google_project_service" "kms" {
+  provider   = google-beta
   project    = google_project.project.project_id
   service    = "cloudkms.googleapis.com"
   depends_on = [google_project_service.servicenetworking]
 }
 
 resource "google_project_service" "eventarc" {
+  provider   = google-beta
   project    = google_project.project.project_id
   service    = "eventarc.googleapis.com"
   depends_on = [google_project_service.kms]
 }
 
 resource "google_kms_key_ring" "keyring" {
+  provider   = google-beta
   name       = "keyring"
   location   = "%{region}"
   project    = google_project.project.project_id
@@ -365,34 +400,40 @@ resource "google_kms_key_ring" "keyring" {
 }
 
 resource "google_kms_crypto_key" "key" {
+  provider = google-beta
   name     = "key1"
   key_ring = google_kms_key_ring.keyring.id
 }
 
 resource "google_kms_crypto_key" "key_update" {
+  provider = google-beta
   name     = "key2"
   key_ring = google_kms_key_ring.keyring.id
 }
 
 resource "google_project_service_identity" "eventarc_sa" {
+  provider   = google-beta
   service    = "eventarc.googleapis.com"
   project    = google_project.project.project_id
   depends_on = [google_project_service.eventarc]
 }
 
 resource "google_kms_crypto_key_iam_member" "eventarc_sa_keyuser" {
+  provider      = google-beta
   crypto_key_id = google_kms_crypto_key.key.id
   role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
   member        = google_project_service_identity.eventarc_sa.member
 }
 
 resource "google_kms_crypto_key_iam_member" "eventarc_sa_keyuser_update" {
+  provider      = google-beta
   crypto_key_id = google_kms_crypto_key.key_update.id
   role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
   member        = google_project_service_identity.eventarc_sa.member
 }
 
 resource "google_project" "project_update" {
+  provider        = google-beta
   project_id      = "tf-test2%{random_suffix}"
   name            = "tf-test2%{random_suffix}"
   org_id          = "%{org_id}"
@@ -401,17 +442,20 @@ resource "google_project" "project_update" {
 }
 
 resource "google_project_service" "eventarc_update" {
+  provider   = google-beta
   project    = google_project.project_update.project_id
   service    = "eventarc.googleapis.com"
 }
 
 resource "google_project_service_identity" "eventarc_sa_update" {
+  provider   = google-beta
   project    = google_project.project_update.project_id
   service    = "eventarc.googleapis.com"
   depends_on = [google_project_service.eventarc_update]
 }
 
 resource "google_eventarc_message_bus" "message_bus_update" {
+  provider       = google-beta
   location       = "%{region}"
   message_bus_id = "tf-test-messagebus2%{random_suffix}"
   project        = google_project.project_update.project_id
@@ -419,6 +463,7 @@ resource "google_eventarc_message_bus" "message_bus_update" {
 }
 
 resource "google_eventarc_google_api_source" "primary" {
+  provider             = google-beta
   location             = "%{region}"
   google_api_source_id = "tf-test-googleapisource%{random_suffix}"
   project              = google_project.project.project_id
