@@ -1249,6 +1249,8 @@ func TestAccComputeRegionInstanceTemplate_maxRunDuration_onInstanceStopAction(t 
 }
 
 func TestAccComputeRegionInstanceTemplate_instanceTerminationAction_terminationTime(t *testing.T) {
+	// Uses time.Now
+	acctest.SkipIfVcr(t)
 	t.Parallel()
 
 	var instanceTemplate compute.InstanceTemplate
