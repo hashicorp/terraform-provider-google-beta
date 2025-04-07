@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 resource: 'google_firebase_database_instance'
 generation_type: 'mmv1'
 source_file: 'products/firebasedatabase/Instance.yaml'
