@@ -18,7 +18,7 @@ FEATURES:
 * **New Resource:** `google_discovery_engine_sitemap` ([#9608](https://github.com/hashicorp/terraform-provider-google-beta/pull/9608))
 * **New Resource:** `google_eventarc_enrollment` ([#9623](https://github.com/hashicorp/terraform-provider-google-beta/pull/9623))
 * **New Resource:** `google_firebase_app_hosting_build` ([#9646](https://github.com/hashicorp/terraform-provider-google-beta/pull/9646))
-* **New Resource:** `google_memorystore_instance_desired_user_created_connections` ([#9652](https://github.com/hashicorp/terraform-provider-google-beta/pull/9652))
+* **New Resource:** `google_memorystore_instance_desired_user_created_endpoints` ([#9652](https://github.com/hashicorp/terraform-provider-google-beta/pull/9652))
 * **New Resource:** `google_storage_control_folder_intelligence_config` ([#9644](https://github.com/hashicorp/terraform-provider-google-beta/pull/9644))
 * **New Resource:** `google_storage_control_organization_intelligence_config` ([#9617](https://github.com/hashicorp/terraform-provider-google-beta/pull/9617))
 
