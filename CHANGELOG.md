@@ -1,5 +1,31 @@
 ## 6.29.0 (Unreleased)
 
+FEATURES:
+* **New Resource:** `google_clouddeploy_deploy_policy` ([#9694](https://github.com/hashicorp/terraform-provider-google-beta/pull/9694))
+* **New Resource:** `google_control_plane_access` ([#9709](https://github.com/hashicorp/terraform-provider-google-beta/pull/9709))
+* **New Resource:** `google_folder_service_identity` ([#9703](https://github.com/hashicorp/terraform-provider-google-beta/pull/9703))
+* **New Resource:** `google_os_config_v2_policy_orchestrator_for_organization` ([#9696](https://github.com/hashicorp/terraform-provider-google-beta/pull/9696))
+
+IMPROVEMENTS:
+* accesscontextmanager: added `session_settings` field to `gcp_user_access_binding` resource ([#9720](https://github.com/hashicorp/terraform-provider-google-beta/pull/9720))
+* cloudedeploy: added `timed_promote_release_rule` and `repair_rollout_rule` fields to `google_clouddeploy_automation` resource ([#9694](https://github.com/hashicorp/terraform-provider-google-beta/pull/9694))
+* compute: added `group_placement_policy.0.tpu_topology` field to `google_compute_resource_policy` resource. ([#9702](https://github.com/hashicorp/terraform-provider-google-beta/pull/9702))
+* datastream: added support for creating streams for Salesforce source in `google_datastream_stream`. ([#9706](https://github.com/hashicorp/terraform-provider-google-beta/pull/9706))
+* gkeonprem: added `enable_advanced_cluster` field to `google_gkeonprem_vmware_admin_cluster` resource ([#9693](https://github.com/hashicorp/terraform-provider-google-beta/pull/9693))
+* gkeonprem: added `enable_advanced_cluster` field to `google_gkeonprem_vmware_cluster` resource ([#9693](https://github.com/hashicorp/terraform-provider-google-beta/pull/9693))
+* memorystore: added `automated_backup_config` field to `google_memorystore_instance` resource ([#9708](https://github.com/hashicorp/terraform-provider-google-beta/pull/9708))
+* netapp: added `tiering_policy` to `google_netapp_volume_replication` resource ([#9716](https://github.com/hashicorp/terraform-provider-google-beta/pull/9716))
+* parametermanagerregional: added `kms_key_version` field to `google_parameter_manager_regional_parameter_version` resource and datasource ([#9712](https://github.com/hashicorp/terraform-provider-google-beta/pull/9712))
+* parametermanagerregional: added `kms_key` field to `google_parameter_manager_regional_parameter` resource and `google_parameter_manager_regional_parameters` datasource ([#9712](https://github.com/hashicorp/terraform-provider-google-beta/pull/9712))
+* redis: added `automated_backup_config` field to `google_redis_cluster` ([#9682](https://github.com/hashicorp/terraform-provider-google-beta/pull/9682))
+* storage: added `md5hexhash` field in `google_storage_bucket_object` ([#9722](https://github.com/hashicorp/terraform-provider-google-beta/pull/9722))
+* workbench: added `confidential_instance_config` field to `google_workbench_instance` resource ([#9688](https://github.com/hashicorp/terraform-provider-google-beta/pull/9688))
+
+BUG FIXES:
+* colab: fixed an issue where `google_colab_*` resources incorrectly required a provider-level region matching the resource location ([#9714](https://github.com/hashicorp/terraform-provider-google-beta/pull/9714))
+* datastream: updated `private_key`to be mutable in `google_datastream_connection_profile` resource. ([#9689](https://github.com/hashicorp/terraform-provider-google-beta/pull/9689))
+* gkehub: enabled partial results to be returned when a cloud region is unreachable in `google_gke_hub_feature ` ([#9715](https://github.com/hashicorp/terraform-provider-google-beta/pull/9715))
+
 ## 6.28.0 (Apr 1, 2025)
 
 DEPRECATIONS:
