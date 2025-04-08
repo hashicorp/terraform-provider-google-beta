@@ -1,4 +1,5 @@
 ## 6.29.0 (Unreleased)
+
 FEATURES:
 * **New Resource:** `google_clouddeploy_deploy_policy` ([#9694](https://github.com/hashicorp/terraform-provider-google-beta/pull/9694))
 * **New Resource:** `google_control_plane_access` ([#9709](https://github.com/hashicorp/terraform-provider-google-beta/pull/9709))
@@ -7,7 +8,7 @@ FEATURES:
 
 IMPROVEMENTS:
 * accesscontextmanager: added `session_settings` field to `gcp_user_access_binding` resource ([#9720](https://github.com/hashicorp/terraform-provider-google-beta/pull/9720))
-* cloudedeploy: added `timed_promote_release_rule` and `repair_rollout_rule`  to `google_clouddeploy_automation` resource ([#9694](https://github.com/hashicorp/terraform-provider-google-beta/pull/9694))
+* cloudedeploy: added `timed_promote_release_rule` and `repair_rollout_rule` fields to `google_clouddeploy_automation` resource ([#9694](https://github.com/hashicorp/terraform-provider-google-beta/pull/9694))
 * compute: added `group_placement_policy.0.tpu_topology` field to `google_compute_resource_policy` resource. ([#9702](https://github.com/hashicorp/terraform-provider-google-beta/pull/9702))
 * datastream: added support for creating streams for Salesforce source in `google_datastream_stream`. ([#9706](https://github.com/hashicorp/terraform-provider-google-beta/pull/9706))
 * gkeonprem: added `enable_advanced_cluster` field to `google_gkeonprem_vmware_admin_cluster` resource ([#9693](https://github.com/hashicorp/terraform-provider-google-beta/pull/9693))
