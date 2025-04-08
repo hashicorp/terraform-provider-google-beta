@@ -17,7 +17,7 @@ IMPROVEMENTS:
 * parametermanagerregional: added `kms_key_version` field to `google_parameter_manager_regional_parameter_version` resource and datasource ([#9712](https://github.com/hashicorp/terraform-provider-google-beta/pull/9712))
 * parametermanagerregional: added `kms_key` field to `google_parameter_manager_regional_parameter` resource and `google_parameter_manager_regional_parameters` datasource ([#9712](https://github.com/hashicorp/terraform-provider-google-beta/pull/9712))
 * redis: added `automated_backup_config` field to `google_redis_cluster` ([#9682](https://github.com/hashicorp/terraform-provider-google-beta/pull/9682))
-* storage: added md5hexhash field in `google_storage_bucket_object` ([#9722](https://github.com/hashicorp/terraform-provider-google-beta/pull/9722))
+* storage: added `md5hexhash` field in `google_storage_bucket_object` ([#9722](https://github.com/hashicorp/terraform-provider-google-beta/pull/9722))
 * workbench: added `confidential_instance_config` field to `google_workbench_instance` resource ([#9688](https://github.com/hashicorp/terraform-provider-google-beta/pull/9688))
 
 BUG FIXES:
