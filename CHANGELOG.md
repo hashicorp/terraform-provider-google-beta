@@ -13,7 +13,7 @@ IMPROVEMENTS:
 * gkeonprem: added `enable_advanced_cluster` field to `google_gkeonprem_vmware_admin_cluster` resource ([#9693](https://github.com/hashicorp/terraform-provider-google-beta/pull/9693))
 * gkeonprem: added `enable_advanced_cluster` field to `google_gkeonprem_vmware_cluster` resource ([#9693](https://github.com/hashicorp/terraform-provider-google-beta/pull/9693))
 * memorystore: added `automated_backup_config` field to `google_memorystore_instance` resource ([#9708](https://github.com/hashicorp/terraform-provider-google-beta/pull/9708))
-* netapp: added `tiering_policy` to google_netapp_volume_replication resource ([#9716](https://github.com/hashicorp/terraform-provider-google-beta/pull/9716))
+* netapp: added `tiering_policy` to `google_netapp_volume_replication` resource ([#9716](https://github.com/hashicorp/terraform-provider-google-beta/pull/9716))
 * parametermanagerregional: added `kms_key_version` field to `google_parameter_manager_regional_parameter_version` resource and datasource ([#9712](https://github.com/hashicorp/terraform-provider-google-beta/pull/9712))
 * parametermanagerregional: added `kms_key` field to `google_parameter_manager_regional_parameter` resource and `google_parameter_manager_regional_parameters` datasource ([#9712](https://github.com/hashicorp/terraform-provider-google-beta/pull/9712))
 * redis: added `automated_backup_config` field to `google_redis_cluster` ([#9682](https://github.com/hashicorp/terraform-provider-google-beta/pull/9682))
