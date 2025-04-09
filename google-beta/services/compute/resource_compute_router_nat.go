@@ -188,8 +188,7 @@ func computeRouterNatRulesHash(v interface{}) int {
 		}
 	}
 
-	routerNatRulesHash = ruleNumber + descriptionHash + schema.HashString(match) + sourceNatActiveIpHash + sourceNatDrainIpHash
-	routerNatRulesHash += sourceNatActiveRangeHash + sourceNatDrainRangeHash
+	routerNatRulesHash = ruleNumber + descriptionHash + schema.HashString(match) + sourceNatActiveIpHash + sourceNatDrainIpHash + sourceNatActiveRangeHash + sourceNatDrainRangeHash
 	return routerNatRulesHash
 }
 
