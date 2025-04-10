@@ -56,7 +56,7 @@ func TestAccOSConfigV2PolicyOrchestratorForOrganization_osconfigv2PolicyOrchestr
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckOSConfigV2PolicyOrchestratorForOrganizationDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -75,7 +75,6 @@ func TestAccOSConfigV2PolicyOrchestratorForOrganization_osconfigv2PolicyOrchestr
 func testAccOSConfigV2PolicyOrchestratorForOrganization_osconfigv2PolicyOrchestratorForOrganizationBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_os_config_v2_policy_orchestrator_for_organization" "policy_orchestrator_for_organization" {
-    provider = google-beta
     policy_orchestrator_id = "tf-test-po-org%{random_suffix}"
     organization_id = "%{org_id}"
     
