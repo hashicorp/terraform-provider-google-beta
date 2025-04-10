@@ -43,6 +43,7 @@ fields:
   - field: 'etag'
   - field: 'expire_time'
   - field: 'generation'
+  - field: 'iap_enabled'
   - field: 'ingress'
   - field: 'invoker_iam_disabled'
   - field: 'labels'
