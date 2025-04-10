@@ -690,6 +690,15 @@ func resourceComputeFirewallPolicyWithRulesCreate(d *schema.ResourceData, meta i
 	if err != nil {
 		return fmt.Errorf("Error creating FirewallPolicyWithRules: %s", err)
 	}
+	// Set computed resource properties from create API response so that they're available on the subsequent Read
+	// call.
+	res, err = resourceComputeFirewallPolicyWithRulesDecoder(d, meta, res)
+	if err != nil {
+		return fmt.Errorf("decoding response: %w", err)
+	}
+	if res == nil {
+		return fmt.Errorf("decoding response, could not find object")
+	}
 	if err := d.Set("policy_id", flattenComputeFirewallPolicyWithRulesPolicyId(res["id"], d, config)); err != nil {
 		return fmt.Errorf(`Error setting computed identity field "policy_id": %s`, err)
 	}
