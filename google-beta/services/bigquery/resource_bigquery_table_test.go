@@ -1848,6 +1848,7 @@ func TestAccBigQueryTable_ResourceTags(t *testing.T) {
 		},
 	})
 }
+
 func TestAccBigQueryTable_externalCatalogTableOptions(t *testing.T) {
 	t.Parallel()
 
@@ -1860,7 +1861,7 @@ func TestAccBigQueryTable_externalCatalogTableOptions(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckBigQueryTableDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -1896,7 +1897,7 @@ func TestAccBigQueryTable_foreignTypeInfo(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckBigQueryTableDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -1911,6 +1912,7 @@ func TestAccBigQueryTable_foreignTypeInfo(t *testing.T) {
 		},
 	})
 }
+
 func testAccCheckBigQueryExtData(t *testing.T, expectedQuoteChar string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		for _, rs := range s.RootModule().Resources {
@@ -4635,26 +4637,21 @@ resource "google_bigquery_table" "test" {
 }
 `, context)
 }
+
 func testAccBigQueryTable_externalCatalogTableOptions_basic(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_bigquery_dataset" "test" {
-  provider = google-beta
-
   dataset_id = "%{dataset_id}"
   location = "EU"
 }
 
 resource "google_bigquery_connection" "test" {
-  provider = google-beta
-
   connection_id = "%{connection_id}"
   location = "EU"
   cloud_resource {}
 }
 
 resource "google_bigquery_table" "test" {
-  provider = google-beta
-
   deletion_protection = false
   dataset_id = "${google_bigquery_dataset.test.dataset_id}"
   table_id   = "%{table_id}"
@@ -4693,23 +4690,17 @@ EOF
 func testAccBigQueryTable_externalCatalogTableOptions_update(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_bigquery_dataset" "test" {
-  provider = google-beta
-
   dataset_id = "%{dataset_id}"
   location = "EU"
 }
 
 resource "google_bigquery_connection" "test" {
-  provider = google-beta
-
   connection_id = "%{connection_id}"
   location = "EU"
   cloud_resource {}
 }
 
 resource "google_bigquery_table" "test" {
-  provider = google-beta
-
   deletion_protection = false
   dataset_id = "${google_bigquery_dataset.test.dataset_id}"
   table_id   = "%{table_id}"
@@ -4745,15 +4736,11 @@ EOF
 func testAccBigQueryTable_foreignTypeInfo_basic(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_bigquery_dataset" "test" {
-  provider = google-beta
-
   dataset_id = "%{dataset_id}"
   location = "EU"
 }
 
 resource "google_bigquery_table" "test" {
-  provider = google-beta
-
   deletion_protection = false
   dataset_id = "${google_bigquery_dataset.test.dataset_id}"
   table_id   = "%{table_id}"
