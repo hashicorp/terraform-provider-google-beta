@@ -97,11 +97,13 @@ func jsonCompareWithMapKeyOverride(key string, a, b interface{}, compareMapKeyVa
 		for subKey := range objectB {
 			unionOfKeys[subKey] = true
 		}
+
 		// Disregard "type" and "fields" if "foreignTypeDefinition" is present since they may have been modified by the server.
 		if _, ok := unionOfKeys["foreignTypeDefinition"]; ok {
 			delete(unionOfKeys, "type")
 			delete(unionOfKeys, "fields")
 		}
+
 		for subKey := range unionOfKeys {
 			eq := compareMapKeyVal(subKey, objectA, objectB)
 			if !eq {
@@ -329,11 +331,13 @@ func resourceBigQueryTableSchemaIsChangeable(old, new interface{}, isExternalTab
 		for key := range objectNew {
 			unionOfKeys[key] = true
 		}
+
 		// Disregard "type" and "fields" if "foreignTypeDefinition" is present since they may have been modified by the server.
 		if _, ok := unionOfKeys["foreignTypeDefinition"]; ok {
 			delete(unionOfKeys, "type")
 			delete(unionOfKeys, "fields")
 		}
+
 		for key := range unionOfKeys {
 			valOld := objectOld[key]
 			valNew := objectNew[key]
@@ -1659,11 +1663,13 @@ func resourceTable(d *schema.ResourceData, meta interface{}) (*bigquery.Table, e
 		}
 		table.Schema = schema
 	}
+
 	if v, ok := d.GetOk("schema_foreign_type_info"); ok {
 		if table.Schema != nil {
 			table.Schema.ForeignTypeInfo = expandForeignTypeInfo(v)
 		}
 	}
+
 	if v, ok := d.GetOk("time_partitioning"); ok {
 		table.TimePartitioning = expandTimePartitioning(v)
 	}
@@ -1698,9 +1704,11 @@ func resourceTable(d *schema.ResourceData, meta interface{}) (*bigquery.Table, e
 	}
 
 	table.ResourceTags = tpgresource.ExpandStringMap(d, "resource_tags")
+
 	if v, ok := d.GetOk("external_catalog_table_options"); ok {
 		table.ExternalCatalogTableOptions = expandExternalCatalogTableOptions(v)
 	}
+
 	return table, nil
 }
 
@@ -2028,6 +2036,7 @@ func resourceBigQueryTableRead(d *schema.ResourceData, meta interface{}) error {
 			return fmt.Errorf("Error setting table replication info: %s", err)
 		}
 	}
+
 	if res.ExternalCatalogTableOptions != nil {
 		externalCatalogTableOptions := flattenExternalCatalogTableOptions(res.ExternalCatalogTableOptions)
 
@@ -2035,6 +2044,7 @@ func resourceBigQueryTableRead(d *schema.ResourceData, meta interface{}) error {
 			return fmt.Errorf("Error setting external_catalog_table_options: %s", err)
 		}
 	}
+
 	return nil
 }
 
@@ -2781,6 +2791,7 @@ func schemaHasRequiredFields(schema *bigquery.TableSchema) bool {
 	}
 	return false
 }
+
 func expandForeignTypeInfo(configured interface{}) *bigquery.ForeignTypeInfo {
 	if len(configured.([]interface{})) == 0 {
 		return nil
@@ -2804,6 +2815,7 @@ func flattenForeignTypeInfo(fti *bigquery.ForeignTypeInfo) []map[string]interfac
 	result := map[string]interface{}{"type_system": fti.TypeSystem}
 	return []map[string]interface{}{result}
 }
+
 func expandTimePartitioning(configured interface{}) *bigquery.TimePartitioning {
 	raw := configured.([]interface{})[0].(map[string]interface{})
 	tp := &bigquery.TimePartitioning{Type: raw["type"].(string)}
@@ -3209,6 +3221,7 @@ func flattenTableReplicationInfo(tableReplicationInfo map[string]interface{}) []
 
 	return []map[string]interface{}{result}
 }
+
 func expandExternalCatalogTableOptions(configured interface{}) *bigquery.ExternalCatalogTableOptions {
 	if len(configured.([]interface{})) == 0 {
 		return nil
@@ -3355,6 +3368,7 @@ func flattenSerDeInfo(si *bigquery.SerDeInfo) []map[string]interface{} {
 
 	return []map[string]interface{}{result}
 }
+
 func resourceBigQueryTableImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*transport_tpg.Config)
 	if err := tpgresource.ParseImportId([]string{
