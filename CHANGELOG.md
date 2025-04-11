@@ -10,7 +10,7 @@ IMPROVEMENTS:
 * cloudrunv2: added `iap_enabled` field to `google_cloud_run_v2_service` resource ([#9758](https://github.com/hashicorp/terraform-provider-google-beta/pull/9758))
 * compute: added `source_disk_encryption_key.kms_key_self_link` and `source_disk_encryption_key.rsa_encrypted_key` fields to `google_compute_snapshot` resource ([#9730](https://github.com/hashicorp/terraform-provider-google-beta/pull/9730))
 * compute: added `source_disk_encryption_key`, `source_image_encryption_key` and `source_snapshot_encryption_key` fields to `google_compute_image` resource ([#9730](https://github.com/hashicorp/terraform-provider-google-beta/pull/9730))
-* databasemigrationservice: allowed setting `ssl.type` as an input field in `google_database_migration_service_connection_profile` resource ([#9739](https://github.com/hashicorp/terraform-provider-google-beta/pull/9739))
+* databasemigrationservice: allowed setting `ssl.type` in `google_database_migration_service_connection_profile` resource ([#9739](https://github.com/hashicorp/terraform-provider-google-beta/pull/9739))
 * firestore: added `MONGODB_COMPATIBLE_API` enum option to `api_scope` field in `google_firestore_index` resource ([#9750](https://github.com/hashicorp/terraform-provider-google-beta/pull/9750))
 * firestore: added `database_edition` field to `google_firestore_database` resource ([#9750](https://github.com/hashicorp/terraform-provider-google-beta/pull/9750))
 * firestore: added `density` and `multikey` fields to `google_firestore_index` resource ([#9750](https://github.com/hashicorp/terraform-provider-google-beta/pull/9750))
