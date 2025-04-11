@@ -24,7 +24,7 @@ IMPROVEMENTS:
 * storagecontrol: added `trial_config` field to `google_storage_control_project_intelligence_config` resource ([#9724](https://github.com/hashicorp/terraform-provider-google-beta/pull/9724))
 
 BUG FIXES:
-* container: fixed perma-diff in `fleet` field when the "fleet.project" field being added is null or empty in `google_container_cluster` resource ([#9726](https://github.com/hashicorp/terraform-provider-google-beta/pull/9726))
+* container: fixed perma-diff in `fleet` field when the `fleet.project` field being added is null or empty in `google_container_cluster` resource ([#9726](https://github.com/hashicorp/terraform-provider-google-beta/pull/9726))
 * pubsub: fixed perma-diff by changing `allowed_persistence_regions` field to set in `google_pubsub_topic` resource ([#9743](https://github.com/hashicorp/terraform-provider-google-beta/pull/9743))
 
 ## 6.29.0 (Apr 8, 2025)
