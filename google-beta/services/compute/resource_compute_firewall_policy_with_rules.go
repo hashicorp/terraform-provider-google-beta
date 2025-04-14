@@ -1819,6 +1819,11 @@ func resourceComputeFirewallPolicyWithRulesUpdateEncoder(d *schema.ResourceData,
 }
 
 func resourceComputeFirewallPolicyWithRulesDecoder(d *schema.ResourceData, meta interface{}, res map[string]interface{}) (map[string]interface{}, error) {
+	// If rules is nil, this is being called on a Create operation (and we don't want to do anything in that case.)
+	if _, ok := res["rules"]; !ok {
+		return res, nil
+	}
+
 	rules, predefinedRules, err := firewallPolicyWithRulesSplitPredefinedRules(res["rules"].([]interface{}))
 
 	if err != nil {
