@@ -18,7 +18,6 @@ IMPROVEMENTS:
 * monitoring: added `password_wo` write-only field and `password_wo_version` field to `google_monitoring_uptime_check_config` resource ([#9727](https://github.com/hashicorp/terraform-provider-google-beta/pull/9727))
 * redis: added `managed_backup_source` and `gcs_source` fields to `google_redis_cluster` resource ([#9745](https://github.com/hashicorp/terraform-provider-google-beta/pull/9745))
 * storage: added support for deleting pending caches present on bucket when setting `force_destory` to true in `google_storage_bucket` resource ([#9737](https://github.com/hashicorp/terraform-provider-google-beta/pull/9737))
-* storage: added `md5hexhash` field to `google_storage_bucket_object` resource ([#9722](https://github.com/hashicorp/terraform-provider-google-beta/pull/9722))
 * storagecontrol: added `trial_config` field to `google_storage_control_folder_intelligence_config` resource ([#9724](https://github.com/hashicorp/terraform-provider-google-beta/pull/9724))
 * storagecontrol: added `trial_config` field to `google_storage_control_organization_intelligence_config` resource ([#9724](https://github.com/hashicorp/terraform-provider-google-beta/pull/9724))
 * storagecontrol: added `trial_config` field to `google_storage_control_project_intelligence_config` resource ([#9724](https://github.com/hashicorp/terraform-provider-google-beta/pull/9724))
