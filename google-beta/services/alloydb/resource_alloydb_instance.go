@@ -238,6 +238,11 @@ the same instance.`,
 				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"assistive_experiences_enabled": {
+							Type:        schema.TypeBool,
+							Optional:    true,
+							Description: `Whether assistive experiences are enabled for this AlloyDB instance.`,
+						},
 						"enabled": {
 							Type:        schema.TypeBool,
 							Optional:    true,
@@ -1156,6 +1161,8 @@ func flattenAlloydbInstanceObservabilityConfig(v interface{}, d *schema.Resource
 		flattenAlloydbInstanceObservabilityConfigQueryPlansPerMinute(original["queryPlansPerMinute"], d, config)
 	transformed["track_active_queries"] =
 		flattenAlloydbInstanceObservabilityConfigTrackActiveQueries(original["trackActiveQueries"], d, config)
+	transformed["assistive_experiences_enabled"] =
+		flattenAlloydbInstanceObservabilityConfigAssistiveExperiencesEnabled(original["assistiveExperiencesEnabled"], d, config)
 	return []interface{}{transformed}
 }
 func flattenAlloydbInstanceObservabilityConfigEnabled(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -1213,6 +1220,10 @@ func flattenAlloydbInstanceObservabilityConfigQueryPlansPerMinute(v interface{},
 }
 
 func flattenAlloydbInstanceObservabilityConfigTrackActiveQueries(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenAlloydbInstanceObservabilityConfigAssistiveExperiencesEnabled(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -1597,6 +1608,13 @@ func expandAlloydbInstanceObservabilityConfig(v interface{}, d tpgresource.Terra
 		transformed["trackActiveQueries"] = transformedTrackActiveQueries
 	}
 
+	transformedAssistiveExperiencesEnabled, err := expandAlloydbInstanceObservabilityConfigAssistiveExperiencesEnabled(original["assistive_experiences_enabled"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedAssistiveExperiencesEnabled); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["assistiveExperiencesEnabled"] = transformedAssistiveExperiencesEnabled
+	}
+
 	return transformed, nil
 }
 
@@ -1629,6 +1647,10 @@ func expandAlloydbInstanceObservabilityConfigQueryPlansPerMinute(v interface{}, 
 }
 
 func expandAlloydbInstanceObservabilityConfigTrackActiveQueries(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandAlloydbInstanceObservabilityConfigAssistiveExperiencesEnabled(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
