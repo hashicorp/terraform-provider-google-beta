@@ -1,4 +1,32 @@
-## 6.30.0 (Unreleased)
+## 6.31.0 (Unreleased)
+
+## 6.30.0 (Apr 15, 2025)
+
+FEATURES:
+* **New Resource:** `google_developer_connect_account_connector` ([#9741](https://github.com/hashicorp/terraform-provider-google-beta/pull/9741))
+* **New Resource:** `google_vertex_ai_feature_group_iam_*` ([#9735](https://github.com/hashicorp/terraform-provider-google-beta/pull/9735))
+* **New Resource:** `google_vertex_ai_feature_online_store_iam_*` ([#9735](https://github.com/hashicorp/terraform-provider-google-beta/pull/9735))
+* **New Resource:** `google_vertex_ai_feature_online_store_featureview_iam_*` ([#9735](https://github.com/hashicorp/terraform-provider-google-beta/pull/9735))
+
+IMPROVEMENTS:
+* cloudrunv2: added `iap_enabled` field to `google_cloud_run_v2_service` resource ([#9758](https://github.com/hashicorp/terraform-provider-google-beta/pull/9758))
+* compute: added `source_disk_encryption_key.kms_key_self_link` and `source_disk_encryption_key.rsa_encrypted_key` fields to `google_compute_snapshot` resource ([#9730](https://github.com/hashicorp/terraform-provider-google-beta/pull/9730))
+* compute: added `source_disk_encryption_key`, `source_image_encryption_key` and `source_snapshot_encryption_key` fields to `google_compute_image` resource ([#9730](https://github.com/hashicorp/terraform-provider-google-beta/pull/9730))
+* databasemigrationservice: added `ssl.type` field to `google_database_migration_service_connection_profile` resource ([#9739](https://github.com/hashicorp/terraform-provider-google-beta/pull/9739))
+* firestore: added `MONGODB_COMPATIBLE_API` enum option to `api_scope` field in `google_firestore_index` resource ([#9750](https://github.com/hashicorp/terraform-provider-google-beta/pull/9750))
+* firestore: added `database_edition` field to `google_firestore_database` resource ([#9750](https://github.com/hashicorp/terraform-provider-google-beta/pull/9750))
+* firestore: added `density` and `multikey` fields to `google_firestore_index` resource ([#9750](https://github.com/hashicorp/terraform-provider-google-beta/pull/9750))
+* memorystore: added `managed_backup_source` and `gcs_source` fields to `google_memorystore_instance` resource ([#9753](https://github.com/hashicorp/terraform-provider-google-beta/pull/9753))
+* monitoring: added `password_wo` write-only field and `password_wo_version` field to `google_monitoring_uptime_check_config` resource ([#9727](https://github.com/hashicorp/terraform-provider-google-beta/pull/9727))
+* redis: added `managed_backup_source` and `gcs_source` fields to `google_redis_cluster` resource ([#9745](https://github.com/hashicorp/terraform-provider-google-beta/pull/9745))
+* storage: added support for deleting pending caches present on bucket when setting `force_destory` to true in `google_storage_bucket` resource ([#9737](https://github.com/hashicorp/terraform-provider-google-beta/pull/9737))
+* storagecontrol: added `trial_config` field to `google_storage_control_folder_intelligence_config` resource ([#9724](https://github.com/hashicorp/terraform-provider-google-beta/pull/9724))
+* storagecontrol: added `trial_config` field to `google_storage_control_organization_intelligence_config` resource ([#9724](https://github.com/hashicorp/terraform-provider-google-beta/pull/9724))
+* storagecontrol: added `trial_config` field to `google_storage_control_project_intelligence_config` resource ([#9724](https://github.com/hashicorp/terraform-provider-google-beta/pull/9724))
+
+BUG FIXES:
+* container: fixed perma-diff in `fleet` field when the `fleet.project` field being added is null or empty in `google_container_cluster` resource ([#9726](https://github.com/hashicorp/terraform-provider-google-beta/pull/9726))
+* pubsub: fixed perma-diff by changing `allowed_persistence_regions` field to set in `google_pubsub_topic` resource ([#9743](https://github.com/hashicorp/terraform-provider-google-beta/pull/9743))
 
 ## 6.29.0 (Apr 8, 2025)
 
