@@ -30,6 +30,7 @@ fields:
   - field: 'network_config.authorized_external_networks.cidr_range'
   - field: 'network_config.enable_outbound_public_ip'
   - field: 'network_config.enable_public_ip'
+  - field: 'observability_config.assistive_experiences_enabled'
   - field: 'observability_config.enabled'
   - field: 'observability_config.max_query_string_length'
   - field: 'observability_config.preserve_comments'
