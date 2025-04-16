@@ -43,7 +43,10 @@ func TestAccApigeeEnvironmentKeyvaluemaps_apigeeEnvironmentKeyvaluemapsTestExamp
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
-		CheckDestroy:             testAccCheckApigeeEnvironmentKeyvaluemapsDestroyProducer(t),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccCheckApigeeEnvironmentKeyvaluemapsDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccApigeeEnvironmentKeyvaluemaps_apigeeEnvironmentKeyvaluemapsTestExample(context),
@@ -85,10 +88,15 @@ resource "google_project_service" "servicenetworking" {
   depends_on = [ google_project_service.apigee ]
 }
 
+resource "time_sleep" "wait_120_seconds" {
+  create_duration = "120s"
+  depends_on = [google_project_service.compute]
+}
+
 resource "google_compute_network" "apigee_network" {
   name       = "apigee-network"
   project    = google_project.project.project_id
-  depends_on = [ google_project_service.compute ]
+  depends_on = [time_sleep.wait_120_seconds]
 }
 
 resource "google_compute_global_address" "apigee_range" {
@@ -172,7 +180,10 @@ func TestAccApigeeEnvironmentKeyvaluemaps_apigeeEnvironmentKeyvaluemapsBetaTestE
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
-		CheckDestroy:             testAccCheckApigeeEnvironmentKeyvaluemapsDestroyProducer(t),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccCheckApigeeEnvironmentKeyvaluemapsDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccApigeeEnvironmentKeyvaluemaps_apigeeEnvironmentKeyvaluemapsBetaTestExample(context),
@@ -220,7 +231,7 @@ resource "google_project" "project" {
    project = google_project.project.project_id 
    service = "servicenetworking.googleapis.com" 
    depends_on = [google_project_service.compute]
- } 
+ }
   
  resource "google_project_service" "kms" { 
    provider = google-beta 
@@ -237,13 +248,18 @@ resource "google_project" "project" {
   service = "apigeeconnect.googleapis.com"
   depends_on = [google_project_service.apigee]
 }
+
+resource "time_sleep" "wait_120_seconds" {
+  create_duration = "120s"
+  depends_on = [google_project_service.compute]
+ }
   
  resource "google_compute_network" "apigee_network" { 
    provider = google-beta 
   
    name       = "apigee-network" 
    project    = google_project.project.project_id 
-   depends_on = [google_project_service.compute] 
+   depends_on = [time_sleep.wait_120_seconds]
  } 
   
  resource "google_compute_global_address" "apigee_range" { 
