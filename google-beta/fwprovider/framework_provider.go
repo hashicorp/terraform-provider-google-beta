@@ -22,8 +22,9 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/functions"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/fwmodels"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/fwvalidators"
-	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebase"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager"
+
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebase"
 	"github.com/hashicorp/terraform-provider-google-beta/version"
 
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
