@@ -14,6 +14,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/sql"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	sqladmin "google.golang.org/api/sqladmin/v1beta4"
 )
@@ -529,6 +530,40 @@ func TestAccSqlDatabaseInstance_diskspecs(t *testing.T) {
 			{
 				Config: fmt.Sprintf(
 					testGoogleSqlDatabaseInstance_diskspecs, masterID),
+			},
+			{
+				ResourceName:            "google_sql_database_instance.instance",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"deletion_protection"},
+			},
+		},
+	})
+}
+func TestAccSqlDatabaseInstance_hyperdisk(t *testing.T) {
+	t.Parallel()
+	enterprisePlusName := "tf-test-enterprise-plus" + acctest.RandString(t, 10)
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccSqlDatabaseInstanceDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testGoogleSqlDatabaseInstance_hyperdisk_default(enterprisePlusName),
+			},
+			{
+				ResourceName:            "google_sql_database_instance.instance",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"deletion_protection"},
+			},
+			{
+				Config: testGoogleSqlDatabaseInstance_hyperdisk(enterprisePlusName, 3000, 140),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_sql_database_instance.instance", plancheck.ResourceActionUpdate),
+					},
+				},
 			},
 			{
 				ResourceName:            "google_sql_database_instance.instance",
@@ -5232,6 +5267,44 @@ resource "google_sql_database_instance" "instance" {
   }
 }
 `
+
+func testGoogleSqlDatabaseInstance_hyperdisk_default(databaseName string) string {
+	return fmt.Sprintf(`
+
+resource "google_sql_database_instance" "instance" {
+  provider = google-beta
+
+  name             = "%s"
+  region           = "us-east1"
+  database_version    = "POSTGRES_17"
+  deletion_protection = false
+  settings {
+    tier = "db-c4a-highmem-2"
+    edition = "ENTERPRISE_PLUS"
+    disk_type = "HYPERDISK_BALANCED"
+  }
+}`, databaseName)
+}
+
+func testGoogleSqlDatabaseInstance_hyperdisk(databaseName string, iops, throughput int64) string {
+	return fmt.Sprintf(`
+
+resource "google_sql_database_instance" "instance" {
+  provider = google-beta
+
+  name             = "%s"
+  region           = "us-east1"
+  database_version    = "POSTGRES_17"
+  deletion_protection = false
+  settings {
+    tier = "db-c4a-highmem-2"
+    edition = "ENTERPRISE_PLUS"
+    disk_type = "HYPERDISK_BALANCED"
+    data_disk_provisioned_iops = %d
+    data_disk_provisioned_throughput = %d
+  }
+}`, databaseName, iops, throughput)
+}
 
 var testGoogleSqlDatabaseInstance_maintenance = `
 resource "google_sql_database_instance" "instance" {
