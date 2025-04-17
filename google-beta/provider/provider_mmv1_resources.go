@@ -560,9 +560,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 642
+// Generated resources: 644
 // Generated IAM resources: 324
-// Total generated resources: 966
+// Total generated resources: 968
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -1107,10 +1107,12 @@ var generatedResources = map[string]*schema.Resource{
 	"google_gemini_repository_group_iam_binding":                                 tpgiamresource.ResourceIamBinding(gemini.GeminiRepositoryGroupIamSchema, gemini.GeminiRepositoryGroupIamUpdaterProducer, gemini.GeminiRepositoryGroupIdParseFunc),
 	"google_gemini_repository_group_iam_member":                                  tpgiamresource.ResourceIamMember(gemini.GeminiRepositoryGroupIamSchema, gemini.GeminiRepositoryGroupIamUpdaterProducer, gemini.GeminiRepositoryGroupIdParseFunc),
 	"google_gemini_repository_group_iam_policy":                                  tpgiamresource.ResourceIamPolicy(gemini.GeminiRepositoryGroupIamSchema, gemini.GeminiRepositoryGroupIamUpdaterProducer, gemini.GeminiRepositoryGroupIdParseFunc),
+	"google_gke_backup_backup_channel":                                           gkebackup.ResourceGKEBackupBackupChannel(),
 	"google_gke_backup_backup_plan":                                              gkebackup.ResourceGKEBackupBackupPlan(),
 	"google_gke_backup_backup_plan_iam_binding":                                  tpgiamresource.ResourceIamBinding(gkebackup.GKEBackupBackupPlanIamSchema, gkebackup.GKEBackupBackupPlanIamUpdaterProducer, gkebackup.GKEBackupBackupPlanIdParseFunc),
 	"google_gke_backup_backup_plan_iam_member":                                   tpgiamresource.ResourceIamMember(gkebackup.GKEBackupBackupPlanIamSchema, gkebackup.GKEBackupBackupPlanIamUpdaterProducer, gkebackup.GKEBackupBackupPlanIdParseFunc),
 	"google_gke_backup_backup_plan_iam_policy":                                   tpgiamresource.ResourceIamPolicy(gkebackup.GKEBackupBackupPlanIamSchema, gkebackup.GKEBackupBackupPlanIamUpdaterProducer, gkebackup.GKEBackupBackupPlanIdParseFunc),
+	"google_gke_backup_restore_channel":                                          gkebackup.ResourceGKEBackupRestoreChannel(),
 	"google_gke_backup_restore_plan":                                             gkebackup.ResourceGKEBackupRestorePlan(),
 	"google_gke_backup_restore_plan_iam_binding":                                 tpgiamresource.ResourceIamBinding(gkebackup.GKEBackupRestorePlanIamSchema, gkebackup.GKEBackupRestorePlanIamUpdaterProducer, gkebackup.GKEBackupRestorePlanIdParseFunc),
 	"google_gke_backup_restore_plan_iam_member":                                  tpgiamresource.ResourceIamMember(gkebackup.GKEBackupRestorePlanIamSchema, gkebackup.GKEBackupRestorePlanIamUpdaterProducer, gkebackup.GKEBackupRestorePlanIdParseFunc),
