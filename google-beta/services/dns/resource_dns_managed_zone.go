@@ -407,10 +407,10 @@ This should be formatted like 'projects/{project}/global/networks/{network}' or
 func dnsManagedZoneForwardingConfigTargetNameServersSchema() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
-			"ipv4_address": {
+			"domain_name": {
 				Type:        schema.TypeString,
-				Required:    true,
-				Description: `IPv4 address of a target name server.`,
+				Optional:    true,
+				Description: `Fully qualified domain name for the forwarding target.`,
 			},
 			"forwarding_path": {
 				Type:         schema.TypeString,
@@ -419,6 +419,11 @@ func dnsManagedZoneForwardingConfigTargetNameServersSchema() *schema.Resource {
 				Description: `Forwarding path for this TargetNameServer. If unset or 'default' Cloud DNS will make forwarding
 decision based on address ranges, i.e. RFC1918 addresses go to the VPC, Non-RFC1918 addresses go
 to the Internet. When set to 'private', Cloud DNS will always send queries through VPC for this target Possible values: ["default", "private"]`,
+			},
+			"ipv4_address": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: `IPv4 address of a target name server.`,
 			},
 		},
 	}
@@ -1170,12 +1175,17 @@ func flattenDNSManagedZoneForwardingConfigTargetNameServers(v interface{}, d *sc
 		}
 		transformed.Add(map[string]interface{}{
 			"ipv4_address":    flattenDNSManagedZoneForwardingConfigTargetNameServersIpv4Address(original["ipv4Address"], d, config),
+			"domain_name":     flattenDNSManagedZoneForwardingConfigTargetNameServersDomainName(original["domainName"], d, config),
 			"forwarding_path": flattenDNSManagedZoneForwardingConfigTargetNameServersForwardingPath(original["forwardingPath"], d, config),
 		})
 	}
 	return transformed
 }
 func flattenDNSManagedZoneForwardingConfigTargetNameServersIpv4Address(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenDNSManagedZoneForwardingConfigTargetNameServersDomainName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -1546,6 +1556,13 @@ func expandDNSManagedZoneForwardingConfigTargetNameServers(v interface{}, d tpgr
 			transformed["ipv4Address"] = transformedIpv4Address
 		}
 
+		transformedDomainName, err := expandDNSManagedZoneForwardingConfigTargetNameServersDomainName(original["domain_name"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedDomainName); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["domainName"] = transformedDomainName
+		}
+
 		transformedForwardingPath, err := expandDNSManagedZoneForwardingConfigTargetNameServersForwardingPath(original["forwarding_path"], d, config)
 		if err != nil {
 			return nil, err
@@ -1559,6 +1576,10 @@ func expandDNSManagedZoneForwardingConfigTargetNameServers(v interface{}, d tpgr
 }
 
 func expandDNSManagedZoneForwardingConfigTargetNameServersIpv4Address(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandDNSManagedZoneForwardingConfigTargetNameServersDomainName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
