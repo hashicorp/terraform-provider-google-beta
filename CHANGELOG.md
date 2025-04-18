@@ -15,7 +15,7 @@ FEATURES:
 
 IMPROVEMENTS:
 * accesscontextmanager: added `scoped_access_settings` field to `gcp_user_access_binding` resource ([#9763](https://github.com/hashicorp/terraform-provider-google-beta/pull/9763))
-* alloydb: added `assistiveExperiencesEnabled` field to `observabilityConfig` in `google_alloydb_instance` resource ([#9808](https://github.com/hashicorp/terraform-provider-google-beta/pull/9808))
+* alloydb: added `assistive_experiences_enabled` field to `observabilityConfig` in `google_alloydb_instance` resource ([#9808](https://github.com/hashicorp/terraform-provider-google-beta/pull/9808))
 * alloydb: added `machine_type` field to `google_alloydb_instance` resource ([#9795](https://github.com/hashicorp/terraform-provider-google-beta/pull/9795))
 * artifactregistry: added `DEBIAN_SNAPSHOT` enum value to `repository_base` in `google_artifact_registry_repository` ([#9770](https://github.com/hashicorp/terraform-provider-google-beta/pull/9770))
 * compute: added `log_config.optional_mode`, `log_config.optional_fields`, `backend.preference`, `max_stream_duration` and `cdn_policy.request_coalescing` fields to `google_compute_backend_service` resource ([#9818](https://github.com/hashicorp/terraform-provider-google-beta/pull/9818))
@@ -27,12 +27,11 @@ IMPROVEMENTS:
 * metastore: added `tags` field to `google_dataproc_metastore_service` resource to allow setting tags for services at creation time ([#9768](https://github.com/hashicorp/terraform-provider-google-beta/pull/9768))
 * monitoring: added `log_check_failures` to `google_monitoring_uptime_check_config` ([#9794](https://github.com/hashicorp/terraform-provider-google-beta/pull/9794))
 * networkconnectivity: added IPv6 support to `google_network_connectivity_internal_range` resource ([#9826](https://github.com/hashicorp/terraform-provider-google-beta/pull/9826))
-* networkconnectivity: added `excludeCidrRanges` field to `google_network_connectivity_internal_range` resource ([#9778](https://github.com/hashicorp/terraform-provider-google-beta/pull/9778))
+* networkconnectivity: added `exclude_cidr_ranges` field to `google_network_connectivity_internal_range` resource ([#9778](https://github.com/hashicorp/terraform-provider-google-beta/pull/9778))
 * privateca: added the `backdate_duration` field to the `google_privateca_ca_pool` resource to add support for backdating the `not_before_time` of certificates ([#9812](https://github.com/hashicorp/terraform-provider-google-beta/pull/9812))
 * redis: added `tags` field to `google_redis_instance` resource to allow setting tags for instances at creation time ([#9783](https://github.com/hashicorp/terraform-provider-google-beta/pull/9783))
 * sql: added `custom_subject_alternative_names` field to `instances` resource ([#9799](https://github.com/hashicorp/terraform-provider-google-beta/pull/9799))
 * sql: added `data_disk_provisioned_iops` and `data_disk_provisioned_throughput` fields to `google_sql_database_instance` resource ([#9822](https://github.com/hashicorp/terraform-provider-google-beta/pull/9822))
-* sql: added `databaseVersionDiffSuppress` to `google_sql_database_instance`. ([#9798](https://github.com/hashicorp/terraform-provider-google-beta/pull/9798))
 * sql: added `retain_backups_on_delete` field to `google_sql_database_instance` resource ([#9780](https://github.com/hashicorp/terraform-provider-google-beta/pull/9780))
 
 BUG FIXES:
@@ -40,6 +39,7 @@ BUG FIXES:
 * discoveryengine: fixed `google_discovery_engine_target_site` operations to allow for enough time to index before timing out ([#9800](https://github.com/hashicorp/terraform-provider-google-beta/pull/9800))
 * compute: fixed perma-diff in `google_compute_network_firewall_policy_rule` ([#9827](https://github.com/hashicorp/terraform-provider-google-beta/pull/9827))
 * identityplatform: fixed perma-diff in `google_identity_platform_config` ([#9814](https://github.com/hashicorp/terraform-provider-google-beta/pull/9814))
+* sql: added diff suppression for some version changes to`google_sql_database_instance`. Diffs for `database_version` for MySQL 8.0 will be suppressed when the version is updated by auto version upgrade.([#22356](https://github.com/hashicorp/terraform-provider-google/pull/22356))
 * sql: fixed the issue of shortened version of failover_dr_replica_name causing unnecessary diff ([#9775](https://github.com/hashicorp/terraform-provider-google-beta/pull/9775))
 
 ## 6.30.0 (Apr 15, 2025)
