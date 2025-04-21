@@ -209,9 +209,6 @@ func resourceFirebaseAppleAppCreate(d *schema.ResourceData, meta interface{}) er
 		return fmt.Errorf("Error waiting to create AppleApp: %s", err)
 	}
 
-	if err := d.Set("name", flattenFirebaseAppleAppName(opRes["name"], d, config)); err != nil {
-		return err
-	}
 	if err := d.Set("app_id", flattenFirebaseAppleAppAppId(opRes["appId"], d, config)); err != nil {
 		return err
 	}

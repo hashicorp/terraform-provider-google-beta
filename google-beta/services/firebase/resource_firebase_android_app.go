@@ -228,9 +228,6 @@ func resourceFirebaseAndroidAppCreate(d *schema.ResourceData, meta interface{}) 
 		return fmt.Errorf("Error waiting to create AndroidApp: %s", err)
 	}
 
-	if err := d.Set("name", flattenFirebaseAndroidAppName(opRes["name"], d, config)); err != nil {
-		return err
-	}
 	if err := d.Set("app_id", flattenFirebaseAndroidAppAppId(opRes["appId"], d, config)); err != nil {
 		return err
 	}
