@@ -721,7 +721,6 @@ func testAccComputeRegionSecurityPolicy_withMultipleEnforceOnKeyConfigs_update(c
 		}
 	`, context)
 }
-
 func TestAccComputeRegionSecurityPolicy_regionSecurityPolicyWithRulesNetworkMatch(t *testing.T) {
 	t.Parallel()
 

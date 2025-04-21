@@ -4,10 +4,9 @@ package compute_test
 
 import (
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"testing"
-
-	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
 func TestAccComputeRegionSecurityPolicyRule_regionSecurityPolicyRuleBasicUpdate(t *testing.T) {
@@ -240,7 +239,6 @@ resource "google_compute_region_security_policy_rule" "policy_rule" {
 }
 `, context)
 }
-
 func TestAccComputeRegionSecurityPolicyRule_regionSecurityPolicyRuleNetworkMatchUpdate(t *testing.T) {
 	context := map[string]interface{}{
 		"random_suffix": acctest.RandString(t, 10),
