@@ -24,7 +24,7 @@ func TestAccRedisCluster_createUpdateClusterWithNodeType(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckRedisClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -63,7 +63,7 @@ func TestAccRedisCluster_createClusterWithZoneDistribution(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckRedisClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -92,7 +92,7 @@ func TestAccRedisCluster_updateReplicaCount(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckRedisClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -141,7 +141,7 @@ func TestAccRedisCluster_updateShardCount(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckRedisClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -180,7 +180,7 @@ func TestAccRedisCluster_updateRedisConfigs(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckRedisClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -242,7 +242,7 @@ func TestAccRedisCluster_createUpdateDeletionProtection(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckRedisClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -272,7 +272,6 @@ func TestAccRedisCluster_createUpdateDeletionProtection(t *testing.T) {
 		},
 	})
 }
-
 func TestAccRedisCluster_automatedBackupConfig(t *testing.T) {
 	t.Parallel()
 
@@ -715,7 +714,7 @@ func TestAccRedisCluster_persistenceUpdate(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckRedisClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -764,7 +763,7 @@ func TestAccRedisCluster_switchoverAndDetachSecondary(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckRedisClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -803,7 +802,7 @@ func TestAccRedisCluster_updateClusterEndpoints(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckRedisClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -897,7 +896,7 @@ func createRedisClusterEndpoints(params *ClusterParams) string {
 func createRedisClusterEndpointsWithOneUserCreatedConnections(params *ClusterParams) string {
 	return fmt.Sprintf(`
 		resource "google_redis_cluster_user_created_connections" "default" {
-		provider      = google-beta
+		
 		name = "%s"
 		region = "us-central1"
 		cluster_endpoints {
@@ -923,7 +922,6 @@ func createRedisClusterEndpointsWithOneUserCreatedConnections(params *ClusterPar
 		}
 		}
 		data "google_project" "project" {
-			provider      = google-beta
 		}
 		%s
 		`,
@@ -936,7 +934,6 @@ func createRedisClusterEndpointsWithOneUserCreatedConnections(params *ClusterPar
 func createRedisClusterEndpointsWithTwoUserCreatedConnections(params *ClusterParams) string {
 	return fmt.Sprintf(`
 		resource "google_redis_cluster_user_created_connections" "default" {
-		provider      = google-beta
 		name = "%s"
 		region = "us-central1"
 		cluster_endpoints {
@@ -982,7 +979,6 @@ func createRedisClusterEndpointsWithTwoUserCreatedConnections(params *ClusterPar
 		}
 		}
 		data "google_project" "project" {
-			provider      = google-beta
 		}
 		%s
 		%s
@@ -996,7 +992,6 @@ func createRedisClusterEndpointsWithTwoUserCreatedConnections(params *ClusterPar
 func createRedisClusterUserCreatedConnection1(params *ClusterParams) string {
 	return fmt.Sprintf(`
 		resource "google_compute_forwarding_rule" "forwarding_rule1_network1" {
-		provider      = google-beta
 		name                   = "%s"
 		region                 = "us-central1"
 		ip_address             = google_compute_address.ip1_network1.id
@@ -1005,8 +1000,7 @@ func createRedisClusterUserCreatedConnection1(params *ClusterParams) string {
 		target                 = google_redis_cluster.test.psc_service_attachments[0].service_attachment
 		}
 
-		resource "google_compute_forwarding_rule" "forwarding_rule2_network1" {
-		provider      = google-beta
+		resource "google_compute_forwarding_rule" "forwarding_rule2_network1" {	
 		name                   = "%s"
 		region                 = "us-central1"
 		ip_address             = google_compute_address.ip2_network1.id
@@ -1016,7 +1010,6 @@ func createRedisClusterUserCreatedConnection1(params *ClusterParams) string {
 		}
 
 		resource "google_compute_address" "ip1_network1" {
-		provider      = google-beta
 		name         = "%s"
 		region       = "us-central1"
 		subnetwork   = google_compute_subnetwork.subnet_network1.id
@@ -1025,7 +1018,6 @@ func createRedisClusterUserCreatedConnection1(params *ClusterParams) string {
 		}
 
 		resource "google_compute_address" "ip2_network1" {
-		provider      = google-beta
 		name         = "%s"
 		region       = "us-central1"
 		subnetwork   = google_compute_subnetwork.subnet_network1.id
@@ -1034,7 +1026,6 @@ func createRedisClusterUserCreatedConnection1(params *ClusterParams) string {
 		}
 
 		resource "google_compute_subnetwork" "subnet_network1" {
-		provider      = google-beta
 		name          = "%s"
 		ip_cidr_range = "10.0.0.248/29"
 		region        = "us-central1"
@@ -1042,7 +1033,6 @@ func createRedisClusterUserCreatedConnection1(params *ClusterParams) string {
 		}
 
 		resource "google_compute_network" "network1" {
-		provider      = google-beta
 		name                    = "%s"
 		auto_create_subnetworks = false
 		}
@@ -1059,7 +1049,6 @@ func createRedisClusterUserCreatedConnection1(params *ClusterParams) string {
 func createRedisClusterUserCreatedConnection2(params *ClusterParams) string {
 	return fmt.Sprintf(`
 		resource "google_compute_forwarding_rule" "forwarding_rule1_network2" {
-		provider      = google-beta
 		name                   = "%s"
 		region                 = "us-central1"
 		ip_address             = google_compute_address.ip1_network2.id
@@ -1069,7 +1058,6 @@ func createRedisClusterUserCreatedConnection2(params *ClusterParams) string {
 		}
 
 		resource "google_compute_forwarding_rule" "forwarding_rule2_network2" {
-		provider      = google-beta
 		name                   = "%s"
 		region                 = "us-central1"
 		ip_address             = google_compute_address.ip2_network2.id
@@ -1079,7 +1067,6 @@ func createRedisClusterUserCreatedConnection2(params *ClusterParams) string {
 		}
 
 		resource "google_compute_address" "ip1_network2" {
-		provider      = google-beta
 		name         = "%s"
 		region       = "us-central1"
 		subnetwork   = google_compute_subnetwork.subnet_network2.id
@@ -1088,7 +1075,6 @@ func createRedisClusterUserCreatedConnection2(params *ClusterParams) string {
 		}
 
 		resource "google_compute_address" "ip2_network2" {
-		provider      = google-beta
 		name         = "%s"
 		region       = "us-central1"
 		subnetwork   = google_compute_subnetwork.subnet_network2.id
@@ -1097,7 +1083,6 @@ func createRedisClusterUserCreatedConnection2(params *ClusterParams) string {
 		}
 
 		resource "google_compute_subnetwork" "subnet_network2" {
-		provider      = google-beta
 		name          = "%s"
 		ip_cidr_range = "10.0.0.248/29"
 		region        = "us-central1"
@@ -1105,7 +1090,6 @@ func createRedisClusterUserCreatedConnection2(params *ClusterParams) string {
 		}
 
 		resource "google_compute_network" "network2" {
-		provider      = google-beta
 		name                    = "%s"
 		auto_create_subnetworks = false
 		}
@@ -1134,7 +1118,6 @@ func createOrUpdateRedisCluster(params *ClusterParams) string {
 		%s
 		%s
 		resource "google_network_connectivity_service_connection_policy" "default" {
-			provider = google-beta
 			name = "%s"
 			location = "us-central1"
 			service_class = "gcp-memorystore-redis"
@@ -1146,7 +1129,6 @@ func createOrUpdateRedisCluster(params *ClusterParams) string {
 		}
 
 		resource "google_compute_subnetwork" "producer_subnet" {
-			provider      = google-beta
 			name          = "%s"
 			ip_cidr_range = "10.0.0.16/28"
 			region        = "us-central1"
@@ -1154,7 +1136,6 @@ func createOrUpdateRedisCluster(params *ClusterParams) string {
 		}
 
 		resource "google_compute_network" "producer_net" {
-			provider                = google-beta
 			name                    = "%s"
 			auto_create_subnetworks = false
 		}
@@ -1237,7 +1218,6 @@ func createRedisClusterResourceConfig(params *ClusterParams, isSecondaryCluster 
 
 	return fmt.Sprintf(`
 		resource "google_redis_cluster" "%s" {
-		provider = google-beta
 		name           = "%s"
 		replica_count = %d
 		shard_count = %d
