@@ -2956,7 +2956,10 @@ func TestAccSqlDatabaseInstance_useCustomSubjectAlternateName(t *testing.T) {
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
-		CheckDestroy:             testAccSqlDatabaseInstanceDestroyProducer(t),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccSqlDatabaseInstanceDestroyProducer(t),
 
 		Steps: []resource.TestStep{
 			{
@@ -2990,7 +2993,10 @@ func TestAccSqlDatabaseInstance_useCustomerManagedServerCa(t *testing.T) {
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
-		CheckDestroy:             testAccSqlDatabaseInstanceDestroyProducer(t),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccSqlDatabaseInstanceDestroyProducer(t),
 
 		Steps: []resource.TestStep{
 			{
@@ -3070,6 +3076,15 @@ resource "google_privateca_ca_pool_iam_member" "granting" {
   member = "serviceAccount:service-${data.google_project.project.number}@gcp-sa-cloud-sql.iam.gserviceaccount.com"
 }
 
+resource "time_sleep" "wait_2_mins" {
+  depends_on = [
+    google_privateca_certificate_authority.customer_ca,
+    google_privateca_ca_pool_iam_member.granting
+  ]
+
+  create_duration = "120s"
+}
+
 resource "google_sql_database_instance" "instance" {
   name                = "%{databaseName}"
   region              = "us-central1"
@@ -3085,10 +3100,7 @@ resource "google_sql_database_instance" "instance" {
 	}
   }
 
-  depends_on = [
-      google_privateca_certificate_authority.customer_ca,
-      google_privateca_ca_pool_iam_member.granting
-  ]
+  depends_on = [time_sleep.wait_2_mins]
 }
 `, context)
 }
@@ -3154,6 +3166,16 @@ resource "google_privateca_ca_pool_iam_member" "granting" {
   member = "serviceAccount:service-${data.google_project.project.number}@gcp-sa-cloud-sql.iam.gserviceaccount.com"
 }
 
+
+resource "time_sleep" "wait_2_mins" {
+  depends_on = [
+    google_privateca_certificate_authority.customer_ca,
+    google_privateca_ca_pool_iam_member.granting
+  ]
+
+  create_duration = "120s"
+}
+
 resource "google_sql_database_instance" "instance" {
   name                = "%{databaseName}"
   region              = "us-central1"
@@ -3168,10 +3190,7 @@ resource "google_sql_database_instance" "instance" {
 	}
   }
 
-  depends_on = [
-      google_privateca_certificate_authority.customer_ca,
-      google_privateca_ca_pool_iam_member.granting
-  ]
+  depends_on = [time_sleep.wait_2_mins]
 }
 `, context)
 }
