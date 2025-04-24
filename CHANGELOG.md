@@ -1,4 +1,9 @@
-## 6.31.0 (Unreleased)
+## 6.31.1 (Unreleased)
+
+BUG FIXES:
+* storage: removed extra permission (storage.anywhereCaches.list) required for destroying a `resource_storage_bucket` ([#9842](https://github.com/hashicorp/terraform-provider-google-beta/pull/9842))
+
+## 6.31.0 (Apr 22, 2025)
 
 DEPRECATIONS:
 * integrations: deprecated `run_as_service_account` field in `google_integrations_client` resource ([#9767](https://github.com/hashicorp/terraform-provider-google-beta/pull/9767))
