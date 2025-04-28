@@ -19,7 +19,6 @@ IMPROVEMENTS:
 * identityplatform: Added `response_type` field to `google_identity_platform_oauth_idp_config` ([#9856](https://github.com/hashicorp/terraform-provider-google-beta/pull/9856))
 * netapp: added `custom_performance_enabled`, `total_throughput_mibps`, and `total_iops` fields to `google_netapp_storage_pool` resource (beta) ([#9872](https://github.com/hashicorp/terraform-provider-google-beta/pull/9872))
 * networkservices: added `metadata` field to `google_networkservices_lbtrafficextension` resource ([#9849](https://github.com/hashicorp/terraform-provider-google-beta/pull/9849))
-* secretmanager: added `tags` field to `google_secret_manager_secret` to allow setting tags for secrets at creation time ([#9850](https://github.com/hashicorp/terraform-provider-google-beta/pull/9850))
 * sql: added output-only field `dns_names` to `google_sql_database_instance` resource ([#9879](https://github.com/hashicorp/terraform-provider-google-beta/pull/9879))
 * storage: added new fields `time_created` and `updated` in `google_storage_bucket` ([#9877](https://github.com/hashicorp/terraform-provider-google-beta/pull/9877))
 * storagetransfer: added `transfer_spec.aws_s3_data_source.managed_private_network` field to `google_storage_transfer_job` resource ([#9886](https://github.com/hashicorp/terraform-provider-google-beta/pull/9886))
@@ -30,7 +29,6 @@ BUG FIXES:
 * compute: fixed an issue preventing `terms.priority` from being set to priority value 0 in `google_compute_router_route_policy` resource ([#9830](https://github.com/hashicorp/terraform-provider-google-beta/pull/9830))
 * securesourcemanager: increased default timeouts on `google_secure_source_manager_instance` operations to 120m from 60m. Operations could take longer than an hour. ([#9868](https://github.com/hashicorp/terraform-provider-google-beta/pull/9868))
 * sql: replaced the Terraform-based default value for `settings.disk_type` in `google_sql_database_instance` with a server-assigned default, allowing for compatibility with machine types that require `HyperDisk_Balanced` ([#9870](https://github.com/hashicorp/terraform-provider-google-beta/pull/9870))
-* storage: removed extra permission (storage.anywhereCaches.list) required for doing a destroy in `resource_storage_bucket` ([#9842](https://github.com/hashicorp/terraform-provider-google-beta/pull/9842))
 * workstations: increased default timeouts on `google_workstations_workstation_cluster` operations to 120m from 60m. Operations could take longer than an hour. ([#9867](https://github.com/hashicorp/terraform-provider-google-beta/pull/9867))
 
 ## 6.32.0 (Unreleased)
