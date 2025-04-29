@@ -1,4 +1,14 @@
-## 6.32.0 (Unreleased)
+## 6.33.0 (Unreleased)
+
+## 6.32.0 (Apr 25, 2025)
+
+IMPROVEMENTS:
+* container: added `flex_start` to `node_config` in `google_container_cluster` and `google_container_node_pool` ([#9885](https://github.com/hashicorp/terraform-provider-google-beta/pull/9885))
+
+## 6.31.1 (Apr 25, 2025)
+
+BUG FIXES:
+* storage: removed extra permission (storage.anywhereCaches.list) required for destroying a `resource_storage_bucket` ([#9842](https://github.com/hashicorp/terraform-provider-google-beta/pull/9842))
 
 ## 6.31.0 (Apr 22, 2025)
 
