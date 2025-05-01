@@ -127,6 +127,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/pubsublite"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/redis"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager3"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/runtimeconfig"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/secretmanager"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/secretmanagerregional"
@@ -562,9 +563,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 649
+// Generated resources: 650
 // Generated IAM resources: 327
-// Total generated resources: 976
+// Total generated resources: 977
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -1372,6 +1373,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_redis_cluster_user_created_connections":                              redis.ResourceRedisClusterUserCreatedConnections(),
 	"google_redis_instance":                                                      redis.ResourceRedisInstance(),
 	"google_resource_manager_lien":                                               resourcemanager.ResourceResourceManagerLien(),
+	"google_resource_manager_capability":                                         resourcemanager3.ResourceResourceManager3Capability(),
 	"google_runtimeconfig_config_iam_binding":                                    tpgiamresource.ResourceIamBinding(runtimeconfig.RuntimeConfigConfigIamSchema, runtimeconfig.RuntimeConfigConfigIamUpdaterProducer, runtimeconfig.RuntimeConfigConfigIdParseFunc),
 	"google_runtimeconfig_config_iam_member":                                     tpgiamresource.ResourceIamMember(runtimeconfig.RuntimeConfigConfigIamSchema, runtimeconfig.RuntimeConfigConfigIamUpdaterProducer, runtimeconfig.RuntimeConfigConfigIdParseFunc),
 	"google_runtimeconfig_config_iam_policy":                                     tpgiamresource.ResourceIamPolicy(runtimeconfig.RuntimeConfigConfigIamSchema, runtimeconfig.RuntimeConfigConfigIamUpdaterProducer, runtimeconfig.RuntimeConfigConfigIdParseFunc),
