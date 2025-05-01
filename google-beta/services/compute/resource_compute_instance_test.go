@@ -2790,9 +2790,13 @@ func TestAccComputeInstance_enableDisplay(t *testing.T) {
 			computeInstanceImportStep("us-central1-a", instanceName, []string{"allow_stopping_for_update"}),
 			{
 				Config: testAccComputeInstance_enableDisplayUpdated(instanceName),
+			},
+			computeInstanceImportStep("us-central1-a", instanceName, []string{"allow_stopping_for_update"}),
+			{
+				Config: testAccComputeInstance_enableDisplay(instanceName),
 				Check: resource.ComposeTestCheckFunc(
 					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_enableDisplayUpdated(instanceName)),
+						testAccComputeInstance_enableDisplay(instanceName)),
 				),
 			},
 			computeInstanceImportStep("us-central1-a", instanceName, []string{"allow_stopping_for_update"}),
@@ -9576,7 +9580,8 @@ resource "google_compute_instance" "foobar" {
     %{host_error_timeout_sec}
 	automatic_restart = true
   }
-}`, context)
+}
+`, context)
 }
 
 func testAccComputeInstance_shieldedVmConfig(instance string, enableSecureBoot bool, enableVtpm bool, enableIntegrityMonitoring bool) string {
@@ -10856,7 +10861,8 @@ resource "google_compute_instance" "foobar" {
   network_interface {
     network = "default"
   }
-}`, instance)
+}
+`, instance)
 }
 
 func testAccComputeInstance_partnerMetadata(instance string) string {
