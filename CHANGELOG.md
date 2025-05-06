@@ -1,5 +1,24 @@
 ## 6.33.0 (Unreleased)
 
+DEPRECATIONS:
+* tpu: deprecated `google_tpu_node` resource. `google_tpu_node` is deprecated and will be removed in a future major release. Use `google_tpu_v2_vm` instead. ([#9902](https://github.com/hashicorp/terraform-provider-google-beta/pull/9902))
+
+FEATURES:
+* **New Resource:** `google_apigee_security_profile_v2` ([#9895](https://github.com/hashicorp/terraform-provider-google-beta/pull/9895))
+* **New Resource:** `google_resource_manager_capability` ([#9917](https://github.com/hashicorp/terraform-provider-google-beta/pull/9917))
+
+IMPROVEMENTS:
+* bigtable: added `cluster.node_scaling_factor` field to `google_bigtable_instance` resource ([#9907](https://github.com/hashicorp/terraform-provider-google-beta/pull/9907))
+* cloudrunv2: added `scaling_mode` and `manual_instance_count` fields to `google_cloud_run_v2_service` resource ([#9908](https://github.com/hashicorp/terraform-provider-google-beta/pull/9908))
+* filestore: added `directory_services` field to `google_filestore_instance` (beta) ([#9919](https://github.com/hashicorp/terraform-provider-google-beta/pull/9919))
+* networkconnectivity: added `state_reason` field to `spoke` resource ([#9896](https://github.com/hashicorp/terraform-provider-google-beta/pull/9896))
+* sql: added `connection_pool_config` field. ([#9918](https://github.com/hashicorp/terraform-provider-google-beta/pull/9918))
+* vpcaccess: changed fields `min_instances`, `max_instances`, `machine_type` to allow update `google_vpc_access_connector` without without recreation. ([#9914](https://github.com/hashicorp/terraform-provider-google-beta/pull/9914))
+
+BUG FIXES:
+* compute: fixed the bug when validating the subnetwork project in `google_compute_instance` resource ([#9913](https://github.com/hashicorp/terraform-provider-google-beta/pull/9913))
+* workbench: fixed a permadiff on `metadata` of `instance-region` in `google_workbench_instance` resource ([#9903](https://github.com/hashicorp/terraform-provider-google-beta/pull/9903))
+
 ## 6.32.0 (Apr 25, 2025)
 
 IMPROVEMENTS:
