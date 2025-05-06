@@ -5,12 +5,11 @@ DEPRECATIONS:
 
 FEATURES:
 * **New Resource:** `google_apigee_security_profile_v2` ([#9895](https://github.com/hashicorp/terraform-provider-google-beta/pull/9895))
-* **New Resource:** `google_resource_manager_capability` (beta) ([#9917](https://github.com/hashicorp/terraform-provider-google-beta/pull/9917))
+* **New Resource:** `google_resource_manager_capability` ([#9917](https://github.com/hashicorp/terraform-provider-google-beta/pull/9917))
 
 IMPROVEMENTS:
 * bigtable: added `cluster.node_scaling_factor` field to `google_bigtable_instance` resource ([#9907](https://github.com/hashicorp/terraform-provider-google-beta/pull/9907))
 * cloudrunv2: added `scaling_mode` and `manual_instance_count` fields to `google_cloud_run_v2_service` resource ([#9908](https://github.com/hashicorp/terraform-provider-google-beta/pull/9908))
-* container: added `flex_start` to `node_config` in `google_container_cluster` and `google_container_node_pool` (ga revert) ([#9897](https://github.com/hashicorp/terraform-provider-google-beta/pull/9897))
 * filestore: added `directory_services` field to `google_filestore_instance` (beta) ([#9919](https://github.com/hashicorp/terraform-provider-google-beta/pull/9919))
 * networkconnectivity: added `state_reason` field to `spoke` resource ([#9896](https://github.com/hashicorp/terraform-provider-google-beta/pull/9896))
 * sql: added `connection_pool_config` field. ([#9918](https://github.com/hashicorp/terraform-provider-google-beta/pull/9918))
