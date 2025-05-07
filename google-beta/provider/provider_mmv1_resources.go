@@ -563,9 +563,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 651
+// Generated resources: 652
 // Generated IAM resources: 327
-// Total generated resources: 978
+// Total generated resources: 979
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -794,6 +794,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_compute_backend_service_iam_member":                                  tpgiamresource.ResourceIamMember(compute.ComputeBackendServiceIamSchema, compute.ComputeBackendServiceIamUpdaterProducer, compute.ComputeBackendServiceIdParseFunc),
 	"google_compute_backend_service_iam_policy":                                  tpgiamresource.ResourceIamPolicy(compute.ComputeBackendServiceIamSchema, compute.ComputeBackendServiceIamUpdaterProducer, compute.ComputeBackendServiceIdParseFunc),
 	"google_compute_backend_service_signed_url_key":                              compute.ResourceComputeBackendServiceSignedUrlKey(),
+	"google_compute_cross_site_network":                                          compute.ResourceComputeCrossSiteNetwork(),
 	"google_compute_disk":                                                        compute.ResourceComputeDisk(),
 	"google_compute_disk_iam_binding":                                            tpgiamresource.ResourceIamBinding(compute.ComputeDiskIamSchema, compute.ComputeDiskIamUpdaterProducer, compute.ComputeDiskIdParseFunc),
 	"google_compute_disk_iam_member":                                             tpgiamresource.ResourceIamMember(compute.ComputeDiskIamSchema, compute.ComputeDiskIamUpdaterProducer, compute.ComputeDiskIdParseFunc),
