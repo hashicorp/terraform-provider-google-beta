@@ -1,4 +1,56 @@
-## 6.33.0 (Unreleased)
+## 6.35.0 (Unreleased)
+
+## 6.34.0 (May 6, 2025)
+DEPRECATIONS:
+* tpu: deprecated `google_tpu_node` resource. `google_tpu_node` is deprecated and will be removed in a future major release. Use `google_tpu_v2_vm` instead. ([#9902](https://github.com/hashicorp/terraform-provider-google-beta/pull/9902))
+
+FEATURES:
+* **New Resource:** `google_apigee_security_profile_v2` ([#9895](https://github.com/hashicorp/terraform-provider-google-beta/pull/9895))
+* **New Resource:** `google_resource_manager_capability` ([#9917](https://github.com/hashicorp/terraform-provider-google-beta/pull/9917))
+
+IMPROVEMENTS:
+* bigtable: added `cluster.node_scaling_factor` field to `google_bigtable_instance` resource ([#9907](https://github.com/hashicorp/terraform-provider-google-beta/pull/9907))
+* cloudrunv2: added `scaling_mode` and `manual_instance_count` fields to `google_cloud_run_v2_service` resource ([#9908](https://github.com/hashicorp/terraform-provider-google-beta/pull/9908))
+* filestore: added `directory_services` field to `google_filestore_instance` (beta) ([#9919](https://github.com/hashicorp/terraform-provider-google-beta/pull/9919))
+* networkconnectivity: added `state_reason` field to `google_network_connectivity_spoke ` resource ([#9896](https://github.com/hashicorp/terraform-provider-google-beta/pull/9896))
+* sql: added `connection_pool_config` field to the google_sql_database_instance resource ([#9918](https://github.com/hashicorp/terraform-provider-google-beta/pull/9918))
+* vpcaccess: changed fields `min_instances`, `max_instances`, `machine_type` to allow update `google_vpc_access_connector` without without recreation. ([#9914](https://github.com/hashicorp/terraform-provider-google-beta/pull/9914))
+
+BUG FIXES:
+* compute: fixed the bug when validating the subnetwork project in `google_compute_instance` resource ([#9913](https://github.com/hashicorp/terraform-provider-google-beta/pull/9913))
+* workbench: fixed a permadiff on `metadata` of `instance-region` in `google_workbench_instance` resource ([#9903](https://github.com/hashicorp/terraform-provider-google-beta/pull/9903))
+
+## 6.33.0 (Apr 29, 2025)
+FEATURES:
+* **New Data Source:** `google_memcache_instance` ([#9864](https://github.com/hashicorp/terraform-provider-google-beta/pull/9864))
+* **New Resource:** `google_bigtable_logical_view` ([#9876](https://github.com/hashicorp/terraform-provider-google-beta/pull/9876))
+* **New Resource:** `google_bigtable_materialized_view` ([#9862](https://github.com/hashicorp/terraform-provider-google-beta/pull/9862))
+* **New Resource:** `google_os_config_v2_policy_orchestrator_for_folder` ([#9841](https://github.com/hashicorp/terraform-provider-google-beta/pull/9841))
+
+IMPROVEMENTS:
+* beyondcorp: Added `upstreams` fields to `google_beyondcorp_application` resource ([#9890](https://github.com/hashicorp/terraform-provider-google-beta/pull/9890))
+* compute: Added fields like `raw_key`, `rsa_encrypted_key`, `kms_key_service_account` to all relevant resources on `google_compute_instance_template` and `google_compute_region_instance_template` ([#9880](https://github.com/hashicorp/terraform-provider-google-beta/pull/9880))
+* compute: added `disk_id` to `google_compute_region_disk` resource ([#9855](https://github.com/hashicorp/terraform-provider-google-beta/pull/9855))
+* compute: marked `location` field as required in `google_compute_interconnect` resource ([#9865](https://github.com/hashicorp/terraform-provider-google-beta/pull/9865))
+* container: added `data_cache_count` to `ephemeral_storage_local_ssd_config` for `google_container_node_pool` ([#9851](https://github.com/hashicorp/terraform-provider-google-beta/pull/9851))
+* container: added update for `gvnic` to `google_container_node_pool` ([#9834](https://github.com/hashicorp/terraform-provider-google-beta/pull/9834))
+* dataplex: added `notification_report` field to `google_dataplex_datascan` resource ([#9857](https://github.com/hashicorp/terraform-provider-google-beta/pull/9857))
+* dns: added `target_name_servers.domainName` to resource`google_dns_managed_zone ` (beta) ([#9832](https://github.com/hashicorp/terraform-provider-google-beta/pull/9832))
+* gkehub: added `configmanagement.config_sync.deployment_overrides` field to `google_gke_hub_feature_membership` resource ([#9828](https://github.com/hashicorp/terraform-provider-google-beta/pull/9828))
+* identityplatform: Added `response_type` field to `google_identity_platform_oauth_idp_config` ([#9856](https://github.com/hashicorp/terraform-provider-google-beta/pull/9856))
+* netapp: added `custom_performance_enabled`, `total_throughput_mibps`, and `total_iops` fields to `google_netapp_storage_pool` resource (beta) ([#9872](https://github.com/hashicorp/terraform-provider-google-beta/pull/9872))
+* networkservices: added `metadata` field to `google_networkservices_lbtrafficextension` resource ([#9849](https://github.com/hashicorp/terraform-provider-google-beta/pull/9849))
+* sql: added output-only field `dns_names` to `google_sql_database_instance` resource ([#9879](https://github.com/hashicorp/terraform-provider-google-beta/pull/9879))
+* storage: added new fields `time_created` and `updated` in `google_storage_bucket` ([#9877](https://github.com/hashicorp/terraform-provider-google-beta/pull/9877))
+* storagetransfer: added `transfer_spec.aws_s3_data_source.managed_private_network` field to `google_storage_transfer_job` resource ([#9886](https://github.com/hashicorp/terraform-provider-google-beta/pull/9886))
+
+BUG FIXES:
+* alloydb: stopped diffs when `google_alloydb_instance.network_config` is not specified as the API newly returns a value. Removing the field from config will no longer create a diff and will preserve the current value ([#9881](https://github.com/hashicorp/terraform-provider-google-beta/pull/9881))
+* clouddeploy: allowed sending empty block for `rollback` field  in  `google_clouddeploy_automation` resource. ([#9878](https://github.com/hashicorp/terraform-provider-google-beta/pull/9878))
+* compute: fixed an issue preventing `terms.priority` from being set to priority value 0 in `google_compute_router_route_policy` resource ([#9830](https://github.com/hashicorp/terraform-provider-google-beta/pull/9830))
+* securesourcemanager: increased default timeouts on `google_secure_source_manager_instance` operations to 120m from 60m. Operations could take longer than an hour. ([#9868](https://github.com/hashicorp/terraform-provider-google-beta/pull/9868))
+* sql: replaced the Terraform-based default value for `settings.disk_type` in `google_sql_database_instance` with a server-assigned default, allowing for compatibility with machine types that require `HyperDisk_Balanced` ([#9870](https://github.com/hashicorp/terraform-provider-google-beta/pull/9870))
+* workstations: increased default timeouts on `google_workstations_workstation_cluster` operations to 120m from 60m. Operations could take longer than an hour. ([#9867](https://github.com/hashicorp/terraform-provider-google-beta/pull/9867))
 
 ## 6.32.0 (Apr 25, 2025)
 
