@@ -563,9 +563,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 652
+// Generated resources: 651
 // Generated IAM resources: 327
-// Total generated resources: 979
+// Total generated resources: 978
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -978,7 +978,6 @@ var generatedResources = map[string]*schema.Resource{
 	"google_dataplex_datascan_iam_binding":                                       tpgiamresource.ResourceIamBinding(dataplex.DataplexDatascanIamSchema, dataplex.DataplexDatascanIamUpdaterProducer, dataplex.DataplexDatascanIdParseFunc),
 	"google_dataplex_datascan_iam_member":                                        tpgiamresource.ResourceIamMember(dataplex.DataplexDatascanIamSchema, dataplex.DataplexDatascanIamUpdaterProducer, dataplex.DataplexDatascanIdParseFunc),
 	"google_dataplex_datascan_iam_policy":                                        tpgiamresource.ResourceIamPolicy(dataplex.DataplexDatascanIamSchema, dataplex.DataplexDatascanIamUpdaterProducer, dataplex.DataplexDatascanIdParseFunc),
-	"google_dataplex_entry":                                                      dataplex.ResourceDataplexEntry(),
 	"google_dataplex_entry_group":                                                dataplex.ResourceDataplexEntryGroup(),
 	"google_dataplex_entry_group_iam_binding":                                    tpgiamresource.ResourceIamBinding(dataplex.DataplexEntryGroupIamSchema, dataplex.DataplexEntryGroupIamUpdaterProducer, dataplex.DataplexEntryGroupIdParseFunc),
 	"google_dataplex_entry_group_iam_member":                                     tpgiamresource.ResourceIamMember(dataplex.DataplexEntryGroupIamSchema, dataplex.DataplexEntryGroupIamUpdaterProducer, dataplex.DataplexEntryGroupIdParseFunc),
