@@ -29,6 +29,11 @@ BUG FIXES:
 * privateca: removed requirement to specify `organization` when creating a Certificate Authority ([#9942](https://github.com/hashicorp/terraform-provider-google-beta/pull/9942))
 * workbench: fixed some metadata changes not being reflected in `google_workbench_instance` ([#9927](https://github.com/hashicorp/terraform-provider-google-beta/pull/9927))
 
+## 6.34.1 (May 12, 2025)
+
+BUG FIXES:
+* bigtable: fixed forced instance recreation due to addition of `cluster.node_scaling_factor` for `google_bigtable_instance` ([#9961](https://github.com/hashicorp/terraform-provider-google-beta/pull/9961))
+
 ## 6.34.0 (May 6, 2025)
 DEPRECATIONS:
 * tpu: deprecated `google_tpu_node` resource. `google_tpu_node` is deprecated and will be removed in a future major release. Use `google_tpu_v2_vm` instead. ([#9902](https://github.com/hashicorp/terraform-provider-google-beta/pull/9902))
