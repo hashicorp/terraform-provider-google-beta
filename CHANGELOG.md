@@ -1,5 +1,35 @@
 ## 6.35.0 (Unreleased)
 
+FEATURES:
+* **New Resource:** `google_compute_cross_site_network` ([#9940](https://github.com/hashicorp/terraform-provider-google-beta/pull/9940))
+
+IMPROVEMENTS:
+* alloydb: added `psc_auto_connections` field to `google_alloydb_instance` resource ([#9938](https://github.com/hashicorp/terraform-provider-google-beta/pull/9938))
+* apigee: added `s_sl_info.enforce` field in `google_apigee_target_server` resource ([#9922](https://github.com/hashicorp/terraform-provider-google-beta/pull/9922))
+* bigquery: added `security_mode` option for `google_bigquery_routine` resource ([#9949](https://github.com/hashicorp/terraform-provider-google-beta/pull/9949))
+* bigtable: added support for explicit disable automated backup on create for `google_bigtable_table` ([#9943](https://github.com/hashicorp/terraform-provider-google-beta/pull/9943))
+* compute: added `guest_os_features` and `architecture` to `google_compute_instance_template` and `google_compute_region_instance_template` ([#9950](https://github.com/hashicorp/terraform-provider-google-beta/pull/9950))
+* compute: added `grpc_tls_health_check` field to `google_compute_healthcheck` resource ([#9924](https://github.com/hashicorp/terraform-provider-google-beta/pull/9924))
+* compute: allowed in-place updates for `subnetworks`, `description`, `producer_accept_lists`, and `producer_reject_lists` on `google_compute_network_attachment` ([#9926](https://github.com/hashicorp/terraform-provider-google-beta/pull/9926))
+* dialogflowcx: added `knowledge_connector_settings` field to `google_dialogflow_cx_flow` and `google_dialogflow_cx_page` resources ([#9939](https://github.com/hashicorp/terraform-provider-google-beta/pull/9939))
+* filestore: added `directory_services` field to `google_filestore_instance` ([#9919](https://github.com/hashicorp/terraform-provider-google-beta/pull/9919))
+* netapp: added `backup_vault_type`, `backup_region`, `source_region`, `source_backup_vault`, and `destination_backup_vault` fields to `google_netapp_backup_vault` ([#9933](https://github.com/hashicorp/terraform-provider-google-beta/pull/9933))
+* netapp: added `volume_region` and `backup_region` fields to `google_netapp_backup` ([#9933](https://github.com/hashicorp/terraform-provider-google-beta/pull/9933))
+* networkconnectivity: added `immutability` field to `google_network_connectivity_internal_range` resource ([#9931](https://github.com/hashicorp/terraform-provider-google-beta/pull/9931))
+* networkservices: added `flex_shielding` field to `google_network_services_edge_cache_origin` resource ([#9951](https://github.com/hashicorp/terraform-provider-google-beta/pull/9951))
+* spanner: added field `default_time_zone` to `google_spanner_database` resource ([#9936](https://github.com/hashicorp/terraform-provider-google-beta/pull/9936))
+* storage: added new field `content_hexsha512` and `content_base64sha512` in data source `google_storage_bucket_object_content` ([#9920](https://github.com/hashicorp/terraform-provider-google-beta/pull/9920))
+
+BUG FIXES:
+* gemini: fixed bug on `google_gemini_code_repository_index` where `force_destroy` field did nothing. ([#9952](https://github.com/hashicorp/terraform-provider-google-beta/pull/9952))
+* privateca: removed requirement to specify `organization` for `google_privateca_certificate_authority` resource ([#9942](https://github.com/hashicorp/terraform-provider-google-beta/pull/9942))
+* workbench: fixed some metadata changes not being reflected in `google_workbench_instance` ([#9927](https://github.com/hashicorp/terraform-provider-google-beta/pull/9927))
+
+## 6.34.1 (May 12, 2025)
+
+BUG FIXES:
+* bigtable: fixed forced instance recreation due to addition of `cluster.node_scaling_factor` for `google_bigtable_instance` ([#9961](https://github.com/hashicorp/terraform-provider-google-beta/pull/9961))
+
 ## 6.34.0 (May 6, 2025)
 DEPRECATIONS:
 * tpu: deprecated `google_tpu_node` resource. `google_tpu_node` is deprecated and will be removed in a future major release. Use `google_tpu_v2_vm` instead. ([#9902](https://github.com/hashicorp/terraform-provider-google-beta/pull/9902))
