@@ -9,7 +9,7 @@ IMPROVEMENTS:
 * bigquery: added `security_mode` option for `google_bigquery_routine` resource ([#9949](https://github.com/hashicorp/terraform-provider-google-beta/pull/9949))
 * bigtable: added support for explicit disable automated backup on create for `google_bigtable_table` ([#9943](https://github.com/hashicorp/terraform-provider-google-beta/pull/9943))
 * compute: added `guest_os_features` and `architecture` to `google_compute_instance_template` and `google_compute_region_instance_template` ([#9950](https://github.com/hashicorp/terraform-provider-google-beta/pull/9950))
-* compute: added `grpc_tls_health_check` field to `google_compute_healthcheck` resource (beta) ([#9924](https://github.com/hashicorp/terraform-provider-google-beta/pull/9924))
+* compute: added `grpc_tls_health_check` field to `google_compute_healthcheck` resource ([#9924](https://github.com/hashicorp/terraform-provider-google-beta/pull/9924))
 * compute: allow in-place updates for `subnetworks`, `description`, `producer_accept_lists`, and `producer_reject_lists` on `google_compute_network_attachment` ([#9926](https://github.com/hashicorp/terraform-provider-google-beta/pull/9926))
 * dialogflowcx: added `knowledge_connector_settings` field to `google_dialogflow_cx_flow` and `google_dialogflow_cx_page` resources ([#9939](https://github.com/hashicorp/terraform-provider-google-beta/pull/9939))
 * filestore: added `directory_services` field to `google_filestore_instance` (beta) ([#9919](https://github.com/hashicorp/terraform-provider-google-beta/pull/9919))
