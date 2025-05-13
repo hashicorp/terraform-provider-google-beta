@@ -22,7 +22,7 @@ IMPROVEMENTS:
 
 BUG FIXES:
 * gemini: fixed bug on `google_gemini_code_repository_index` where `force_destroy` field did nothing. ([#9952](https://github.com/hashicorp/terraform-provider-google-beta/pull/9952))
-* privateca: removed requirement to specify `organization` when creating a Certificate Authority ([#9942](https://github.com/hashicorp/terraform-provider-google-beta/pull/9942))
+* privateca: removed requirement to specify `organization` for `google_privateca_certificate_authority` resource ([#9942](https://github.com/hashicorp/terraform-provider-google-beta/pull/9942))
 * workbench: fixed some metadata changes not being reflected in `google_workbench_instance` ([#9927](https://github.com/hashicorp/terraform-provider-google-beta/pull/9927))
 
 ## 6.34.1 (May 12, 2025)
