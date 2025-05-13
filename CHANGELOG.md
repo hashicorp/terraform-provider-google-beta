@@ -12,7 +12,7 @@ IMPROVEMENTS:
 * compute: added `grpc_tls_health_check` field to `google_compute_healthcheck` resource ([#9924](https://github.com/hashicorp/terraform-provider-google-beta/pull/9924))
 * compute: allowed in-place updates for `subnetworks`, `description`, `producer_accept_lists`, and `producer_reject_lists` on `google_compute_network_attachment` ([#9926](https://github.com/hashicorp/terraform-provider-google-beta/pull/9926))
 * dialogflowcx: added `knowledge_connector_settings` field to `google_dialogflow_cx_flow` and `google_dialogflow_cx_page` resources ([#9939](https://github.com/hashicorp/terraform-provider-google-beta/pull/9939))
-* filestore: added `directory_services` field to `google_filestore_instance` (beta) ([#9919](https://github.com/hashicorp/terraform-provider-google-beta/pull/9919))
+* filestore: added `directory_services` field to `google_filestore_instance` ([#9919](https://github.com/hashicorp/terraform-provider-google-beta/pull/9919))
 * netapp: added `backup_vault_type`, `backup_region`, `source_region`, `source_backup_vault`, and `destination_backup_vault` fields to `google_netapp_backup_vault` ([#9933](https://github.com/hashicorp/terraform-provider-google-beta/pull/9933))
 * netapp: added `volume_region` and `backup_region` fields to `google_netapp_backup` ([#9933](https://github.com/hashicorp/terraform-provider-google-beta/pull/9933))
 * networkconnectivity: added `immutability` field to `google_network_connectivity_internal_range` resource ([#9931](https://github.com/hashicorp/terraform-provider-google-beta/pull/9931))
