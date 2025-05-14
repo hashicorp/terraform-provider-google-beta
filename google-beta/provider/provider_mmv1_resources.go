@@ -491,6 +491,7 @@ var generatedIAMDatasources = map[string]*schema.Resource{
 	"google_gke_hub_feature_iam_policy":                            tpgiamresource.DataSourceIamPolicy(gkehub2.GKEHub2FeatureIamSchema, gkehub2.GKEHub2FeatureIamUpdaterProducer),
 	"google_gke_hub_scope_iam_policy":                              tpgiamresource.DataSourceIamPolicy(gkehub2.GKEHub2ScopeIamSchema, gkehub2.GKEHub2ScopeIamUpdaterProducer),
 	"google_healthcare_consent_store_iam_policy":                   tpgiamresource.DataSourceIamPolicy(healthcare.HealthcareConsentStoreIamSchema, healthcare.HealthcareConsentStoreIamUpdaterProducer),
+	"google_iam_workload_identity_pool_iam_policy":                 tpgiamresource.DataSourceIamPolicy(iambeta.IAMBetaWorkloadIdentityPoolIamSchema, iambeta.IAMBetaWorkloadIdentityPoolIamUpdaterProducer),
 	"google_iap_app_engine_service_iam_policy":                     tpgiamresource.DataSourceIamPolicy(iap.IapAppEngineServiceIamSchema, iap.IapAppEngineServiceIamUpdaterProducer),
 	"google_iap_app_engine_version_iam_policy":                     tpgiamresource.DataSourceIamPolicy(iap.IapAppEngineVersionIamSchema, iap.IapAppEngineVersionIamUpdaterProducer),
 	"google_iap_web_cloud_run_service_iam_policy":                  tpgiamresource.DataSourceIamPolicy(iap.IapWebCloudRunServiceIamSchema, iap.IapWebCloudRunServiceIamUpdaterProducer),
@@ -565,8 +566,8 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 
 // Resources
 // Generated resources: 654
-// Generated IAM resources: 327
-// Total generated resources: 981
+// Generated IAM resources: 330
+// Total generated resources: 984
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -1169,6 +1170,9 @@ var generatedResources = map[string]*schema.Resource{
 	"google_iam_principal_access_boundary_policy":                                iam3.ResourceIAM3PrincipalAccessBoundaryPolicy(),
 	"google_iam_projects_policy_binding":                                         iam3.ResourceIAM3ProjectsPolicyBinding(),
 	"google_iam_workload_identity_pool":                                          iambeta.ResourceIAMBetaWorkloadIdentityPool(),
+	"google_iam_workload_identity_pool_iam_binding":                              tpgiamresource.ResourceIamBinding(iambeta.IAMBetaWorkloadIdentityPoolIamSchema, iambeta.IAMBetaWorkloadIdentityPoolIamUpdaterProducer, iambeta.IAMBetaWorkloadIdentityPoolIdParseFunc),
+	"google_iam_workload_identity_pool_iam_member":                               tpgiamresource.ResourceIamMember(iambeta.IAMBetaWorkloadIdentityPoolIamSchema, iambeta.IAMBetaWorkloadIdentityPoolIamUpdaterProducer, iambeta.IAMBetaWorkloadIdentityPoolIdParseFunc),
+	"google_iam_workload_identity_pool_iam_policy":                               tpgiamresource.ResourceIamPolicy(iambeta.IAMBetaWorkloadIdentityPoolIamSchema, iambeta.IAMBetaWorkloadIdentityPoolIamUpdaterProducer, iambeta.IAMBetaWorkloadIdentityPoolIdParseFunc),
 	"google_iam_workload_identity_pool_provider":                                 iambeta.ResourceIAMBetaWorkloadIdentityPoolProvider(),
 	"google_iam_oauth_client":                                                    iamworkforcepool.ResourceIAMWorkforcePoolOauthClient(),
 	"google_iam_oauth_client_credential":                                         iamworkforcepool.ResourceIAMWorkforcePoolOauthClientCredential(),
