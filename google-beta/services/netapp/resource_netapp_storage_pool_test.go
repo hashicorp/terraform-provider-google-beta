@@ -327,7 +327,7 @@ func TestAccNetappStoragePool_customPerformanceStoragePoolCreateExample_update(t
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckNetappStoragePoolDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -355,7 +355,6 @@ func TestAccNetappStoragePool_customPerformanceStoragePoolCreateExample_update(t
 func testAccNetappStoragePool_customPerformanceStoragePoolCreateExample_full(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_netapp_storage_pool" "test_pool" {
-  provider = google-beta
   name = "tf-test-pool%{random_suffix}"
   location = "us-east4-a"
   service_level = "FLEX"
@@ -368,7 +367,6 @@ resource "google_netapp_storage_pool" "test_pool" {
 }
 
 data "google_compute_network" "default" {
-    provider = google-beta
     name = "%{network_name}"
 }
 `, context)
@@ -377,7 +375,6 @@ data "google_compute_network" "default" {
 func testAccNetappStoragePool_customPerformanceStoragePoolCreateExample_update(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_netapp_storage_pool" "test_pool" {
-  provider = google-beta
   name = "tf-test-pool%{random_suffix}"
   location = "us-east4-a"
   service_level = "FLEX"
@@ -390,7 +387,6 @@ resource "google_netapp_storage_pool" "test_pool" {
 }
 
 data "google_compute_network" "default" {
-    provider = google-beta
     name = "%{network_name}"
 }
 `, context)
