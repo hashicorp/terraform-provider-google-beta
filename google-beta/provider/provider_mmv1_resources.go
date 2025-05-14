@@ -127,6 +127,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/pubsublite"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/redis"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager3"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/runtimeconfig"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/secretmanager"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/secretmanagerregional"
@@ -404,6 +405,7 @@ var handwrittenDatasources = map[string]*schema.Resource{
 	"google_tpu_v2_accelerator_types":                            tpuv2.DataSourceTpuV2AcceleratorTypes(),
 	"google_vpc_access_connector":                                vpcaccess.DataSourceVPCAccessConnector(),
 	"google_memorystore_instance":                                memorystore.DataSourceMemorystoreInstance(),
+	"google_memcache_instance":                                   memcache.DataSourceMemcacheInstance(),
 	"google_redis_instance":                                      redis.DataSourceGoogleRedisInstance(),
 	"google_vertex_ai_index":                                     vertexai.DataSourceVertexAIIndex(),
 	"google_vmwareengine_cluster":                                vmwareengine.DataSourceVmwareengineCluster(),
@@ -561,9 +563,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 646
+// Generated resources: 654
 // Generated IAM resources: 327
-// Total generated resources: 973
+// Total generated resources: 981
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -628,6 +630,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_apigee_keystores_aliases_self_signed_cert":                           apigee.ResourceApigeeKeystoresAliasesSelfSignedCert(),
 	"google_apigee_nat_address":                                                  apigee.ResourceApigeeNatAddress(),
 	"google_apigee_organization":                                                 apigee.ResourceApigeeOrganization(),
+	"google_apigee_security_profile_v2":                                          apigee.ResourceApigeeSecurityProfileV2(),
 	"google_apigee_sync_authorization":                                           apigee.ResourceApigeeSyncAuthorization(),
 	"google_apigee_target_server":                                                apigee.ResourceApigeeTargetServer(),
 	"google_apihub_api_hub_instance":                                             apihub.ResourceApihubApiHubInstance(),
@@ -696,6 +699,8 @@ var generatedResources = map[string]*schema.Resource{
 	"google_bigquery_reservation":                                                bigqueryreservation.ResourceBigqueryReservationReservation(),
 	"google_bigquery_reservation_assignment":                                     bigqueryreservation.ResourceBigqueryReservationReservationAssignment(),
 	"google_bigtable_app_profile":                                                bigtable.ResourceBigtableAppProfile(),
+	"google_bigtable_logical_view":                                               bigtable.ResourceBigtableLogicalView(),
+	"google_bigtable_materialized_view":                                          bigtable.ResourceBigtableMaterializedView(),
 	"google_billing_budget":                                                      billing.ResourceBillingBudget(),
 	"google_binary_authorization_attestor":                                       binaryauthorization.ResourceBinaryAuthorizationAttestor(),
 	"google_binary_authorization_attestor_iam_binding":                           tpgiamresource.ResourceIamBinding(binaryauthorization.BinaryAuthorizationAttestorIamSchema, binaryauthorization.BinaryAuthorizationAttestorIamUpdaterProducer, binaryauthorization.BinaryAuthorizationAttestorIdParseFunc),
@@ -789,6 +794,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_compute_backend_service_iam_member":                                  tpgiamresource.ResourceIamMember(compute.ComputeBackendServiceIamSchema, compute.ComputeBackendServiceIamUpdaterProducer, compute.ComputeBackendServiceIdParseFunc),
 	"google_compute_backend_service_iam_policy":                                  tpgiamresource.ResourceIamPolicy(compute.ComputeBackendServiceIamSchema, compute.ComputeBackendServiceIamUpdaterProducer, compute.ComputeBackendServiceIdParseFunc),
 	"google_compute_backend_service_signed_url_key":                              compute.ResourceComputeBackendServiceSignedUrlKey(),
+	"google_compute_cross_site_network":                                          compute.ResourceComputeCrossSiteNetwork(),
 	"google_compute_disk":                                                        compute.ResourceComputeDisk(),
 	"google_compute_disk_iam_binding":                                            tpgiamresource.ResourceIamBinding(compute.ComputeDiskIamSchema, compute.ComputeDiskIamUpdaterProducer, compute.ComputeDiskIdParseFunc),
 	"google_compute_disk_iam_member":                                             tpgiamresource.ResourceIamMember(compute.ComputeDiskIamSchema, compute.ComputeDiskIamUpdaterProducer, compute.ComputeDiskIdParseFunc),
@@ -1080,6 +1086,9 @@ var generatedResources = map[string]*schema.Resource{
 	"google_firebase_app_check_service_config":                                   firebaseappcheck.ResourceFirebaseAppCheckServiceConfig(),
 	"google_firebase_app_hosting_backend":                                        firebaseapphosting.ResourceFirebaseAppHostingBackend(),
 	"google_firebase_app_hosting_build":                                          firebaseapphosting.ResourceFirebaseAppHostingBuild(),
+	"google_firebase_app_hosting_default_domain":                                 firebaseapphosting.ResourceFirebaseAppHostingDefaultDomain(),
+	"google_firebase_app_hosting_domain":                                         firebaseapphosting.ResourceFirebaseAppHostingDomain(),
+	"google_firebase_app_hosting_traffic":                                        firebaseapphosting.ResourceFirebaseAppHostingTraffic(),
 	"google_firebase_database_instance":                                          firebasedatabase.ResourceFirebaseDatabaseInstance(),
 	"google_firebase_data_connect_service":                                       firebasedataconnect.ResourceFirebaseDataConnectService(),
 	"google_firebase_extensions_instance":                                        firebaseextensions.ResourceFirebaseExtensionsInstance(),
@@ -1368,6 +1377,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_redis_cluster_user_created_connections":                              redis.ResourceRedisClusterUserCreatedConnections(),
 	"google_redis_instance":                                                      redis.ResourceRedisInstance(),
 	"google_resource_manager_lien":                                               resourcemanager.ResourceResourceManagerLien(),
+	"google_resource_manager_capability":                                         resourcemanager3.ResourceResourceManager3Capability(),
 	"google_runtimeconfig_config_iam_binding":                                    tpgiamresource.ResourceIamBinding(runtimeconfig.RuntimeConfigConfigIamSchema, runtimeconfig.RuntimeConfigConfigIamUpdaterProducer, runtimeconfig.RuntimeConfigConfigIdParseFunc),
 	"google_runtimeconfig_config_iam_member":                                     tpgiamresource.ResourceIamMember(runtimeconfig.RuntimeConfigConfigIamSchema, runtimeconfig.RuntimeConfigConfigIamUpdaterProducer, runtimeconfig.RuntimeConfigConfigIdParseFunc),
 	"google_runtimeconfig_config_iam_policy":                                     tpgiamresource.ResourceIamPolicy(runtimeconfig.RuntimeConfigConfigIamSchema, runtimeconfig.RuntimeConfigConfigIamUpdaterProducer, runtimeconfig.RuntimeConfigConfigIdParseFunc),
