@@ -1,11 +1,5 @@
 ## 6.36.0 (Unreleased)
 
-NOTES:
-* Fixes a typo in the docs ([#10006](https://github.com/hashicorp/terraform-provider-google-beta/pull/10006))
-* Reverted #13820 ([#9959](https://github.com/hashicorp/terraform-provider-google-beta/pull/9959))
-* firebaseapphosting: fixed typo in GitHub samples ([#10005](https://github.com/hashicorp/terraform-provider-google-beta/pull/10005))
-* networksecurity: promoted `google_network_security_intercept_deployment`, `google_network_security_intercept_deployment_group`, `google_network_security_intercept_endpoint_group_association`, `google_network_security_intercept_endpoint_group` resources from Beta to GA ([#9993](https://github.com/hashicorp/terraform-provider-google-beta/pull/9993))
-
 DEPRECATIONS:
 * beyonndcorp: deprecated `google_beyondcorp_application`. Use `google_beyondcorp_security_gateway_application` instead. ([#9968](https://github.com/hashicorp/terraform-provider-google-beta/pull/9968))
 * firestore: deprecated `deletion_policy` field of `google_firestore_database` resource ([#9976](https://github.com/hashicorp/terraform-provider-google-beta/pull/9976))
@@ -31,19 +25,16 @@ IMPROVEMENTS:
 * compute: added the numeric id as `generated_id` attribute to the `google_compute_network_endpoint_group` ([#9984](https://github.com/hashicorp/terraform-provider-google-beta/pull/9984))
 * compute: added update support for `load_balancing_scheme` in `google_compute_backend_service` and `google_compute_global_forwarding_rule` resources to allow migrating between classic and global external ALB ([#9985](https://github.com/hashicorp/terraform-provider-google-beta/pull/9985))
 * container: added `in_transit_encryption_config` field in `google_container_cluster` resource ([#9972](https://github.com/hashicorp/terraform-provider-google-beta/pull/9972))
-* container: allow updaing `windows_node_config` in place ([#9986](https://github.com/hashicorp/terraform-provider-google-beta/pull/9986))
-* container: allowed in-place update for `node_config.storage_pools` field in `google_container_cluster` resource ([#9967](https://github.com/hashicorp/terraform-provider-google-beta/pull/9967))
-* container: allowed in-place update for `node_config.storage_pools` field in `google_container_node_pool` resource ([#9967](https://github.com/hashicorp/terraform-provider-google-beta/pull/9967))
-* dialogflowcx: added `eventHandlers > triggerFulfillment > enableGenerativeFallback` field to `google_dialogflow_cx_flow` resource ([#9958](https://github.com/hashicorp/terraform-provider-google-beta/pull/9958))
-* dialogflowcx: added `genAppBuilderSettings` field to `google_dialogflow_cx_agent` resource ([#9971](https://github.com/hashicorp/terraform-provider-google-beta/pull/9971))
+* container: allowed in-place update `node_config.windows_node_config` field in `google_container_cluster` and `google_container_node_pool` resource ([#9986](https://github.com/hashicorp/terraform-provider-google-beta/pull/9986))
+* container: allowed in-place update for `node_config.storage_pools` field in `google_container_cluster` and `google_container_node_pool` resourcee ([#9967](https://github.com/hashicorp/terraform-provider-google-beta/pull/9967))
+* dialogflowcx: added `event_handlers.trigger_fulfillment.enable_generative_fallback` field to `google_dialogflow_cx_flow` resource ([#9958](https://github.com/hashicorp/terraform-provider-google-beta/pull/9958))
+* dialogflowcx: added `gen_app_builder_settings` field to `google_dialogflow_cx_agent` resource ([#9971](https://github.com/hashicorp/terraform-provider-google-beta/pull/9971))
 * iambeta: added `mode`, `inline_certificate_issuance_config`, and `inline_trust_config` fields to `google_iam_workload_identity_pool` resource ([#9990](https://github.com/hashicorp/terraform-provider-google-beta/pull/9990))
-* netapp: promoted `custom_performance_enabled`, `total_throughput_mibps`, and `total_iops` fields of `google_netapp_storage_pool` resource to GA ([#9982](https://github.com/hashicorp/terraform-provider-google-beta/pull/9982))
-* vmwareengine: extend `google_cloud_vmwareengine_private_cloud` timeout to 6 hours. ([#9974](https://github.com/hashicorp/terraform-provider-google-beta/pull/9974))
+* vmwareengine: increased `google_cloud_vmwareengine_private_cloud` timeout to 6 hours. ([#9974](https://github.com/hashicorp/terraform-provider-google-beta/pull/9974))
 
 BUG FIXES:
-* bigtable: fixed forced instance recreation due to addition of `cluster.node_scaling_factor` for `google_bigtable_instance` in 6.34.0 ([#9961](https://github.com/hashicorp/terraform-provider-google-beta/pull/9961))
-* compute: Support retries when the API returns resourceNotReady for Networks ([#9970](https://github.com/hashicorp/terraform-provider-google-beta/pull/9970))
-* dialogflowcx: fixed using `dialogflow_cx_custom_endpoint` with `Flow` ([#9995](https://github.com/hashicorp/terraform-provider-google-beta/pull/9995))
+* compute: added global retry for "resourceNotReady for Networks" 400 errors ([#9970](https://github.com/hashicorp/terraform-provider-google-beta/pull/9970))
+* dialogflowcx: fixed an issue where `dialogflow_cx_custom_endpoint` is not correctedly handled ([#9995](https://github.com/hashicorp/terraform-provider-google-beta/pull/9995))
 * iamoauthclient: marked `google_iam_oauth_client_credential.client_secret` as sensitive ([#9992](https://github.com/hashicorp/terraform-provider-google-beta/pull/9992))
 * resourcemanager: fixed an issue in `google_projects` data source where the provider `universe_domain` did not overwrite the list URL ([#9964](https://github.com/hashicorp/terraform-provider-google-beta/pull/9964))
 
