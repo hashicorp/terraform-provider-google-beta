@@ -1,7 +1,7 @@
 ## 6.36.0 (Unreleased)
 
 DEPRECATIONS:
-* beyonndcorp: deprecated `google_beyondcorp_application`. Use `google_beyondcorp_security_gateway_application` instead. ([#9968](https://github.com/hashicorp/terraform-provider-google-beta/pull/9968))
+* beyondcorp: deprecated `google_beyondcorp_application`. Use `google_beyondcorp_security_gateway_application` instead. ([#9968](https://github.com/hashicorp/terraform-provider-google-beta/pull/9968))
 * firestore: deprecated `deletion_policy` field of `google_firestore_database` resource ([#9976](https://github.com/hashicorp/terraform-provider-google-beta/pull/9976))
 
 FEATURES:
