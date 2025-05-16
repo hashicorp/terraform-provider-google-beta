@@ -567,9 +567,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 656
+// Generated resources: 658
 // Generated IAM resources: 333
-// Total generated resources: 989
+// Total generated resources: 991
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -995,6 +995,8 @@ var generatedResources = map[string]*schema.Resource{
 	"google_dataplex_glossary_iam_binding":                                       tpgiamresource.ResourceIamBinding(dataplex.DataplexGlossaryIamSchema, dataplex.DataplexGlossaryIamUpdaterProducer, dataplex.DataplexGlossaryIdParseFunc),
 	"google_dataplex_glossary_iam_member":                                        tpgiamresource.ResourceIamMember(dataplex.DataplexGlossaryIamSchema, dataplex.DataplexGlossaryIamUpdaterProducer, dataplex.DataplexGlossaryIdParseFunc),
 	"google_dataplex_glossary_iam_policy":                                        tpgiamresource.ResourceIamPolicy(dataplex.DataplexGlossaryIamSchema, dataplex.DataplexGlossaryIamUpdaterProducer, dataplex.DataplexGlossaryIdParseFunc),
+	"google_dataplex_glossary_category":                                          dataplex.ResourceDataplexGlossaryCategory(),
+	"google_dataplex_glossary_term":                                              dataplex.ResourceDataplexGlossaryTerm(),
 	"google_dataplex_lake_iam_binding":                                           tpgiamresource.ResourceIamBinding(dataplex.DataplexLakeIamSchema, dataplex.DataplexLakeIamUpdaterProducer, dataplex.DataplexLakeIdParseFunc),
 	"google_dataplex_lake_iam_member":                                            tpgiamresource.ResourceIamMember(dataplex.DataplexLakeIamSchema, dataplex.DataplexLakeIamUpdaterProducer, dataplex.DataplexLakeIdParseFunc),
 	"google_dataplex_lake_iam_policy":                                            tpgiamresource.ResourceIamPolicy(dataplex.DataplexLakeIamSchema, dataplex.DataplexLakeIamUpdaterProducer, dataplex.DataplexLakeIdParseFunc),
