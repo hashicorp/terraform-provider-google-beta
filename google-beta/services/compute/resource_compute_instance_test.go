@@ -227,9 +227,6 @@ func TestAccComputeInstance_basic1(t *testing.T) {
 					// instance resource without an explicit deletion_protection = true declaration.
 					// Other tests check explicit true/false configs: TestAccComputeInstance_deletionProtectionExplicit[True | False]
 					testAccCheckComputeInstanceHasConfiguredDeletionProtection(&instance, false),
-
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_basic(instanceName)),
 				),
 			},
 			computeInstanceImportStep("us-central1-a", instanceName, []string{"metadata.baz", "metadata.foo", "desired_status", "current_status", "labels", "terraform_labels"}),
@@ -256,8 +253,6 @@ func TestAccComputeInstance_basic2(t *testing.T) {
 					testAccCheckComputeInstanceTag(&instance, "foo"),
 					testAccCheckComputeInstanceMetadata(&instance, "foo", "bar"),
 					testAccCheckComputeInstanceDisk(&instance, instanceName, true, true),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_basic2(instanceName)),
 				),
 			},
 		},
@@ -283,8 +278,6 @@ func TestAccComputeInstance_basic3(t *testing.T) {
 					testAccCheckComputeInstanceTag(&instance, "foo"),
 					testAccCheckComputeInstanceMetadata(&instance, "foo", "bar"),
 					testAccCheckComputeInstanceDisk(&instance, instanceName, true, true),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_basic3(instanceName)),
 				),
 			},
 		},
@@ -310,8 +303,6 @@ func TestAccComputeInstance_basic4(t *testing.T) {
 					testAccCheckComputeInstanceTag(&instance, "foo"),
 					testAccCheckComputeInstanceMetadata(&instance, "foo", "bar"),
 					testAccCheckComputeInstanceDisk(&instance, instanceName, true, true),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_basic4(instanceName)),
 				),
 			},
 		},
@@ -337,8 +328,6 @@ func TestAccComputeInstance_basic5(t *testing.T) {
 					testAccCheckComputeInstanceTag(&instance, "foo"),
 					testAccCheckComputeInstanceMetadata(&instance, "foo", "bar"),
 					testAccCheckComputeInstanceDisk(&instance, instanceName, true, true),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_basic5(instanceName)),
 				),
 			},
 		},
@@ -372,8 +361,6 @@ func TestAccComputeInstance_resourceManagerTags(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_resourceManagerTagsUpdate(context)),
 				),
 			},
 		},
@@ -406,8 +393,6 @@ func TestAccComputeInstance_diskResourcePolicies(t *testing.T) {
 				Config: testAccComputeInstance_diskResourcePoliciesOnePolicyUpdate(context),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar", &instance),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_diskResourcePoliciesOnePolicyUpdate(context)),
 				),
 			},
 			{
@@ -464,8 +449,6 @@ func TestAccComputeInstance_diskResourcePolicies_attachmentDiff(t *testing.T) {
 				Config: testAccComputeInstance_diskResourcePoliciesOnePolicy(context_1),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar", &instance),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_diskResourcePoliciesOnePolicy(context_1)),
 				),
 			},
 			{
@@ -495,8 +478,6 @@ func TestAccComputeInstance_machineTypeUrl(t *testing.T) {
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
 					resource.TestCheckResourceAttr("google_compute_instance.foobar", "description", "old_desc"),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_machineType(instanceName, machineTypeUrl)),
 				),
 			},
 		},
@@ -528,8 +509,6 @@ func TestAccComputeInstance_descriptionUpdate(t *testing.T) {
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
 					resource.TestCheckResourceAttr("google_compute_instance.foobar", "description", "new_desc"),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_descriptionUpdate(instanceName)),
 				),
 			},
 		},
@@ -553,10 +532,7 @@ func TestAccComputeInstance_IP(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
-					testAccCheckComputeInstanceAccessConfigHasNatIP(&instance),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_ip(ipName, instanceName)),
-				),
+					testAccCheckComputeInstanceAccessConfigHasNatIP(&instance)),
 			},
 		},
 	})
@@ -581,8 +557,6 @@ func TestAccComputeInstance_IPv6(t *testing.T) {
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceIpv6AccessConfigHasExternalIPv6(&instance),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_ipv6(ipName, instanceName, ptrName)),
 				),
 			},
 			{
@@ -610,8 +584,6 @@ func TestAccComputeInstance_ipv6ExternalReservation(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_ipv6ExternalReservation(instanceName)),
 				),
 			},
 			computeInstanceImportStep("us-west2-a", instanceName, []string{}),
@@ -637,8 +609,6 @@ func TestAccComputeInstance_internalIPv6(t *testing.T) {
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceIpv6AccessConfigHasInternalIPv6(&instance),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_internalIpv6(ipName, instanceName)),
 				),
 			},
 			computeInstanceImportStep("us-west2-a", instanceName, []string{}),
@@ -663,8 +633,6 @@ func TestAccComputeInstance_internalIPv6PrefixLength(t *testing.T) {
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceIpv6AccessConfigHasInternalIPv6(&instance),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_internalIpv6PrefixLength("96", instanceName)),
 				),
 			},
 			computeInstanceImportStep("us-west2-a", instanceName, []string{"allow_stopping_for_update"}),
@@ -700,8 +668,6 @@ func TestAccComputeInstance_PTRRecord(t *testing.T) {
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceAccessConfigHasNatIP(&instance),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_ip(ipName, instanceName)),
 				),
 			},
 			computeInstanceImportStep("us-central1-a", instanceName, []string{"metadata.baz", "metadata.foo"}),
@@ -725,8 +691,6 @@ func TestAccComputeInstance_networkTier(t *testing.T) {
 						t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceAccessConfigHasNatIP(&instance),
 					testAccCheckComputeInstanceHasAssignedNatIP,
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_networkTier(instanceName)),
 				),
 			},
 			computeInstanceImportStep("us-central1-a", instanceName, []string{}),
@@ -767,8 +731,6 @@ func TestAccComputeInstance_diskEncryption(t *testing.T) {
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceDiskEncryptionKey("google_compute_instance.foobar", &instance, bootEncryptionKeyHash, diskNameToEncryptionKey),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_disks_encryption(bootEncryptionKey, diskNameToEncryptionKey, instanceName, acctest.RandString(t, 10))),
 				),
 			},
 		},
@@ -808,8 +770,6 @@ func TestAccComputeInstance_diskEncryptionRestart(t *testing.T) {
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceDiskEncryptionKey("google_compute_instance.foobar", &instance, bootEncryptionKeyHash, diskNameToEncryptionKey),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_disks_encryption_restartUpdate(bootEncryptionKey, diskNameToEncryptionKey, instanceName)),
 				),
 			},
 		},
@@ -853,8 +813,6 @@ func TestAccComputeInstance_kmsDiskEncryption(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceDiskKmsEncryptionKey("google_compute_instance.foobar", &instance, bootKmsKeyName, diskNameToEncryptionKey),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_disks_kms(bootKmsKeyName, diskNameToEncryptionKey, instanceName, acctest.RandString(t, 10))),
 				),
 			},
 			computeInstanceImportStep("us-central1-a", instanceName, []string{}),
@@ -880,8 +838,6 @@ func TestAccComputeInstance_rsaBootDiskEncryption(t *testing.T) {
 				Config: testAccComputeInstance_rsaBootDiskEncryption(context),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar", &instance),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_rsaBootDiskEncryption(context)),
 				),
 			},
 		},
@@ -944,8 +900,6 @@ func TestAccComputeInstance_instanceEncryption(t *testing.T) {
 				Config: testAccComputeInstance_instanceEncryption_SelfLinkServiceAccount(context_3),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar", &instance),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_instanceEncryption_SelfLinkServiceAccount(context_3)),
 				),
 			},
 		},
@@ -974,8 +928,6 @@ func TestAccComputeInstance_snapshot(t *testing.T) {
 				Config: testAccComputeInstance_snapshot(context), //create from snapshot
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar", &instance),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_snapshot(context)),
 				),
 			},
 		},
@@ -1017,8 +969,6 @@ func TestAccComputeInstance_snapshotEncryption(t *testing.T) {
 				Config: testAccComputeInstance_snapshotEncryption_RsaKey(context),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar", &instance),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_snapshotEncryption_RsaKey(context)),
 				),
 			},
 		},
@@ -1060,8 +1010,6 @@ func TestAccComputeInstance_imageEncryption(t *testing.T) {
 				Config: testAccComputeInstance_imageEncryption_RsaKey(context),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar", &instance),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_imageEncryption_RsaKey(context)),
 				),
 			},
 		},
@@ -1087,8 +1035,6 @@ func TestAccComputeInstance_attachedDisk_RSAencryption(t *testing.T) {
 				Config: testAccComputeInstance_attachedDisk_RSAencryption(context),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar", &instance),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_attachedDisk_RSAencryption(context)),
 				),
 			},
 		},
@@ -1141,8 +1087,6 @@ func TestAccComputeInstance_resourcePolicyUpdate(t *testing.T) {
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeResourcePolicy(&instance, "", 0),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_removeResourcePolicy(instanceName, scheduleName1, scheduleName2)),
 				),
 			},
 		},
@@ -1167,8 +1111,6 @@ func TestAccComputeInstance_attachedDisk(t *testing.T) {
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceDisk(&instance, diskName, false, false),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_attachedDisk(diskName, instanceName)),
 				),
 			},
 			computeInstanceImportStep("us-central1-a", instanceName, []string{}),
@@ -1194,8 +1136,6 @@ func TestAccComputeInstance_attachedDisk_sourceUrl(t *testing.T) {
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceDisk(&instance, diskName, false, false),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_attachedDisk_sourceUrl(diskName, instanceName)),
 				),
 			},
 			computeInstanceImportStep("us-central1-a", instanceName, []string{}),
@@ -1221,8 +1161,6 @@ func TestAccComputeInstance_attachedDisk_modeRo(t *testing.T) {
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceDisk(&instance, diskName, false, false),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_attachedDisk_modeRo(diskName, instanceName)),
 				),
 			},
 			computeInstanceImportStep("us-central1-a", instanceName, []string{}),
@@ -1323,8 +1261,6 @@ func TestAccComputeInstance_attachedDiskUpdate(t *testing.T) {
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceDisk(&instance, diskName, false, false),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_updateAttachedDiskEncryptionKey(diskName, instanceName)),
 				),
 			},
 		},
@@ -1349,8 +1285,6 @@ func TestAccComputeInstance_bootDisk_source(t *testing.T) {
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceBootDisk(&instance, diskName),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_bootDisk_source(diskName, instanceName)),
 				),
 			},
 			computeInstanceImportStep("us-central1-a", instanceName, []string{}),
@@ -1376,8 +1310,6 @@ func TestAccComputeInstance_bootDisk_sourceUrl(t *testing.T) {
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceBootDisk(&instance, diskName),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_bootDisk_sourceUrl(diskName, instanceName)),
 				),
 			},
 			computeInstanceImportStep("us-central1-a", instanceName, []string{}),
@@ -1403,8 +1335,6 @@ func TestAccComputeInstance_bootDisk_type(t *testing.T) {
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceBootDiskType(t, instanceName, diskType),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_bootDisk_type(instanceName, diskType)),
 				),
 			},
 		},
@@ -1424,10 +1354,6 @@ func TestAccComputeInstance_bootDisk_mode(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeInstance_bootDisk_mode(instanceName, diskMode),
-				Check: resource.ComposeTestCheckFunc(
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_bootDisk_mode(instanceName, diskMode)),
-				),
 			},
 			computeInstanceImportStep("us-central1-a", instanceName, []string{}),
 		},
@@ -1512,8 +1438,6 @@ func TestAccComputeInstance_with375GbScratchDisk(t *testing.T) {
 							"deviceName": "scsi-local-ssd",
 						},
 					}),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_with375GbScratchDisk(instanceName)),
 				),
 			},
 			computeInstanceImportStep("us-central1-a", instanceName, []string{}),
@@ -1560,8 +1484,6 @@ func TestAccComputeInstance_with18TbScratchDisk(t *testing.T) {
 							"interface": "NVME",
 						},
 					}),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_with18TbScratchDisk(instanceName)),
 				),
 			},
 			computeInstanceImportStep("us-central1-a", instanceName, []string{}),
@@ -1594,8 +1516,6 @@ func TestAccComputeInstance_forceNewAndChangeMetadata(t *testing.T) {
 						t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceMetadata(
 						&instance, "qux", "true"),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_forceNewAndChangeMetadata(instanceName)),
 				),
 			},
 		},
@@ -1630,8 +1550,6 @@ func TestAccComputeInstance_update(t *testing.T) {
 					testAccCheckComputeInstanceLabel(&instance, "only_me", "nothing_else"),
 					testAccCheckComputeInstanceTag(&instance, "baz"),
 					testAccCheckComputeInstanceAccessConfig(&instance),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_update(instanceName)),
 				),
 			},
 		},
@@ -1673,8 +1591,6 @@ func TestAccComputeInstance_stopInstanceToUpdate(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_stopInstanceToUpdate3(instanceName)),
 				),
 			},
 			computeInstanceImportStep("us-central1-a", instanceName, []string{"allow_stopping_for_update"}),
@@ -1704,8 +1620,6 @@ func TestAccComputeInstance_serviceAccount(t *testing.T) {
 						"https://www.googleapis.com/auth/devstorage.read_only"),
 					testAccCheckComputeInstanceServiceAccount(&instance,
 						"https://www.googleapis.com/auth/userinfo.email"),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_serviceAccount(instanceName)),
 				),
 			},
 			computeInstanceImportStep("us-central1-a", instanceName, []string{}),
@@ -1730,8 +1644,6 @@ func TestAccComputeInstance_noServiceAccount(t *testing.T) {
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceNoServiceAccount(&instance),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_noServiceAccount(instanceName)),
 				),
 			},
 			computeInstanceImportStep("us-central1-a", instanceName, []string{}),
@@ -1756,8 +1668,6 @@ func TestAccComputeInstance_serviceAccountEmail_0scopes(t *testing.T) {
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceMatchServiceAccount(&instance, "\\d+-compute@developer.gserviceaccount.com"),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_serviceAccountEmail_0scopes(instanceName)),
 				),
 			},
 			computeInstanceImportStep("us-central1-a", instanceName, []string{}),
@@ -1813,8 +1723,6 @@ func TestAccComputeInstance_serviceAccount_updated(t *testing.T) {
 						t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceMatchServiceAccount(&instance, "\\d+-compute@developer.gserviceaccount.com"),
 					testAccCheckComputeInstanceScopes(&instance, 3),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_serviceAccount_update3(instanceName)),
 				),
 			},
 			computeInstanceImportStep("us-central1-a", instanceName, []string{"allow_stopping_for_update"}),
@@ -1860,8 +1768,6 @@ func TestAccComputeInstance_serviceAccount_updated0to1to0scopes(t *testing.T) {
 						t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceNoServiceAccount(&instance),
 					testAccCheckComputeInstanceScopes(&instance, 0),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_serviceAccount_update01(instanceName)),
 				),
 			},
 			computeInstanceImportStep("us-central1-a", instanceName, []string{"allow_stopping_for_update"}),
@@ -1893,8 +1799,6 @@ func TestAccComputeInstance_scheduling(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_schedulingUpdated(instanceName)),
 				),
 			},
 			computeInstanceImportStep("us-central1-a", instanceName, []string{}),
@@ -1950,8 +1854,6 @@ func TestAccComputeInstance_schedulingTerminationTime(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_TerminationTimeDeleted(instanceName)),
 				),
 			},
 			computeInstanceImportStep("us-central1-a", instanceName, []string{"allow_stopping_for_update"}),
@@ -1983,8 +1885,6 @@ func TestAccComputeInstance_advancedMachineFeatures(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_advancedMachineFeaturesUpdated(instanceName)),
 				),
 			},
 			computeInstanceImportStep("us-central1-a", instanceName, []string{"allow_stopping_for_update"}),
@@ -2038,8 +1938,6 @@ func TestAccComputeInstance_performanceMonitoringUnit(t *testing.T) {
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
 					resource.TestCheckResourceAttr("google_compute_instance.foobar", "advanced_machine_features.0.performance_monitoring_unit", "ARCHITECTURAL"),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_performanceMonitoringUnit(context_3)),
 				),
 			},
 		},
@@ -2066,8 +1964,6 @@ func TestAccComputeInstance_enableUefiNetworking(t *testing.T) {
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
 					resource.TestCheckResourceAttr("google_compute_instance.foobar", "advanced_machine_features.0.enable_uefi_networking", "true"),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_enableUefiNetworking(context_1)),
 				),
 			},
 			computeInstanceImportStep("us-central1-a", context_1["instance_name"].(string), []string{}),
@@ -2101,10 +1997,6 @@ func TestAccComputeInstance_soleTenantNodeAffinities(t *testing.T) {
 			computeInstanceImportStep("us-central1-a", instanceName, []string{"allow_stopping_for_update"}),
 			{
 				Config: testAccComputeInstance_soleTenantNodeAffinitiesReduced(instanceName, templateName, groupName),
-				Check: resource.ComposeTestCheckFunc(
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_soleTenantNodeAffinitiesReduced(instanceName, templateName, groupName)),
-				),
 			},
 			computeInstanceImportStep("us-central1-a", instanceName, []string{"allow_stopping_for_update"}),
 		},
@@ -2143,8 +2035,6 @@ func TestAccComputeInstance_reservationAffinities(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceHasReservationAffinity(&instance, "SPECIFIC_RESERVATION", instanceName),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_reservationAffinity_specificReservationConfig(instanceName)),
 				),
 			},
 			computeInstanceImportStep("us-central1-a", instanceName, []string{}),
@@ -2222,8 +2112,6 @@ func TestAccComputeInstance_hostErrorTimeoutSecconds(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar", &instance),
 					resource.TestCheckResourceAttr("google_compute_instance.foobar", "scheduling.0.host_error_timeout_seconds", "90"),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_hostErrorTimeoutSeconds(context_1)),
 				),
 			},
 			computeInstanceImportStep(context_1["zone"].(string), context_1["instance_name"].(string), []string{}),
@@ -2248,8 +2136,6 @@ func TestAccComputeInstance_subnet_auto(t *testing.T) {
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceHasSubnet(&instance),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_subnet_auto(acctest.RandString(t, 10), instanceName)),
 				),
 			},
 			computeInstanceImportStep("us-central1-a", instanceName, []string{}),
@@ -2274,8 +2160,6 @@ func TestAccComputeInstance_subnet_custom(t *testing.T) {
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceHasSubnet(&instance),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_subnet_custom(acctest.RandString(t, 10), instanceName)),
 				),
 			},
 			computeInstanceImportStep("us-central1-a", instanceName, []string{}),
@@ -2306,8 +2190,6 @@ func TestAccComputeInstance_subnet_xpn(t *testing.T) {
 						t, "google_compute_instance.foobar", fmt.Sprintf("%s-service", projectName),
 						&instance),
 					testAccCheckComputeInstanceHasSubnet(&instance),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_subnet_xpn(org, billingId, projectName, instanceName, acctest.RandString(t, 10))),
 				),
 			},
 		},
@@ -2331,8 +2213,6 @@ func TestAccComputeInstance_networkIPAuto(t *testing.T) {
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceHasAnyNetworkIP(&instance),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_networkIPAuto(acctest.RandString(t, 10), instanceName)),
 				),
 			},
 		},
@@ -2356,8 +2236,6 @@ func TestAccComputeInstance_network_ip_custom(t *testing.T) {
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceHasNetworkIP(&instance, ipAddress),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_network_ip_custom(acctest.RandString(t, 10), instanceName, ipAddress)),
 				),
 			},
 		},
@@ -2382,8 +2260,6 @@ func TestAccComputeInstance_private_image_family(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_private_image_family(diskName, familyName, instanceName)),
 				),
 			},
 		},
@@ -2409,8 +2285,6 @@ func TestAccComputeInstance_networkPerformanceConfig(t *testing.T) {
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceHasNetworkPerformanceConfig(&instance, "DEFAULT"),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_networkPerformanceConfig(imageName, diskName, instanceName)),
 				),
 			},
 		},
@@ -2433,8 +2307,6 @@ func TestAccComputeInstance_forceChangeMachineTypeManually(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceUpdateMachineType(t, "google_compute_instance.foobar"),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_basic(instanceName)),
 				),
 				ExpectNonEmptyPlan: true,
 			},
@@ -2461,8 +2333,6 @@ func TestAccComputeInstance_multiNic(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceHasMultiNic(&instance),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_multiNic(instanceName, networkName, subnetworkName)),
 				),
 			},
 			computeInstanceImportStep("us-central1-a", instanceName, []string{}),
@@ -2493,8 +2363,6 @@ func TestAccComputeInstance_nictype_update(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_nictype(instanceName, "VIRTIO_NET")),
 				),
 			},
 		},
@@ -2517,8 +2385,6 @@ func TestAccComputeInstance_guestAccelerator(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceHasGuestAccelerator(&instance, "nvidia-tesla-t4", 1),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_guestAccelerator(instanceName, 1)),
 				),
 			},
 			computeInstanceImportStep("us-east1-d", instanceName, []string{"metadata.baz", "metadata.foo"}),
@@ -2543,8 +2409,6 @@ func TestAccComputeInstance_guestAcceleratorSkip(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceLacksGuestAccelerator(&instance),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_guestAccelerator(instanceName, 0)),
 				),
 			},
 		},
@@ -2576,8 +2440,6 @@ func TestAccComputeInstance_minCpuPlatform(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceHasMinCpuPlatform(&instance, ""),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_minCpuPlatform_remove(instanceName)),
 				),
 			},
 			computeInstanceImportStep("us-east1-d", instanceName, []string{"allow_stopping_for_update"}),
@@ -2602,8 +2464,6 @@ func TestAccComputeInstance_deletionProtectionExplicitFalse(t *testing.T) {
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceHasConfiguredDeletionProtection(&instance, false),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_basic_deletionProtectionFalse(instanceName)),
 				),
 			},
 		},
@@ -2637,8 +2497,6 @@ func TestAccComputeInstance_deletionProtectionExplicitTrueAndUpdateFalse(t *test
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceHasConfiguredDeletionProtection(&instance, false),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_basic_deletionProtectionFalse(instanceName)),
 				),
 			},
 		},
@@ -2661,8 +2519,6 @@ func TestAccComputeInstance_primaryAliasIpRange(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceHasAliasIpRange(&instance, "", "/24"),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_primaryAliasIpRange(instanceName)),
 				),
 			},
 			computeInstanceImportStep("us-east1-d", instanceName, []string{}),
@@ -2696,8 +2552,6 @@ func TestAccComputeInstance_secondaryAliasIpRange(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceHasAliasIpRange(&instance, "", "10.0.1.0/24"),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_secondaryAliasIpRangeUpdate(networkName, subnetName, instanceName)),
 				),
 			},
 			computeInstanceImportStep("us-east1-d", instanceName, []string{"network_interface.0.alias_ip_range.0.ip_cidr_range", "network_interface.0.alias_ip_range.0.subnetwork_range_name", "network_interface.0.alias_ip_range.1.ip_cidr_range", "network_interface.0.alias_ip_range.1.subnetwork_range_name"}),
@@ -2742,8 +2596,6 @@ func TestAccComputeInstance_aliasIpRangeCommonAddresses(t *testing.T) {
 					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceHasAliasIpRange(&instance, "inst-test-secondary", "172.16.1.0/24"),
 					testAccCheckComputeInstanceHasAliasIpRange(&instance, "inst-test-tertiary", "10.1.3.0/24"),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_secondaryAliasIpRangeUpdateWithCommonAddressDifferentRanges(networkName, subnetName, instanceName)),
 				),
 			},
 			computeInstanceImportStep("us-east1-d", instanceName, []string{"network_interface.0.alias_ip_range.0.ip_cidr_range", "network_interface.0.alias_ip_range.0.subnetwork_range_name", "network_interface.0.alias_ip_range.1.ip_cidr_range", "network_interface.0.alias_ip_range.1.subnetwork_range_name"}),
@@ -2767,8 +2619,6 @@ func TestAccComputeInstance_hostname(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet("google_compute_instance.foobar", "hostname"),
 					testAccCheckComputeInstanceLacksShieldedVmConfig(&instance),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_hostname(instanceName)),
 				),
 			},
 			computeInstanceImportStep("us-central1-a", instanceName, []string{}),
@@ -2800,8 +2650,6 @@ func TestAccComputeInstance_shieldedVmConfig(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceHasShieldedVmConfig(&instance, true, true, false),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_shieldedVmConfig(instanceName, true, true, false)),
 				),
 			},
 			computeInstanceImportStep("us-central1-a", instanceName, []string{"allow_stopping_for_update"}),
@@ -2850,8 +2698,6 @@ func TestAccComputeInstanceConfidentialInstanceConfigMain(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar5", &instance),
 					testAccCheckComputeInstanceHasConfidentialInstanceConfig(&instance, false, "TDX"),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar5",
-						testAccComputeInstanceConfidentialInstanceConfigEnableTdx(instanceName, "TDX")),
 				),
 			},
 		},
@@ -2895,10 +2741,6 @@ func TestAccComputeInstance_confidentialHyperDiskBootDisk(t *testing.T) {
 			computeInstanceImportStep(context_1["zone"].(string), context_1["instance_name"].(string), []string{"allow_stopping_for_update"}),
 			{
 				Config: testAccComputeInstanceConfidentialHyperDiskBootDisk(context_2),
-				Check: resource.ComposeTestCheckFunc(
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstanceConfidentialHyperDiskBootDisk(context_2)),
-				),
 			},
 			computeInstanceImportStep(context_2["zone"].(string), context_2["instance_name"].(string), []string{"allow_stopping_for_update"}),
 		},
@@ -2922,10 +2764,6 @@ func TestAccComputeInstance_hyperdiskBootDisk_provisioned_iops_throughput(t *tes
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeInstanceHyperDiskBootDiskProvisionedIopsThroughput(context),
-				Check: resource.ComposeTestCheckFunc(
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstanceHyperDiskBootDiskProvisionedIopsThroughput(context)),
-				),
 			},
 			computeInstanceImportStep(context["zone"].(string), context["instance_name"].(string), []string{"allow_stopping_for_update"}),
 		},
@@ -2952,10 +2790,6 @@ func TestAccComputeInstance_enableDisplay(t *testing.T) {
 			computeInstanceImportStep("us-central1-a", instanceName, []string{"allow_stopping_for_update"}),
 			{
 				Config: testAccComputeInstance_enableDisplay(instanceName),
-				Check: resource.ComposeTestCheckFunc(
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_enableDisplay(instanceName)),
-				),
 			},
 			computeInstanceImportStep("us-central1-a", instanceName, []string{"allow_stopping_for_update"}),
 		},
@@ -2996,8 +2830,6 @@ func TestAccComputeInstance_desiredStatusTerminatedOnCreation(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceHasStatus(&instance, context_2["desired_status"].(string)),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_desiredStatusOnCreation(context_2)),
 				),
 			},
 		},
@@ -3038,8 +2870,6 @@ func TestAccComputeInstance_desiredStatusSuspendedOnCreation(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceHasStatus(&instance, context_2["desired_status"].(string)),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_desiredStatusOnCreation(context_2)),
 				),
 			},
 		},
@@ -3094,8 +2924,6 @@ func TestAccComputeInstance_desiredStatusUpdateBasic(t *testing.T) {
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceHasStatus(&instance, "RUNNING"),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_machineType_desiredStatus_allowStoppingForUpdate(instanceName, "e2-medium", "RUNNING", false)),
 				),
 			},
 		},
@@ -3138,8 +2966,6 @@ func TestAccComputeInstance_desiredStatusTerminatedUpdateFields(t *testing.T) {
 					testAccCheckComputeInstanceLabel(&instance, "only_me", "nothing_else"),
 					testAccCheckComputeInstanceTag(&instance, "baz"),
 					testAccCheckComputeInstanceHasStatus(&instance, "TERMINATED"),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_desiredStatusTerminatedUpdate(instanceName)),
 				),
 			},
 		},
@@ -3172,8 +2998,6 @@ func TestAccComputeInstance_updateRunning_desiredStatusRunning_allowStoppingForU
 						t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceHasMachineType(&instance, "e2-standard-2"),
 					testAccCheckComputeInstanceHasStatus(&instance, "RUNNING"),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_machineType_desiredStatus_allowStoppingForUpdate(instanceName, "e2-standard-2", "RUNNING", true)),
 				),
 			},
 		},
@@ -3199,8 +3023,6 @@ func TestAccComputeInstance_updateRunning_desiredStatusNotSet_notAllowStoppingFo
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceHasStatus(&instance, "RUNNING"),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_basic2(instanceName)),
 				),
 			},
 			{
@@ -3228,8 +3050,6 @@ func TestAccComputeInstance_updateRunning_desiredStatusRunning_notAllowStoppingF
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceHasStatus(&instance, "RUNNING"),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_basic2(instanceName)),
 				),
 			},
 			{
@@ -3266,8 +3086,6 @@ func TestAccComputeInstance_updateRunning_desiredStatusTerminated_allowStoppingF
 						t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceHasMachineType(&instance, "e2-standard-2"),
 					testAccCheckComputeInstanceHasStatus(&instance, "TERMINATED"),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_machineType_desiredStatus_allowStoppingForUpdate(instanceName, "e2-standard-2", "TERMINATED", true)),
 				),
 			},
 		},
@@ -3300,8 +3118,6 @@ func TestAccComputeInstance_updateRunning_desiredStatusTerminated_notAllowStoppi
 						t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceHasMachineType(&instance, "e2-standard-2"),
 					testAccCheckComputeInstanceHasStatus(&instance, "TERMINATED"),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_machineType_desiredStatus_allowStoppingForUpdate(instanceName, "e2-standard-2", "TERMINATED", false)),
 				),
 			},
 		},
@@ -3342,8 +3158,6 @@ func TestAccComputeInstance_updateTerminated_desiredStatusNotSet_allowStoppingFo
 						t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceHasMachineType(&instance, "e2-standard-2"),
 					testAccCheckComputeInstanceHasStatus(&instance, "TERMINATED"),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_machineType_desiredStatus_allowStoppingForUpdate(instanceName, "e2-standard-2", "", true)),
 				),
 			},
 		},
@@ -3384,8 +3198,6 @@ func TestAccComputeInstance_updateTerminated_desiredStatusTerminated_allowStoppi
 						t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceHasMachineType(&instance, "e2-standard-2"),
 					testAccCheckComputeInstanceHasStatus(&instance, "TERMINATED"),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_machineType_desiredStatus_allowStoppingForUpdate(instanceName, "e2-standard-2", "TERMINATED", true)),
 				),
 			},
 		},
@@ -3426,8 +3238,6 @@ func TestAccComputeInstance_updateTerminated_desiredStatusNotSet_notAllowStoppin
 						t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceHasMachineType(&instance, "e2-standard-2"),
 					testAccCheckComputeInstanceHasStatus(&instance, "TERMINATED"),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_machineType_desiredStatus_allowStoppingForUpdate(instanceName, "e2-standard-2", "", false)),
 				),
 			},
 		},
@@ -3508,8 +3318,6 @@ func TestAccComputeInstance_updateTerminated_desiredStatusRunning_allowStoppingF
 						t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceHasMachineType(&instance, "e2-standard-2"),
 					testAccCheckComputeInstanceHasStatus(&instance, "RUNNING"),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_machineType_desiredStatus_allowStoppingForUpdate(instanceName, "e2-standard-2", "RUNNING", true)),
 				),
 			},
 		},
@@ -3550,8 +3358,6 @@ func TestAccComputeInstance_updateTerminated_desiredStatusRunning_notAllowStoppi
 						t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceHasMachineType(&instance, "e2-standard-2"),
 					testAccCheckComputeInstanceHasStatus(&instance, "RUNNING"),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_machineType_desiredStatus_allowStoppingForUpdate(instanceName, "e2-standard-2", "RUNNING", false)),
 				),
 			},
 		},
@@ -3598,8 +3404,6 @@ func TestAccComputeInstance_desiredStatus_suspended(t *testing.T) {
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceHasStatus(&instance, "RUNNING"), // this mimics resume method behavior
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_desiredStatus_suspended(context_1)),
 				),
 			},
 		},
@@ -3618,10 +3422,6 @@ func TestAccComputeInstance_resourcePolicyCollocate(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeInstance_resourcePolicyCollocate(instanceName, acctest.RandString(t, 10)),
-				Check: resource.ComposeTestCheckFunc(
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_resourcePolicyCollocate(instanceName, acctest.RandString(t, 10))),
-				),
 			},
 			computeInstanceImportStep("us-east4-b", instanceName, []string{"allow_stopping_for_update"}),
 		},
@@ -3646,8 +3446,6 @@ func TestAccComputeInstance_resourcePolicySpread(t *testing.T) {
 						t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceHasStatus(&instance, "RUNNING"),
 					testAccCheckComputeInstanceHasAvailabilityDomain(&instance, 3),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_resourcePolicySpread(instanceName, acctest.RandString(t, 10))),
 				),
 			},
 			computeInstanceImportStep("us-east4-b", instanceName, []string{"allow_stopping_for_update"}),
@@ -3675,10 +3473,6 @@ func TestAccComputeInstance_subnetworkUpdate(t *testing.T) {
 			computeInstanceImportStep("us-east1-d", instanceName, []string{"allow_stopping_for_update", "network_interface.0.alias_ip_range.0.ip_cidr_range", "network_interface.0.alias_ip_range.0.subnetwork_range_name", "network_interface.0.alias_ip_range.1.ip_cidr_range", "network_interface.0.alias_ip_range.1.subnetwork_range_name"}),
 			{
 				Config: testAccComputeInstance_subnetworkUpdate(suffix, instanceName),
-				Check: resource.ComposeTestCheckFunc(
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_subnetworkUpdate(suffix, instanceName)),
-				),
 			},
 			computeInstanceImportStep("us-east1-d", instanceName, []string{"allow_stopping_for_update", "network_interface.0.alias_ip_range.0.ip_cidr_range", "network_interface.0.alias_ip_range.0.subnetwork_range_name", "network_interface.0.alias_ip_range.1.ip_cidr_range", "network_interface.0.alias_ip_range.1.subnetwork_range_name"}),
 		},
@@ -3735,8 +3529,6 @@ func TestAccComputeInstance_networkIpUpdate(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceHasNetworkIP(&instance, "10.3.0.5"),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_networkIpUpdateWithComputeAddress(suffix, instanceName)),
 				),
 			},
 			computeInstanceImportStep("us-east1-d", instanceName, []string{}),
@@ -3755,10 +3547,6 @@ func TestAccComputeInstance_queueCount(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeInstance_queueCountSet(instanceName),
-				Check: resource.ComposeTestCheckFunc(
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_queueCountSet(instanceName)),
-				),
 			},
 			computeInstanceImportStep("us-east1-d", instanceName, []string{"allow_stopping_for_update"}),
 		},
@@ -3780,8 +3568,6 @@ func TestAccComputeInstance_spotVM(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_spotVM(instanceName)),
 				),
 			},
 			computeInstanceImportStep("us-central1-a", instanceName, []string{}),
@@ -3812,8 +3598,6 @@ func TestAccComputeInstance_spotVM_update(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_spotVM(instanceName)),
 				),
 			},
 			computeInstanceImportStep("us-central1-a", instanceName, []string{}),
@@ -3847,8 +3631,6 @@ func TestAccComputeInstance_maxRunDuration_update(t *testing.T) {
 						t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceTerminationAction(&instance, "STOP"),
 					testAccCheckComputeInstanceMaxRunDuration(&instance, expectedMaxRunDuration),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_standardVM_maxRunDurationUpdated(instanceName, "STOP")),
 				),
 			},
 			computeInstanceImportStep("us-central1-a", instanceName, []string{"allow_stopping_for_update"}),
@@ -3879,8 +3661,6 @@ func TestAccComputeInstance_standardVM_maxRunDuration_stopTerminationAction(t *t
 						t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceTerminationAction(&instance, instanceTerminationAction),
 					testAccCheckComputeInstanceMaxRunDuration(&instance, expectedMaxRunDuration),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_standardVM_maxRunDuration(instanceName, instanceTerminationAction)),
 				),
 			},
 			computeInstanceImportStep("us-central1-a", instanceName, []string{}),
@@ -3911,8 +3691,6 @@ func TestAccComputeInstance_localSsdVM_maxRunDuration_stopTerminationAction(t *t
 						t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceTerminationAction(&instance, instanceTerminationAction),
 					testAccCheckComputeInstanceMaxRunDuration(&instance, expectedMaxRunDuration),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_localSsdVM_maxRunDuration(instanceName, instanceTerminationAction)),
 				),
 			},
 			computeInstanceImportStep("us-central1-a", instanceName, []string{}),
@@ -3943,8 +3721,6 @@ func TestAccComputeInstance_spotVM_maxRunDuration_deleteTerminationAction(t *tes
 						t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceTerminationAction(&instance, instanceTerminationAction),
 					testAccCheckComputeInstanceMaxRunDuration(&instance, expectedMaxRunDuration),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_spotVM_maxRunDuration(instanceName, instanceTerminationAction)),
 				),
 			},
 			computeInstanceImportStep("us-central1-a", instanceName, []string{}),
@@ -3975,8 +3751,6 @@ func TestAccComputeInstance_standardVM_maxRunDuration_deleteTerminationAction(t 
 						t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceTerminationAction(&instance, instanceTerminationAction),
 					testAccCheckComputeInstanceMaxRunDuration(&instance, expectedMaxRunDuration),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_standardVM_maxRunDuration(instanceName, instanceTerminationAction)),
 				),
 			},
 			computeInstanceImportStep("us-central1-a", instanceName, []string{}),
@@ -4012,8 +3786,6 @@ func TestAccComputeInstance_spotVM_maxRunDuration_update(t *testing.T) {
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceMaxRunDuration(&instance, expectedMaxRunDuration),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_spotVM_maxRunDuration(instanceName, "DELETE")),
 				),
 			},
 			computeInstanceImportStep("us-central1-a", instanceName, []string{}),
@@ -4042,8 +3814,6 @@ func TestAccComputeInstance_localSsdRecoveryTimeout(t *testing.T) {
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceLocalSsdRecoveryTimeout(&instance, expectedLocalSsdRecoveryTimeout),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_localSsdRecoveryTimeout(instanceName)),
 				),
 			},
 			computeInstanceImportStep("us-central1-a", instanceName, []string{}),
@@ -4079,8 +3849,6 @@ func TestAccComputeInstance_localSsdRecoveryTimeout_update(t *testing.T) {
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceLocalSsdRecoveryTimeout(&instance, expectedLocalSsdRecoveryTimeout),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_localSsdRecoveryTimeout(instanceName)),
 				),
 			},
 			computeInstanceImportStep("us-central1-a", instanceName, []string{}),
@@ -4109,8 +3877,6 @@ func TestAccComputeInstance_partnerMetadata(t *testing.T) {
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstancePartnerMetadata(&instance, expectedPartnerMetadata),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_partnerMetadata(instanceName)),
 				),
 			},
 			computeInstanceImportStep("us-central1-a", instanceName, []string{fmt.Sprintf("partner_metadata.%s", namespace)}),
@@ -4147,8 +3913,6 @@ func TestAccComputeInstance_partnerMetadata_update(t *testing.T) {
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstancePartnerMetadata(&instance, expectedPartnerMetadata),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_partnerMetadata(instanceName)),
 				),
 			},
 			computeInstanceImportStep("us-central1-a", instanceName, []string{fmt.Sprintf("partner_metadata.%s", namespace)}),
@@ -4185,8 +3949,6 @@ func TestAccComputeInstance_partnerMetadata_deletePartnerMetadata(t *testing.T) 
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_partnerMetadata_empty(instanceName)),
 				),
 			},
 			computeInstanceImportStep("us-central1-a", instanceName, []string{fmt.Sprintf("partner_metadata.%s", namespace)}),
@@ -4217,8 +3979,6 @@ func TestAccComputeInstance_metadataStartupScript_update(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_metadataStartupScript(instanceName, "e2-standard-4", "xyz")),
 				),
 			},
 		},
@@ -4256,8 +4016,6 @@ func TestAccComputeInstance_metadataStartupScript_gracefulSwitch(t *testing.T) {
 						&instance, "foo", "abc"),
 					testAccCheckComputeInstanceMetadata(
 						&instance, "startup-script", "echo hi > /test.txt"),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_metadataStartupScript_gracefulSwitch(instanceName, "e2-medium", "abc")),
 				),
 			},
 		},
@@ -4283,8 +4041,6 @@ func TestAccComputeInstance_regionBootDisk(t *testing.T) {
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.regional_vm_instance", &instance),
 					testAccCheckComputeInstanceBootDisk(&instance, diskName),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.regional_vm_instance",
-						testAccComputeInstance_regionBootDisk(instanceName, diskName, suffix)),
 				),
 			},
 		},
@@ -4318,8 +4074,6 @@ func TestAccComputeInstance_creationOnlyAttributionLabel(t *testing.T) {
 						t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceLabel(&instance, "user_label", "bar"),
 					testAccCheckComputeInstanceAttributionLabel(&instance, true),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_attributionLabelUpdate(instanceName, "true", "CREATION_ONLY")),
 				),
 			},
 		},
@@ -4355,8 +4109,6 @@ func TestAccComputeInstance_creationOnlyAttributionLabelConfiguredOnUpdate(t *te
 						t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceLabel(&instance, "user_label", "bar"),
 					testAccCheckComputeInstanceAttributionLabel(&instance, false),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_attributionLabelUpdate(instanceName, "true", "CREATION_ONLY")),
 				),
 			},
 		},
@@ -4392,8 +4144,6 @@ func TestAccComputeInstance_proactiveAttributionLabel(t *testing.T) {
 						t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceLabel(&instance, "user_label", "bar"),
 					testAccCheckComputeInstanceAttributionLabel(&instance, true),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_attributionLabelUpdate(instanceName, "true", "PROACTIVE")),
 				),
 			},
 		},
@@ -4437,8 +4187,6 @@ func TestAccComputeInstance_autoDeleteUpdate(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar", &instance),
 					resource.TestCheckResourceAttr("google_compute_instance.foobar", "boot_disk.0.auto_delete", "true"),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_autoDeleteUpdate(context_1)),
 				),
 			},
 		},
@@ -4497,8 +4245,6 @@ func TestAccComputeInstance_keyRevocationActionType(t *testing.T) {
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
 					resource.TestCheckResourceAttr("google_compute_instance.foobar", "key_revocation_action_type", "STOP"),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_keyRevocationActionType(context_2)),
 				),
 			},
 		},
@@ -4603,8 +4349,6 @@ func TestAccComputeInstance_GracefulShutdownWithResetUpdate(t *testing.T) {
 					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar", &instance),
 					resource.TestCheckResourceAttr("google_compute_instance.foobar", "allow_stopping_for_update", "true"),
 					resource.TestCheckResourceAttr("google_compute_instance.foobar", "scheduling.0.graceful_shutdown.0.max_duration.0.seconds", "100"),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_GracefulShutdownUpdate(acceptableByApi_3)),
 				),
 			},
 			{
@@ -4708,8 +4452,6 @@ func TestAccComputeInstance_GracefulShutdownWithoutResetUpdate(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar", &instance),
 					resource.TestCheckResourceAttr("google_compute_instance.foobar", "scheduling.0.graceful_shutdown.0.max_duration.0.seconds", "100"),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_GracefulShutdownUpdate(acceptableByApi_3)),
 				),
 			},
 			{
@@ -5127,8 +4869,6 @@ func TestAccComputeInstance_NetworkAttachment(t *testing.T) {
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
 					testAccCheckComputeInstanceHasNetworkAttachment(&instance, fmt.Sprintf("https://www.googleapis.com/compute/%s/%s", providerVersion, fullFormNetworkAttachmentName)),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_networkAttachment(context)),
 				),
 			},
 		},
@@ -5159,10 +4899,6 @@ func TestAccComputeInstance_NetworkAttachmentUpdate(t *testing.T) {
 			computeInstanceImportStep("us-central1-a", instanceName, []string{"allow_stopping_for_update"}),
 			{
 				Config: testAccComputeInstance_networkAttachmentUpdate(networkAttachmentSelflink1, envRegion, suffix),
-				Check: resource.ComposeTestCheckFunc(
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_networkAttachmentUpdate(networkAttachmentSelflink1, envRegion, suffix)),
-				),
 			},
 			computeInstanceImportStep("us-central1-a", instanceName, []string{"allow_stopping_for_update"}),
 		},
@@ -5190,10 +4926,6 @@ func TestAccComputeInstance_NicStackTypeUpdate(t *testing.T) {
 			computeInstanceImportStep("us-central1-a", instanceName, []string{"allow_stopping_for_update"}),
 			{
 				Config: testAccComputeInstance_nicStackTypeUpdate(suffix, envRegion, "IPV4_ONLY", instanceName),
-				Check: resource.ComposeTestCheckFunc(
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_nicStackTypeUpdate(suffix, envRegion, "IPV4_ONLY", instanceName)),
-				),
 			},
 			computeInstanceImportStep("us-central1-a", instanceName, []string{"allow_stopping_for_update"}),
 		},
@@ -5215,10 +4947,6 @@ func TestAccComputeInstance_NicStackType_IPV6(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeInstance_nicStackTypeUpdate_ipv6(context),
-				Check: resource.ComposeTestCheckFunc(
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_nicStackTypeUpdate_ipv6(context)),
-				),
 			},
 		},
 	})
@@ -5245,8 +4973,6 @@ func TestAccComputeInstance_guestOsFeatures(t *testing.T) {
 					resource.TestCheckResourceAttr("google_compute_instance.foobar", "boot_disk.0.guest_os_features.1", "VIRTIO_SCSI_MULTIQUEUE"),
 					resource.TestCheckResourceAttr("google_compute_instance.foobar", "boot_disk.0.guest_os_features.2", "GVNIC"),
 					resource.TestCheckResourceAttr("google_compute_instance.foobar", "boot_disk.0.guest_os_features.3", "IDPF"),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_guestOsFeatures(context_1)),
 				),
 			},
 		},
@@ -12378,10 +12104,6 @@ func TestAccComputeInstance_bootDisk_storagePoolSpecified(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeInstance_bootDisk_storagePoolSpecified(instanceName, storagePoolNameLong, envvar.GetTestZoneFromEnv()),
-				Check: resource.ComposeTestCheckFunc(
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_bootDisk_storagePoolSpecified(instanceName, storagePoolNameLong, envvar.GetTestZoneFromEnv())),
-				),
 			},
 			{
 				ResourceName:      "google_compute_instance.foobar",
@@ -12404,10 +12126,6 @@ func TestAccComputeInstance_bootDisk_storagePoolSpecified_nameOnly(t *testing.T)
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeInstance_bootDisk_storagePoolSpecified(instanceName, "tf-bootstrap-storage-pool-hyperdisk-balanced-basic-2", envvar.GetTestZoneFromEnv()),
-				Check: resource.ComposeTestCheckFunc(
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_bootDisk_storagePoolSpecified(instanceName, "tf-bootstrap-storage-pool-hyperdisk-balanced-basic-2", envvar.GetTestZoneFromEnv())),
-				),
 			},
 			{
 				ResourceName:      "google_compute_instance.foobar",
@@ -12472,8 +12190,6 @@ func TestAccComputeInstance_bootAndAttachedDisk_interface(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_compute_instance.foobar", "boot_disk.0.interface", "SCSI"),
 					resource.TestCheckResourceAttr("google_compute_instance.foobar", "machine_type", "n2-standard-8"),
-					acctest.GetTestMetadataForTgc("compute", "google_compute_instance.foobar",
-						testAccComputeInstance_bootAndAttachedDisk_interface(instanceName2, diskName2, envvar.GetTestZoneFromEnv(), "n2-standard-8", "SCSI", true)),
 				),
 			},
 			//computeInstanceImportStep("us-central1-a", instanceName2, []string{"desired_status","allow_stopping_for_update"}),
