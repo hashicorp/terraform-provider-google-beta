@@ -109,10 +109,7 @@ func TestAccAssuredWorkloadsWorkload_BasicHandWritten(t *testing.T) {
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
-		ExternalProviders: map[string]resource.ExternalProvider{
-			"time": {},
-		},
-		CheckDestroy: testAccCheckAssuredWorkloadsWorkloadDestroyProducer(t),
+		CheckDestroy:             testAccCheckAssuredWorkloadsWorkloadDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccAssuredWorkloadsWorkload_BasicHandWritten(context),
@@ -148,10 +145,7 @@ func TestAccAssuredWorkloadsWorkload_FullHandWritten(t *testing.T) {
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
-		ExternalProviders: map[string]resource.ExternalProvider{
-			"time": {},
-		},
-		CheckDestroy: testAccCheckAssuredWorkloadsWorkloadDestroyProducer(t),
+		CheckDestroy:             testAccCheckAssuredWorkloadsWorkloadDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccAssuredWorkloadsWorkload_FullHandWritten(context),
@@ -283,12 +277,6 @@ resource "google_assured_workloads_workload" "primary" {
     display_name = "folder-display-name"
   }
   violation_notifications_enabled = true
-  depends_on = [time_sleep.wait_120_seconds]
-}
-
-resource "time_sleep" "wait_120_seconds" {
-  create_duration = "120s"
-  depends_on = [google_folder.folder1]
 }
 
 resource "google_folder" "folder1" {
@@ -316,12 +304,6 @@ resource "google_assured_workloads_workload" "primary" {
     display_name = "folder-display-name"
   }
   violation_notifications_enabled = true
-  depends_on = [time_sleep.wait_120_seconds]
-}
-
-resource "time_sleep" "wait_120_seconds" {
-  create_duration = "120s"
-  depends_on = [google_folder.folder1]
 }
 
 resource "google_folder" "folder1" {
@@ -345,14 +327,7 @@ resource "google_assured_workloads_workload" "primary" {
     rotation_period = "864000s"
   }
   provisioned_resources_parent = google_folder.folder1.name
-  depends_on = [time_sleep.wait_120_seconds]
 }
-
-resource "time_sleep" "wait_120_seconds" {
-  create_duration = "120s"
-  depends_on = [google_folder.folder1]
-}
-
 
 resource "google_folder" "folder1" {
   display_name = "tf-test-name%{random_suffix}"

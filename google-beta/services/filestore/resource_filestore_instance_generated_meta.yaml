@@ -9,10 +9,6 @@ fields:
   - field: 'deletion_protection_enabled'
   - field: 'deletion_protection_reason'
   - field: 'description'
-  - field: 'directory_services.ldap.domain'
-  - field: 'directory_services.ldap.groups_ou'
-  - field: 'directory_services.ldap.servers'
-  - field: 'directory_services.ldap.users_ou'
   - field: 'effective_labels'
     provider_only: true
   - field: 'effective_replication.replicas.last_active_sync_time'
