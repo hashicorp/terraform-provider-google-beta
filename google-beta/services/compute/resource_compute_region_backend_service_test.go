@@ -384,6 +384,18 @@ func TestAccComputeRegionBackendService_subsettingUpdate(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
+			{
+				Config: testAccComputeRegionBackendService_imlbWithSubsettingSubsetSize(backendName, checkName, 3),
+			},
+			{
+				ResourceName:      "google_compute_region_backend_service.foobar",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
+				Config:      testAccComputeRegionBackendService_imlbWithSubsettingSubsetSize(backendName, checkName, -1),
+				ExpectError: regexp.MustCompile("Must be greater than or equal to 1"),
+			},
 		},
 	})
 }
@@ -1298,7 +1310,7 @@ resource "google_compute_region_backend_service" "foobar" {
   name                  = "%s"
   health_checks         = [google_compute_health_check.health_check.self_link]
   protocol              = "TCP"
-  load_balancing_scheme = "INTERNAL"  
+  load_balancing_scheme = "INTERNAL"
   subsetting {
 	  policy = "CONSISTENT_HASH_SUBSETTING"
   }
@@ -1319,7 +1331,7 @@ resource "google_compute_region_backend_service" "foobar" {
   name                  = "%s"
   health_checks         = [google_compute_health_check.health_check.self_link]
   protocol              = "TCP"
-  load_balancing_scheme = "INTERNAL"  
+  load_balancing_scheme = "INTERNAL"
 }
 
 resource "google_compute_health_check" "health_check" {
@@ -1329,6 +1341,32 @@ resource "google_compute_health_check" "health_check" {
   }
 }
 `, serviceName, checkName)
+}
+
+func testAccComputeRegionBackendService_imlbWithSubsettingSubsetSize(serviceName, checkName string, subsetSize int64) string {
+	return fmt.Sprintf(`
+resource "google_compute_region_backend_service" "foobar" {
+  name                  = "%s"
+  health_checks         = [google_compute_region_health_check.zero.self_link]
+  protocol              = "HTTP"
+  load_balancing_scheme = "INTERNAL_MANAGED"
+  subsetting {
+	  policy = "CONSISTENT_HASH_SUBSETTING"
+    subset_size = %d
+  }
+}
+
+resource "google_compute_region_health_check" "zero" {
+  name               = "%s"
+  region             = "us-central1"
+  check_interval_sec = 1
+  timeout_sec        = 1
+
+  http_health_check {
+    port = 80
+  }
+}
+`, serviceName, subsetSize, checkName)
 }
 
 func TestAccComputeRegionBackendService_withSecurityPolicy(t *testing.T) {

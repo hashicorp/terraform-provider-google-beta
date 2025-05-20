@@ -718,6 +718,47 @@ resource "google_compute_health_check" "health_check" {
 `, context)
 }
 
+func TestAccComputeRegionBackendService_regionBackendServiceDynamicForwardingExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckComputeRegionBackendServiceDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeRegionBackendService_regionBackendServiceDynamicForwardingExample(context),
+			},
+			{
+				ResourceName:            "google_compute_region_backend_service.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"iap.0.oauth2_client_secret", "network", "region"},
+			},
+		},
+	})
+}
+
+func testAccComputeRegionBackendService_regionBackendServiceDynamicForwardingExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_compute_region_backend_service" "default" {
+  provider                        = google-beta
+  name                            = "tf-test-region-service%{random_suffix}"
+  region                          = "us-central1"
+  load_balancing_scheme           = "EXTERNAL_MANAGED"
+  dynamic_forwarding {
+    ip_port_selection {
+      enabled = true
+    }
+  }
+}
+`, context)
+}
+
 func testAccCheckComputeRegionBackendServiceDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		for name, rs := range s.RootModule().Resources {
