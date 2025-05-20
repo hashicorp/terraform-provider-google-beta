@@ -127,6 +127,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/pubsublite"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/redis"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager3"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/runtimeconfig"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/secretmanager"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/secretmanagerregional"
@@ -195,6 +196,7 @@ var handwrittenDatasources = map[string]*schema.Resource{
 	"google_beyondcorp_app_connection":                           beyondcorp.DataSourceGoogleBeyondcorpAppConnection(),
 	"google_beyondcorp_app_connector":                            beyondcorp.DataSourceGoogleBeyondcorpAppConnector(),
 	"google_beyondcorp_app_gateway":                              beyondcorp.DataSourceGoogleBeyondcorpAppGateway(),
+	"google_beyondcorp_security_gateway":                         beyondcorp.DataSourceGoogleBeyondcorpSecurityGateway(),
 	"google_billing_account":                                     billing.DataSourceGoogleBillingAccount(),
 	"google_bigquery_tables":                                     bigquery.DataSourceGoogleBigQueryTables(),
 	"google_bigquery_dataset":                                    bigquery.DataSourceGoogleBigqueryDataset(),
@@ -317,6 +319,7 @@ var handwrittenDatasources = map[string]*schema.Resource{
 	"google_logging_project_cmek_settings":                       logging.DataSourceGoogleLoggingProjectCmekSettings(),
 	"google_logging_project_settings":                            logging.DataSourceGoogleLoggingProjectSettings(),
 	"google_logging_sink":                                        logging.DataSourceGoogleLoggingSink(),
+	"google_lustre_instance":                                     lustre.DataSourceLustreInstance(),
 	"google_monitoring_notification_channel":                     monitoring.DataSourceMonitoringNotificationChannel(),
 	"google_monitoring_cluster_istio_service":                    monitoring.DataSourceMonitoringServiceClusterIstio(),
 	"google_monitoring_istio_canonical_service":                  monitoring.DataSourceMonitoringIstioCanonicalService(),
@@ -404,6 +407,7 @@ var handwrittenDatasources = map[string]*schema.Resource{
 	"google_tpu_v2_accelerator_types":                            tpuv2.DataSourceTpuV2AcceleratorTypes(),
 	"google_vpc_access_connector":                                vpcaccess.DataSourceVPCAccessConnector(),
 	"google_memorystore_instance":                                memorystore.DataSourceMemorystoreInstance(),
+	"google_memcache_instance":                                   memcache.DataSourceMemcacheInstance(),
 	"google_redis_instance":                                      redis.DataSourceGoogleRedisInstance(),
 	"google_vertex_ai_index":                                     vertexai.DataSourceVertexAIIndex(),
 	"google_vmwareengine_cluster":                                vmwareengine.DataSourceVmwareengineCluster(),
@@ -472,6 +476,7 @@ var generatedIAMDatasources = map[string]*schema.Resource{
 	"google_dataplex_datascan_iam_policy":                          tpgiamresource.DataSourceIamPolicy(dataplex.DataplexDatascanIamSchema, dataplex.DataplexDatascanIamUpdaterProducer),
 	"google_dataplex_entry_group_iam_policy":                       tpgiamresource.DataSourceIamPolicy(dataplex.DataplexEntryGroupIamSchema, dataplex.DataplexEntryGroupIamUpdaterProducer),
 	"google_dataplex_entry_type_iam_policy":                        tpgiamresource.DataSourceIamPolicy(dataplex.DataplexEntryTypeIamSchema, dataplex.DataplexEntryTypeIamUpdaterProducer),
+	"google_dataplex_glossary_iam_policy":                          tpgiamresource.DataSourceIamPolicy(dataplex.DataplexGlossaryIamSchema, dataplex.DataplexGlossaryIamUpdaterProducer),
 	"google_dataplex_lake_iam_policy":                              tpgiamresource.DataSourceIamPolicy(dataplex.DataplexLakeIamSchema, dataplex.DataplexLakeIamUpdaterProducer),
 	"google_dataplex_task_iam_policy":                              tpgiamresource.DataSourceIamPolicy(dataplex.DataplexTaskIamSchema, dataplex.DataplexTaskIamUpdaterProducer),
 	"google_dataplex_zone_iam_policy":                              tpgiamresource.DataSourceIamPolicy(dataplex.DataplexZoneIamSchema, dataplex.DataplexZoneIamUpdaterProducer),
@@ -488,6 +493,7 @@ var generatedIAMDatasources = map[string]*schema.Resource{
 	"google_gke_hub_feature_iam_policy":                            tpgiamresource.DataSourceIamPolicy(gkehub2.GKEHub2FeatureIamSchema, gkehub2.GKEHub2FeatureIamUpdaterProducer),
 	"google_gke_hub_scope_iam_policy":                              tpgiamresource.DataSourceIamPolicy(gkehub2.GKEHub2ScopeIamSchema, gkehub2.GKEHub2ScopeIamUpdaterProducer),
 	"google_healthcare_consent_store_iam_policy":                   tpgiamresource.DataSourceIamPolicy(healthcare.HealthcareConsentStoreIamSchema, healthcare.HealthcareConsentStoreIamUpdaterProducer),
+	"google_iam_workload_identity_pool_iam_policy":                 tpgiamresource.DataSourceIamPolicy(iambeta.IAMBetaWorkloadIdentityPoolIamSchema, iambeta.IAMBetaWorkloadIdentityPoolIamUpdaterProducer),
 	"google_iap_app_engine_service_iam_policy":                     tpgiamresource.DataSourceIamPolicy(iap.IapAppEngineServiceIamSchema, iap.IapAppEngineServiceIamUpdaterProducer),
 	"google_iap_app_engine_version_iam_policy":                     tpgiamresource.DataSourceIamPolicy(iap.IapAppEngineVersionIamSchema, iap.IapAppEngineVersionIamUpdaterProducer),
 	"google_iap_web_cloud_run_service_iam_policy":                  tpgiamresource.DataSourceIamPolicy(iap.IapWebCloudRunServiceIamSchema, iap.IapWebCloudRunServiceIamUpdaterProducer),
@@ -561,9 +567,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 646
-// Generated IAM resources: 327
-// Total generated resources: 973
+// Generated resources: 659
+// Generated IAM resources: 333
+// Total generated resources: 992
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -628,6 +634,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_apigee_keystores_aliases_self_signed_cert":                           apigee.ResourceApigeeKeystoresAliasesSelfSignedCert(),
 	"google_apigee_nat_address":                                                  apigee.ResourceApigeeNatAddress(),
 	"google_apigee_organization":                                                 apigee.ResourceApigeeOrganization(),
+	"google_apigee_security_profile_v2":                                          apigee.ResourceApigeeSecurityProfileV2(),
 	"google_apigee_sync_authorization":                                           apigee.ResourceApigeeSyncAuthorization(),
 	"google_apigee_target_server":                                                apigee.ResourceApigeeTargetServer(),
 	"google_apihub_api_hub_instance":                                             apihub.ResourceApihubApiHubInstance(),
@@ -670,6 +677,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_bigquery_dataset_access":                                             bigquery.ResourceBigQueryDatasetAccess(),
 	"google_bigquery_job":                                                        bigquery.ResourceBigQueryJob(),
 	"google_bigquery_routine":                                                    bigquery.ResourceBigQueryRoutine(),
+	"google_bigquery_row_access_policy":                                          bigquery.ResourceBigQueryRowAccessPolicy(),
 	"google_bigquery_table_iam_binding":                                          tpgiamresource.ResourceIamBinding(bigquery.BigQueryTableIamSchema, bigquery.BigQueryTableIamUpdaterProducer, bigquery.BigQueryTableIdParseFunc),
 	"google_bigquery_table_iam_member":                                           tpgiamresource.ResourceIamMember(bigquery.BigQueryTableIamSchema, bigquery.BigQueryTableIamUpdaterProducer, bigquery.BigQueryTableIdParseFunc),
 	"google_bigquery_table_iam_policy":                                           tpgiamresource.ResourceIamPolicy(bigquery.BigQueryTableIamSchema, bigquery.BigQueryTableIamUpdaterProducer, bigquery.BigQueryTableIdParseFunc),
@@ -696,6 +704,8 @@ var generatedResources = map[string]*schema.Resource{
 	"google_bigquery_reservation":                                                bigqueryreservation.ResourceBigqueryReservationReservation(),
 	"google_bigquery_reservation_assignment":                                     bigqueryreservation.ResourceBigqueryReservationReservationAssignment(),
 	"google_bigtable_app_profile":                                                bigtable.ResourceBigtableAppProfile(),
+	"google_bigtable_logical_view":                                               bigtable.ResourceBigtableLogicalView(),
+	"google_bigtable_materialized_view":                                          bigtable.ResourceBigtableMaterializedView(),
 	"google_billing_budget":                                                      billing.ResourceBillingBudget(),
 	"google_binary_authorization_attestor":                                       binaryauthorization.ResourceBinaryAuthorizationAttestor(),
 	"google_binary_authorization_attestor_iam_binding":                           tpgiamresource.ResourceIamBinding(binaryauthorization.BinaryAuthorizationAttestorIamSchema, binaryauthorization.BinaryAuthorizationAttestorIamUpdaterProducer, binaryauthorization.BinaryAuthorizationAttestorIdParseFunc),
@@ -789,6 +799,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_compute_backend_service_iam_member":                                  tpgiamresource.ResourceIamMember(compute.ComputeBackendServiceIamSchema, compute.ComputeBackendServiceIamUpdaterProducer, compute.ComputeBackendServiceIdParseFunc),
 	"google_compute_backend_service_iam_policy":                                  tpgiamresource.ResourceIamPolicy(compute.ComputeBackendServiceIamSchema, compute.ComputeBackendServiceIamUpdaterProducer, compute.ComputeBackendServiceIdParseFunc),
 	"google_compute_backend_service_signed_url_key":                              compute.ResourceComputeBackendServiceSignedUrlKey(),
+	"google_compute_cross_site_network":                                          compute.ResourceComputeCrossSiteNetwork(),
 	"google_compute_disk":                                                        compute.ResourceComputeDisk(),
 	"google_compute_disk_iam_binding":                                            tpgiamresource.ResourceIamBinding(compute.ComputeDiskIamSchema, compute.ComputeDiskIamUpdaterProducer, compute.ComputeDiskIdParseFunc),
 	"google_compute_disk_iam_member":                                             tpgiamresource.ResourceIamMember(compute.ComputeDiskIamSchema, compute.ComputeDiskIamUpdaterProducer, compute.ComputeDiskIdParseFunc),
@@ -801,6 +812,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_compute_firewall_policy_rule":                                        compute.ResourceComputeFirewallPolicyRule(),
 	"google_compute_firewall_policy_with_rules":                                  compute.ResourceComputeFirewallPolicyWithRules(),
 	"google_compute_forwarding_rule":                                             compute.ResourceComputeForwardingRule(),
+	"google_compute_future_reservation":                                          compute.ResourceComputeFutureReservation(),
 	"google_compute_global_address":                                              compute.ResourceComputeGlobalAddress(),
 	"google_compute_global_forwarding_rule":                                      compute.ResourceComputeGlobalForwardingRule(),
 	"google_compute_global_network_endpoint":                                     compute.ResourceComputeGlobalNetworkEndpoint(),
@@ -980,6 +992,12 @@ var generatedResources = map[string]*schema.Resource{
 	"google_dataplex_entry_type_iam_binding":                                     tpgiamresource.ResourceIamBinding(dataplex.DataplexEntryTypeIamSchema, dataplex.DataplexEntryTypeIamUpdaterProducer, dataplex.DataplexEntryTypeIdParseFunc),
 	"google_dataplex_entry_type_iam_member":                                      tpgiamresource.ResourceIamMember(dataplex.DataplexEntryTypeIamSchema, dataplex.DataplexEntryTypeIamUpdaterProducer, dataplex.DataplexEntryTypeIdParseFunc),
 	"google_dataplex_entry_type_iam_policy":                                      tpgiamresource.ResourceIamPolicy(dataplex.DataplexEntryTypeIamSchema, dataplex.DataplexEntryTypeIamUpdaterProducer, dataplex.DataplexEntryTypeIdParseFunc),
+	"google_dataplex_glossary":                                                   dataplex.ResourceDataplexGlossary(),
+	"google_dataplex_glossary_iam_binding":                                       tpgiamresource.ResourceIamBinding(dataplex.DataplexGlossaryIamSchema, dataplex.DataplexGlossaryIamUpdaterProducer, dataplex.DataplexGlossaryIdParseFunc),
+	"google_dataplex_glossary_iam_member":                                        tpgiamresource.ResourceIamMember(dataplex.DataplexGlossaryIamSchema, dataplex.DataplexGlossaryIamUpdaterProducer, dataplex.DataplexGlossaryIdParseFunc),
+	"google_dataplex_glossary_iam_policy":                                        tpgiamresource.ResourceIamPolicy(dataplex.DataplexGlossaryIamSchema, dataplex.DataplexGlossaryIamUpdaterProducer, dataplex.DataplexGlossaryIdParseFunc),
+	"google_dataplex_glossary_category":                                          dataplex.ResourceDataplexGlossaryCategory(),
+	"google_dataplex_glossary_term":                                              dataplex.ResourceDataplexGlossaryTerm(),
 	"google_dataplex_lake_iam_binding":                                           tpgiamresource.ResourceIamBinding(dataplex.DataplexLakeIamSchema, dataplex.DataplexLakeIamUpdaterProducer, dataplex.DataplexLakeIdParseFunc),
 	"google_dataplex_lake_iam_member":                                            tpgiamresource.ResourceIamMember(dataplex.DataplexLakeIamSchema, dataplex.DataplexLakeIamUpdaterProducer, dataplex.DataplexLakeIdParseFunc),
 	"google_dataplex_lake_iam_policy":                                            tpgiamresource.ResourceIamPolicy(dataplex.DataplexLakeIamSchema, dataplex.DataplexLakeIamUpdaterProducer, dataplex.DataplexLakeIdParseFunc),
@@ -1080,6 +1098,9 @@ var generatedResources = map[string]*schema.Resource{
 	"google_firebase_app_check_service_config":                                   firebaseappcheck.ResourceFirebaseAppCheckServiceConfig(),
 	"google_firebase_app_hosting_backend":                                        firebaseapphosting.ResourceFirebaseAppHostingBackend(),
 	"google_firebase_app_hosting_build":                                          firebaseapphosting.ResourceFirebaseAppHostingBuild(),
+	"google_firebase_app_hosting_default_domain":                                 firebaseapphosting.ResourceFirebaseAppHostingDefaultDomain(),
+	"google_firebase_app_hosting_domain":                                         firebaseapphosting.ResourceFirebaseAppHostingDomain(),
+	"google_firebase_app_hosting_traffic":                                        firebaseapphosting.ResourceFirebaseAppHostingTraffic(),
 	"google_firebase_database_instance":                                          firebasedatabase.ResourceFirebaseDatabaseInstance(),
 	"google_firebase_data_connect_service":                                       firebasedataconnect.ResourceFirebaseDataConnectService(),
 	"google_firebase_extensions_instance":                                        firebaseextensions.ResourceFirebaseExtensionsInstance(),
@@ -1159,6 +1180,9 @@ var generatedResources = map[string]*schema.Resource{
 	"google_iam_principal_access_boundary_policy":                                iam3.ResourceIAM3PrincipalAccessBoundaryPolicy(),
 	"google_iam_projects_policy_binding":                                         iam3.ResourceIAM3ProjectsPolicyBinding(),
 	"google_iam_workload_identity_pool":                                          iambeta.ResourceIAMBetaWorkloadIdentityPool(),
+	"google_iam_workload_identity_pool_iam_binding":                              tpgiamresource.ResourceIamBinding(iambeta.IAMBetaWorkloadIdentityPoolIamSchema, iambeta.IAMBetaWorkloadIdentityPoolIamUpdaterProducer, iambeta.IAMBetaWorkloadIdentityPoolIdParseFunc),
+	"google_iam_workload_identity_pool_iam_member":                               tpgiamresource.ResourceIamMember(iambeta.IAMBetaWorkloadIdentityPoolIamSchema, iambeta.IAMBetaWorkloadIdentityPoolIamUpdaterProducer, iambeta.IAMBetaWorkloadIdentityPoolIdParseFunc),
+	"google_iam_workload_identity_pool_iam_policy":                               tpgiamresource.ResourceIamPolicy(iambeta.IAMBetaWorkloadIdentityPoolIamSchema, iambeta.IAMBetaWorkloadIdentityPoolIamUpdaterProducer, iambeta.IAMBetaWorkloadIdentityPoolIdParseFunc),
 	"google_iam_workload_identity_pool_provider":                                 iambeta.ResourceIAMBetaWorkloadIdentityPoolProvider(),
 	"google_iam_oauth_client":                                                    iamworkforcepool.ResourceIAMWorkforcePoolOauthClient(),
 	"google_iam_oauth_client_credential":                                         iamworkforcepool.ResourceIAMWorkforcePoolOauthClientCredential(),
@@ -1368,6 +1392,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_redis_cluster_user_created_connections":                              redis.ResourceRedisClusterUserCreatedConnections(),
 	"google_redis_instance":                                                      redis.ResourceRedisInstance(),
 	"google_resource_manager_lien":                                               resourcemanager.ResourceResourceManagerLien(),
+	"google_resource_manager_capability":                                         resourcemanager3.ResourceResourceManager3Capability(),
 	"google_runtimeconfig_config_iam_binding":                                    tpgiamresource.ResourceIamBinding(runtimeconfig.RuntimeConfigConfigIamSchema, runtimeconfig.RuntimeConfigConfigIamUpdaterProducer, runtimeconfig.RuntimeConfigConfigIdParseFunc),
 	"google_runtimeconfig_config_iam_member":                                     tpgiamresource.ResourceIamMember(runtimeconfig.RuntimeConfigConfigIamSchema, runtimeconfig.RuntimeConfigConfigIamUpdaterProducer, runtimeconfig.RuntimeConfigConfigIdParseFunc),
 	"google_runtimeconfig_config_iam_policy":                                     tpgiamresource.ResourceIamPolicy(runtimeconfig.RuntimeConfigConfigIamSchema, runtimeconfig.RuntimeConfigConfigIamUpdaterProducer, runtimeconfig.RuntimeConfigConfigIdParseFunc),
@@ -1704,4 +1729,168 @@ var handwrittenIAMResources = map[string]*schema.Resource{
 	"google_service_account_iam_member":          tpgiamresource.ResourceIamMember(resourcemanager.IamServiceAccountSchema, resourcemanager.NewServiceAccountIamUpdater, resourcemanager.ServiceAccountIdParseFunc),
 	"google_service_account_iam_policy":          tpgiamresource.ResourceIamPolicy(resourcemanager.IamServiceAccountSchema, resourcemanager.NewServiceAccountIamUpdater, resourcemanager.ServiceAccountIdParseFunc),
 	// ####### END non-generated IAM resources ###########
+}
+
+// UseGeneratedProducts uses every generated product to avoid "imported and not used" errors.
+// This allows developers to define a product without any resources, datasources, or other files.
+//
+// This avoids goimports which takes a very long time, or needing to know if there are any other
+// files in a given package when generating this file (which is done in parallel)
+func UseGeneratedProducts() {
+	var _ = accessapproval.ProductName
+	var _ = accesscontextmanager.ProductName
+	var _ = activedirectory.ProductName
+	var _ = alloydb.ProductName
+	var _ = apigateway.ProductName
+	var _ = apigee.ProductName
+	var _ = apihub.ProductName
+	var _ = appengine.ProductName
+	var _ = apphub.ProductName
+	var _ = artifactregistry.ProductName
+	var _ = backupdr.ProductName
+	var _ = beyondcorp.ProductName
+	var _ = biglake.ProductName
+	var _ = bigquery.ProductName
+	var _ = bigqueryanalyticshub.ProductName
+	var _ = bigqueryconnection.ProductName
+	var _ = bigquerydatapolicy.ProductName
+	var _ = bigquerydatatransfer.ProductName
+	var _ = bigqueryreservation.ProductName
+	var _ = bigtable.ProductName
+	var _ = billing.ProductName
+	var _ = binaryauthorization.ProductName
+	var _ = blockchainnodeengine.ProductName
+	var _ = certificatemanager.ProductName
+	var _ = chronicle.ProductName
+	var _ = cloudasset.ProductName
+	var _ = cloudbuild.ProductName
+	var _ = cloudbuildv2.ProductName
+	var _ = clouddeploy.ProductName
+	var _ = clouddomains.ProductName
+	var _ = cloudfunctions.ProductName
+	var _ = cloudfunctions2.ProductName
+	var _ = cloudidentity.ProductName
+	var _ = cloudids.ProductName
+	var _ = cloudquotas.ProductName
+	var _ = cloudrun.ProductName
+	var _ = cloudrunv2.ProductName
+	var _ = cloudscheduler.ProductName
+	var _ = cloudtasks.ProductName
+	var _ = colab.ProductName
+	var _ = composer.ProductName
+	var _ = compute.ProductName
+	var _ = containeranalysis.ProductName
+	var _ = containerattached.ProductName
+	var _ = corebilling.ProductName
+	var _ = databasemigrationservice.ProductName
+	var _ = datacatalog.ProductName
+	var _ = dataform.ProductName
+	var _ = datafusion.ProductName
+	var _ = datalossprevention.ProductName
+	var _ = datapipeline.ProductName
+	var _ = dataplex.ProductName
+	var _ = dataproc.ProductName
+	var _ = dataprocgdc.ProductName
+	var _ = dataprocmetastore.ProductName
+	var _ = datastream.ProductName
+	var _ = deploymentmanager.ProductName
+	var _ = developerconnect.ProductName
+	var _ = dialogflow.ProductName
+	var _ = dialogflowcx.ProductName
+	var _ = discoveryengine.ProductName
+	var _ = dns.ProductName
+	var _ = documentai.ProductName
+	var _ = documentaiwarehouse.ProductName
+	var _ = edgecontainer.ProductName
+	var _ = edgenetwork.ProductName
+	var _ = essentialcontacts.ProductName
+	var _ = eventarc.ProductName
+	var _ = filestore.ProductName
+	var _ = firebase.ProductName
+	var _ = firebaseappcheck.ProductName
+	var _ = firebaseapphosting.ProductName
+	var _ = firebasedatabase.ProductName
+	var _ = firebasedataconnect.ProductName
+	var _ = firebaseextensions.ProductName
+	var _ = firebasehosting.ProductName
+	var _ = firebasestorage.ProductName
+	var _ = firestore.ProductName
+	var _ = gemini.ProductName
+	var _ = gkebackup.ProductName
+	var _ = gkehub.ProductName
+	var _ = gkehub2.ProductName
+	var _ = gkeonprem.ProductName
+	var _ = healthcare.ProductName
+	var _ = iam2.ProductName
+	var _ = iam3.ProductName
+	var _ = iambeta.ProductName
+	var _ = iamworkforcepool.ProductName
+	var _ = iap.ProductName
+	var _ = identityplatform.ProductName
+	var _ = integrationconnectors.ProductName
+	var _ = integrations.ProductName
+	var _ = kms.ProductName
+	var _ = logging.ProductName
+	var _ = looker.ProductName
+	var _ = lustre.ProductName
+	var _ = managedkafka.ProductName
+	var _ = memcache.ProductName
+	var _ = memorystore.ProductName
+	var _ = migrationcenter.ProductName
+	var _ = mlengine.ProductName
+	var _ = monitoring.ProductName
+	var _ = netapp.ProductName
+	var _ = networkconnectivity.ProductName
+	var _ = networkmanagement.ProductName
+	var _ = networksecurity.ProductName
+	var _ = networkservices.ProductName
+	var _ = notebooks.ProductName
+	var _ = oracledatabase.ProductName
+	var _ = orgpolicy.ProductName
+	var _ = osconfig.ProductName
+	var _ = osconfigv2.ProductName
+	var _ = oslogin.ProductName
+	var _ = parallelstore.ProductName
+	var _ = parametermanager.ProductName
+	var _ = parametermanagerregional.ProductName
+	var _ = privateca.ProductName
+	var _ = privilegedaccessmanager.ProductName
+	var _ = publicca.ProductName
+	var _ = pubsub.ProductName
+	var _ = pubsublite.ProductName
+	var _ = redis.ProductName
+	var _ = resourcemanager.ProductName
+	var _ = resourcemanager3.ProductName
+	var _ = runtimeconfig.ProductName
+	var _ = secretmanager.ProductName
+	var _ = secretmanagerregional.ProductName
+	var _ = securesourcemanager.ProductName
+	var _ = securitycenter.ProductName
+	var _ = securitycentermanagement.ProductName
+	var _ = securitycenterv2.ProductName
+	var _ = securityposture.ProductName
+	var _ = securityscanner.ProductName
+	var _ = servicedirectory.ProductName
+	var _ = servicemanagement.ProductName
+	var _ = servicenetworking.ProductName
+	var _ = serviceusage.ProductName
+	var _ = siteverification.ProductName
+	var _ = sourcerepo.ProductName
+	var _ = spanner.ProductName
+	var _ = sql.ProductName
+	var _ = storage.ProductName
+	var _ = storagebatchoperations.ProductName
+	var _ = storagecontrol.ProductName
+	var _ = storageinsights.ProductName
+	var _ = storagetransfer.ProductName
+	var _ = tags.ProductName
+	var _ = tpu.ProductName
+	var _ = tpuv2.ProductName
+	var _ = transcoder.ProductName
+	var _ = vertexai.ProductName
+	var _ = vmwareengine.ProductName
+	var _ = vpcaccess.ProductName
+	var _ = workbench.ProductName
+	var _ = workflows.ProductName
+	var _ = workstations.ProductName
 }

@@ -1,0 +1,100 @@
+// Copyright (c) HashiCorp, Inc.
+// SPDX-License-Identifier: MPL-2.0
+package compute_test
+
+import (
+	"testing"
+
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
+)
+
+func TestAccComputeFutureReservation_update(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+		"project":       envvar.GetTestProjectFromEnv(),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeFutureReservation_full(context),
+			},
+			{
+				ResourceName:            "google_compute_future_reservation.gce_future_reservation",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"auto_delete_auto_created_reservations"},
+			},
+			{
+				Config: testAccComputeFutureReservation_update(context),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_compute_future_reservation.gce_future_reservation", plancheck.ResourceActionUpdate),
+					},
+				},
+			},
+			{
+				ResourceName:            "google_compute_future_reservation.gce_future_reservation",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"auto_delete_auto_created_reservations"},
+			},
+		},
+	})
+}
+
+func testAccComputeFutureReservation_full(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_compute_future_reservation" "gce_future_reservation" {
+  provider = google-beta
+  name     = "tf-fr%{random_suffix}"
+  name_prefix = "fr-%{random_suffix}"
+  project  = "%{project}"
+  planning_status = "DRAFT"
+  auto_delete_auto_created_reservations = true
+  description      = "test future reservation"
+  time_window {
+    start_time = "2025-11-01T00:00:00Z"
+    end_time   = "2025-11-02T00:00:00Z"
+  }
+
+  specific_sku_properties {
+    total_count = "1"
+    instance_properties {
+      machine_type = "e2-standard-2"
+    }
+  }
+}
+`, context)
+}
+
+func testAccComputeFutureReservation_update(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_compute_future_reservation" "gce_future_reservation" {
+  provider = google-beta
+  name     = "tf-fr%{random_suffix}"
+  name_prefix = "fru-%{random_suffix}"
+  project  = "%{project}"
+  planning_status = "SUBMITTED"
+  auto_delete_auto_created_reservations = false
+  description      = "test updated future reservation"
+  time_window {
+    start_time = "2025-11-01T00:00:00Z"
+    end_time   = "2025-11-02T00:00:00Z"
+  }
+  specific_sku_properties {
+    total_count = "1"
+    instance_properties {
+      machine_type = "e2-standard-2"
+    }
+  }
+}
+`, context)
+}
