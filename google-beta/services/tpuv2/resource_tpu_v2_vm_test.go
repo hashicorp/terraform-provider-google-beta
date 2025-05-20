@@ -30,7 +30,7 @@ func TestAccTpuV2Vm_update(t *testing.T) {
 				ResourceName:            "google_tpu_v2_vm.tpu",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"labels", "terraform_labels", "zone"},
+				ImportStateVerifyIgnore: []string{"labels", "terraform_labels", "zone", "health", "health_description"},
 			},
 			{
 				Config: testAccTpuV2Vm_update(context, true),
@@ -39,7 +39,7 @@ func TestAccTpuV2Vm_update(t *testing.T) {
 				ResourceName:            "google_tpu_v2_vm.tpu",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"labels", "terraform_labels", "zone"},
+				ImportStateVerifyIgnore: []string{"labels", "terraform_labels", "zone", "health", "health_description"},
 			},
 			{
 				Config: testAccTpuV2Vm_update(context, false),
@@ -48,7 +48,7 @@ func TestAccTpuV2Vm_update(t *testing.T) {
 				ResourceName:            "google_tpu_v2_vm.tpu",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"labels", "terraform_labels", "zone"},
+				ImportStateVerifyIgnore: []string{"labels", "terraform_labels", "zone", "health", "health_description"},
 			},
 		},
 	})

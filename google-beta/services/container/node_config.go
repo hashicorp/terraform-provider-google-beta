@@ -464,7 +464,6 @@ func schemaNodeConfig() *schema.Schema {
 
 				"storage_pools": {
 					Type:        schema.TypeList,
-					ForceNew:    true,
 					Optional:    true,
 					Elem:        &schema.Schema{Type: schema.TypeString},
 					Description: `The list of Storage Pools where boot disks are provisioned.`,
@@ -715,7 +714,6 @@ func schemaNodeConfig() *schema.Schema {
 							"osversion": {
 								Type:         schema.TypeString,
 								Optional:     true,
-								ForceNew:     true,
 								Default:      "OS_VERSION_UNSPECIFIED",
 								Description:  `The OS Version of the windows nodepool.Values are OS_VERSION_UNSPECIFIED,OS_VERSION_LTSC2019 and OS_VERSION_LTSC2022`,
 								ValidateFunc: validation.StringInSlice([]string{"OS_VERSION_UNSPECIFIED", "OS_VERSION_LTSC2019", "OS_VERSION_LTSC2022"}, false),
@@ -866,6 +864,12 @@ func schemaNodeConfig() *schema.Schema {
 					Optional:    true,
 					ForceNew:    true,
 					Description: `The runtime of each node in the node pool in seconds, terminated by 's'. Example: "3600s".`,
+				},
+				"flex_start": {
+					Type:        schema.TypeBool,
+					Optional:    true,
+					ForceNew:    true,
+					Description: `Enables Flex Start provisioning model for the node pool`,
 				},
 			},
 		},
@@ -1256,6 +1260,10 @@ func expandNodeConfig(v interface{}) *container.NodeConfig {
 
 	if v, ok := nodeConfig["max_run_duration"]; ok {
 		nc.MaxRunDuration = v.(string)
+	}
+
+	if v, ok := nodeConfig["flex_start"]; ok {
+		nc.FlexStart = v.(bool)
 	}
 
 	if v, ok := nodeConfig["host_maintenance_policy"]; ok {
@@ -1681,6 +1689,7 @@ func flattenNodeConfig(c *container.NodeConfig, v interface{}) []map[string]inte
 		"node_group":                         c.NodeGroup,
 		"advanced_machine_features":          flattenAdvancedMachineFeaturesConfig(c.AdvancedMachineFeatures),
 		"max_run_duration":                   c.MaxRunDuration,
+		"flex_start":                         c.FlexStart,
 		"sole_tenant_config":                 flattenSoleTenantConfig(c.SoleTenantConfig),
 		"fast_socket":                        flattenFastSocket(c.FastSocket),
 		"resource_manager_tags":              flattenResourceManagerTags(c.ResourceManagerTags),
