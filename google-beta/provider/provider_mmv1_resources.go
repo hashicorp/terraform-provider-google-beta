@@ -435,6 +435,7 @@ var generatedIAMDatasources = map[string]*schema.Resource{
 	"google_artifact_registry_repository_iam_policy":               tpgiamresource.DataSourceIamPolicy(artifactregistry.ArtifactRegistryRepositoryIamSchema, artifactregistry.ArtifactRegistryRepositoryIamUpdaterProducer),
 	"google_beyondcorp_application_iam_policy":                     tpgiamresource.DataSourceIamPolicy(beyondcorp.BeyondcorpApplicationIamSchema, beyondcorp.BeyondcorpApplicationIamUpdaterProducer),
 	"google_beyondcorp_security_gateway_iam_policy":                tpgiamresource.DataSourceIamPolicy(beyondcorp.BeyondcorpSecurityGatewayIamSchema, beyondcorp.BeyondcorpSecurityGatewayIamUpdaterProducer),
+	"google_beyondcorp_security_gateway_application_iam_policy":    tpgiamresource.DataSourceIamPolicy(beyondcorp.BeyondcorpSecurityGatewayApplicationIamSchema, beyondcorp.BeyondcorpSecurityGatewayApplicationIamUpdaterProducer),
 	"google_bigquery_table_iam_policy":                             tpgiamresource.DataSourceIamPolicy(bigquery.BigQueryTableIamSchema, bigquery.BigQueryTableIamUpdaterProducer),
 	"google_bigquery_analytics_hub_data_exchange_iam_policy":       tpgiamresource.DataSourceIamPolicy(bigqueryanalyticshub.BigqueryAnalyticsHubDataExchangeIamSchema, bigqueryanalyticshub.BigqueryAnalyticsHubDataExchangeIamUpdaterProducer),
 	"google_bigquery_analytics_hub_listing_iam_policy":             tpgiamresource.DataSourceIamPolicy(bigqueryanalyticshub.BigqueryAnalyticsHubListingIamSchema, bigqueryanalyticshub.BigqueryAnalyticsHubListingIamUpdaterProducer),
@@ -569,9 +570,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 661
-// Generated IAM resources: 336
-// Total generated resources: 997
+// Generated resources: 662
+// Generated IAM resources: 339
+// Total generated resources: 1001
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -672,6 +673,10 @@ var generatedResources = map[string]*schema.Resource{
 	"google_beyondcorp_security_gateway_iam_binding":                             tpgiamresource.ResourceIamBinding(beyondcorp.BeyondcorpSecurityGatewayIamSchema, beyondcorp.BeyondcorpSecurityGatewayIamUpdaterProducer, beyondcorp.BeyondcorpSecurityGatewayIdParseFunc),
 	"google_beyondcorp_security_gateway_iam_member":                              tpgiamresource.ResourceIamMember(beyondcorp.BeyondcorpSecurityGatewayIamSchema, beyondcorp.BeyondcorpSecurityGatewayIamUpdaterProducer, beyondcorp.BeyondcorpSecurityGatewayIdParseFunc),
 	"google_beyondcorp_security_gateway_iam_policy":                              tpgiamresource.ResourceIamPolicy(beyondcorp.BeyondcorpSecurityGatewayIamSchema, beyondcorp.BeyondcorpSecurityGatewayIamUpdaterProducer, beyondcorp.BeyondcorpSecurityGatewayIdParseFunc),
+	"google_beyondcorp_security_gateway_application":                             beyondcorp.ResourceBeyondcorpSecurityGatewayApplication(),
+	"google_beyondcorp_security_gateway_application_iam_binding":                 tpgiamresource.ResourceIamBinding(beyondcorp.BeyondcorpSecurityGatewayApplicationIamSchema, beyondcorp.BeyondcorpSecurityGatewayApplicationIamUpdaterProducer, beyondcorp.BeyondcorpSecurityGatewayApplicationIdParseFunc),
+	"google_beyondcorp_security_gateway_application_iam_member":                  tpgiamresource.ResourceIamMember(beyondcorp.BeyondcorpSecurityGatewayApplicationIamSchema, beyondcorp.BeyondcorpSecurityGatewayApplicationIamUpdaterProducer, beyondcorp.BeyondcorpSecurityGatewayApplicationIdParseFunc),
+	"google_beyondcorp_security_gateway_application_iam_policy":                  tpgiamresource.ResourceIamPolicy(beyondcorp.BeyondcorpSecurityGatewayApplicationIamSchema, beyondcorp.BeyondcorpSecurityGatewayApplicationIamUpdaterProducer, beyondcorp.BeyondcorpSecurityGatewayApplicationIdParseFunc),
 	"google_biglake_catalog":                                                     biglake.ResourceBiglakeCatalog(),
 	"google_biglake_database":                                                    biglake.ResourceBiglakeDatabase(),
 	"google_biglake_table":                                                       biglake.ResourceBiglakeTable(),
