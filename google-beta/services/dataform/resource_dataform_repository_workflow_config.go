@@ -495,7 +495,7 @@ func flattenDataformRepositoryWorkflowConfigName(v interface{}, d *schema.Resour
 	if v == nil {
 		return v
 	}
-	return tpgresource.NameFromSelfLinkStateFunc(v)
+	return tpgresource.GetResourceNameFromSelfLink(v.(string))
 }
 
 func flattenDataformRepositoryWorkflowConfigReleaseConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
