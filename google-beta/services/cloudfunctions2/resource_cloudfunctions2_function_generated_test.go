@@ -1072,7 +1072,7 @@ resource "google_cloudfunctions2_function" "function" {
 `, context)
 }
 
-func TestAccCloudfunctions2function_cloudfunctions2AutomaticBaseImageUpdateExample(t *testing.T) {
+func TestAccCloudfunctions2function_cloudfunctions2AbiuExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
@@ -1089,7 +1089,7 @@ func TestAccCloudfunctions2function_cloudfunctions2AutomaticBaseImageUpdateExamp
 		CheckDestroy:             testAccCheckCloudfunctions2functionDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudfunctions2function_cloudfunctions2AutomaticBaseImageUpdateExample(context),
+				Config: testAccCloudfunctions2function_cloudfunctions2AbiuExample(context),
 			},
 			{
 				ResourceName:            "google_cloudfunctions2_function.function",
@@ -1101,7 +1101,7 @@ func TestAccCloudfunctions2function_cloudfunctions2AutomaticBaseImageUpdateExamp
 	})
 }
 
-func testAccCloudfunctions2function_cloudfunctions2AutomaticBaseImageUpdateExample(context map[string]interface{}) string {
+func testAccCloudfunctions2function_cloudfunctions2AbiuExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 locals {
   project = "%{project}" # Google Cloud Platform Project ID
@@ -1178,7 +1178,7 @@ resource "google_cloudfunctions2_function" "function" {
 `, context)
 }
 
-func TestAccCloudfunctions2function_cloudfunctions2OnDeployBaseImageUpdateExample(t *testing.T) {
+func TestAccCloudfunctions2function_cloudfunctions2AbiuOnDeployExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
@@ -1195,7 +1195,7 @@ func TestAccCloudfunctions2function_cloudfunctions2OnDeployBaseImageUpdateExampl
 		CheckDestroy:             testAccCheckCloudfunctions2functionDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudfunctions2function_cloudfunctions2OnDeployBaseImageUpdateExample(context),
+				Config: testAccCloudfunctions2function_cloudfunctions2AbiuOnDeployExample(context),
 			},
 			{
 				ResourceName:            "google_cloudfunctions2_function.function",
@@ -1207,7 +1207,7 @@ func TestAccCloudfunctions2function_cloudfunctions2OnDeployBaseImageUpdateExampl
 	})
 }
 
-func testAccCloudfunctions2function_cloudfunctions2OnDeployBaseImageUpdateExample(context map[string]interface{}) string {
+func testAccCloudfunctions2function_cloudfunctions2AbiuOnDeployExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 locals {
   project = "%{project}" # Google Cloud Platform Project ID

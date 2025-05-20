@@ -848,52 +848,6 @@ func TestAccSqlDatabaseInstance_withPrivateNetwork_withoutAllocatedIpRange(t *te
 	})
 }
 
-func TestAccSqlDatabaseInstance_withMCPEnabled(t *testing.T) {
-	t.Parallel()
-
-	instanceName := "tf-test-" + acctest.RandString(t, 10)
-
-	acctest.VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
-		CheckDestroy:             testAccSqlDatabaseInstanceDestroyProducer(t),
-		Steps: []resource.TestStep{
-			{
-				Config: testAccSqlDatabaseInstance_withMCPEnabled(instanceName),
-			},
-			{
-				ResourceName:            "google_sql_database_instance.instance",
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"deletion_protection"},
-			},
-		},
-	})
-}
-
-func TestAccSqlDatabaseInstance_withoutMCPEnabled(t *testing.T) {
-	t.Parallel()
-
-	instanceName := "tf-test-" + acctest.RandString(t, 10)
-
-	acctest.VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
-		CheckDestroy:             testAccSqlDatabaseInstanceDestroyProducer(t),
-		Steps: []resource.TestStep{
-			{
-				Config: testAccSqlDatabaseInstance_withoutMCPEnabled(instanceName),
-			},
-			{
-				ResourceName:            "google_sql_database_instance.instance",
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"deletion_protection"},
-			},
-		},
-	})
-}
-
 func TestAccSqlDatabaseInstance_withPSCEnabled_withoutAllowedConsumerProjects(t *testing.T) {
 	t.Parallel()
 
@@ -1787,7 +1741,7 @@ func TestAccSQLDatabaseInstance_DefaultEdition(t *testing.T) {
 	t.Parallel()
 	databaseName := "tf-test-" + acctest.RandString(t, 10)
 	databaseVersion := "POSTGRES_16"
-	enterprisePlusTier := "db-c4a-highmem-4"
+	enterprisePlusTier := "db-perf-optimized-N-2"
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
@@ -2972,9 +2926,6 @@ func TestAccSqlDatabaseInstance_useCasBasedServerCa(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "settings.0.ip_configuration.0.server_ca_mode", "GOOGLE_MANAGED_CAS_CA"),
 					resource.TestCheckResourceAttr(resourceName, "settings.0.ip_configuration.0.server_ca_pool", ""),
-					resource.TestCheckResourceAttr(resourceName, "dns_names.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "dns_names.0.connection_type", "PUBLIC"),
-					resource.TestCheckResourceAttr(resourceName, "dns_names.0.dns_scope", "INSTANCE"),
 				),
 			},
 			{
@@ -3002,10 +2953,7 @@ func TestAccSqlDatabaseInstance_useCustomSubjectAlternateName(t *testing.T) {
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
-		ExternalProviders: map[string]resource.ExternalProvider{
-			"time": {},
-		},
-		CheckDestroy: testAccSqlDatabaseInstanceDestroyProducer(t),
+		CheckDestroy:             testAccSqlDatabaseInstanceDestroyProducer(t),
 
 		Steps: []resource.TestStep{
 			{
@@ -3039,10 +2987,7 @@ func TestAccSqlDatabaseInstance_useCustomerManagedServerCa(t *testing.T) {
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
-		ExternalProviders: map[string]resource.ExternalProvider{
-			"time": {},
-		},
-		CheckDestroy: testAccSqlDatabaseInstanceDestroyProducer(t),
+		CheckDestroy:             testAccSqlDatabaseInstanceDestroyProducer(t),
 
 		Steps: []resource.TestStep{
 			{
@@ -3122,15 +3067,6 @@ resource "google_privateca_ca_pool_iam_member" "granting" {
   member = "serviceAccount:service-${data.google_project.project.number}@gcp-sa-cloud-sql.iam.gserviceaccount.com"
 }
 
-resource "time_sleep" "wait_2_mins" {
-  depends_on = [
-    google_privateca_certificate_authority.customer_ca,
-    google_privateca_ca_pool_iam_member.granting
-  ]
-
-  create_duration = "120s"
-}
-
 resource "google_sql_database_instance" "instance" {
   name                = "%{databaseName}"
   region              = "us-central1"
@@ -3146,7 +3082,10 @@ resource "google_sql_database_instance" "instance" {
 	}
   }
 
-  depends_on = [time_sleep.wait_2_mins]
+  depends_on = [
+      google_privateca_certificate_authority.customer_ca,
+      google_privateca_ca_pool_iam_member.granting
+  ]
 }
 `, context)
 }
@@ -3212,16 +3151,6 @@ resource "google_privateca_ca_pool_iam_member" "granting" {
   member = "serviceAccount:service-${data.google_project.project.number}@gcp-sa-cloud-sql.iam.gserviceaccount.com"
 }
 
-
-resource "time_sleep" "wait_2_mins" {
-  depends_on = [
-    google_privateca_certificate_authority.customer_ca,
-    google_privateca_ca_pool_iam_member.granting
-  ]
-
-  create_duration = "120s"
-}
-
 resource "google_sql_database_instance" "instance" {
   name                = "%{databaseName}"
   region              = "us-central1"
@@ -3236,7 +3165,10 @@ resource "google_sql_database_instance" "instance" {
 	}
   }
 
-  depends_on = [time_sleep.wait_2_mins]
+  depends_on = [
+      google_privateca_certificate_authority.customer_ca,
+      google_privateca_ca_pool_iam_member.granting
+  ]
 }
 `, context)
 }
@@ -4806,41 +4738,6 @@ func verifyPscAutoConnectionsOperation(resourceName string, isPscConfigExpected 
 
 		return nil
 	}
-}
-
-func testAccSqlDatabaseInstance_withoutMCPEnabled(instanceName string) string {
-	return fmt.Sprintf(`
-resource "google_sql_database_instance" "instance" {
-  name                = "%s"
-  region              = "us-central1"
-  database_version    = "POSTGRES_16"
-  deletion_protection = false
-  settings {
-    tier = "db-perf-optimized-N-2"
-  }
-}
-`, instanceName)
-}
-
-func testAccSqlDatabaseInstance_withMCPEnabled(instanceName string) string {
-	return fmt.Sprintf(`
-resource "google_sql_database_instance" "instance" {
-  name                = "%s"
-  region              = "us-central1"
-  database_version    = "POSTGRES_16"
-  deletion_protection = false
-  settings {
-    tier = "db-perf-optimized-N-2"
-	connection_pool_config {
-		connection_pooling_enabled = true
-		flags {
-			name = "max_client_connections"
-			value = "1980"
-		}
-	}
-  }
-}
-`, instanceName)
 }
 
 func testAccSqlDatabaseInstance_withPSCEnabled_withoutPscAutoConnections(instanceName string) string {

@@ -223,55 +223,7 @@ If not specified, gRPC health check follows behavior specified in 'port' and
 						},
 					},
 				},
-				ExactlyOneOf: []string{"http_health_check", "https_health_check", "http2_health_check", "tcp_health_check", "ssl_health_check", "grpc_health_check", "grpc_tls_health_check"},
-			},
-			"grpc_tls_health_check": {
-				Type:             schema.TypeList,
-				Optional:         true,
-				DiffSuppressFunc: portDiffSuppress,
-				Description:      `A nested object resource.`,
-				MaxItems:         1,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"grpc_service_name": {
-							Type:     schema.TypeString,
-							Optional: true,
-							Description: `The gRPC service name for the health check.
-The value of grpcServiceName has the following meanings by convention:
-  - Empty serviceName means the overall status of all services at the backend.
-  - Non-empty serviceName means the health of that gRPC service, as defined by the owner of the service.
-The grpcServiceName can only be ASCII.`,
-							AtLeastOneOf: []string{"grpc_tls_health_check.0.port", "grpc_tls_health_check.0.port_specification", "grpc_tls_health_check.0.grpc_service_name"},
-						},
-						"port": {
-							Type:     schema.TypeInt,
-							Optional: true,
-							Description: `The port number for the health check request.
-Must be specified if port_specification is USE_FIXED_PORT. Valid values are 1 through 65535.`,
-							AtLeastOneOf: []string{"grpc_tls_health_check.0.port", "grpc_tls_health_check.0.port_specification", "grpc_tls_health_check.0.grpc_service_name"},
-						},
-						"port_specification": {
-							Type:         schema.TypeString,
-							Optional:     true,
-							ValidateFunc: verify.ValidateEnum([]string{"USE_FIXED_PORT", "USE_NAMED_PORT", "USE_SERVING_PORT", ""}),
-							Description: `Specifies how port is selected for health checking, can be one of the
-following values:
-
-  * 'USE_FIXED_PORT': The port number in 'port' is used for health checking.
-
-  * 'USE_NAMED_PORT': Not supported for GRPC with TLS health checking.
-
-  * 'USE_SERVING_PORT': For NetworkEndpointGroup, the port specified for each
-  network endpoint is used for health checking. For other backends, the
-  port or named port specified in the Backend Service is used for health
-  checking.
-
-If not specified, gRPC with TLS health check follows behavior specified in the 'port' field. Possible values: ["USE_FIXED_PORT", "USE_NAMED_PORT", "USE_SERVING_PORT"]`,
-							AtLeastOneOf: []string{"grpc_tls_health_check.0.port", "grpc_tls_health_check.0.port_specification", "grpc_tls_health_check.0.grpc_service_name"},
-						},
-					},
-				},
-				ExactlyOneOf: []string{"http_health_check", "https_health_check", "http2_health_check", "tcp_health_check", "ssl_health_check", "grpc_health_check", "grpc_tls_health_check"},
+				ExactlyOneOf: []string{"http_health_check", "https_health_check", "http2_health_check", "tcp_health_check", "ssl_health_check", "grpc_health_check"},
 			},
 			"healthy_threshold": {
 				Type:     schema.TypeInt,
@@ -357,7 +309,7 @@ can only be ASCII.`,
 						},
 					},
 				},
-				ExactlyOneOf: []string{"http_health_check", "https_health_check", "http2_health_check", "tcp_health_check", "ssl_health_check", "grpc_health_check", "grpc_tls_health_check"},
+				ExactlyOneOf: []string{"http_health_check", "https_health_check", "http2_health_check", "tcp_health_check", "ssl_health_check", "grpc_health_check"},
 			},
 			"http_health_check": {
 				Type:             schema.TypeList,
@@ -436,7 +388,7 @@ can only be ASCII.`,
 						},
 					},
 				},
-				ExactlyOneOf: []string{"http_health_check", "https_health_check", "http2_health_check", "tcp_health_check", "ssl_health_check", "grpc_health_check", "grpc_tls_health_check"},
+				ExactlyOneOf: []string{"http_health_check", "https_health_check", "http2_health_check", "tcp_health_check", "ssl_health_check", "grpc_health_check"},
 			},
 			"https_health_check": {
 				Type:             schema.TypeList,
@@ -515,7 +467,7 @@ can only be ASCII.`,
 						},
 					},
 				},
-				ExactlyOneOf: []string{"http_health_check", "https_health_check", "http2_health_check", "tcp_health_check", "ssl_health_check", "grpc_health_check", "grpc_tls_health_check"},
+				ExactlyOneOf: []string{"http_health_check", "https_health_check", "http2_health_check", "tcp_health_check", "ssl_health_check", "grpc_health_check"},
 			},
 			"log_config": {
 				Type:        schema.TypeList,
@@ -631,7 +583,7 @@ can only be ASCII.`,
 						},
 					},
 				},
-				ExactlyOneOf: []string{"http_health_check", "https_health_check", "http2_health_check", "tcp_health_check", "ssl_health_check", "grpc_health_check", "grpc_tls_health_check"},
+				ExactlyOneOf: []string{"http_health_check", "https_health_check", "http2_health_check", "tcp_health_check", "ssl_health_check", "grpc_health_check"},
 			},
 			"tcp_health_check": {
 				Type:             schema.TypeList,
@@ -703,7 +655,7 @@ can only be ASCII.`,
 						},
 					},
 				},
-				ExactlyOneOf: []string{"http_health_check", "https_health_check", "http2_health_check", "tcp_health_check", "ssl_health_check", "grpc_health_check", "grpc_tls_health_check"},
+				ExactlyOneOf: []string{"http_health_check", "https_health_check", "http2_health_check", "tcp_health_check", "ssl_health_check", "grpc_health_check"},
 			},
 			"timeout_sec": {
 				Type:     schema.TypeInt,
@@ -830,12 +782,6 @@ func resourceComputeHealthCheckCreate(d *schema.ResourceData, meta interface{}) 
 		return err
 	} else if v, ok := d.GetOkExists("grpc_health_check"); !tpgresource.IsEmptyValue(reflect.ValueOf(grpcHealthCheckProp)) && (ok || !reflect.DeepEqual(v, grpcHealthCheckProp)) {
 		obj["grpcHealthCheck"] = grpcHealthCheckProp
-	}
-	grpcTlsHealthCheckProp, err := expandComputeHealthCheckGrpcTlsHealthCheck(d.Get("grpc_tls_health_check"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("grpc_tls_health_check"); !tpgresource.IsEmptyValue(reflect.ValueOf(grpcTlsHealthCheckProp)) && (ok || !reflect.DeepEqual(v, grpcTlsHealthCheckProp)) {
-		obj["grpcTlsHealthCheck"] = grpcTlsHealthCheckProp
 	}
 	logConfigProp, err := expandComputeHealthCheckLogConfig(d.Get("log_config"), d, config)
 	if err != nil {
@@ -992,9 +938,6 @@ func resourceComputeHealthCheckRead(d *schema.ResourceData, meta interface{}) er
 	if err := d.Set("grpc_health_check", flattenComputeHealthCheckGrpcHealthCheck(res["grpcHealthCheck"], d, config)); err != nil {
 		return fmt.Errorf("Error reading HealthCheck: %s", err)
 	}
-	if err := d.Set("grpc_tls_health_check", flattenComputeHealthCheckGrpcTlsHealthCheck(res["grpcTlsHealthCheck"], d, config)); err != nil {
-		return fmt.Errorf("Error reading HealthCheck: %s", err)
-	}
 	if err := d.Set("log_config", flattenComputeHealthCheckLogConfig(res["logConfig"], d, config)); err != nil {
 		return fmt.Errorf("Error reading HealthCheck: %s", err)
 	}
@@ -1098,12 +1041,6 @@ func resourceComputeHealthCheckUpdate(d *schema.ResourceData, meta interface{}) 
 		return err
 	} else if v, ok := d.GetOkExists("grpc_health_check"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, grpcHealthCheckProp)) {
 		obj["grpcHealthCheck"] = grpcHealthCheckProp
-	}
-	grpcTlsHealthCheckProp, err := expandComputeHealthCheckGrpcTlsHealthCheck(d.Get("grpc_tls_health_check"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("grpc_tls_health_check"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, grpcTlsHealthCheckProp)) {
-		obj["grpcTlsHealthCheck"] = grpcTlsHealthCheckProp
 	}
 	logConfigProp, err := expandComputeHealthCheckLogConfig(d.Get("log_config"), d, config)
 	if err != nil {
@@ -1688,48 +1625,6 @@ func flattenComputeHealthCheckGrpcHealthCheckGrpcServiceName(v interface{}, d *s
 	return v
 }
 
-func flattenComputeHealthCheckGrpcTlsHealthCheck(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
-	if v == nil {
-		return nil
-	}
-	original := v.(map[string]interface{})
-	if len(original) == 0 {
-		return nil
-	}
-	transformed := make(map[string]interface{})
-	transformed["port"] =
-		flattenComputeHealthCheckGrpcTlsHealthCheckPort(original["port"], d, config)
-	transformed["port_specification"] =
-		flattenComputeHealthCheckGrpcTlsHealthCheckPortSpecification(original["portSpecification"], d, config)
-	transformed["grpc_service_name"] =
-		flattenComputeHealthCheckGrpcTlsHealthCheckGrpcServiceName(original["grpcServiceName"], d, config)
-	return []interface{}{transformed}
-}
-func flattenComputeHealthCheckGrpcTlsHealthCheckPort(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
-	// Handles the string fixed64 format
-	if strVal, ok := v.(string); ok {
-		if intVal, err := tpgresource.StringToFixed64(strVal); err == nil {
-			return intVal
-		}
-	}
-
-	// number values are represented as float64
-	if floatVal, ok := v.(float64); ok {
-		intVal := int(floatVal)
-		return intVal
-	}
-
-	return v // let terraform core handle it otherwise
-}
-
-func flattenComputeHealthCheckGrpcTlsHealthCheckPortSpecification(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
-	return v
-}
-
-func flattenComputeHealthCheckGrpcTlsHealthCheckGrpcServiceName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
-	return v
-}
-
 func flattenComputeHealthCheckLogConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	transformed := make(map[string]interface{})
 	if v == nil {
@@ -2250,51 +2145,6 @@ func expandComputeHealthCheckGrpcHealthCheckGrpcServiceName(v interface{}, d tpg
 	return v, nil
 }
 
-func expandComputeHealthCheckGrpcTlsHealthCheck(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
-	l := v.([]interface{})
-	if len(l) == 0 || l[0] == nil {
-		return nil, nil
-	}
-	raw := l[0]
-	original := raw.(map[string]interface{})
-	transformed := make(map[string]interface{})
-
-	transformedPort, err := expandComputeHealthCheckGrpcTlsHealthCheckPort(original["port"], d, config)
-	if err != nil {
-		return nil, err
-	} else if val := reflect.ValueOf(transformedPort); val.IsValid() && !tpgresource.IsEmptyValue(val) {
-		transformed["port"] = transformedPort
-	}
-
-	transformedPortSpecification, err := expandComputeHealthCheckGrpcTlsHealthCheckPortSpecification(original["port_specification"], d, config)
-	if err != nil {
-		return nil, err
-	} else if val := reflect.ValueOf(transformedPortSpecification); val.IsValid() && !tpgresource.IsEmptyValue(val) {
-		transformed["portSpecification"] = transformedPortSpecification
-	}
-
-	transformedGrpcServiceName, err := expandComputeHealthCheckGrpcTlsHealthCheckGrpcServiceName(original["grpc_service_name"], d, config)
-	if err != nil {
-		return nil, err
-	} else if val := reflect.ValueOf(transformedGrpcServiceName); val.IsValid() && !tpgresource.IsEmptyValue(val) {
-		transformed["grpcServiceName"] = transformedGrpcServiceName
-	}
-
-	return transformed, nil
-}
-
-func expandComputeHealthCheckGrpcTlsHealthCheckPort(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
-	return v, nil
-}
-
-func expandComputeHealthCheckGrpcTlsHealthCheckPortSpecification(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
-	return v, nil
-}
-
-func expandComputeHealthCheckGrpcTlsHealthCheckGrpcServiceName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
-	return v, nil
-}
-
 func expandComputeHealthCheckLogConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
@@ -2402,20 +2252,6 @@ func resourceComputeHealthCheckEncoder(d *schema.ResourceData, meta interface{},
 			}
 		}
 		obj["type"] = "GRPC"
-		return obj, nil
-	}
-
-	if _, ok := d.GetOk("grpc_tls_health_check"); ok {
-		hc := d.Get("grpc_tls_health_check").([]interface{})[0]
-		ps := hc.(map[string]interface{})["port_specification"]
-
-		if ps == "USE_FIXED_PORT" || ps == "" {
-			m := obj["grpcTlsHealthCheck"].(map[string]interface{})
-			if m["port"] == nil {
-				return nil, fmt.Errorf("error in HealthCheck %s: `port` must be set for GRPC with TLS health checks`.", d.Get("name").(string))
-			}
-		}
-		obj["type"] = "GRPC_WITH_TLS"
 		return obj, nil
 	}
 
