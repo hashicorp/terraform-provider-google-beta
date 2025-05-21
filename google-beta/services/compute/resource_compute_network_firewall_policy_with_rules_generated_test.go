@@ -41,7 +41,7 @@ func TestAccComputeNetworkFirewallPolicyWithRules_computeNetworkFirewallPolicyWi
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeNetworkFirewallPolicyWithRulesDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -59,11 +59,9 @@ func TestAccComputeNetworkFirewallPolicyWithRules_computeNetworkFirewallPolicyWi
 func testAccComputeNetworkFirewallPolicyWithRules_computeNetworkFirewallPolicyWithRulesFullExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 data "google_project" "project" {
-  provider = google-beta
 }
 
 resource "google_compute_network_firewall_policy_with_rules" "primary" {
-  provider = google-beta
   name = "tf-test-fw-policy%{random_suffix}"
   description = "Terraform test"
 
@@ -136,48 +134,9 @@ resource "google_compute_network_firewall_policy_with_rules" "primary" {
       }
     }
   }
-
-  rule {
-    description    = "network scope rule 1"
-    rule_name      = "network scope 1"
-    priority       = 4000
-    enable_logging = false
-    action         = "allow"
-    direction      = "INGRESS"
-
-    match {
-      src_ip_ranges     = ["11.100.0.1/32"]
-      src_network_scope = "VPC_NETWORKS"
-      src_networks      = [google_compute_network.network.id]
-
-      layer4_config {
-        ip_protocol = "tcp"
-        ports       = [8080]
-      }
-    }
-  }
-
-  rule {
-    description    = "network scope rule 2"
-    rule_name      = "network scope 2"
-    priority       = 5000
-    enable_logging = false
-    action         = "allow"
-    direction      = "EGRESS"
-    match {
-      dest_ip_ranges     = ["0.0.0.0/0"]
-      dest_network_scope = "INTERNET"
-
-      layer4_config {
-        ip_protocol = "tcp"
-        ports       = [8080]
-      }
-    }
-  }
 }
 
 resource "google_network_security_address_group" "address_group_1" {
-  provider    = google-beta
   name        = "tf-test-address-group%{random_suffix}"
   parent      = data.google_project.project.id
   description = "Global address group"
@@ -188,7 +147,6 @@ resource "google_network_security_address_group" "address_group_1" {
 }
 
 resource "google_tags_tag_key" "secure_tag_key_1" {
-  provider    = google-beta
   description = "Tag key"
   parent      = data.google_project.project.id
   purpose     = "GCE_FIREWALL"
@@ -200,14 +158,12 @@ resource "google_tags_tag_key" "secure_tag_key_1" {
 }
 
 resource "google_tags_tag_value" "secure_tag_value_1" {
-  provider    = google-beta
   description = "Tag value"
   parent      = google_tags_tag_key.secure_tag_key_1.id
   short_name  = "tf-test-tag-value%{random_suffix}"
 }
 
 resource "google_network_security_security_profile_group" "security_profile_group_1" {
-  provider                  = google-beta
   name                      = "spg%{random_suffix}"
   parent                    = "organizations/%{org_id}"
   description               = "my description"
@@ -215,17 +171,10 @@ resource "google_network_security_security_profile_group" "security_profile_grou
 }
 
 resource "google_network_security_security_profile" "security_profile_1" {
-  provider    = google-beta
   name        = "sp%{random_suffix}"
   type        = "THREAT_PREVENTION"
   parent      = "organizations/%{org_id}"
   location    = "global"
-}
-
-resource "google_compute_network" "network" {
-  provider                = google-beta
-  name                    = "network%{random_suffix}"
-  auto_create_subnetworks = false
 }
 `, context)
 }

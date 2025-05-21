@@ -35,7 +35,7 @@ func TestAccComputeFirewallPolicyWithRules_update(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeFirewallPolicyWithRulesDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -61,14 +61,12 @@ func TestAccComputeFirewallPolicyWithRules_update(t *testing.T) {
 func testAccComputeFirewallPolicyWithRules_full(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 data "google_project" "project" {
-  provider = google-beta
 }
 
 resource "google_compute_firewall_policy_with_rules" "firewall-policy-with-rules" {
   short_name = "tf-test-tf-fw-org-policy-with-rules%{random_suffix}"
   description = "Terraform test"
   parent = "organizations/%{org_id}"
-  provider = google-beta
 
   rule {
     description    = "tcp rule"
@@ -87,7 +85,7 @@ resource "google_compute_firewall_policy_with_rules" "firewall-policy-with-rules
       dest_threat_intelligences = ["iplist-search-engines-crawlers", "iplist-tor-exit-nodes"]
       dest_address_groups = [google_network_security_address_group.address_group_1.id]
     }
-    target_resources = ["https://www.googleapis.com/compute/beta/projects/${data.google_project.project.project_id}/global/networks/default"]
+    target_resources = [google_compute_network.network.self_link]
   }
   rule {
     description    = "udp rule"
@@ -127,7 +125,6 @@ resource "google_compute_firewall_policy_with_rules" "firewall-policy-with-rules
 }
 
 resource "google_network_security_address_group" "address_group_1" {
-  provider    = google-beta
   name        = "tf-test-tf-address-group%{random_suffix}"
   parent      = "organizations/%{org_id}"
   description = "Global address group"
@@ -138,7 +135,6 @@ resource "google_network_security_address_group" "address_group_1" {
 }
 
 resource "google_network_security_security_profile_group" "security_profile_group_1" {
-  provider                  = google-beta
   name                      = "tf-test-tf-security-profile-group%{random_suffix}"
   parent                    = "organizations/%{org_id}"
   description               = "my description"
@@ -146,26 +142,29 @@ resource "google_network_security_security_profile_group" "security_profile_grou
 }
 
 resource "google_network_security_security_profile" "security_profile_1" {
-  provider    = google-beta
   name        = "tf-test-tf-security-profile%{random_suffix}"
   type        = "THREAT_PREVENTION"
   parent      = "organizations/%{org_id}"
   location    = "global"
 }
+
+resource "google_compute_network" "network" {
+  name                    = "tf-network%{random_suffix}"
+  auto_create_subnetworks = false
+}
+
 `, context)
 }
 
 func testAccComputeFirewallPolicyWithRules_update(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 data "google_project" "project" {
-  provider = google-beta
 }
 
 resource "google_compute_firewall_policy_with_rules" "firewall-policy-with-rules" {
   short_name = "tf-test-tf-fw-org-policy-with-rules%{random_suffix}"
   description = "Terraform test - update"
   parent = "organizations/%{org_id}"
-  provider = google-beta
 
   rule {
     description    = "tcp rule - update"
@@ -206,7 +205,6 @@ resource "google_compute_firewall_policy_with_rules" "firewall-policy-with-rules
 }
 
 resource "google_network_security_address_group" "address_group_1" {
-  provider    = google-beta
   name        = "tf-test-tf-address-group%{random_suffix}"
   parent      = "organizations/%{org_id}"
   description = "Global address group"
@@ -217,7 +215,6 @@ resource "google_network_security_address_group" "address_group_1" {
 }
 
 resource "google_network_security_security_profile_group" "security_profile_group_1" {
-  provider                  = google-beta
   name                      = "tf-test-tf-security-profile-group%{random_suffix}"
   parent                    = "organizations/%{org_id}"
   description               = "my description"
@@ -225,7 +222,6 @@ resource "google_network_security_security_profile_group" "security_profile_grou
 }
 
 resource "google_network_security_security_profile" "security_profile_1" {
-  provider    = google-beta
   name        = "tf-test-tf-security-profile%{random_suffix}"
   type        = "THREAT_PREVENTION"
   parent      = "organizations/%{org_id}"
