@@ -586,9 +586,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 665
+// Generated resources: 666
 // Generated IAM resources: 339
-// Total generated resources: 1004
+// Total generated resources: 1005
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -1211,6 +1211,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_iam_workload_identity_pool_iam_binding":                              tpgiamresource.ResourceIamBinding(iambeta.IAMBetaWorkloadIdentityPoolIamSchema, iambeta.IAMBetaWorkloadIdentityPoolIamUpdaterProducer, iambeta.IAMBetaWorkloadIdentityPoolIdParseFunc),
 	"google_iam_workload_identity_pool_iam_member":                               tpgiamresource.ResourceIamMember(iambeta.IAMBetaWorkloadIdentityPoolIamSchema, iambeta.IAMBetaWorkloadIdentityPoolIamUpdaterProducer, iambeta.IAMBetaWorkloadIdentityPoolIdParseFunc),
 	"google_iam_workload_identity_pool_iam_policy":                               tpgiamresource.ResourceIamPolicy(iambeta.IAMBetaWorkloadIdentityPoolIamSchema, iambeta.IAMBetaWorkloadIdentityPoolIamUpdaterProducer, iambeta.IAMBetaWorkloadIdentityPoolIdParseFunc),
+	"google_iam_workload_identity_pool_managed_identity":                         iambeta.ResourceIAMBetaWorkloadIdentityPoolManagedIdentity(),
 	"google_iam_workload_identity_pool_namespace":                                iambeta.ResourceIAMBetaWorkloadIdentityPoolNamespace(),
 	"google_iam_workload_identity_pool_provider":                                 iambeta.ResourceIAMBetaWorkloadIdentityPoolProvider(),
 	"google_iam_oauth_client":                                                    iamworkforcepool.ResourceIAMWorkforcePoolOauthClient(),
