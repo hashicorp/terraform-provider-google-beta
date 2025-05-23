@@ -20,7 +20,7 @@ IMPROVEMENTS:
 * compute: added `network_pass_through_lb_traffic_policy.0.zonal_affinity.0.spillover`, `network_pass_through_lb_traffic_policy.0.zonal_affinity.0.spillover_ratio` and `dynamic_forwarding.0.ip_port_selection.0.enabled` to `google_compute_backend_service` resource ([#10056](https://github.com/hashicorp/terraform-provider-google-beta/pull/10056))
 * compute: added `subsetting.0.subset_size` and `dynamic_forwarding.0.ip_port_selection.0.enabled` to `google_compute_region_backend_service` resource ([#10056](https://github.com/hashicorp/terraform-provider-google-beta/pull/10056))
 * container: added in-place update support for `ip_allocation_policy.stack_type` field in `google_container_cluster` resource ([#10037](https://github.com/hashicorp/terraform-provider-google-beta/pull/10037))
-* container: allow updating enable_multi_networking ([#10045](https://github.com/hashicorp/terraform-provider-google-beta/pull/10045))
+* container: allow updating `enable_multi_networking` in `google_container_cluster` resource ([#10045](https://github.com/hashicorp/terraform-provider-google-beta/pull/10045))
 * databasemigrationservice: added `create_without_validation` field to `google_database_migration_service_private_connection` resource ([#10046](https://github.com/hashicorp/terraform-provider-google-beta/pull/10046))
 * dataflow: added `additional_pipeline_options` field to `google_dataflow_flex_template_job` resource ([#10040](https://github.com/hashicorp/terraform-provider-google-beta/pull/10040))
 * filestore: added PSC fields to `google_filestore_instance` (beta) ([#10061](https://github.com/hashicorp/terraform-provider-google-beta/pull/10061))
