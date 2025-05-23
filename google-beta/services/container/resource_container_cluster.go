@@ -1590,7 +1590,6 @@ func ResourceContainerCluster() *schema.Resource {
 					},
 				},
 			},
-
 			"pod_autoscaling": {
 				Type:        schema.TypeList,
 				Optional:    true,
@@ -3237,7 +3236,6 @@ func resourceContainerClusterRead(d *schema.ResourceData, meta interface{}) erro
 	if err := d.Set("cluster_telemetry", flattenClusterTelemetry(cluster.ClusterTelemetry)); err != nil {
 		return err
 	}
-
 	if err := d.Set("pod_autoscaling", flattenPodAutoscaling(cluster.PodAutoscaling)); err != nil {
 		return err
 	}
@@ -5900,7 +5898,6 @@ func expandPodSecurityPolicyConfig(configured interface{}) *container.PodSecurit
 		ForceSendFields: []string{"Enabled"},
 	}
 }
-
 func expandPodAutoscaling(configured interface{}) *container.PodAutoscaling {
 	if configured == nil {
 		return nil
