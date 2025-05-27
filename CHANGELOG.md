@@ -38,7 +38,7 @@ BUG FIXES:
 * gemini: fixed permadiff on `product` field in `google_gemini_logging_setting_binding ` resource ([#10011](https://github.com/hashicorp/terraform-provider-google-beta/pull/10011))
 * gemini: fixed permadiff on `product` field in `google_gemini_release_channel_setting_binding ` resource ([#10050](https://github.com/hashicorp/terraform-provider-google-beta/pull/10050))
 * networkservices: fixed validation error when modifying the `cache_mode` field in `edge_cache_service` ([#10053](https://github.com/hashicorp/terraform-provider-google-beta/pull/10053))
-* privateca: added fields to enable properly setting `0` and null values for basic constraints for `google_privateca_certificate_template` via `null_ca` and `zero_max_issuer_path_length` for `google_privateca_certificate_template` resource ([#10083](https://github.com/hashicorp/terraform-provider-google-beta/pull/10083))
+* privateca: fixed issue preventing setting `0` and null values for basic constraints in the `google_privateca_certificate_template` resource via the addition of `null_ca` and `zero_max_issuer_path_length` fields ([#10083](https://github.com/hashicorp/terraform-provider-google-beta/pull/10083))
 * vpcaccess: fixed an issue where Terraform config validation conditions could have erroneously invalidated existing `google_vpc_access_connector` resources ([#10018](https://github.com/hashicorp/terraform-provider-google-beta/pull/10018))
 
 ## 6.36.1 (May 21, 2025)
