@@ -2326,6 +2326,68 @@ prior to sending the response back to the client.`,
 											},
 										},
 									},
+									"http_filter_configs": {
+										Type:     schema.TypeList,
+										Optional: true,
+										Description: `Outbound route specific configuration for networkservices.HttpFilter resources enabled by Traffic Director.
+httpFilterConfigs only applies for load balancers with loadBalancingScheme set to INTERNAL_SELF_MANAGED.
+See ForwardingRule for more details.
+
+Not supported when the URL map is bound to a target gRPC proxy that has validateForProxyless field set to true.`,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"config": {
+													Type:     schema.TypeString,
+													Optional: true,
+													Description: `The configuration needed to enable the networkservices.HttpFilter resource.
+The configuration must be YAML formatted and only contain fields defined in the protobuf identified in configTypeUrl`,
+												},
+												"config_type_url": {
+													Type:     schema.TypeString,
+													Optional: true,
+													Description: `The fully qualified versioned proto3 type url of the protobuf that the filter expects for its contextual settings,
+for example: type.googleapis.com/google.protobuf.Struct`,
+												},
+												"filter_name": {
+													Type:     schema.TypeString,
+													Optional: true,
+													Description: `Name of the networkservices.HttpFilter resource this configuration belongs to.
+This name must be known to the xDS client. Example: envoy.wasm`,
+												},
+											},
+										},
+									},
+									"http_filter_metadata": {
+										Type:     schema.TypeList,
+										Optional: true,
+										Description: `Outbound route specific metadata supplied to networkservices.HttpFilter resources enabled by Traffic Director.
+httpFilterMetadata only applies for load balancers with loadBalancingScheme set to INTERNAL_SELF_MANAGED.
+See ForwardingRule for more details.
+
+Not supported when the URL map is bound to a target gRPC proxy that has validateForProxyless field set to true.`,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"config": {
+													Type:     schema.TypeString,
+													Optional: true,
+													Description: `The configuration needed to enable the networkservices.HttpFilter resource.
+The configuration must be YAML formatted and only contain fields defined in the protobuf identified in configTypeUrl`,
+												},
+												"config_type_url": {
+													Type:     schema.TypeString,
+													Optional: true,
+													Description: `The fully qualified versioned proto3 type url of the protobuf that the filter expects for its contextual settings,
+for example: type.googleapis.com/google.protobuf.Struct`,
+												},
+												"filter_name": {
+													Type:     schema.TypeString,
+													Optional: true,
+													Description: `Name of the networkservices.HttpFilter resource this configuration belongs to.
+This name must be known to the xDS client. Example: envoy.wasm`,
+												},
+											},
+										},
+									},
 									"match_rules": {
 										Type:        schema.TypeList,
 										Optional:    true,
@@ -4706,6 +4768,8 @@ func flattenComputeUrlMapPathMatcherRouteRules(v interface{}, d *schema.Resource
 			"route_action":                 flattenComputeUrlMapPathMatcherRouteRulesRouteAction(original["routeAction"], d, config),
 			"url_redirect":                 flattenComputeUrlMapPathMatcherRouteRulesUrlRedirect(original["urlRedirect"], d, config),
 			"custom_error_response_policy": flattenComputeUrlMapPathMatcherRouteRulesCustomErrorResponsePolicy(original["customErrorResponsePolicy"], d, config),
+			"http_filter_configs":          flattenComputeUrlMapPathMatcherRouteRulesHttpFilterConfigs(original["httpFilterConfigs"], d, config),
+			"http_filter_metadata":         flattenComputeUrlMapPathMatcherRouteRulesHttpFilterMetadata(original["httpFilterMetadata"], d, config),
 		})
 	}
 	return transformed
@@ -5712,6 +5776,70 @@ func flattenComputeUrlMapPathMatcherRouteRulesCustomErrorResponsePolicyErrorServ
 		return v
 	}
 	return tpgresource.ConvertSelfLinkToV1(v.(string))
+}
+
+func flattenComputeUrlMapPathMatcherRouteRulesHttpFilterConfigs(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+	l := v.([]interface{})
+	transformed := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		original := raw.(map[string]interface{})
+		if len(original) < 1 {
+			// Do not include empty json objects coming back from the api
+			continue
+		}
+		transformed = append(transformed, map[string]interface{}{
+			"filter_name":     flattenComputeUrlMapPathMatcherRouteRulesHttpFilterConfigsFilterName(original["filterName"], d, config),
+			"config_type_url": flattenComputeUrlMapPathMatcherRouteRulesHttpFilterConfigsConfigTypeUrl(original["configTypeUrl"], d, config),
+			"config":          flattenComputeUrlMapPathMatcherRouteRulesHttpFilterConfigsConfig(original["config"], d, config),
+		})
+	}
+	return transformed
+}
+func flattenComputeUrlMapPathMatcherRouteRulesHttpFilterConfigsFilterName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenComputeUrlMapPathMatcherRouteRulesHttpFilterConfigsConfigTypeUrl(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenComputeUrlMapPathMatcherRouteRulesHttpFilterConfigsConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenComputeUrlMapPathMatcherRouteRulesHttpFilterMetadata(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+	l := v.([]interface{})
+	transformed := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		original := raw.(map[string]interface{})
+		if len(original) < 1 {
+			// Do not include empty json objects coming back from the api
+			continue
+		}
+		transformed = append(transformed, map[string]interface{}{
+			"filter_name":     flattenComputeUrlMapPathMatcherRouteRulesHttpFilterMetadataFilterName(original["filterName"], d, config),
+			"config_type_url": flattenComputeUrlMapPathMatcherRouteRulesHttpFilterMetadataConfigTypeUrl(original["configTypeUrl"], d, config),
+			"config":          flattenComputeUrlMapPathMatcherRouteRulesHttpFilterMetadataConfig(original["config"], d, config),
+		})
+	}
+	return transformed
+}
+func flattenComputeUrlMapPathMatcherRouteRulesHttpFilterMetadataFilterName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenComputeUrlMapPathMatcherRouteRulesHttpFilterMetadataConfigTypeUrl(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenComputeUrlMapPathMatcherRouteRulesHttpFilterMetadataConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
 }
 
 func flattenComputeUrlMapPathMatcherDefaultUrlRedirect(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -8612,6 +8740,20 @@ func expandComputeUrlMapPathMatcherRouteRules(v interface{}, d tpgresource.Terra
 			transformed["customErrorResponsePolicy"] = transformedCustomErrorResponsePolicy
 		}
 
+		transformedHttpFilterConfigs, err := expandComputeUrlMapPathMatcherRouteRulesHttpFilterConfigs(original["http_filter_configs"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedHttpFilterConfigs); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["httpFilterConfigs"] = transformedHttpFilterConfigs
+		}
+
+		transformedHttpFilterMetadata, err := expandComputeUrlMapPathMatcherRouteRulesHttpFilterMetadata(original["http_filter_metadata"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedHttpFilterMetadata); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["httpFilterMetadata"] = transformedHttpFilterMetadata
+		}
+
 		req = append(req, transformed)
 	}
 	return req, nil
@@ -10061,6 +10203,102 @@ func expandComputeUrlMapPathMatcherRouteRulesCustomErrorResponsePolicyErrorRespo
 }
 
 func expandComputeUrlMapPathMatcherRouteRulesCustomErrorResponsePolicyErrorService(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeUrlMapPathMatcherRouteRulesHttpFilterConfigs(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	req := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		if raw == nil {
+			continue
+		}
+		original := raw.(map[string]interface{})
+		transformed := make(map[string]interface{})
+
+		transformedFilterName, err := expandComputeUrlMapPathMatcherRouteRulesHttpFilterConfigsFilterName(original["filter_name"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedFilterName); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["filterName"] = transformedFilterName
+		}
+
+		transformedConfigTypeUrl, err := expandComputeUrlMapPathMatcherRouteRulesHttpFilterConfigsConfigTypeUrl(original["config_type_url"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedConfigTypeUrl); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["configTypeUrl"] = transformedConfigTypeUrl
+		}
+
+		transformedConfig, err := expandComputeUrlMapPathMatcherRouteRulesHttpFilterConfigsConfig(original["config"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedConfig); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["config"] = transformedConfig
+		}
+
+		req = append(req, transformed)
+	}
+	return req, nil
+}
+
+func expandComputeUrlMapPathMatcherRouteRulesHttpFilterConfigsFilterName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeUrlMapPathMatcherRouteRulesHttpFilterConfigsConfigTypeUrl(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeUrlMapPathMatcherRouteRulesHttpFilterConfigsConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeUrlMapPathMatcherRouteRulesHttpFilterMetadata(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	req := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		if raw == nil {
+			continue
+		}
+		original := raw.(map[string]interface{})
+		transformed := make(map[string]interface{})
+
+		transformedFilterName, err := expandComputeUrlMapPathMatcherRouteRulesHttpFilterMetadataFilterName(original["filter_name"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedFilterName); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["filterName"] = transformedFilterName
+		}
+
+		transformedConfigTypeUrl, err := expandComputeUrlMapPathMatcherRouteRulesHttpFilterMetadataConfigTypeUrl(original["config_type_url"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedConfigTypeUrl); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["configTypeUrl"] = transformedConfigTypeUrl
+		}
+
+		transformedConfig, err := expandComputeUrlMapPathMatcherRouteRulesHttpFilterMetadataConfig(original["config"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedConfig); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["config"] = transformedConfig
+		}
+
+		req = append(req, transformed)
+	}
+	return req, nil
+}
+
+func expandComputeUrlMapPathMatcherRouteRulesHttpFilterMetadataFilterName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeUrlMapPathMatcherRouteRulesHttpFilterMetadataConfigTypeUrl(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeUrlMapPathMatcherRouteRulesHttpFilterMetadataConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
