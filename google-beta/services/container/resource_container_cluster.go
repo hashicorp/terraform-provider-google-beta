@@ -2422,6 +2422,21 @@ func ResourceContainerCluster() *schema.Resource {
 				Description:  `Defines the config of in-transit encryption`,
 				ValidateFunc: validation.StringInSlice([]string{"IN_TRANSIT_ENCRYPTION_CONFIG_UNSPECIFIED", "IN_TRANSIT_ENCRYPTION_DISABLED", "IN_TRANSIT_ENCRYPTION_INTER_NODE_TRANSPARENT"}, false),
 			},
+			"network_performance_config": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				MaxItems:    1,
+				Description: `Network bandwidth tier configuration.`,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"total_egress_bandwidth_tier": {
+							Type:        schema.TypeString,
+							Required:    true,
+							Description: `Specifies the total network bandwidth tier for NodePools in the cluster.`,
+						},
+					},
+				},
+			},
 		},
 	}
 }
@@ -2584,6 +2599,7 @@ func resourceContainerClusterCreate(d *schema.ResourceData, meta interface{}) er
 			EnableMultiNetworking:                d.Get("enable_multi_networking").(bool),
 			DefaultEnablePrivateNodes:            expandDefaultEnablePrivateNodes(d),
 			EnableFqdnNetworkPolicy:              d.Get("enable_fqdn_network_policy").(bool),
+			NetworkPerformanceConfig:             expandNetworkPerformanceConfig(d.Get("network_performance_config")),
 		},
 		MasterAuth:           expandMasterAuth(d.Get("master_auth")),
 		NotificationConfig:   expandNotificationConfig(d.Get("notification_config")),
@@ -3264,6 +3280,9 @@ func resourceContainerClusterRead(d *schema.ResourceData, meta interface{}) erro
 		return err
 	}
 	if err := d.Set("gateway_api_config", flattenGatewayApiConfig(cluster.NetworkConfig.GatewayApiConfig)); err != nil {
+		return err
+	}
+	if err := d.Set("network_performance_config", flattenNetworkPerformanceConfig(cluster.NetworkConfig.NetworkPerformanceConfig)); err != nil {
 		return err
 	}
 	if err := d.Set("fleet", flattenFleet(cluster.Fleet)); err != nil {
@@ -4505,6 +4524,24 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 			return err
 		}
 		log.Printf("[INFO] GKE cluster %s resource usage export config has been updated", d.Id())
+	}
+
+	if d.HasChange("network_performance_config") {
+		if npc, ok := d.GetOk("network_performance_config"); ok {
+			req := &container.UpdateClusterRequest{
+				Update: &container.ClusterUpdate{
+					DesiredNetworkPerformanceConfig: expandNetworkPerformanceConfig(npc),
+				},
+			}
+
+			updateF := updateFunc(req, "updating GKE Network Performance Config")
+			// Call update serially.
+			if err := transport_tpg.LockedCall(lockKey, updateF); err != nil {
+				return err
+			}
+
+			log.Printf("[INFO] GKE cluster %s Network Performance Config has been updated", d.Id())
+		}
 	}
 
 	if d.HasChange("gateway_api_config") {
@@ -6001,6 +6038,18 @@ func expandDnsConfig(configured interface{}) *container.DNSConfig {
 	}
 }
 
+func expandNetworkPerformanceConfig(configured interface{}) *container.ClusterNetworkPerformanceConfig {
+	l := configured.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil
+	}
+
+	config := l[0].(map[string]interface{})
+	return &container.ClusterNetworkPerformanceConfig{
+		TotalEgressBandwidthTier: config["total_egress_bandwidth_tier"].(string),
+	}
+}
+
 func expandGatewayApiConfig(configured interface{}) *container.GatewayAPIConfig {
 	l := configured.([]interface{})
 	if len(l) == 0 || l[0] == nil {
@@ -6984,6 +7033,17 @@ func flattenDnsConfig(c *container.DNSConfig) []map[string]interface{} {
 			"cluster_dns":                   c.ClusterDns,
 			"cluster_dns_scope":             c.ClusterDnsScope,
 			"cluster_dns_domain":            c.ClusterDnsDomain,
+		},
+	}
+}
+
+func flattenNetworkPerformanceConfig(c *container.ClusterNetworkPerformanceConfig) []map[string]interface{} {
+	if c == nil {
+		return nil
+	}
+	return []map[string]interface{}{
+		{
+			"total_egress_bandwidth_tier": c.TotalEgressBandwidthTier,
 		},
 	}
 }
