@@ -690,8 +690,11 @@ func resourceComputeFirewallPolicyWithRulesCreate(d *schema.ResourceData, meta i
 	if err != nil {
 		return fmt.Errorf("Error creating FirewallPolicyWithRules: %s", err)
 	}
-	if err := d.Set("policy_id", flattenComputeFirewallPolicyWithRulesPolicyId(res["id"], d, config)); err != nil {
-		return fmt.Errorf(`Error setting computed identity field "policy_id": %s`, err)
+	// Set computed resource properties from create API response so that they're available on the subsequent Read
+	// call.
+	err = resourceComputeFirewallPolicyWithRulesPostCreateSetComputedFields(d, meta, res)
+	if err != nil {
+		return fmt.Errorf("setting computed ID format fields: %w", err)
 	}
 
 	// Store the ID now
@@ -1810,6 +1813,11 @@ func resourceComputeFirewallPolicyWithRulesUpdateEncoder(d *schema.ResourceData,
 }
 
 func resourceComputeFirewallPolicyWithRulesDecoder(d *schema.ResourceData, meta interface{}, res map[string]interface{}) (map[string]interface{}, error) {
+	// If rules is nil, this is being called on a Create operation (and we don't want to do anything in that case.)
+	if _, ok := res["rules"]; !ok {
+		return res, nil
+	}
+
 	rules, predefinedRules, err := firewallPolicyWithRulesSplitPredefinedRules(res["rules"].([]interface{}))
 
 	if err != nil {
@@ -1826,4 +1834,18 @@ func resourceComputeFirewallPolicyWithRulesDecoder(d *schema.ResourceData, meta 
 	}
 
 	return res, nil
+}
+func resourceComputeFirewallPolicyWithRulesPostCreateSetComputedFields(d *schema.ResourceData, meta interface{}, res map[string]interface{}) error {
+	config := meta.(*transport_tpg.Config)
+	res, err := resourceComputeFirewallPolicyWithRulesDecoder(d, meta, res)
+	if err != nil {
+		return fmt.Errorf("decoding response: %w", err)
+	}
+	if res == nil {
+		return fmt.Errorf("decoding response, could not find object")
+	}
+	if err := d.Set("policy_id", flattenComputeFirewallPolicyWithRulesPolicyId(res["id"], d, config)); err != nil {
+		return fmt.Errorf(`Error setting computed identity field "policy_id": %s`, err)
+	}
+	return nil
 }

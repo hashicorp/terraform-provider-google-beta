@@ -924,6 +924,11 @@ For more information, see https://cloud.google.com/run/docs/configuring/custom-a
 				Optional:    true,
 				Description: `User-provided description of the Service. This field currently has a 512-character limit.`,
 			},
+			"iap_enabled": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: `Used to enable/disable IAP for the service.`,
+			},
 			"ingress": {
 				Type:         schema.TypeString,
 				Computed:     true,
@@ -966,10 +971,21 @@ For example, if ALPHA is provided as input, but only BETA and GA-level features 
 				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"manual_instance_count": {
+							Type:        schema.TypeInt,
+							Optional:    true,
+							Description: `Total instance count for the service in manual scaling mode. This number of instances is divided among all revisions with specified traffic based on the percent of traffic they are receiving.`,
+						},
 						"min_instance_count": {
 							Type:        schema.TypeInt,
 							Optional:    true,
 							Description: `Minimum number of instances for the service, to be divided among all revisions receiving traffic.`,
+						},
+						"scaling_mode": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: verify.ValidateEnum([]string{"AUTOMATIC", "MANUAL", ""}),
+							Description:  `The [scaling mode](https://cloud.google.com/run/docs/reference/rest/v2/projects.locations.services#scalingmode) for the service. Possible values: ["AUTOMATIC", "MANUAL"]`,
 						},
 					},
 				},
@@ -1399,6 +1415,12 @@ func resourceCloudRunV2ServiceCreate(d *schema.ResourceData, meta interface{}) e
 	} else if v, ok := d.GetOkExists("build_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(buildConfigProp)) && (ok || !reflect.DeepEqual(v, buildConfigProp)) {
 		obj["buildConfig"] = buildConfigProp
 	}
+	iapEnabledProp, err := expandCloudRunV2ServiceIapEnabled(d.Get("iap_enabled"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("iap_enabled"); !tpgresource.IsEmptyValue(reflect.ValueOf(iapEnabledProp)) && (ok || !reflect.DeepEqual(v, iapEnabledProp)) {
+		obj["iapEnabled"] = iapEnabledProp
+	}
 	labelsProp, err := expandCloudRunV2ServiceEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
@@ -1453,22 +1475,14 @@ func resourceCloudRunV2ServiceCreate(d *schema.ResourceData, meta interface{}) e
 	}
 	d.SetId(id)
 
-	// Use the resource in the operation response to populate
-	// identity fields and d.Id() before read
-	var opRes map[string]interface{}
-	err = CloudRunV2OperationWaitTimeWithResponse(
-		config, res, &opRes, project, "Creating Service", userAgent,
+	err = CloudRunV2OperationWaitTime(
+		config, res, project, "Creating Service", userAgent,
 		d.Timeout(schema.TimeoutCreate))
+
 	if err != nil {
+
 		return fmt.Errorf("Error waiting to create Service: %s", err)
 	}
-
-	// This may have caused the ID to update - update it if so.
-	id, err = tpgresource.ReplaceVars(d, config, "projects/{{project}}/locations/{{location}}/services/{{name}}")
-	if err != nil {
-		return fmt.Errorf("Error constructing id: %s", err)
-	}
-	d.SetId(id)
 
 	log.Printf("[DEBUG] Finished creating Service %q: %#v", d.Id(), res)
 
@@ -1622,6 +1636,9 @@ func resourceCloudRunV2ServiceRead(d *schema.ResourceData, meta interface{}) err
 	if err := d.Set("etag", flattenCloudRunV2ServiceEtag(res["etag"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Service: %s", err)
 	}
+	if err := d.Set("iap_enabled", flattenCloudRunV2ServiceIapEnabled(res["iapEnabled"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Service: %s", err)
+	}
 	if err := d.Set("terraform_labels", flattenCloudRunV2ServiceTerraformLabels(res["labels"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Service: %s", err)
 	}
@@ -1728,6 +1745,12 @@ func resourceCloudRunV2ServiceUpdate(d *schema.ResourceData, meta interface{}) e
 		return err
 	} else if v, ok := d.GetOkExists("build_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, buildConfigProp)) {
 		obj["buildConfig"] = buildConfigProp
+	}
+	iapEnabledProp, err := expandCloudRunV2ServiceIapEnabled(d.Get("iap_enabled"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("iap_enabled"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, iapEnabledProp)) {
+		obj["iapEnabled"] = iapEnabledProp
 	}
 	labelsProp, err := expandCloudRunV2ServiceEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
@@ -1993,9 +2016,34 @@ func flattenCloudRunV2ServiceScaling(v interface{}, d *schema.ResourceData, conf
 	transformed := make(map[string]interface{})
 	transformed["min_instance_count"] =
 		flattenCloudRunV2ServiceScalingMinInstanceCount(original["minInstanceCount"], d, config)
+	transformed["scaling_mode"] =
+		flattenCloudRunV2ServiceScalingScalingMode(original["scalingMode"], d, config)
+	transformed["manual_instance_count"] =
+		flattenCloudRunV2ServiceScalingManualInstanceCount(original["manualInstanceCount"], d, config)
 	return []interface{}{transformed}
 }
 func flattenCloudRunV2ServiceScalingMinInstanceCount(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	// Handles the string fixed64 format
+	if strVal, ok := v.(string); ok {
+		if intVal, err := tpgresource.StringToFixed64(strVal); err == nil {
+			return intVal
+		}
+	}
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
+}
+
+func flattenCloudRunV2ServiceScalingScalingMode(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenCloudRunV2ServiceScalingManualInstanceCount(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := tpgresource.StringToFixed64(strVal); err == nil {
@@ -3456,6 +3504,10 @@ func flattenCloudRunV2ServiceEtag(v interface{}, d *schema.ResourceData, config 
 	return v
 }
 
+func flattenCloudRunV2ServiceIapEnabled(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenCloudRunV2ServiceTerraformLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
@@ -3564,10 +3616,32 @@ func expandCloudRunV2ServiceScaling(v interface{}, d tpgresource.TerraformResour
 		transformed["minInstanceCount"] = transformedMinInstanceCount
 	}
 
+	transformedScalingMode, err := expandCloudRunV2ServiceScalingScalingMode(original["scaling_mode"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedScalingMode); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["scalingMode"] = transformedScalingMode
+	}
+
+	transformedManualInstanceCount, err := expandCloudRunV2ServiceScalingManualInstanceCount(original["manual_instance_count"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedManualInstanceCount); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["manualInstanceCount"] = transformedManualInstanceCount
+	}
+
 	return transformed, nil
 }
 
 func expandCloudRunV2ServiceScalingMinInstanceCount(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandCloudRunV2ServiceScalingScalingMode(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandCloudRunV2ServiceScalingManualInstanceCount(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
@@ -5246,6 +5320,10 @@ func expandCloudRunV2ServiceBuildConfigEnvironmentVariables(v interface{}, d tpg
 }
 
 func expandCloudRunV2ServiceBuildConfigServiceAccount(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandCloudRunV2ServiceIapEnabled(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

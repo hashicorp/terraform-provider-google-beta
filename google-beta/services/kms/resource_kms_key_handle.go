@@ -153,37 +153,15 @@ func resourceKMSKeyHandleCreate(d *schema.ResourceData, meta interface{}) error 
 	}
 	d.SetId(id)
 
-	// Use the resource in the operation response to populate
-	// identity fields and d.Id() before read
-	var opRes map[string]interface{}
-	err = KMSOperationWaitTimeWithResponse(
-		config, res, &opRes, project, "Creating KeyHandle", userAgent,
+	err = KMSOperationWaitTime(
+		config, res, project, "Creating KeyHandle", userAgent,
 		d.Timeout(schema.TimeoutCreate))
+
 	if err != nil {
 		// The resource didn't actually create
 		d.SetId("")
-
 		return fmt.Errorf("Error waiting to create KeyHandle: %s", err)
 	}
-
-	opRes, err = resourceKMSKeyHandleDecoder(d, meta, opRes)
-	if err != nil {
-		return fmt.Errorf("Error decoding response from operation: %s", err)
-	}
-	if opRes == nil {
-		return fmt.Errorf("Error decoding response from operation, could not find object")
-	}
-
-	if err := d.Set("name", flattenKMSKeyHandleName(opRes["name"], d, config)); err != nil {
-		return err
-	}
-
-	// This may have caused the ID to update - update it if so.
-	id, err = tpgresource.ReplaceVars(d, config, "projects/{{project}}/locations/{{location}}/keyHandles/{{name}}")
-	if err != nil {
-		return fmt.Errorf("Error constructing id: %s", err)
-	}
-	d.SetId(id)
 
 	log.Printf("[DEBUG] Finished creating KeyHandle %q: %#v", d.Id(), res)
 

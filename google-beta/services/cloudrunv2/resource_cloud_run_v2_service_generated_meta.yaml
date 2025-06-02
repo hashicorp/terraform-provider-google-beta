@@ -43,6 +43,7 @@ fields:
   - field: 'etag'
   - field: 'expire_time'
   - field: 'generation'
+  - field: 'iap_enabled'
   - field: 'ingress'
   - field: 'invoker_iam_disabled'
   - field: 'labels'
@@ -56,7 +57,9 @@ fields:
     provider_only: true
   - field: 'observed_generation'
   - field: 'reconciling'
+  - field: 'scaling.manual_instance_count'
   - field: 'scaling.min_instance_count'
+  - field: 'scaling.scaling_mode'
   - field: 'template.annotations'
   - field: 'template.containers.args'
   - field: 'template.containers.base_image_uri'
