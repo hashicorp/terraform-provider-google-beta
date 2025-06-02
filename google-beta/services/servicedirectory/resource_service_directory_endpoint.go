@@ -166,8 +166,11 @@ func resourceServiceDirectoryEndpointCreate(d *schema.ResourceData, meta interfa
 	if err != nil {
 		return fmt.Errorf("Error creating Endpoint: %s", err)
 	}
-	if err := d.Set("name", flattenServiceDirectoryEndpointName(res["name"], d, config)); err != nil {
-		return fmt.Errorf(`Error setting computed identity field "name": %s`, err)
+	// Set computed resource properties from create API response so that they're available on the subsequent Read
+	// call.
+	err = resourceServiceDirectoryEndpointPostCreateSetComputedFields(d, meta, res)
+	if err != nil {
+		return fmt.Errorf("setting computed ID format fields: %w", err)
 	}
 
 	// Store the ID now
@@ -472,4 +475,12 @@ func expandServiceDirectoryEndpointMetadata(v interface{}, d tpgresource.Terrafo
 
 func expandServiceDirectoryEndpointNetwork(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func resourceServiceDirectoryEndpointPostCreateSetComputedFields(d *schema.ResourceData, meta interface{}, res map[string]interface{}) error {
+	config := meta.(*transport_tpg.Config)
+	if err := d.Set("name", flattenServiceDirectoryEndpointName(res["name"], d, config)); err != nil {
+		return fmt.Errorf(`Error setting computed identity field "name": %s`, err)
+	}
+	return nil
 }

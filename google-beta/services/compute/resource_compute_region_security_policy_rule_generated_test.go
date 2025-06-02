@@ -39,7 +39,7 @@ func TestAccComputeRegionSecurityPolicyRule_regionSecurityPolicyRuleBasicExample
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeRegionSecurityPolicyRuleDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -58,8 +58,6 @@ func TestAccComputeRegionSecurityPolicyRule_regionSecurityPolicyRuleBasicExample
 func testAccComputeRegionSecurityPolicyRule_regionSecurityPolicyRuleBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_region_security_policy" "default" {
-  provider    = google-beta
-  
   region      = "us-west2"
   name        = "policyruletest%{random_suffix}"
   description = "basic region security policy"
@@ -67,8 +65,6 @@ resource "google_compute_region_security_policy" "default" {
 }
 
 resource "google_compute_region_security_policy_rule" "policy_rule" {
-  provider = google-beta
-  
   region          = "us-west2"
   security_policy = google_compute_region_security_policy.default.name
   description     = "new rule"
@@ -94,7 +90,7 @@ func TestAccComputeRegionSecurityPolicyRule_regionSecurityPolicyRuleMultipleRule
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeRegionSecurityPolicyRuleDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -113,8 +109,6 @@ func TestAccComputeRegionSecurityPolicyRule_regionSecurityPolicyRuleMultipleRule
 func testAccComputeRegionSecurityPolicyRule_regionSecurityPolicyRuleMultipleRulesExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_region_security_policy" "default" {
-  provider    = google-beta
-  
   region      = "us-west2"
   name        = "policywithmultiplerules%{random_suffix}"
   description = "basic region security policy"
@@ -122,8 +116,6 @@ resource "google_compute_region_security_policy" "default" {
 }
 
 resource "google_compute_region_security_policy_rule" "policy_rule_one" {
-  provider = google-beta
-  
   region          = "us-west2"
   security_policy = google_compute_region_security_policy.default.name
   description     = "new rule one"
@@ -139,8 +131,6 @@ resource "google_compute_region_security_policy_rule" "policy_rule_one" {
 }
 
 resource "google_compute_region_security_policy_rule" "policy_rule_two" {
-  provider = google-beta
-  
   region          = "us-west2"
   security_policy = google_compute_region_security_policy.default.name
   description     = "new rule two"
@@ -166,7 +156,7 @@ func TestAccComputeRegionSecurityPolicyRule_regionSecurityPolicyRuleDefaultRuleE
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeRegionSecurityPolicyRuleDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -185,7 +175,6 @@ func TestAccComputeRegionSecurityPolicyRule_regionSecurityPolicyRuleDefaultRuleE
 func testAccComputeRegionSecurityPolicyRule_regionSecurityPolicyRuleDefaultRuleExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_region_security_policy" "default" {
-  provider    = google-beta
   region      = "us-west2"
   name        = "policywithdefaultrule%{random_suffix}"
   description = "basic region security policy"
@@ -193,7 +182,6 @@ resource "google_compute_region_security_policy" "default" {
 }
 
 resource "google_compute_region_security_policy_rule" "default_rule" {
-  provider        = google-beta
   region          = "us-west2"
   security_policy = google_compute_region_security_policy.default.name
   description     = "new rule"
@@ -208,7 +196,6 @@ resource "google_compute_region_security_policy_rule" "default_rule" {
 }
 
 resource "google_compute_region_security_policy_rule" "policy_rule" {
-  provider        = google-beta
   region          = "us-west2"
   security_policy = google_compute_region_security_policy.default.name
   description     = "new rule"
@@ -234,7 +221,7 @@ func TestAccComputeRegionSecurityPolicyRule_regionSecurityPolicyRuleWithPreconfi
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeRegionSecurityPolicyRuleDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -253,8 +240,6 @@ func TestAccComputeRegionSecurityPolicyRule_regionSecurityPolicyRuleWithPreconfi
 func testAccComputeRegionSecurityPolicyRule_regionSecurityPolicyRuleWithPreconfiguredWafConfigExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_region_security_policy" "default" {
-  provider    = google-beta
-
   region      = "asia-southeast1"
   name        = "policyruletest%{random_suffix}"
   description = "basic region security policy"
@@ -262,8 +247,6 @@ resource "google_compute_region_security_policy" "default" {
 }
 
 resource "google_compute_region_security_policy_rule" "policy_rule" {
-  provider    = google-beta
-
   region          = "asia-southeast1"
   security_policy = google_compute_region_security_policy.default.name
   description     = "new rule"

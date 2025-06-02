@@ -257,12 +257,11 @@ func resourceFirebaseHostingVersionCreate(d *schema.ResourceData, meta interface
 	if err != nil {
 		return fmt.Errorf("Error creating Version: %s", err)
 	}
-	// Setting `name` field so that `id_from_name` flattener will work properly.
-	if err := d.Set("name", flattenFirebaseHostingVersionName(res["name"], d, config)); err != nil {
-		return fmt.Errorf(`Error setting computed identity field "name": %s`, err)
-	}
-	if err := d.Set("version_id", flattenFirebaseHostingVersionVersionId(res["version_id"], d, config)); err != nil {
-		return fmt.Errorf(`Error setting computed identity field "version_id": %s`, err)
+	// Set computed resource properties from create API response so that they're available on the subsequent Read
+	// call.
+	err = resourceFirebaseHostingVersionPostCreateSetComputedFields(d, meta, res)
+	if err != nil {
+		return fmt.Errorf("setting computed ID format fields: %w", err)
 	}
 
 	// Store the ID now
@@ -797,4 +796,16 @@ func expandFirebaseHostingVersionConfigHeadersHeaders(v interface{}, d tpgresour
 		m[k] = val.(string)
 	}
 	return m, nil
+}
+
+func resourceFirebaseHostingVersionPostCreateSetComputedFields(d *schema.ResourceData, meta interface{}, res map[string]interface{}) error {
+	config := meta.(*transport_tpg.Config)
+	// Setting `name` field so that `id_from_name` flattener will work properly.
+	if err := d.Set("name", flattenFirebaseHostingVersionName(res["name"], d, config)); err != nil {
+		return fmt.Errorf(`Error setting computed identity field "name": %s`, err)
+	}
+	if err := d.Set("version_id", flattenFirebaseHostingVersionVersionId(res["version_id"], d, config)); err != nil {
+		return fmt.Errorf(`Error setting computed identity field "version_id": %s`, err)
+	}
+	return nil
 }

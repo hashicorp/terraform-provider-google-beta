@@ -157,12 +157,11 @@ func resourceFirebaseHostingReleaseCreate(d *schema.ResourceData, meta interface
 	if err != nil {
 		return fmt.Errorf("Error creating Release: %s", err)
 	}
-	// Setting `name` field so that `id_from_name` flattener will work properly.
-	if err := d.Set("name", flattenFirebaseHostingReleaseName(res["name"], d, config)); err != nil {
-		return fmt.Errorf(`Error setting computed identity field "name": %s`, err)
-	}
-	if err := d.Set("release_id", flattenFirebaseHostingReleaseReleaseId(res["release_id"], d, config)); err != nil {
-		return fmt.Errorf(`Error setting computed identity field "release_id": %s`, err)
+	// Set computed resource properties from create API response so that they're available on the subsequent Read
+	// call.
+	err = resourceFirebaseHostingReleasePostCreateSetComputedFields(d, meta, res)
+	if err != nil {
+		return fmt.Errorf("setting computed ID format fields: %w", err)
 	}
 
 	// Store the ID now
@@ -285,4 +284,16 @@ func expandFirebaseHostingReleaseType(v interface{}, d tpgresource.TerraformReso
 
 func expandFirebaseHostingReleaseMessage(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func resourceFirebaseHostingReleasePostCreateSetComputedFields(d *schema.ResourceData, meta interface{}, res map[string]interface{}) error {
+	config := meta.(*transport_tpg.Config)
+	// Setting `name` field so that `id_from_name` flattener will work properly.
+	if err := d.Set("name", flattenFirebaseHostingReleaseName(res["name"], d, config)); err != nil {
+		return fmt.Errorf(`Error setting computed identity field "name": %s`, err)
+	}
+	if err := d.Set("release_id", flattenFirebaseHostingReleaseReleaseId(res["release_id"], d, config)); err != nil {
+		return fmt.Errorf(`Error setting computed identity field "release_id": %s`, err)
+	}
+	return nil
 }

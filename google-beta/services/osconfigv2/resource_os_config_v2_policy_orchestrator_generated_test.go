@@ -56,7 +56,7 @@ func TestAccOSConfigV2PolicyOrchestrator_osconfigv2PolicyOrchestratorBasicExampl
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckOSConfigV2PolicyOrchestratorDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -75,7 +75,6 @@ func TestAccOSConfigV2PolicyOrchestrator_osconfigv2PolicyOrchestratorBasicExampl
 func testAccOSConfigV2PolicyOrchestrator_osconfigv2PolicyOrchestratorBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_os_config_v2_policy_orchestrator" "policy_orchestrator" {
-    provider = google-beta
     policy_orchestrator_id = "po%{random_suffix}"
     
     state = "ACTIVE"

@@ -39,7 +39,7 @@ func TestAccComputeRegionSecurityPolicy_regionSecurityPolicyBasicExample(t *test
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeRegionSecurityPolicyDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -58,8 +58,6 @@ func TestAccComputeRegionSecurityPolicy_regionSecurityPolicyBasicExample(t *test
 func testAccComputeRegionSecurityPolicy_regionSecurityPolicyBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_region_security_policy" "region-sec-policy-basic" {
-  provider    = google-beta
-
   name        = "tf-test-my-sec-policy-basic%{random_suffix}"
   description = "basic region security policy"
   type        = "CLOUD_ARMOR"
@@ -76,7 +74,7 @@ func TestAccComputeRegionSecurityPolicy_regionSecurityPolicyWithDdosProtectionCo
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeRegionSecurityPolicyDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -95,8 +93,6 @@ func TestAccComputeRegionSecurityPolicy_regionSecurityPolicyWithDdosProtectionCo
 func testAccComputeRegionSecurityPolicy_regionSecurityPolicyWithDdosProtectionConfigExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_region_security_policy" "region-sec-policy-ddos-protection" {
-  provider    = google-beta  
-
   name        = "tf-test-my-sec-policy-ddos-protection%{random_suffix}"
   description = "with ddos protection config"
   type        = "CLOUD_ARMOR_NETWORK"
@@ -117,7 +113,7 @@ func TestAccComputeRegionSecurityPolicy_regionSecurityPolicyWithUserDefinedField
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeRegionSecurityPolicyDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -136,8 +132,6 @@ func TestAccComputeRegionSecurityPolicy_regionSecurityPolicyWithUserDefinedField
 func testAccComputeRegionSecurityPolicy_regionSecurityPolicyWithUserDefinedFieldsExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_region_security_policy" "region-sec-policy-user-defined-fields" {
-  provider    = google-beta  
-
   name        = "tf-test-my-sec-policy-user-defined-fields%{random_suffix}"
   description = "with user defined fields"
   type        = "CLOUD_ARMOR_NETWORK"
@@ -168,7 +162,7 @@ func TestAccComputeRegionSecurityPolicy_regionSecurityPolicyWithRulesExample(t *
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeRegionSecurityPolicyDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -187,8 +181,6 @@ func TestAccComputeRegionSecurityPolicy_regionSecurityPolicyWithRulesExample(t *
 func testAccComputeRegionSecurityPolicy_regionSecurityPolicyWithRulesExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_region_security_policy" "region-sec-policy-with-rules" {
-  provider    = google-beta
-
   name        = "tf-test-my-sec-policy-with-rules%{random_suffix}"
   description = "basic region security policy with multiple rules"
   type        = "CLOUD_ARMOR"

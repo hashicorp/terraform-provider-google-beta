@@ -164,8 +164,11 @@ func resourceServiceDirectoryNamespaceCreate(d *schema.ResourceData, meta interf
 	if err != nil {
 		return fmt.Errorf("Error creating Namespace: %s", err)
 	}
-	if err := d.Set("name", flattenServiceDirectoryNamespaceName(res["name"], d, config)); err != nil {
-		return fmt.Errorf(`Error setting computed identity field "name": %s`, err)
+	// Set computed resource properties from create API response so that they're available on the subsequent Read
+	// call.
+	err = resourceServiceDirectoryNamespacePostCreateSetComputedFields(d, meta, res)
+	if err != nil {
+		return fmt.Errorf("setting computed ID format fields: %w", err)
 	}
 
 	// Store the ID now
@@ -471,4 +474,12 @@ func expandServiceDirectoryNamespaceEffectiveLabels(v interface{}, d tpgresource
 		m[k] = val.(string)
 	}
 	return m, nil
+}
+
+func resourceServiceDirectoryNamespacePostCreateSetComputedFields(d *schema.ResourceData, meta interface{}, res map[string]interface{}) error {
+	config := meta.(*transport_tpg.Config)
+	if err := d.Set("name", flattenServiceDirectoryNamespaceName(res["name"], d, config)); err != nil {
+		return fmt.Errorf(`Error setting computed identity field "name": %s`, err)
+	}
+	return nil
 }

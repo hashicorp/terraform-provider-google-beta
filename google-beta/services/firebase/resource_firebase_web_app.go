@@ -183,9 +183,6 @@ func resourceFirebaseWebAppCreate(d *schema.ResourceData, meta interface{}) erro
 		return fmt.Errorf("Error waiting to create WebApp: %s", err)
 	}
 
-	if err := d.Set("name", flattenFirebaseWebAppName(opRes["name"], d, config)); err != nil {
-		return err
-	}
 	if err := d.Set("app_id", flattenFirebaseWebAppAppId(opRes["appId"], d, config)); err != nil {
 		return err
 	}

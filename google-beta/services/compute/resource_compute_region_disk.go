@@ -304,6 +304,11 @@ encryption key that protects this resource.`,
 create the disk. Provide this when creating the disk.`,
 				Default: "pd-standard",
 			},
+			"disk_id": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: `The unique identifier for the resource. This identifier is defined by the server.`,
+			},
 			"creation_timestamp": {
 				Type:        schema.TypeString,
 				Computed:    true,
@@ -678,6 +683,9 @@ func resourceComputeRegionDiskRead(d *schema.ResourceData, meta interface{}) err
 		return fmt.Errorf("Error reading RegionDisk: %s", err)
 	}
 	if err := d.Set("source_disk", flattenComputeRegionDiskSourceDisk(res["sourceDisk"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RegionDisk: %s", err)
+	}
+	if err := d.Set("disk_id", flattenComputeRegionDiskDiskId(res["id"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionDisk: %s", err)
 	}
 	if err := d.Set("source_disk_id", flattenComputeRegionDiskSourceDiskId(res["sourceDiskId"], d, config)); err != nil {
@@ -1222,10 +1230,14 @@ func flattenComputeRegionDiskType(v interface{}, d *schema.ResourceData, config 
 	if v == nil {
 		return v
 	}
-	return tpgresource.NameFromSelfLinkStateFunc(v)
+	return tpgresource.GetResourceNameFromSelfLink(v.(string))
 }
 
 func flattenComputeRegionDiskSourceDisk(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenComputeRegionDiskDiskId(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -1302,7 +1314,7 @@ func flattenComputeRegionDiskRegion(v interface{}, d *schema.ResourceData, confi
 	if v == nil {
 		return v
 	}
-	return tpgresource.NameFromSelfLinkStateFunc(v)
+	return tpgresource.GetResourceNameFromSelfLink(v.(string))
 }
 
 func flattenComputeRegionDiskSnapshot(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
