@@ -21,6 +21,7 @@ IMPROVEMENTS:
 * provider: supported service account impersonation in different universes through credential file ([#10097](https://github.com/hashicorp/terraform-provider-google-beta/pull/10097))
 
 BUG FIXES:
+* colab: fixed perma-diff in `google_colab_runtime_template` caused by the API returning a non-null default value ([#10127](https://github.com/hashicorp/terraform-provider-google-beta/pull/10127))
 * compute: fixed an issue where rules ordering in `google_compute_region_security_policy` caused a diff after apply ([#10105](https://github.com/hashicorp/terraform-provider-google-beta/pull/10105))
 * filestore: fixed bug where `google_filestore_instance.initial_replication` field could not be set ([#10087](https://github.com/hashicorp/terraform-provider-google-beta/pull/10087))
 
