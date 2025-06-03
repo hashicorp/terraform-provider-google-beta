@@ -111,9 +111,10 @@ value should be 4-32 characters, and may contain the characters [a-z0-9-]. The p
 'gcp-' is reserved for use by Google, and may not be specified.`,
 			},
 			"workload_identity_pool_managed_identity_id": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Type:         schema.TypeString,
+				Required:     true,
+				ForceNew:     true,
+				ValidateFunc: ValidateWorkloadIdentityPoolManagedIdentityId,
 				Description: `The ID to use for the managed identity. This value must:
 * contain at most 63 characters
 * contain only lowercase alphanumeric characters or '-'
