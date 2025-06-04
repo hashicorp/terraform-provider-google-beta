@@ -14,7 +14,6 @@ IMPROVEMENTS:
 * compute: added `httpFilterConfigs` and `httpFilterMetadata` fields in `google_compute_url_map` resource ([#10101](https://github.com/hashicorp/terraform-provider-google-beta/pull/10101))
 * compute: added `numeric_id` to `google_compute_region_instance_template` resource ([#10098](https://github.com/hashicorp/terraform-provider-google-beta/pull/10098))
 * compute: added `source_subnetwork_ip_ranges_to_nat64` and `nat64_subnetwork` fields  in `google_compute_router_nat` resource ([#10106](https://github.com/hashicorp/terraform-provider-google-beta/pull/10106))
-* container: promoted `pod_autoscaling` field in `google_container_cluster` resource to GA ([#23002](https://github.com/hashicorp/terraform-provider-google/pull/23002))
 * datastream: added `psc_interface_config` field in  `google_datastream_private_connection` resource ([#23091](https://github.com/hashicorp/terraform-provider-google/pull/23091))
 * dns: added `dns64_config` field  to `google_dns_policy` resource ([#10106](https://github.com/hashicorp/terraform-provider-google-beta/pull/10106))
 * filestore: added `effective_replication.role` and `effective_replication.replicas.peer_instance` fields to `google_filestore_instance` resource ([#10087](https://github.com/hashicorp/terraform-provider-google-beta/pull/10087))
