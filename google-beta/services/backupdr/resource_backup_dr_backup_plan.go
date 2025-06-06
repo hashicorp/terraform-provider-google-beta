@@ -233,6 +233,14 @@ This is required for 'recurrence_type', 'HOURLY' and is not applicable otherwise
 				Computed:    true,
 				Description: `The name of backup plan resource created`,
 			},
+			"supported_resource_types": {
+				Type:        schema.TypeList,
+				Computed:    true,
+				Description: `The list of all resource types to which the 'BackupPlan' can be applied.`,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
 			"update_time": {
 				Type:        schema.TypeString,
 				Computed:    true,
@@ -392,6 +400,9 @@ func resourceBackupDRBackupPlanRead(d *schema.ResourceData, meta interface{}) er
 	if err := d.Set("backup_vault_service_account", flattenBackupDRBackupPlanBackupVaultServiceAccount(res["backupVaultServiceAccount"], d, config)); err != nil {
 		return fmt.Errorf("Error reading BackupPlan: %s", err)
 	}
+	if err := d.Set("supported_resource_types", flattenBackupDRBackupPlanSupportedResourceTypes(res["supportedResourceTypes"], d, config)); err != nil {
+		return fmt.Errorf("Error reading BackupPlan: %s", err)
+	}
 	if err := d.Set("resource_type", flattenBackupDRBackupPlanResourceType(res["resourceType"], d, config)); err != nil {
 		return fmt.Errorf("Error reading BackupPlan: %s", err)
 	}
@@ -497,6 +508,10 @@ func flattenBackupDRBackupPlanBackupVault(v interface{}, d *schema.ResourceData,
 }
 
 func flattenBackupDRBackupPlanBackupVaultServiceAccount(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenBackupDRBackupPlanSupportedResourceTypes(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
