@@ -1,4 +1,39 @@
-## 6.39.0 (Unreleased)
+## 6.40.0 (Unreleased)
+
+## 6.39.0 (June 10, 2025)
+
+FEATURES:
+* **New Resource:** `google_apihub_curation` ([#10130](https://github.com/hashicorp/terraform-provider-google-beta/pull/10130))
+* **New Resource:** `google_compute_interconnect_attachment_group` ([#10136](https://github.com/hashicorp/terraform-provider-google-beta/pull/10136))
+* **New Resource:** `google_compute_interconnect_group` ([#10136](https://github.com/hashicorp/terraform-provider-google-beta/pull/10136))
+* **New Resource:** `google_compute_snapshot_settings` ([#10133](https://github.com/hashicorp/terraform-provider-google-beta/pull/10133))
+
+IMPROVEMENTS:
+* apigee: added `client_ip_resolution_config` field to `google_apigee_environment` resource ([#10143](https://github.com/hashicorp/terraform-provider-google-beta/pull/10143))
+* beyondcorp: added `delegating_service_account` field to `google_beyondcorp_security_gateway` resource ([#10114](https://github.com/hashicorp/terraform-provider-google-beta/pull/10114))
+* bigquery: added `data_source_id` to update requests through `google_bigquery_data_transfer_config` ([#10126](https://github.com/hashicorp/terraform-provider-google-beta/pull/10126))
+* cloudrunv2: added `google_cloud_run_v2_job` support for `depends_on` and `startup_probe` properties ([#10147](https://github.com/hashicorp/terraform-provider-google-beta/pull/10147))
+* container: added `network_performance_config` field to `google_container_cluster` resource ([#10117](https://github.com/hashicorp/terraform-provider-google-beta/pull/10117))
+* dataplex: added `catalog_publishing_enabled` field to `google_dataplex_datascan` resource ([#10141](https://github.com/hashicorp/terraform-provider-google-beta/pull/10141))
+* datastream: added `network_attachment` support via `psc_interface_config` attribute in `google_datastream_private_connection` ([#10112](https://github.com/hashicorp/terraform-provider-google-beta/pull/10112))
+* eventarc: made `network_attachment` optional in `google_eventarc_pipeline` ([#10125](https://github.com/hashicorp/terraform-provider-google-beta/pull/10125))
+* gemini: added `disable_web_grounding` field to `google_gemini_gemini_gcp_enablement_setting` resource ([#10115](https://github.com/hashicorp/terraform-provider-google-beta/pull/10115))
+* gemini: added `enable_data_sharing` field to `google_gemini_data_sharing_with_google_setting` resource ([#10144](https://github.com/hashicorp/terraform-provider-google-beta/pull/10144))
+* gkehub2: added `spec.rbacrolebindingactuation` field to resource `google_gke_hub_feature` ([#10121](https://github.com/hashicorp/terraform-provider-google-beta/pull/10121))
+* gkehub: added `custom_role` field to `google_gke_hub_scope_rbac_role_binding` resource ([#10151](https://github.com/hashicorp/terraform-provider-google-beta/pull/10151))
+* gkeonprem: added `private_registry_config` field to `google_gkeonprem_vmware_admin_cluster` resource ([#10150](https://github.com/hashicorp/terraform-provider-google-beta/pull/10150))
+* iambeta: enforced `workload_identity_pool_managed_identity_id` field validation per the documented specifications ([#10132](https://github.com/hashicorp/terraform-provider-google-beta/pull/10132))
+* pubsub: added `message_transform` field to `google_pubsub_topic` resource ([#10137](https://github.com/hashicorp/terraform-provider-google-beta/pull/10137))
+* pubsub: added `message_transforms` field to `google_pubsub_subscription` resource ([#10138](https://github.com/hashicorp/terraform-provider-google-beta/pull/10138))
+
+BUG FIXES:
+* bigquery: modified `google_bigquery_dataset_iam_member`  to no longer remove authorized views and routines ([#10145](https://github.com/hashicorp/terraform-provider-google-beta/pull/10145))
+* colab: fixed perma-diff in `google_colab_runtime_template` caused by the API returning a non-null default value. ([#10127](https://github.com/hashicorp/terraform-provider-google-beta/pull/10127))
+* colab: fixed perma-diff in `google_colab_runtime_template` caused by empty blocks. ([#10139](https://github.com/hashicorp/terraform-provider-google-beta/pull/10139))
+* compute: fixed a permadiff in `network_profile` field of `google_compute_network` related to specifying partial self-links ([#10140](https://github.com/hashicorp/terraform-provider-google-beta/pull/10140))
+* compute: fixed an issue where `google_compute_firewall_policy_with_rules.target_resources` could see a diff between the beta and v1 API in the resource's self-link ([#10142](https://github.com/hashicorp/terraform-provider-google-beta/pull/10142))
+* container: fixed nodepool secondary range validation to allow the use of netmasks. ([#10128](https://github.com/hashicorp/terraform-provider-google-beta/pull/10128))
+* gemini: removed overly restrictive `product` validation on `google_gemini_gemini_gcp_enablement_setting_binding`, `google_gemini_data_sharing_with_google_setting_binding`. New values like `GOOGLE_CLOUD_ASSIST` will now be accepted. ([#10146](https://github.com/hashicorp/terraform-provider-google-beta/pull/10146))
 
 ## 6.38.0 (June 4, 2025)
 
