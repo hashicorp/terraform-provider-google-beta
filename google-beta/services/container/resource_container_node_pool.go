@@ -21,6 +21,7 @@ import (
 	"log"
 	"regexp"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
@@ -36,6 +37,76 @@ import (
 )
 
 var clusterIdRegex = regexp.MustCompile("projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/clusters/(?P<name>[^/]+)")
+
+type nodePoolWithUpdateTime struct {
+	nodePool   *container.NodePool
+	updateTime time.Time
+}
+
+type nodePoolCache struct {
+	nodePools map[string]*nodePoolWithUpdateTime
+	ttl       time.Duration
+	mutex     sync.RWMutex
+}
+
+func (nodePoolCache *nodePoolCache) get(nodePool string) (*container.NodePool, error) {
+	nodePoolCache.mutex.RLock()
+	defer nodePoolCache.mutex.RUnlock()
+	np, ok := nodePoolCache.nodePools[nodePool]
+	if !ok {
+		return nil, fmt.Errorf("NodePool %q was not found", nodePool)
+	}
+	return np.nodePool, nil
+}
+
+func (nodePoolCache *nodePoolCache) refreshIfNeeded(d *schema.ResourceData, config *transport_tpg.Config, userAgent string, nodePoolInfo *NodePoolInformation, name string) error {
+	if !nodePoolCache.needsRefresh(nodePoolInfo.fullyQualifiedName(name)) {
+		return nil
+	}
+
+	nodePoolCache.mutex.Lock()
+	defer nodePoolCache.mutex.Unlock()
+
+	parent := fmt.Sprintf("projects/%s/locations/%s/clusters/%s", nodePoolInfo.project, nodePoolInfo.location, nodePoolInfo.cluster)
+	clusterNodePoolsListCall := config.NewContainerClient(userAgent).Projects.Locations.Clusters.NodePools.List(parent)
+	if config.UserProjectOverride {
+		clusterNodePoolsListCall.Header().Add("X-Goog-User-Project", nodePoolInfo.project)
+	}
+	listNodePoolsResponse, err := clusterNodePoolsListCall.Do()
+	if err != nil {
+		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("NodePools from cluster %q", nodePoolInfo.cluster))
+	}
+
+	updateTime := time.Now()
+	for _, nodePool := range listNodePoolsResponse.NodePools {
+		nodePoolCache.nodePools[nodePoolInfo.fullyQualifiedName(nodePool.Name)] = &nodePoolWithUpdateTime{
+			nodePool:   nodePool,
+			updateTime: updateTime,
+		}
+	}
+	return nil
+}
+
+func (nodePoolCache *nodePoolCache) needsRefresh(nodePool string) bool {
+	nodePoolCache.mutex.RLock()
+	defer nodePoolCache.mutex.RUnlock()
+	np, ok := nodePoolCache.nodePools[nodePool]
+	if !ok {
+		return true
+	}
+	return time.Since(np.updateTime) > nodePoolCache.ttl
+}
+
+func (nodePoolCache *nodePoolCache) remove(nodePool string) {
+	nodePoolCache.mutex.Lock()
+	defer nodePoolCache.mutex.Unlock()
+	delete(nodePoolCache.nodePools, nodePool)
+}
+
+var npCache = &nodePoolCache{
+	nodePools: make(map[string]*nodePoolWithUpdateTime),
+	ttl:       30 * time.Second,
+}
 
 func ResourceContainerNodePool() *schema.Resource {
 	return &schema.Resource{
@@ -713,11 +784,8 @@ func resourceContainerNodePoolRead(d *schema.ResourceData, meta interface{}) err
 
 	name := getNodePoolName(d.Id())
 
-	clusterNodePoolsGetCall := config.NewContainerClient(userAgent).Projects.Locations.Clusters.NodePools.Get(nodePoolInfo.fullyQualifiedName(name))
-	if config.UserProjectOverride {
-		clusterNodePoolsGetCall.Header().Add("X-Goog-User-Project", nodePoolInfo.project)
-	}
-	nodePool, err := clusterNodePoolsGetCall.Do()
+	npCache.refreshIfNeeded(d, config, userAgent, nodePoolInfo, name)
+	nodePool, err := npCache.get(nodePoolInfo.fullyQualifiedName(name))
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("NodePool %q from cluster %q", name, nodePoolInfo.cluster))
 	}
@@ -776,6 +844,8 @@ func resourceContainerNodePoolUpdate(d *schema.ResourceData, meta interface{}) e
 	if err != nil {
 		return err
 	}
+
+	npCache.remove(nodePoolInfo.fullyQualifiedName(name))
 
 	return resourceContainerNodePoolRead(d, meta)
 }
@@ -857,6 +927,8 @@ func resourceContainerNodePoolDelete(d *schema.ResourceData, meta interface{}) e
 
 	d.SetId("")
 
+	npCache.remove(nodePoolInfo.fullyQualifiedName(name))
+
 	return nil
 }
 
@@ -873,11 +945,8 @@ func resourceContainerNodePoolExists(d *schema.ResourceData, meta interface{}) (
 	}
 
 	name := getNodePoolName(d.Id())
-	clusterNodePoolsGetCall := config.NewContainerClient(userAgent).Projects.Locations.Clusters.NodePools.Get(nodePoolInfo.fullyQualifiedName(name))
-	if config.UserProjectOverride {
-		clusterNodePoolsGetCall.Header().Add("X-Goog-User-Project", nodePoolInfo.project)
-	}
-	_, err = clusterNodePoolsGetCall.Do()
+	npCache.refreshIfNeeded(d, config, userAgent, nodePoolInfo, name)
+	_, err = npCache.get(nodePoolInfo.fullyQualifiedName(name))
 
 	if err != nil {
 		if err = transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("Container NodePool %s", name)); err == nil {
