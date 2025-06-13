@@ -1505,7 +1505,7 @@ func TestAccComputeUrlMap_urlMapCustomErrorResponsePolicyExample(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeUrlMapDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -1524,7 +1524,6 @@ func TestAccComputeUrlMap_urlMapCustomErrorResponsePolicyExample(t *testing.T) {
 func testAccComputeUrlMap_urlMapCustomErrorResponsePolicyExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_url_map" "urlmap" {
-  provider    = google-beta
   name        = "urlmap%{random_suffix}"
   description = "a description"
 
@@ -1579,7 +1578,6 @@ resource "google_compute_url_map" "urlmap" {
 }
 
 resource "google_compute_backend_service" "example" {
-  provider    = google-beta
   name        = "login%{random_suffix}"
   port_name   = "http"
   protocol    = "HTTP"
@@ -1590,7 +1588,6 @@ resource "google_compute_backend_service" "example" {
 }
 
 resource "google_compute_http_health_check" "default" {
-  provider           = google-beta
   name               = "tf-test-health-check%{random_suffix}"
   request_path       = "/"
   check_interval_sec = 1
@@ -1598,14 +1595,12 @@ resource "google_compute_http_health_check" "default" {
 }
 
 resource "google_compute_backend_bucket" "error" {
-  provider    = google-beta
   name        = "tf-test-error-backend-bucket%{random_suffix}"
   bucket_name = google_storage_bucket.error.name
   enable_cdn  = true
 }
 
 resource "google_storage_bucket" "error" {
-  provider    = google-beta
   name        = "tf-test-static-asset-bucket%{random_suffix}"
   location    = "US"
 }
