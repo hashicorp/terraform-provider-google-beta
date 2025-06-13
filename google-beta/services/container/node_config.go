@@ -27,6 +27,8 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
+
 	container "google.golang.org/api/container/v1beta1"
 )
 
@@ -762,6 +764,12 @@ func schemaNodeConfig() *schema.Schema {
 								ForceNew:    true,
 								Description: `Whether the node should have nested virtualization enabled.`,
 							},
+							"performance_monitoring_unit": {
+								Type:         schema.TypeString,
+								Optional:     true,
+								ValidateFunc: verify.ValidateEnum([]string{"ARCHITECTURAL", "STANDARD", "ENHANCED"}),
+								Description:  `Level of Performance Monitoring Unit (PMU) requested. If unset, no access to the PMU is assumed.`,
+							},
 						},
 					},
 				},
@@ -1257,6 +1265,7 @@ func expandNodeConfig(v interface{}) *container.NodeConfig {
 		nc.AdvancedMachineFeatures = &container.AdvancedMachineFeatures{
 			ThreadsPerCore:             int64(advanced_machine_features["threads_per_core"].(int)),
 			EnableNestedVirtualization: advanced_machine_features["enable_nested_virtualization"].(bool),
+			PerformanceMonitoringUnit:  advanced_machine_features["performance_monitoring_unit"].(string),
 		}
 	}
 
@@ -1738,6 +1747,7 @@ func flattenAdvancedMachineFeaturesConfig(c *container.AdvancedMachineFeatures) 
 		result = append(result, map[string]interface{}{
 			"threads_per_core":             c.ThreadsPerCore,
 			"enable_nested_virtualization": c.EnableNestedVirtualization,
+			"performance_monitoring_unit":  c.PerformanceMonitoringUnit,
 		})
 	}
 	return result
