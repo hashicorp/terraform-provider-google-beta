@@ -59,7 +59,7 @@ func TestAccDataflowFlexTemplateJob_basic(t *testing.T) {
 				ResourceName:            "google_dataflow_flex_template_job.flex_job",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "container_spec_gcs_path", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "container_spec_gcs_path", "labels", "terraform_labels", "machine_type", "sdk_container_image"},
 			},
 		},
 	})
@@ -98,7 +98,7 @@ func TestAccDataflowFlexTemplateJob_streamUpdate(t *testing.T) {
 				ResourceName:            "google_dataflow_flex_template_job.flex_job",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "transform_name_mapping", "state", "container_spec_gcs_path", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "transform_name_mapping", "state", "container_spec_gcs_path", "labels", "terraform_labels", "machine_type", "sdk_container_image"},
 			},
 		},
 	})
@@ -163,7 +163,7 @@ func TestAccDataflowFlexTemplateJob_FullUpdate(t *testing.T) {
 				ResourceName:            "google_dataflow_flex_template_job.flex_job_fullupdate",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "container_spec_gcs_path", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "container_spec_gcs_path", "labels", "terraform_labels", "machine_type", "sdk_container_image"},
 			},
 			{
 				Config: testAccDataflowFlexTemplateJob_dataflowFlexTemplateJobFullUpdate(job, bucket, topic, randStr),
@@ -172,7 +172,7 @@ func TestAccDataflowFlexTemplateJob_FullUpdate(t *testing.T) {
 				ResourceName:            "google_dataflow_flex_template_job.flex_job_fullupdate",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "container_spec_gcs_path", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "container_spec_gcs_path", "labels", "terraform_labels", "machine_type", "sdk_container_image"},
 			},
 		},
 	})
@@ -207,7 +207,7 @@ func TestAccDataflowFlexTemplateJob_withNetwork(t *testing.T) {
 				ResourceName:            "google_dataflow_flex_template_job.flex_job_network",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "container_spec_gcs_path", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "container_spec_gcs_path", "labels", "terraform_labels", "machine_type", "sdk_container_image"},
 			},
 			{
 				Config: testAccDataflowFlexTemplateJob_networkUpdate(job, network1, network2, bucket, topic),
@@ -220,7 +220,7 @@ func TestAccDataflowFlexTemplateJob_withNetwork(t *testing.T) {
 				ResourceName:            "google_dataflow_flex_template_job.flex_job_network",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "container_spec_gcs_path", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "container_spec_gcs_path", "labels", "terraform_labels", "machine_type", "sdk_container_image"},
 			},
 		},
 	})
@@ -256,7 +256,7 @@ func TestAccDataflowFlexTemplateJob_withSubNetwork(t *testing.T) {
 				ResourceName:            "google_dataflow_flex_template_job.flex_job_subnetwork",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "container_spec_gcs_path", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "container_spec_gcs_path", "labels", "terraform_labels", "machine_type", "sdk_container_image"},
 			},
 			{
 				Config: testAccDataflowFlexTemplateJob_subnetworkUpdate(job, network, subnetwork1, subnetwork2, bucket, topic),
@@ -269,7 +269,7 @@ func TestAccDataflowFlexTemplateJob_withSubNetwork(t *testing.T) {
 				ResourceName:            "google_dataflow_flex_template_job.flex_job_subnetwork",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "container_spec_gcs_path", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "container_spec_gcs_path", "labels", "terraform_labels", "machine_type", "sdk_container_image"},
 			},
 		},
 	})
@@ -303,7 +303,7 @@ func TestAccDataflowFlexTemplateJob_withIpConfig(t *testing.T) {
 				ResourceName:            "google_dataflow_flex_template_job.flex_job_ipconfig",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "ip_configuration", "state", "container_spec_gcs_path", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "ip_configuration", "state", "container_spec_gcs_path", "labels", "terraform_labels", "machine_type", "sdk_container_image"},
 			},
 		},
 	})
@@ -348,7 +348,7 @@ func TestAccDataflowFlexTemplateJob_withKmsKey(t *testing.T) {
 				ResourceName:            "google_dataflow_flex_template_job.flex_job_kms",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "container_spec_gcs_path", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "container_spec_gcs_path", "labels", "terraform_labels", "machine_type", "sdk_container_image"},
 			},
 		},
 	})
@@ -382,7 +382,7 @@ func TestAccDataflowFlexTemplateJob_withAdditionalExperiments(t *testing.T) {
 				ResourceName:            "google_dataflow_flex_template_job.flex_job_experiments",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "additional_experiments", "container_spec_gcs_path", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "additional_experiments", "container_spec_gcs_path", "labels", "terraform_labels", "machine_type", "sdk_container_image"},
 			},
 		},
 	})
@@ -416,7 +416,7 @@ func TestAccDataflowFlexTemplateJob_withAdditionalPipelineOptions(t *testing.T) 
 				ResourceName:            "google_dataflow_flex_template_job.flex_job_pipeline_options",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "additional_pipeline_options", "container_spec_gcs_path", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "additional_pipeline_options", "container_spec_gcs_path", "labels", "terraform_labels", "machine_type", "sdk_container_image"},
 			},
 		},
 	})
@@ -437,6 +437,9 @@ func TestAccDataflowFlexTemplateJob_withProviderDefaultLabels(t *testing.T) {
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckDataflowJobDestroyProducer(t),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDataflowFlexTemplateJob_withProviderDefaultLabels(job, bucket, topic, randStr),
@@ -448,7 +451,7 @@ func TestAccDataflowFlexTemplateJob_withProviderDefaultLabels(t *testing.T) {
 				ResourceName:            "google_dataflow_flex_template_job.flex_job_fullupdate",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "container_spec_gcs_path", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "container_spec_gcs_path", "labels", "terraform_labels", "machine_type", "sdk_container_image"},
 			},
 			{
 				Config: testAccComputeAddress_resourceLabelsOverridesProviderDefaultLabels(job, bucket, topic, randStr),
@@ -460,7 +463,7 @@ func TestAccDataflowFlexTemplateJob_withProviderDefaultLabels(t *testing.T) {
 				ResourceName:            "google_dataflow_flex_template_job.flex_job_fullupdate",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "container_spec_gcs_path", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "container_spec_gcs_path", "labels", "terraform_labels", "machine_type", "sdk_container_image"},
 			},
 			{
 				Config: testAccComputeAddress_moveResourceLabelToProviderDefaultLabels(job, bucket, topic, randStr),
@@ -472,7 +475,7 @@ func TestAccDataflowFlexTemplateJob_withProviderDefaultLabels(t *testing.T) {
 				ResourceName:            "google_dataflow_flex_template_job.flex_job_fullupdate",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "container_spec_gcs_path", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "container_spec_gcs_path", "labels", "terraform_labels", "machine_type", "sdk_container_image"},
 			},
 			{
 				Config: testAccComputeAddress_resourceLabelsOverridesProviderDefaultLabels(job, bucket, topic, randStr),
@@ -484,7 +487,7 @@ func TestAccDataflowFlexTemplateJob_withProviderDefaultLabels(t *testing.T) {
 				ResourceName:            "google_dataflow_flex_template_job.flex_job_fullupdate",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "container_spec_gcs_path", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "container_spec_gcs_path", "labels", "terraform_labels", "machine_type", "sdk_container_image"},
 			},
 			{
 				Config: testAccDataflowFlexTemplateJob_dataflowFlexTemplateJobFull(job, bucket, topic, randStr),
@@ -496,7 +499,7 @@ func TestAccDataflowFlexTemplateJob_withProviderDefaultLabels(t *testing.T) {
 				ResourceName:            "google_dataflow_flex_template_job.flex_job_fullupdate",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "container_spec_gcs_path", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "container_spec_gcs_path", "labels", "terraform_labels", "machine_type", "sdk_container_image"},
 			},
 		},
 	})
@@ -536,7 +539,7 @@ func TestAccDataflowJob_withAttributionLabelCreationOnly(t *testing.T) {
 				ResourceName:            "google_dataflow_job.big_data",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "labels", "terraform_labels", "machine_type", "sdk_container_image"},
 			},
 			{
 				Config: testAccDataflowJob_attributionLabelUpdate(bucket, job, add, strategy),
@@ -555,7 +558,7 @@ func TestAccDataflowJob_withAttributionLabelCreationOnly(t *testing.T) {
 				ResourceName:            "google_dataflow_job.big_data",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "labels", "terraform_labels", "machine_type", "sdk_container_image"},
 			},
 		},
 	})
@@ -593,7 +596,7 @@ func TestAccDataflowJob_withAttributionLabelProactive(t *testing.T) {
 				ResourceName:            "google_dataflow_job.big_data",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "labels", "terraform_labels", "machine_type", "sdk_container_image"},
 			},
 			{
 				Config: testAccDataflowJob_attributionLabelUpdate(bucket, job, "true", strategy),
@@ -612,7 +615,7 @@ func TestAccDataflowJob_withAttributionLabelProactive(t *testing.T) {
 				ResourceName:            "google_dataflow_job.big_data",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "labels", "terraform_labels", "machine_type", "sdk_container_image"},
 			},
 		},
 	})
