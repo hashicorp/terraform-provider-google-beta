@@ -49,3 +49,4 @@ fields:
   - field: 'state'
   - field: 'terraform_labels'
     provider_only: true
+  - field: 'wire_groups'
