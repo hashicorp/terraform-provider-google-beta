@@ -8,5 +8,7 @@ fields:
   - field: 'effective_container'
   - field: 'effective_enablement'
   - field: 'enablement'
+  - field: 'inherited'
+  - field: 'inherited_from'
   - field: 'parent'
     provider_only: true
