@@ -70,6 +70,11 @@ func ResourceKMSAutokeyConfig() *schema.Resource {
 CryptoKey for any new KeyHandle the Developer creates. Should have the form
 'projects/<project_id_or_number>'.`,
 			},
+			"etag": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: `The etag of the AutokeyConfig for optimistic concurrency control.`,
+			},
 		},
 		UseJSONNumber: true,
 	}
@@ -173,6 +178,9 @@ func resourceKMSAutokeyConfigRead(d *schema.ResourceData, meta interface{}) erro
 	}
 
 	if err := d.Set("key_project", flattenKMSAutokeyConfigKeyProject(res["keyProject"], d, config)); err != nil {
+		return fmt.Errorf("Error reading AutokeyConfig: %s", err)
+	}
+	if err := d.Set("etag", flattenKMSAutokeyConfigEtag(res["etag"], d, config)); err != nil {
 		return fmt.Errorf("Error reading AutokeyConfig: %s", err)
 	}
 
@@ -297,6 +305,10 @@ func resourceKMSAutokeyConfigImport(d *schema.ResourceData, meta interface{}) ([
 }
 
 func flattenKMSAutokeyConfigKeyProject(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenKMSAutokeyConfigEtag(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
