@@ -227,7 +227,7 @@ resource "google_compute_network" "custom_test" {
 func TestAccCloudRunV2Job_cloudrunv2JobWithDirectVPCUpdate(t *testing.T) {
 	t.Parallel()
 
-	jobName := fmt.Sprintf("tf-test-cloudrun-service%s", acctest.RandString(t, 10))
+	jobName := fmt.Sprintf("tf-test-cloudrun-job%s", acctest.RandString(t, 10))
 	context := map[string]interface{}{
 		"job_name": jobName,
 		"project":  envvar.GetTestProjectFromEnv(),
@@ -328,7 +328,7 @@ func TestAccCloudRunV2Job_cloudrunv2JobWithGcsUpdate(t *testing.T) {
 	acctest.SkipIfVcr(t)
 	t.Parallel()
 
-	jobName := fmt.Sprintf("tf-test-cloudrun-service%s", acctest.RandString(t, 10))
+	jobName := fmt.Sprintf("tf-test-cloudrun-job%s", acctest.RandString(t, 10))
 	context := map[string]interface{}{
 		"job_name": jobName,
 	}
@@ -339,7 +339,7 @@ func TestAccCloudRunV2Job_cloudrunv2JobWithGcsUpdate(t *testing.T) {
 		CheckDestroy:             testAccCheckCloudRunV2JobDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudRunV2Job_cloudrunv2JobWithNoVolume(context),
+				Config: testAccCloudRunV2Job_cloudrunv2BasicJob(context),
 			},
 			{
 				ResourceName:            "google_cloud_run_v2_job.default",
@@ -360,7 +360,7 @@ func TestAccCloudRunV2Job_cloudrunv2JobWithGcsUpdate(t *testing.T) {
 	})
 }
 
-func testAccCloudRunV2Job_cloudrunv2JobWithNoVolume(context map[string]interface{}) string {
+func testAccCloudRunV2Job_cloudrunv2BasicJob(context map[string]interface{}) string {
 	return acctest.Nprintf(`
   resource "google_cloud_run_v2_job" "default" {
     name     = "%{job_name}"
@@ -422,7 +422,7 @@ func TestAccCloudRunV2Job_cloudrunv2JobWithNfsUpdate(t *testing.T) {
 	acctest.SkipIfVcr(t)
 	t.Parallel()
 
-	jobName := fmt.Sprintf("tf-test-cloudrun-service%s", acctest.RandString(t, 10))
+	jobName := fmt.Sprintf("tf-test-cloudrun-job%s", acctest.RandString(t, 10))
 	context := map[string]interface{}{
 		"job_name": jobName,
 	}
@@ -433,7 +433,7 @@ func TestAccCloudRunV2Job_cloudrunv2JobWithNfsUpdate(t *testing.T) {
 		CheckDestroy:             testAccCheckCloudRunV2JobDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudRunV2Job_cloudrunv2JobWithNoVolume(context),
+				Config: testAccCloudRunV2Job_cloudrunv2BasicJob(context),
 			},
 			{
 				ResourceName:            "google_cloud_run_v2_job.default",
@@ -896,7 +896,7 @@ resource "google_cloud_run_v2_job" "default" {
 func TestAccCloudRunV2Job_cloudrunv2JobWithStartExecutionTokenUpdate(t *testing.T) {
 	t.Parallel()
 
-	jobName := fmt.Sprintf("tf-test-cloudrun-service%s", acctest.RandString(t, 10))
+	jobName := fmt.Sprintf("tf-test-cloudrun-job%s", acctest.RandString(t, 10))
 	context1 := map[string]interface{}{
 		"job_name": jobName,
 		"token":    "token1",
@@ -954,7 +954,7 @@ func testAccCloudRunV2Job_cloudrunv2JobWithStartExecutionToken(context map[strin
 func TestAccCloudRunV2Job_cloudrunv2JobWithRunExecutionTokenUpdate(t *testing.T) {
 	t.Parallel()
 
-	jobName := fmt.Sprintf("tf-test-cloudrun-service%s", acctest.RandString(t, 10))
+	jobName := fmt.Sprintf("tf-test-cloudrun-job%s", acctest.RandString(t, 10))
 	context1 := map[string]interface{}{
 		"job_name": jobName,
 		"token":    "token1",
@@ -1004,6 +1004,76 @@ func testAccCloudRunV2Job_cloudrunv2JobWithRunExecutionToken(context map[string]
           image = "us-docker.pkg.dev/cloudrun/container/job"
         }
       }
+    }
+  }
+`, context)
+}
+
+func TestAccCloudRunV2Job_cloudrunv2JobWithGpuUpdate(t *testing.T) {
+	acctest.SkipIfVcr(t)
+	t.Parallel()
+
+	jobName := fmt.Sprintf("tf-test-cloudrun-job-gpu%s", acctest.RandString(t, 10))
+	context := map[string]interface{}{
+		"job_name": jobName,
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckCloudRunV2JobDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudRunV2Job_cloudrunv2BasicJob(context),
+			},
+			{
+				ResourceName:            "google_cloud_run_v2_job.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"location", "launch_stage", "deletion_protection"},
+			},
+			{
+				Config: testAccCloudRunV2Job_cloudrunv2JobWithGpu(context),
+			},
+			{
+				ResourceName:            "google_cloud_run_v2_job.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"location", "launch_stage", "deletion_protection"},
+			},
+		},
+	})
+}
+
+func testAccCloudRunV2Job_cloudrunv2JobWithGpu(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+  resource "google_cloud_run_v2_job" "default" {
+    provider = google-beta
+    name     = "%{job_name}"
+    location = "us-central1"
+    launch_stage = "BETA"
+    deletion_protection = false
+    template {
+      template {
+        containers {
+          image = "us-docker.pkg.dev/cloudrun/container/job"
+          resources {
+            limits = {
+              "cpu" = "4"
+              "memory" = "16Gi"
+              "nvidia.com/gpu" = "1"
+            }
+          }
+        }
+        node_selector {
+          accelerator = "nvidia-l4"
+        }
+      }
+    }
+    lifecycle {
+      ignore_changes = [
+        launch_stage,
+      ]
     }
   }
 `, context)

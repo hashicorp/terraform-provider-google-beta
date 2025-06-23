@@ -166,7 +166,7 @@ If omitted, a port number will be chosen and passed to the container through the
 																Type:        schema.TypeMap,
 																Computed:    true,
 																Optional:    true,
-																Description: `Only memory and CPU are supported. Use key 'cpu' for CPU limit and 'memory' for memory limit. Note: The only supported values for CPU are '1', '2', '4', and '8'. Setting 4 CPU requires at least 2Gi of memory. The values of the map is string form of the 'quantity' k8s type: https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/apimachinery/pkg/api/resource/quantity.go`,
+																Description: `Only memory, CPU, and nvidia.com/gpu are supported. Use key 'cpu' for CPU limit, 'memory' for memory limit, 'nvidia.com/gpu' for gpu limit. Note: The only supported values for CPU are '1', '2', '4', and '8'. Setting 4 CPU requires at least 2Gi of memory. The values of the map is string form of the 'quantity' k8s type: https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/apimachinery/pkg/api/resource/quantity.go`,
 																Elem:        &schema.Schema{Type: schema.TypeString},
 															},
 														},
@@ -343,6 +343,21 @@ Must be smaller than periodSeconds.`,
 										Optional:    true,
 										Description: `Number of retries allowed per Task, before marking this Task failed. Defaults to 3. Minimum value is 0.`,
 										Default:     3,
+									},
+									"node_selector": {
+										Type:        schema.TypeList,
+										Optional:    true,
+										Description: `Node Selector describes the hardware requirements of the resources.`,
+										MaxItems:    1,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"accelerator": {
+													Type:        schema.TypeString,
+													Required:    true,
+													Description: `The GPU to attach to an instance. See https://cloud.google.com/run/docs/configuring/jobs/gpu for configuring GPU.`,
+												},
+											},
+										},
 									},
 									"service_account": {
 										Type:        schema.TypeString,
@@ -1625,6 +1640,8 @@ func flattenCloudRunV2JobTemplateTemplate(v interface{}, d *schema.ResourceData,
 		flattenCloudRunV2JobTemplateTemplateVpcAccess(original["vpcAccess"], d, config)
 	transformed["max_retries"] =
 		flattenCloudRunV2JobTemplateTemplateMaxRetries(original["maxRetries"], d, config)
+	transformed["node_selector"] =
+		flattenCloudRunV2JobTemplateTemplateNodeSelector(original["nodeSelector"], d, config)
 	return []interface{}{transformed}
 }
 func flattenCloudRunV2JobTemplateTemplateContainers(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -2340,6 +2357,23 @@ func flattenCloudRunV2JobTemplateTemplateMaxRetries(v interface{}, d *schema.Res
 	return v // let terraform core handle it otherwise
 }
 
+func flattenCloudRunV2JobTemplateTemplateNodeSelector(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["accelerator"] =
+		flattenCloudRunV2JobTemplateTemplateNodeSelectorAccelerator(original["accelerator"], d, config)
+	return []interface{}{transformed}
+}
+func flattenCloudRunV2JobTemplateTemplateNodeSelectorAccelerator(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenCloudRunV2JobObservedGeneration(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
@@ -2742,6 +2776,13 @@ func expandCloudRunV2JobTemplateTemplate(v interface{}, d tpgresource.TerraformR
 		return nil, err
 	} else {
 		transformed["maxRetries"] = transformedMaxRetries
+	}
+
+	transformedNodeSelector, err := expandCloudRunV2JobTemplateTemplateNodeSelector(original["node_selector"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedNodeSelector); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["nodeSelector"] = transformedNodeSelector
 	}
 
 	return transformed, nil
@@ -3695,6 +3736,29 @@ func expandCloudRunV2JobTemplateTemplateVpcAccessNetworkInterfacesTags(v interfa
 }
 
 func expandCloudRunV2JobTemplateTemplateMaxRetries(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandCloudRunV2JobTemplateTemplateNodeSelector(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedAccelerator, err := expandCloudRunV2JobTemplateTemplateNodeSelectorAccelerator(original["accelerator"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedAccelerator); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["accelerator"] = transformedAccelerator
+	}
+
+	return transformed, nil
+}
+
+func expandCloudRunV2JobTemplateTemplateNodeSelectorAccelerator(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
