@@ -65,16 +65,26 @@ func ResourceCloudQuotasQuotaAdjusterSettings() *schema.Resource {
 				Description: `The parent of the quota preference. Allowed parent format is "projects/[project-id / number]".`,
 			},
 			"effective_container": {
-				Type:     schema.TypeString,
-				Computed: true,
-				Description: `The resource container that determines if the quota adjuster is set for this project.
-Expect this field to be empty currently.`,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: `The resource container that determines if the quota adjuster is set for this project.`,
 			},
 			"effective_enablement": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: `Based on the effective container's setting above, determines Whether this resource container has the quota adjuster enabled.`,
+			},
+			"inherited": {
+				Type:        schema.TypeBool,
+				Computed:    true,
+				Description: `Indicates whether the setting is inherited or explicitly specified.`,
+			},
+			"inherited_from": {
 				Type:     schema.TypeString,
 				Computed: true,
-				Description: `Based on the effective container's setting above, determines Whether this resource container has the quota adjuster enabled.
-Expect this field to be empty currently.`,
+				Description: `The resource container from which the setting is inherited. This refers to the  nearest ancestor with enablement set (either ENABLED or DISABLED).
+The value can be 'organizations/{organization_id}', 'folders/{folder_id}', or can be 'default' if no ancestor exists with enablement set.
+The value will be empty when 'enablement' is specified on this resource container.`,
 			},
 		},
 		UseJSONNumber: true,
@@ -177,6 +187,12 @@ func resourceCloudQuotasQuotaAdjusterSettingsRead(d *schema.ResourceData, meta i
 	if err := d.Set("effective_enablement", flattenCloudQuotasQuotaAdjusterSettingsEffectiveEnablement(res["effectiveEnablement"], d, config)); err != nil {
 		return fmt.Errorf("Error reading QuotaAdjusterSettings: %s", err)
 	}
+	if err := d.Set("inherited", flattenCloudQuotasQuotaAdjusterSettingsInherited(res["inherited"], d, config)); err != nil {
+		return fmt.Errorf("Error reading QuotaAdjusterSettings: %s", err)
+	}
+	if err := d.Set("inherited_from", flattenCloudQuotasQuotaAdjusterSettingsInheritedFrom(res["inheritedFrom"], d, config)); err != nil {
+		return fmt.Errorf("Error reading QuotaAdjusterSettings: %s", err)
+	}
 
 	return nil
 }
@@ -267,6 +283,14 @@ func flattenCloudQuotasQuotaAdjusterSettingsEffectiveContainer(v interface{}, d 
 }
 
 func flattenCloudQuotasQuotaAdjusterSettingsEffectiveEnablement(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenCloudQuotasQuotaAdjusterSettingsInherited(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenCloudQuotasQuotaAdjusterSettingsInheritedFrom(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 

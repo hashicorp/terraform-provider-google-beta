@@ -145,6 +145,67 @@ resource "google_network_security_backend_authentication_config" "default" {
 `, context)
 }
 
+func TestAccNetworkSecurityBackendAuthenticationConfig_backendServiceTlsSettingsExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckNetworkSecurityBackendAuthenticationConfigDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccNetworkSecurityBackendAuthenticationConfig_backendServiceTlsSettingsExample(context),
+			},
+			{
+				ResourceName:            "google_network_security_backend_authentication_config.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"labels", "location", "name", "terraform_labels"},
+			},
+		},
+	})
+}
+
+func testAccNetworkSecurityBackendAuthenticationConfig_backendServiceTlsSettingsExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_compute_backend_service" "default" {
+  provider = google-beta
+  name          = "tf-test-backend-service%{random_suffix}"
+  health_checks = [google_compute_health_check.default.id]
+  load_balancing_scheme = "EXTERNAL_MANAGED"
+  protocol = "HTTPS"
+  tls_settings {
+    sni = "example.com"
+    subject_alt_names {
+        dns_name = "example.com"
+    }
+    subject_alt_names {
+        uniform_resource_identifier = "https://example.com"
+    }
+    authentication_config = "//networksecurity.googleapis.com/${google_network_security_backend_authentication_config.default.id}"
+  }
+}
+
+resource "google_compute_health_check" "default" {
+  provider = google-beta
+  name = "tf-test-health-check%{random_suffix}"
+  http_health_check {
+    port = 80
+  }
+}
+
+resource "google_network_security_backend_authentication_config" "default" {
+  provider = google-beta
+  name             = "authentication%{random_suffix}"
+  well_known_roots = "PUBLIC_ROOTS"
+}
+`, context)
+}
+
 func testAccCheckNetworkSecurityBackendAuthenticationConfigDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		for name, rs := range s.RootModule().Resources {

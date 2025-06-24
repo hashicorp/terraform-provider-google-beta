@@ -662,6 +662,33 @@ responses.`,
 				Optional:    true,
 				Description: `An optional description of this resource.`,
 			},
+			"dynamic_forwarding": {
+				Type:     schema.TypeList,
+				Optional: true,
+				Description: `Dynamic forwarding configuration. This field is used to configure the backend service with dynamic forwarding
+feature which together with Service Extension allows customized and complex routing logic.`,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"ip_port_selection": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							Description: `IP:PORT based dynamic forwarding configuration.`,
+							MaxItems:    1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"enabled": {
+										Type:        schema.TypeBool,
+										Optional:    true,
+										ForceNew:    true,
+										Description: `A boolean flag enabling IP:PORT based dynamic forwarding.`,
+									},
+								},
+							},
+						},
+					},
+				},
+			},
 			"edge_security_policy": {
 				Type:             schema.TypeString,
 				Optional:         true,
@@ -672,6 +699,37 @@ responses.`,
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Description: `If true, enable Cloud CDN for this BackendService.`,
+			},
+			"external_managed_migration_state": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: verify.ValidateEnum([]string{"PREPARE", "TEST_BY_PERCENTAGE", "TEST_ALL_TRAFFIC", ""}),
+				Description: `Specifies the canary migration state. Possible values are PREPARE, TEST_BY_PERCENTAGE, and
+TEST_ALL_TRAFFIC.
+
+To begin the migration from EXTERNAL to EXTERNAL_MANAGED, the state must be changed to
+PREPARE. The state must be changed to TEST_ALL_TRAFFIC before the loadBalancingScheme can be
+changed to EXTERNAL_MANAGED. Optionally, the TEST_BY_PERCENTAGE state can be used to migrate
+traffic by percentage using externalManagedMigrationTestingPercentage.
+
+Rolling back a migration requires the states to be set in reverse order. So changing the
+scheme from EXTERNAL_MANAGED to EXTERNAL requires the state to be set to TEST_ALL_TRAFFIC at
+the same time. Optionally, the TEST_BY_PERCENTAGE state can be used to migrate some traffic
+back to EXTERNAL or PREPARE can be used to migrate all traffic back to EXTERNAL. Possible values: ["PREPARE", "TEST_BY_PERCENTAGE", "TEST_ALL_TRAFFIC"]`,
+			},
+			"external_managed_migration_testing_percentage": {
+				Type:     schema.TypeFloat,
+				Optional: true,
+				Description: `Determines the fraction of requests that should be processed by the Global external
+Application Load Balancer.
+
+The value of this field must be in the range [0, 100].
+
+Session affinity options will slightly affect this routing behavior, for more details,
+see: Session Affinity.
+
+This value can only be set if the loadBalancingScheme in the backend service is set to
+EXTERNAL (when using the Classic ALB) and the migration state is TEST_BY_PERCENTAGE.`,
 			},
 			"health_checks": {
 				Type:     schema.TypeSet,
@@ -734,7 +792,6 @@ If OAuth client is not set, the Google-managed OAuth client is used.`,
 			"load_balancing_scheme": {
 				Type:         schema.TypeString,
 				Optional:     true,
-				ForceNew:     true,
 				ValidateFunc: verify.ValidateEnum([]string{"EXTERNAL", "INTERNAL_SELF_MANAGED", "INTERNAL_MANAGED", "EXTERNAL_MANAGED", ""}),
 				Description: `Indicates whether the backend service will be used with internal or
 external load balancing. A backend service created for one type of
@@ -893,7 +950,7 @@ The possible values are:
 
 locality_lb_policy is applicable to either:
 
-* A regional backend service with the service_protocol set to HTTP, HTTPS, or HTTP2,
+* A regional backend service with the service_protocol set to HTTP, HTTPS, HTTP2 or H2C,
   and loadBalancingScheme set to INTERNAL_MANAGED.
 * A global backend service with the load_balancing_scheme set to INTERNAL_SELF_MANAGED.
 * A regional backend service with loadBalancingScheme set to EXTERNAL (External Network
@@ -927,7 +984,8 @@ If logging is enabled, logs will be exported to Stackdriver.`,
 							Optional: true,
 							Description: `This field can only be specified if logging is enabled for this backend service and "logConfig.optionalMode"
 was set to CUSTOM. Contains a list of optional fields you want to include in the logs.
-For example: serverInstance, serverGkeDetails.cluster, serverGkeDetails.pod.podNamespace`,
+For example: serverInstance, serverGkeDetails.cluster, serverGkeDetails.pod.podNamespace
+For example: orca_load_report, tls.protocol`,
 							Elem: &schema.Schema{
 								Type: schema.TypeString,
 							},
@@ -978,6 +1036,42 @@ This field is only allowed when the loadBalancingScheme of the backend service i
 							Description: `Span of time that's a fraction of a second at nanosecond resolution.
 Durations less than one second are represented with a 0 seconds field and a positive nanos field.
 Must be from 0 to 999,999,999 inclusive.`,
+						},
+					},
+				},
+			},
+			"network_pass_through_lb_traffic_policy": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: `Configures traffic steering properties of internal passthrough Network Load Balancers.`,
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"zonal_affinity": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							Description: `When configured, new connections are load balanced across healthy backend endpoints in the local zone.`,
+							MaxItems:    1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"spillover": {
+										Type:         schema.TypeString,
+										Optional:     true,
+										ValidateFunc: verify.ValidateEnum([]string{"ZONAL_AFFINITY_DISABLED", "ZONAL_AFFINITY_SPILL_CROSS_ZONE", "ZONAL_AFFINITY_STAY_WITHIN_ZONE", ""}),
+										Description:  `This field indicates whether zonal affinity is enabled or not. Default value: "ZONAL_AFFINITY_DISABLED" Possible values: ["ZONAL_AFFINITY_DISABLED", "ZONAL_AFFINITY_SPILL_CROSS_ZONE", "ZONAL_AFFINITY_STAY_WITHIN_ZONE"]`,
+										Default:      "ZONAL_AFFINITY_DISABLED",
+									},
+									"spillover_ratio": {
+										Type:     schema.TypeFloat,
+										Optional: true,
+										Description: `The value of the field must be in [0, 1]. When the ratio of the count of healthy backend endpoints in a zone
+to the count of backend endpoints in that same zone is equal to or above this threshold, the load balancer
+distributes new connections to all healthy endpoints in the local zone only. When the ratio of the count
+of healthy backend endpoints in a zone to the count of backend endpoints in that same zone is below this
+threshold, the load balancer distributes all new connections to all healthy endpoints across all zones.`,
+									},
+								},
+							},
 						},
 					},
 				},
@@ -1134,12 +1228,12 @@ scheme is EXTERNAL.`,
 				Type:         schema.TypeString,
 				Computed:     true,
 				Optional:     true,
-				ValidateFunc: verify.ValidateEnum([]string{"HTTP", "HTTPS", "HTTP2", "TCP", "SSL", "GRPC", "UNSPECIFIED", ""}),
+				ValidateFunc: verify.ValidateEnum([]string{"HTTP", "HTTPS", "HTTP2", "TCP", "SSL", "UDP", "GRPC", "UNSPECIFIED", "H2C", ""}),
 				Description: `The protocol this BackendService uses to communicate with backends.
-The default is HTTP. **NOTE**: HTTP2 is only valid for beta HTTP/2 load balancer
-types and may result in errors if used with the GA API. **NOTE**: With protocol “UNSPECIFIED”,
-the backend service can be used by Layer 4 Internal Load Balancing or Network Load Balancing
-with TCP/UDP/L3_DEFAULT Forwarding Rule protocol. Possible values: ["HTTP", "HTTPS", "HTTP2", "TCP", "SSL", "GRPC", "UNSPECIFIED"]`,
+The default is HTTP. Possible values are HTTP, HTTPS, HTTP2, H2C, TCP, SSL, UDP
+or GRPC. Refer to the documentation for the load balancers or for Traffic Director
+for more information. Must be set to GRPC when the backend service is referenced
+by a URL map that is bound to target gRPC proxy. Possible values: ["HTTP", "HTTPS", "HTTP2", "TCP", "SSL", "UDP", "GRPC", "UNSPECIFIED", "H2C"]`,
 			},
 			"security_policy": {
 				Type:             schema.TypeString,
@@ -1151,7 +1245,7 @@ with TCP/UDP/L3_DEFAULT Forwarding Rule protocol. Possible values: ["HTTP", "HTT
 				Type:     schema.TypeList,
 				Optional: true,
 				Description: `The security settings that apply to this backend service. This field is applicable to either
-a regional backend service with the service_protocol set to HTTP, HTTPS, or HTTP2, and
+a regional backend service with the service_protocol set to HTTP, HTTPS, HTTP2 or H2C, and
 load_balancing_scheme set to INTERNAL_MANAGED; or a global backend service with the
 load_balancing_scheme set to INTERNAL_SELF_MANAGED.`,
 				MaxItems: 1,
@@ -1645,6 +1739,18 @@ func resourceComputeBackendServiceCreate(d *schema.ResourceData, meta interface{
 	} else if v, ok := d.GetOkExists("load_balancing_scheme"); !tpgresource.IsEmptyValue(reflect.ValueOf(loadBalancingSchemeProp)) && (ok || !reflect.DeepEqual(v, loadBalancingSchemeProp)) {
 		obj["loadBalancingScheme"] = loadBalancingSchemeProp
 	}
+	externalManagedMigrationStateProp, err := expandComputeBackendServiceExternalManagedMigrationState(d.Get("external_managed_migration_state"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("external_managed_migration_state"); !tpgresource.IsEmptyValue(reflect.ValueOf(externalManagedMigrationStateProp)) && (ok || !reflect.DeepEqual(v, externalManagedMigrationStateProp)) {
+		obj["externalManagedMigrationState"] = externalManagedMigrationStateProp
+	}
+	externalManagedMigrationTestingPercentageProp, err := expandComputeBackendServiceExternalManagedMigrationTestingPercentage(d.Get("external_managed_migration_testing_percentage"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("external_managed_migration_testing_percentage"); !tpgresource.IsEmptyValue(reflect.ValueOf(externalManagedMigrationTestingPercentageProp)) && (ok || !reflect.DeepEqual(v, externalManagedMigrationTestingPercentageProp)) {
+		obj["externalManagedMigrationTestingPercentage"] = externalManagedMigrationTestingPercentageProp
+	}
 	localityLbPolicyProp, err := expandComputeBackendServiceLocalityLbPolicy(d.Get("locality_lb_policy"), d, config)
 	if err != nil {
 		return err
@@ -1746,6 +1852,18 @@ func resourceComputeBackendServiceCreate(d *schema.ResourceData, meta interface{
 		return err
 	} else if v, ok := d.GetOkExists("max_stream_duration"); !tpgresource.IsEmptyValue(reflect.ValueOf(maxStreamDurationProp)) && (ok || !reflect.DeepEqual(v, maxStreamDurationProp)) {
 		obj["maxStreamDuration"] = maxStreamDurationProp
+	}
+	networkPassThroughLbTrafficPolicyProp, err := expandComputeBackendServiceNetworkPassThroughLbTrafficPolicy(d.Get("network_pass_through_lb_traffic_policy"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("network_pass_through_lb_traffic_policy"); !tpgresource.IsEmptyValue(reflect.ValueOf(networkPassThroughLbTrafficPolicyProp)) && (ok || !reflect.DeepEqual(v, networkPassThroughLbTrafficPolicyProp)) {
+		obj["networkPassThroughLbTrafficPolicy"] = networkPassThroughLbTrafficPolicyProp
+	}
+	dynamicForwardingProp, err := expandComputeBackendServiceDynamicForwarding(d.Get("dynamic_forwarding"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("dynamic_forwarding"); !tpgresource.IsEmptyValue(reflect.ValueOf(dynamicForwardingProp)) && (ok || !reflect.DeepEqual(v, dynamicForwardingProp)) {
+		obj["dynamicForwarding"] = dynamicForwardingProp
 	}
 
 	obj, err = resourceComputeBackendServiceEncoder(d, meta, obj)
@@ -1968,6 +2086,12 @@ func resourceComputeBackendServiceRead(d *schema.ResourceData, meta interface{})
 	if err := d.Set("load_balancing_scheme", flattenComputeBackendServiceLoadBalancingScheme(res["loadBalancingScheme"], d, config)); err != nil {
 		return fmt.Errorf("Error reading BackendService: %s", err)
 	}
+	if err := d.Set("external_managed_migration_state", flattenComputeBackendServiceExternalManagedMigrationState(res["externalManagedMigrationState"], d, config)); err != nil {
+		return fmt.Errorf("Error reading BackendService: %s", err)
+	}
+	if err := d.Set("external_managed_migration_testing_percentage", flattenComputeBackendServiceExternalManagedMigrationTestingPercentage(res["externalManagedMigrationTestingPercentage"], d, config)); err != nil {
+		return fmt.Errorf("Error reading BackendService: %s", err)
+	}
 	if err := d.Set("locality_lb_policy", flattenComputeBackendServiceLocalityLbPolicy(res["localityLbPolicy"], d, config)); err != nil {
 		return fmt.Errorf("Error reading BackendService: %s", err)
 	}
@@ -2017,6 +2141,12 @@ func resourceComputeBackendServiceRead(d *schema.ResourceData, meta interface{})
 		return fmt.Errorf("Error reading BackendService: %s", err)
 	}
 	if err := d.Set("max_stream_duration", flattenComputeBackendServiceMaxStreamDuration(res["maxStreamDuration"], d, config)); err != nil {
+		return fmt.Errorf("Error reading BackendService: %s", err)
+	}
+	if err := d.Set("network_pass_through_lb_traffic_policy", flattenComputeBackendServiceNetworkPassThroughLbTrafficPolicy(res["networkPassThroughLbTrafficPolicy"], d, config)); err != nil {
+		return fmt.Errorf("Error reading BackendService: %s", err)
+	}
+	if err := d.Set("dynamic_forwarding", flattenComputeBackendServiceDynamicForwarding(res["dynamicForwarding"], d, config)); err != nil {
 		return fmt.Errorf("Error reading BackendService: %s", err)
 	}
 	if err := d.Set("self_link", tpgresource.ConvertSelfLinkToV1(res["selfLink"].(string))); err != nil {
@@ -2138,6 +2268,18 @@ func resourceComputeBackendServiceUpdate(d *schema.ResourceData, meta interface{
 	} else if v, ok := d.GetOkExists("load_balancing_scheme"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, loadBalancingSchemeProp)) {
 		obj["loadBalancingScheme"] = loadBalancingSchemeProp
 	}
+	externalManagedMigrationStateProp, err := expandComputeBackendServiceExternalManagedMigrationState(d.Get("external_managed_migration_state"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("external_managed_migration_state"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, externalManagedMigrationStateProp)) {
+		obj["externalManagedMigrationState"] = externalManagedMigrationStateProp
+	}
+	externalManagedMigrationTestingPercentageProp, err := expandComputeBackendServiceExternalManagedMigrationTestingPercentage(d.Get("external_managed_migration_testing_percentage"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("external_managed_migration_testing_percentage"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, externalManagedMigrationTestingPercentageProp)) {
+		obj["externalManagedMigrationTestingPercentage"] = externalManagedMigrationTestingPercentageProp
+	}
 	localityLbPolicyProp, err := expandComputeBackendServiceLocalityLbPolicy(d.Get("locality_lb_policy"), d, config)
 	if err != nil {
 		return err
@@ -2239,6 +2381,18 @@ func resourceComputeBackendServiceUpdate(d *schema.ResourceData, meta interface{
 		return err
 	} else if v, ok := d.GetOkExists("max_stream_duration"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, maxStreamDurationProp)) {
 		obj["maxStreamDuration"] = maxStreamDurationProp
+	}
+	networkPassThroughLbTrafficPolicyProp, err := expandComputeBackendServiceNetworkPassThroughLbTrafficPolicy(d.Get("network_pass_through_lb_traffic_policy"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("network_pass_through_lb_traffic_policy"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, networkPassThroughLbTrafficPolicyProp)) {
+		obj["networkPassThroughLbTrafficPolicy"] = networkPassThroughLbTrafficPolicyProp
+	}
+	dynamicForwardingProp, err := expandComputeBackendServiceDynamicForwarding(d.Get("dynamic_forwarding"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("dynamic_forwarding"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, dynamicForwardingProp)) {
+		obj["dynamicForwarding"] = dynamicForwardingProp
 	}
 
 	obj, err = resourceComputeBackendServiceEncoder(d, meta, obj)
@@ -3247,6 +3401,14 @@ func flattenComputeBackendServiceLoadBalancingScheme(v interface{}, d *schema.Re
 	return v
 }
 
+func flattenComputeBackendServiceExternalManagedMigrationState(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenComputeBackendServiceExternalManagedMigrationTestingPercentage(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenComputeBackendServiceLocalityLbPolicy(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
@@ -3924,6 +4086,72 @@ func flattenComputeBackendServiceMaxStreamDurationNanos(v interface{}, d *schema
 	}
 
 	return v // let terraform core handle it otherwise
+}
+
+func flattenComputeBackendServiceNetworkPassThroughLbTrafficPolicy(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["zonal_affinity"] =
+		flattenComputeBackendServiceNetworkPassThroughLbTrafficPolicyZonalAffinity(original["zonalAffinity"], d, config)
+	return []interface{}{transformed}
+}
+func flattenComputeBackendServiceNetworkPassThroughLbTrafficPolicyZonalAffinity(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["spillover"] =
+		flattenComputeBackendServiceNetworkPassThroughLbTrafficPolicyZonalAffinitySpillover(original["spillover"], d, config)
+	transformed["spillover_ratio"] =
+		flattenComputeBackendServiceNetworkPassThroughLbTrafficPolicyZonalAffinitySpilloverRatio(original["spilloverRatio"], d, config)
+	return []interface{}{transformed}
+}
+func flattenComputeBackendServiceNetworkPassThroughLbTrafficPolicyZonalAffinitySpillover(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenComputeBackendServiceNetworkPassThroughLbTrafficPolicyZonalAffinitySpilloverRatio(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenComputeBackendServiceDynamicForwarding(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["ip_port_selection"] =
+		flattenComputeBackendServiceDynamicForwardingIpPortSelection(original["ipPortSelection"], d, config)
+	return []interface{}{transformed}
+}
+func flattenComputeBackendServiceDynamicForwardingIpPortSelection(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["enabled"] =
+		flattenComputeBackendServiceDynamicForwardingIpPortSelectionEnabled(original["enabled"], d, config)
+	return []interface{}{transformed}
+}
+func flattenComputeBackendServiceDynamicForwardingIpPortSelectionEnabled(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
 }
 
 func expandComputeBackendServiceAffinityCookieTtlSec(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
@@ -4743,6 +4971,14 @@ func expandComputeBackendServiceLoadBalancingScheme(v interface{}, d tpgresource
 	return v, nil
 }
 
+func expandComputeBackendServiceExternalManagedMigrationState(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeBackendServiceExternalManagedMigrationTestingPercentage(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
 func expandComputeBackendServiceLocalityLbPolicy(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
@@ -5432,6 +5668,101 @@ func expandComputeBackendServiceMaxStreamDurationSeconds(v interface{}, d tpgres
 }
 
 func expandComputeBackendServiceMaxStreamDurationNanos(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeBackendServiceNetworkPassThroughLbTrafficPolicy(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedZonalAffinity, err := expandComputeBackendServiceNetworkPassThroughLbTrafficPolicyZonalAffinity(original["zonal_affinity"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedZonalAffinity); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["zonalAffinity"] = transformedZonalAffinity
+	}
+
+	return transformed, nil
+}
+
+func expandComputeBackendServiceNetworkPassThroughLbTrafficPolicyZonalAffinity(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedSpillover, err := expandComputeBackendServiceNetworkPassThroughLbTrafficPolicyZonalAffinitySpillover(original["spillover"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedSpillover); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["spillover"] = transformedSpillover
+	}
+
+	transformedSpilloverRatio, err := expandComputeBackendServiceNetworkPassThroughLbTrafficPolicyZonalAffinitySpilloverRatio(original["spillover_ratio"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedSpilloverRatio); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["spilloverRatio"] = transformedSpilloverRatio
+	}
+
+	return transformed, nil
+}
+
+func expandComputeBackendServiceNetworkPassThroughLbTrafficPolicyZonalAffinitySpillover(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeBackendServiceNetworkPassThroughLbTrafficPolicyZonalAffinitySpilloverRatio(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeBackendServiceDynamicForwarding(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedIpPortSelection, err := expandComputeBackendServiceDynamicForwardingIpPortSelection(original["ip_port_selection"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedIpPortSelection); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["ipPortSelection"] = transformedIpPortSelection
+	}
+
+	return transformed, nil
+}
+
+func expandComputeBackendServiceDynamicForwardingIpPortSelection(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedEnabled, err := expandComputeBackendServiceDynamicForwardingIpPortSelectionEnabled(original["enabled"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedEnabled); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["enabled"] = transformedEnabled
+	}
+
+	return transformed, nil
+}
+
+func expandComputeBackendServiceDynamicForwardingIpPortSelectionEnabled(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

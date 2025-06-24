@@ -26,6 +26,7 @@ fields:
   - field: 'google_ip_address'
   - field: 'google_reference_id'
   - field: 'interconnect_attachments'
+  - field: 'interconnect_groups'
   - field: 'interconnect_type'
   - field: 'label_fingerprint'
   - field: 'labels'
@@ -48,3 +49,4 @@ fields:
   - field: 'state'
   - field: 'terraform_labels'
     provider_only: true
+  - field: 'wire_groups'

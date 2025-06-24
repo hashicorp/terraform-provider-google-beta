@@ -9,6 +9,7 @@ fields:
   - field: 'description'
   - field: 'fingerprint'
   - field: 'name'
+  - field: 'policy_type'
   - field: 'region'
     provider_only: true
   - field: 'region_network_firewall_policy_id'

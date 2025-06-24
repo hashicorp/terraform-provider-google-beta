@@ -1230,7 +1230,7 @@ func flattenComputeRegionDiskType(v interface{}, d *schema.ResourceData, config 
 	if v == nil {
 		return v
 	}
-	return tpgresource.NameFromSelfLinkStateFunc(v)
+	return tpgresource.GetResourceNameFromSelfLink(v.(string))
 }
 
 func flattenComputeRegionDiskSourceDisk(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -1314,7 +1314,7 @@ func flattenComputeRegionDiskRegion(v interface{}, d *schema.ResourceData, confi
 	if v == nil {
 		return v
 	}
-	return tpgresource.NameFromSelfLinkStateFunc(v)
+	return tpgresource.GetResourceNameFromSelfLink(v.(string))
 }
 
 func flattenComputeRegionDiskSnapshot(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
