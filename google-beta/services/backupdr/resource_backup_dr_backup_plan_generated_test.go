@@ -88,6 +88,66 @@ resource "google_backup_dr_backup_plan" "my-backup-plan-1" {
 `, context)
 }
 
+func TestAccBackupDRBackupPlan_backupDrBackupPlanForDiskResourceExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckBackupDRBackupPlanDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccBackupDRBackupPlan_backupDrBackupPlanForDiskResourceExample(context),
+			},
+			{
+				ResourceName:            "google_backup_dr_backup_plan.my-disk-backup-plan-1",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"backup_plan_id", "location"},
+			},
+		},
+	})
+}
+
+func testAccBackupDRBackupPlan_backupDrBackupPlanForDiskResourceExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_backup_dr_backup_vault" "my_backup_vault" {
+  provider = google-beta
+  location                                      = "us-central1"
+  backup_vault_id                               = "tf-test-backup-vault-disk-test%{random_suffix}"
+  backup_minimum_enforced_retention_duration    = "100000s"
+}
+
+resource "google_backup_dr_backup_plan" "my-disk-backup-plan-1" {
+  provider       = google-beta
+  location       = "us-central1"
+  backup_plan_id = "tf-test-backup-plan-disk-test%{random_suffix}"
+  resource_type  = "compute.googleapis.com/Disk"
+  backup_vault   = google_backup_dr_backup_vault.my_backup_vault.id
+
+  backup_rules {
+    rule_id                = "rule-1"
+    backup_retention_days  = 5
+
+    standard_schedule {
+      recurrence_type     = "HOURLY"
+      hourly_frequency    = 1
+      time_zone           = "UTC"
+
+      backup_window {
+        start_hour_of_day = 0
+        end_hour_of_day   = 6
+      }
+    }
+  }
+}
+`, context)
+}
+
 func testAccCheckBackupDRBackupPlanDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		for name, rs := range s.RootModule().Resources {

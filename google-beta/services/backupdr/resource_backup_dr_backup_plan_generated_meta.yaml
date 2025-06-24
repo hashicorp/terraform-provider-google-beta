@@ -27,4 +27,5 @@ fields:
     provider_only: true
   - field: 'name'
   - field: 'resource_type'
+  - field: 'supported_resource_types'
   - field: 'update_time'

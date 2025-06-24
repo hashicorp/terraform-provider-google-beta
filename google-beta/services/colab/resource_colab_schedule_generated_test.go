@@ -295,7 +295,7 @@ func TestAccColabSchedule_colabScheduleFullExample(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckColabScheduleDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -314,6 +314,7 @@ func TestAccColabSchedule_colabScheduleFullExample(t *testing.T) {
 func testAccColabSchedule_colabScheduleFullExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_colab_runtime_template" "my_runtime_template" {
+  provider = google-beta
   name = "tf-test-runtime-template%{random_suffix}"
   display_name = "Runtime template"
   location = "us-central1"
@@ -328,6 +329,7 @@ resource "google_colab_runtime_template" "my_runtime_template" {
 }
 
 resource "google_storage_bucket" "output_bucket" {
+  provider = google-beta
   name          = "tf_test_my_bucket%{random_suffix}"
   location      = "US"
   force_destroy = true
@@ -335,6 +337,7 @@ resource "google_storage_bucket" "output_bucket" {
 }
 
 resource "google_secret_manager_secret" "secret" {
+  provider = google-beta
   secret_id = "secret%{random_suffix}"
   replication {
     auto {}
@@ -342,11 +345,13 @@ resource "google_secret_manager_secret" "secret" {
 }
 
 resource "google_secret_manager_secret_version" "secret_version" {
+  provider = google-beta
   secret = google_secret_manager_secret.secret.id
   secret_data = "secret-data"
 }
 
 resource "google_dataform_repository" "dataform_repository" {
+  provider = google-beta
   name = "tf-test-dataform-repository%{random_suffix}"
   display_name = "dataform_repository"
   npmrc_environment_variables_secret_version = google_secret_manager_secret_version.secret_version.id
@@ -371,6 +376,7 @@ resource "google_dataform_repository" "dataform_repository" {
 }
 
 resource "google_colab_schedule" "schedule" {
+  provider = google-beta
   display_name = "tf-test-full-schedule%{random_suffix}"
   location = "%{location}"
   allow_queueing = true

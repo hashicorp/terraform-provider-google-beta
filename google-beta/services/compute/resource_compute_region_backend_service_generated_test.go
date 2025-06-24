@@ -475,7 +475,7 @@ resource "google_compute_region_backend_service" "default" {
 
   region      = "us-central1"
   name        = "tf-test-region-service%{random_suffix}"
-  protocol    = "HTTP"
+  protocol    = "H2C"
   timeout_sec = 10
 
   health_checks = [google_compute_region_health_check.default.id]
@@ -713,6 +713,47 @@ resource "google_compute_health_check" "health_check" {
   name               = "tf-test-rbs-health-check%{random_suffix}"
   http_health_check {
     port = 80
+  }
+}
+`, context)
+}
+
+func TestAccComputeRegionBackendService_regionBackendServiceDynamicForwardingExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckComputeRegionBackendServiceDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeRegionBackendService_regionBackendServiceDynamicForwardingExample(context),
+			},
+			{
+				ResourceName:            "google_compute_region_backend_service.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"iap.0.oauth2_client_secret", "network", "region"},
+			},
+		},
+	})
+}
+
+func testAccComputeRegionBackendService_regionBackendServiceDynamicForwardingExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_compute_region_backend_service" "default" {
+  provider                        = google-beta
+  name                            = "tf-test-region-service%{random_suffix}"
+  region                          = "us-central1"
+  load_balancing_scheme           = "EXTERNAL_MANAGED"
+  dynamic_forwarding {
+    ip_port_selection {
+      enabled = true
+    }
   }
 }
 `, context)

@@ -128,6 +128,12 @@ The limit is 64 IP ranges/addresses for each FileShareConfig among all NfsExport
 											Type: schema.TypeString,
 										},
 									},
+									"network": {
+										Type:     schema.TypeString,
+										Optional: true,
+										Description: `The source VPC network for 'ip_ranges'.
+Required for instances using Private Service Connect, optional otherwise.`,
+									},
 									"squash_mode": {
 										Type:         schema.TypeString,
 										Optional:     true,
@@ -187,11 +193,31 @@ instance is connected.`,
 							Type:         schema.TypeString,
 							Optional:     true,
 							ForceNew:     true,
-							ValidateFunc: verify.ValidateEnum([]string{"DIRECT_PEERING", "PRIVATE_SERVICE_ACCESS", ""}),
+							ValidateFunc: verify.ValidateEnum([]string{"DIRECT_PEERING", "PRIVATE_SERVICE_ACCESS", "PRIVATE_SERVICE_CONNECT", ""}),
 							Description: `The network connect mode of the Filestore instance.
 If not provided, the connect mode defaults to
-DIRECT_PEERING. Default value: "DIRECT_PEERING" Possible values: ["DIRECT_PEERING", "PRIVATE_SERVICE_ACCESS"]`,
+DIRECT_PEERING. Default value: "DIRECT_PEERING" Possible values: ["DIRECT_PEERING", "PRIVATE_SERVICE_ACCESS", "PRIVATE_SERVICE_CONNECT"]`,
 							Default: "DIRECT_PEERING",
+						},
+						"psc_config": {
+							Type:     schema.TypeList,
+							Optional: true,
+							Description: `Private Service Connect configuration.
+Should only be set when connect_mode is PRIVATE_SERVICE_CONNECT.`,
+							MaxItems: 1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"endpoint_project": {
+										Type:     schema.TypeString,
+										Optional: true,
+										ForceNew: true,
+										Description: `Consumer service project in which the Private Service Connect endpoint
+would be set up. This is optional, and only relevant in case the network
+is a shared VPC. If this is not specified, the endpoint would be set up
+in the VPC host project.`,
+									},
+								},
+							},
 						},
 						"reserved_ip_range": {
 							Type:     schema.TypeString,
@@ -234,12 +260,71 @@ Possible values include: STANDARD, PREMIUM, BASIC_HDD, BASIC_SSD, HIGH_SCALE_SSD
 				Optional:    true,
 				Description: `A description of the instance.`,
 			},
+			"directory_services": {
+				Type:     schema.TypeList,
+				Optional: true,
+				ForceNew: true,
+				Description: `Directory Services configuration.
+Should only be set if protocol is "NFS_V4_1".`,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"ldap": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							ForceNew:    true,
+							Description: `Configuration for LDAP servers.`,
+							MaxItems:    1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"domain": {
+										Type:        schema.TypeString,
+										Required:    true,
+										ForceNew:    true,
+										Description: `The LDAP domain name in the format of 'my-domain.com'.`,
+									},
+									"servers": {
+										Type:     schema.TypeList,
+										Required: true,
+										ForceNew: true,
+										Description: `The servers names are used for specifying the LDAP servers names.
+The LDAP servers names can come with two formats:
+1. DNS name, for example: 'ldap.example1.com', 'ldap.example2.com'.
+2. IP address, for example: '10.0.0.1', '10.0.0.2', '10.0.0.3'.
+All servers names must be in the same format: either all DNS names or all
+IP addresses.`,
+										Elem: &schema.Schema{
+											Type: schema.TypeString,
+										},
+									},
+									"groups_ou": {
+										Type:     schema.TypeString,
+										Optional: true,
+										ForceNew: true,
+										Description: `The groups Organizational Unit (OU) is optional. This parameter is a hint
+to allow faster lookup in the LDAP namespace. In case that this parameter
+is not provided, Filestore instance will query the whole LDAP namespace.`,
+									},
+									"users_ou": {
+										Type:     schema.TypeString,
+										Optional: true,
+										ForceNew: true,
+										Description: `The users Organizational Unit (OU) is optional. This parameter is a hint
+to allow faster lookup in the LDAP namespace. In case that this parameter
+is not provided, Filestore instance will query the whole LDAP namespace.`,
+									},
+								},
+							},
+						},
+					},
+				},
+			},
 			"initial_replication": {
 				Type:     schema.TypeList,
 				Optional: true,
 				ForceNew: true,
 				Description: `Replication configuration, once set, this cannot be updated.
-Addtionally this should be specified on the replica instance only, indicating the active as the peer_instance`,
+Additionally this should be specified on the replica instance only, indicating the active as the peer_instance`,
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -407,6 +492,11 @@ resource, see the 'google_tags_tag_value' resource.`,
 A timestamp in RFC3339 UTC "Zulu" format, with nanosecond resolution and up to nine fractional digits.
 Examples: "2014-10-02T15:01:23Z" and "2014-10-02T15:01:23.045123456Z"`,
 									},
+									"peer_instance": {
+										Type:        schema.TypeString,
+										Computed:    true,
+										Description: `The peer instance.`,
+									},
 									"state": {
 										Type:        schema.TypeString,
 										Computed:    true,
@@ -422,6 +512,11 @@ Examples: "2014-10-02T15:01:23Z" and "2014-10-02T15:01:23.045123456Z"`,
 									},
 								},
 							},
+						},
+						"role": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: `The replication role.`,
 						},
 					},
 				},
@@ -518,6 +613,18 @@ func resourceFilestoreInstanceCreate(d *schema.ResourceData, meta interface{}) e
 	} else if v, ok := d.GetOkExists("tags"); !tpgresource.IsEmptyValue(reflect.ValueOf(tagsProp)) && (ok || !reflect.DeepEqual(v, tagsProp)) {
 		obj["tags"] = tagsProp
 	}
+	replicationProp, err := expandFilestoreInstanceInitialReplication(d.Get("initial_replication"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("initial_replication"); !tpgresource.IsEmptyValue(reflect.ValueOf(replicationProp)) && (ok || !reflect.DeepEqual(v, replicationProp)) {
+		obj["replication"] = replicationProp
+	}
+	directoryServicesProp, err := expandFilestoreInstanceDirectoryServices(d.Get("directory_services"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("directory_services"); !tpgresource.IsEmptyValue(reflect.ValueOf(directoryServicesProp)) && (ok || !reflect.DeepEqual(v, directoryServicesProp)) {
+		obj["directoryServices"] = directoryServicesProp
+	}
 	labelsProp, err := expandFilestoreInstanceEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
@@ -584,25 +691,15 @@ func resourceFilestoreInstanceCreate(d *schema.ResourceData, meta interface{}) e
 	}
 	d.SetId(id)
 
-	// Use the resource in the operation response to populate
-	// identity fields and d.Id() before read
-	var opRes map[string]interface{}
-	err = FilestoreOperationWaitTimeWithResponse(
-		config, res, &opRes, project, "Creating Instance", userAgent,
+	err = FilestoreOperationWaitTime(
+		config, res, project, "Creating Instance", userAgent,
 		d.Timeout(schema.TimeoutCreate))
+
 	if err != nil {
 		// The resource didn't actually create
 		d.SetId("")
-
 		return fmt.Errorf("Error waiting to create Instance: %s", err)
 	}
-
-	// This may have caused the ID to update - update it if so.
-	id, err = tpgresource.ReplaceVars(d, config, "projects/{{project}}/locations/{{location}}/instances/{{name}}")
-	if err != nil {
-		return fmt.Errorf("Error constructing id: %s", err)
-	}
-	d.SetId(id)
 
 	log.Printf("[DEBUG] Finished creating Instance %q: %#v", d.Id(), res)
 
@@ -689,6 +786,9 @@ func resourceFilestoreInstanceRead(d *schema.ResourceData, meta interface{}) err
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
 	if err := d.Set("effective_replication", flattenFilestoreInstanceEffectiveReplication(res["replication"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Instance: %s", err)
+	}
+	if err := d.Set("directory_services", flattenFilestoreInstanceDirectoryServices(res["directoryServices"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
 	if err := d.Set("terraform_labels", flattenFilestoreInstanceTerraformLabels(res["labels"], d, config)); err != nil {
@@ -1006,6 +1106,7 @@ func flattenFilestoreInstanceFileSharesNfsExportOptions(v interface{}, d *schema
 			"squash_mode": flattenFilestoreInstanceFileSharesNfsExportOptionsSquashMode(original["squashMode"], d, config),
 			"anon_uid":    flattenFilestoreInstanceFileSharesNfsExportOptionsAnonUid(original["anonUid"], d, config),
 			"anon_gid":    flattenFilestoreInstanceFileSharesNfsExportOptionsAnonGid(original["anonGid"], d, config),
+			"network":     flattenFilestoreInstanceFileSharesNfsExportOptionsNetwork(original["network"], d, config),
 		})
 	}
 	return transformed
@@ -1056,6 +1157,10 @@ func flattenFilestoreInstanceFileSharesNfsExportOptionsAnonGid(v interface{}, d 
 	return v // let terraform core handle it otherwise
 }
 
+func flattenFilestoreInstanceFileSharesNfsExportOptionsNetwork(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenFilestoreInstanceNetworks(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
@@ -1074,6 +1179,7 @@ func flattenFilestoreInstanceNetworks(v interface{}, d *schema.ResourceData, con
 			"reserved_ip_range": flattenFilestoreInstanceNetworksReservedIpRange(original["reservedIpRange"], d, config),
 			"ip_addresses":      flattenFilestoreInstanceNetworksIpAddresses(original["ipAddresses"], d, config),
 			"connect_mode":      flattenFilestoreInstanceNetworksConnectMode(original["connectMode"], d, config),
+			"psc_config":        flattenFilestoreInstanceNetworksPscConfig(original["pscConfig"], d, config),
 		})
 	}
 	return transformed
@@ -1099,6 +1205,23 @@ func flattenFilestoreInstanceNetworksConnectMode(v interface{}, d *schema.Resour
 		return "DIRECT_PEERING"
 	}
 
+	return v
+}
+
+func flattenFilestoreInstanceNetworksPscConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["endpoint_project"] =
+		flattenFilestoreInstanceNetworksPscConfigEndpointProject(original["endpointProject"], d, config)
+	return []interface{}{transformed}
+}
+func flattenFilestoreInstanceNetworksPscConfigEndpointProject(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -1202,10 +1325,16 @@ func flattenFilestoreInstanceEffectiveReplication(v interface{}, d *schema.Resou
 		return nil
 	}
 	transformed := make(map[string]interface{})
+	transformed["role"] =
+		flattenFilestoreInstanceEffectiveReplicationRole(original["role"], d, config)
 	transformed["replicas"] =
 		flattenFilestoreInstanceEffectiveReplicationReplicas(original["replicas"], d, config)
 	return []interface{}{transformed}
 }
+func flattenFilestoreInstanceEffectiveReplicationRole(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenFilestoreInstanceEffectiveReplicationReplicas(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
@@ -1219,6 +1348,7 @@ func flattenFilestoreInstanceEffectiveReplicationReplicas(v interface{}, d *sche
 			continue
 		}
 		transformed = append(transformed, map[string]interface{}{
+			"peer_instance":         flattenFilestoreInstanceEffectiveReplicationReplicasPeerInstance(original["peerInstance"], d, config),
 			"state":                 flattenFilestoreInstanceEffectiveReplicationReplicasState(original["state"], d, config),
 			"state_reasons":         flattenFilestoreInstanceEffectiveReplicationReplicasStateReasons(original["stateReasons"], d, config),
 			"last_active_sync_time": flattenFilestoreInstanceEffectiveReplicationReplicasLastActiveSyncTime(original["lastActiveSyncTime"], d, config),
@@ -1226,6 +1356,10 @@ func flattenFilestoreInstanceEffectiveReplicationReplicas(v interface{}, d *sche
 	}
 	return transformed
 }
+func flattenFilestoreInstanceEffectiveReplicationReplicasPeerInstance(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenFilestoreInstanceEffectiveReplicationReplicasState(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
@@ -1235,6 +1369,54 @@ func flattenFilestoreInstanceEffectiveReplicationReplicasStateReasons(v interfac
 }
 
 func flattenFilestoreInstanceEffectiveReplicationReplicasLastActiveSyncTime(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenFilestoreInstanceDirectoryServices(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["ldap"] =
+		flattenFilestoreInstanceDirectoryServicesLdap(original["ldap"], d, config)
+	return []interface{}{transformed}
+}
+func flattenFilestoreInstanceDirectoryServicesLdap(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["domain"] =
+		flattenFilestoreInstanceDirectoryServicesLdapDomain(original["domain"], d, config)
+	transformed["servers"] =
+		flattenFilestoreInstanceDirectoryServicesLdapServers(original["servers"], d, config)
+	transformed["users_ou"] =
+		flattenFilestoreInstanceDirectoryServicesLdapUsersOu(original["usersOu"], d, config)
+	transformed["groups_ou"] =
+		flattenFilestoreInstanceDirectoryServicesLdapGroupsOu(original["groupsOu"], d, config)
+	return []interface{}{transformed}
+}
+func flattenFilestoreInstanceDirectoryServicesLdapDomain(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenFilestoreInstanceDirectoryServicesLdapServers(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenFilestoreInstanceDirectoryServicesLdapUsersOu(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenFilestoreInstanceDirectoryServicesLdapGroupsOu(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -1369,6 +1551,13 @@ func expandFilestoreInstanceFileSharesNfsExportOptions(v interface{}, d tpgresou
 			transformed["anonGid"] = transformedAnonGid
 		}
 
+		transformedNetwork, err := expandFilestoreInstanceFileSharesNfsExportOptionsNetwork(original["network"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedNetwork); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["network"] = transformedNetwork
+		}
+
 		req = append(req, transformed)
 	}
 	return req, nil
@@ -1391,6 +1580,10 @@ func expandFilestoreInstanceFileSharesNfsExportOptionsAnonUid(v interface{}, d t
 }
 
 func expandFilestoreInstanceFileSharesNfsExportOptionsAnonGid(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandFilestoreInstanceFileSharesNfsExportOptionsNetwork(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
@@ -1439,6 +1632,13 @@ func expandFilestoreInstanceNetworks(v interface{}, d tpgresource.TerraformResou
 			transformed["connectMode"] = transformedConnectMode
 		}
 
+		transformedPscConfig, err := expandFilestoreInstanceNetworksPscConfig(original["psc_config"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedPscConfig); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["pscConfig"] = transformedPscConfig
+		}
+
 		req = append(req, transformed)
 	}
 	return req, nil
@@ -1461,6 +1661,29 @@ func expandFilestoreInstanceNetworksIpAddresses(v interface{}, d tpgresource.Ter
 }
 
 func expandFilestoreInstanceNetworksConnectMode(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandFilestoreInstanceNetworksPscConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedEndpointProject, err := expandFilestoreInstanceNetworksPscConfigEndpointProject(original["endpoint_project"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedEndpointProject); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["endpointProject"] = transformedEndpointProject
+	}
+
+	return transformed, nil
+}
+
+func expandFilestoreInstanceNetworksPscConfigEndpointProject(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
@@ -1557,6 +1780,137 @@ func expandFilestoreInstanceTags(v interface{}, d tpgresource.TerraformResourceD
 		m[k] = val.(string)
 	}
 	return m, nil
+}
+
+func expandFilestoreInstanceInitialReplication(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedRole, err := expandFilestoreInstanceInitialReplicationRole(original["role"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedRole); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["role"] = transformedRole
+	}
+
+	transformedReplicas, err := expandFilestoreInstanceInitialReplicationReplicas(original["replicas"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedReplicas); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["replicas"] = transformedReplicas
+	}
+
+	return transformed, nil
+}
+
+func expandFilestoreInstanceInitialReplicationRole(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandFilestoreInstanceInitialReplicationReplicas(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	req := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		if raw == nil {
+			continue
+		}
+		original := raw.(map[string]interface{})
+		transformed := make(map[string]interface{})
+
+		transformedPeerInstance, err := expandFilestoreInstanceInitialReplicationReplicasPeerInstance(original["peer_instance"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedPeerInstance); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["peerInstance"] = transformedPeerInstance
+		}
+
+		req = append(req, transformed)
+	}
+	return req, nil
+}
+
+func expandFilestoreInstanceInitialReplicationReplicasPeerInstance(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandFilestoreInstanceDirectoryServices(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedLdap, err := expandFilestoreInstanceDirectoryServicesLdap(original["ldap"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedLdap); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["ldap"] = transformedLdap
+	}
+
+	return transformed, nil
+}
+
+func expandFilestoreInstanceDirectoryServicesLdap(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedDomain, err := expandFilestoreInstanceDirectoryServicesLdapDomain(original["domain"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedDomain); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["domain"] = transformedDomain
+	}
+
+	transformedServers, err := expandFilestoreInstanceDirectoryServicesLdapServers(original["servers"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedServers); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["servers"] = transformedServers
+	}
+
+	transformedUsersOu, err := expandFilestoreInstanceDirectoryServicesLdapUsersOu(original["users_ou"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedUsersOu); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["usersOu"] = transformedUsersOu
+	}
+
+	transformedGroupsOu, err := expandFilestoreInstanceDirectoryServicesLdapGroupsOu(original["groups_ou"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedGroupsOu); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["groupsOu"] = transformedGroupsOu
+	}
+
+	return transformed, nil
+}
+
+func expandFilestoreInstanceDirectoryServicesLdapDomain(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandFilestoreInstanceDirectoryServicesLdapServers(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandFilestoreInstanceDirectoryServicesLdapUsersOu(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandFilestoreInstanceDirectoryServicesLdapGroupsOu(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
 }
 
 func expandFilestoreInstanceEffectiveLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
