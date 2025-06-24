@@ -11,6 +11,7 @@ fields:
   - field: 'name'
   - field: 'network_firewall_policy_id'
     api_field: 'id'
+  - field: 'policy_type'
   - field: 'predefined_rules.action'
   - field: 'predefined_rules.description'
   - field: 'predefined_rules.direction'
