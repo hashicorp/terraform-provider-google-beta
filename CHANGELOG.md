@@ -28,12 +28,12 @@ IMPROVEMENTS:
 
 BUG FIXES:
 * bigqueryanalyticshub: supported in-place update for `log_linked_dataset_query_user_email` in `google_bigquery_analytics_hub_listing` and `google_bigquery_analytics_hub_data_exchange` resources. Once enabled, this feature cannot be disabled. ([#10241](https://github.com/hashicorp/terraform-provider-google-beta/pull/10241))
-* bigquerydatatransfer: no longer surface persistent warnings recommending write-only field when using `secret_access_key` on `google_bigquery_data_transfer_config` ([#10263](https://github.com/hashicorp/terraform-provider-google-beta/pull/10263))
+* bigquerydatatransfer: stopped surfacing persistent warnings recommending write-only field when using `secret_access_key` on `google_bigquery_data_transfer_config` ([#10263](https://github.com/hashicorp/terraform-provider-google-beta/pull/10263))
 * memorystore: added the ability to set the `replica_count` field in `google_memorystore_instance` resource to 0 ([#10259](https://github.com/hashicorp/terraform-provider-google-beta/pull/10259))
 * monitoring: made `description` and `displayName` optional and mutable in `google_monitoring_metric_descriptor` resource ([#10233](https://github.com/hashicorp/terraform-provider-google-beta/pull/10233))
 * redis: fixed `reserved_ip_range` field not being populated for `google_redis_instance` data source ([#10235](https://github.com/hashicorp/terraform-provider-google-beta/pull/10235))
-* secretmanager: no longer surface persistent warnings recommending write-only field when using `secret_data` on `google_secret_manager_secret_version` ([#10263](https://github.com/hashicorp/terraform-provider-google-beta/pull/10263))
-* sql: no longer surface persistent warnings recommending write-only field when using `password` on `google_sql_user` ([#10263](https://github.com/hashicorp/terraform-provider-google-beta/pull/10263))
+* secretmanager: stopped surfacing persistent warnings recommending write-only field when using `secret_data` on `google_secret_manager_secret_version` ([#10263](https://github.com/hashicorp/terraform-provider-google-beta/pull/10263))
+* sql: stopped surfacing persistent warnings recommending write-only field when using `password` on `google_sql_user` ([#10263](https://github.com/hashicorp/terraform-provider-google-beta/pull/10263))
 * workbench: added support for setting `serial-port-logging-enable` key in `metadata` field in `google_workbench_instance` resource ([#10253](https://github.com/hashicorp/terraform-provider-google-beta/pull/10253))
 
 ## 6.41.0 (June 24, 2025)
