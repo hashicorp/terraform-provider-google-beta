@@ -1,4 +1,6 @@
-## 6.42.0 (Unreleased)
+## 6.43.0 (Unreleased)
+
+## 6.42.0 (July 1, 2025)
 
 FEATURES:
 * **New Resource:** `google_apihub_plugin_instance` ([#10225](https://github.com/hashicorp/terraform-provider-google-beta/pull/10225))
