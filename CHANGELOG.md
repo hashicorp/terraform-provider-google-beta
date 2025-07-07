@@ -1,29 +1,22 @@
 ## 6.43.0 (Unreleased)
 
-UNKNOWN CHANGELOG TYPE:
-* Update CHANGELOG.md 6.41.0 ([#10271](https://github.com/hashicorp/terraform-provider-google-beta/pull/10271))
 DEPRECATIONS:
 * iap: deprecated `google_iap_client` and `google_iap_brand` ([#10269](https://github.com/hashicorp/terraform-provider-google-beta/pull/10269))
 
 FEATURES:
-* **New Data Source:** `google_kms_autokey_config` (ga) ([#10294](https://github.com/hashicorp/terraform-provider-google-beta/pull/10294))
-* **New Data Source:** `google_kms_key_handle` (ga) ([#10294](https://github.com/hashicorp/terraform-provider-google-beta/pull/10294))
-* **New Data Source:** `google_kms_key_handles` (ga) ([#10294](https://github.com/hashicorp/terraform-provider-google-beta/pull/10294))
 * **New Data Source:** `google_network_management_connectivity_test_run` ([#10300](https://github.com/hashicorp/terraform-provider-google-beta/pull/10300))
 * **New Data Source:** `google_redis_cluster` ([#10273](https://github.com/hashicorp/terraform-provider-google-beta/pull/10273))
 * **New Resource:** `google_contact_center_insights_analysis_rule` ([#10272](https://github.com/hashicorp/terraform-provider-google-beta/pull/10272))
-* **New Resource:** `google_kms_autokey_config` (ga) ([#10294](https://github.com/hashicorp/terraform-provider-google-beta/pull/10294))
-* **New Resource:** `google_kms_key_handle` (ga) ([#10294](https://github.com/hashicorp/terraform-provider-google-beta/pull/10294))
 * **New Resource:** `google_model_armor_template` ([#10270](https://github.com/hashicorp/terraform-provider-google-beta/pull/10270))
 
 IMPROVEMENTS:
 * bigquery: added `ignore_schema_changes` virtual field to `google_bigquery_table` resource. Only `dataPolicies` field is supported in `ignore_schema_changes` for now. ([#10299](https://github.com/hashicorp/terraform-provider-google-beta/pull/10299))
 * billing: added `currency_code` to `google_billing_account` data source ([#10284](https://github.com/hashicorp/terraform-provider-google-beta/pull/10284))
-* compute: add `params.resourceManagerTags` field to the `google_compute_network` ([#10266](https://github.com/hashicorp/terraform-provider-google-beta/pull/10266))
+* compute: added `params.resourceManagerTags` field to the `google_compute_network` ([#10266](https://github.com/hashicorp/terraform-provider-google-beta/pull/10266))
 * compute: added `load_balancing_scheme` field to `google_compute_backend_bucket` resource ([#10301](https://github.com/hashicorp/terraform-provider-google-beta/pull/10301))
 * compute: added `params.resourceManagerTags` field to the `google_compute_route` ([#10293](https://github.com/hashicorp/terraform-provider-google-beta/pull/10293))
-* compute: added `update_strategy`  field to `google_compute_network_peering ` resource (beta) ([#10275](https://github.com/hashicorp/terraform-provider-google-beta/pull/10275))
-* container: added `secret_manager_config.rotation_config` field to `google_container_cluster` resource (beta) ([#10291](https://github.com/hashicorp/terraform-provider-google-beta/pull/10291))
+* compute: added `update_strategy`  field to `google_compute_network_peering ` resource ([#10275](https://github.com/hashicorp/terraform-provider-google-beta/pull/10275))
+* container: added `secret_manager_config.rotation_config` field to `google_container_cluster` resource ([#10291](https://github.com/hashicorp/terraform-provider-google-beta/pull/10291))
 * container: added support for `anonymous_authentication_config` ([#10295](https://github.com/hashicorp/terraform-provider-google-beta/pull/10295))
 * dataplex: added `suspended` field to `google_dataplex_datascan` resource ([#10276](https://github.com/hashicorp/terraform-provider-google-beta/pull/10276))
 * discoveryengine: Added `enable_table_annotation`, `enable_image_annotation`, `structured_content_types`, `exclude_html_elements`, `exclude_html_classes` and `exclude_html_ids`  to `layout_parsing_config` structure of `google_discovery_engine_data_store` resource ([#10288](https://github.com/hashicorp/terraform-provider-google-beta/pull/10288))
@@ -35,9 +28,9 @@ IMPROVEMENTS:
 BUG FIXES:
 * compute: fixed `match` field in `google_compute_router_route_policy` resource to be marked as required ([#10298](https://github.com/hashicorp/terraform-provider-google-beta/pull/10298))
 * compute: fixed an issue with `bgp_always_compare_med` in `google_compute_network` where it was unable to be set from `true` to `false` ([#10286](https://github.com/hashicorp/terraform-provider-google-beta/pull/10286))
-* compute: make no replication status in `google_compute_disk_async_replication` a retryable error ([#10296](https://github.com/hashicorp/terraform-provider-google-beta/pull/10296))
+* compute: made no replication status in `google_compute_disk_async_replication` a retryable error ([#10296](https://github.com/hashicorp/terraform-provider-google-beta/pull/10296))
 * gkeonprem: fixed type of `load_balancer.0.bgp_lb_config.0.address_pools.0.manual_assign` in `google_gkeonprem_bare_metal_cluster`, making it a boolean instead of a string ([#10283](https://github.com/hashicorp/terraform-provider-google-beta/pull/10283))
-* integrationconnectors: remove validation from authConfigs in `google_integration_connectors_connection` ([#10267](https://github.com/hashicorp/terraform-provider-google-beta/pull/10267))
+* integrationconnectors: removed validation from authConfigs in `google_integration_connectors_connection` ([#10267](https://github.com/hashicorp/terraform-provider-google-beta/pull/10267))
 
 
 ## 6.42.0 (July 1, 2025)
