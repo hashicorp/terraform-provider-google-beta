@@ -86,6 +86,11 @@ Firebase project's
 Learn more about using project identifiers in Google's
 [AIP 2510 standard](https://google.aip.dev/cloud/2510).`,
 			},
+			"type": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: `The type of Hosting site, either 'DEFAULT_SITE' or 'USER_SITE'`,
+			},
 			"project": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -236,6 +241,9 @@ func resourceFirebaseHostingSiteRead(d *schema.ResourceData, meta interface{}) e
 	if err := d.Set("default_url", flattenFirebaseHostingSiteDefaultUrl(res["defaultUrl"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Site: %s", err)
 	}
+	if err := d.Set("type", flattenFirebaseHostingSiteType(res["type"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Site: %s", err)
+	}
 
 	return nil
 }
@@ -339,6 +347,10 @@ func resourceFirebaseHostingSiteDelete(d *schema.ResourceData, meta interface{})
 	}
 
 	headers := make(http.Header)
+	if siteType := d.Get("type"); siteType == "DEFAULT_SITE" {
+		log.Printf("[WARN] Skip deleting default hosting side: %q", d.Get("name").(string))
+		return nil
+	}
 
 	log.Printf("[DEBUG] Deleting Site %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
@@ -389,6 +401,10 @@ func flattenFirebaseHostingSiteAppId(v interface{}, d *schema.ResourceData, conf
 }
 
 func flattenFirebaseHostingSiteDefaultUrl(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenFirebaseHostingSiteType(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
