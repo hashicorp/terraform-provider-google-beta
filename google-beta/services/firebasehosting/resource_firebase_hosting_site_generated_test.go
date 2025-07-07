@@ -111,6 +111,42 @@ resource "google_firebase_hosting_site" "full" {
 `, context)
 }
 
+func TestAccFirebaseHostingSite_firebasehostingSiteDefaultExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"project_id":    envvar.GetTestProjectFromEnv(),
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckFirebaseHostingSiteDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccFirebaseHostingSite_firebasehostingSiteDefaultExample(context),
+			},
+			{
+				ResourceName:            "google_firebase_hosting_site.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"site_id"},
+			},
+		},
+	})
+}
+
+func testAccFirebaseHostingSite_firebasehostingSiteDefaultExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_firebase_hosting_site" "default" {
+  provider = google-beta
+  project  = "%{project_id}"
+  site_id  = "%{project_id}"
+}
+`, context)
+}
+
 func testAccCheckFirebaseHostingSiteDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		for name, rs := range s.RootModule().Resources {
@@ -134,15 +170,15 @@ func testAccCheckFirebaseHostingSiteDestroyProducer(t *testing.T) func(s *terraf
 				billingProject = config.BillingProject
 			}
 
-			_, err = transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
+			resp, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 				Config:    config,
 				Method:    "GET",
 				Project:   billingProject,
 				RawURL:    url,
 				UserAgent: config.UserAgent,
 			})
-			if err == nil {
-				return fmt.Errorf("FirebaseHostingSite still exists at %s", url)
+			if err == nil && resp["type"].(string) != "DEFAULT_SITE" {
+				return fmt.Errorf("Firebase Hosting Site still exists at %s", url)
 			}
 		}
 
