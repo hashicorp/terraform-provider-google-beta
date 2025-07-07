@@ -17,7 +17,7 @@ IMPROVEMENTS:
 * compute: added `params.resource_manager_tags` field to `google_compute_route` resource ([#10293](https://github.com/hashicorp/terraform-provider-google-beta/pull/10293))
 * compute: added `update_strategy`  field to `google_compute_network_peering` resource ([#10275](https://github.com/hashicorp/terraform-provider-google-beta/pull/10275))
 * container: added `secret_manager_config.rotation_config` field to `google_container_cluster` resource ([#10291](https://github.com/hashicorp/terraform-provider-google-beta/pull/10291))
-* container: added support for `anonymous_authentication_config` to `google_container_cluster` resource ([#10295](https://github.com/hashicorp/terraform-provider-google-beta/pull/10295))
+* container: added `anonymous_authentication_config` field to `google_container_cluster` resource ([#10295](https://github.com/hashicorp/terraform-provider-google-beta/pull/10295))
 * dataplex: added `suspended` field to `google_dataplex_datascan` resource ([#10276](https://github.com/hashicorp/terraform-provider-google-beta/pull/10276))
 * discoveryengine: Added `enable_table_annotation`, `enable_image_annotation`, `structured_content_types`, `exclude_html_elements`, `exclude_html_classes` and `exclude_html_ids`  to `layout_parsing_config` structure of `google_discovery_engine_data_store` resource ([#10288](https://github.com/hashicorp/terraform-provider-google-beta/pull/10288))
 * discoveryengine: added `kms_key_name` field to `google_discovery_engine_data_store` resource ([#10281](https://github.com/hashicorp/terraform-provider-google-beta/pull/10281))
