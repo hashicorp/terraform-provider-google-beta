@@ -15,7 +15,7 @@ IMPROVEMENTS:
 * compute: added `params.resource_manager_tags` field to `google_compute_network` resource ([#10266](https://github.com/hashicorp/terraform-provider-google-beta/pull/10266))
 * compute: added `load_balancing_scheme` field to `google_compute_backend_bucket` resource ([#10301](https://github.com/hashicorp/terraform-provider-google-beta/pull/10301))
 * compute: added `params.resource_manager_tags` field to `google_compute_route` resource ([#10293](https://github.com/hashicorp/terraform-provider-google-beta/pull/10293))
-* compute: added `update_strategy`  field to `google_compute_network_peering ` resource ([#10275](https://github.com/hashicorp/terraform-provider-google-beta/pull/10275))
+* compute: added `update_strategy`  field to `google_compute_network_peering` resource ([#10275](https://github.com/hashicorp/terraform-provider-google-beta/pull/10275))
 * container: added `secret_manager_config.rotation_config` field to `google_container_cluster` resource ([#10291](https://github.com/hashicorp/terraform-provider-google-beta/pull/10291))
 * container: added support for `anonymous_authentication_config` to `google_container_cluster` resource ([#10295](https://github.com/hashicorp/terraform-provider-google-beta/pull/10295))
 * dataplex: added `suspended` field to `google_dataplex_datascan` resource ([#10276](https://github.com/hashicorp/terraform-provider-google-beta/pull/10276))
