@@ -83,6 +83,67 @@ resource "google_compute_future_reservation" "gce_future_reservation" {
 `, context)
 }
 
+func TestAccComputeFutureReservation_futureReservationAggregateReservationExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"billing_account": envvar.GetTestBillingAccountFromEnv(t),
+		"org_id":          envvar.GetTestOrgFromEnv(t),
+		"project":         envvar.GetTestProjectFromEnv(),
+		"random_suffix":   acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckComputeFutureReservationDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeFutureReservation_futureReservationAggregateReservationExample(context),
+			},
+			{
+				ResourceName:            "google_compute_future_reservation.gce_future_reservation",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"auto_created_reservations_delete_time", "auto_delete_auto_created_reservations"},
+			},
+		},
+	})
+}
+
+func testAccComputeFutureReservation_futureReservationAggregateReservationExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_compute_future_reservation" "gce_future_reservation" {
+  provider = google-beta
+  name     = "tf-test-gce-future-reservation-aggregate-reservation%{random_suffix}"
+  project  = "%{project}"
+  auto_delete_auto_created_reservations = true
+  planning_status = "DRAFT"
+  name_prefix = "fr-basic"
+  time_window {
+    start_time = "2025-11-01T00:00:00Z"
+    end_time   = "2025-11-02T00:00:00Z"
+  }
+  aggregate_reservation {
+    vm_family = "VM_FAMILY_CLOUD_TPU_DEVICE_CT3"
+    workload_type = "UNSPECIFIED"
+    reserved_resources {
+      accelerator {
+        accelerator_count = 32
+        accelerator_type  = "projects/%{project}/zones/us-central1-a/acceleratorTypes/ct3"
+      }
+    }
+    reserved_resources {
+      accelerator {
+        accelerator_count = 2
+        accelerator_type  = "projects/%{project}/zones/us-central1-a/acceleratorTypes/ct3"
+      }
+    }
+  }
+}
+`, context)
+}
+
 func TestAccComputeFutureReservation_sharedFutureReservationExample(t *testing.T) {
 	acctest.SkipIfVcr(t)
 	t.Parallel()
