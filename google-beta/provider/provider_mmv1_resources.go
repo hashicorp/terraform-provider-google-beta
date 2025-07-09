@@ -332,6 +332,7 @@ var handwrittenDatasources = map[string]*schema.Resource{
 	"google_firebase_apple_app":                                  firebase.DataSourceGoogleFirebaseAppleApp(),
 	"google_firebase_hosting_channel":                            firebasehosting.DataSourceGoogleFirebaseHostingChannel(),
 	"google_firebase_web_app":                                    firebase.DataSourceGoogleFirebaseWebApp(),
+	"google_firestore_document":                                  firestore.DataSourceGoogleFirestoreDocument(),
 	"google_folder":                                              resourcemanager.DataSourceGoogleFolder(),
 	"google_folders":                                             resourcemanager.DataSourceGoogleFolders(),
 	"google_folder_organization_policy":                          resourcemanager.DataSourceGoogleFolderOrganizationPolicy(),
