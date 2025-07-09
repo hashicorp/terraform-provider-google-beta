@@ -593,9 +593,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 682
+// Generated resources: 683
 // Generated IAM resources: 339
-// Total generated resources: 1021
+// Total generated resources: 1022
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -720,6 +720,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_bigquery_analytics_hub_data_exchange_iam_binding":                    tpgiamresource.ResourceIamBinding(bigqueryanalyticshub.BigqueryAnalyticsHubDataExchangeIamSchema, bigqueryanalyticshub.BigqueryAnalyticsHubDataExchangeIamUpdaterProducer, bigqueryanalyticshub.BigqueryAnalyticsHubDataExchangeIdParseFunc),
 	"google_bigquery_analytics_hub_data_exchange_iam_member":                     tpgiamresource.ResourceIamMember(bigqueryanalyticshub.BigqueryAnalyticsHubDataExchangeIamSchema, bigqueryanalyticshub.BigqueryAnalyticsHubDataExchangeIamUpdaterProducer, bigqueryanalyticshub.BigqueryAnalyticsHubDataExchangeIdParseFunc),
 	"google_bigquery_analytics_hub_data_exchange_iam_policy":                     tpgiamresource.ResourceIamPolicy(bigqueryanalyticshub.BigqueryAnalyticsHubDataExchangeIamSchema, bigqueryanalyticshub.BigqueryAnalyticsHubDataExchangeIamUpdaterProducer, bigqueryanalyticshub.BigqueryAnalyticsHubDataExchangeIdParseFunc),
+	"google_bigquery_analytics_hub_data_exchange_subscription":                   bigqueryanalyticshub.ResourceBigqueryAnalyticsHubDataExchangeSubscription(),
 	"google_bigquery_analytics_hub_listing":                                      bigqueryanalyticshub.ResourceBigqueryAnalyticsHubListing(),
 	"google_bigquery_analytics_hub_listing_iam_binding":                          tpgiamresource.ResourceIamBinding(bigqueryanalyticshub.BigqueryAnalyticsHubListingIamSchema, bigqueryanalyticshub.BigqueryAnalyticsHubListingIamUpdaterProducer, bigqueryanalyticshub.BigqueryAnalyticsHubListingIdParseFunc),
 	"google_bigquery_analytics_hub_listing_iam_member":                           tpgiamresource.ResourceIamMember(bigqueryanalyticshub.BigqueryAnalyticsHubListingIamSchema, bigqueryanalyticshub.BigqueryAnalyticsHubListingIamUpdaterProducer, bigqueryanalyticshub.BigqueryAnalyticsHubListingIdParseFunc),
