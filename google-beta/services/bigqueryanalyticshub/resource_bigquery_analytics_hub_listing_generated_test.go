@@ -347,6 +347,94 @@ resource "google_bigquery_analytics_hub_listing" "listing" {
 `, context)
 }
 
+func TestAccBigqueryAnalyticsHubListing_bigqueryAnalyticshubListingDcrRoutineExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckBigqueryAnalyticsHubListingDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccBigqueryAnalyticsHubListing_bigqueryAnalyticshubListingDcrRoutineExample(context),
+			},
+			{
+				ResourceName:            "google_bigquery_analytics_hub_listing.listing",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"data_exchange_id", "listing_id", "location"},
+			},
+		},
+	})
+}
+
+func testAccBigqueryAnalyticsHubListing_bigqueryAnalyticshubListingDcrRoutineExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_bigquery_analytics_hub_data_exchange" "dcr_data_exchange_example" {
+  provider = google-beta
+  location         = "us"
+  data_exchange_id = "tf_test_tf_test_data_exchange%{random_suffix}"
+  display_name     = "tf_test_tf_test_data_exchange%{random_suffix}"
+  description      = "Example for listing with routine%{random_suffix}"
+  sharing_environment_config {
+    dcr_exchange_config {}
+  }
+}
+
+resource "google_bigquery_dataset" "listing" {
+  provider = google-beta
+  dataset_id    = "tf_test_tf_test_dataset%{random_suffix}"
+  friendly_name = "tf_test_tf_test_dataset%{random_suffix}"
+  description   = "Example for listing with routine%{random_suffix}"
+  location      = "us"
+}
+
+resource "google_bigquery_routine" "listing" {
+  provider = google-beta
+  dataset_id      = google_bigquery_dataset.listing.dataset_id
+  routine_id      = "tf_test_tf_test_routine%{random_suffix}"
+  routine_type    = "TABLE_VALUED_FUNCTION"
+  language        = "SQL"
+  description     = "A DCR routine example."
+  definition_body = <<-EOS
+    SELECT 1 + value AS value
+  EOS
+  arguments {
+    name          = "value"
+    argument_kind = "FIXED_TYPE"
+    data_type     = jsonencode({ "typeKind" : "INT64" })
+  }
+  return_table_type = jsonencode({
+    "columns" : [
+      { "name" : "value", "type" : { "typeKind" : "INT64" } },
+    ]
+  })
+}
+
+resource "google_bigquery_analytics_hub_listing" "listing" {
+  provider = google-beta
+  location         = "US"
+  data_exchange_id = google_bigquery_analytics_hub_data_exchange.dcr_data_exchange_example.data_exchange_id
+  listing_id       = "tf_test_tf_test_listing_routine%{random_suffix}"
+  display_name     = "tf_test_tf_test_listing_routine%{random_suffix}"
+  description      = "Example for listing with routine%{random_suffix}"
+  bigquery_dataset {
+    dataset = google_bigquery_dataset.listing.id
+    selected_resources {
+      routine = google_bigquery_routine.listing.id
+    }
+  }
+  restricted_export_config {
+    enabled = true
+  }
+}
+`, context)
+}
+
 func testAccCheckBigqueryAnalyticsHubListingDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		for name, rs := range s.RootModule().Resources {

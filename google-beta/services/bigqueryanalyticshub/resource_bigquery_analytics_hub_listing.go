@@ -101,12 +101,21 @@ func ResourceBigqueryAnalyticsHubListing() *schema.Resource {
 							Description: `Resource in this dataset that is selectively shared. This field is required for data clean room exchanges.`,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
+									"routine": {
+										Type:             schema.TypeString,
+										Optional:         true,
+										ForceNew:         true,
+										DiffSuppressFunc: tpgresource.ProjectNumberDiffSuppress,
+										Description:      `Format: For routine: projects/{projectId}/datasets/{datasetId}/routines/{routineId} Example:"projects/test_project/datasets/test_dataset/routines/test_routine"`,
+										ExactlyOneOf:     []string{},
+									},
 									"table": {
 										Type:             schema.TypeString,
 										Optional:         true,
 										ForceNew:         true,
 										DiffSuppressFunc: tpgresource.ProjectNumberDiffSuppress,
 										Description:      `Format: For table: projects/{projectId}/datasets/{datasetId}/tables/{tableId} Example:"projects/test_project/datasets/test_dataset/tables/test_table"`,
+										ExactlyOneOf:     []string{},
 									},
 								},
 							},
@@ -861,12 +870,17 @@ func flattenBigqueryAnalyticsHubListingBigqueryDatasetSelectedResources(v interf
 			continue
 		}
 		transformed = append(transformed, map[string]interface{}{
-			"table": flattenBigqueryAnalyticsHubListingBigqueryDatasetSelectedResourcesTable(original["table"], d, config),
+			"table":   flattenBigqueryAnalyticsHubListingBigqueryDatasetSelectedResourcesTable(original["table"], d, config),
+			"routine": flattenBigqueryAnalyticsHubListingBigqueryDatasetSelectedResourcesRoutine(original["routine"], d, config),
 		})
 	}
 	return transformed
 }
 func flattenBigqueryAnalyticsHubListingBigqueryDatasetSelectedResourcesTable(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenBigqueryAnalyticsHubListingBigqueryDatasetSelectedResourcesRoutine(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -1072,12 +1086,23 @@ func expandBigqueryAnalyticsHubListingBigqueryDatasetSelectedResources(v interfa
 			transformed["table"] = transformedTable
 		}
 
+		transformedRoutine, err := expandBigqueryAnalyticsHubListingBigqueryDatasetSelectedResourcesRoutine(original["routine"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedRoutine); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["routine"] = transformedRoutine
+		}
+
 		req = append(req, transformed)
 	}
 	return req, nil
 }
 
 func expandBigqueryAnalyticsHubListingBigqueryDatasetSelectedResourcesTable(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandBigqueryAnalyticsHubListingBigqueryDatasetSelectedResourcesRoutine(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
