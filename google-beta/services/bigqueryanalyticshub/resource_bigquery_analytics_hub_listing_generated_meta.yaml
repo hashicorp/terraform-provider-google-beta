@@ -6,6 +6,7 @@ api_version: 'v1'
 api_resource_type_kind: 'Listing'
 fields:
   - field: 'bigquery_dataset.dataset'
+  - field: 'bigquery_dataset.selected_resources.routine'
   - field: 'bigquery_dataset.selected_resources.table'
   - field: 'categories'
   - field: 'data_exchange_id'
