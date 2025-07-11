@@ -1,5 +1,33 @@
 ## 6.44.0 (Unreleased)
 
+FEATURES:
+* **New Data Source:** `google_compute_network_attachment` ([#10336](https://github.com/hashicorp/terraform-provider-google-beta/pull/10336))
+* **New Data Source:** `google_firestore_document` ([#10321](https://github.com/hashicorp/terraform-provider-google-beta/pull/10321))
+* **New Resource:** `google_backup_dr_service_config` ([#10320](https://github.com/hashicorp/terraform-provider-google-beta/pull/10320))
+* **New Resource:** `google_bigquery_analytics_hub_data_exchange_subscription` ([#10328](https://github.com/hashicorp/terraform-provider-google-beta/pull/10328))
+* **New Resource:** gkeonprem: `google_gkeonprem_vmware_admin_cluster` (GA) ([#10322](https://github.com/hashicorp/terraform-provider-google-beta/pull/10322))
+
+IMPROVEMENTS:
+* apigee: added `access_logging_config` field to `google_apigee_instance` resource ([#10303](https://github.com/hashicorp/terraform-provider-google-beta/pull/10303))
+* apigee: marked `access_logging_config` field immutable in `google_apigee_instance` resource ([#10337](https://github.com/hashicorp/terraform-provider-google-beta/pull/10337))
+* backupdr: added in-place update support for `google_backup_dr_backup_plan` resource ([#10312](https://github.com/hashicorp/terraform-provider-google-beta/pull/10312))
+* bigqueryanalyticshub: added `routine` field to `google_bigquery_analytics_hub_listing` resource ([#10327](https://github.com/hashicorp/terraform-provider-google-beta/pull/10327))
+* compute: added `params.resource_manager_tags` field to `google_compute_firewall` resource ([#10304](https://github.com/hashicorp/terraform-provider-google-beta/pull/10304))
+* compute: added `aggregate_reservation.vm_family`, `aggregate_reservation.reserved_resources.accelerator.accelerator_count`, `aggregate_reservation.reserved_resources.accelerator.accelerator_type` and `aggregate_reservation.workload_type` fields to `google_future_reservation` resource ([#10317](https://github.com/hashicorp/terraform-provider-google-beta/pull/10317))
+* compute: added `application_aware_interconnect` and `aai_enabled` fields to `google_compute_interconnect` resource ([#10333](https://github.com/hashicorp/terraform-provider-google-beta/pull/10333))
+* compute: added `load_balancing_scheme` field to `google_compute_backend_bucket` resource ([#10301](https://github.com/hashicorp/terraform-provider-google-beta/pull/10301))
+* compute: added `provisioned_iops` and `provisioned_throughput` fields to `google_compute_region_disk` resource ([#10319](https://github.com/hashicorp/terraform-provider-google-beta/pull/10319))
+* compute: added `request_body_inspection_size` field to `google_compute_security_policy` resource ([#10318](https://github.com/hashicorp/terraform-provider-google-beta/pull/10318))
+* compute: added `specific_reservation.instance_properties.maintenance_interval`, `share_settings.projects` and `enable_emergent_maintenance` fields to `google_compute_reservation` resource ([#10329](https://github.com/hashicorp/terraform-provider-google-beta/pull/10329))
+* firestore: added `tags` field to `google_firestore_database` resource ([#10335](https://github.com/hashicorp/terraform-provider-google-beta/pull/10335))
+* securesourcemanager: added in-place update support for `description` field in `google_secure_source_manager_repository` resource ([#10325](https://github.com/hashicorp/terraform-provider-google-beta/pull/10325))
+* storage: added `force_empty_content_type` field to `google_storage_bucket_object` resource ([#10334](https://github.com/hashicorp/terraform-provider-google-beta/pull/10334))
+
+BUG FIXES:
+* artifactregistry: fixed an issue where changes to `cleanup_policies` were not being applied correctly in `google_artifact_registry_repository` resource ([#10324](https://github.com/hashicorp/terraform-provider-google-beta/pull/10324))
+* firebasehosting: skipped deletion of `google_firebase_hosting_site` resource of type `DEFAULT_SITE` ([#10305](https://github.com/hashicorp/terraform-provider-google-beta/pull/10305))
+* iambeta: fixed perma-diff for `jwks_json` field when GCP normalizes JSON formatting in `google_iam_workload_identity_pool_provider` resource ([#10306](https://github.com/hashicorp/terraform-provider-google-beta/pull/10306))
+
 ## 6.43.0 (July 8, 2025)
 
 DEPRECATIONS:
