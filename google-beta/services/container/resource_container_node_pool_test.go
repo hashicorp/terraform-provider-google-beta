@@ -5108,11 +5108,6 @@ resource "google_container_cluster" "primary" {
   deletion_protection = false
   network             = "%{network}"
   subnetwork          = "%{subnet}"
-
-  timeouts {
-    create = "30m"
-    update = "40m"
-  }
 }
 
 # Separately Managed Node Pool
@@ -5160,11 +5155,6 @@ resource "google_container_cluster" "primary" {
   deletion_protection = false
   network             = "%{network}"
   subnetwork          = "%{subnet}"
-
-  timeouts {
-    create = "30m"
-    update = "40m"
-  }
 }
 
 # Separately Managed Node Pool
@@ -5213,11 +5203,6 @@ resource "google_container_cluster" "primary" {
   deletion_protection = false
   network             = "%{network}"
   subnetwork          = "%{subnet}"
-
-  timeouts {
-    create = "30m"
-    update = "40m"
-  }
 }
 
 # Separately Managed Node Pool
