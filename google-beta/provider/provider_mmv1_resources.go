@@ -594,9 +594,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 683
+// Generated resources: 684
 // Generated IAM resources: 339
-// Total generated resources: 1022
+// Total generated resources: 1023
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -743,6 +743,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_bigtable_app_profile":                                                bigtable.ResourceBigtableAppProfile(),
 	"google_bigtable_logical_view":                                               bigtable.ResourceBigtableLogicalView(),
 	"google_bigtable_materialized_view":                                          bigtable.ResourceBigtableMaterializedView(),
+	"google_bigtable_schema_bundle":                                              bigtable.ResourceBigtableSchemaBundle(),
 	"google_billing_budget":                                                      billing.ResourceBillingBudget(),
 	"google_binary_authorization_attestor":                                       binaryauthorization.ResourceBinaryAuthorizationAttestor(),
 	"google_binary_authorization_attestor_iam_binding":                           tpgiamresource.ResourceIamBinding(binaryauthorization.BinaryAuthorizationAttestorIamSchema, binaryauthorization.BinaryAuthorizationAttestorIamUpdaterProducer, binaryauthorization.BinaryAuthorizationAttestorIdParseFunc),
