@@ -2,7 +2,7 @@ resource: 'google_model_armor_template'
 generation_type: 'mmv1'
 source_file: 'products/modelarmor/Template.yaml'
 api_service_name: 'modelarmor.googleapis.com'
-api_version: 'v1'
+api_version: 'v1beta'
 api_resource_type_kind: 'Template'
 autogen_status: true
 fields:
