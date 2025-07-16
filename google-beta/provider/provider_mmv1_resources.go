@@ -595,9 +595,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 687
+// Generated resources: 688
 // Generated IAM resources: 339
-// Total generated resources: 1026
+// Total generated resources: 1027
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -1575,6 +1575,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_vertex_ai_endpoint_iam_binding":                                      tpgiamresource.ResourceIamBinding(vertexai.VertexAIEndpointIamSchema, vertexai.VertexAIEndpointIamUpdaterProducer, vertexai.VertexAIEndpointIdParseFunc),
 	"google_vertex_ai_endpoint_iam_member":                                       tpgiamresource.ResourceIamMember(vertexai.VertexAIEndpointIamSchema, vertexai.VertexAIEndpointIamUpdaterProducer, vertexai.VertexAIEndpointIdParseFunc),
 	"google_vertex_ai_endpoint_iam_policy":                                       tpgiamresource.ResourceIamPolicy(vertexai.VertexAIEndpointIamSchema, vertexai.VertexAIEndpointIamUpdaterProducer, vertexai.VertexAIEndpointIdParseFunc),
+	"google_vertex_ai_endpoint_with_model_garden_deployment":                     vertexai.ResourceVertexAIEndpointWithModelGardenDeployment(),
 	"google_vertex_ai_feature_group":                                             vertexai.ResourceVertexAIFeatureGroup(),
 	"google_vertex_ai_feature_group_iam_binding":                                 tpgiamresource.ResourceIamBinding(vertexai.VertexAIFeatureGroupIamSchema, vertexai.VertexAIFeatureGroupIamUpdaterProducer, vertexai.VertexAIFeatureGroupIdParseFunc),
 	"google_vertex_ai_feature_group_iam_member":                                  tpgiamresource.ResourceIamMember(vertexai.VertexAIFeatureGroupIamSchema, vertexai.VertexAIFeatureGroupIamUpdaterProducer, vertexai.VertexAIFeatureGroupIdParseFunc),
