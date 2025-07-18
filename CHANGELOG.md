@@ -1,8 +1,5 @@
 ## 6.45.0 (Unreleased)
 
-UNKNOWN CHANGELOG TYPE:
-* Update CHANGELOG.md for 6.43.0 in the main branch ([#10310](https://github.com/hashicorp/terraform-provider-google-beta/pull/10310))
-* Update CHANGELOG.md on main for 6.44.0 ([#10362](https://github.com/hashicorp/terraform-provider-google-beta/pull/10362))
 NOTES:
 * iam: Update service account creation to prevent failures due to eventual consistency (reverted) ([#10340](https://github.com/hashicorp/terraform-provider-google-beta/pull/10340))
 DEPRECATIONS:
@@ -18,8 +15,7 @@ FEATURES:
 IMPROVEMENTS:
 * accesscontextmanager: added `name` to `google_access_context_manager_gcp_user_access_binding` resource ([#10370](https://github.com/hashicorp/terraform-provider-google-beta/pull/10370))
 * bigquery: added `ignore_auto_generated_schema` virtual field to `google_bigquery_table` resource to ignore server-added columns in the `schema` field ([#10366](https://github.com/hashicorp/terraform-provider-google-beta/pull/10366))
-* cloudrunv2: promoted field `node_selector` in `google_cloud_run_v2_job` resource to GA ([#10343](https://github.com/hashicorp/terraform-provider-google-beta/pull/10343))
-* compute: add `params.resourceManagerTags` field to the `google_compute_subnetwork` ([#10357](https://github.com/hashicorp/terraform-provider-google-beta/pull/10357))
+* compute: added `params.resourceManagerTags` field to the `google_compute_subnetwork` ([#10357](https://github.com/hashicorp/terraform-provider-google-beta/pull/10357))
 * compute: added `mirrorPercent` field to `requestMirrorPolicy` in `defaultRouteAction`, `pathMatchers[].defaultRouteAction`, `pathMatchers[].pathRules[].routeAction`, and `pathMatchers[].routeRules[].routeAction` to `google_compute_region_url_map` resource (beta) ([#10351](https://github.com/hashicorp/terraform-provider-google-beta/pull/10351))
 * compute: added `rule.match.src_secure_tags`, `rule.target_secure_tags`, `predefined_rules.match.src_secure_tags` and `predefined_rules.target_secure_tags` fields to `google_compute_firewall_policy_with_rules` resource ([#10367](https://github.com/hashicorp/terraform-provider-google-beta/pull/10367))
 * dataproc: added `cluster_config.security_config.identity_config` field to `google_dataproc_cluster` resource ([#10352](https://github.com/hashicorp/terraform-provider-google-beta/pull/10352))
