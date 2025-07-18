@@ -50,7 +50,7 @@ func TestAccComputeReservation_reservationBasicExample(t *testing.T) {
 				ResourceName:            "google_compute_reservation.gce_reservation",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"share_settings", "zone"},
+				ImportStateVerifyIgnore: []string{"delete_after_duration", "enable_emergent_maintenance", "share_settings", "zone"},
 			},
 		},
 	})
@@ -68,6 +68,210 @@ resource "google_compute_reservation" "gce_reservation" {
       min_cpu_platform = "Intel Cascade Lake"
       machine_type     = "n2-standard-2"
     }
+  }
+}
+`, context)
+}
+
+func TestAccComputeReservation_reservationBasicBetaExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckComputeReservationDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeReservation_reservationBasicBetaExample(context),
+			},
+			{
+				ResourceName:            "google_compute_reservation.gce_reservation",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"delete_after_duration", "enable_emergent_maintenance", "share_settings", "zone"},
+			},
+		},
+	})
+}
+
+func testAccComputeReservation_reservationBasicBetaExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_compute_reservation" "gce_reservation" {
+  provider = google-beta
+  name     = "tf-test-gce-reservation%{random_suffix}"
+  zone     = "us-central1-a"
+
+  specific_reservation {
+    count = 1
+    instance_properties {
+      min_cpu_platform     = "Intel Cascade Lake"
+      machine_type         = "n2-standard-2"
+      maintenance_interval = "PERIODIC"
+    }
+  }
+
+  enable_emergent_maintenance = true
+}
+`, context)
+}
+
+func TestAccComputeReservation_reservationSourceInstanceTemplateExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckComputeReservationDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeReservation_reservationSourceInstanceTemplateExample(context),
+			},
+			{
+				ResourceName:            "google_compute_reservation.gce_reservation_source_instance_template",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"delete_after_duration", "enable_emergent_maintenance", "share_settings", "zone"},
+			},
+		},
+	})
+}
+
+func testAccComputeReservation_reservationSourceInstanceTemplateExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+data "google_compute_image" "my_image" {
+  family  = "debian-11"
+  project = "debian-cloud"
+}
+
+resource "google_compute_instance_template" "foobar" {
+  name           = "tf-test-instance-template%{random_suffix}"
+  machine_type   = "n2-standard-2"
+  can_ip_forward = false
+  tags           = ["foo", "bar"]
+
+  disk {
+    source_image = data.google_compute_image.my_image.self_link
+    auto_delete  = true
+    boot         = true
+  }
+
+  network_interface {
+    network = "default"
+  }
+
+  scheduling {
+    preemptible       = false
+    automatic_restart = true
+  }
+
+  metadata = {
+    foo = "bar"
+  }
+
+  service_account {
+    scopes = ["userinfo-email", "compute-ro", "storage-ro"]
+  }
+
+  labels = {
+    my_label = "foobar"
+  }
+}
+
+resource "google_compute_reservation" "gce_reservation_source_instance_template" {
+  name = "tf-test-gce-reservation-source-instance-template%{random_suffix}"
+  zone = "us-central1-a"
+
+  specific_reservation {
+    count = 1
+    source_instance_template = google_compute_instance_template.foobar.self_link
+  }
+}
+`, context)
+}
+
+func TestAccComputeReservation_reservationSharingPolicyExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckComputeReservationDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeReservation_reservationSharingPolicyExample(context),
+			},
+			{
+				ResourceName:            "google_compute_reservation.gce_reservation_sharing_policy",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"delete_after_duration", "enable_emergent_maintenance", "share_settings", "zone"},
+			},
+		},
+	})
+}
+
+func testAccComputeReservation_reservationSharingPolicyExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+data "google_compute_image" "my_image" {
+  family = "debian-11"
+  project = "debian-cloud"
+}
+
+resource "google_compute_instance_template" "foobar" {
+  name = "tf-test-instance-template%{random_suffix}"
+  machine_type = "g2-standard-4"
+  can_ip_forward = false
+  tags = ["foo", "bar"]
+
+  disk {
+    source_image = data.google_compute_image.my_image.self_link
+    auto_delete = true
+    boot = true
+  }
+
+  network_interface {
+    network = "default"
+  }
+
+  scheduling {
+    preemptible = false
+    automatic_restart = true
+  }
+
+  metadata = {
+    foo = "bar"
+  }
+  service_account {
+    scopes = ["userinfo-email", "compute-ro", "storage-ro"]
+  }
+  labels = {
+    my_label = "foobar"
+  }
+}
+
+resource "google_compute_reservation" "gce_reservation_sharing_policy" {
+  name = "tf-test-gce-reservation-sharing-policy%{random_suffix}"
+  zone = "us-central1-b"
+
+  specific_reservation {
+    count = 2
+    source_instance_template = google_compute_instance_template.foobar.self_link
+  }
+
+  reservation_sharing_policy {
+    service_share_type = "ALLOW_ALL"
   }
 }
 `, context)
@@ -96,7 +300,7 @@ func TestAccComputeReservation_sharedReservationBasicExample(t *testing.T) {
 				ResourceName:            "google_compute_reservation.gce_reservation",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"share_settings", "zone"},
+				ImportStateVerifyIgnore: []string{"delete_after_duration", "enable_emergent_maintenance", "share_settings", "zone"},
 			},
 		},
 	})
@@ -154,6 +358,95 @@ resource "google_compute_reservation" "gce_reservation" {
       id = google_project.guest_project.project_id
       project_id = google_project.guest_project.project_id
     }
+  }
+  depends_on = [google_organization_policy.shared_reservation_org_policy,google_project_service.compute]
+}
+`, context)
+}
+
+func TestAccComputeReservation_sharedReservationBetaExample(t *testing.T) {
+	acctest.SkipIfVcr(t)
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"billing_account": envvar.GetTestBillingAccountFromEnv(t),
+		"org_id":          envvar.GetTestOrgFromEnv(t),
+		"project":         envvar.GetTestProjectFromEnv(),
+		"random_suffix":   acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckComputeReservationDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeReservation_sharedReservationBetaExample(context),
+			},
+			{
+				ResourceName:            "google_compute_reservation.gce_reservation",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"delete_after_duration", "enable_emergent_maintenance", "share_settings", "zone"},
+			},
+		},
+	})
+}
+
+func testAccComputeReservation_sharedReservationBetaExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_project" "owner_project" {
+  provider        = google-beta
+  project_id      = "tf-test%{random_suffix}"
+  name            = "tf-test%{random_suffix}"
+  org_id          = "%{org_id}"
+  billing_account = "%{billing_account}"
+  deletion_policy = "DELETE"
+}
+
+
+resource "google_project_service" "compute" {
+  provider = google-beta
+  project  = google_project.owner_project.project_id
+  service  = "compute.googleapis.com"
+  disable_on_destroy = false
+}
+
+resource "google_project" "guest_project" {
+  provider        = google-beta
+  project_id      = "tf-test-2%{random_suffix}"
+  name            = "tf-test-2%{random_suffix}"
+  org_id          = "%{org_id}"
+  deletion_policy = "DELETE"
+}
+
+resource "google_organization_policy" "shared_reservation_org_policy" {
+  provider   = google-beta
+  org_id     = "%{org_id}"
+  constraint = "constraints/compute.sharedReservationsOwnerProjects"
+  list_policy {
+    allow {
+      values = ["projects/${google_project.owner_project.number}"]
+    }
+  }
+}
+
+resource "google_compute_reservation" "gce_reservation" {
+  provider = google-beta
+  project  = google_project.owner_project.project_id
+  name = "tf-test-gce-shared-reservation-beta%{random_suffix}"
+  zone = "us-central1-a"
+
+  specific_reservation {
+    count = 1
+    instance_properties {
+      min_cpu_platform = "Intel Cascade Lake"
+      machine_type     = "n2-standard-2"
+    }
+  }
+  share_settings {
+    share_type = "SPECIFIC_PROJECTS"
+    projects = [google_project.guest_project.name]
   }
   depends_on = [google_organization_policy.shared_reservation_org_policy,google_project_service.compute]
 }

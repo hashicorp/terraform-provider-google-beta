@@ -34,7 +34,7 @@ func TestAccGkeonpremVmwareAdminCluster_gkeonpremVmwareAdminClusterBasicExample(
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccGkeonpremVmwareAdminCluster_gkeonpremVmwareAdminClusterBasicExample(context),
@@ -52,7 +52,6 @@ func TestAccGkeonpremVmwareAdminCluster_gkeonpremVmwareAdminClusterBasicExample(
 func testAccGkeonpremVmwareAdminCluster_gkeonpremVmwareAdminClusterBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_gkeonprem_vmware_admin_cluster" "admin-cluster-basic" {
-  provider = google-beta
   name = "basic%{random_suffix}"
   location = "us-west1"
   description = "test admin cluster"
@@ -108,7 +107,7 @@ func TestAccGkeonpremVmwareAdminCluster_gkeonpremVmwareAdminClusterFullExample(t
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccGkeonpremVmwareAdminCluster_gkeonpremVmwareAdminClusterFullExample(context),
@@ -126,7 +125,6 @@ func TestAccGkeonpremVmwareAdminCluster_gkeonpremVmwareAdminClusterFullExample(t
 func testAccGkeonpremVmwareAdminCluster_gkeonpremVmwareAdminClusterFullExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_gkeonprem_vmware_admin_cluster" "admin-cluster-full" {
-  provider = google-beta
   name = "full%{random_suffix}"
   location = "us-west1"
   description = "test admin cluster"
@@ -229,7 +227,7 @@ func TestAccGkeonpremVmwareAdminCluster_gkeonpremVmwareAdminClusterMetallbExampl
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccGkeonpremVmwareAdminCluster_gkeonpremVmwareAdminClusterMetallbExample(context),
@@ -247,7 +245,6 @@ func TestAccGkeonpremVmwareAdminCluster_gkeonpremVmwareAdminClusterMetallbExampl
 func testAccGkeonpremVmwareAdminCluster_gkeonpremVmwareAdminClusterMetallbExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_gkeonprem_vmware_admin_cluster" "admin-cluster-metallb" {
-  provider = google-beta
   name = "metallb%{random_suffix}"
   location = "us-west1"
   description = "test admin cluster"

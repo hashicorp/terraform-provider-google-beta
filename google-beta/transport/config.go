@@ -363,6 +363,7 @@ type Config struct {
 	MigrationCenterBasePath          string
 	MLEngineBasePath                 string
 	ModelArmorBasePath               string
+	ModelArmorGlobalBasePath         string
 	MonitoringBasePath               string
 	NetappBasePath                   string
 	NetworkConnectivityBasePath      string
@@ -540,6 +541,7 @@ const MemorystoreBasePathKey = "Memorystore"
 const MigrationCenterBasePathKey = "MigrationCenter"
 const MLEngineBasePathKey = "MLEngine"
 const ModelArmorBasePathKey = "ModelArmor"
+const ModelArmorGlobalBasePathKey = "ModelArmorGlobal"
 const MonitoringBasePathKey = "Monitoring"
 const NetappBasePathKey = "Netapp"
 const NetworkConnectivityBasePathKey = "NetworkConnectivity"
@@ -710,7 +712,8 @@ var DefaultBasePaths = map[string]string{
 	MemorystoreBasePathKey:              "https://memorystore.googleapis.com/v1beta/",
 	MigrationCenterBasePathKey:          "https://migrationcenter.googleapis.com/v1/",
 	MLEngineBasePathKey:                 "https://ml.googleapis.com/v1/",
-	ModelArmorBasePathKey:               "https://modelarmor.{{location}}.rep.googleapis.com/v1/",
+	ModelArmorBasePathKey:               "https://modelarmor.{{location}}.rep.googleapis.com/v1beta/",
+	ModelArmorGlobalBasePathKey:         "https://modelarmor.googleapis.com/v1beta/",
 	MonitoringBasePathKey:               "https://monitoring.googleapis.com/",
 	NetappBasePathKey:                   "https://netapp.googleapis.com/v1beta1/",
 	NetworkConnectivityBasePathKey:      "https://networkconnectivity.googleapis.com/v1/",
@@ -1365,6 +1368,11 @@ func SetEndpointDefaults(d *schema.ResourceData) error {
 			"GOOGLE_MODEL_ARMOR_CUSTOM_ENDPOINT",
 		}, DefaultBasePaths[ModelArmorBasePathKey]))
 	}
+	if d.Get("model_armor_global_custom_endpoint") == "" {
+		d.Set("model_armor_global_custom_endpoint", MultiEnvDefault([]string{
+			"GOOGLE_MODEL_ARMOR_GLOBAL_CUSTOM_ENDPOINT",
+		}, DefaultBasePaths[ModelArmorGlobalBasePathKey]))
+	}
 	if d.Get("monitoring_custom_endpoint") == "" {
 		d.Set("monitoring_custom_endpoint", MultiEnvDefault([]string{
 			"GOOGLE_MONITORING_CUSTOM_ENDPOINT",
@@ -1800,10 +1808,9 @@ func (c *Config) LoadAndValidate(ctx context.Context) error {
 		TimestampFormat: "2006/01/02 15:04:05",
 		LogFormat:       "%time% [%lvl%] %msg% \n",
 	})
+	logger.SetOutput(log.Writer())
 
 	alwaysLoggingDeciderClient := func(ctx context.Context, fullMethodName string) bool { return true }
-	grpc_logrus.ReplaceGrpcLogger(logrus.NewEntry(logger))
-
 	c.gRPCLoggingOptions = append(
 		c.gRPCLoggingOptions, option.WithGRPCDialOption(grpc.WithUnaryInterceptor(
 			grpc_logrus.PayloadUnaryClientInterceptor(logrus.NewEntry(logger), alwaysLoggingDeciderClient))),
@@ -2771,6 +2778,7 @@ func ConfigureBasePaths(c *Config) {
 	c.MigrationCenterBasePath = DefaultBasePaths[MigrationCenterBasePathKey]
 	c.MLEngineBasePath = DefaultBasePaths[MLEngineBasePathKey]
 	c.ModelArmorBasePath = DefaultBasePaths[ModelArmorBasePathKey]
+	c.ModelArmorGlobalBasePath = DefaultBasePaths[ModelArmorGlobalBasePathKey]
 	c.MonitoringBasePath = DefaultBasePaths[MonitoringBasePathKey]
 	c.NetappBasePath = DefaultBasePaths[NetappBasePathKey]
 	c.NetworkConnectivityBasePath = DefaultBasePaths[NetworkConnectivityBasePathKey]

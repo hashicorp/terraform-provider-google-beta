@@ -39,7 +39,7 @@ func TestAccNetworkSecurityBackendAuthenticationConfig_networkSecurityBackendAut
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckNetworkSecurityBackendAuthenticationConfigDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -58,7 +58,6 @@ func TestAccNetworkSecurityBackendAuthenticationConfig_networkSecurityBackendAut
 func testAccNetworkSecurityBackendAuthenticationConfig_networkSecurityBackendAuthenticationConfigBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_network_security_backend_authentication_config" "default" {
-  provider = google-beta
   name             = "tf-test-my-backend-authentication-config%{random_suffix}"
   labels           = {
     foo = "bar"
@@ -78,7 +77,7 @@ func TestAccNetworkSecurityBackendAuthenticationConfig_networkSecurityBackendAut
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckNetworkSecurityBackendAuthenticationConfigDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -97,7 +96,6 @@ func TestAccNetworkSecurityBackendAuthenticationConfig_networkSecurityBackendAut
 func testAccNetworkSecurityBackendAuthenticationConfig_networkSecurityBackendAuthenticationConfigFullExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_certificate_manager_certificate" "certificate" {
-  provider = google-beta
   name     = "tf-test-my-certificate%{random_suffix}"
   labels   = {
     foo = "bar"
@@ -111,7 +109,6 @@ resource "google_certificate_manager_certificate" "certificate" {
 }
 
 resource "google_certificate_manager_trust_config" "trust_config" {
-  provider    = google-beta
   name        = "tf-test-my-trust-config%{random_suffix}"
   description = "sample description for the trust config"
   location    = "global"
@@ -131,7 +128,6 @@ resource "google_certificate_manager_trust_config" "trust_config" {
 }
 
 resource "google_network_security_backend_authentication_config" "default" {
-  provider = google-beta
   name     = "tf-test-my-backend-authentication-config%{random_suffix}"
   labels   = {
     bar = "foo"
@@ -154,7 +150,7 @@ func TestAccNetworkSecurityBackendAuthenticationConfig_backendServiceTlsSettings
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckNetworkSecurityBackendAuthenticationConfigDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -173,7 +169,6 @@ func TestAccNetworkSecurityBackendAuthenticationConfig_backendServiceTlsSettings
 func testAccNetworkSecurityBackendAuthenticationConfig_backendServiceTlsSettingsExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_backend_service" "default" {
-  provider = google-beta
   name          = "tf-test-backend-service%{random_suffix}"
   health_checks = [google_compute_health_check.default.id]
   load_balancing_scheme = "EXTERNAL_MANAGED"
@@ -191,7 +186,6 @@ resource "google_compute_backend_service" "default" {
 }
 
 resource "google_compute_health_check" "default" {
-  provider = google-beta
   name = "tf-test-health-check%{random_suffix}"
   http_health_check {
     port = 80
@@ -199,7 +193,6 @@ resource "google_compute_health_check" "default" {
 }
 
 resource "google_network_security_backend_authentication_config" "default" {
-  provider = google-beta
   name             = "authentication%{random_suffix}"
   well_known_roots = "PUBLIC_ROOTS"
 }

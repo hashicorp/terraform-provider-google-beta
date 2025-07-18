@@ -117,7 +117,7 @@ func listAndActionModelArmorTemplate(action sweeper.ResourceAction) error {
 		}
 
 		// Prepare list URL
-		listTemplate := strings.Split("https://modelarmor.{{location}}.rep.googleapis.com/v1/projects/{{project}}/locations/{{location}}/templates", "?")[0]
+		listTemplate := strings.Split("https://modelarmor.{{location}}.rep.googleapis.com/v1beta/projects/{{project}}/locations/{{location}}/templates", "?")[0]
 		listUrl, err := tpgresource.ReplaceVars(mockConfig, config, listTemplate)
 		if err != nil {
 			log.Printf("[INFO][SWEEPER_LOG] error preparing sweeper list url: %s", err)
@@ -198,7 +198,7 @@ func deleteResourceModelArmorTemplate(config *transport_tpg.Config, d *tpgresour
 		return nil
 	}
 
-	deleteTemplate := "https://modelarmor.{{location}}.rep.googleapis.com/v1/projects/{{project}}/locations/{{location}}/templates/{{template_id}}"
+	deleteTemplate := "https://modelarmor.{{location}}.rep.googleapis.com/v1beta/projects/{{project}}/locations/{{location}}/templates/{{template_id}}"
 
 	url, err := tpgresource.ReplaceVars(d, config, deleteTemplate)
 	if err != nil {
