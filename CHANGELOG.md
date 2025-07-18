@@ -1,5 +1,42 @@
 ## 6.45.0 (Unreleased)
 
+UNKNOWN CHANGELOG TYPE:
+* Update CHANGELOG.md for 6.43.0 in the main branch ([#10310](https://github.com/hashicorp/terraform-provider-google-beta/pull/10310))
+* Update CHANGELOG.md on main for 6.44.0 ([#10362](https://github.com/hashicorp/terraform-provider-google-beta/pull/10362))
+NOTES:
+* iam: Update service account creation to prevent failures due to eventual consistency (reverted) ([#10340](https://github.com/hashicorp/terraform-provider-google-beta/pull/10340))
+DEPRECATIONS:
+* gemini: deprecated the `disable_web_grounding` field in the `google_gemini_gemini_gcp_enablement_setting` resource ([#10338](https://github.com/hashicorp/terraform-provider-google-beta/pull/10338))
+
+FEATURES:
+* **New Resource:** `google_bigtable_schema_bundle` ([#10342](https://github.com/hashicorp/terraform-provider-google-beta/pull/10342))
+* **New Resource:** `google_compute_preview_feature` ([#10364](https://github.com/hashicorp/terraform-provider-google-beta/pull/10364))
+* **New Resource:** `google_dialogflow_cx_generator` ([#10348](https://github.com/hashicorp/terraform-provider-google-beta/pull/10348))
+* **New Resource:** `google_model_armor_floorsetting` ([#10359](https://github.com/hashicorp/terraform-provider-google-beta/pull/10359))
+* **New Resource:** `google_vertex_ai_endpoint_with_model_garden_deployment` ([#10365](https://github.com/hashicorp/terraform-provider-google-beta/pull/10365))
+
+IMPROVEMENTS:
+* accesscontextmanager: added `name` to `google_access_context_manager_gcp_user_access_binding` resource ([#10370](https://github.com/hashicorp/terraform-provider-google-beta/pull/10370))
+* bigquery: added `ignore_auto_generated_schema` virtual field to `google_bigquery_table` resource to ignore server-added columns in the `schema` field ([#10366](https://github.com/hashicorp/terraform-provider-google-beta/pull/10366))
+* cloudrunv2: promoted field `node_selector` in `google_cloud_run_v2_job` resource to GA ([#10343](https://github.com/hashicorp/terraform-provider-google-beta/pull/10343))
+* compute: add `params.resourceManagerTags` field to the `google_compute_subnetwork` ([#10357](https://github.com/hashicorp/terraform-provider-google-beta/pull/10357))
+* compute: added `mirrorPercent` field to `requestMirrorPolicy` in `defaultRouteAction`, `pathMatchers[].defaultRouteAction`, `pathMatchers[].pathRules[].routeAction`, and `pathMatchers[].routeRules[].routeAction` to `google_compute_region_url_map` resource (beta) ([#10351](https://github.com/hashicorp/terraform-provider-google-beta/pull/10351))
+* compute: added `rule.match.src_secure_tags`, `rule.target_secure_tags`, `predefined_rules.match.src_secure_tags` and `predefined_rules.target_secure_tags` fields to `google_compute_firewall_policy_with_rules` resource ([#10367](https://github.com/hashicorp/terraform-provider-google-beta/pull/10367))
+* dataproc: added `cluster_config.security_config.identity_config` field to `google_dataproc_cluster` resource ([#10352](https://github.com/hashicorp/terraform-provider-google-beta/pull/10352))
+* dataproc: updated `cluster_config.gce_cluster_config.metadata` field to be computed in `google_dataproc_cluster` resource ([#10352](https://github.com/hashicorp/terraform-provider-google-beta/pull/10352))
+* dialogflowcx: added `flexible` support to `google_dialogflow_cx_webhook` resource. ([#10339](https://github.com/hashicorp/terraform-provider-google-beta/pull/10339))
+* gemini: added `web_grounding_type` field to `google_gemini_gemini_gcp_enablement_setting` resource ([#10338](https://github.com/hashicorp/terraform-provider-google-beta/pull/10338))
+* modelarmor: switched to the v1beta API for `google_model_armor_*` resources ([#10359](https://github.com/hashicorp/terraform-provider-google-beta/pull/10359))
+* netapp: added in-place update support for `allow_auto_tiering` field in `google_netapp_storage_pool` resource ([#10353](https://github.com/hashicorp/terraform-provider-google-beta/pull/10353))
+* secretmanager: added `tags` field to `google_secret_manager_secret` to allow setting tags for secrets at creation time ([#10360](https://github.com/hashicorp/terraform-provider-google-beta/pull/10360))
+* securesourcemanager: added `deletion_policy` field to `google_secure_source_manager_instance` resource ([#10349](https://github.com/hashicorp/terraform-provider-google-beta/pull/10349))
+* sql: added `network_attachment_uri` field to `google_sql_database_instance` ([#10354](https://github.com/hashicorp/terraform-provider-google-beta/pull/10354))
+* vmwareengine: added `GOOGLE_CLOUD_NETAPP_VOLUMES` peering type to resource `google_vmwareengine_network_peering` ([#10363](https://github.com/hashicorp/terraform-provider-google-beta/pull/10363))
+
+BUG FIXES:
+* modelarmor: fixed conflicting field validation for `filter_config.sdp_settings` on `google_model_armor_template` ([#10361](https://github.com/hashicorp/terraform-provider-google-beta/pull/10361))
+* resourcemanager: updated service account creation to prevent failures due to eventual consistency in `google_service_account` resource ([#10371](https://github.com/hashicorp/terraform-provider-google-beta/pull/10371))
+
 ## 6.44.0 (July 16, 2025)
 
 FEATURES:
