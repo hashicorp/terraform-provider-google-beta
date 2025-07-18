@@ -121,6 +121,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/migrationcenter"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/mlengine"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/modelarmor"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/modelarmorglobal"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/monitoring"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/netapp"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/networkconnectivity"
@@ -265,6 +266,7 @@ var handwrittenDatasources = map[string]*schema.Resource{
 	"google_compute_machine_types":                               compute.DataSourceGoogleComputeMachineTypes(),
 	"google_compute_network":                                     compute.DataSourceGoogleComputeNetwork(),
 	"google_compute_networks":                                    compute.DataSourceGoogleComputeNetworks(),
+	"google_compute_network_attachment":                          compute.DataSourceGoogleComputeNetworkAttachment(),
 	"google_compute_network_endpoint_group":                      compute.DataSourceGoogleComputeNetworkEndpointGroup(),
 	"google_compute_network_peering":                             compute.DataSourceComputeNetworkPeering(),
 	"google_compute_node_types":                                  compute.DataSourceGoogleComputeNodeTypes(),
@@ -332,6 +334,7 @@ var handwrittenDatasources = map[string]*schema.Resource{
 	"google_firebase_apple_app":                                  firebase.DataSourceGoogleFirebaseAppleApp(),
 	"google_firebase_hosting_channel":                            firebasehosting.DataSourceGoogleFirebaseHostingChannel(),
 	"google_firebase_web_app":                                    firebase.DataSourceGoogleFirebaseWebApp(),
+	"google_firestore_document":                                  firestore.DataSourceGoogleFirestoreDocument(),
 	"google_folder":                                              resourcemanager.DataSourceGoogleFolder(),
 	"google_folders":                                             resourcemanager.DataSourceGoogleFolders(),
 	"google_folder_organization_policy":                          resourcemanager.DataSourceGoogleFolderOrganizationPolicy(),
@@ -592,9 +595,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 681
+// Generated resources: 687
 // Generated IAM resources: 339
-// Total generated resources: 1020
+// Total generated resources: 1026
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -719,6 +722,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_bigquery_analytics_hub_data_exchange_iam_binding":                    tpgiamresource.ResourceIamBinding(bigqueryanalyticshub.BigqueryAnalyticsHubDataExchangeIamSchema, bigqueryanalyticshub.BigqueryAnalyticsHubDataExchangeIamUpdaterProducer, bigqueryanalyticshub.BigqueryAnalyticsHubDataExchangeIdParseFunc),
 	"google_bigquery_analytics_hub_data_exchange_iam_member":                     tpgiamresource.ResourceIamMember(bigqueryanalyticshub.BigqueryAnalyticsHubDataExchangeIamSchema, bigqueryanalyticshub.BigqueryAnalyticsHubDataExchangeIamUpdaterProducer, bigqueryanalyticshub.BigqueryAnalyticsHubDataExchangeIdParseFunc),
 	"google_bigquery_analytics_hub_data_exchange_iam_policy":                     tpgiamresource.ResourceIamPolicy(bigqueryanalyticshub.BigqueryAnalyticsHubDataExchangeIamSchema, bigqueryanalyticshub.BigqueryAnalyticsHubDataExchangeIamUpdaterProducer, bigqueryanalyticshub.BigqueryAnalyticsHubDataExchangeIdParseFunc),
+	"google_bigquery_analytics_hub_data_exchange_subscription":                   bigqueryanalyticshub.ResourceBigqueryAnalyticsHubDataExchangeSubscription(),
 	"google_bigquery_analytics_hub_listing":                                      bigqueryanalyticshub.ResourceBigqueryAnalyticsHubListing(),
 	"google_bigquery_analytics_hub_listing_iam_binding":                          tpgiamresource.ResourceIamBinding(bigqueryanalyticshub.BigqueryAnalyticsHubListingIamSchema, bigqueryanalyticshub.BigqueryAnalyticsHubListingIamUpdaterProducer, bigqueryanalyticshub.BigqueryAnalyticsHubListingIdParseFunc),
 	"google_bigquery_analytics_hub_listing_iam_member":                           tpgiamresource.ResourceIamMember(bigqueryanalyticshub.BigqueryAnalyticsHubListingIamSchema, bigqueryanalyticshub.BigqueryAnalyticsHubListingIamUpdaterProducer, bigqueryanalyticshub.BigqueryAnalyticsHubListingIdParseFunc),
@@ -740,6 +744,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_bigtable_app_profile":                                                bigtable.ResourceBigtableAppProfile(),
 	"google_bigtable_logical_view":                                               bigtable.ResourceBigtableLogicalView(),
 	"google_bigtable_materialized_view":                                          bigtable.ResourceBigtableMaterializedView(),
+	"google_bigtable_schema_bundle":                                              bigtable.ResourceBigtableSchemaBundle(),
 	"google_billing_budget":                                                      billing.ResourceBillingBudget(),
 	"google_binary_authorization_attestor":                                       binaryauthorization.ResourceBinaryAuthorizationAttestor(),
 	"google_binary_authorization_attestor_iam_binding":                           tpgiamresource.ResourceIamBinding(binaryauthorization.BinaryAuthorizationAttestorIamSchema, binaryauthorization.BinaryAuthorizationAttestorIamUpdaterProducer, binaryauthorization.BinaryAuthorizationAttestorIdParseFunc),
@@ -904,6 +909,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_compute_organization_security_policy_rule":                           compute.ResourceComputeOrganizationSecurityPolicyRule(),
 	"google_compute_packet_mirroring":                                            compute.ResourceComputePacketMirroring(),
 	"google_compute_per_instance_config":                                         compute.ResourceComputePerInstanceConfig(),
+	"google_compute_preview_feature":                                             compute.ResourceComputePreviewFeature(),
 	"google_compute_project_cloud_armor_tier":                                    compute.ResourceComputeProjectCloudArmorTier(),
 	"google_compute_public_advertised_prefix":                                    compute.ResourceComputePublicAdvertisedPrefix(),
 	"google_compute_public_delegated_prefix":                                     compute.ResourceComputePublicDelegatedPrefix(),
@@ -1093,6 +1099,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_dialogflow_cx_environment":                                           dialogflowcx.ResourceDialogflowCXEnvironment(),
 	"google_dialogflow_cx_flow":                                                  dialogflowcx.ResourceDialogflowCXFlow(),
 	"google_dialogflow_cx_generative_settings":                                   dialogflowcx.ResourceDialogflowCXGenerativeSettings(),
+	"google_dialogflow_cx_generator":                                             dialogflowcx.ResourceDialogflowCXGenerator(),
 	"google_dialogflow_cx_intent":                                                dialogflowcx.ResourceDialogflowCXIntent(),
 	"google_dialogflow_cx_page":                                                  dialogflowcx.ResourceDialogflowCXPage(),
 	"google_dialogflow_cx_security_settings":                                     dialogflowcx.ResourceDialogflowCXSecuritySettings(),
@@ -1324,6 +1331,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_migration_center_preference_set":                                     migrationcenter.ResourceMigrationCenterPreferenceSet(),
 	"google_ml_engine_model":                                                     mlengine.ResourceMLEngineModel(),
 	"google_model_armor_template":                                                modelarmor.ResourceModelArmorTemplate(),
+	"google_model_armor_floorsetting":                                            modelarmorglobal.ResourceModelArmorGlobalFloorsetting(),
 	"google_monitoring_alert_policy":                                             monitoring.ResourceMonitoringAlertPolicy(),
 	"google_monitoring_service":                                                  monitoring.ResourceMonitoringGenericService(),
 	"google_monitoring_group":                                                    monitoring.ResourceMonitoringGroup(),
@@ -1566,6 +1574,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_vertex_ai_endpoint_iam_binding":                                      tpgiamresource.ResourceIamBinding(vertexai.VertexAIEndpointIamSchema, vertexai.VertexAIEndpointIamUpdaterProducer, vertexai.VertexAIEndpointIdParseFunc),
 	"google_vertex_ai_endpoint_iam_member":                                       tpgiamresource.ResourceIamMember(vertexai.VertexAIEndpointIamSchema, vertexai.VertexAIEndpointIamUpdaterProducer, vertexai.VertexAIEndpointIdParseFunc),
 	"google_vertex_ai_endpoint_iam_policy":                                       tpgiamresource.ResourceIamPolicy(vertexai.VertexAIEndpointIamSchema, vertexai.VertexAIEndpointIamUpdaterProducer, vertexai.VertexAIEndpointIdParseFunc),
+	"google_vertex_ai_endpoint_with_model_garden_deployment":                     vertexai.ResourceVertexAIEndpointWithModelGardenDeployment(),
 	"google_vertex_ai_feature_group":                                             vertexai.ResourceVertexAIFeatureGroup(),
 	"google_vertex_ai_feature_group_iam_binding":                                 tpgiamresource.ResourceIamBinding(vertexai.VertexAIFeatureGroupIamSchema, vertexai.VertexAIFeatureGroupIamUpdaterProducer, vertexai.VertexAIFeatureGroupIdParseFunc),
 	"google_vertex_ai_feature_group_iam_member":                                  tpgiamresource.ResourceIamMember(vertexai.VertexAIFeatureGroupIamSchema, vertexai.VertexAIFeatureGroupIamUpdaterProducer, vertexai.VertexAIFeatureGroupIdParseFunc),
@@ -1893,6 +1902,7 @@ func UseGeneratedProducts() {
 	var _ = migrationcenter.ProductName
 	var _ = mlengine.ProductName
 	var _ = modelarmor.ProductName
+	var _ = modelarmorglobal.ProductName
 	var _ = monitoring.ProductName
 	var _ = netapp.ProductName
 	var _ = networkconnectivity.ProductName

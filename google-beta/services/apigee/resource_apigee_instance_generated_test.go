@@ -532,7 +532,7 @@ resource "google_apigee_instance" "apigee_instance" {
   disk_encryption_key_name = google_kms_crypto_key.apigee_key.id
 
   access_logging_config {
-    enabled = true,
+    enabled = true
     filter  = "status_code >= 200 && status_code < 300"
   }
 }
