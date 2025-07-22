@@ -595,9 +595,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 689
+// Generated resources: 690
 // Generated IAM resources: 339
-// Total generated resources: 1028
+// Total generated resources: 1029
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -1414,6 +1414,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_oracle_database_autonomous_database":                                 oracledatabase.ResourceOracleDatabaseAutonomousDatabase(),
 	"google_oracle_database_cloud_exadata_infrastructure":                        oracledatabase.ResourceOracleDatabaseCloudExadataInfrastructure(),
 	"google_oracle_database_cloud_vm_cluster":                                    oracledatabase.ResourceOracleDatabaseCloudVmCluster(),
+	"google_oracle_database_odb_network":                                         oracledatabase.ResourceOracleDatabaseOdbNetwork(),
 	"google_org_policy_custom_constraint":                                        orgpolicy.ResourceOrgPolicyCustomConstraint(),
 	"google_org_policy_policy":                                                   orgpolicy.ResourceOrgPolicyPolicy(),
 	"google_os_config_guest_policies":                                            osconfig.ResourceOSConfigGuestPolicies(),
