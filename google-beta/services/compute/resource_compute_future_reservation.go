@@ -109,6 +109,64 @@ character, which cannot be a dash.`,
 					},
 				},
 			},
+			"aggregate_reservation": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				ForceNew:    true,
+				Description: `Aggregate reservation details for the future reservation.`,
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"reserved_resources": {
+							Type:        schema.TypeList,
+							Required:    true,
+							ForceNew:    true,
+							Description: `futureReservations.list of reserved resources (CPUs, memory, accelerators).`,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"accelerator": {
+										Type:        schema.TypeList,
+										Optional:    true,
+										ForceNew:    true,
+										Description: `Properties of accelerator resources in this reservation.`,
+										MaxItems:    1,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"accelerator_count": {
+													Type:        schema.TypeInt,
+													Optional:    true,
+													ForceNew:    true,
+													Description: `Number of accelerators of specified type.`,
+												},
+												"accelerator_type": {
+													Type:        schema.TypeString,
+													Optional:    true,
+													ForceNew:    true,
+													Description: `Full or partial URL to accelerator type. e.g. "projects/{PROJECT}/zones/{ZONE}/acceleratorTypes/ct4l"`,
+												},
+											},
+										},
+									},
+								},
+							},
+						},
+						"vm_family": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ForceNew:     true,
+							ValidateFunc: verify.ValidateEnum([]string{"VM_FAMILY_CLOUD_TPU_DEVICE_CT3", "VM_FAMILY_CLOUD_TPU_LITE_DEVICE_CT5L", "VM_FAMILY_CLOUD_TPU_LITE_POD_SLICE_CT5LP", "VM_FAMILY_CLOUD_TPU_LITE_POD_SLICE_CT6E", "VM_FAMILY_CLOUD_TPU_POD_SLICE_CT3P", "VM_FAMILY_CLOUD_TPU_POD_SLICE_CT4P", "VM_FAMILY_CLOUD_TPU_POD_SLICE_CT5P", ""}),
+							Description:  `The VM family that all instances scheduled against this reservation must belong to. Possible values: ["VM_FAMILY_CLOUD_TPU_DEVICE_CT3", "VM_FAMILY_CLOUD_TPU_LITE_DEVICE_CT5L", "VM_FAMILY_CLOUD_TPU_LITE_POD_SLICE_CT5LP", "VM_FAMILY_CLOUD_TPU_LITE_POD_SLICE_CT6E", "VM_FAMILY_CLOUD_TPU_POD_SLICE_CT3P", "VM_FAMILY_CLOUD_TPU_POD_SLICE_CT4P", "VM_FAMILY_CLOUD_TPU_POD_SLICE_CT5P"]`,
+						},
+						"workload_type": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ForceNew:     true,
+							ValidateFunc: verify.ValidateEnum([]string{"BATCH", "SERVING", "UNSPECIFIED", ""}),
+							Description:  `The workload type of the instances that will target this reservation. Possible values: ["BATCH", "SERVING", "UNSPECIFIED"]`,
+						},
+					},
+				},
+			},
 			"auto_created_reservations_delete_time": {
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -770,6 +828,12 @@ func resourceComputeFutureReservationCreate(d *schema.ResourceData, meta interfa
 	} else if v, ok := d.GetOkExists("auto_created_reservations_duration"); !tpgresource.IsEmptyValue(reflect.ValueOf(autoCreatedReservationsDurationProp)) && (ok || !reflect.DeepEqual(v, autoCreatedReservationsDurationProp)) {
 		obj["autoCreatedReservationsDuration"] = autoCreatedReservationsDurationProp
 	}
+	aggregateReservationProp, err := expandComputeFutureReservationAggregateReservation(d.Get("aggregate_reservation"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("aggregate_reservation"); !tpgresource.IsEmptyValue(reflect.ValueOf(aggregateReservationProp)) && (ok || !reflect.DeepEqual(v, aggregateReservationProp)) {
+		obj["aggregateReservation"] = aggregateReservationProp
+	}
 	nameProp, err := expandComputeFutureReservationName(d.Get("name"), d, config)
 	if err != nil {
 		return err
@@ -924,6 +988,9 @@ func resourceComputeFutureReservationRead(d *schema.ResourceData, meta interface
 		return fmt.Errorf("Error reading FutureReservation: %s", err)
 	}
 	if err := d.Set("auto_created_reservations_duration", flattenComputeFutureReservationAutoCreatedReservationsDuration(res["autoCreatedReservationsDuration"], d, config)); err != nil {
+		return fmt.Errorf("Error reading FutureReservation: %s", err)
+	}
+	if err := d.Set("aggregate_reservation", flattenComputeFutureReservationAggregateReservation(res["aggregateReservation"], d, config)); err != nil {
 		return fmt.Errorf("Error reading FutureReservation: %s", err)
 	}
 	if err := d.Set("name", flattenComputeFutureReservationName(res["name"], d, config)); err != nil {
@@ -1996,6 +2063,85 @@ func flattenComputeFutureReservationAutoCreatedReservationsDurationNanos(v inter
 	return v // let terraform core handle it otherwise
 }
 
+func flattenComputeFutureReservationAggregateReservation(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["vm_family"] =
+		flattenComputeFutureReservationAggregateReservationVmFamily(original["vmFamily"], d, config)
+	transformed["reserved_resources"] =
+		flattenComputeFutureReservationAggregateReservationReservedResources(original["reservedResources"], d, config)
+	transformed["workload_type"] =
+		flattenComputeFutureReservationAggregateReservationWorkloadType(original["workloadType"], d, config)
+	return []interface{}{transformed}
+}
+func flattenComputeFutureReservationAggregateReservationVmFamily(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenComputeFutureReservationAggregateReservationReservedResources(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+	l := v.([]interface{})
+	transformed := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		original := raw.(map[string]interface{})
+		if len(original) < 1 {
+			// Do not include empty json objects coming back from the api
+			continue
+		}
+		transformed = append(transformed, map[string]interface{}{
+			"accelerator": flattenComputeFutureReservationAggregateReservationReservedResourcesAccelerator(original["accelerator"], d, config),
+		})
+	}
+	return transformed
+}
+func flattenComputeFutureReservationAggregateReservationReservedResourcesAccelerator(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["accelerator_count"] =
+		flattenComputeFutureReservationAggregateReservationReservedResourcesAcceleratorAcceleratorCount(original["acceleratorCount"], d, config)
+	transformed["accelerator_type"] =
+		flattenComputeFutureReservationAggregateReservationReservedResourcesAcceleratorAcceleratorType(original["acceleratorType"], d, config)
+	return []interface{}{transformed}
+}
+func flattenComputeFutureReservationAggregateReservationReservedResourcesAcceleratorAcceleratorCount(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	// Handles the string fixed64 format
+	if strVal, ok := v.(string); ok {
+		if intVal, err := tpgresource.StringToFixed64(strVal); err == nil {
+			return intVal
+		}
+	}
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
+}
+
+func flattenComputeFutureReservationAggregateReservationReservedResourcesAcceleratorAcceleratorType(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenComputeFutureReservationAggregateReservationWorkloadType(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenComputeFutureReservationName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
@@ -2457,6 +2603,103 @@ func expandComputeFutureReservationAutoCreatedReservationsDurationSeconds(v inte
 }
 
 func expandComputeFutureReservationAutoCreatedReservationsDurationNanos(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeFutureReservationAggregateReservation(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedVmFamily, err := expandComputeFutureReservationAggregateReservationVmFamily(original["vm_family"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedVmFamily); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["vmFamily"] = transformedVmFamily
+	}
+
+	transformedReservedResources, err := expandComputeFutureReservationAggregateReservationReservedResources(original["reserved_resources"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedReservedResources); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["reservedResources"] = transformedReservedResources
+	}
+
+	transformedWorkloadType, err := expandComputeFutureReservationAggregateReservationWorkloadType(original["workload_type"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedWorkloadType); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["workloadType"] = transformedWorkloadType
+	}
+
+	return transformed, nil
+}
+
+func expandComputeFutureReservationAggregateReservationVmFamily(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeFutureReservationAggregateReservationReservedResources(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	req := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		if raw == nil {
+			continue
+		}
+		original := raw.(map[string]interface{})
+		transformed := make(map[string]interface{})
+
+		transformedAccelerator, err := expandComputeFutureReservationAggregateReservationReservedResourcesAccelerator(original["accelerator"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedAccelerator); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["accelerator"] = transformedAccelerator
+		}
+
+		req = append(req, transformed)
+	}
+	return req, nil
+}
+
+func expandComputeFutureReservationAggregateReservationReservedResourcesAccelerator(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedAcceleratorCount, err := expandComputeFutureReservationAggregateReservationReservedResourcesAcceleratorAcceleratorCount(original["accelerator_count"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedAcceleratorCount); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["acceleratorCount"] = transformedAcceleratorCount
+	}
+
+	transformedAcceleratorType, err := expandComputeFutureReservationAggregateReservationReservedResourcesAcceleratorAcceleratorType(original["accelerator_type"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedAcceleratorType); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["acceleratorType"] = transformedAcceleratorType
+	}
+
+	return transformed, nil
+}
+
+func expandComputeFutureReservationAggregateReservationReservedResourcesAcceleratorAcceleratorCount(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeFutureReservationAggregateReservationReservedResourcesAcceleratorAcceleratorType(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeFutureReservationAggregateReservationWorkloadType(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

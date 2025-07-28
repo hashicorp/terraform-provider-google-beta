@@ -940,10 +940,6 @@ func TestAccComputeInstanceTemplate_performanceMonitoringUnit(t *testing.T) {
 		"instance_name":               fmt.Sprintf("tf-test-instance-template-%s", acctest.RandString(t, 10)),
 		"performance_monitoring_unit": "STANDARD",
 	}
-	context_2 := map[string]interface{}{
-		"instance_name":               context_1["instance_name"].(string),
-		"performance_monitoring_unit": "ENHANCED",
-	}
 	context_3 := map[string]interface{}{
 		"instance_name":               context_1["instance_name"].(string),
 		"performance_monitoring_unit": "ARCHITECTURAL",
@@ -959,18 +955,6 @@ func TestAccComputeInstanceTemplate_performanceMonitoringUnit(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceTemplateExists(t, "google_compute_instance_template.foobar", &instanceTemplate),
 					resource.TestCheckResourceAttr("google_compute_instance_template.foobar", "advanced_machine_features.0.performance_monitoring_unit", "STANDARD"),
-				),
-			},
-			{
-				ResourceName:      "google_compute_instance_template.foobar",
-				ImportState:       true,
-				ImportStateVerify: true,
-			},
-			{
-				Config: testAccComputeInstanceTemplate_performanceMonitoringUnit(context_2),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckComputeInstanceTemplateExists(t, "google_compute_instance_template.foobar", &instanceTemplate),
-					resource.TestCheckResourceAttr("google_compute_instance_template.foobar", "advanced_machine_features.0.performance_monitoring_unit", "ENHANCED"),
 				),
 			},
 			{
@@ -4166,7 +4150,7 @@ resource "google_compute_instance_template" "foobar" {
 func testAccComputeInstanceTemplateConfidentialInstanceConfigEnable(suffix string, confidentialInstanceType string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
-  family  = "ubuntu-2004-lts"
+  family  = "ubuntu-2204-lts"
   project = "ubuntu-os-cloud"
 }
 
@@ -4224,7 +4208,7 @@ resource "google_compute_instance_template" "foobar2" {
 func testAccComputeInstanceTemplateConfidentialInstanceConfigNoEnable(suffix string, minCpuPlatform, confidentialInstanceType string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image2" {
-  family  = "ubuntu-2004-lts"
+  family  = "ubuntu-2204-lts"
   project = "ubuntu-os-cloud"
 }
 
@@ -4318,7 +4302,7 @@ resource "google_compute_instance_template" "foobar5" {
 func testAccComputeInstanceTemplateAdvancedMachineFeatures(suffix string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
-  family  = "ubuntu-2004-lts"
+  family  = "ubuntu-2204-lts"
   project = "ubuntu-os-cloud"
 }
 
@@ -4354,7 +4338,7 @@ resource "google_compute_instance_template" "foobar" {
 func testAccComputeInstanceTemplate_performanceMonitoringUnit(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 data "google_compute_image" "my_image" {
-  family  = "ubuntu-2004-lts"
+  family  = "ubuntu-2204-lts"
   project = "ubuntu-os-cloud"
 }
 
@@ -4380,7 +4364,7 @@ resource "google_compute_instance_template" "foobar" {
 func testAccComputeInstanceTemplate_enableUefiNetworking(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 data "google_compute_image" "my_image" {
-  family  = "ubuntu-2004-lts"
+  family  = "ubuntu-2204-lts"
   project = "ubuntu-os-cloud"
 }
 

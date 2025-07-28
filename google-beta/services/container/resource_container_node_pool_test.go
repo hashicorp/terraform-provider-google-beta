@@ -2477,6 +2477,68 @@ resource "google_container_node_pool" "np" {
 `, cluster, networkName, subnetworkName, enableNV, np, enableNV)
 }
 
+func TestAccContainerNodePool_performanceMonitoringUnit(t *testing.T) {
+	t.Parallel()
+
+	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
+	np := fmt.Sprintf("tf-test-nodepool-%s", acctest.RandString(t, 10))
+	networkName := acctest.BootstrapSharedTestNetwork(t, "gke-cluster")
+	subnetworkName := acctest.BootstrapSubnet(t, "gke-cluster", networkName)
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckContainerNodePoolDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccContainerNodePool_performanceMonitoringUnit(cluster, np, networkName, subnetworkName, "ARCHITECTURAL"),
+			},
+			{
+				ResourceName:            "google_container_cluster.cluster",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"deletion_protection"},
+			},
+		},
+	})
+}
+
+func testAccContainerNodePool_performanceMonitoringUnit(cluster, np, networkName, subnetworkName, pmuLevel string) string {
+	return fmt.Sprintf(`
+resource "google_container_cluster" "cluster" {
+  name               = "%s"
+  location           = "us-central1-a"
+  initial_node_count = 1
+  deletion_protection = false
+  network    = "%s"
+  subnetwork    = "%s"
+
+  node_config {
+    machine_type = "c4-standard-4"
+	advanced_machine_features {
+	  threads_per_core = 2
+	  performance_monitoring_unit = "%s"
+	}
+  }
+}
+
+resource "google_container_node_pool" "np" {
+  name               = "%s"
+  location           = "us-central1-a"
+  cluster            = google_container_cluster.cluster.name
+  initial_node_count = 2
+
+  node_config {
+    machine_type = "c4-standard-4"
+	advanced_machine_features {
+	  threads_per_core = 2
+	  performance_monitoring_unit = "%s"
+	}
+  }
+}
+`, cluster, networkName, subnetworkName, pmuLevel, np, pmuLevel)
+}
+
 func testAccCheckContainerNodePoolDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		config := acctest.GoogleProviderConfig(t)
@@ -4453,7 +4515,7 @@ func TestAccContainerNodePool_withConfidentialNodes(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerNodePool_withConfidentialNodes(clusterName, np, networkName, subnetworkName, true),
+				Config: testAccContainerNodePool_withConfidentialNodes(clusterName, np, networkName, subnetworkName, false, "", "n2d-standard-2"),
 			},
 			{
 				ResourceName:      "google_container_node_pool.np",
@@ -4461,7 +4523,7 @@ func TestAccContainerNodePool_withConfidentialNodes(t *testing.T) {
 				ImportStateVerify: true,
 			},
 			{
-				Config: testAccContainerNodePool_withConfidentialNodes(clusterName, np, networkName, subnetworkName, false),
+				Config: testAccContainerNodePool_withConfidentialNodes(clusterName, np, networkName, subnetworkName, true, "", "n2d-standard-2"),
 			},
 			{
 				ResourceName:      "google_container_node_pool.np",
@@ -4469,7 +4531,21 @@ func TestAccContainerNodePool_withConfidentialNodes(t *testing.T) {
 				ImportStateVerify: true,
 			},
 			{
-				Config: testAccContainerNodePool_withConfidentialNodes(clusterName, np, networkName, subnetworkName, true),
+				Config: testAccContainerNodePool_withConfidentialNodes(clusterName, np, networkName, subnetworkName, false, "SEV", "n2d-standard-2"),
+			},
+			{
+				ResourceName:      "google_container_node_pool.np",
+				ImportState:       true,
+				ImportStateVerify: true,
+			}, {
+				Config: testAccContainerNodePool_withConfidentialNodes(clusterName, np, networkName, subnetworkName, false, "SEV_SNP", "n2d-standard-2"),
+			},
+			{
+				ResourceName:      "google_container_node_pool.np",
+				ImportState:       true,
+				ImportStateVerify: true,
+			}, {
+				Config: testAccContainerNodePool_withConfidentialNodes(clusterName, np, networkName, subnetworkName, false, "TDX", "c3-standard-4"),
 			},
 			{
 				ResourceName:      "google_container_node_pool.np",
@@ -4480,18 +4556,16 @@ func TestAccContainerNodePool_withConfidentialNodes(t *testing.T) {
 	})
 }
 
-func testAccContainerNodePool_withConfidentialNodes(clusterName, np, networkName, subnetworkName string, confidential bool) string {
+func testAccContainerNodePool_withConfidentialNodes(clusterName, np, networkName, subnetworkName string, enable bool, confidentialInstanceType, machineType string) string {
+	confInsTypeString := ""
+	if confidentialInstanceType != "" {
+		confInsTypeString = fmt.Sprintf(`confidential_instance_type = "%s"`, confidentialInstanceType)
+	}
 	return fmt.Sprintf(`
 resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1-a"
   initial_node_count = 1
-  node_config {
-    confidential_nodes {
-      enabled = false
-    }
-    machine_type = "n2-standard-2"
-  }
   deletion_protection = false
   network    = "%s"
   subnetwork = "%s"
@@ -4503,13 +4577,14 @@ resource "google_container_node_pool" "np" {
   cluster            = google_container_cluster.cluster.name
   initial_node_count = 1
   node_config {
-    machine_type = "n2d-standard-2" // can't be e2 because Confidential Nodes require AMD CPUs
+    machine_type = "%s"
     confidential_nodes {
-      enabled = "%t"
+      enabled = %t
+      %s
     }
   }
 }
-`, clusterName, networkName, subnetworkName, np, confidential)
+`, clusterName, networkName, subnetworkName, np, machineType, enable, confInsTypeString)
 }
 
 func TestAccContainerNodePool_withLocalSsdEncryptionMode(t *testing.T) {
@@ -5033,11 +5108,6 @@ resource "google_container_cluster" "primary" {
   deletion_protection = false
   network             = "%{network}"
   subnetwork          = "%{subnet}"
-
-  timeouts {
-    create = "30m"
-    update = "40m"
-  }
 }
 
 # Separately Managed Node Pool
@@ -5085,11 +5155,6 @@ resource "google_container_cluster" "primary" {
   deletion_protection = false
   network             = "%{network}"
   subnetwork          = "%{subnet}"
-
-  timeouts {
-    create = "30m"
-    update = "40m"
-  }
 }
 
 # Separately Managed Node Pool
@@ -5138,11 +5203,6 @@ resource "google_container_cluster" "primary" {
   deletion_protection = false
   network             = "%{network}"
   subnetwork          = "%{subnet}"
-
-  timeouts {
-    create = "30m"
-    update = "40m"
-  }
 }
 
 # Separately Managed Node Pool

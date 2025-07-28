@@ -111,9 +111,10 @@ value should be 4-32 characters, and may contain the characters [a-z0-9-]. The p
 'gcp-' is reserved for use by Google, and may not be specified.`,
 			},
 			"workload_identity_pool_managed_identity_id": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Type:         schema.TypeString,
+				Required:     true,
+				ForceNew:     true,
+				ValidateFunc: ValidateWorkloadIdentityPoolManagedIdentityId,
 				Description: `The ID to use for the managed identity. This value must:
 * contain at most 63 characters
 * contain only lowercase alphanumeric characters or '-'
@@ -135,6 +136,15 @@ The prefix 'gcp-' will be reserved for future uses.`,
 
 
 The prefix 'gcp-' will be reserved for future uses.`,
+			},
+			"attestation_rules": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				Description: `Defines which workloads can receive an identity within a pool. When an AttestationRule is
+defined under a managed identity, matching workloads may receive that identity. A maximum of
+50 AttestationRules can be set.`,
+				Elem: iambetaWorkloadIdentityPoolManagedIdentityAttestationRulesSchema(),
+				// Default schema.HashSchema is used.
 			},
 			"description": {
 				Type:        schema.TypeString,
@@ -174,6 +184,19 @@ soft-deleted managed identity until it is permanently deleted.`,
 	}
 }
 
+func iambetaWorkloadIdentityPoolManagedIdentityAttestationRulesSchema() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"google_cloud_resource": {
+				Type:     schema.TypeString,
+				Required: true,
+				Description: `A single workload operating on Google Cloud. For example:
+'//compute.googleapis.com/projects/123/uid/zones/us-central1-a/instances/12345678'.`,
+			},
+		},
+	}
+}
+
 func resourceIAMBetaWorkloadIdentityPoolManagedIdentityCreate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
 	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
@@ -193,6 +216,12 @@ func resourceIAMBetaWorkloadIdentityPoolManagedIdentityCreate(d *schema.Resource
 		return err
 	} else if v, ok := d.GetOkExists("disabled"); !tpgresource.IsEmptyValue(reflect.ValueOf(disabledProp)) && (ok || !reflect.DeepEqual(v, disabledProp)) {
 		obj["disabled"] = disabledProp
+	}
+	attestationRulesProp, err := expandIAMBetaWorkloadIdentityPoolManagedIdentityAttestationRules(d.Get("attestation_rules"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("attestation_rules"); !tpgresource.IsEmptyValue(reflect.ValueOf(attestationRulesProp)) && (ok || !reflect.DeepEqual(v, attestationRulesProp)) {
+		obj["attestationRules"] = attestationRulesProp
 	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{IAMBetaBasePath}}projects/{{project}}/locations/global/workloadIdentityPools/{{workload_identity_pool_id}}/namespaces/{{workload_identity_pool_namespace_id}}/managedIdentities?workloadIdentityPoolManagedIdentityId={{workload_identity_pool_managed_identity_id}}")
@@ -215,6 +244,13 @@ func resourceIAMBetaWorkloadIdentityPoolManagedIdentityCreate(d *schema.Resource
 	}
 
 	headers := make(http.Header)
+	// see if we need to create attestation_rules
+	_, hasRule := d.GetOk("attestation_rules")
+	ruleObj := make(map[string]interface{})
+	if hasRule {
+		ruleObj["attestationRules"] = attestationRulesProp
+		delete(obj, "attestationRules")
+	}
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -244,6 +280,39 @@ func resourceIAMBetaWorkloadIdentityPoolManagedIdentityCreate(d *schema.Resource
 		// The resource didn't actually create
 		d.SetId("")
 		return fmt.Errorf("Error waiting to create WorkloadIdentityPoolManagedIdentity: %s", err)
+	}
+
+	// create attestation_rules
+	if hasRule {
+		qIdx := strings.Index(url, "?")
+		var basePath string
+		if qIdx != -1 {
+			basePath = url[:qIdx]
+		} else {
+			basePath = url
+		}
+		ruleUrl := basePath + "/" + d.Get("workload_identity_pool_managed_identity_id").(string) + ":setAttestationRules"
+
+		ruleRes, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
+			Config:    config,
+			Method:    "POST",
+			Project:   billingProject,
+			RawURL:    ruleUrl,
+			UserAgent: userAgent,
+			Body:      ruleObj,
+			Timeout:   d.Timeout(schema.TimeoutCreate),
+			Headers:   headers,
+		})
+		if err != nil {
+			return fmt.Errorf("Error creating WorkloadIdentityPoolManagedIdentity %q: %s", d.Id(), err)
+		}
+
+		err = IAMBetaOperationWaitTime(
+			config, ruleRes, project, "Creating WorkloadIdentityPoolManagedIdentity", userAgent,
+			d.Timeout(schema.TimeoutCreate))
+		if err != nil {
+			return fmt.Errorf("Error waiting to create WorkloadIdentityPoolManagedIdentity: %s", err)
+		}
 	}
 
 	log.Printf("[DEBUG] Finished creating WorkloadIdentityPoolManagedIdentity %q: %#v", d.Id(), res)
@@ -288,6 +357,24 @@ func resourceIAMBetaWorkloadIdentityPoolManagedIdentityRead(d *schema.ResourceDa
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("IAMBetaWorkloadIdentityPoolManagedIdentity %q", d.Id()))
 	}
+	// list attestation_rules
+	ruleUrl := url + ":listAttestationRules"
+
+	ruleRes, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
+		Config:    config,
+		Method:    "GET",
+		Project:   billingProject,
+		RawURL:    ruleUrl,
+		UserAgent: userAgent,
+		Headers:   headers,
+	})
+	if err != nil {
+		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("IAMBetaWorkloadIdentityPoolManagedIdentity %q", d.Id()))
+	}
+
+	for k, v := range ruleRes {
+		res[k] = v
+	}
 
 	res, err = resourceIAMBetaWorkloadIdentityPoolManagedIdentityDecoder(d, meta, res)
 	if err != nil {
@@ -315,6 +402,9 @@ func resourceIAMBetaWorkloadIdentityPoolManagedIdentityRead(d *schema.ResourceDa
 		return fmt.Errorf("Error reading WorkloadIdentityPoolManagedIdentity: %s", err)
 	}
 	if err := d.Set("disabled", flattenIAMBetaWorkloadIdentityPoolManagedIdentityDisabled(res["disabled"], d, config)); err != nil {
+		return fmt.Errorf("Error reading WorkloadIdentityPoolManagedIdentity: %s", err)
+	}
+	if err := d.Set("attestation_rules", flattenIAMBetaWorkloadIdentityPoolManagedIdentityAttestationRules(res["attestationRules"], d, config)); err != nil {
 		return fmt.Errorf("Error reading WorkloadIdentityPoolManagedIdentity: %s", err)
 	}
 
@@ -405,6 +495,55 @@ func resourceIAMBetaWorkloadIdentityPoolManagedIdentityUpdate(d *schema.Resource
 			return err
 		}
 	}
+	d.Partial(true)
+
+	if d.HasChange("attestation_rules") {
+		obj := make(map[string]interface{})
+
+		attestationRulesProp, err := expandIAMBetaWorkloadIdentityPoolManagedIdentityAttestationRules(d.Get("attestation_rules"), d, config)
+		if err != nil {
+			return err
+		} else if v, ok := d.GetOkExists("attestation_rules"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, attestationRulesProp)) {
+			obj["attestationRules"] = attestationRulesProp
+		}
+
+		url, err := tpgresource.ReplaceVars(d, config, "{{IAMBetaBasePath}}projects/{{project}}/locations/global/workloadIdentityPools/{{workload_identity_pool_id}}/namespaces/{{workload_identity_pool_namespace_id}}/managedIdentities/{{workload_identity_pool_managed_identity_id}}:setAttestationRules")
+		if err != nil {
+			return err
+		}
+
+		headers := make(http.Header)
+
+		// err == nil indicates that the billing_project value was found
+		if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
+			billingProject = bp
+		}
+
+		res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
+			Config:    config,
+			Method:    "POST",
+			Project:   billingProject,
+			RawURL:    url,
+			UserAgent: userAgent,
+			Body:      obj,
+			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
+		})
+		if err != nil {
+			return fmt.Errorf("Error updating WorkloadIdentityPoolManagedIdentity %q: %s", d.Id(), err)
+		} else {
+			log.Printf("[DEBUG] Finished updating WorkloadIdentityPoolManagedIdentity %q: %#v", d.Id(), res)
+		}
+
+		err = IAMBetaOperationWaitTime(
+			config, res, project, "Updating WorkloadIdentityPoolManagedIdentity", userAgent,
+			d.Timeout(schema.TimeoutUpdate))
+		if err != nil {
+			return err
+		}
+	}
+
+	d.Partial(false)
 
 	return resourceIAMBetaWorkloadIdentityPoolManagedIdentityRead(d, meta)
 }
@@ -501,11 +640,60 @@ func flattenIAMBetaWorkloadIdentityPoolManagedIdentityDisabled(v interface{}, d 
 	return v
 }
 
+func flattenIAMBetaWorkloadIdentityPoolManagedIdentityAttestationRules(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+	l := v.([]interface{})
+	transformed := schema.NewSet(schema.HashResource(iambetaWorkloadIdentityPoolManagedIdentityAttestationRulesSchema()), []interface{}{})
+	for _, raw := range l {
+		original := raw.(map[string]interface{})
+		if len(original) < 1 {
+			// Do not include empty json objects coming back from the api
+			continue
+		}
+		transformed.Add(map[string]interface{}{
+			"google_cloud_resource": flattenIAMBetaWorkloadIdentityPoolManagedIdentityAttestationRulesGoogleCloudResource(original["googleCloudResource"], d, config),
+		})
+	}
+	return transformed
+}
+func flattenIAMBetaWorkloadIdentityPoolManagedIdentityAttestationRulesGoogleCloudResource(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func expandIAMBetaWorkloadIdentityPoolManagedIdentityDescription(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
 func expandIAMBetaWorkloadIdentityPoolManagedIdentityDisabled(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandIAMBetaWorkloadIdentityPoolManagedIdentityAttestationRules(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	v = v.(*schema.Set).List()
+	l := v.([]interface{})
+	req := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		if raw == nil {
+			continue
+		}
+		original := raw.(map[string]interface{})
+		transformed := make(map[string]interface{})
+
+		transformedGoogleCloudResource, err := expandIAMBetaWorkloadIdentityPoolManagedIdentityAttestationRulesGoogleCloudResource(original["google_cloud_resource"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedGoogleCloudResource); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["googleCloudResource"] = transformedGoogleCloudResource
+		}
+
+		req = append(req, transformed)
+	}
+	return req, nil
+}
+
+func expandIAMBetaWorkloadIdentityPoolManagedIdentityAttestationRulesGoogleCloudResource(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

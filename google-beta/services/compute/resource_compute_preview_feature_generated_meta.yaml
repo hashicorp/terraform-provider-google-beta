@@ -1,0 +1,11 @@
+resource: 'google_compute_preview_feature'
+generation_type: 'mmv1'
+source_file: 'products/compute/PreviewFeature.yaml'
+api_service_name: 'compute.googleapis.com'
+api_version: 'beta'
+api_resource_type_kind: 'PreviewFeature'
+fields:
+  - field: 'activation_status'
+  - field: 'name'
+    provider_only: true
+  - field: 'rollout_operation.rollout_input.predefined_rollout_plan'

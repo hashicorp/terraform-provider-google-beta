@@ -10,3 +10,4 @@ fields:
   - field: 'name'
   - field: 'site_id'
     provider_only: true
+  - field: 'type'

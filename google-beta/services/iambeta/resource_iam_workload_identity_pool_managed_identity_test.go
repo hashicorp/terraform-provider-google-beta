@@ -23,6 +23,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 )
 
 func TestAccIAMBetaWorkloadIdentityPoolManagedIdentity_minimal(t *testing.T) {
@@ -68,6 +69,7 @@ func TestAccIAMBetaWorkloadIdentityPoolManagedIdentity_full(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
+		"project":       envvar.GetTestProjectNumberFromEnv(),
 		"random_suffix": acctest.RandString(t, 10),
 	}
 
@@ -153,6 +155,12 @@ resource "google_iam_workload_identity_pool_managed_identity" "example" {
   workload_identity_pool_managed_identity_id = "tf-test-example-managed-identity%{random_suffix}"
   description                                = "Example Managed Identity in a Workload Identity Pool Namespace"
   disabled                                   = true
+  attestation_rules {
+    google_cloud_resource = "//compute.googleapis.com/projects/%{project}/uid/zones/us-central1-a/instances/12345678"
+  }
+  attestation_rules {
+    google_cloud_resource = "//run.googleapis.com/projects/%{project}/name/locations/us-east1/services/my-service"
+  }
 }
 `, context)
 }

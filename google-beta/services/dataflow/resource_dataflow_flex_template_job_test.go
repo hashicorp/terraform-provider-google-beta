@@ -59,7 +59,7 @@ func TestAccDataflowFlexTemplateJob_basic(t *testing.T) {
 				ResourceName:            "google_dataflow_flex_template_job.flex_job",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "container_spec_gcs_path", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "container_spec_gcs_path", "labels", "terraform_labels", "machine_type", "sdk_container_image"},
 			},
 		},
 	})
@@ -98,7 +98,7 @@ func TestAccDataflowFlexTemplateJob_streamUpdate(t *testing.T) {
 				ResourceName:            "google_dataflow_flex_template_job.flex_job",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "transform_name_mapping", "state", "container_spec_gcs_path", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "transform_name_mapping", "state", "container_spec_gcs_path", "labels", "terraform_labels", "machine_type", "sdk_container_image"},
 			},
 		},
 	})
@@ -163,7 +163,7 @@ func TestAccDataflowFlexTemplateJob_FullUpdate(t *testing.T) {
 				ResourceName:            "google_dataflow_flex_template_job.flex_job_fullupdate",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "container_spec_gcs_path", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "container_spec_gcs_path", "labels", "terraform_labels", "machine_type", "sdk_container_image"},
 			},
 			{
 				Config: testAccDataflowFlexTemplateJob_dataflowFlexTemplateJobFullUpdate(job, bucket, topic, randStr),
@@ -172,7 +172,7 @@ func TestAccDataflowFlexTemplateJob_FullUpdate(t *testing.T) {
 				ResourceName:            "google_dataflow_flex_template_job.flex_job_fullupdate",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "container_spec_gcs_path", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "container_spec_gcs_path", "labels", "terraform_labels", "machine_type", "sdk_container_image"},
 			},
 		},
 	})
@@ -207,7 +207,7 @@ func TestAccDataflowFlexTemplateJob_withNetwork(t *testing.T) {
 				ResourceName:            "google_dataflow_flex_template_job.flex_job_network",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "container_spec_gcs_path", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "container_spec_gcs_path", "labels", "terraform_labels", "machine_type", "sdk_container_image"},
 			},
 			{
 				Config: testAccDataflowFlexTemplateJob_networkUpdate(job, network1, network2, bucket, topic),
@@ -220,7 +220,7 @@ func TestAccDataflowFlexTemplateJob_withNetwork(t *testing.T) {
 				ResourceName:            "google_dataflow_flex_template_job.flex_job_network",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "container_spec_gcs_path", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "container_spec_gcs_path", "labels", "terraform_labels", "machine_type", "sdk_container_image"},
 			},
 		},
 	})
@@ -256,7 +256,7 @@ func TestAccDataflowFlexTemplateJob_withSubNetwork(t *testing.T) {
 				ResourceName:            "google_dataflow_flex_template_job.flex_job_subnetwork",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "container_spec_gcs_path", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "container_spec_gcs_path", "labels", "terraform_labels", "machine_type", "sdk_container_image"},
 			},
 			{
 				Config: testAccDataflowFlexTemplateJob_subnetworkUpdate(job, network, subnetwork1, subnetwork2, bucket, topic),
@@ -269,7 +269,7 @@ func TestAccDataflowFlexTemplateJob_withSubNetwork(t *testing.T) {
 				ResourceName:            "google_dataflow_flex_template_job.flex_job_subnetwork",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "container_spec_gcs_path", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "container_spec_gcs_path", "labels", "terraform_labels", "machine_type", "sdk_container_image"},
 			},
 		},
 	})
@@ -303,7 +303,7 @@ func TestAccDataflowFlexTemplateJob_withIpConfig(t *testing.T) {
 				ResourceName:            "google_dataflow_flex_template_job.flex_job_ipconfig",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "ip_configuration", "state", "container_spec_gcs_path", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "ip_configuration", "state", "container_spec_gcs_path", "labels", "terraform_labels", "machine_type", "sdk_container_image"},
 			},
 		},
 	})
@@ -348,7 +348,7 @@ func TestAccDataflowFlexTemplateJob_withKmsKey(t *testing.T) {
 				ResourceName:            "google_dataflow_flex_template_job.flex_job_kms",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "container_spec_gcs_path", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "container_spec_gcs_path", "labels", "terraform_labels", "machine_type", "sdk_container_image"},
 			},
 		},
 	})
@@ -382,7 +382,41 @@ func TestAccDataflowFlexTemplateJob_withAdditionalExperiments(t *testing.T) {
 				ResourceName:            "google_dataflow_flex_template_job.flex_job_experiments",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "additional_experiments", "container_spec_gcs_path", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "additional_experiments", "container_spec_gcs_path", "labels", "terraform_labels", "machine_type", "sdk_container_image"},
+			},
+		},
+	})
+}
+
+func TestAccDataflowFlexTemplateJob_withAdditionalPipelineOptions(t *testing.T) {
+	// Dataflow responses include serialized java classes and bash commands
+	// This makes body comparison infeasible
+	acctest.SkipIfVcr(t)
+	t.Parallel()
+
+	randStr := acctest.RandString(t, 10)
+	job := "tf-test-dataflow-job-" + randStr
+	additionalPipelineOptions := []string{"numberOfWorkerHarnessThreads=200"}
+	bucket := "tf-test-dataflow-bucket-" + randStr
+	topic := "tf-test-topic" + randStr
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckDataflowJobDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccDataflowFlexTemplateJob_additionalPipelineOptions(job, bucket, topic, additionalPipelineOptions),
+				Check: resource.ComposeTestCheckFunc(
+					testAccDataflowFlexJobExists(t, "google_dataflow_flex_template_job.flex_job_pipeline_options", false),
+					testAccDataflowFlexTemplateJobHasAdditionalPipelineOptions(t, "google_dataflow_flex_template_job.flex_job_pipeline_options", additionalPipelineOptions, false),
+				),
+			},
+			{
+				ResourceName:            "google_dataflow_flex_template_job.flex_job_pipeline_options",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "additional_pipeline_options", "container_spec_gcs_path", "labels", "terraform_labels", "machine_type", "sdk_container_image"},
 			},
 		},
 	})
@@ -437,6 +471,9 @@ func TestAccDataflowFlexTemplateJob_withProviderDefaultLabels(t *testing.T) {
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckDataflowJobDestroyProducer(t),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDataflowFlexTemplateJob_withProviderDefaultLabels(job, bucket, topic, randStr),
@@ -448,7 +485,7 @@ func TestAccDataflowFlexTemplateJob_withProviderDefaultLabels(t *testing.T) {
 				ResourceName:            "google_dataflow_flex_template_job.flex_job_fullupdate",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "container_spec_gcs_path", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "container_spec_gcs_path", "labels", "terraform_labels", "machine_type", "sdk_container_image"},
 			},
 			{
 				Config: testAccComputeAddress_resourceLabelsOverridesProviderDefaultLabels(job, bucket, topic, randStr),
@@ -460,7 +497,7 @@ func TestAccDataflowFlexTemplateJob_withProviderDefaultLabels(t *testing.T) {
 				ResourceName:            "google_dataflow_flex_template_job.flex_job_fullupdate",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "container_spec_gcs_path", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "container_spec_gcs_path", "labels", "terraform_labels", "machine_type", "sdk_container_image"},
 			},
 			{
 				Config: testAccComputeAddress_moveResourceLabelToProviderDefaultLabels(job, bucket, topic, randStr),
@@ -472,7 +509,7 @@ func TestAccDataflowFlexTemplateJob_withProviderDefaultLabels(t *testing.T) {
 				ResourceName:            "google_dataflow_flex_template_job.flex_job_fullupdate",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "container_spec_gcs_path", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "container_spec_gcs_path", "labels", "terraform_labels", "machine_type", "sdk_container_image"},
 			},
 			{
 				Config: testAccComputeAddress_resourceLabelsOverridesProviderDefaultLabels(job, bucket, topic, randStr),
@@ -484,7 +521,7 @@ func TestAccDataflowFlexTemplateJob_withProviderDefaultLabels(t *testing.T) {
 				ResourceName:            "google_dataflow_flex_template_job.flex_job_fullupdate",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "container_spec_gcs_path", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "container_spec_gcs_path", "labels", "terraform_labels", "machine_type", "sdk_container_image"},
 			},
 			{
 				Config: testAccDataflowFlexTemplateJob_dataflowFlexTemplateJobFull(job, bucket, topic, randStr),
@@ -496,7 +533,7 @@ func TestAccDataflowFlexTemplateJob_withProviderDefaultLabels(t *testing.T) {
 				ResourceName:            "google_dataflow_flex_template_job.flex_job_fullupdate",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "container_spec_gcs_path", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "container_spec_gcs_path", "labels", "terraform_labels", "machine_type", "sdk_container_image"},
 			},
 		},
 	})
@@ -536,7 +573,7 @@ func TestAccDataflowJob_withAttributionLabelCreationOnly(t *testing.T) {
 				ResourceName:            "google_dataflow_job.big_data",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "labels", "terraform_labels", "machine_type", "sdk_container_image"},
 			},
 			{
 				Config: testAccDataflowJob_attributionLabelUpdate(bucket, job, add, strategy),
@@ -555,7 +592,7 @@ func TestAccDataflowJob_withAttributionLabelCreationOnly(t *testing.T) {
 				ResourceName:            "google_dataflow_job.big_data",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "labels", "terraform_labels", "machine_type", "sdk_container_image"},
 			},
 		},
 	})
@@ -593,7 +630,7 @@ func TestAccDataflowJob_withAttributionLabelProactive(t *testing.T) {
 				ResourceName:            "google_dataflow_job.big_data",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "labels", "terraform_labels", "machine_type", "sdk_container_image"},
 			},
 			{
 				Config: testAccDataflowJob_attributionLabelUpdate(bucket, job, "true", strategy),
@@ -612,7 +649,7 @@ func TestAccDataflowJob_withAttributionLabelProactive(t *testing.T) {
 				ResourceName:            "google_dataflow_job.big_data",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"on_delete", "parameters", "skip_wait_on_job_termination", "state", "labels", "terraform_labels", "machine_type", "sdk_container_image"},
 			},
 		},
 	})
@@ -652,6 +689,49 @@ func TestAccDataflowFlexTemplateJob_enableStreamingEngine(t *testing.T) {
 					resource.TestCheckNoResourceAttr("google_dataflow_flex_template_job.flex_job", "parameters.enableStreamingEngine"),
 					// Now is set
 					resource.TestCheckResourceAttr("google_dataflow_flex_template_job.flex_job", "enable_streaming_engine", "true"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccDataflowFlexTemplateJob_workerPoolsFallback(t *testing.T) {
+	acctest.SkipIfVcr(t)
+	t.Parallel()
+
+	context1 := map[string]interface{}{
+		"random_id":    acctest.RandString(t, 10),
+		"max_workers":  2,
+		"num_workers":  1,
+		"machine_type": `"n1-standard-1"`,
+	}
+
+	context2 := map[string]interface{}{
+		"random_id":    context1["random_id"],
+		"max_workers":  3,
+		"num_workers":  2,
+		"machine_type": `"n1-standard-1"`,
+	}
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckDataflowJobDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccDataflowFlexTemplateJob_workerPoolFallback(context1),
+				Check: resource.ComposeTestCheckFunc(
+					testAccDataflowFlexJobExists(t, "google_dataflow_flex_template_job.flex_job", false),
+					resource.TestCheckResourceAttr("google_dataflow_flex_template_job.flex_job", "num_workers", "1"),
+					resource.TestCheckResourceAttr("google_dataflow_flex_template_job.flex_job", "max_workers", "2"),
+				),
+			},
+			{
+				Config: testAccDataflowFlexTemplateJob_workerPoolFallback(context2),
+				Check: resource.ComposeTestCheckFunc(
+					testAccDataflowFlexJobExists(t, "google_dataflow_flex_template_job.flex_job", true),
+					resource.TestCheckResourceAttr("google_dataflow_flex_template_job.flex_job", "num_workers", "2"),
+					resource.TestCheckResourceAttr("google_dataflow_flex_template_job.flex_job", "max_workers", "3"),
 				),
 			},
 		},
@@ -2056,4 +2136,71 @@ resource "google_dataflow_flex_template_job" "flex_job" {
   }
 }
 `, topicName, bucket, job)
+}
+
+func testAccDataflowFlexTemplateJob_workerPoolFallback(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_pubsub_topic" "example" {
+  name = "tf-test-topic-%{random_id}"
+}
+
+data "google_storage_bucket_object" "flex_template" {
+  name   = "latest/flex/Streaming_Data_Generator"
+  bucket = "dataflow-templates"
+}
+
+resource "google_storage_bucket" "bucket" {
+  name = "tf-test-bucket-%{random_id}"
+  location = "US-CENTRAL1"
+  force_destroy = true
+  uniform_bucket_level_access = true
+}
+
+resource "google_storage_bucket_object" "schema" {
+  name = "schema-%{random_id}.json"
+  bucket = google_storage_bucket.bucket.name
+  content = <<EOF
+{
+	"eventId": "{{uuid()}}",
+	"eventTimestamp": {{timestamp()}},
+	"ipv4": "{{ipv4()}}",
+	"ipv6": "{{ipv6()}}",
+	"country": "{{country()}}",
+	"username": "{{username()}}",
+	"quest": "{{random("A Break In the Ice", "Ghosts of Perdition", "Survive the Low Road")}}",
+	"score": {{integer(100, 10000)}},
+	"completed": {{bool()}}
+}
+EOF
+}
+
+resource "google_compute_network" "test-network" {
+  name                    = "tf-test-network-%{random_id}"
+  auto_create_subnetworks = false
+}
+
+resource "google_compute_subnetwork" "test-subnetwork" {
+  name          = "tf-test-subnetwork-%{random_id}"
+  ip_cidr_range = "192.168.0.0/24"
+  region		= "us-central1"
+  network       = google_compute_network.test-network.id
+}
+
+resource "google_dataflow_flex_template_job" "flex_job" {
+  name = "tf-test-flex-job-%{random_id}"
+  container_spec_gcs_path = "gs://${data.google_storage_bucket_object.flex_template.bucket}/${data.google_storage_bucket_object.flex_template.name}"
+  on_delete = "cancel"
+  parameters = {
+    schemaLocation = "gs://${google_storage_bucket_object.schema.bucket}/schema-%{random_id}.json"
+    qps = "1"
+    topic = google_pubsub_topic.example.id
+  }
+
+  max_workers = %{max_workers}
+  num_workers = %{num_workers}
+  machine_type = %{machine_type}
+  network = google_compute_network.test-network.name
+  subnetwork = google_compute_subnetwork.test-subnetwork.self_link
+}
+`, context)
 }

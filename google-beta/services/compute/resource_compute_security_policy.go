@@ -350,7 +350,7 @@ func ResourceComputeSecurityPolicy() *schema.Resource {
 										Type:         schema.TypeString,
 										Optional:     true,
 										Description:  `Determines the key to enforce the rateLimitThreshold on`,
-										ValidateFunc: validation.StringInSlice([]string{"ALL", "IP", "HTTP_HEADER", "XFF_IP", "HTTP_COOKIE", "HTTP_PATH", "SNI", "REGION_CODE", "TLS_JA3_FINGERPRINT", "USER_IP", ""}, false),
+										ValidateFunc: validation.StringInSlice([]string{"ALL", "IP", "HTTP_HEADER", "XFF_IP", "HTTP_COOKIE", "HTTP_PATH", "SNI", "REGION_CODE", "TLS_JA3_FINGERPRINT", "TLS_JA4_FINGERPRINT", "USER_IP", ""}, false),
 									},
 
 									"enforce_on_key_name": {
@@ -369,7 +369,7 @@ func ResourceComputeSecurityPolicy() *schema.Resource {
 													Type:         schema.TypeString,
 													Optional:     true,
 													Description:  `Determines the key to enforce the rate_limit_threshold on`,
-													ValidateFunc: validation.StringInSlice([]string{"ALL", "IP", "HTTP_HEADER", "XFF_IP", "HTTP_COOKIE", "HTTP_PATH", "SNI", "REGION_CODE", "TLS_JA3_FINGERPRINT", "USER_IP"}, false),
+													ValidateFunc: validation.StringInSlice([]string{"ALL", "IP", "HTTP_HEADER", "XFF_IP", "HTTP_COOKIE", "HTTP_PATH", "SNI", "REGION_CODE", "TLS_JA3_FINGERPRINT", "TLS_JA4_FINGERPRINT", "USER_IP"}, false),
 												},
 												"enforce_on_key_name": {
 													Type:        schema.TypeString,
@@ -546,6 +546,13 @@ func ResourceComputeSecurityPolicy() *schema.Resource {
 							Optional:    true,
 							Description: `An optional list of case-insensitive request header names to use for resolving the callers client IP address.`,
 							Elem:        &schema.Schema{Type: schema.TypeString},
+						},
+						"request_body_inspection_size": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							Computed:     true,
+							ValidateFunc: validation.StringInSlice([]string{"8KB", "16KB", "32KB", "48KB", "64KB"}, false),
+							Description:  `The maximum request size chosen by the customer with Waf enabled. Values supported are "8KB", "16KB, "32KB", "48KB" and "64KB". Values are case insensitive.`,
 						},
 					},
 				},
@@ -898,7 +905,8 @@ func resourceComputeSecurityPolicyUpdate(d *schema.ResourceData, meta interface{
 
 	if d.HasChange("advanced_options_config") {
 		securityPolicy.AdvancedOptionsConfig = expandSecurityPolicyAdvancedOptionsConfig(d.Get("advanced_options_config").([]interface{}))
-		securityPolicy.ForceSendFields = append(securityPolicy.ForceSendFields, "AdvancedOptionsConfig", "advancedOptionsConfig.jsonParsing", "advancedOptionsConfig.jsonCustomConfig", "advancedOptionsConfig.logLevel")
+
+		securityPolicy.ForceSendFields = append(securityPolicy.ForceSendFields, "AdvancedOptionsConfig", "advancedOptionsConfig.jsonParsing", "advancedOptionsConfig.jsonCustomConfig", "advancedOptionsConfig.logLevel", "advancedOptionsConfig.requestBodyInspectionSize")
 		securityPolicy.ForceSendFields = append(securityPolicy.ForceSendFields, "advanceOptionConfig.userIpRequestHeaders")
 		if len(securityPolicy.AdvancedOptionsConfig.UserIpRequestHeaders) == 0 {
 			// to clean this list we must send the updateMask of this field on the request.
@@ -1359,10 +1367,11 @@ func expandSecurityPolicyAdvancedOptionsConfig(configured []interface{}) *comput
 
 	data := configured[0].(map[string]interface{})
 	return &compute.SecurityPolicyAdvancedOptionsConfig{
-		JsonParsing:          data["json_parsing"].(string),
-		JsonCustomConfig:     expandSecurityPolicyAdvancedOptionsConfigJsonCustomConfig(data["json_custom_config"].([]interface{})),
-		LogLevel:             data["log_level"].(string),
-		UserIpRequestHeaders: tpgresource.ConvertStringArr(data["user_ip_request_headers"].(*schema.Set).List()),
+		JsonParsing:               data["json_parsing"].(string),
+		JsonCustomConfig:          expandSecurityPolicyAdvancedOptionsConfigJsonCustomConfig(data["json_custom_config"].([]interface{})),
+		LogLevel:                  data["log_level"].(string),
+		UserIpRequestHeaders:      tpgresource.ConvertStringArr(data["user_ip_request_headers"].(*schema.Set).List()),
+		RequestBodyInspectionSize: data["request_body_inspection_size"].(string),
 	}
 }
 
@@ -1372,10 +1381,11 @@ func flattenSecurityPolicyAdvancedOptionsConfig(conf *compute.SecurityPolicyAdva
 	}
 
 	data := map[string]interface{}{
-		"json_parsing":            conf.JsonParsing,
-		"json_custom_config":      flattenSecurityPolicyAdvancedOptionsConfigJsonCustomConfig(conf.JsonCustomConfig),
-		"log_level":               conf.LogLevel,
-		"user_ip_request_headers": schema.NewSet(schema.HashString, tpgresource.ConvertStringArrToInterface(conf.UserIpRequestHeaders)),
+		"json_parsing":                 conf.JsonParsing,
+		"json_custom_config":           flattenSecurityPolicyAdvancedOptionsConfigJsonCustomConfig(conf.JsonCustomConfig),
+		"log_level":                    conf.LogLevel,
+		"user_ip_request_headers":      schema.NewSet(schema.HashString, tpgresource.ConvertStringArrToInterface(conf.UserIpRequestHeaders)),
+		"request_body_inspection_size": conf.RequestBodyInspectionSize,
 	}
 
 	return []map[string]interface{}{data}

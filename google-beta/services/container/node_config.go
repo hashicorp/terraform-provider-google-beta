@@ -27,6 +27,8 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
+
 	container "google.golang.org/api/container/v1beta1"
 )
 
@@ -762,6 +764,12 @@ func schemaNodeConfig() *schema.Schema {
 								ForceNew:    true,
 								Description: `Whether the node should have nested virtualization enabled.`,
 							},
+							"performance_monitoring_unit": {
+								Type:         schema.TypeString,
+								Optional:     true,
+								ValidateFunc: verify.ValidateEnum([]string{"ARCHITECTURAL", "STANDARD", "ENHANCED"}),
+								Description:  `Level of Performance Monitoring Unit (PMU) requested. If unset, no access to the PMU is assumed.`,
+							},
 						},
 					},
 				},
@@ -836,6 +844,14 @@ func schemaNodeConfig() *schema.Schema {
 								Type:        schema.TypeBool,
 								Required:    true,
 								Description: `Whether Confidential Nodes feature is enabled for all nodes in this pool.`,
+							},
+							"confidential_instance_type": {
+								Type:             schema.TypeString,
+								Optional:         true,
+								ForceNew:         true,
+								DiffSuppressFunc: suppressDiffForConfidentialNodes,
+								Description:      `Defines the type of technology used by the confidential node.`,
+								ValidateFunc:     validation.StringInSlice([]string{"SEV", "SEV_SNP", "TDX"}, false),
 							},
 						},
 					},
@@ -1257,6 +1273,7 @@ func expandNodeConfig(v interface{}) *container.NodeConfig {
 		nc.AdvancedMachineFeatures = &container.AdvancedMachineFeatures{
 			ThreadsPerCore:             int64(advanced_machine_features["threads_per_core"].(int)),
 			EnableNestedVirtualization: advanced_machine_features["enable_nested_virtualization"].(bool),
+			PerformanceMonitoringUnit:  advanced_machine_features["performance_monitoring_unit"].(string),
 		}
 	}
 
@@ -1274,6 +1291,10 @@ func expandNodeConfig(v interface{}) *container.NodeConfig {
 
 	if v, ok := nodeConfig["max_run_duration"]; ok {
 		nc.MaxRunDuration = v.(string)
+	}
+
+	if v, ok := nodeConfig["flex_start"]; ok {
+		nc.FlexStart = v.(bool)
 	}
 
 	if v, ok := nodeConfig["flex_start"]; ok {
@@ -1622,7 +1643,8 @@ func expandConfidentialNodes(configured interface{}) *container.ConfidentialNode
 	}
 	config := l[0].(map[string]interface{})
 	return &container.ConfidentialNodes{
-		Enabled: config["enabled"].(bool),
+		Enabled:                  config["enabled"].(bool),
+		ConfidentialInstanceType: config["confidential_instance_type"].(string),
 	}
 }
 
@@ -1738,6 +1760,7 @@ func flattenAdvancedMachineFeaturesConfig(c *container.AdvancedMachineFeatures) 
 		result = append(result, map[string]interface{}{
 			"threads_per_core":             c.ThreadsPerCore,
 			"enable_nested_virtualization": c.EnableNestedVirtualization,
+			"performance_monitoring_unit":  c.PerformanceMonitoringUnit,
 		})
 	}
 	return result
@@ -2129,7 +2152,8 @@ func flattenConfidentialNodes(c *container.ConfidentialNodes) []map[string]inter
 	result := []map[string]interface{}{}
 	if c != nil {
 		result = append(result, map[string]interface{}{
-			"enabled": c.Enabled,
+			"enabled":                    c.Enabled,
+			"confidential_instance_type": c.ConfidentialInstanceType,
 		})
 	}
 	return result
