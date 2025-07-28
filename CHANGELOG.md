@@ -9,7 +9,6 @@ FEATURES:
 * **New Resource:** `google_storage_insights_dataset_config` ([#10401](https://github.com/hashicorp/terraform-provider-google-beta/pull/10401))
 
 IMPROVEMENTS:
-* cloudrunv2: added `gpu_zonal_redundancy_disabled` field to `google_cloud_run_v2_job` resource. ([#10377](https://github.com/hashicorp/terraform-provider-google-beta/pull/10377))
 * compute: added `params.resourceManagerTags` field to the `google_compute_router` ([#10392](https://github.com/hashicorp/terraform-provider-google-beta/pull/10392))
 * compute: added in-place update support for `provisioned_iops`, `provisioned_throughput`,  and `access_mode` fields in `google_compute_region_disk` resource ([#10397](https://github.com/hashicorp/terraform-provider-google-beta/pull/10397))
 * dataproc: added `authentication_config` field to `google_dataproc_batch` and `google_dataproc_session_template` resource ([#10375](https://github.com/hashicorp/terraform-provider-google-beta/pull/10375))
