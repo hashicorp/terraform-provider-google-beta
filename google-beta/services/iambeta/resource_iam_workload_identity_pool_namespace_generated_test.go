@@ -68,7 +68,7 @@ resource "google_iam_workload_identity_pool_namespace" "example" {
   provider = google-beta
 
   workload_identity_pool_id           = google_iam_workload_identity_pool.pool.workload_identity_pool_id
-  workload_identity_pool_namespace_id = "tf-test-example-nmspc%{random_suffix}"
+  workload_identity_pool_namespace_id = "tf-test-example-namespace%{random_suffix}"
 }
 `, context)
 }
@@ -111,7 +111,7 @@ resource "google_iam_workload_identity_pool_namespace" "example" {
   provider = google-beta
 
   workload_identity_pool_id           = google_iam_workload_identity_pool.pool.workload_identity_pool_id
-  workload_identity_pool_namespace_id = "tf-test-example-nmspc%{random_suffix}"
+  workload_identity_pool_namespace_id = "tf-test-example-namespace%{random_suffix}"
   description                         = "Example Namespace in a Workload Identity Pool"
   disabled                            = true
 }

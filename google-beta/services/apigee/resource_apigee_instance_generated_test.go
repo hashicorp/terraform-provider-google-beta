@@ -530,6 +530,11 @@ resource "google_apigee_instance" "apigee_instance" {
   display_name             = "tf-test%{random_suffix}"
   org_id                   = google_apigee_organization.apigee_org.id
   disk_encryption_key_name = google_kms_crypto_key.apigee_key.id
+
+  access_logging_config {
+    enabled = true
+    filter  = "status_code >= 200 && status_code < 300"
+  }
 }
 `, context)
 }

@@ -291,6 +291,11 @@ DEDICATED. Possible values: ["DEDICATED", "PARTNER", "PARTNER_PROVIDER"]`,
 				Description: `The IEEE 802.1Q VLAN tag for this attachment, in the range 2-4094. When
 using PARTNER type this will be managed upstream.`,
 			},
+			"attachment_group": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: `URL of the AttachmentGroup that includes this Attachment.`,
+			},
 			"cloud_router_ip_address": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -788,6 +793,9 @@ func resourceComputeInterconnectAttachmentRead(d *schema.ResourceData, meta inte
 	if err := d.Set("candidate_customer_router_ipv6_address", flattenComputeInterconnectAttachmentCandidateCustomerRouterIpv6Address(res["candidateCustomerRouterIpv6Address"], d, config)); err != nil {
 		return fmt.Errorf("Error reading InterconnectAttachment: %s", err)
 	}
+	if err := d.Set("attachment_group", flattenComputeInterconnectAttachmentAttachmentGroup(res["attachmentGroup"], d, config)); err != nil {
+		return fmt.Errorf("Error reading InterconnectAttachment: %s", err)
+	}
 	if err := d.Set("terraform_labels", flattenComputeInterconnectAttachmentTerraformLabels(res["labels"], d, config)); err != nil {
 		return fmt.Errorf("Error reading InterconnectAttachment: %s", err)
 	}
@@ -1210,6 +1218,10 @@ func flattenComputeInterconnectAttachmentCandidateCloudRouterIpv6Address(v inter
 }
 
 func flattenComputeInterconnectAttachmentCandidateCustomerRouterIpv6Address(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenComputeInterconnectAttachmentAttachmentGroup(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
