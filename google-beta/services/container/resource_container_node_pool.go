@@ -1497,7 +1497,9 @@ func nodePoolUpdate(d *schema.ResourceData, meta interface{}, nodePoolInfo *Node
 	}
 
 	if d.HasChange(prefix + "node_config") {
-		nodePoolNodeConfigUpdate(d, config, nodePoolInfo, prefix, name, timeout)
+		if err := nodePoolNodeConfigUpdate(d, config, nodePoolInfo, prefix, name, timeout); err != nil {
+			return err
+		}
 	}
 
 	if d.HasChange(prefix + "node_count") {
