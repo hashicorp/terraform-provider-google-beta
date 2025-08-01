@@ -611,6 +611,33 @@ loadBalancingScheme set to <code>EXTERNAL_MANAGED</code>,
 				Optional:    true,
 				Description: `An optional description of this resource.`,
 			},
+			"dynamic_forwarding": {
+				Type:     schema.TypeList,
+				Optional: true,
+				Description: `Dynamic forwarding configuration. This field is used to configure the backend service with dynamic forwarding
+feature which together with Service Extension allows customized and complex routing logic.`,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"ip_port_selection": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							Description: `IP:PORT based dynamic forwarding configuration.`,
+							MaxItems:    1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"enabled": {
+										Type:        schema.TypeBool,
+										Optional:    true,
+										ForceNew:    true,
+										Description: `A boolean flag enabling IP:PORT based dynamic forwarding.`,
+									},
+								},
+							},
+						},
+					},
+				},
+			},
 			"enable_cdn": {
 				Type:        schema.TypeBool,
 				Optional:    true,
@@ -1096,6 +1123,17 @@ be from 0 to 999,999,999 inclusive.`,
 							ValidateFunc: verify.ValidateEnum([]string{"CONSISTENT_HASH_SUBSETTING"}),
 							Description:  `The algorithm used for subsetting. Possible values: ["CONSISTENT_HASH_SUBSETTING"]`,
 						},
+						"subset_size": {
+							Type:     schema.TypeInt,
+							Optional: true,
+							Description: `The number of backends per backend group assigned to each proxy instance or each service mesh client.
+An input parameter to the CONSISTENT_HASH_SUBSETTING algorithm. Can only be set if policy is set to
+CONSISTENT_HASH_SUBSETTING. Can only be set if load balancing scheme is INTERNAL_MANAGED or INTERNAL_SELF_MANAGED.
+subsetSize is optional for Internal HTTP(S) load balancing and required for Traffic Director.
+If you do not provide this value, Cloud Load Balancing will calculate it dynamically to optimize the number
+of proxies/clients visible to each backend and vice versa.
+Must be greater than 0. If subsetSize is larger than the number of backends/endpoints, then subsetting is disabled.`,
+						},
 					},
 				},
 			},
@@ -1490,6 +1528,12 @@ func resourceComputeRegionBackendServiceCreate(d *schema.ResourceData, meta inte
 	} else if v, ok := d.GetOkExists("subsetting"); !tpgresource.IsEmptyValue(reflect.ValueOf(subsettingProp)) && (ok || !reflect.DeepEqual(v, subsettingProp)) {
 		obj["subsetting"] = subsettingProp
 	}
+	dynamicForwardingProp, err := expandComputeRegionBackendServiceDynamicForwarding(d.Get("dynamic_forwarding"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("dynamic_forwarding"); !tpgresource.IsEmptyValue(reflect.ValueOf(dynamicForwardingProp)) && (ok || !reflect.DeepEqual(v, dynamicForwardingProp)) {
+		obj["dynamicForwarding"] = dynamicForwardingProp
+	}
 	regionProp, err := expandComputeRegionBackendServiceRegion(d.Get("region"), d, config)
 	if err != nil {
 		return err
@@ -1752,6 +1796,9 @@ func resourceComputeRegionBackendServiceRead(d *schema.ResourceData, meta interf
 	if err := d.Set("subsetting", flattenComputeRegionBackendServiceSubsetting(res["subsetting"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionBackendService: %s", err)
 	}
+	if err := d.Set("dynamic_forwarding", flattenComputeRegionBackendServiceDynamicForwarding(res["dynamicForwarding"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RegionBackendService: %s", err)
+	}
 	if err := d.Set("region", flattenComputeRegionBackendServiceRegion(res["region"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionBackendService: %s", err)
 	}
@@ -1939,6 +1986,12 @@ func resourceComputeRegionBackendServiceUpdate(d *schema.ResourceData, meta inte
 		return err
 	} else if v, ok := d.GetOkExists("subsetting"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, subsettingProp)) {
 		obj["subsetting"] = subsettingProp
+	}
+	dynamicForwardingProp, err := expandComputeRegionBackendServiceDynamicForwarding(d.Get("dynamic_forwarding"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("dynamic_forwarding"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, dynamicForwardingProp)) {
+		obj["dynamicForwarding"] = dynamicForwardingProp
 	}
 	regionProp, err := expandComputeRegionBackendServiceRegion(d.Get("region"), d, config)
 	if err != nil {
@@ -3467,9 +3520,58 @@ func flattenComputeRegionBackendServiceSubsetting(v interface{}, d *schema.Resou
 	transformed := make(map[string]interface{})
 	transformed["policy"] =
 		flattenComputeRegionBackendServiceSubsettingPolicy(original["policy"], d, config)
+	transformed["subset_size"] =
+		flattenComputeRegionBackendServiceSubsettingSubsetSize(original["subsetSize"], d, config)
 	return []interface{}{transformed}
 }
 func flattenComputeRegionBackendServiceSubsettingPolicy(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenComputeRegionBackendServiceSubsettingSubsetSize(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	// Handles the string fixed64 format
+	if strVal, ok := v.(string); ok {
+		if intVal, err := tpgresource.StringToFixed64(strVal); err == nil {
+			return intVal
+		}
+	}
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
+}
+
+func flattenComputeRegionBackendServiceDynamicForwarding(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["ip_port_selection"] =
+		flattenComputeRegionBackendServiceDynamicForwardingIpPortSelection(original["ipPortSelection"], d, config)
+	return []interface{}{transformed}
+}
+func flattenComputeRegionBackendServiceDynamicForwardingIpPortSelection(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["enabled"] =
+		flattenComputeRegionBackendServiceDynamicForwardingIpPortSelectionEnabled(original["enabled"], d, config)
+	return []interface{}{transformed}
+}
+func flattenComputeRegionBackendServiceDynamicForwardingIpPortSelectionEnabled(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -3477,7 +3579,7 @@ func flattenComputeRegionBackendServiceRegion(v interface{}, d *schema.ResourceD
 	if v == nil {
 		return v
 	}
-	return tpgresource.NameFromSelfLinkStateFunc(v)
+	return tpgresource.GetResourceNameFromSelfLink(v.(string))
 }
 
 func expandComputeRegionBackendServiceAffinityCookieTtlSec(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
@@ -4742,10 +4844,63 @@ func expandComputeRegionBackendServiceSubsetting(v interface{}, d tpgresource.Te
 		transformed["policy"] = transformedPolicy
 	}
 
+	transformedSubsetSize, err := expandComputeRegionBackendServiceSubsettingSubsetSize(original["subset_size"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedSubsetSize); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["subsetSize"] = transformedSubsetSize
+	}
+
 	return transformed, nil
 }
 
 func expandComputeRegionBackendServiceSubsettingPolicy(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeRegionBackendServiceSubsettingSubsetSize(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeRegionBackendServiceDynamicForwarding(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedIpPortSelection, err := expandComputeRegionBackendServiceDynamicForwardingIpPortSelection(original["ip_port_selection"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedIpPortSelection); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["ipPortSelection"] = transformedIpPortSelection
+	}
+
+	return transformed, nil
+}
+
+func expandComputeRegionBackendServiceDynamicForwardingIpPortSelection(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedEnabled, err := expandComputeRegionBackendServiceDynamicForwardingIpPortSelectionEnabled(original["enabled"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedEnabled); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["enabled"] = transformedEnabled
+	}
+
+	return transformed, nil
+}
+
+func expandComputeRegionBackendServiceDynamicForwardingIpPortSelectionEnabled(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

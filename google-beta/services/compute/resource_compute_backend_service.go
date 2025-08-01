@@ -662,6 +662,33 @@ responses.`,
 				Optional:    true,
 				Description: `An optional description of this resource.`,
 			},
+			"dynamic_forwarding": {
+				Type:     schema.TypeList,
+				Optional: true,
+				Description: `Dynamic forwarding configuration. This field is used to configure the backend service with dynamic forwarding
+feature which together with Service Extension allows customized and complex routing logic.`,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"ip_port_selection": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							Description: `IP:PORT based dynamic forwarding configuration.`,
+							MaxItems:    1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"enabled": {
+										Type:        schema.TypeBool,
+										Optional:    true,
+										ForceNew:    true,
+										Description: `A boolean flag enabling IP:PORT based dynamic forwarding.`,
+									},
+								},
+							},
+						},
+					},
+				},
+			},
 			"edge_security_policy": {
 				Type:             schema.TypeString,
 				Optional:         true,
@@ -957,7 +984,8 @@ If logging is enabled, logs will be exported to Stackdriver.`,
 							Optional: true,
 							Description: `This field can only be specified if logging is enabled for this backend service and "logConfig.optionalMode"
 was set to CUSTOM. Contains a list of optional fields you want to include in the logs.
-For example: serverInstance, serverGkeDetails.cluster, serverGkeDetails.pod.podNamespace`,
+For example: serverInstance, serverGkeDetails.cluster, serverGkeDetails.pod.podNamespace
+For example: orca_load_report, tls.protocol`,
 							Elem: &schema.Schema{
 								Type: schema.TypeString,
 							},
@@ -1008,6 +1036,42 @@ This field is only allowed when the loadBalancingScheme of the backend service i
 							Description: `Span of time that's a fraction of a second at nanosecond resolution.
 Durations less than one second are represented with a 0 seconds field and a positive nanos field.
 Must be from 0 to 999,999,999 inclusive.`,
+						},
+					},
+				},
+			},
+			"network_pass_through_lb_traffic_policy": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: `Configures traffic steering properties of internal passthrough Network Load Balancers.`,
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"zonal_affinity": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							Description: `When configured, new connections are load balanced across healthy backend endpoints in the local zone.`,
+							MaxItems:    1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"spillover": {
+										Type:         schema.TypeString,
+										Optional:     true,
+										ValidateFunc: verify.ValidateEnum([]string{"ZONAL_AFFINITY_DISABLED", "ZONAL_AFFINITY_SPILL_CROSS_ZONE", "ZONAL_AFFINITY_STAY_WITHIN_ZONE", ""}),
+										Description:  `This field indicates whether zonal affinity is enabled or not. Default value: "ZONAL_AFFINITY_DISABLED" Possible values: ["ZONAL_AFFINITY_DISABLED", "ZONAL_AFFINITY_SPILL_CROSS_ZONE", "ZONAL_AFFINITY_STAY_WITHIN_ZONE"]`,
+										Default:      "ZONAL_AFFINITY_DISABLED",
+									},
+									"spillover_ratio": {
+										Type:     schema.TypeFloat,
+										Optional: true,
+										Description: `The value of the field must be in [0, 1]. When the ratio of the count of healthy backend endpoints in a zone
+to the count of backend endpoints in that same zone is equal to or above this threshold, the load balancer
+distributes new connections to all healthy endpoints in the local zone only. When the ratio of the count
+of healthy backend endpoints in a zone to the count of backend endpoints in that same zone is below this
+threshold, the load balancer distributes all new connections to all healthy endpoints across all zones.`,
+									},
+								},
+							},
 						},
 					},
 				},
@@ -1789,6 +1853,18 @@ func resourceComputeBackendServiceCreate(d *schema.ResourceData, meta interface{
 	} else if v, ok := d.GetOkExists("max_stream_duration"); !tpgresource.IsEmptyValue(reflect.ValueOf(maxStreamDurationProp)) && (ok || !reflect.DeepEqual(v, maxStreamDurationProp)) {
 		obj["maxStreamDuration"] = maxStreamDurationProp
 	}
+	networkPassThroughLbTrafficPolicyProp, err := expandComputeBackendServiceNetworkPassThroughLbTrafficPolicy(d.Get("network_pass_through_lb_traffic_policy"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("network_pass_through_lb_traffic_policy"); !tpgresource.IsEmptyValue(reflect.ValueOf(networkPassThroughLbTrafficPolicyProp)) && (ok || !reflect.DeepEqual(v, networkPassThroughLbTrafficPolicyProp)) {
+		obj["networkPassThroughLbTrafficPolicy"] = networkPassThroughLbTrafficPolicyProp
+	}
+	dynamicForwardingProp, err := expandComputeBackendServiceDynamicForwarding(d.Get("dynamic_forwarding"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("dynamic_forwarding"); !tpgresource.IsEmptyValue(reflect.ValueOf(dynamicForwardingProp)) && (ok || !reflect.DeepEqual(v, dynamicForwardingProp)) {
+		obj["dynamicForwarding"] = dynamicForwardingProp
+	}
 
 	obj, err = resourceComputeBackendServiceEncoder(d, meta, obj)
 	if err != nil {
@@ -2067,6 +2143,12 @@ func resourceComputeBackendServiceRead(d *schema.ResourceData, meta interface{})
 	if err := d.Set("max_stream_duration", flattenComputeBackendServiceMaxStreamDuration(res["maxStreamDuration"], d, config)); err != nil {
 		return fmt.Errorf("Error reading BackendService: %s", err)
 	}
+	if err := d.Set("network_pass_through_lb_traffic_policy", flattenComputeBackendServiceNetworkPassThroughLbTrafficPolicy(res["networkPassThroughLbTrafficPolicy"], d, config)); err != nil {
+		return fmt.Errorf("Error reading BackendService: %s", err)
+	}
+	if err := d.Set("dynamic_forwarding", flattenComputeBackendServiceDynamicForwarding(res["dynamicForwarding"], d, config)); err != nil {
+		return fmt.Errorf("Error reading BackendService: %s", err)
+	}
 	if err := d.Set("self_link", tpgresource.ConvertSelfLinkToV1(res["selfLink"].(string))); err != nil {
 		return fmt.Errorf("Error reading BackendService: %s", err)
 	}
@@ -2299,6 +2381,18 @@ func resourceComputeBackendServiceUpdate(d *schema.ResourceData, meta interface{
 		return err
 	} else if v, ok := d.GetOkExists("max_stream_duration"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, maxStreamDurationProp)) {
 		obj["maxStreamDuration"] = maxStreamDurationProp
+	}
+	networkPassThroughLbTrafficPolicyProp, err := expandComputeBackendServiceNetworkPassThroughLbTrafficPolicy(d.Get("network_pass_through_lb_traffic_policy"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("network_pass_through_lb_traffic_policy"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, networkPassThroughLbTrafficPolicyProp)) {
+		obj["networkPassThroughLbTrafficPolicy"] = networkPassThroughLbTrafficPolicyProp
+	}
+	dynamicForwardingProp, err := expandComputeBackendServiceDynamicForwarding(d.Get("dynamic_forwarding"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("dynamic_forwarding"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, dynamicForwardingProp)) {
+		obj["dynamicForwarding"] = dynamicForwardingProp
 	}
 
 	obj, err = resourceComputeBackendServiceEncoder(d, meta, obj)
@@ -3994,6 +4088,72 @@ func flattenComputeBackendServiceMaxStreamDurationNanos(v interface{}, d *schema
 	return v // let terraform core handle it otherwise
 }
 
+func flattenComputeBackendServiceNetworkPassThroughLbTrafficPolicy(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["zonal_affinity"] =
+		flattenComputeBackendServiceNetworkPassThroughLbTrafficPolicyZonalAffinity(original["zonalAffinity"], d, config)
+	return []interface{}{transformed}
+}
+func flattenComputeBackendServiceNetworkPassThroughLbTrafficPolicyZonalAffinity(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["spillover"] =
+		flattenComputeBackendServiceNetworkPassThroughLbTrafficPolicyZonalAffinitySpillover(original["spillover"], d, config)
+	transformed["spillover_ratio"] =
+		flattenComputeBackendServiceNetworkPassThroughLbTrafficPolicyZonalAffinitySpilloverRatio(original["spilloverRatio"], d, config)
+	return []interface{}{transformed}
+}
+func flattenComputeBackendServiceNetworkPassThroughLbTrafficPolicyZonalAffinitySpillover(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenComputeBackendServiceNetworkPassThroughLbTrafficPolicyZonalAffinitySpilloverRatio(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenComputeBackendServiceDynamicForwarding(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["ip_port_selection"] =
+		flattenComputeBackendServiceDynamicForwardingIpPortSelection(original["ipPortSelection"], d, config)
+	return []interface{}{transformed}
+}
+func flattenComputeBackendServiceDynamicForwardingIpPortSelection(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["enabled"] =
+		flattenComputeBackendServiceDynamicForwardingIpPortSelectionEnabled(original["enabled"], d, config)
+	return []interface{}{transformed}
+}
+func flattenComputeBackendServiceDynamicForwardingIpPortSelectionEnabled(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func expandComputeBackendServiceAffinityCookieTtlSec(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
@@ -5508,6 +5668,101 @@ func expandComputeBackendServiceMaxStreamDurationSeconds(v interface{}, d tpgres
 }
 
 func expandComputeBackendServiceMaxStreamDurationNanos(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeBackendServiceNetworkPassThroughLbTrafficPolicy(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedZonalAffinity, err := expandComputeBackendServiceNetworkPassThroughLbTrafficPolicyZonalAffinity(original["zonal_affinity"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedZonalAffinity); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["zonalAffinity"] = transformedZonalAffinity
+	}
+
+	return transformed, nil
+}
+
+func expandComputeBackendServiceNetworkPassThroughLbTrafficPolicyZonalAffinity(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedSpillover, err := expandComputeBackendServiceNetworkPassThroughLbTrafficPolicyZonalAffinitySpillover(original["spillover"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedSpillover); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["spillover"] = transformedSpillover
+	}
+
+	transformedSpilloverRatio, err := expandComputeBackendServiceNetworkPassThroughLbTrafficPolicyZonalAffinitySpilloverRatio(original["spillover_ratio"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedSpilloverRatio); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["spilloverRatio"] = transformedSpilloverRatio
+	}
+
+	return transformed, nil
+}
+
+func expandComputeBackendServiceNetworkPassThroughLbTrafficPolicyZonalAffinitySpillover(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeBackendServiceNetworkPassThroughLbTrafficPolicyZonalAffinitySpilloverRatio(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeBackendServiceDynamicForwarding(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedIpPortSelection, err := expandComputeBackendServiceDynamicForwardingIpPortSelection(original["ip_port_selection"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedIpPortSelection); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["ipPortSelection"] = transformedIpPortSelection
+	}
+
+	return transformed, nil
+}
+
+func expandComputeBackendServiceDynamicForwardingIpPortSelection(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedEnabled, err := expandComputeBackendServiceDynamicForwardingIpPortSelectionEnabled(original["enabled"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedEnabled); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["enabled"] = transformedEnabled
+	}
+
+	return transformed, nil
+}
+
+func expandComputeBackendServiceDynamicForwardingIpPortSelectionEnabled(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

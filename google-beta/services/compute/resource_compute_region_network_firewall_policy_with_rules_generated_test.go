@@ -41,7 +41,7 @@ func TestAccComputeRegionNetworkFirewallPolicyWithRules_computeRegionNetworkFire
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeRegionNetworkFirewallPolicyWithRulesDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -60,11 +60,9 @@ func TestAccComputeRegionNetworkFirewallPolicyWithRules_computeRegionNetworkFire
 func testAccComputeRegionNetworkFirewallPolicyWithRules_computeRegionNetworkFirewallPolicyWithRulesFullExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 data "google_project" "project" {
-  provider = google-beta
 }
 
 resource "google_compute_region_network_firewall_policy_with_rules" "primary" {
-  provider    = google-beta
   name        = "tf-test-fw-policy%{random_suffix}"
   region      = "us-west2"
   description = "Terraform test"
@@ -119,49 +117,9 @@ resource "google_compute_region_network_firewall_policy_with_rules" "primary" {
       }
     }
   }
-
-  rule {
-    description    = "network scope rule 1"
-    rule_name      = "network scope 1"
-    priority       = 4000
-    enable_logging = false
-    action         = "allow"
-    direction      = "INGRESS"
-
-    match {
-      src_ip_ranges     = ["11.100.0.1/32"]
-      src_network_scope = "VPC_NETWORKS"
-      src_networks      = [google_compute_network.network.id]
-
-      layer4_config {
-        ip_protocol = "tcp"
-        ports       = [8080]
-      }
-    }
-  }
-
-  rule {
-    description    = "network scope rule 2"
-    rule_name      = "network scope 2"
-    priority       = 5000
-    enable_logging = false
-    action         = "allow"
-    direction      = "EGRESS"
-
-    match {
-      dest_ip_ranges     = ["0.0.0.0/0"]
-      dest_network_scope = "NON_INTERNET"
-
-      layer4_config {
-        ip_protocol = "tcp"
-        ports       = [8080]
-      }
-    }
-  }
 }
 
 resource "google_network_security_address_group" "address_group_1" {
-  provider    = google-beta 
   name        = "tf-test-address-group%{random_suffix}"
   parent      = data.google_project.project.id
   description = "Regional address group"
@@ -172,7 +130,6 @@ resource "google_network_security_address_group" "address_group_1" {
 }
 
 resource "google_tags_tag_key" "secure_tag_key_1" {
-  provider    = google-beta
   description = "Tag key"
   parent      = data.google_project.project.id
   purpose     = "GCE_FIREWALL"
@@ -183,16 +140,61 @@ resource "google_tags_tag_key" "secure_tag_key_1" {
 }
 
 resource "google_tags_tag_value" "secure_tag_value_1" {
-  provider    = google-beta
   description = "Tag value"
   parent      = google_tags_tag_key.secure_tag_key_1.id
   short_name  = "tf-test-tag-value%{random_suffix}"
 }
+`, context)
+}
 
-resource "google_compute_network" "network" {
-  provider                = google-beta
-  name                    = "network%{random_suffix}"
-  auto_create_subnetworks = false
+func TestAccComputeRegionNetworkFirewallPolicyWithRules_computeRegionNetworkFirewallPolicyWithRulesRoceExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckComputeRegionNetworkFirewallPolicyWithRulesDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeRegionNetworkFirewallPolicyWithRules_computeRegionNetworkFirewallPolicyWithRulesRoceExample(context),
+			},
+			{
+				ResourceName:            "google_compute_region_network_firewall_policy_with_rules.policy",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"region"},
+			},
+		},
+	})
+}
+
+func testAccComputeRegionNetworkFirewallPolicyWithRules_computeRegionNetworkFirewallPolicyWithRulesRoceExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_compute_region_network_firewall_policy_with_rules" "policy" {
+  provider = google-beta
+  name        = "tf-test-rnf-policy%{random_suffix}"
+  description = "Terraform test"
+  policy_type = "RDMA_ROCE_POLICY"
+
+  rule {
+    description    = "deny all rule"
+    priority       = 1000
+    enable_logging = true
+    action         = "deny"
+    direction      = "INGRESS"
+
+    match {
+      src_ip_ranges            = ["0.0.0.0/0"]
+
+      layer4_config {
+        ip_protocol = "all"
+      }
+    }
+  }
 }
 `, context)
 }

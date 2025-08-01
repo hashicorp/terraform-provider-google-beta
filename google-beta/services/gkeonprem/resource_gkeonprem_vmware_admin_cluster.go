@@ -676,6 +676,26 @@ indicate real problems requiring user intervention.`,
 					},
 				},
 			},
+			"private_registry_config": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: `Configuration for private registry.`,
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"address": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: `The registry address.`,
+						},
+						"ca_cert": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: `The CA certificate public key for private registry.`,
+						},
+					},
+				},
+			},
 			"vcenter": {
 				Type:        schema.TypeList,
 				Optional:    true,
@@ -961,6 +981,12 @@ func resourceGkeonpremVmwareAdminClusterCreate(d *schema.ResourceData, meta inte
 	} else if v, ok := d.GetOkExists("platform_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(platformConfigProp)) && (ok || !reflect.DeepEqual(v, platformConfigProp)) {
 		obj["platformConfig"] = platformConfigProp
 	}
+	privateRegistryConfigProp, err := expandGkeonpremVmwareAdminClusterPrivateRegistryConfig(d.Get("private_registry_config"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("private_registry_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(privateRegistryConfigProp)) && (ok || !reflect.DeepEqual(v, privateRegistryConfigProp)) {
+		obj["privateRegistryConfig"] = privateRegistryConfigProp
+	}
 	annotationsProp, err := expandGkeonpremVmwareAdminClusterEffectiveAnnotations(d.Get("effective_annotations"), d, config)
 	if err != nil {
 		return err
@@ -1009,22 +1035,14 @@ func resourceGkeonpremVmwareAdminClusterCreate(d *schema.ResourceData, meta inte
 	}
 	d.SetId(id)
 
-	// Use the resource in the operation response to populate
-	// identity fields and d.Id() before read
-	var opRes map[string]interface{}
-	err = GkeonpremOperationWaitTimeWithResponse(
-		config, res, &opRes, project, "Creating VmwareAdminCluster", userAgent,
+	err = GkeonpremOperationWaitTime(
+		config, res, project, "Creating VmwareAdminCluster", userAgent,
 		d.Timeout(schema.TimeoutCreate))
+
 	if err != nil {
+
 		return fmt.Errorf("Error waiting to create VmwareAdminCluster: %s", err)
 	}
-
-	// This may have caused the ID to update - update it if so.
-	id, err = tpgresource.ReplaceVars(d, config, "projects/{{project}}/locations/{{location}}/vmwareAdminClusters/{{name}}")
-	if err != nil {
-		return fmt.Errorf("Error constructing id: %s", err)
-	}
-	d.SetId(id)
 
 	log.Printf("[DEBUG] Finished creating VmwareAdminCluster %q: %#v", d.Id(), res)
 
@@ -1148,6 +1166,9 @@ func resourceGkeonpremVmwareAdminClusterRead(d *schema.ResourceData, meta interf
 	if err := d.Set("enable_advanced_cluster", flattenGkeonpremVmwareAdminClusterEnableAdvancedCluster(res["enableAdvancedCluster"], d, config)); err != nil {
 		return fmt.Errorf("Error reading VmwareAdminCluster: %s", err)
 	}
+	if err := d.Set("private_registry_config", flattenGkeonpremVmwareAdminClusterPrivateRegistryConfig(res["privateRegistryConfig"], d, config)); err != nil {
+		return fmt.Errorf("Error reading VmwareAdminCluster: %s", err)
+	}
 	if err := d.Set("effective_annotations", flattenGkeonpremVmwareAdminClusterEffectiveAnnotations(res["annotations"], d, config)); err != nil {
 		return fmt.Errorf("Error reading VmwareAdminCluster: %s", err)
 	}
@@ -1249,6 +1270,12 @@ func resourceGkeonpremVmwareAdminClusterUpdate(d *schema.ResourceData, meta inte
 	} else if v, ok := d.GetOkExists("platform_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, platformConfigProp)) {
 		obj["platformConfig"] = platformConfigProp
 	}
+	privateRegistryConfigProp, err := expandGkeonpremVmwareAdminClusterPrivateRegistryConfig(d.Get("private_registry_config"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("private_registry_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, privateRegistryConfigProp)) {
+		obj["privateRegistryConfig"] = privateRegistryConfigProp
+	}
 	annotationsProp, err := expandGkeonpremVmwareAdminClusterEffectiveAnnotations(d.Get("effective_annotations"), d, config)
 	if err != nil {
 		return err
@@ -1315,6 +1342,10 @@ func resourceGkeonpremVmwareAdminClusterUpdate(d *schema.ResourceData, meta inte
 
 	if d.HasChange("platform_config") {
 		updateMask = append(updateMask, "platformConfig")
+	}
+
+	if d.HasChange("private_registry_config") {
+		updateMask = append(updateMask, "privateRegistryConfig")
 	}
 
 	if d.HasChange("effective_annotations") {
@@ -2348,6 +2379,29 @@ func flattenGkeonpremVmwareAdminClusterStatusConditionsState(v interface{}, d *s
 }
 
 func flattenGkeonpremVmwareAdminClusterEnableAdvancedCluster(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenGkeonpremVmwareAdminClusterPrivateRegistryConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["address"] =
+		flattenGkeonpremVmwareAdminClusterPrivateRegistryConfigAddress(original["address"], d, config)
+	transformed["ca_cert"] =
+		flattenGkeonpremVmwareAdminClusterPrivateRegistryConfigCaCert(original["caCert"], d, config)
+	return []interface{}{transformed}
+}
+func flattenGkeonpremVmwareAdminClusterPrivateRegistryConfigAddress(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenGkeonpremVmwareAdminClusterPrivateRegistryConfigCaCert(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -3485,6 +3539,40 @@ func expandGkeonpremVmwareAdminClusterPlatformConfigStatusConditionsLastTransiti
 }
 
 func expandGkeonpremVmwareAdminClusterPlatformConfigStatusConditionsState(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandGkeonpremVmwareAdminClusterPrivateRegistryConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedAddress, err := expandGkeonpremVmwareAdminClusterPrivateRegistryConfigAddress(original["address"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedAddress); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["address"] = transformedAddress
+	}
+
+	transformedCaCert, err := expandGkeonpremVmwareAdminClusterPrivateRegistryConfigCaCert(original["ca_cert"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedCaCert); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["caCert"] = transformedCaCert
+	}
+
+	return transformed, nil
+}
+
+func expandGkeonpremVmwareAdminClusterPrivateRegistryConfigAddress(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandGkeonpremVmwareAdminClusterPrivateRegistryConfigCaCert(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

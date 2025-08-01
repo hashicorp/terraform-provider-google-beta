@@ -34,7 +34,7 @@ func TestAccNetappStoragePool_storagePoolCreateExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"network_name":  acctest.BootstrapSharedServiceNetworkingConnection(t, "gcnv-network-config-2", acctest.ServiceNetworkWithParentService("netapp.servicenetworking.goog")),
+		"network_name":  acctest.BootstrapSharedServiceNetworkingConnection(t, "gcnv-network-config-3", acctest.ServiceNetworkWithParentService("netapp.servicenetworking.goog")),
 		"random_suffix": acctest.RandString(t, 10),
 	}
 
@@ -50,7 +50,7 @@ func TestAccNetappStoragePool_storagePoolCreateExample(t *testing.T) {
 				ResourceName:            "google_netapp_storage_pool.test_pool",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"labels", "location", "name", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"enable_hot_tier_auto_resize", "labels", "location", "name", "terraform_labels"},
 			},
 		},
 	})

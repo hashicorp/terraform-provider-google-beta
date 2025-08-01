@@ -638,6 +638,7 @@ func TestAccDNSManagedZone_dnsManagedZoneCloudLoggingExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
+		"dns_name":      "services.example.com-" + acctest.RandString(t, 10) + ".",
 		"random_suffix": acctest.RandString(t, 10),
 	}
 
@@ -663,7 +664,7 @@ func testAccDNSManagedZone_dnsManagedZoneCloudLoggingExample(context map[string]
 	return acctest.Nprintf(`
 resource "google_dns_managed_zone" "cloud-logging-enabled-zone" {
   name        = "tf-test-cloud-logging-enabled-zone%{random_suffix}"
-  dns_name    = "services.example.com."
+  dns_name    = "%{dns_name}"
   description = "Example cloud logging enabled DNS zone"
   labels = {
     foo = "bar"
