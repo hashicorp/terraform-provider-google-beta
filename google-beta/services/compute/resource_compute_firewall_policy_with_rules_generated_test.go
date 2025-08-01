@@ -41,7 +41,7 @@ func TestAccComputeFirewallPolicyWithRules_computeFirewallPolicyWithRulesFullExa
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeFirewallPolicyWithRulesDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -59,11 +59,9 @@ func TestAccComputeFirewallPolicyWithRules_computeFirewallPolicyWithRulesFullExa
 func testAccComputeFirewallPolicyWithRules_computeFirewallPolicyWithRulesFullExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 data "google_project" "project" {
-  provider = google-beta
 }
 
 resource "google_compute_firewall_policy_with_rules" "primary" {
-  provider    = google-beta
   short_name  = "tf-test-fw-policy%{random_suffix}"
   description = "Terraform test"
   parent      = "organizations/%{org_id}"
@@ -74,7 +72,7 @@ resource "google_compute_firewall_policy_with_rules" "primary" {
     enable_logging   = true
     action           = "allow"
     direction        = "EGRESS"
-    target_resources = ["https://www.googleapis.com/compute/beta/projects/${data.google_project.project.project_id}/global/networks/default"]
+    target_resources = [google_compute_network.network.self_link]
 
     match {
       dest_ip_ranges            = ["11.100.0.1/32"]
@@ -132,34 +130,23 @@ resource "google_compute_firewall_policy_with_rules" "primary" {
   }
 
   rule {
-    description    = "network scope rule 1"
-    rule_name      = "network scope 1"
-    priority       = 4000
-    enable_logging = false
-    action         = "allow"
-    direction      = "INGRESS"
-    match {
-      src_ip_ranges     = ["11.100.0.1/32"]
-      src_network_scope = "VPC_NETWORKS"
-      src_networks      = [google_compute_network.network.id]
+    description             = "secure tags"
+    rule_name               = "secure tags rule"
+    priority                = 4000
+    enable_logging          = false
+    action                  = "allow"
+    direction               = "INGRESS"
 
-      layer4_config {
-        ip_protocol = "tcp"
-        ports       = [8080]
-      }
+    target_secure_tag {
+      name = google_tags_tag_value.basic_value.id
     }
-  }
 
-  rule {
-    description    = "network scope rule 2"
-    rule_name      = "network scope 2"
-    priority       = 5000
-    enable_logging = false
-    action         = "allow"
-    direction      = "EGRESS"
     match {
-      dest_ip_ranges     = ["0.0.0.0/0"]
-      dest_network_scope = "INTERNET"
+      src_ip_ranges = ["11.100.0.1/32"]
+
+      src_secure_tag {
+        name = google_tags_tag_value.basic_value.id
+      }
 
       layer4_config {
         ip_protocol = "tcp"
@@ -170,7 +157,6 @@ resource "google_compute_firewall_policy_with_rules" "primary" {
 }
 
 resource "google_network_security_address_group" "address_group_1" {
-  provider    = google-beta
   name        = "tf-test-address-group%{random_suffix}"
   parent      = "organizations/%{org_id}"
   description = "Global address group"
@@ -181,7 +167,6 @@ resource "google_network_security_address_group" "address_group_1" {
 }
 
 resource "google_network_security_security_profile_group" "security_profile_group_1" {
-  provider                  = google-beta
   name                      = "spg%{random_suffix}"
   parent                    = "organizations/%{org_id}"
   description               = "my description"
@@ -189,7 +174,6 @@ resource "google_network_security_security_profile_group" "security_profile_grou
 }
 
 resource "google_network_security_security_profile" "security_profile_1" {
-  provider    = google-beta
   name        = "sp%{random_suffix}"
   type        = "THREAT_PREVENTION"
   parent      = "organizations/%{org_id}"
@@ -197,9 +181,25 @@ resource "google_network_security_security_profile" "security_profile_1" {
 }
 
 resource "google_compute_network" "network" {
-  provider                = google-beta
   name                    = "network%{random_suffix}"
   auto_create_subnetworks = false
+}
+
+resource "google_tags_tag_key" "basic_key" {
+  description = "For keyname resources."
+  parent      = "organizations/%{org_id}"
+  purpose     = "GCE_FIREWALL"
+  short_name  = "tf-test-tag-key%{random_suffix}"
+
+  purpose_data = {
+    organization = "auto"
+  }
+}
+
+resource "google_tags_tag_value" "basic_value" {
+  description = "For valuename resources."
+  parent      = google_tags_tag_key.basic_key.id
+  short_name  = "tf-test-tag-value%{random_suffix}"
 }
 `, context)
 }
