@@ -28,7 +28,7 @@ IMPROVEMENTS:
 * container: added support for `rbac_binding_config` in `google_container_cluster` ([#10441](https://github.com/hashicorp/terraform-provider-google-beta/pull/10441))
 * dataproc: added `cluster_config.cluster_tier` field to `google_dataproc_cluster` resource ([#10453](https://github.com/hashicorp/terraform-provider-google-beta/pull/10453))
 * looker: added `LOOKER_CORE_TRIAL_STANDARD`, `LOOKER_CORE_TRIAL_ENTERPRISE`, and `LOOKER_CORE_TRIAL_EMBED` editions to `google_looker_instance` resource. ([#10427](https://github.com/hashicorp/terraform-provider-google-beta/pull/10427))
-* managedkafka: added `tls_config` field to `google_managed_kafka_cluster` resource (beta) ([#10420](https://github.com/hashicorp/terraform-provider-google-beta/pull/10420))
+* managedkafka: added `tls_config` field to `google_managed_kafka_cluster` resource ([#10420](https://github.com/hashicorp/terraform-provider-google-beta/pull/10420))
 * memorystore: added `allow_fewer_zones_deployment` field to `google_redis_cluster` resource ([#10434](https://github.com/hashicorp/terraform-provider-google-beta/pull/10434))
 * storage: added `deletion_policy` field to `google_storage_bucket_object` resource ([#10445](https://github.com/hashicorp/terraform-provider-google-beta/pull/10445))
 * vertexai: added `custom_delete` field to `google_vertex_ai_endpoint_with_model_garden_deployment` resource ([#10430](https://github.com/hashicorp/terraform-provider-google-beta/pull/10430))
