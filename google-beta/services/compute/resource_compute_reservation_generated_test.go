@@ -278,7 +278,6 @@ resource "google_compute_reservation" "gce_reservation_sharing_policy" {
 }
 
 func TestAccComputeReservation_sharedReservationBasicExample(t *testing.T) {
-	acctest.SkipIfVcr(t)
 	t.Parallel()
 
 	context := map[string]interface{}{
@@ -330,12 +329,13 @@ resource "google_project" "guest_project" {
   deletion_policy = "DELETE"
 }
 
-resource "google_organization_policy" "shared_reservation_org_policy" {
-  org_id     = "%{org_id}"
-  constraint = "constraints/compute.sharedReservationsOwnerProjects"
-  list_policy {
-    allow {
-      values = ["projects/${google_project.owner_project.number}"]
+resource "google_org_policy_policy" "shared_reservation_org_policy" {
+  name   = "projects/${google_project.owner_project.project_id}/policies/compute.sharedReservationsOwnerProjects"
+  parent = "projects/${google_project.owner_project.project_id}"
+
+  spec {
+    rules {
+      allow_all = "TRUE"
     }
   }
 }
@@ -359,13 +359,12 @@ resource "google_compute_reservation" "gce_reservation" {
       project_id = google_project.guest_project.project_id
     }
   }
-  depends_on = [google_organization_policy.shared_reservation_org_policy,google_project_service.compute]
+  depends_on = [google_org_policy_policy.shared_reservation_org_policy,google_project_service.compute]
 }
 `, context)
 }
 
 func TestAccComputeReservation_sharedReservationBetaExample(t *testing.T) {
-	acctest.SkipIfVcr(t)
 	t.Parallel()
 
 	context := map[string]interface{}{
@@ -420,13 +419,14 @@ resource "google_project" "guest_project" {
   deletion_policy = "DELETE"
 }
 
-resource "google_organization_policy" "shared_reservation_org_policy" {
-  provider   = google-beta
-  org_id     = "%{org_id}"
-  constraint = "constraints/compute.sharedReservationsOwnerProjects"
-  list_policy {
-    allow {
-      values = ["projects/${google_project.owner_project.number}"]
+resource "google_org_policy_policy" "shared_reservation_org_policy" {
+  provider = google-beta
+  name   = "projects/${google_project.owner_project.project_id}/policies/compute.sharedReservationsOwnerProjects"
+  parent = "projects/${google_project.owner_project.project_id}"
+
+  spec {
+    rules {
+      allow_all = "TRUE"
     }
   }
 }
@@ -448,7 +448,7 @@ resource "google_compute_reservation" "gce_reservation" {
     share_type = "SPECIFIC_PROJECTS"
     projects = [google_project.guest_project.name]
   }
-  depends_on = [google_organization_policy.shared_reservation_org_policy,google_project_service.compute]
+  depends_on = [google_org_policy_policy.shared_reservation_org_policy,google_project_service.compute]
 }
 `, context)
 }
