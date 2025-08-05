@@ -2,7 +2,7 @@
 
 DEPRECATIONS:
 * compute: deprecated `network_self_link` field in `google_compute_subnetworks` data source. Use `network_name` instead. ([#10423](https://github.com/hashicorp/terraform-provider-google-beta/pull/10423))
-* resourcemanager: `project` field in `google_service_account_key` data source has been deprecated. The field is non functional and can safely be removed from your configuration. ([#10442](https://github.com/hashicorp/terraform-provider-google-beta/pull/10442))
+* resourcemanager: deprecated `project` field in `google_service_account_key` data source. The field is non functional and can safely be removed from your configuration. ([#10442](https://github.com/hashicorp/terraform-provider-google-beta/pull/10442))
 
 FEATURES:
 * **New Data Source:** `google_artifact_registry_docker_images` ([#10422](https://github.com/hashicorp/terraform-provider-google-beta/pull/10422))
@@ -23,7 +23,7 @@ IMPROVEMENTS:
 * compute: added `labels` field to `google_compute_storage_pool` resource ([#10425](https://github.com/hashicorp/terraform-provider-google-beta/pull/10425))
 * compute: added `network_name` field to `google_compute_subnetworks` data source ([#10423](https://github.com/hashicorp/terraform-provider-google-beta/pull/10423))
 * container: added `ip_allocation_policy.additional_ip_ranges_config` field to `google_container_cluster` resource ([#10451](https://github.com/hashicorp/terraform-provider-google-beta/pull/10451))
-* container: added `network_config.additional_node_network_configs.subnetwork` field to`google_container_node_pool` resource ([#10451](https://github.com/hashicorp/terraform-provider-google-beta/pull/10451))
+* container: added `network_config.additional_node_network_configs.subnetwork` field to `google_container_node_pool` resource ([#10451](https://github.com/hashicorp/terraform-provider-google-beta/pull/10451))
 * container: added `addons_config.lustre_csi_driver_config` field to `google_container_cluster` resource ([#10413](https://github.com/hashicorp/terraform-provider-google-beta/pull/10413))
 * container: added support for `rbac_binding_config` in `google_container_cluster` ([#10441](https://github.com/hashicorp/terraform-provider-google-beta/pull/10441))
 * dataproc: added `cluster_config.cluster_tier` field to `google_dataproc_cluster` resource ([#10453](https://github.com/hashicorp/terraform-provider-google-beta/pull/10453))
