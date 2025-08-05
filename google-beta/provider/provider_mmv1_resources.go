@@ -198,8 +198,10 @@ var handwrittenDatasources = map[string]*schema.Resource{
 	"google_alloydb_supported_database_flags":                    alloydb.DataSourceAlloydbSupportedDatabaseFlags(),
 	"google_alloydb_instance":                                    alloydb.DataSourceAlloydbDatabaseInstance(),
 	"google_artifact_registry_docker_image":                      artifactregistry.DataSourceArtifactRegistryDockerImage(),
+	"google_artifact_registry_docker_images":                     artifactregistry.DataSourceArtifactRegistryDockerImages(),
 	"google_artifact_registry_locations":                         artifactregistry.DataSourceGoogleArtifactRegistryLocations(),
 	"google_artifact_registry_repository":                        artifactregistry.DataSourceArtifactRegistryRepository(),
+	"google_artifact_registry_version":                           artifactregistry.DataSourceArtifactRegistryVersion(),
 	"google_apphub_discovered_workload":                          apphub.DataSourceApphubDiscoveredWorkload(),
 	"google_app_engine_default_service_account":                  appengine.DataSourceGoogleAppEngineDefaultServiceAccount(),
 	"google_apphub_application":                                  apphub.DataSourceGoogleApphubApplication(),
@@ -523,6 +525,7 @@ var generatedIAMDatasources = map[string]*schema.Resource{
 	"google_gke_hub_scope_iam_policy":                              tpgiamresource.DataSourceIamPolicy(gkehub2.GKEHub2ScopeIamSchema, gkehub2.GKEHub2ScopeIamUpdaterProducer),
 	"google_healthcare_consent_store_iam_policy":                   tpgiamresource.DataSourceIamPolicy(healthcare.HealthcareConsentStoreIamSchema, healthcare.HealthcareConsentStoreIamUpdaterProducer),
 	"google_iam_workload_identity_pool_iam_policy":                 tpgiamresource.DataSourceIamPolicy(iambeta.IAMBetaWorkloadIdentityPoolIamSchema, iambeta.IAMBetaWorkloadIdentityPoolIamUpdaterProducer),
+	"google_iam_workforce_pool_iam_policy":                         tpgiamresource.DataSourceIamPolicy(iamworkforcepool.IAMWorkforcePoolWorkforcePoolIamSchema, iamworkforcepool.IAMWorkforcePoolWorkforcePoolIamUpdaterProducer),
 	"google_iap_app_engine_service_iam_policy":                     tpgiamresource.DataSourceIamPolicy(iap.IapAppEngineServiceIamSchema, iap.IapAppEngineServiceIamUpdaterProducer),
 	"google_iap_app_engine_version_iam_policy":                     tpgiamresource.DataSourceIamPolicy(iap.IapAppEngineVersionIamSchema, iap.IapAppEngineVersionIamUpdaterProducer),
 	"google_iap_web_cloud_run_service_iam_policy":                  tpgiamresource.DataSourceIamPolicy(iap.IapWebCloudRunServiceIamSchema, iap.IapWebCloudRunServiceIamUpdaterProducer),
@@ -596,9 +599,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 694
-// Generated IAM resources: 339
-// Total generated resources: 1033
+// Generated resources: 695
+// Generated IAM resources: 342
+// Total generated resources: 1037
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -1092,6 +1095,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_developer_connect_account_connector":                                 developerconnect.ResourceDeveloperConnectAccountConnector(),
 	"google_developer_connect_connection":                                        developerconnect.ResourceDeveloperConnectConnection(),
 	"google_developer_connect_git_repository_link":                               developerconnect.ResourceDeveloperConnectGitRepositoryLink(),
+	"google_developer_connect_insights_config":                                   developerconnect.ResourceDeveloperConnectInsightsConfig(),
 	"google_dialogflow_agent":                                                    dialogflow.ResourceDialogflowAgent(),
 	"google_dialogflow_encryption_spec":                                          dialogflow.ResourceDialogflowEncryptionSpec(),
 	"google_dialogflow_entity_type":                                              dialogflow.ResourceDialogflowEntityType(),
@@ -1250,6 +1254,9 @@ var generatedResources = map[string]*schema.Resource{
 	"google_iam_oauth_client":                                                    iamworkforcepool.ResourceIAMWorkforcePoolOauthClient(),
 	"google_iam_oauth_client_credential":                                         iamworkforcepool.ResourceIAMWorkforcePoolOauthClientCredential(),
 	"google_iam_workforce_pool":                                                  iamworkforcepool.ResourceIAMWorkforcePoolWorkforcePool(),
+	"google_iam_workforce_pool_iam_binding":                                      tpgiamresource.ResourceIamBinding(iamworkforcepool.IAMWorkforcePoolWorkforcePoolIamSchema, iamworkforcepool.IAMWorkforcePoolWorkforcePoolIamUpdaterProducer, iamworkforcepool.IAMWorkforcePoolWorkforcePoolIdParseFunc),
+	"google_iam_workforce_pool_iam_member":                                       tpgiamresource.ResourceIamMember(iamworkforcepool.IAMWorkforcePoolWorkforcePoolIamSchema, iamworkforcepool.IAMWorkforcePoolWorkforcePoolIamUpdaterProducer, iamworkforcepool.IAMWorkforcePoolWorkforcePoolIdParseFunc),
+	"google_iam_workforce_pool_iam_policy":                                       tpgiamresource.ResourceIamPolicy(iamworkforcepool.IAMWorkforcePoolWorkforcePoolIamSchema, iamworkforcepool.IAMWorkforcePoolWorkforcePoolIamUpdaterProducer, iamworkforcepool.IAMWorkforcePoolWorkforcePoolIdParseFunc),
 	"google_iam_workforce_pool_provider":                                         iamworkforcepool.ResourceIAMWorkforcePoolWorkforcePoolProvider(),
 	"google_iam_workforce_pool_provider_key":                                     iamworkforcepool.ResourceIAMWorkforcePoolWorkforcePoolProviderKey(),
 	"google_iap_app_engine_service_iam_binding":                                  tpgiamresource.ResourceIamBinding(iap.IapAppEngineServiceIamSchema, iap.IapAppEngineServiceIamUpdaterProducer, iap.IapAppEngineServiceIdParseFunc),
