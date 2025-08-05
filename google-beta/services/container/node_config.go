@@ -1297,10 +1297,6 @@ func expandNodeConfig(v interface{}) *container.NodeConfig {
 		nc.FlexStart = v.(bool)
 	}
 
-	if v, ok := nodeConfig["flex_start"]; ok {
-		nc.FlexStart = v.(bool)
-	}
-
 	if v, ok := nodeConfig["host_maintenance_policy"]; ok {
 		nc.HostMaintenancePolicy = expandHostMaintenancePolicy(v)
 	}
