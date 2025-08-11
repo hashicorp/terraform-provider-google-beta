@@ -193,21 +193,18 @@ resource "google_project_service" "mcsd" {
 resource "google_project_service" "compute" {
   project = google_project.project.project_id
   service = "compute.googleapis.com"
-  disable_on_destroy = false
   provider = google-beta
 }
 
 resource "google_project_service" "container" {
   project = google_project.project.project_id
   service = "container.googleapis.com"
-  disable_on_destroy = false
   provider = google-beta
 }
 
 resource "google_project_service" "gkehub" {
   project = google_project.project.project_id
   service = "gkehub.googleapis.com"
-  disable_on_destroy = false
   provider = google-beta
 }
 `, context)
@@ -1100,13 +1097,11 @@ resource "google_project_service" "mcsd" {
 resource "google_project_service" "compute" {
   project = google_project.project.project_id
   service = "compute.googleapis.com"
-  disable_on_destroy = false
 }
 
 resource "google_project_service" "container" {
   project = google_project.project.project_id
   service = "container.googleapis.com"
-  disable_on_destroy = false
 }
 
 resource "google_project_service" "anthos" {
@@ -1117,7 +1112,6 @@ resource "google_project_service" "anthos" {
 resource "google_project_service" "gkehub" {
   project = google_project.project.project_id
   service = "gkehub.googleapis.com"
-  disable_on_destroy = false
 }
 
 resource "google_project" "project_2" {
@@ -1131,19 +1125,16 @@ resource "google_project" "project_2" {
 resource "google_project_service" "compute_2" {
   project = google_project.project_2.project_id
   service = "compute.googleapis.com"
-  disable_on_destroy = false
 }
 
 resource "google_project_service" "container_2" {
   project = google_project.project_2.project_id
   service = "container.googleapis.com"
-  disable_on_destroy = false
 }
 
 resource "google_project_service" "gkehub_2" {
   project = google_project.project_2.project_id
   service = "gkehub.googleapis.com"
-  disable_on_destroy = false
 }
 `, context)
 }
