@@ -28,7 +28,6 @@ BUG FIXES:
 * accesscontextmanager: made `scopes` field as immutable for `access_context_manager_access_policy` resource. ([#10478](https://github.com/hashicorp/terraform-provider-google-beta/pull/10478))
 * bigquery: fixed handling of non-legacy roles for access block inside `google_bigquery_dataset` ([#10488](https://github.com/hashicorp/terraform-provider-google-beta/pull/10488))
 * container: fixed an issue causing errors during updates to `node_config` to be suppressed in `google_container_cluster` and `google_container_node_pool` ([#10459](https://github.com/hashicorp/terraform-provider-google-beta/pull/10459))
-* provider: fixed many import functions throughout the provider that erroneously matched a subset of the provided input, leading to unclear error messages when using `terraform input` with invalid resource IDs ([#10469](https://github.com/hashicorp/terraform-provider-google-beta/pull/10469))
 
 ## 6.47.0 (August 05, 2025)
 
