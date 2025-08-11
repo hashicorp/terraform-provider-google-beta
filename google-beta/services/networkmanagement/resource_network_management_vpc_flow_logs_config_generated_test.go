@@ -30,70 +30,6 @@ import (
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
-func TestAccNetworkManagementVpcFlowLogsConfig_networkManagementVpcFlowLogsConfigInterconnectFullExample(t *testing.T) {
-	t.Parallel()
-
-	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
-	}
-
-	acctest.VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
-		CheckDestroy:             testAccCheckNetworkManagementVpcFlowLogsConfigDestroyProducer(t),
-		Steps: []resource.TestStep{
-			{
-				Config: testAccNetworkManagementVpcFlowLogsConfig_networkManagementVpcFlowLogsConfigInterconnectFullExample(context),
-			},
-			{
-				ResourceName:            "google_network_management_vpc_flow_logs_config.interconnect-test",
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"labels", "location", "terraform_labels", "vpc_flow_logs_config_id"},
-			},
-		},
-	})
-}
-
-func testAccNetworkManagementVpcFlowLogsConfig_networkManagementVpcFlowLogsConfigInterconnectFullExample(context map[string]interface{}) string {
-	return acctest.Nprintf(`
-data "google_project" "project" {
-}
-
-resource "google_network_management_vpc_flow_logs_config" "interconnect-test" {
-  vpc_flow_logs_config_id = "tf-test-full-interconnect-test-id%{random_suffix}"
-  location                = "global"
-  interconnect_attachment = "projects/${data.google_project.project.number}/regions/us-east4/interconnectAttachments/${google_compute_interconnect_attachment.attachment.name}"
-  state                   = "ENABLED"
-  aggregation_interval    = "INTERVAL_5_SEC"
-  description             = "VPC Flow Logs over a VPN Gateway."
-  flow_sampling           = 0.5
-  metadata                = "INCLUDE_ALL_METADATA"
-}
-
-resource "google_compute_network" "network" {
-  name     = "tf-test-full-interconnect-test-network%{random_suffix}"
-}
-
-resource "google_compute_router" "router" {
-  name    = "tf-test-full-interconnect-test-router%{random_suffix}"
-  network = google_compute_network.network.name
-  bgp {
-    asn = 16550
-  }
-}
-
-resource "google_compute_interconnect_attachment" "attachment" {
-  name                     = "tf-test-full-interconnect-test-id%{random_suffix}"
-  edge_availability_domain = "AVAILABILITY_DOMAIN_1"
-  type                     = "PARTNER"
-  router                   = google_compute_router.router.id
-  mtu                      = 1500
-}
-
-`, context)
-}
-
 func TestAccNetworkManagementVpcFlowLogsConfig_networkManagementVpcFlowLogsConfigInterconnectBasicExample(t *testing.T) {
 	t.Parallel()
 
@@ -248,7 +184,7 @@ resource "google_compute_route" "route" {
 `, context)
 }
 
-func TestAccNetworkManagementVpcFlowLogsConfig_networkManagementVpcFlowLogsConfigVpnFullExample(t *testing.T) {
+func TestAccNetworkManagementVpcFlowLogsConfig_networkManagementVpcFlowLogsConfigNetworkBasicExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
@@ -257,14 +193,14 @@ func TestAccNetworkManagementVpcFlowLogsConfig_networkManagementVpcFlowLogsConfi
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckNetworkManagementVpcFlowLogsConfigDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccNetworkManagementVpcFlowLogsConfig_networkManagementVpcFlowLogsConfigVpnFullExample(context),
+				Config: testAccNetworkManagementVpcFlowLogsConfig_networkManagementVpcFlowLogsConfigNetworkBasicExample(context),
 			},
 			{
-				ResourceName:            "google_network_management_vpc_flow_logs_config.vpn-test",
+				ResourceName:            "google_network_management_vpc_flow_logs_config.network-test",
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"labels", "location", "terraform_labels", "vpc_flow_logs_config_id"},
@@ -273,77 +209,76 @@ func TestAccNetworkManagementVpcFlowLogsConfig_networkManagementVpcFlowLogsConfi
 	})
 }
 
-func testAccNetworkManagementVpcFlowLogsConfig_networkManagementVpcFlowLogsConfigVpnFullExample(context map[string]interface{}) string {
+func testAccNetworkManagementVpcFlowLogsConfig_networkManagementVpcFlowLogsConfigNetworkBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 data "google_project" "project" {
+  provider = google-beta
 }
 
-resource "google_network_management_vpc_flow_logs_config" "vpn-test" {
-  vpc_flow_logs_config_id = "tf-test-full-test-id%{random_suffix}"
+resource "google_network_management_vpc_flow_logs_config" "network-test" {
+  provider                = google-beta
+  vpc_flow_logs_config_id = "tf-test-basic-network-test-id%{random_suffix}"
   location                = "global"
-  vpn_tunnel              = "projects/${data.google_project.project.number}/regions/us-central1/vpnTunnels/${google_compute_vpn_tunnel.tunnel.name}"
-  state                   = "ENABLED"
-  aggregation_interval    = "INTERVAL_5_SEC"
-  description             = "VPC Flow Logs over a VPN Gateway."
-  flow_sampling           = 0.5
-  metadata                = "INCLUDE_ALL_METADATA"
-}
-
-resource "google_compute_vpn_tunnel" "tunnel" {
-  name               = "tf-test-full-test-tunnel%{random_suffix}"
-  peer_ip            = "15.0.0.120"
-  shared_secret      = "a secret message"
-  target_vpn_gateway = google_compute_vpn_gateway.target_gateway.id
-
-  depends_on = [
-    google_compute_forwarding_rule.fr_esp,
-    google_compute_forwarding_rule.fr_udp500,
-    google_compute_forwarding_rule.fr_udp4500,
-  ]
-}
-
-resource "google_compute_vpn_gateway" "target_gateway" {
-  name     = "tf-test-full-test-gateway%{random_suffix}"
-  network  = google_compute_network.network.id
+  network                 = "projects/${data.google_project.project.number}/global/networks/${google_compute_network.network.name}"
 }
 
 resource "google_compute_network" "network" {
-  name     = "tf-test-full-test-network%{random_suffix}"
+  provider = google-beta
+  name     = "tf-test-basic-network-test-network%{random_suffix}"
+}
+`, context)
 }
 
-resource "google_compute_address" "vpn_static_ip" {
-  name     = "tf-test-full-test-address%{random_suffix}"
+func TestAccNetworkManagementVpcFlowLogsConfig_networkManagementVpcFlowLogsConfigSubnetBasicExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckNetworkManagementVpcFlowLogsConfigDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccNetworkManagementVpcFlowLogsConfig_networkManagementVpcFlowLogsConfigSubnetBasicExample(context),
+			},
+			{
+				ResourceName:            "google_network_management_vpc_flow_logs_config.subnet-test",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"labels", "location", "terraform_labels", "vpc_flow_logs_config_id"},
+			},
+		},
+	})
 }
 
-resource "google_compute_forwarding_rule" "fr_esp" {
-  name        = "tf-test-full-test-fresp%{random_suffix}"
-  ip_protocol = "ESP"
-  ip_address  = google_compute_address.vpn_static_ip.address
-  target      = google_compute_vpn_gateway.target_gateway.id
+func testAccNetworkManagementVpcFlowLogsConfig_networkManagementVpcFlowLogsConfigSubnetBasicExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+data "google_project" "project" {
+  provider = google-beta
 }
 
-resource "google_compute_forwarding_rule" "fr_udp500" {
-  name        = "tf-test-full-test-fr500%{random_suffix}"
-  ip_protocol = "UDP"
-  port_range  = "500"
-  ip_address  = google_compute_address.vpn_static_ip.address
-  target      = google_compute_vpn_gateway.target_gateway.id
+resource "google_network_management_vpc_flow_logs_config" "subnet-test" {
+  provider                = google-beta
+  vpc_flow_logs_config_id = "tf-test-basic-subnet-test-id%{random_suffix}"
+  location                = "global"
+  subnet                  = "projects/${data.google_project.project.number}/regions/us-central1/subnetworks/${google_compute_subnetwork.subnetwork.name}"
 }
 
-resource "google_compute_forwarding_rule" "fr_udp4500" {
-  name        = "tf-test-full-test-fr4500%{random_suffix}"
-  ip_protocol = "UDP"
-  port_range  = "4500"
-  ip_address  = google_compute_address.vpn_static_ip.address
-  target      = google_compute_vpn_gateway.target_gateway.id
+resource "google_compute_network" "network" {
+  provider                = google-beta
+  name                    = "tf-test-basic-subnet-test-network%{random_suffix}"
+  auto_create_subnetworks = false
 }
 
-resource "google_compute_route" "route" {
-  name                = "tf-test-full-test-route%{random_suffix}"
-  network             = google_compute_network.network.name
-  dest_range          = "15.0.0.0/24"
-  priority            = 1000
-  next_hop_vpn_tunnel = google_compute_vpn_tunnel.tunnel.id
+resource "google_compute_subnetwork" "subnetwork" {
+  provider      = google-beta
+  name          = "tf-test-basic-subnet-test-subnetwork%{random_suffix}"
+  ip_cidr_range = "10.2.0.0/16"
+  region        = "us-central1"
+  network       = google_compute_network.network.id
 }
 `, context)
 }
