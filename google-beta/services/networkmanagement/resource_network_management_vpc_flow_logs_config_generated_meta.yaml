@@ -19,7 +19,10 @@ fields:
   - field: 'metadata'
   - field: 'metadata_fields'
   - field: 'name'
+  - field: 'network'
   - field: 'state'
+  - field: 'subnet'
+  - field: 'target_resource_state'
   - field: 'terraform_labels'
     provider_only: true
   - field: 'update_time'
