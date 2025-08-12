@@ -168,7 +168,6 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/storageinsights"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/storagetransfer"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/tags"
-	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/tpu"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/tpuv2"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/transcoder"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/vertexai"
@@ -429,7 +428,6 @@ var handwrittenDatasources = map[string]*schema.Resource{
 	"google_tags_tag_keys":                                       tags.DataSourceGoogleTagsTagKeys(),
 	"google_tags_tag_value":                                      tags.DataSourceGoogleTagsTagValue(),
 	"google_tags_tag_values":                                     tags.DataSourceGoogleTagsTagValues(),
-	"google_tpu_tensorflow_versions":                             tpu.DataSourceTpuTensorflowVersions(),
 	"google_tpu_v2_runtime_versions":                             tpuv2.DataSourceTpuV2RuntimeVersions(),
 	"google_tpu_v2_accelerator_types":                            tpuv2.DataSourceTpuV2AcceleratorTypes(),
 	"google_vpc_access_connector":                                vpcaccess.DataSourceVPCAccessConnector(),
@@ -599,9 +597,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 695
+// Generated resources: 694
 // Generated IAM resources: 342
-// Total generated resources: 1037
+// Total generated resources: 1036
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -1578,7 +1576,6 @@ var generatedResources = map[string]*schema.Resource{
 	"google_tags_tag_value_iam_binding":                                          tpgiamresource.ResourceIamBinding(tags.TagsTagValueIamSchema, tags.TagsTagValueIamUpdaterProducer, tags.TagsTagValueIdParseFunc),
 	"google_tags_tag_value_iam_member":                                           tpgiamresource.ResourceIamMember(tags.TagsTagValueIamSchema, tags.TagsTagValueIamUpdaterProducer, tags.TagsTagValueIdParseFunc),
 	"google_tags_tag_value_iam_policy":                                           tpgiamresource.ResourceIamPolicy(tags.TagsTagValueIamSchema, tags.TagsTagValueIamUpdaterProducer, tags.TagsTagValueIdParseFunc),
-	"google_tpu_node":                                                            tpu.ResourceTPUNode(),
 	"google_tpu_v2_queued_resource":                                              tpuv2.ResourceTpuV2QueuedResource(),
 	"google_tpu_v2_vm":                                                           tpuv2.ResourceTpuV2Vm(),
 	"google_transcoder_job":                                                      transcoder.ResourceTranscoderJob(),
@@ -1964,7 +1961,6 @@ func UseGeneratedProducts() {
 	var _ = storageinsights.ProductName
 	var _ = storagetransfer.ProductName
 	var _ = tags.ProductName
-	var _ = tpu.ProductName
 	var _ = tpuv2.ProductName
 	var _ = transcoder.ProductName
 	var _ = vertexai.ProductName
