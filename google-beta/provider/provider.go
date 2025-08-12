@@ -938,11 +938,6 @@ func Provider() *schema.Provider {
 				Optional:     true,
 				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
 			},
-			"tpu_custom_endpoint": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
-			},
 			"tpu_v2_custom_endpoint": {
 				Type:         schema.TypeString,
 				Optional:     true,
@@ -1333,7 +1328,6 @@ func ProviderConfigure(ctx context.Context, d *schema.ResourceData, p *schema.Pr
 	config.StorageInsightsBasePath = d.Get("storage_insights_custom_endpoint").(string)
 	config.StorageTransferBasePath = d.Get("storage_transfer_custom_endpoint").(string)
 	config.TagsBasePath = d.Get("tags_custom_endpoint").(string)
-	config.TPUBasePath = d.Get("tpu_custom_endpoint").(string)
 	config.TpuV2BasePath = d.Get("tpu_v2_custom_endpoint").(string)
 	config.TranscoderBasePath = d.Get("transcoder_custom_endpoint").(string)
 	config.VertexAIBasePath = d.Get("vertex_ai_custom_endpoint").(string)
