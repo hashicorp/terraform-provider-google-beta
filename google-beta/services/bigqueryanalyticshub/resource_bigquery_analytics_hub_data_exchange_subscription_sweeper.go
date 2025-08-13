@@ -140,9 +140,9 @@ func listAndActionBigqueryAnalyticsHubDataExchangeSubscription(action sweeper.Re
 		}
 
 		// First try the expected resource key
-		resourceList, ok := res["dataExchangeSubscriptions"]
+		resourceList, ok := res["subscriptions"]
 		if ok {
-			log.Printf("[INFO][SWEEPER_LOG] Found resources under expected key 'dataExchangeSubscriptions'")
+			log.Printf("[INFO][SWEEPER_LOG] Found resources under expected key 'subscriptions'")
 		} else {
 			// Next, try the common "items" pattern
 			resourceList, ok = res["items"]

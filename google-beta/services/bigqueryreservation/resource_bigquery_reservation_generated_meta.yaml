@@ -12,6 +12,7 @@ fields:
   - field: 'ignore_idle_slots'
   - field: 'location'
     provider_only: true
+  - field: 'max_slots'
   - field: 'name'
     provider_only: true
   - field: 'original_primary_location'
@@ -20,5 +21,6 @@ fields:
   - field: 'replication_status.error.message'
   - field: 'replication_status.last_error_time'
   - field: 'replication_status.last_replication_time'
+  - field: 'scaling_mode'
   - field: 'secondary_location'
   - field: 'slot_capacity'
