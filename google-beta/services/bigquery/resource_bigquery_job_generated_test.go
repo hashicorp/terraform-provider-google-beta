@@ -126,6 +126,11 @@ resource "google_bigquery_job" "job" {
   query {
     query = "SELECT state FROM [lookerdata:cdc.project_tycho_reports]"
     continuous = true
+
+    connection_properties {
+      key = "service_account"
+      value = "bq-runner@project-query-continuous.iam.gserviceaccount.com"
+    }
   }
 }
 `, context)
