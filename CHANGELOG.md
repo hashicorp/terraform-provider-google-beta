@@ -24,7 +24,6 @@ BUG FIXES:
 * kms: `skip_initial_version_creation` field is no longer immutable in `google_kms_crypto_key`, but is still only settable at-creation ([#10526](https://github.com/hashicorp/terraform-provider-google-beta/pull/10526))
 * netapp: fixed bug where `google_netapp_volume.large_capacity` was not properly marked as immutable, causing updates to fail (and making it impossible to change the field value after creation) ([#10541](https://github.com/hashicorp/terraform-provider-google-beta/pull/10541))
 * networkconnectivity: added update support for `linked_vpc_network` in `google_network_connectivity_spoke` ([#10507](https://github.com/hashicorp/terraform-provider-google-beta/pull/10507))
-* provider: fixed many import functions throughout the provider that erroneously matched a subset of the provided input, leading to unclear error messages when using `terraform input` with invalid resource IDs (revert) ([#10513](https://github.com/hashicorp/terraform-provider-google-beta/pull/10513))
 
 
 ## 6.48.0 (August 12, 2025)
