@@ -19,7 +19,7 @@ IMPROVEMENTS:
 * resourcemanager: Added `management_project` and `configured_capabilities` fields to the `google_folder` resource. ([#10525](https://github.com/hashicorp/terraform-provider-google-beta/pull/10525))
 
 BUG FIXES:
-* cloud_tasks: set `name` field set to required in `google_cloud_tasks_queue` resource ([#10534](https://github.com/hashicorp/terraform-provider-google-beta/pull/10534))
+* cloud_tasks: correctly set `name` field to be required in `google_cloud_tasks_queue` resource ([#10534](https://github.com/hashicorp/terraform-provider-google-beta/pull/10534))
 * clouddeploy: allowed sending `start_time` with default values in `weekly_windows` in  `google_clouddeploy_deploy_policy` resource. `start_time 00:00` means the policy will start at midnight. ([#10530](https://github.com/hashicorp/terraform-provider-google-beta/pull/10530))
 * kms: `skip_initial_version_creation` field is no longer immutable in `google_kms_crypto_key`, but is still only settable at-creation ([#10526](https://github.com/hashicorp/terraform-provider-google-beta/pull/10526))
 * netapp: fixed bug where `google_netapp_volume.large_capacity` was not properly marked as immutable, causing updates to fail (and making it impossible to change the field value after creation) ([#10541](https://github.com/hashicorp/terraform-provider-google-beta/pull/10541))
