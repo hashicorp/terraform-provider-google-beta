@@ -16,7 +16,6 @@ IMPROVEMENTS:
 * container: added `eviction_soft`, `eviction_soft_grace_period`, `eviction_minimum_reclaim`, `eviction_max_pod_grace_period_seconds`, `max_parallel_image_pulls`, `transparent_hugepage_enabled`, `transparent_hugepage_defrag` and `min_node_cpus` fields to `node_config` block of `google_container_node_pool` and `google_container_cluster` resources ([#10522](https://github.com/hashicorp/terraform-provider-google-beta/pull/10522))
 * networkmanagement: added `subnet` and `network` fields to the `google_network_management_vpc_flow_logs_config` resource (beta) ([#10506](https://github.com/hashicorp/terraform-provider-google-beta/pull/10506))
 * networkmanagement: added output-only field `target_resource_state` to the `google_network_management_vpc_flow_logs_config` resource ([#10506](https://github.com/hashicorp/terraform-provider-google-beta/pull/10506))
-* provider: eliminated the need to manually add `*_wo` and `*_wo_version` for write-only properties ([#10504](https://github.com/hashicorp/terraform-provider-google-beta/pull/10504))
 * resourcemanager: Added `management_project` and `configured_capabilities` fields to the `google_folder` resource. ([#10525](https://github.com/hashicorp/terraform-provider-google-beta/pull/10525))
 
 BUG FIXES:
