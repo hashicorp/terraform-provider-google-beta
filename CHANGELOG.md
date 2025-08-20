@@ -1,6 +1,6 @@
 ## 6.49.1 (August 20, 2025)
 BUG FIXES:
-* secretmanager: fixed issue where `secret_data_wo_version` would show a plan/apply time diff when unset for `google_secret_manager_secret_version` ([#10574](https://github.com/hashicorp/terraform-provider-google-beta/pull/10574))
+* secretmanager: fixed issue where upgrading to 6.49.0 would cause all `google_secret_manager_secret_version` resources to be recreated unless `secret_data_wo_version` was set ([#10574](https://github.com/hashicorp/terraform-provider-google-beta/pull/10574))
 
 
 ## 6.49.0 (August 19, 2025)
