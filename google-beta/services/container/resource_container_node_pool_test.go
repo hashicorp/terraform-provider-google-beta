@@ -5552,7 +5552,6 @@ resource "google_container_node_pool" "primary_nodes" {
   node_count = 1
 
   node_config {
-    machine_type = "n1-standard-1" // can't be e2 because of local-ssd
     disk_size_gb = 15
 
     resource_manager_tags = {
@@ -5599,12 +5598,11 @@ resource "google_container_node_pool" "primary_nodes" {
   node_count = 1
 
   node_config {
-    machine_type = "n1-standard-1" // can't be e2 because of local-ssd
     disk_size_gb = 15
 
     resource_manager_tags = {
       "%{pid}/%{tagKey1}" = "%{tagValue1}"
-	  "%{pid}/%{tagKey2}" = "%{tagValue2}"
+      "%{pid}/%{tagKey2}" = "%{tagValue2}"
     }
   }
 }
@@ -5647,7 +5645,6 @@ resource "google_container_node_pool" "primary_nodes" {
   node_count = 1
 
   node_config {
-    machine_type = "n1-standard-1" // can't be e2 because of local-ssd
     disk_size_gb = 15
   }
 }
