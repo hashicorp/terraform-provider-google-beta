@@ -11,4 +11,5 @@ fields:
   - field: 'parent'
   - field: 'policy_id'
     api_field: 'id'
+  - field: 'short_name'
   - field: 'type'
