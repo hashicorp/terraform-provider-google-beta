@@ -1,0 +1,26 @@
+resource: 'google_saas_runtime_saas'
+generation_type: 'mmv1'
+source_file: 'products/saasservicemgmt/Saas.yaml'
+api_service_name: 'saasservicemgmt.googleapis.com'
+api_version: 'v1beta1'
+api_resource_type_kind: 'Saas'
+autogen_status: true
+fields:
+  - field: 'annotations'
+  - field: 'create_time'
+  - field: 'effective_annotations'
+    provider_only: true
+  - field: 'effective_labels'
+    provider_only: true
+  - field: 'etag'
+  - field: 'labels'
+  - field: 'location'
+    provider_only: true
+  - field: 'locations.name'
+  - field: 'name'
+  - field: 'saas_id'
+    provider_only: true
+  - field: 'terraform_labels'
+    provider_only: true
+  - field: 'uid'
+  - field: 'update_time'

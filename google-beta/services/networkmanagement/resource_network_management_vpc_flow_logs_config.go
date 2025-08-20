@@ -76,7 +76,7 @@ for resource type 'networkmanagement.googleapis.com/VpcFlowLogsConfig'.`,
 				Computed: true,
 				Optional: true,
 				Description: `Optional. The aggregation interval for the logs. Default value is
-INTERVAL_5_SEC.   Possible values:  AGGREGATION_INTERVAL_UNSPECIFIED INTERVAL_5_SEC INTERVAL_30_SEC INTERVAL_1_MIN INTERVAL_5_MIN INTERVAL_10_MIN INTERVAL_15_MIN"`,
+INTERVAL_5_SEC.   Possible values:  AGGREGATION_INTERVAL_UNSPECIFIED INTERVAL_5_SEC INTERVAL_30_SEC INTERVAL_1_MIN INTERVAL_5_MIN INTERVAL_10_MIN INTERVAL_15_MIN`,
 			},
 			"description": {
 				Type:     schema.TypeString,
@@ -130,12 +130,23 @@ logs. Can only be specified if \"metadata\" was set to CUSTOM_METADATA.`,
 					Type: schema.TypeString,
 				},
 			},
+			"network": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: `Traffic will be logged from VMs, VPN tunnels and Interconnect Attachments within the network. Format: projects/{project_id}/global/networks/{name}`,
+			},
 			"state": {
 				Type:     schema.TypeString,
 				Computed: true,
 				Optional: true,
 				Description: `Optional. The state of the VPC Flow Log configuration. Default value
-is ENABLED. When creating a new configuration, it must be enabled.   Possible`,
+is ENABLED. When creating a new configuration, it must be enabled.
+Possible values: STATE_UNSPECIFIED ENABLED DISABLED`,
+			},
+			"subnet": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: `Traffic will be logged from VMs within the subnetwork. Format: projects/{project_id}/regions/{region}/subnetworks/{name}`,
 			},
 			"vpn_tunnel": {
 				Type:        schema.TypeString,
@@ -157,6 +168,16 @@ is ENABLED. When creating a new configuration, it must be enabled.   Possible`,
 				Type:        schema.TypeString,
 				Computed:    true,
 				Description: `Identifier. Unique name of the configuration using the form:     'projects/{project_id}/locations/global/vpcFlowLogsConfigs/{vpc_flow_logs_config_id}'`,
+			},
+			"target_resource_state": {
+				Type:     schema.TypeString,
+				Computed: true,
+				Description: `Describes the state of the configured target resource for diagnostic
+purposes.
+Possible values:
+TARGET_RESOURCE_STATE_UNSPECIFIED
+TARGET_RESOURCE_EXISTS
+TARGET_RESOURCE_DOES_NOT_EXIST`,
 			},
 			"terraform_labels": {
 				Type:     schema.TypeMap,
@@ -242,6 +263,18 @@ func resourceNetworkManagementVpcFlowLogsConfigCreate(d *schema.ResourceData, me
 		return err
 	} else if v, ok := d.GetOkExists("vpn_tunnel"); !tpgresource.IsEmptyValue(reflect.ValueOf(vpnTunnelProp)) && (ok || !reflect.DeepEqual(v, vpnTunnelProp)) {
 		obj["vpnTunnel"] = vpnTunnelProp
+	}
+	subnetProp, err := expandNetworkManagementVpcFlowLogsConfigSubnet(d.Get("subnet"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("subnet"); !tpgresource.IsEmptyValue(reflect.ValueOf(subnetProp)) && (ok || !reflect.DeepEqual(v, subnetProp)) {
+		obj["subnet"] = subnetProp
+	}
+	networkProp, err := expandNetworkManagementVpcFlowLogsConfigNetwork(d.Get("network"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("network"); !tpgresource.IsEmptyValue(reflect.ValueOf(networkProp)) && (ok || !reflect.DeepEqual(v, networkProp)) {
+		obj["network"] = networkProp
 	}
 	labelsProp, err := expandNetworkManagementVpcFlowLogsConfigEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
@@ -378,6 +411,12 @@ func resourceNetworkManagementVpcFlowLogsConfigRead(d *schema.ResourceData, meta
 	if err := d.Set("vpn_tunnel", flattenNetworkManagementVpcFlowLogsConfigVpnTunnel(res["vpnTunnel"], d, config)); err != nil {
 		return fmt.Errorf("Error reading VpcFlowLogsConfig: %s", err)
 	}
+	if err := d.Set("subnet", flattenNetworkManagementVpcFlowLogsConfigSubnet(res["subnet"], d, config)); err != nil {
+		return fmt.Errorf("Error reading VpcFlowLogsConfig: %s", err)
+	}
+	if err := d.Set("network", flattenNetworkManagementVpcFlowLogsConfigNetwork(res["network"], d, config)); err != nil {
+		return fmt.Errorf("Error reading VpcFlowLogsConfig: %s", err)
+	}
 	if err := d.Set("labels", flattenNetworkManagementVpcFlowLogsConfigLabels(res["labels"], d, config)); err != nil {
 		return fmt.Errorf("Error reading VpcFlowLogsConfig: %s", err)
 	}
@@ -385,6 +424,9 @@ func resourceNetworkManagementVpcFlowLogsConfigRead(d *schema.ResourceData, meta
 		return fmt.Errorf("Error reading VpcFlowLogsConfig: %s", err)
 	}
 	if err := d.Set("update_time", flattenNetworkManagementVpcFlowLogsConfigUpdateTime(res["updateTime"], d, config)); err != nil {
+		return fmt.Errorf("Error reading VpcFlowLogsConfig: %s", err)
+	}
+	if err := d.Set("target_resource_state", flattenNetworkManagementVpcFlowLogsConfigTargetResourceState(res["targetResourceState"], d, config)); err != nil {
 		return fmt.Errorf("Error reading VpcFlowLogsConfig: %s", err)
 	}
 	if err := d.Set("terraform_labels", flattenNetworkManagementVpcFlowLogsConfigTerraformLabels(res["labels"], d, config)); err != nil {
@@ -467,6 +509,18 @@ func resourceNetworkManagementVpcFlowLogsConfigUpdate(d *schema.ResourceData, me
 	} else if v, ok := d.GetOkExists("vpn_tunnel"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, vpnTunnelProp)) {
 		obj["vpnTunnel"] = vpnTunnelProp
 	}
+	subnetProp, err := expandNetworkManagementVpcFlowLogsConfigSubnet(d.Get("subnet"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("subnet"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, subnetProp)) {
+		obj["subnet"] = subnetProp
+	}
+	networkProp, err := expandNetworkManagementVpcFlowLogsConfigNetwork(d.Get("network"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("network"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, networkProp)) {
+		obj["network"] = networkProp
+	}
 	labelsProp, err := expandNetworkManagementVpcFlowLogsConfigEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
@@ -517,6 +571,14 @@ func resourceNetworkManagementVpcFlowLogsConfigUpdate(d *schema.ResourceData, me
 
 	if d.HasChange("vpn_tunnel") {
 		updateMask = append(updateMask, "vpnTunnel")
+	}
+
+	if d.HasChange("subnet") {
+		updateMask = append(updateMask, "subnet")
+	}
+
+	if d.HasChange("network") {
+		updateMask = append(updateMask, "network")
 	}
 
 	if d.HasChange("effective_labels") {
@@ -681,6 +743,14 @@ func flattenNetworkManagementVpcFlowLogsConfigVpnTunnel(v interface{}, d *schema
 	return v
 }
 
+func flattenNetworkManagementVpcFlowLogsConfigSubnet(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenNetworkManagementVpcFlowLogsConfigNetwork(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenNetworkManagementVpcFlowLogsConfigLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
@@ -701,6 +771,10 @@ func flattenNetworkManagementVpcFlowLogsConfigCreateTime(v interface{}, d *schem
 }
 
 func flattenNetworkManagementVpcFlowLogsConfigUpdateTime(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenNetworkManagementVpcFlowLogsConfigTargetResourceState(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -756,6 +830,14 @@ func expandNetworkManagementVpcFlowLogsConfigInterconnectAttachment(v interface{
 }
 
 func expandNetworkManagementVpcFlowLogsConfigVpnTunnel(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandNetworkManagementVpcFlowLogsConfigSubnet(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandNetworkManagementVpcFlowLogsConfigNetwork(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

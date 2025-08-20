@@ -17,6 +17,7 @@
 package resourcemanager3_test
 
 import (
+	"regexp"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
@@ -32,6 +33,7 @@ func TestAccResourceManagerCapability_resourceManagerCapabilityExample_basic(t *
 		"org_id":        envvar.GetTestOrgFromEnv(t),
 		"random_suffix": acctest.RandString(t, 10),
 	}
+	folderTFResourceName := "google_folder.folder"
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -42,6 +44,16 @@ func TestAccResourceManagerCapability_resourceManagerCapabilityExample_basic(t *
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceManagerCapability_resourceManagerCapabilityExample_basic(context),
+			},
+			{
+				ResourceName:      folderTFResourceName,
+				ImportState:       true,
+				ImportStateVerify: false,
+				Check: resource.ComposeTestCheckFunc(
+					// Checks are now performed on the state *after* the import/refresh.
+					resource.TestCheckResourceAttr(folderTFResourceName, "configured_capabilities.#", "1"),
+					resource.TestMatchResourceAttr(folderTFResourceName, "management_project", regexp.MustCompile(".+")),
+				),
 			},
 			{
 				ResourceName:            "google_resource_manager_capability.capability",
