@@ -709,6 +709,7 @@ func resourceContainerNodePoolCreate(d *schema.ResourceData, meta interface{}) e
 		return nil
 	})
 	if err != nil {
+		d.SetId("")
 		return fmt.Errorf("error creating NodePool: %s", err)
 	}
 	timeout -= time.Since(startTime)
@@ -792,7 +793,9 @@ func resourceContainerNodePoolRead(d *schema.ResourceData, meta interface{}) err
 	npCache.refreshIfNeeded(d, config, userAgent, nodePoolInfo, name)
 	nodePool, err := npCache.get(nodePoolInfo.fullyQualifiedName(name))
 	if err != nil {
-		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("NodePool %q from cluster %q", name, nodePoolInfo.cluster))
+		log.Printf("[WARN] Removing %s because it's gone", fmt.Sprintf("NodePool %q from cluster %q", name, nodePoolInfo.cluster))
+		d.SetId("")
+		return nil
 	}
 
 	npMap, err := flattenNodePool(d, config, nodePool, "")
