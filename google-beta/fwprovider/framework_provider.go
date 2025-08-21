@@ -36,6 +36,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/functions"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/fwmodels"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/fwvalidators"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/apigee"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebase"
@@ -1283,7 +1284,9 @@ func (p *FrameworkProvider) DataSources(_ context.Context) []func() datasource.D
 
 // Resources defines the resources implemented in the provider.
 func (p *FrameworkProvider) Resources(_ context.Context) []func() resource.Resource {
-	return nil
+	return []func() resource.Resource{
+		apigee.NewApigeeKeystoresAliasesKeyCertFileResource,
+	}
 }
 
 // Functions defines the provider functions implemented in the provider.
