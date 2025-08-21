@@ -955,13 +955,10 @@ func resourceContainerNodePoolExists(d *schema.ResourceData, meta interface{}) (
 	name := getNodePoolName(d.Id())
 	npCache.refreshIfNeeded(d, config, userAgent, nodePoolInfo, name)
 	_, err = npCache.get(nodePoolInfo.fullyQualifiedName(name))
-
 	if err != nil {
-		if err = transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("Container NodePool %s", name)); err == nil {
-			return false, nil
-		}
-		// There was some other error in reading the resource
-		return true, err
+		log.Printf("[WARN] Removing %s because it's gone", fmt.Sprintf("NodePool %q from cluster %q", name, nodePoolInfo.cluster))
+		d.SetId("")
+		return false, nil
 	}
 	return true, nil
 }
