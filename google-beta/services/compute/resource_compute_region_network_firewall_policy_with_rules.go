@@ -767,11 +767,11 @@ func resourceComputeRegionNetworkFirewallPolicyWithRulesCreate(d *schema.Resourc
 	} else if v, ok := d.GetOkExists("policy_type"); !tpgresource.IsEmptyValue(reflect.ValueOf(policyTypeProp)) && (ok || !reflect.DeepEqual(v, policyTypeProp)) {
 		obj["policyType"] = policyTypeProp
 	}
-	rulesProp, err := expandComputeRegionNetworkFirewallPolicyWithRulesRule(d.Get("rule"), d, config)
+	ruleProp, err := expandComputeRegionNetworkFirewallPolicyWithRulesRule(d.Get("rule"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("rule"); !tpgresource.IsEmptyValue(reflect.ValueOf(rulesProp)) && (ok || !reflect.DeepEqual(v, rulesProp)) {
-		obj["rules"] = rulesProp
+	} else if v, ok := d.GetOkExists("rule"); !tpgresource.IsEmptyValue(reflect.ValueOf(ruleProp)) && (ok || !reflect.DeepEqual(v, ruleProp)) {
+		obj["rules"] = ruleProp
 	}
 	fingerprintProp, err := expandComputeRegionNetworkFirewallPolicyWithRulesFingerprint(d.Get("fingerprint"), d, config)
 	if err != nil {
@@ -986,11 +986,11 @@ func resourceComputeRegionNetworkFirewallPolicyWithRulesUpdate(d *schema.Resourc
 	} else if v, ok := d.GetOkExists("description"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
 		obj["description"] = descriptionProp
 	}
-	rulesProp, err := expandComputeRegionNetworkFirewallPolicyWithRulesRule(d.Get("rule"), d, config)
+	ruleProp, err := expandComputeRegionNetworkFirewallPolicyWithRulesRule(d.Get("rule"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("rule"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, rulesProp)) {
-		obj["rules"] = rulesProp
+	} else if v, ok := d.GetOkExists("rule"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, ruleProp)) {
+		obj["rules"] = ruleProp
 	}
 	fingerprintProp, err := expandComputeRegionNetworkFirewallPolicyWithRulesFingerprint(d.Get("fingerprint"), d, config)
 	if err != nil {

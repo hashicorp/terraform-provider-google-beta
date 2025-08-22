@@ -24,6 +24,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 )
 
 func TestAccComputeBackendService_basic(t *testing.T) {
@@ -1166,6 +1167,35 @@ func TestAccComputeBackendService_withNetworkPassThroughLbTrafficPolicy(t *testi
 			{
 				Config:      testAccComputeBackendService_withNetworkPassThroughLbTrafficPolicy(namePrefix, "ZONAL_AFFINITY_STAY_WITHIN_ZONE", 1.001),
 				ExpectError: regexp.MustCompile("Must be less than or equal to 1.0"),
+			},
+		},
+	})
+}
+
+func TestAccComputeBackendService_resourceManagerTags(t *testing.T) {
+	t.Parallel()
+
+	org := envvar.GetTestOrgFromEnv(t)
+
+	serviceName := fmt.Sprintf("tf-test-%s", acctest.RandString(t, 10))
+	checkName := fmt.Sprintf("tf-test-%s", acctest.RandString(t, 10))
+	tagKeyResult := acctest.BootstrapSharedTestTagKeyDetails(t, "crm-bs-tagkey", "organizations/"+org, make(map[string]interface{}))
+	sharedTagkey, _ := tagKeyResult["shared_tag_key"]
+	tagValueResult := acctest.BootstrapSharedTestTagValueDetails(t, "crm-bs-tagvalue", sharedTagkey, org)
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckComputeBackendServiceDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeBackendService_withTags(serviceName, checkName, tagKeyResult["name"], tagValueResult["name"]),
+			},
+			{
+				ResourceName:            "google_compute_backend_service.foobar",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"params"},
 			},
 		},
 	})
@@ -2969,4 +2999,25 @@ resource "google_compute_health_check" "default" {
   }
 }
 `, namePrefix, spillover, ratio, namePrefix, namePrefix, namePrefix, namePrefix)
+}
+
+func testAccComputeBackendService_withTags(serviceName, checkName string, tagKey string, tagValue string) string {
+	return fmt.Sprintf(`
+resource "google_compute_backend_service" "foobar" {
+  name          = "%s"
+  health_checks = [google_compute_http_health_check.zero.self_link]
+  params {
+	resource_manager_tags = {
+		"%s" = "%s"
+	}
+  }
+}
+
+resource "google_compute_http_health_check" "zero" {
+  name               = "%s"
+  request_path       = "/"
+  check_interval_sec = 1
+  timeout_sec        = 1
+}
+`, serviceName, tagKey, tagValue, checkName)
 }

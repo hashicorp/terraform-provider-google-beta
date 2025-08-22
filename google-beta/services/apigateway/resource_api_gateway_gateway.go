@@ -148,11 +148,11 @@ func resourceApiGatewayGatewayCreate(d *schema.ResourceData, meta interface{}) e
 	} else if v, ok := d.GetOkExists("api_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(apiConfigProp)) && (ok || !reflect.DeepEqual(v, apiConfigProp)) {
 		obj["apiConfig"] = apiConfigProp
 	}
-	labelsProp, err := expandApiGatewayGatewayEffectiveLabels(d.Get("effective_labels"), d, config)
+	effectiveLabelsProp, err := expandApiGatewayGatewayEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
-		obj["labels"] = labelsProp
+	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(effectiveLabelsProp)) && (ok || !reflect.DeepEqual(v, effectiveLabelsProp)) {
+		obj["labels"] = effectiveLabelsProp
 	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{ApiGatewayBasePath}}projects/{{project}}/locations/{{region}}/gateways?gatewayId={{gateway_id}}")
@@ -306,11 +306,11 @@ func resourceApiGatewayGatewayUpdate(d *schema.ResourceData, meta interface{}) e
 	} else if v, ok := d.GetOkExists("api_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, apiConfigProp)) {
 		obj["apiConfig"] = apiConfigProp
 	}
-	labelsProp, err := expandApiGatewayGatewayEffectiveLabels(d.Get("effective_labels"), d, config)
+	effectiveLabelsProp, err := expandApiGatewayGatewayEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
-		obj["labels"] = labelsProp
+	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, effectiveLabelsProp)) {
+		obj["labels"] = effectiveLabelsProp
 	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{ApiGatewayBasePath}}projects/{{project}}/locations/{{region}}/gateways/{{gateway_id}}")
