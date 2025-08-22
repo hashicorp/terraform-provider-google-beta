@@ -411,7 +411,6 @@ type Config struct {
 	StorageInsightsBasePath          string
 	StorageTransferBasePath          string
 	TagsBasePath                     string
-	TPUBasePath                      string
 	TpuV2BasePath                    string
 	TranscoderBasePath               string
 	VertexAIBasePath                 string
@@ -595,7 +594,6 @@ const StorageControlBasePathKey = "StorageControl"
 const StorageInsightsBasePathKey = "StorageInsights"
 const StorageTransferBasePathKey = "StorageTransfer"
 const TagsBasePathKey = "Tags"
-const TPUBasePathKey = "TPU"
 const TpuV2BasePathKey = "TpuV2"
 const TranscoderBasePathKey = "Transcoder"
 const VertexAIBasePathKey = "VertexAI"
@@ -698,7 +696,7 @@ var DefaultBasePaths = map[string]string{
 	FirestoreBasePathKey:                "https://firestore.googleapis.com/v1/",
 	GeminiBasePathKey:                   "https://cloudaicompanion.googleapis.com/v1/",
 	GKEBackupBasePathKey:                "https://gkebackup.googleapis.com/v1/",
-	GKEHubBasePathKey:                   "https://gkehub.googleapis.com/v1beta1/",
+	GKEHubBasePathKey:                   "https://gkehub.googleapis.com/v1beta/",
 	GKEHub2BasePathKey:                  "https://gkehub.googleapis.com/v1beta/",
 	GkeonpremBasePathKey:                "https://gkeonprem.googleapis.com/v1/",
 	HealthcareBasePathKey:               "https://healthcare.googleapis.com/v1beta1/",
@@ -768,7 +766,6 @@ var DefaultBasePaths = map[string]string{
 	StorageInsightsBasePathKey:          "https://storageinsights.googleapis.com/v1/",
 	StorageTransferBasePathKey:          "https://storagetransfer.googleapis.com/v1/",
 	TagsBasePathKey:                     "https://cloudresourcemanager.googleapis.com/v3/",
-	TPUBasePathKey:                      "https://tpu.googleapis.com/v1/",
 	TpuV2BasePathKey:                    "https://tpu.googleapis.com/v2alpha1/",
 	TranscoderBasePathKey:               "https://transcoder.googleapis.com/v1/",
 	VertexAIBasePathKey:                 "https://{{region}}-aiplatform.googleapis.com/v1beta1/",
@@ -1621,11 +1618,6 @@ func SetEndpointDefaults(d *schema.ResourceData) error {
 		d.Set("tags_custom_endpoint", MultiEnvDefault([]string{
 			"GOOGLE_TAGS_CUSTOM_ENDPOINT",
 		}, DefaultBasePaths[TagsBasePathKey]))
-	}
-	if d.Get("tpu_custom_endpoint") == "" {
-		d.Set("tpu_custom_endpoint", MultiEnvDefault([]string{
-			"GOOGLE_TPU_CUSTOM_ENDPOINT",
-		}, DefaultBasePaths[TPUBasePathKey]))
 	}
 	if d.Get("tpu_v2_custom_endpoint") == "" {
 		d.Set("tpu_v2_custom_endpoint", MultiEnvDefault([]string{
@@ -2887,7 +2879,6 @@ func ConfigureBasePaths(c *Config) {
 	c.StorageInsightsBasePath = DefaultBasePaths[StorageInsightsBasePathKey]
 	c.StorageTransferBasePath = DefaultBasePaths[StorageTransferBasePathKey]
 	c.TagsBasePath = DefaultBasePaths[TagsBasePathKey]
-	c.TPUBasePath = DefaultBasePaths[TPUBasePathKey]
 	c.TpuV2BasePath = DefaultBasePaths[TpuV2BasePathKey]
 	c.TranscoderBasePath = DefaultBasePaths[TranscoderBasePathKey]
 	c.VertexAIBasePath = DefaultBasePaths[VertexAIBasePathKey]

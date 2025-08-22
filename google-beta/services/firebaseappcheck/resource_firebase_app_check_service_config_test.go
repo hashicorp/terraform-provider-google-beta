@@ -92,14 +92,12 @@ resource "google_project_service" "firebase" {
   provider = google-beta
   project  = google_project.default.project_id
   service  = "firebase.googleapis.com"
-  disable_on_destroy = false
 }
 
 resource "google_project_service" "database" {
   provider = google-beta
   project  = google_project.default.project_id
   service  = "firebasedatabase.googleapis.com"
-  disable_on_destroy = false
   depends_on = [
     google_project_service.firebase,
   ]
@@ -109,7 +107,6 @@ resource "google_project_service" "appcheck" {
   provider = google-beta
   project  = google_project.default.project_id
   service  = "firebaseappcheck.googleapis.com"
-  disable_on_destroy = false
   depends_on = [
     google_project_service.database,
   ]

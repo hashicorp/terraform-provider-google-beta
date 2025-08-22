@@ -169,7 +169,6 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/storageinsights"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/storagetransfer"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/tags"
-	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/tpu"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/tpuv2"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/transcoder"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/vertexai"
@@ -436,7 +435,6 @@ var handwrittenDatasources = map[string]*schema.Resource{
 	"google_tags_tag_keys":                                       tags.DataSourceGoogleTagsTagKeys(),
 	"google_tags_tag_value":                                      tags.DataSourceGoogleTagsTagValue(),
 	"google_tags_tag_values":                                     tags.DataSourceGoogleTagsTagValues(),
-	"google_tpu_tensorflow_versions":                             tpu.DataSourceTpuTensorflowVersions(),
 	"google_tpu_v2_runtime_versions":                             tpuv2.DataSourceTpuV2RuntimeVersions(),
 	"google_tpu_v2_accelerator_types":                            tpuv2.DataSourceTpuV2AcceleratorTypes(),
 	"google_vpc_access_connector":                                vpcaccess.DataSourceVPCAccessConnector(),
@@ -468,7 +466,6 @@ var generatedIAMDatasources = map[string]*schema.Resource{
 	"google_api_gateway_gateway_iam_policy":                        tpgiamresource.DataSourceIamPolicy(apigateway.ApiGatewayGatewayIamSchema, apigateway.ApiGatewayGatewayIamUpdaterProducer),
 	"google_apigee_environment_iam_policy":                         tpgiamresource.DataSourceIamPolicy(apigee.ApigeeEnvironmentIamSchema, apigee.ApigeeEnvironmentIamUpdaterProducer),
 	"google_artifact_registry_repository_iam_policy":               tpgiamresource.DataSourceIamPolicy(artifactregistry.ArtifactRegistryRepositoryIamSchema, artifactregistry.ArtifactRegistryRepositoryIamUpdaterProducer),
-	"google_beyondcorp_application_iam_policy":                     tpgiamresource.DataSourceIamPolicy(beyondcorp.BeyondcorpApplicationIamSchema, beyondcorp.BeyondcorpApplicationIamUpdaterProducer),
 	"google_beyondcorp_security_gateway_iam_policy":                tpgiamresource.DataSourceIamPolicy(beyondcorp.BeyondcorpSecurityGatewayIamSchema, beyondcorp.BeyondcorpSecurityGatewayIamUpdaterProducer),
 	"google_beyondcorp_security_gateway_application_iam_policy":    tpgiamresource.DataSourceIamPolicy(beyondcorp.BeyondcorpSecurityGatewayApplicationIamSchema, beyondcorp.BeyondcorpSecurityGatewayApplicationIamUpdaterProducer),
 	"google_bigquery_table_iam_policy":                             tpgiamresource.DataSourceIamPolicy(bigquery.BigQueryTableIamSchema, bigquery.BigQueryTableIamUpdaterProducer),
@@ -607,9 +604,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 700
-// Generated IAM resources: 345
-// Total generated resources: 1045
+// Generated resources: 697
+// Generated IAM resources: 342
+// Total generated resources: 1039
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -709,10 +706,6 @@ var generatedResources = map[string]*schema.Resource{
 	"google_beyondcorp_app_connection":                                           beyondcorp.ResourceBeyondcorpAppConnection(),
 	"google_beyondcorp_app_connector":                                            beyondcorp.ResourceBeyondcorpAppConnector(),
 	"google_beyondcorp_app_gateway":                                              beyondcorp.ResourceBeyondcorpAppGateway(),
-	"google_beyondcorp_application":                                              beyondcorp.ResourceBeyondcorpApplication(),
-	"google_beyondcorp_application_iam_binding":                                  tpgiamresource.ResourceIamBinding(beyondcorp.BeyondcorpApplicationIamSchema, beyondcorp.BeyondcorpApplicationIamUpdaterProducer, beyondcorp.BeyondcorpApplicationIdParseFunc),
-	"google_beyondcorp_application_iam_member":                                   tpgiamresource.ResourceIamMember(beyondcorp.BeyondcorpApplicationIamSchema, beyondcorp.BeyondcorpApplicationIamUpdaterProducer, beyondcorp.BeyondcorpApplicationIdParseFunc),
-	"google_beyondcorp_application_iam_policy":                                   tpgiamresource.ResourceIamPolicy(beyondcorp.BeyondcorpApplicationIamSchema, beyondcorp.BeyondcorpApplicationIamUpdaterProducer, beyondcorp.BeyondcorpApplicationIdParseFunc),
 	"google_beyondcorp_security_gateway":                                         beyondcorp.ResourceBeyondcorpSecurityGateway(),
 	"google_beyondcorp_security_gateway_iam_binding":                             tpgiamresource.ResourceIamBinding(beyondcorp.BeyondcorpSecurityGatewayIamSchema, beyondcorp.BeyondcorpSecurityGatewayIamUpdaterProducer, beyondcorp.BeyondcorpSecurityGatewayIdParseFunc),
 	"google_beyondcorp_security_gateway_iam_member":                              tpgiamresource.ResourceIamMember(beyondcorp.BeyondcorpSecurityGatewayIamSchema, beyondcorp.BeyondcorpSecurityGatewayIamUpdaterProducer, beyondcorp.BeyondcorpSecurityGatewayIdParseFunc),
@@ -1430,7 +1423,6 @@ var generatedResources = map[string]*schema.Resource{
 	"google_notebooks_instance_iam_binding":                                      tpgiamresource.ResourceIamBinding(notebooks.NotebooksInstanceIamSchema, notebooks.NotebooksInstanceIamUpdaterProducer, notebooks.NotebooksInstanceIdParseFunc),
 	"google_notebooks_instance_iam_member":                                       tpgiamresource.ResourceIamMember(notebooks.NotebooksInstanceIamSchema, notebooks.NotebooksInstanceIamUpdaterProducer, notebooks.NotebooksInstanceIdParseFunc),
 	"google_notebooks_instance_iam_policy":                                       tpgiamresource.ResourceIamPolicy(notebooks.NotebooksInstanceIamSchema, notebooks.NotebooksInstanceIamUpdaterProducer, notebooks.NotebooksInstanceIdParseFunc),
-	"google_notebooks_location":                                                  notebooks.ResourceNotebooksLocation(),
 	"google_notebooks_runtime":                                                   notebooks.ResourceNotebooksRuntime(),
 	"google_notebooks_runtime_iam_binding":                                       tpgiamresource.ResourceIamBinding(notebooks.NotebooksRuntimeIamSchema, notebooks.NotebooksRuntimeIamUpdaterProducer, notebooks.NotebooksRuntimeIdParseFunc),
 	"google_notebooks_runtime_iam_member":                                        tpgiamresource.ResourceIamMember(notebooks.NotebooksRuntimeIamSchema, notebooks.NotebooksRuntimeIamUpdaterProducer, notebooks.NotebooksRuntimeIdParseFunc),
@@ -1593,7 +1585,6 @@ var generatedResources = map[string]*schema.Resource{
 	"google_tags_tag_value_iam_binding":                                          tpgiamresource.ResourceIamBinding(tags.TagsTagValueIamSchema, tags.TagsTagValueIamUpdaterProducer, tags.TagsTagValueIdParseFunc),
 	"google_tags_tag_value_iam_member":                                           tpgiamresource.ResourceIamMember(tags.TagsTagValueIamSchema, tags.TagsTagValueIamUpdaterProducer, tags.TagsTagValueIdParseFunc),
 	"google_tags_tag_value_iam_policy":                                           tpgiamresource.ResourceIamPolicy(tags.TagsTagValueIamSchema, tags.TagsTagValueIamUpdaterProducer, tags.TagsTagValueIdParseFunc),
-	"google_tpu_node":                                                            tpu.ResourceTPUNode(),
 	"google_tpu_v2_queued_resource":                                              tpuv2.ResourceTpuV2QueuedResource(),
 	"google_tpu_v2_vm":                                                           tpuv2.ResourceTpuV2Vm(),
 	"google_transcoder_job":                                                      transcoder.ResourceTranscoderJob(),
@@ -1981,7 +1972,6 @@ func UseGeneratedProducts() {
 	var _ = storageinsights.ProductName
 	var _ = storagetransfer.ProductName
 	var _ = tags.ProductName
-	var _ = tpu.ProductName
 	var _ = tpuv2.ProductName
 	var _ = transcoder.ProductName
 	var _ = vertexai.ProductName

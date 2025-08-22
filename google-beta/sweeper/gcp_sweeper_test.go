@@ -168,7 +168,6 @@ import (
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/storageinsights"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/storagetransfer"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/tags"
-	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/tpu"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/tpuv2"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/transcoder"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/vertexai"
