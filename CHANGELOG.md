@@ -1,3 +1,7 @@
+## 6.49.2 (August 22, 2025)
+BUG FIXES:
+* container: fixed issue where a failed creation on `google_container_node_pool` would result in an unrecoverable tainted state  ([#24077](https://github.com/hashicorp/terraform-provider-google/pull/24077))
+
 ## 6.49.1 (August 20, 2025)
 BUG FIXES:
 * secretmanager: fixed issue where upgrading to 6.49.0 would cause all `google_secret_manager_secret_version` resources to be recreated unless `secret_data_wo_version` was set ([#10574](https://github.com/hashicorp/terraform-provider-google-beta/pull/10574))
