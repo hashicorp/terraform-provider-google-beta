@@ -195,23 +195,23 @@ func resourceWorkstationsWorkstationCreate(d *schema.ResourceData, meta interfac
 	} else if v, ok := d.GetOkExists("env"); !tpgresource.IsEmptyValue(reflect.ValueOf(envProp)) && (ok || !reflect.DeepEqual(v, envProp)) {
 		obj["env"] = envProp
 	}
-	source_workstationProp, err := expandWorkstationsWorkstationSourceWorkstation(d.Get("source_workstation"), d, config)
+	sourceWorkstationProp, err := expandWorkstationsWorkstationSourceWorkstation(d.Get("source_workstation"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("source_workstation"); !tpgresource.IsEmptyValue(reflect.ValueOf(source_workstationProp)) && (ok || !reflect.DeepEqual(v, source_workstationProp)) {
-		obj["source_workstation"] = source_workstationProp
+	} else if v, ok := d.GetOkExists("source_workstation"); !tpgresource.IsEmptyValue(reflect.ValueOf(sourceWorkstationProp)) && (ok || !reflect.DeepEqual(v, sourceWorkstationProp)) {
+		obj["source_workstation"] = sourceWorkstationProp
 	}
-	labelsProp, err := expandWorkstationsWorkstationEffectiveLabels(d.Get("effective_labels"), d, config)
+	effectiveLabelsProp, err := expandWorkstationsWorkstationEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
-		obj["labels"] = labelsProp
+	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(effectiveLabelsProp)) && (ok || !reflect.DeepEqual(v, effectiveLabelsProp)) {
+		obj["labels"] = effectiveLabelsProp
 	}
-	annotationsProp, err := expandWorkstationsWorkstationEffectiveAnnotations(d.Get("effective_annotations"), d, config)
+	effectiveAnnotationsProp, err := expandWorkstationsWorkstationEffectiveAnnotations(d.Get("effective_annotations"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("effective_annotations"); !tpgresource.IsEmptyValue(reflect.ValueOf(annotationsProp)) && (ok || !reflect.DeepEqual(v, annotationsProp)) {
-		obj["annotations"] = annotationsProp
+	} else if v, ok := d.GetOkExists("effective_annotations"); !tpgresource.IsEmptyValue(reflect.ValueOf(effectiveAnnotationsProp)) && (ok || !reflect.DeepEqual(v, effectiveAnnotationsProp)) {
+		obj["annotations"] = effectiveAnnotationsProp
 	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{WorkstationsBasePath}}projects/{{project}}/locations/{{location}}/workstationClusters/{{workstation_cluster_id}}/workstationConfigs/{{workstation_config_id}}/workstations?workstationId={{workstation_id}}")
@@ -383,17 +383,17 @@ func resourceWorkstationsWorkstationUpdate(d *schema.ResourceData, meta interfac
 	} else if v, ok := d.GetOkExists("env"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, envProp)) {
 		obj["env"] = envProp
 	}
-	labelsProp, err := expandWorkstationsWorkstationEffectiveLabels(d.Get("effective_labels"), d, config)
+	effectiveLabelsProp, err := expandWorkstationsWorkstationEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
-		obj["labels"] = labelsProp
+	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, effectiveLabelsProp)) {
+		obj["labels"] = effectiveLabelsProp
 	}
-	annotationsProp, err := expandWorkstationsWorkstationEffectiveAnnotations(d.Get("effective_annotations"), d, config)
+	effectiveAnnotationsProp, err := expandWorkstationsWorkstationEffectiveAnnotations(d.Get("effective_annotations"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("effective_annotations"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, annotationsProp)) {
-		obj["annotations"] = annotationsProp
+	} else if v, ok := d.GetOkExists("effective_annotations"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, effectiveAnnotationsProp)) {
+		obj["annotations"] = effectiveAnnotationsProp
 	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{WorkstationsBasePath}}projects/{{project}}/locations/{{location}}/workstationClusters/{{workstation_cluster_id}}/workstationConfigs/{{workstation_config_id}}/workstations/{{workstation_id}}")

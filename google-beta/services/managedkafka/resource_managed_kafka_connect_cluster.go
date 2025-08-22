@@ -224,11 +224,11 @@ func resourceManagedKafkaConnectClusterCreate(d *schema.ResourceData, meta inter
 	} else if v, ok := d.GetOkExists("gcp_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(gcpConfigProp)) && (ok || !reflect.DeepEqual(v, gcpConfigProp)) {
 		obj["gcpConfig"] = gcpConfigProp
 	}
-	labelsProp, err := expandManagedKafkaConnectClusterEffectiveLabels(d.Get("effective_labels"), d, config)
+	effectiveLabelsProp, err := expandManagedKafkaConnectClusterEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
-		obj["labels"] = labelsProp
+	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(effectiveLabelsProp)) && (ok || !reflect.DeepEqual(v, effectiveLabelsProp)) {
+		obj["labels"] = effectiveLabelsProp
 	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{ManagedKafkaBasePath}}projects/{{project}}/locations/{{location}}/connectClusters?connectClusterId={{connect_cluster_id}}")
@@ -397,11 +397,11 @@ func resourceManagedKafkaConnectClusterUpdate(d *schema.ResourceData, meta inter
 	} else if v, ok := d.GetOkExists("gcp_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, gcpConfigProp)) {
 		obj["gcpConfig"] = gcpConfigProp
 	}
-	labelsProp, err := expandManagedKafkaConnectClusterEffectiveLabels(d.Get("effective_labels"), d, config)
+	effectiveLabelsProp, err := expandManagedKafkaConnectClusterEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
-		obj["labels"] = labelsProp
+	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, effectiveLabelsProp)) {
+		obj["labels"] = effectiveLabelsProp
 	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{ManagedKafkaBasePath}}projects/{{project}}/locations/{{location}}/connectClusters/{{connect_cluster_id}}")
