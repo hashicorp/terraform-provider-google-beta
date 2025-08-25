@@ -644,11 +644,11 @@ func resourceComputeInterconnectCreate(d *schema.ResourceData, meta interface{})
 	} else if v, ok := d.GetOkExists("application_aware_interconnect"); !tpgresource.IsEmptyValue(reflect.ValueOf(applicationAwareInterconnectProp)) && (ok || !reflect.DeepEqual(v, applicationAwareInterconnectProp)) {
 		obj["applicationAwareInterconnect"] = applicationAwareInterconnectProp
 	}
-	labelsProp, err := expandComputeInterconnectEffectiveLabels(d.Get("effective_labels"), d, config)
+	effectiveLabelsProp, err := expandComputeInterconnectEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
-		obj["labels"] = labelsProp
+	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(effectiveLabelsProp)) && (ok || !reflect.DeepEqual(v, effectiveLabelsProp)) {
+		obj["labels"] = effectiveLabelsProp
 	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/global/interconnects")
@@ -702,8 +702,8 @@ func resourceComputeInterconnectCreate(d *schema.ResourceData, meta interface{})
 		return fmt.Errorf("Error waiting to create Interconnect: %s", err)
 	}
 
-	if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
-		labels := d.Get("labels")
+	if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, effectiveLabelsProp)) {
+		userLabels := d.Get("labels")
 		terraformLables := d.Get("terraform_labels")
 
 		// Labels cannot be set in a create.  We'll have to set them here.
@@ -747,7 +747,7 @@ func resourceComputeInterconnectCreate(d *schema.ResourceData, meta interface{})
 		}
 
 		// Set back the labels field, as it is needed to decide the value of "labels" in the state in the read function.
-		if err := d.Set("labels", labels); err != nil {
+		if err := d.Set("labels", userLabels); err != nil {
 			return fmt.Errorf("Error setting back labels: %s", err)
 		}
 
