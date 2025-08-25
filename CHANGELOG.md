@@ -31,6 +31,7 @@ OTHER BREAKING CHANGES:
 * provider: fixed many import functions throughout the provider that erroneously matched a subset of the provided input, leading to unclear error messages when using `terraform input` with invalid resource IDs. [#10545](https://github.com/hashicorp/terraform-provider-google-beta/pull/10545)
 * alloydb: added `deletion_protection` field with a default value of `true` to `google_alloydb_cluster` resource [#10553](https://github.com/hashicorp/terraform-provider-google-beta/pull/10553)
 * apigee: changed `certs_info` field in `google_apigee_keystores_aliases_key_cert_file` to be output-only
+* apigee: migrated `google_apigee_keystores_aliases_key_cert_file` to the plugin framework
 * artifactregistry: removed the default values for `public_repository` fields in `google_artifact_registry_repository`. If your state is reliant on them, they will now need to be manually included in your configuration. [#10519](https://github.com/hashicorp/terraform-provider-google-beta/pull/10519)
 * bigquery: removed the default value of `view.use_legacy_sql` in `google_bigquery_table` [#10578](https://github.com/hashicorp/terraform-provider-google-beta/pull/10578)
 * bigtable: renamed instance to `instance_name` for bigtable_table_iam objects [#10248](https://github.com/hashicorp/terraform-provider-google-beta/pull/10248)
@@ -43,6 +44,7 @@ OTHER BREAKING CHANGES:
 * resourcemanager: changed `disable_on_destroy` default value to `false` in `google_project_service` [#10508](https://github.com/hashicorp/terraform-provider-google-beta/pull/10508)
 * securesourcemanager: changed `deletion_policy` default value from `DELETE` to `PREVENT` [#10515](https://github.com/hashicorp/terraform-provider-google-beta/pull/10515)
 * storage: changed `retention_period` to `string` data type in resource `google_storage_bucket` [#10311](https://github.com/hashicorp/terraform-provider-google-beta/pull/10311)
+* storage: migrated `google_storage_notification` to the plugin framework
 
 FEATURES:
 * **New Data Source:** `google_artifact_registry_npm_package` ([#10582](https://github.com/hashicorp/terraform-provider-google-beta/pull/10582))
