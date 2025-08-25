@@ -38,6 +38,9 @@ import (
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/fwprovider"
 	tpgprovider "github.com/hashicorp/terraform-provider-google-beta/google-beta/provider"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/compute"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/pubsublite"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/sql"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
@@ -45,6 +48,8 @@ import (
 	"github.com/dnaeon/go-vcr/recorder"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
+	fwResource "github.com/hashicorp/terraform-plugin-framework/resource"
+
 	fwDiags "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -355,7 +360,14 @@ func (p *frameworkTestProvider) Configure(ctx context.Context, req provider.Conf
 func (p *frameworkTestProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
 	ds := p.FrameworkProvider.DataSources(ctx)
 	ds = append(ds, fwprovider.NewGoogleProviderConfigPluginFrameworkDataSource) // google_provider_config_plugin_framework
+	ds = append(ds, compute.NewComputeNetworkFWDataSource)                       // google_fw_compute_network
 	return ds
+}
+
+func (p *frameworkTestProvider) Resources(ctx context.Context) []func() fwResource.Resource {
+	r := p.FrameworkProvider.Resources(ctx)
+	r = append(r, pubsublite.NewGooglePubsubLiteReservationFWResource, sql.NewSQLUserFWResource) // google_fwprovider_pubsub_lite_reservation
+	return r
 }
 
 // GetSDKProvider gets the SDK provider for use in acceptance tests
