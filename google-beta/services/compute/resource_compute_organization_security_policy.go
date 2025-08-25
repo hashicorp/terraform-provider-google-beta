@@ -51,12 +51,6 @@ func ResourceComputeOrganizationSecurityPolicy() *schema.Resource {
 		},
 
 		Schema: map[string]*schema.Schema{
-			"display_name": {
-				Type:        schema.TypeString,
-				Required:    true,
-				ForceNew:    true,
-				Description: `A textual name of the security policy.`,
-			},
 			"parent": {
 				Type:     schema.TypeString,
 				Required: true,
@@ -69,15 +63,25 @@ Format: organizations/{organization_id} or folders/{folder_id}`,
 				Optional:    true,
 				Description: `A textual description for the organization security policy.`,
 			},
+			"display_name": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				ForceNew:    true,
+				Description: `User-provided name of the organization security policy. The name should be unique in the organization in which the security policy is created. This should only be used when SecurityPolicyType is FIREWALL.`,
+			},
+			"short_name": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				ForceNew:    true,
+				Description: `User-provided name of the organization security policy. The name should be unique in the organization in which the security policy is created. This should only be used when SecurityPolicyType is CLOUD_ARMOR.`,
+			},
 			"type": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ForceNew:     true,
-				ValidateFunc: verify.ValidateEnum([]string{"FIREWALL", ""}),
-				Description: `The type indicates the intended use of the security policy.
-For organization security policies, the only supported type
-is "FIREWALL". Default value: "FIREWALL" Possible values: ["FIREWALL"]`,
-				Default: "FIREWALL",
+				ValidateFunc: verify.ValidateEnum([]string{"FIREWALL", "CLOUD_ARMOR", "CLOUD_ARMOR_EDGE", "CLOUD_ARMOR_INTERNAL_SERVICE", "CLOUD_ARMOR_NETWORK", ""}),
+				Description:  `The type indicates the intended use of the security policy. This field can be set only at resource creation time. Default value: "FIREWALL" Possible values: ["FIREWALL", "CLOUD_ARMOR", "CLOUD_ARMOR_EDGE", "CLOUD_ARMOR_INTERNAL_SERVICE", "CLOUD_ARMOR_NETWORK"]`,
+				Default:      "FIREWALL",
 			},
 			"fingerprint": {
 				Type:     schema.TypeString,
@@ -114,6 +118,12 @@ func resourceComputeOrganizationSecurityPolicyCreate(d *schema.ResourceData, met
 		return err
 	} else if v, ok := d.GetOkExists("description"); !tpgresource.IsEmptyValue(reflect.ValueOf(descriptionProp)) && (ok || !reflect.DeepEqual(v, descriptionProp)) {
 		obj["description"] = descriptionProp
+	}
+	shortNameProp, err := expandComputeOrganizationSecurityPolicyShortName(d.Get("short_name"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("short_name"); !tpgresource.IsEmptyValue(reflect.ValueOf(shortNameProp)) && (ok || !reflect.DeepEqual(v, shortNameProp)) {
+		obj["shortName"] = shortNameProp
 	}
 	fingerprintProp, err := expandComputeOrganizationSecurityPolicyFingerprint(d.Get("fingerprint"), d, config)
 	if err != nil {
@@ -243,6 +253,9 @@ func resourceComputeOrganizationSecurityPolicyRead(d *schema.ResourceData, meta 
 		return fmt.Errorf("Error reading OrganizationSecurityPolicy: %s", err)
 	}
 	if err := d.Set("description", flattenComputeOrganizationSecurityPolicyDescription(res["description"], d, config)); err != nil {
+		return fmt.Errorf("Error reading OrganizationSecurityPolicy: %s", err)
+	}
+	if err := d.Set("short_name", flattenComputeOrganizationSecurityPolicyShortName(res["shortName"], d, config)); err != nil {
 		return fmt.Errorf("Error reading OrganizationSecurityPolicy: %s", err)
 	}
 	if err := d.Set("fingerprint", flattenComputeOrganizationSecurityPolicyFingerprint(res["fingerprint"], d, config)); err != nil {
@@ -407,6 +420,10 @@ func flattenComputeOrganizationSecurityPolicyDescription(v interface{}, d *schem
 	return v
 }
 
+func flattenComputeOrganizationSecurityPolicyShortName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenComputeOrganizationSecurityPolicyFingerprint(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
@@ -428,6 +445,10 @@ func expandComputeOrganizationSecurityPolicyDisplayName(v interface{}, d tpgreso
 }
 
 func expandComputeOrganizationSecurityPolicyDescription(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeOrganizationSecurityPolicyShortName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

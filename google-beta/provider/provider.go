@@ -828,6 +828,11 @@ func Provider() *schema.Provider {
 				Optional:     true,
 				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
 			},
+			"saas_runtime_custom_endpoint": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
+			},
 			"secret_manager_custom_endpoint": {
 				Type:         schema.TypeString,
 				Optional:     true,
@@ -999,6 +1004,11 @@ func Provider() *schema.Provider {
 			// dcl
 			transport_tpg.ContainerAwsCustomEndpointEntryKey:   transport_tpg.ContainerAwsCustomEndpointEntry,
 			transport_tpg.ContainerAzureCustomEndpointEntryKey: transport_tpg.ContainerAzureCustomEndpointEntry,
+			transport_tpg.ApikeysEndpointEntryKey:              transport_tpg.ApikeysEndpointEntry,
+			transport_tpg.AssuredWorkloadsEndpointEntryKey:     transport_tpg.AssuredWorkloadsEndpointEntry,
+			transport_tpg.CloudResourceManagerEndpointEntryKey: transport_tpg.CloudResourceManagerEndpointEntry,
+			transport_tpg.FirebaserulesEndpointEntryKey:        transport_tpg.FirebaserulesEndpointEntry,
+			transport_tpg.RecaptchaEnterpriseEndpointEntryKey:  transport_tpg.RecaptchaEnterpriseEndpointEntry,
 		},
 
 		ProviderMetaSchema: map[string]*schema.Schema{
@@ -1015,9 +1025,6 @@ func Provider() *schema.Provider {
 	provider.ConfigureContextFunc = func(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 		return ProviderConfigure(ctx, d, provider)
 	}
-
-	transport_tpg.ConfigureDCLProvider(provider)
-
 	return provider
 }
 
@@ -1118,9 +1125,6 @@ func ProviderConfigure(ctx context.Context, d *schema.ResourceData, p *schema.Pr
 		config.UniverseDomain = v.(string)
 	}
 
-	// Configure DCL basePath
-	transport_tpg.ProviderDCLConfigure(d, &config)
-
 	// Replace hostname by the universe_domain field.
 	if config.UniverseDomain != "" && config.UniverseDomain != "googleapis.com" {
 		for key, basePath := range transport_tpg.DefaultBasePaths {
@@ -1132,7 +1136,6 @@ func ProviderConfigure(ctx context.Context, d *schema.ResourceData, p *schema.Pr
 	if err != nil {
 		return nil, diag.FromErr(err)
 	}
-	transport_tpg.HandleDCLCustomEndpointDefaults(d)
 
 	// Given that impersonate_service_account is a secondary auth method, it has
 	// no conflicts to worry about. We pull the env var in a DefaultFunc.
@@ -1311,6 +1314,7 @@ func ProviderConfigure(ctx context.Context, d *schema.ResourceData, p *schema.Pr
 	config.ResourceManagerBasePath = d.Get("resource_manager_custom_endpoint").(string)
 	config.ResourceManager3BasePath = d.Get("resource_manager3_custom_endpoint").(string)
 	config.RuntimeConfigBasePath = d.Get("runtime_config_custom_endpoint").(string)
+	config.SaasRuntimeBasePath = d.Get("saas_runtime_custom_endpoint").(string)
 	config.SecretManagerBasePath = d.Get("secret_manager_custom_endpoint").(string)
 	config.SecretManagerRegionalBasePath = d.Get("secret_manager_regional_custom_endpoint").(string)
 	config.SecureSourceManagerBasePath = d.Get("secure_source_manager_custom_endpoint").(string)
@@ -1359,6 +1363,11 @@ func ProviderConfigure(ctx context.Context, d *schema.ResourceData, p *schema.Pr
 	// dcl
 	config.ContainerAwsBasePath = d.Get(transport_tpg.ContainerAwsCustomEndpointEntryKey).(string)
 	config.ContainerAzureBasePath = d.Get(transport_tpg.ContainerAzureCustomEndpointEntryKey).(string)
+	config.ApikeysBasePath = d.Get(transport_tpg.ApikeysEndpointEntryKey).(string)
+	config.AssuredWorkloadsBasePath = d.Get(transport_tpg.AssuredWorkloadsEndpointEntryKey).(string)
+	config.CloudResourceManagerBasePath = d.Get(transport_tpg.CloudResourceManagerEndpointEntryKey).(string)
+	config.FirebaserulesBasePath = d.Get(transport_tpg.FirebaserulesEndpointEntryKey).(string)
+	config.RecaptchaEnterpriseBasePath = d.Get(transport_tpg.RecaptchaEnterpriseEndpointEntryKey).(string)
 
 	stopCtx, ok := schema.StopContext(ctx)
 	if !ok {
