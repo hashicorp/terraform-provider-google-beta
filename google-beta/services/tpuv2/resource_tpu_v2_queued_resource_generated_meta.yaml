@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 resource: 'google_tpu_v2_queued_resource'
 generation_type: 'mmv1'
 source_file: 'products/tpuv2/QueuedResource.yaml'
