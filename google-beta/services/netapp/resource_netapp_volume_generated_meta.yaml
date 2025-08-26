@@ -83,6 +83,7 @@ fields:
   - field: 'storage_pool'
   - field: 'terraform_labels'
     provider_only: true
+  - field: 'throughput_mibps'
   - field: 'tiering_policy.cooling_threshold_days'
   - field: 'tiering_policy.hot_tier_bypass_mode_enabled'
   - field: 'tiering_policy.tier_action'

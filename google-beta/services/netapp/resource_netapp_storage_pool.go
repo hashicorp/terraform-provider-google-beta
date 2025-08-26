@@ -148,6 +148,13 @@ Please refer to the field 'effective_labels' for all of the labels present on th
 				Description: `When enabled, the volumes uses Active Directory as LDAP name service for UID/GID lookups. Required to enable extended group support for NFSv3,
 using security identifiers for NFSv4.1 or principal names for kerberized NFSv4.1.`,
 			},
+			"qos_type": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: verify.ValidateEnum([]string{"QOS_TYPE_UNSPECIFIED", "AUTO", "MANUAL", ""}),
+				Description: `QoS (Quality of Service) type of the storage pool.
+Possible values are: AUTO, MANUAL. Possible values: ["QOS_TYPE_UNSPECIFIED", "AUTO", "MANUAL"]`,
+			},
 			"replica_zone": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -161,6 +168,7 @@ using security identifiers for NFSv4.1 or principal names for kerberized NFSv4.1
 			},
 			"total_throughput_mibps": {
 				Type:        schema.TypeString,
+				Computed:    true,
 				Optional:    true,
 				Description: `Optional. Custom Performance Total Throughput of the pool (in MiB/s).`,
 			},
@@ -171,6 +179,11 @@ using security identifiers for NFSv4.1 or principal names for kerberized NFSv4.1
 				Description: `Specifies the active zone for regional Flex pools. 'zone' and 'replica_zone' values can be swapped to initiate a
 [zone switch](https://cloud.google.com/netapp/volumes/docs/configure-and-use/storage-pools/edit-or-delete-storage-pool#switch_active_and_replica_zones).
 If you want to create a zonal Flex pool, specify a zone name for 'location' and omit 'zone'.`,
+			},
+			"available_throughput_mibps": {
+				Type:        schema.TypeFloat,
+				Computed:    true,
+				Description: `Available throughput of the storage pool (in MiB/s).`,
 			},
 			"effective_labels": {
 				Type:        schema.TypeMap,
@@ -308,6 +321,12 @@ func resourceNetappStoragePoolCreate(d *schema.ResourceData, meta interface{}) e
 		return err
 	} else if v, ok := d.GetOkExists("enable_hot_tier_auto_resize"); ok || !reflect.DeepEqual(v, enableHotTierAutoResizeProp) {
 		obj["enableHotTierAutoResize"] = enableHotTierAutoResizeProp
+	}
+	qosTypeProp, err := expandNetappStoragePoolQosType(d.Get("qos_type"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("qos_type"); !tpgresource.IsEmptyValue(reflect.ValueOf(qosTypeProp)) && (ok || !reflect.DeepEqual(v, qosTypeProp)) {
+		obj["qosType"] = qosTypeProp
 	}
 	effectiveLabelsProp, err := expandNetappStoragePoolEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
@@ -468,6 +487,12 @@ func resourceNetappStoragePoolRead(d *schema.ResourceData, meta interface{}) err
 	if err := d.Set("hot_tier_size_gib", flattenNetappStoragePoolHotTierSizeGib(res["hotTierSizeGib"], d, config)); err != nil {
 		return fmt.Errorf("Error reading StoragePool: %s", err)
 	}
+	if err := d.Set("qos_type", flattenNetappStoragePoolQosType(res["qosType"], d, config)); err != nil {
+		return fmt.Errorf("Error reading StoragePool: %s", err)
+	}
+	if err := d.Set("available_throughput_mibps", flattenNetappStoragePoolAvailableThroughputMibps(res["availableThroughputMibps"], d, config)); err != nil {
+		return fmt.Errorf("Error reading StoragePool: %s", err)
+	}
 	if err := d.Set("terraform_labels", flattenNetappStoragePoolTerraformLabels(res["labels"], d, config)); err != nil {
 		return fmt.Errorf("Error reading StoragePool: %s", err)
 	}
@@ -554,6 +579,12 @@ func resourceNetappStoragePoolUpdate(d *schema.ResourceData, meta interface{}) e
 	} else if v, ok := d.GetOkExists("enable_hot_tier_auto_resize"); ok || !reflect.DeepEqual(v, enableHotTierAutoResizeProp) {
 		obj["enableHotTierAutoResize"] = enableHotTierAutoResizeProp
 	}
+	qosTypeProp, err := expandNetappStoragePoolQosType(d.Get("qos_type"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("qos_type"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, qosTypeProp)) {
+		obj["qosType"] = qosTypeProp
+	}
 	effectiveLabelsProp, err := expandNetappStoragePoolEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
@@ -608,6 +639,10 @@ func resourceNetappStoragePoolUpdate(d *schema.ResourceData, meta interface{}) e
 
 	if d.HasChange("enable_hot_tier_auto_resize") {
 		updateMask = append(updateMask, "enableHotTierAutoResize")
+	}
+
+	if d.HasChange("qos_type") {
+		updateMask = append(updateMask, "qosType")
 	}
 
 	if d.HasChange("effective_labels") {
@@ -893,6 +928,14 @@ func flattenNetappStoragePoolHotTierSizeGib(v interface{}, d *schema.ResourceDat
 	return v
 }
 
+func flattenNetappStoragePoolQosType(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenNetappStoragePoolAvailableThroughputMibps(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenNetappStoragePoolTerraformLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
@@ -969,6 +1012,10 @@ func expandNetappStoragePoolHotTierSizeGib(v interface{}, d tpgresource.Terrafor
 }
 
 func expandNetappStoragePoolEnableHotTierAutoResize(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandNetappStoragePoolQosType(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
