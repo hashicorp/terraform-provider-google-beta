@@ -47,6 +47,21 @@ func ResourceComputeOrganizationSecurityPolicyAssociation() *schema.Resource {
 			Delete: schema.DefaultTimeout(20 * time.Minute),
 		},
 
+		Identity: &schema.ResourceIdentity{
+			Version: 1,
+			SchemaFunc: func() map[string]*schema.Schema {
+				return map[string]*schema.Schema{
+					"name": {
+						Type:              schema.TypeString,
+						RequiredForImport: true,
+					},
+					"policy_id": {
+						Type:              schema.TypeString,
+						RequiredForImport: true,
+					},
+				}
+			},
+		},
 		Schema: map[string]*schema.Schema{
 			"attachment_id": {
 				Type:        schema.TypeString,
@@ -209,6 +224,22 @@ func resourceComputeOrganizationSecurityPolicyAssociationRead(d *schema.Resource
 		return fmt.Errorf("Error reading OrganizationSecurityPolicyAssociation: %s", err)
 	}
 
+	identity, err := d.Identity()
+	if err != nil {
+		return fmt.Errorf("Error getting identity: %s", err)
+	}
+	if v, ok := identity.GetOk("name"); ok && v != "" {
+		err = identity.Set("name", d.Get("name").(string))
+		if err != nil {
+			return fmt.Errorf("Error setting name: %s", err)
+		}
+	}
+	if v, ok := identity.GetOk("policy_id"); ok && v != "" {
+		err = identity.Set("policy_id", d.Get("policy_id").(string))
+		if err != nil {
+			return fmt.Errorf("Error setting policy_id: %s", err)
+		}
+	}
 	return nil
 }
 
