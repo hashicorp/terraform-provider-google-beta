@@ -52,6 +52,29 @@ func ResourceComputeRegionResizeRequest() *schema.Resource {
 			tpgresource.DefaultProviderProject,
 		),
 
+		Identity: &schema.ResourceIdentity{
+			Version: 1,
+			SchemaFunc: func() map[string]*schema.Schema {
+				return map[string]*schema.Schema{
+					"name": {
+						Type:              schema.TypeString,
+						RequiredForImport: true,
+					},
+					"region": {
+						Type:              schema.TypeString,
+						OptionalForImport: true,
+					},
+					"instance_group_manager": {
+						Type:              schema.TypeString,
+						RequiredForImport: true,
+					},
+					"project": {
+						Type:              schema.TypeString,
+						OptionalForImport: true,
+					},
+				}
+			},
+		},
 		Schema: map[string]*schema.Schema{
 			"instance_group_manager": {
 				Type:             schema.TypeString,
@@ -618,6 +641,34 @@ func resourceComputeRegionResizeRequestRead(d *schema.ResourceData, meta interfa
 		return fmt.Errorf("Error reading RegionResizeRequest: %s", err)
 	}
 
+	identity, err := d.Identity()
+	if err != nil {
+		return fmt.Errorf("Error getting identity: %s", err)
+	}
+	if v, ok := identity.GetOk("name"); ok && v != "" {
+		err = identity.Set("name", d.Get("name").(string))
+		if err != nil {
+			return fmt.Errorf("Error setting name: %s", err)
+		}
+	}
+	if v, ok := identity.GetOk("region"); ok && v != "" {
+		err = identity.Set("region", d.Get("region").(string))
+		if err != nil {
+			return fmt.Errorf("Error setting region: %s", err)
+		}
+	}
+	if v, ok := identity.GetOk("instance_group_manager"); ok && v != "" {
+		err = identity.Set("instance_group_manager", d.Get("instance_group_manager").(string))
+		if err != nil {
+			return fmt.Errorf("Error setting instance_group_manager: %s", err)
+		}
+	}
+	if v, ok := identity.GetOk("project"); ok && v != "" {
+		err = identity.Set("project", d.Get("project").(string))
+		if err != nil {
+			return fmt.Errorf("Error setting project: %s", err)
+		}
+	}
 	return nil
 }
 

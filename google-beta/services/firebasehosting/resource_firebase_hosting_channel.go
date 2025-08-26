@@ -55,6 +55,21 @@ func ResourceFirebaseHostingChannel() *schema.Resource {
 			tpgresource.SetLabelsDiff,
 		),
 
+		Identity: &schema.ResourceIdentity{
+			Version: 1,
+			SchemaFunc: func() map[string]*schema.Schema {
+				return map[string]*schema.Schema{
+					"site_id": {
+						Type:              schema.TypeString,
+						RequiredForImport: true,
+					},
+					"channel_id": {
+						Type:              schema.TypeString,
+						RequiredForImport: true,
+					},
+				}
+			},
+		},
 		Schema: map[string]*schema.Schema{
 			"channel_id": {
 				Type:        schema.TypeString,
@@ -250,6 +265,22 @@ func resourceFirebaseHostingChannelRead(d *schema.ResourceData, meta interface{}
 		return fmt.Errorf("Error reading Channel: %s", err)
 	}
 
+	identity, err := d.Identity()
+	if err != nil {
+		return fmt.Errorf("Error getting identity: %s", err)
+	}
+	if v, ok := identity.GetOk("site_id"); ok && v != "" {
+		err = identity.Set("site_id", d.Get("site_id").(string))
+		if err != nil {
+			return fmt.Errorf("Error setting site_id: %s", err)
+		}
+	}
+	if v, ok := identity.GetOk("channel_id"); ok && v != "" {
+		err = identity.Set("channel_id", d.Get("channel_id").(string))
+		if err != nil {
+			return fmt.Errorf("Error setting channel_id: %s", err)
+		}
+	}
 	return nil
 }
 
