@@ -1,5 +1,9 @@
 ## 6.49.3 (Unreleased)
 
+NOTES:
+* 6.49.3 is a backport release, and some changes will not appear in 7.X series releases until 7.1.0.
+
+
 BUG FIXES:
 
 * memorystore: fixed permadiffs that cause destroy+recreate on `google_memorystore_instance` related to `desired_auto_created_endpoints` and `desired_psc_auto_connections` ([#10648](https://github.com/hashicorp/terraform-provider-google-beta/pull/10648))
