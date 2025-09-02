@@ -29,6 +29,7 @@ IMPROVEMENTS:
 BUG FIXES:
 * compute: fixed certain spurious diffs for `google_compute_region_backend_service.backend.group` ([#10611](https://github.com/hashicorp/terraform-provider-google-beta/pull/10611))
 * compute: fixed permadiff on `google_compute_region_network_endpoint_group` when no `network` is specified ([#10625](https://github.com/hashicorp/terraform-provider-google-beta/pull/10625))
+* memorystore: fixed permadiffs that cause destroy+recreate on new `google_memorystore_instance` when `desired_psc_auto_connections` is set ([#10648](https://github.com/hashicorp/terraform-provider-google-beta/pull/10648))
 * netapp: fixed a permadiff on `total_iops` in `google_netapp_storage_pool` resource ([#10643](https://github.com/hashicorp/terraform-provider-google-beta/pull/10643))
 * oracledatabase: fixed permadiffs on `google_oracle_database_autonomous_database` resource for the `odb_network` and `odb_subnet` fields ([#10627](https://github.com/hashicorp/terraform-provider-google-beta/pull/10627))
 
