@@ -42,7 +42,7 @@ func TestAccOSConfigV2PolicyOrchestratorForFolder_osconfigv2PolicyOrchestratorFo
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
 		ExternalProviders: map[string]resource.ExternalProvider{
 			"time": {},
 		},
@@ -64,19 +64,22 @@ func TestAccOSConfigV2PolicyOrchestratorForFolder_osconfigv2PolicyOrchestratorFo
 func testAccOSConfigV2PolicyOrchestratorForFolder_osconfigv2PolicyOrchestratorForFolderBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_folder" "my_folder" {
+    provider = google-beta
     display_name        = "tf-test-po-folder%{random_suffix}"
     parent              = "organizations/%{org_id}"
     deletion_protection = false
 }
 
 resource "google_folder_service_identity" "osconfig_sa" {
-  folder  = google_folder.my_folder.folder_id
-  service = "osconfig.googleapis.com"
+    provider = google-beta
+    folder  = google_folder.my_folder.folder_id
+    service = "osconfig.googleapis.com"
 }
 
 resource "google_folder_service_identity" "ripple_sa" {
-  folder  = google_folder.my_folder.folder_id
-  service = "progressiverollout.googleapis.com"
+    provider = google-beta
+    folder  = google_folder.my_folder.folder_id
+    service = "progressiverollout.googleapis.com"
 }
 
 resource "time_sleep" "wait_30_sec" {
@@ -88,6 +91,7 @@ resource "time_sleep" "wait_30_sec" {
 }
 
 resource "google_folder_iam_member" "iam_osconfig_service_agent" {
+    provider = google-beta
     depends_on = [time_sleep.wait_30_sec]
     folder = google_folder.my_folder.folder_id
     role   = "roles/osconfig.serviceAgent"
@@ -95,6 +99,7 @@ resource "google_folder_iam_member" "iam_osconfig_service_agent" {
 }
 
 resource "google_folder_iam_member" "iam_osconfig_rollout_service_agent" {
+    provider = google-beta
     depends_on = [google_folder_iam_member.iam_osconfig_service_agent]
     folder     = google_folder.my_folder.folder_id
     role       = "roles/osconfig.rolloutServiceAgent"
@@ -102,6 +107,7 @@ resource "google_folder_iam_member" "iam_osconfig_rollout_service_agent" {
 }
 
 resource "google_folder_iam_member" "iam_progressiverollout_service_agent" {
+    provider = google-beta
     depends_on = [google_folder_iam_member.iam_osconfig_rollout_service_agent]
     folder = google_folder.my_folder.folder_id
     role   = "roles/progressiverollout.serviceAgent"
@@ -114,6 +120,7 @@ resource "time_sleep" "wait_3_min" {
 }
 
 resource "google_os_config_v2_policy_orchestrator_for_folder" "policy_orchestrator_for_folder" {
+    provider = google-beta
     depends_on = [time_sleep.wait_3_min]
 
     policy_orchestrator_id = "tf-test-po-folder%{random_suffix}"
