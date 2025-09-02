@@ -7421,6 +7421,7 @@ func flattenSecretManagerConfig(c *container.SecretManagerConfig) []map[string]i
 	result := make(map[string]interface{})
 
 	result["enabled"] = c.Enabled
+
 	rotationList := []map[string]interface{}{}
 	if c.RotationConfig != nil {
 		rotationConfigMap := map[string]interface{}{
