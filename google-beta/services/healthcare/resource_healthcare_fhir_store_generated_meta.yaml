@@ -6,6 +6,11 @@ api_version: 'v1beta1'
 api_resource_type_kind: 'FhirStore'
 fields:
   - field: 'complex_data_type_reference_parsing'
+  - field: 'consent_config.access_determination_log_config.log_level'
+  - field: 'consent_config.access_enforced'
+  - field: 'consent_config.consent_header_handling.profile'
+  - field: 'consent_config.enforced_admin_consents'
+  - field: 'consent_config.version'
   - field: 'dataset'
     provider_only: true
   - field: 'default_search_handling_strict'
