@@ -176,6 +176,7 @@ func TestAccComputeFutureReservation_sharedFutureReservationExample(t *testing.T
 func testAccComputeFutureReservation_sharedFutureReservationExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_project" "owner_project" {
+  provider = google-beta
   project_id      = "tf-test%{random_suffix}"
   name            = "tf-test%{random_suffix}"
   org_id          = "%{org_id}"
@@ -184,11 +185,13 @@ resource "google_project" "owner_project" {
 }
 
 resource "google_project_service" "compute" {
+  provider = google-beta
   project            = google_project.owner_project.project_id
   service            = "compute.googleapis.com"
 }
 
 resource "google_project" "guest_project" {
+  provider = google-beta
   project_id      = "tf-test-2%{random_suffix}"
   name            = "tf-test-2%{random_suffix}"
   org_id          = "%{org_id}"
@@ -196,6 +199,7 @@ resource "google_project" "guest_project" {
 }
 
 resource "google_org_policy_policy" "shared_reservation_org_policy" {
+  provider = google-beta
   name   = "projects/${google_project.owner_project.project_id}/policies/compute.sharedReservationsOwnerProjects"
   parent = "projects/${google_project.owner_project.project_id}"
 
@@ -207,6 +211,7 @@ resource "google_org_policy_policy" "shared_reservation_org_policy" {
 }
 
 resource "google_compute_future_reservation" "gce_future_reservation" {
+  provider = google-beta
   project = google_project.owner_project.project_id
   name    = "tf-test-gce-shared-future-reservation%{random_suffix}"
   time_window {
