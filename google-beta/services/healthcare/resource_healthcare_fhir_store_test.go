@@ -149,6 +149,16 @@ resource "google_healthcare_fhir_store" "default" {
   enable_history_import         = false
   version                       = "R4"
   enable_history_modifications = false
+  consent_config {
+    version = "V1"
+    access_enforced = false
+    consent_header_handling {
+        profile = "PERMIT_EMPTY_SCOPE"
+    }
+    access_determination_log_config {
+        log_level = "DISABLED"
+    }
+  }
 }
 
 resource "google_healthcare_dataset" "dataset" {
@@ -174,6 +184,16 @@ resource "google_healthcare_fhir_store" "default" {
 	send_previous_resource_on_delete = true
   }
   enable_history_modifications = true
+  consent_config {
+    version = "V1"
+    access_enforced = true
+    consent_header_handling {
+        profile = "REQUIRED_ON_READ"
+    }
+    access_determination_log_config {
+        log_level = "VERBOSE"
+    }
+  }
 
   labels = {
     label1 = "labelvalue1"
@@ -210,6 +230,24 @@ func testAccCheckGoogleHealthcareFhirStoreUpdate(t *testing.T, pubsubTopic strin
 			response, err := config.NewHealthcareClient(config.UserAgent).Projects.Locations.Datasets.FhirStores.Get(gcpResourceUri).Do()
 			if err != nil {
 				return fmt.Errorf("Unexpected failure while verifying 'updated' dataset: %s", err)
+			}
+			if response.ConsentConfig == nil {
+				return fmt.Errorf("fhirStore 'ConsentConfig' missing: %s", gcpResourceUri)
+			}
+			if !response.ConsentConfig.AccessEnforced {
+				return fmt.Errorf("fhirStore 'ConsentConfig.AccessEnforced' not updated: %s", gcpResourceUri)
+			}
+			if response.ConsentConfig.ConsentHeaderHandling == nil {
+				return fmt.Errorf("fhirStore 'ConsentConfig.ConsentHeaderHandling' missing: %s", gcpResourceUri)
+			}
+			if response.ConsentConfig.ConsentHeaderHandling.Profile != "REQUIRED_ON_READ" {
+				return fmt.Errorf("fhirStore 'ConsentConfig.ConsentHeaderHandling.Profile' not updated: %s", gcpResourceUri)
+			}
+			if response.ConsentConfig.AccessDeterminationLogConfig == nil {
+				return fmt.Errorf("fhirStore 'ConsentConfig.AccessDeterminationLogConfig' missing: %s", gcpResourceUri)
+			}
+			if response.ConsentConfig.AccessDeterminationLogConfig.LogLevel != "VERBOSE" {
+				return fmt.Errorf("fhirStore 'ConsentConfig.AccessDeterminationLogConfig.LogLevel' not updated: %s", gcpResourceUri)
 			}
 
 			if !response.EnableUpdateCreate {
