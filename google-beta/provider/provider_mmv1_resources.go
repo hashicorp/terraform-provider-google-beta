@@ -607,9 +607,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 700
+// Generated resources: 701
 // Generated IAM resources: 345
-// Total generated resources: 1045
+// Total generated resources: 1046
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -1485,6 +1485,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_runtimeconfig_config_iam_binding":                                    tpgiamresource.ResourceIamBinding(runtimeconfig.RuntimeConfigConfigIamSchema, runtimeconfig.RuntimeConfigConfigIamUpdaterProducer, runtimeconfig.RuntimeConfigConfigIdParseFunc),
 	"google_runtimeconfig_config_iam_member":                                     tpgiamresource.ResourceIamMember(runtimeconfig.RuntimeConfigConfigIamSchema, runtimeconfig.RuntimeConfigConfigIamUpdaterProducer, runtimeconfig.RuntimeConfigConfigIdParseFunc),
 	"google_runtimeconfig_config_iam_policy":                                     tpgiamresource.ResourceIamPolicy(runtimeconfig.RuntimeConfigConfigIamSchema, runtimeconfig.RuntimeConfigConfigIamUpdaterProducer, runtimeconfig.RuntimeConfigConfigIdParseFunc),
+	"google_saas_runtime_release":                                                saasruntime.ResourceSaasRuntimeRelease(),
 	"google_saas_runtime_saas":                                                   saasruntime.ResourceSaasRuntimeSaas(),
 	"google_saas_runtime_unit_kind":                                              saasruntime.ResourceSaasRuntimeUnitKind(),
 	"google_secret_manager_secret":                                               secretmanager.ResourceSecretManagerSecret(),
