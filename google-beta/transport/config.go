@@ -277,6 +277,7 @@ type Config struct {
 	BigqueryAnalyticsHubBasePath     string
 	BigqueryConnectionBasePath       string
 	BigqueryDatapolicyBasePath       string
+	BigqueryDatapolicyv2BasePath     string
 	BigqueryDataTransferBasePath     string
 	BigqueryReservationBasePath      string
 	BigtableBasePath                 string
@@ -460,6 +461,7 @@ const BigQueryBasePathKey = "BigQuery"
 const BigqueryAnalyticsHubBasePathKey = "BigqueryAnalyticsHub"
 const BigqueryConnectionBasePathKey = "BigqueryConnection"
 const BigqueryDatapolicyBasePathKey = "BigqueryDatapolicy"
+const BigqueryDatapolicyv2BasePathKey = "BigqueryDatapolicyv2"
 const BigqueryDataTransferBasePathKey = "BigqueryDataTransfer"
 const BigqueryReservationBasePathKey = "BigqueryReservation"
 const BigtableBasePathKey = "Bigtable"
@@ -632,6 +634,7 @@ var DefaultBasePaths = map[string]string{
 	BigqueryAnalyticsHubBasePathKey:     "https://analyticshub.googleapis.com/v1/",
 	BigqueryConnectionBasePathKey:       "https://bigqueryconnection.googleapis.com/v1/",
 	BigqueryDatapolicyBasePathKey:       "https://bigquerydatapolicy.googleapis.com/v1/",
+	BigqueryDatapolicyv2BasePathKey:     "https://bigquerydatapolicy.googleapis.com/v2/",
 	BigqueryDataTransferBasePathKey:     "https://bigquerydatatransfer.googleapis.com/v1/",
 	BigqueryReservationBasePathKey:      "https://bigqueryreservation.googleapis.com/v1/",
 	BigtableBasePathKey:                 "https://bigtableadmin.googleapis.com/v2/",
@@ -948,6 +951,11 @@ func SetEndpointDefaults(d *schema.ResourceData) error {
 		d.Set("bigquery_datapolicy_custom_endpoint", MultiEnvDefault([]string{
 			"GOOGLE_BIGQUERY_DATAPOLICY_CUSTOM_ENDPOINT",
 		}, DefaultBasePaths[BigqueryDatapolicyBasePathKey]))
+	}
+	if d.Get("bigquery_datapolicyv2_custom_endpoint") == "" {
+		d.Set("bigquery_datapolicyv2_custom_endpoint", MultiEnvDefault([]string{
+			"GOOGLE_BIGQUERY_DATAPOLICYV2_CUSTOM_ENDPOINT",
+		}, DefaultBasePaths[BigqueryDatapolicyv2BasePathKey]))
 	}
 	if d.Get("bigquery_data_transfer_custom_endpoint") == "" {
 		d.Set("bigquery_data_transfer_custom_endpoint", MultiEnvDefault([]string{
@@ -2745,6 +2753,7 @@ func ConfigureBasePaths(c *Config) {
 	c.BigqueryAnalyticsHubBasePath = DefaultBasePaths[BigqueryAnalyticsHubBasePathKey]
 	c.BigqueryConnectionBasePath = DefaultBasePaths[BigqueryConnectionBasePathKey]
 	c.BigqueryDatapolicyBasePath = DefaultBasePaths[BigqueryDatapolicyBasePathKey]
+	c.BigqueryDatapolicyv2BasePath = DefaultBasePaths[BigqueryDatapolicyv2BasePathKey]
 	c.BigqueryDataTransferBasePath = DefaultBasePaths[BigqueryDataTransferBasePathKey]
 	c.BigqueryReservationBasePath = DefaultBasePaths[BigqueryReservationBasePathKey]
 	c.BigtableBasePath = DefaultBasePaths[BigtableBasePathKey]
