@@ -34,6 +34,7 @@ import (
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/bigqueryanalyticshub"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/bigqueryconnection"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/bigquerydatapolicy"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/bigquerydatapolicyv2"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/bigquerydatatransfer"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/bigqueryreservation"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/bigtable"
