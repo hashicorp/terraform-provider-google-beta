@@ -18,9 +18,10 @@ package compute_test
 
 import (
 	"fmt"
-	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"regexp"
 	"testing"
+
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
