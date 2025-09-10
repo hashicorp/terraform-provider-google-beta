@@ -1415,6 +1415,7 @@ resource "google_cloud_run_service" "default" {
         volume_mounts {
           name = "vol1"
           mount_path = "/mnt/vol1"
+          sub_path = "/LM01"
         }
       }
       volumes {
