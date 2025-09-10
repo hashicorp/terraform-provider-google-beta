@@ -380,6 +380,7 @@ mount_options = ["log-severity=info"]
       volume_mounts {
         name = "gcs"
         mount_path = "/mnt/landsat"
+        sub_path = "/LM01"
       }
       resources {
         cpu_idle = true
