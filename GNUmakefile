@@ -23,7 +23,7 @@ fmt:
 
 # Currently required by tf-deploy compile
 fmtcheck:
-	@sh -c "'$(CURDIR)/scripts/gofmtcheck.sh'"
+	sh -c "'$(CURDIR)/scripts/gofmtcheck.sh'"
 
 vet:
 	go vet
