@@ -23,7 +23,7 @@ fmt:
 
 # Currently required by tf-deploy compile
 fmtcheck:
-	@sh -c "'$(CURDIR)/scripts/gofmtcheck.sh'"
+	sh -c "'$(CURDIR)/scripts/gofmtcheck.sh'"
 
 vet:
 	go vet
@@ -48,5 +48,5 @@ endif
 docscheck:
 	@sh -c "'$(CURDIR)/scripts/docscheck.sh'"
 
-.PHONY: build test testnolint testacc fmt fmtcheck vet lint  errcheck test-compile website website-test docscheck
+.PHONY: build test testnolint testacc fmt fmtcheck vet lint test-compile website website-test docscheck
 
