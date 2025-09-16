@@ -197,6 +197,26 @@ If true, update will affect both PENDING and ACCEPTED/REJECTED PSC endpoints. Fo
 				DiffSuppressFunc: tpgresource.CompareSelfLinkOrResourceName,
 				Description:      `URL of the region where the resource resides.`,
 			},
+			"tunneling_config": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: `Tunneling configuration for this service attachment.`,
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"encapsulation_profile": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: `The encapsulation profile for tunneling traffic.`,
+						},
+						"routing_mode": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: `The routing mode for tunneling traffic.`,
+						},
+					},
+				},
+			},
 			"connected_endpoints": {
 				Type:     schema.TypeList,
 				Computed: true,
@@ -238,6 +258,25 @@ this service attachment.`,
 				Computed: true,
 				Description: `Fingerprint of this resource. This field is used internally during
 updates of this resource.`,
+			},
+			"psc_service_attachment_id": {
+				Type:        schema.TypeList,
+				Computed:    true,
+				Description: `An 128-bit global unique ID of the PSC service attachment.`,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"high": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: `The high 64 bits of the PSC service attachment ID.`,
+						},
+						"low": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: `The low 64 bits of the PSC service attachment ID.`,
+						},
+					},
+				},
 			},
 			"send_propagated_connection_limit_if_zero": {
 				Type:     schema.TypeBool,
@@ -344,6 +383,12 @@ func resourceComputeServiceAttachmentCreate(d *schema.ResourceData, meta interfa
 		return err
 	} else if v, ok := d.GetOkExists("domain_names"); !tpgresource.IsEmptyValue(reflect.ValueOf(domainNamesProp)) && (ok || !reflect.DeepEqual(v, domainNamesProp)) {
 		obj["domainNames"] = domainNamesProp
+	}
+	tunnelingConfigProp, err := expandComputeServiceAttachmentTunnelingConfig(d.Get("tunneling_config"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("tunneling_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(tunnelingConfigProp)) && (ok || !reflect.DeepEqual(v, tunnelingConfigProp)) {
+		obj["tunnelingConfig"] = tunnelingConfigProp
 	}
 	consumerRejectListsProp, err := expandComputeServiceAttachmentConsumerRejectLists(d.Get("consumer_reject_lists"), d, config)
 	if err != nil {
@@ -502,6 +547,9 @@ func resourceComputeServiceAttachmentRead(d *schema.ResourceData, meta interface
 	if err := d.Set("fingerprint", flattenComputeServiceAttachmentFingerprint(res["fingerprint"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ServiceAttachment: %s", err)
 	}
+	if err := d.Set("psc_service_attachment_id", flattenComputeServiceAttachmentPscServiceAttachmentId(res["pscServiceAttachmentId"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ServiceAttachment: %s", err)
+	}
 	if err := d.Set("connection_preference", flattenComputeServiceAttachmentConnectionPreference(res["connectionPreference"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ServiceAttachment: %s", err)
 	}
@@ -584,6 +632,12 @@ func resourceComputeServiceAttachmentUpdate(d *schema.ResourceData, meta interfa
 		return err
 	} else if v, ok := d.GetOkExists("enable_proxy_protocol"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, enableProxyProtocolProp)) {
 		obj["enableProxyProtocol"] = enableProxyProtocolProp
+	}
+	tunnelingConfigProp, err := expandComputeServiceAttachmentTunnelingConfig(d.Get("tunneling_config"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("tunneling_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, tunnelingConfigProp)) {
+		obj["tunnelingConfig"] = tunnelingConfigProp
 	}
 	consumerRejectListsProp, err := expandComputeServiceAttachmentConsumerRejectLists(d.Get("consumer_reject_lists"), d, config)
 	if err != nil {
@@ -747,6 +801,29 @@ func flattenComputeServiceAttachmentDescription(v interface{}, d *schema.Resourc
 }
 
 func flattenComputeServiceAttachmentFingerprint(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenComputeServiceAttachmentPscServiceAttachmentId(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["high"] =
+		flattenComputeServiceAttachmentPscServiceAttachmentIdHigh(original["high"], d, config)
+	transformed["low"] =
+		flattenComputeServiceAttachmentPscServiceAttachmentIdLow(original["low"], d, config)
+	return []interface{}{transformed}
+}
+func flattenComputeServiceAttachmentPscServiceAttachmentIdHigh(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenComputeServiceAttachmentPscServiceAttachmentIdLow(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -944,6 +1021,40 @@ func expandComputeServiceAttachmentEnableProxyProtocol(v interface{}, d tpgresou
 }
 
 func expandComputeServiceAttachmentDomainNames(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeServiceAttachmentTunnelingConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedRoutingMode, err := expandComputeServiceAttachmentTunnelingConfigRoutingMode(original["routing_mode"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedRoutingMode); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["routingMode"] = transformedRoutingMode
+	}
+
+	transformedEncapsulationProfile, err := expandComputeServiceAttachmentTunnelingConfigEncapsulationProfile(original["encapsulation_profile"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedEncapsulationProfile); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["encapsulationProfile"] = transformedEncapsulationProfile
+	}
+
+	return transformed, nil
+}
+
+func expandComputeServiceAttachmentTunnelingConfigRoutingMode(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeServiceAttachmentTunnelingConfigEncapsulationProfile(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
