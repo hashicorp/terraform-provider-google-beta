@@ -133,6 +133,7 @@ var (
 		"scheduling.0.maintenance_interval",
 		"scheduling.0.host_error_timeout_seconds",
 		"scheduling.0.graceful_shutdown",
+		"scheduling.0.skip_guest_os_shutdown",
 		"scheduling.0.local_ssd_recovery_timeout",
 	}
 
@@ -1254,6 +1255,12 @@ be from 0 to 999,999,999 inclusive.`,
 									},
 								},
 							},
+						},
+						"skip_guest_os_shutdown": {
+							Type:        schema.TypeBool,
+							Optional:    true,
+							Default:     false,
+							Description: `Default is false and there will be 120 seconds between GCE ACPI G2 Soft Off and ACPI G3 Mechanical Off for Standard VMs and 30 seconds for Spot VMs.`,
 						},
 					},
 				},
