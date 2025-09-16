@@ -65,15 +65,15 @@ func ResourceCloudbuildWorkerPool() *schema.Resource {
 						RequiredForImport: true,
 						Description:       "User-defined name of the `WorkerPool`.",
 					},
-					"location": {
-						Type:              schema.TypeString,
-						RequiredForImport: true,
-						Description:       "The location for the resource",
-					},
 					"project": {
 						Type:              schema.TypeString,
 						OptionalForImport: true,
 						Description:       "The project for the resource",
+					},
+					"location": {
+						Type:              schema.TypeString,
+						RequiredForImport: true,
+						Description:       "The location for the resource",
 					},
 				}
 			},
