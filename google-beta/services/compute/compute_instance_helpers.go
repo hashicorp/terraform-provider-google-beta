@@ -201,6 +201,11 @@ func expandScheduling(v interface{}) (*compute.Scheduling, error) {
 		scheduling.GracefulShutdown = transformedGracefulShutdown
 		scheduling.ForceSendFields = append(scheduling.ForceSendFields, "GracefulShutdown")
 	}
+
+	if v, ok := original["skip_guest_os_shutdown"]; ok {
+		scheduling.SkipGuestOsShutdown = v.(bool)
+		scheduling.ForceSendFields = append(scheduling.ForceSendFields, "SkipGuestOsShutdown")
+	}
 	if v, ok := original["local_ssd_recovery_timeout"]; ok {
 		transformedLocalSsdRecoveryTimeout, err := expandComputeLocalSsdRecoveryTimeout(v)
 		if err != nil {
@@ -368,6 +373,8 @@ func flattenScheduling(resp *compute.Scheduling) []map[string]interface{} {
 	if resp.OnInstanceStopAction != nil {
 		schedulingMap["on_instance_stop_action"] = flattenOnInstanceStopAction(resp.OnInstanceStopAction)
 	}
+
+	schedulingMap["skip_guest_os_shutdown"] = resp.SkipGuestOsShutdown
 
 	if resp.HostErrorTimeoutSeconds != 0 {
 		schedulingMap["host_error_timeout_seconds"] = resp.HostErrorTimeoutSeconds
@@ -839,6 +846,10 @@ func schedulingHasChangeWithoutReboot(d *schema.ResourceData) bool {
 		return true
 	}
 	if oScheduling["host_error_timeout_seconds"] != newScheduling["host_error_timeout_seconds"] {
+		return true
+	}
+
+	if oScheduling["skip_guest_os_shutdown"] != newScheduling["skip_guest_os_shutdown"] {
 		return true
 	}
 
