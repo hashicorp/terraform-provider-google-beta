@@ -197,7 +197,7 @@ func TestAccBigtableTableIamPolicy(t *testing.T) {
 				ImportStateVerify: true,
 			},
 			{
-				// Test IAM Binding - Update instance to instance_name
+				// Test IAM Binding - Update instance_name to instance
 				Config: testAccBigtableTableIamPolicy(instance, cluster, account, role),
 				Check:  resource.TestCheckResourceAttrSet("data.google_bigtable_table_iam_policy.policy", "policy_data"),
 			},
