@@ -29,6 +29,7 @@ fields:
   - field: 'privileged_access.gcp_iam_access.resource'
   - field: 'privileged_access.gcp_iam_access.resource_type'
   - field: 'privileged_access.gcp_iam_access.role_bindings.condition_expression'
+  - field: 'privileged_access.gcp_iam_access.role_bindings.id'
   - field: 'privileged_access.gcp_iam_access.role_bindings.role'
   - field: 'requester_justification_config.not_mandatory'
   - field: 'requester_justification_config.unstructured'

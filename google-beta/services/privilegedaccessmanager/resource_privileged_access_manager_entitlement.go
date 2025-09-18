@@ -164,6 +164,11 @@ Format: calculate the time in seconds and concatenate it with 's' i.e. 2 hours =
 													Description: `The expression field of the IAM condition to be associated with the role. If specified, a user with an active grant for this entitlement would be able to access the resource only if this condition evaluates to true for their request.
 https://cloud.google.com/iam/docs/conditions-overview#attributes.`,
 												},
+												"id": {
+													Type:        schema.TypeString,
+													Computed:    true,
+													Description: `Output Only. The ID corresponding to this role binding in the policy binding. This will be unique within an entitlement across time. Gets re-generated each time the entitlement is updated.`,
+												},
 											},
 										},
 									},
@@ -909,6 +914,7 @@ func flattenPrivilegedAccessManagerEntitlementPrivilegedAccessGcpIamAccessRoleBi
 		transformed = append(transformed, map[string]interface{}{
 			"role":                 flattenPrivilegedAccessManagerEntitlementPrivilegedAccessGcpIamAccessRoleBindingsRole(original["role"], d, config),
 			"condition_expression": flattenPrivilegedAccessManagerEntitlementPrivilegedAccessGcpIamAccessRoleBindingsConditionExpression(original["conditionExpression"], d, config),
+			"id":                   flattenPrivilegedAccessManagerEntitlementPrivilegedAccessGcpIamAccessRoleBindingsId(original["id"], d, config),
 		})
 	}
 	return transformed
@@ -918,6 +924,10 @@ func flattenPrivilegedAccessManagerEntitlementPrivilegedAccessGcpIamAccessRoleBi
 }
 
 func flattenPrivilegedAccessManagerEntitlementPrivilegedAccessGcpIamAccessRoleBindingsConditionExpression(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenPrivilegedAccessManagerEntitlementPrivilegedAccessGcpIamAccessRoleBindingsId(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -1219,6 +1229,13 @@ func expandPrivilegedAccessManagerEntitlementPrivilegedAccessGcpIamAccessRoleBin
 			transformed["conditionExpression"] = transformedConditionExpression
 		}
 
+		transformedId, err := expandPrivilegedAccessManagerEntitlementPrivilegedAccessGcpIamAccessRoleBindingsId(original["id"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedId); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["id"] = transformedId
+		}
+
 		req = append(req, transformed)
 	}
 	return req, nil
@@ -1229,6 +1246,10 @@ func expandPrivilegedAccessManagerEntitlementPrivilegedAccessGcpIamAccessRoleBin
 }
 
 func expandPrivilegedAccessManagerEntitlementPrivilegedAccessGcpIamAccessRoleBindingsConditionExpression(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandPrivilegedAccessManagerEntitlementPrivilegedAccessGcpIamAccessRoleBindingsId(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
