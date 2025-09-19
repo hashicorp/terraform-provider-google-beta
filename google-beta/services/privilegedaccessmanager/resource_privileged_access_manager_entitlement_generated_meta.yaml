@@ -15,6 +15,7 @@ fields:
   - field: 'approval_workflow.manual_approvals.steps.approvals_needed'
   - field: 'approval_workflow.manual_approvals.steps.approver_email_recipients'
   - field: 'approval_workflow.manual_approvals.steps.approvers.principals'
+  - field: 'approval_workflow.manual_approvals.steps.id'
   - field: 'create_time'
   - field: 'eligible_users.principals'
   - field: 'entitlement_id'
