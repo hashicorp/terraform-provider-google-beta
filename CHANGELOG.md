@@ -1,4 +1,15 @@
-## 6.49.3 (Unreleased)
+## 6.50.0 (Unreleased)
+
+NOTES:
+* bigtable: It is recommended for `google_bigtable_table_iam_*` resources to upgrade to v6.50.0 and switch from `instance` to `instance_name` in your configuration before upgrading to v7.X ([#10746](https://github.com/hashicorp/terraform-provider-google-beta/pull/10746))
+
+DEPRECATIONS:
+* bigtable: deprecated `instance` in favor of `instance_name` in `google_bigtable_table_iam_*` resources ([#10746](https://github.com/hashicorp/terraform-provider-google-beta/pull/10746))
+
+IMPROVEMENTS:
+* bigtable: added `instance_name` field to `google_bigtable_table_iam_*` resources ([#10746](https://github.com/hashicorp/terraform-provider-google-beta/pull/10746))
+
+## 6.49.3 (September 12, 2025)
 
 BUG FIXES:
 * compute: fixed a crash in `google_compute_security_policy` due to a changed API response for empty `match.0.expr_options` blocks ([#10715](https://github.com/hashicorp/terraform-provider-google-beta/pull/10715))
