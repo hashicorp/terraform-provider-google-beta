@@ -261,7 +261,7 @@ A single user might be part of 'approvers' ACL for multiple steps in this workfl
 									"steps": {
 										Type:        schema.TypeList,
 										Required:    true,
-										Description: `List of approval steps in this workflow. These steps would be followed in the specified order sequentially.  1 step is supported for now.`,
+										Description: `List of approval steps in this workflow. These steps would be followed in the specified order sequentially.`,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"approvers": {
@@ -302,6 +302,11 @@ supported value.`,
 														Type: schema.TypeString,
 													},
 													Set: schema.HashString,
+												},
+												"id": {
+													Type:        schema.TypeString,
+													Computed:    true,
+													Description: `Output Only. The ID of the approval step.`,
 												},
 											},
 										},
@@ -808,6 +813,7 @@ func flattenPrivilegedAccessManagerEntitlementApprovalWorkflowManualApprovalsSte
 			"approvers":                 flattenPrivilegedAccessManagerEntitlementApprovalWorkflowManualApprovalsStepsApprovers(original["approvers"], d, config),
 			"approvals_needed":          flattenPrivilegedAccessManagerEntitlementApprovalWorkflowManualApprovalsStepsApprovalsNeeded(original["approvalsNeeded"], d, config),
 			"approver_email_recipients": flattenPrivilegedAccessManagerEntitlementApprovalWorkflowManualApprovalsStepsApproverEmailRecipients(original["approverEmailRecipients"], d, config),
+			"id":                        flattenPrivilegedAccessManagerEntitlementApprovalWorkflowManualApprovalsStepsId(original["id"], d, config),
 		})
 	}
 	return transformed
@@ -859,6 +865,10 @@ func flattenPrivilegedAccessManagerEntitlementApprovalWorkflowManualApprovalsSte
 		return v
 	}
 	return schema.NewSet(schema.HashString, v.([]interface{}))
+}
+
+func flattenPrivilegedAccessManagerEntitlementApprovalWorkflowManualApprovalsStepsId(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
 }
 
 func flattenPrivilegedAccessManagerEntitlementPrivilegedAccess(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -1104,6 +1114,13 @@ func expandPrivilegedAccessManagerEntitlementApprovalWorkflowManualApprovalsStep
 			transformed["approverEmailRecipients"] = transformedApproverEmailRecipients
 		}
 
+		transformedId, err := expandPrivilegedAccessManagerEntitlementApprovalWorkflowManualApprovalsStepsId(original["id"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedId); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["id"] = transformedId
+		}
+
 		req = append(req, transformed)
 	}
 	return req, nil
@@ -1142,6 +1159,10 @@ func expandPrivilegedAccessManagerEntitlementApprovalWorkflowManualApprovalsStep
 
 func expandPrivilegedAccessManagerEntitlementApprovalWorkflowManualApprovalsStepsApproverEmailRecipients(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	v = v.(*schema.Set).List()
+	return v, nil
+}
+
+func expandPrivilegedAccessManagerEntitlementApprovalWorkflowManualApprovalsStepsId(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
