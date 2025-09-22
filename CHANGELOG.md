@@ -9,25 +9,35 @@ FEATURES:
 * **New Resource:** `google_network_services_wasm_plugin` ([#10742](https://github.com/hashicorp/terraform-provider-google-beta/pull/10742))
 
 IMPROVEMENTS:
-* compute: added `scheduling.0.skip_guest_os_shutdown` field to `google_compute_instance_template` resource (beta) ([#10729](https://github.com/hashicorp/terraform-provider-google-beta/pull/10729))
-* compute: added `scheduling.0.skip_guest_os_shutdown` field to `google_compute_instance` resource (beta) ([#10729](https://github.com/hashicorp/terraform-provider-google-beta/pull/10729))
-* compute: added `scheduling.0.skip_guest_os_shutdown` field to `google_compute_region_instance_template` resource (beta) ([#10729](https://github.com/hashicorp/terraform-provider-google-beta/pull/10729))
-* compute: added `tunneling_config` field to `google_compute_service_attachment` resource (beta) ([#10730](https://github.com/hashicorp/terraform-provider-google-beta/pull/10730))
+* compute: added `scheduling.0.skip_guest_os_shutdown` field to `google_compute_instance_template` resource ([#10729](https://github.com/hashicorp/terraform-provider-google-beta/pull/10729))
+* compute: added `scheduling.0.skip_guest_os_shutdown` field to `google_compute_instance` resource ([#10729](https://github.com/hashicorp/terraform-provider-google-beta/pull/10729))
+* compute: added `scheduling.0.skip_guest_os_shutdown` field to `google_compute_region_instance_template` resource ([#10729](https://github.com/hashicorp/terraform-provider-google-beta/pull/10729))
+* compute: added `tunneling_config` field to `google_compute_service_attachment` resource ([#10730](https://github.com/hashicorp/terraform-provider-google-beta/pull/10730))
 * container: added `auto_ipam_config` to `google_container_cluster` resource. ([#10737](https://github.com/hashicorp/terraform-provider-google-beta/pull/10737))
-* privilegedaccessmanager: added  RoleBinding `id` field to `google_privileged_access_manager_entitlement` resource ([#10743](https://github.com/hashicorp/terraform-provider-google-beta/pull/10743))
-* sql: Increase robustness of disk_autoresize in sql_database_instance ([#10739](https://github.com/hashicorp/terraform-provider-google-beta/pull/10739))
+* privilegedaccessmanager: added `privileged_access.gcp_iam_access.role_bindings.id` field to `google_privileged_access_manager_entitlement` resource ([#10743](https://github.com/hashicorp/terraform-provider-google-beta/pull/10743))
 * storage: added support for `timeouts`  to  `google_storage_bucket_iam_binding`, `google_storage_bucket_iam_member`, `google_storage_bucket_iam_policy` resources ([#10726](https://github.com/hashicorp/terraform-provider-google-beta/pull/10726))
 
 BUG FIXES:
 * bigtable: fixed `node_scaling_factor` forcing new instance on `google_bigtable_instance` when adding new cluster ([#10744](https://github.com/hashicorp/terraform-provider-google-beta/pull/10744))
 * cloudscheduler: fixed a type assertion panic in `google_cloud_scheduler_job` when processing HTTP headers with nil or unexpected data types ([#10720](https://github.com/hashicorp/terraform-provider-google-beta/pull/10720))
-* compute: The network field in 'google_compute_region_backend_service' is now correctly handled, forcing a new resource on change. This resolves the "Network field cannot be modified" error when trying to add, remove, or modify a network on an existing resource ([#10738](https://github.com/hashicorp/terraform-provider-google-beta/pull/10738))
-* compute: fixed a crash in `google_compute_security_policy` due to a changed API response for empty `match.0.expr_options` blocks ([#10715](https://github.com/hashicorp/terraform-provider-google-beta/pull/10715))
+* compute: fixed the `Network field cannot be modified` issue in `google_compute_region_backend_service`. Now updating the `network` field will force the resource to be recreated ([#10738](https://github.com/hashicorp/terraform-provider-google-beta/pull/10738))
 * netapp: fixed incorrect default value handling in `google_netapp_volume` for `export_policy.rules` attributes `has_root_access` and `squash_mode`. When not specified, these fields will now take on the API default value with no diff. ([#10736](https://github.com/hashicorp/terraform-provider-google-beta/pull/10736))
 * netapp: updated `google_netapp_storage_pool` to source the default value for the `qos_type` field from the API. If not specified in the configuration, `qos_type` will now default to the value provided by the NetApp Volumes API. ([#10735](https://github.com/hashicorp/terraform-provider-google-beta/pull/10735))
+* sql: fixed the permadiffs on `disk_size ` when `disk_autoresize` is enabled in `google_sql_database_instance` ([#10739](https://github.com/hashicorp/terraform-provider-google-beta/pull/10739))
 * workbench: added retry for `unable to queue the operation` 409 errors in `google_workbench_instance` resource. ([#10733](https://github.com/hashicorp/terraform-provider-google-beta/pull/10733))
 
-## 7.3.0 (September 19, 2025)
+## 6.50.0 (September 19, 2025)
+
+NOTES:
+* bigtable: It is recommended for `google_bigtable_table_iam_*` resources to upgrade to v6.50.0 and switch from `instance` to `instance_name` in your configuration before upgrading to v7.X ([#10746](https://github.com/hashicorp/terraform-provider-google-beta/pull/10746))
+
+DEPRECATIONS:
+* bigtable: deprecated `instance` in favor of `instance_name` in `google_bigtable_table_iam_*` resources ([#10746](https://github.com/hashicorp/terraform-provider-google-beta/pull/10746))
+
+IMPROVEMENTS:
+* bigtable: added `instance_name` field to `google_bigtable_table_iam_*` resources ([#10746](https://github.com/hashicorp/terraform-provider-google-beta/pull/10746))
+
+## 7.3.0 (September 16, 2025)
 
 FEATURES:
 * **New Data Source:** `google_backup_dr_data_source_reference` ([#10707](https://github.com/hashicorp/terraform-provider-google-beta/pull/10707))
