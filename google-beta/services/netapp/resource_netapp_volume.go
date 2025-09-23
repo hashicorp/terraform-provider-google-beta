@@ -568,6 +568,11 @@ Only applicable to Flex service level.`,
 				Computed:    true,
 				Description: `Indicates whether the volume is part of a volume replication relationship.`,
 			},
+			"hot_tier_size_used_gib": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: `Total hot tier data rounded down to the nearest GiB used by the volume. This field is only used for flex Service Level`,
+			},
 			"kms_config": {
 				Type:        schema.TypeString,
 				Computed:    true,
@@ -602,6 +607,11 @@ Format for SMB volumes: '\\\\netbios_prefix-four_random_hex_letters.domain_name\
 							Type:        schema.TypeString,
 							Computed:    true,
 							Description: `Human-readable mount instructions.`,
+						},
+						"ip_address": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: `IP Address.`,
 						},
 						"protocol": {
 							Type:        schema.TypeString,
@@ -1023,6 +1033,9 @@ func resourceNetappVolumeRead(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("Error reading Volume: %s", err)
 	}
 	if err := d.Set("throughput_mibps", flattenNetappVolumeThroughputMibps(res["throughputMibps"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Volume: %s", err)
+	}
+	if err := d.Set("hot_tier_size_used_gib", flattenNetappVolumeHotTierSizeUsedGib(res["hotTierSizeUsedGib"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Volume: %s", err)
 	}
 	if err := d.Set("terraform_labels", flattenNetappVolumeTerraformLabels(res["labels"], d, config)); err != nil {
@@ -1574,6 +1587,7 @@ func flattenNetappVolumeMountOptions(v interface{}, d *schema.ResourceData, conf
 			"export_full":  flattenNetappVolumeMountOptionsExportFull(original["exportFull"], d, config),
 			"instructions": flattenNetappVolumeMountOptionsInstructions(original["instructions"], d, config),
 			"protocol":     flattenNetappVolumeMountOptionsProtocol(original["protocol"], d, config),
+			"ip_address":   flattenNetappVolumeMountOptionsIpAddress(original["ipAddress"], d, config),
 		})
 	}
 	return transformed
@@ -1591,6 +1605,10 @@ func flattenNetappVolumeMountOptionsInstructions(v interface{}, d *schema.Resour
 }
 
 func flattenNetappVolumeMountOptionsProtocol(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenNetappVolumeMountOptionsIpAddress(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -2035,6 +2053,10 @@ func flattenNetappVolumeHybridReplicationParametersLabels(v interface{}, d *sche
 }
 
 func flattenNetappVolumeThroughputMibps(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenNetappVolumeHotTierSizeUsedGib(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 

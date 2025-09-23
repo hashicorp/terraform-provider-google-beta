@@ -187,6 +187,11 @@ If you want to create a zonal Flex pool, specify a zone name for 'location' and 
 				Computed:    true,
 				Description: `Available throughput of the storage pool (in MiB/s).`,
 			},
+			"cold_tier_size_used_gib": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: `Total cold tier data rounded down to the nearest GiB used by the storage pool.`,
+			},
 			"effective_labels": {
 				Type:        schema.TypeMap,
 				Computed:    true,
@@ -197,6 +202,11 @@ If you want to create a zonal Flex pool, specify a zone name for 'location' and 
 				Type:        schema.TypeString,
 				Computed:    true,
 				Description: `Reports if volumes in the pool are encrypted using a Google-managed encryption key or CMEK.`,
+			},
+			"hot_tier_size_used_gib": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: `Total hot tier data rounded down to the nearest GiB used by the storage pool.`,
 			},
 			"terraform_labels": {
 				Type:     schema.TypeMap,
@@ -493,6 +503,12 @@ func resourceNetappStoragePoolRead(d *schema.ResourceData, meta interface{}) err
 		return fmt.Errorf("Error reading StoragePool: %s", err)
 	}
 	if err := d.Set("available_throughput_mibps", flattenNetappStoragePoolAvailableThroughputMibps(res["availableThroughputMibps"], d, config)); err != nil {
+		return fmt.Errorf("Error reading StoragePool: %s", err)
+	}
+	if err := d.Set("cold_tier_size_used_gib", flattenNetappStoragePoolColdTierSizeUsedGib(res["coldTierSizeUsedGib"], d, config)); err != nil {
+		return fmt.Errorf("Error reading StoragePool: %s", err)
+	}
+	if err := d.Set("hot_tier_size_used_gib", flattenNetappStoragePoolHotTierSizeUsedGib(res["hotTierSizeUsedGib"], d, config)); err != nil {
 		return fmt.Errorf("Error reading StoragePool: %s", err)
 	}
 	if err := d.Set("terraform_labels", flattenNetappStoragePoolTerraformLabels(res["labels"], d, config)); err != nil {
@@ -935,6 +951,14 @@ func flattenNetappStoragePoolQosType(v interface{}, d *schema.ResourceData, conf
 }
 
 func flattenNetappStoragePoolAvailableThroughputMibps(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenNetappStoragePoolColdTierSizeUsedGib(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenNetappStoragePoolHotTierSizeUsedGib(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
