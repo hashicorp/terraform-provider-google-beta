@@ -1,0 +1,30 @@
+resource: 'google_saas_runtime_rollout_kind'
+generation_type: 'mmv1'
+source_file: 'products/saasservicemgmt/RolloutKind.yaml'
+api_service_name: 'saasservicemgmt.googleapis.com'
+api_version: 'v1beta1'
+api_resource_type_kind: 'RolloutKind'
+autogen_status: true
+fields:
+  - field: 'annotations'
+  - field: 'create_time'
+  - field: 'effective_annotations'
+    provider_only: true
+  - field: 'effective_labels'
+    provider_only: true
+  - field: 'error_budget.allowed_count'
+  - field: 'error_budget.allowed_percentage'
+  - field: 'labels'
+  - field: 'location'
+    provider_only: true
+  - field: 'name'
+  - field: 'rollout_kind_id'
+    provider_only: true
+  - field: 'rollout_orchestration_strategy'
+  - field: 'terraform_labels'
+    provider_only: true
+  - field: 'uid'
+  - field: 'unit_filter'
+  - field: 'unit_kind'
+  - field: 'update_time'
+  - field: 'update_unit_kind_strategy'
