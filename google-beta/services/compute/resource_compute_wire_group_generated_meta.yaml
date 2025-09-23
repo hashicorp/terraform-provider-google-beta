@@ -16,6 +16,7 @@ fields:
   - field: 'topology.endpoints.city'
   - field: 'topology.endpoints.label'
   - field: 'wire_group_properties.type'
+  - field: 'wire_properties.bandwidth_allocation'
   - field: 'wire_properties.bandwidth_unmetered'
   - field: 'wire_properties.fault_response'
   - field: 'wires.admin_enabled'
