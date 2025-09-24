@@ -915,6 +915,9 @@ func flattenSaasRuntimeUnitKindEffectiveLabels(v interface{}, d *schema.Resource
 }
 
 func expandSaasRuntimeUnitKindDependencies(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -952,6 +955,9 @@ func expandSaasRuntimeUnitKindDependenciesUnitKind(v interface{}, d tpgresource.
 }
 
 func expandSaasRuntimeUnitKindInputVariableMappings(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -988,6 +994,9 @@ func expandSaasRuntimeUnitKindInputVariableMappings(v interface{}, d tpgresource
 }
 
 func expandSaasRuntimeUnitKindInputVariableMappingsFrom(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1022,6 +1031,9 @@ func expandSaasRuntimeUnitKindInputVariableMappingsFromOutputVariable(v interfac
 }
 
 func expandSaasRuntimeUnitKindInputVariableMappingsTo(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1071,6 +1083,9 @@ func expandSaasRuntimeUnitKindInputVariableMappingsVariable(v interface{}, d tpg
 }
 
 func expandSaasRuntimeUnitKindOutputVariableMappings(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -1107,6 +1122,9 @@ func expandSaasRuntimeUnitKindOutputVariableMappings(v interface{}, d tpgresourc
 }
 
 func expandSaasRuntimeUnitKindOutputVariableMappingsFrom(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1141,6 +1159,9 @@ func expandSaasRuntimeUnitKindOutputVariableMappingsFromOutputVariable(v interfa
 }
 
 func expandSaasRuntimeUnitKindOutputVariableMappingsTo(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil

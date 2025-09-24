@@ -1618,6 +1618,9 @@ func expandComputeInterconnectLabelFingerprint(v interface{}, d tpgresource.Terr
 }
 
 func expandComputeInterconnectMacsec(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1644,6 +1647,9 @@ func expandComputeInterconnectMacsec(v interface{}, d tpgresource.TerraformResou
 }
 
 func expandComputeInterconnectMacsecPreSharedKeys(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -1712,6 +1718,9 @@ func expandComputeInterconnectAaiEnabled(v interface{}, d tpgresource.TerraformR
 }
 
 func expandComputeInterconnectApplicationAwareInterconnect(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1756,6 +1765,9 @@ func expandComputeInterconnectApplicationAwareInterconnectProfileDescription(v i
 }
 
 func expandComputeInterconnectApplicationAwareInterconnectStrictPriorityPolicy(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 {
 		return nil, nil
@@ -1771,6 +1783,9 @@ func expandComputeInterconnectApplicationAwareInterconnectStrictPriorityPolicy(v
 }
 
 func expandComputeInterconnectApplicationAwareInterconnectBandwidthPercentagePolicy(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1790,6 +1805,9 @@ func expandComputeInterconnectApplicationAwareInterconnectBandwidthPercentagePol
 }
 
 func expandComputeInterconnectApplicationAwareInterconnectBandwidthPercentagePolicyBandwidthPercentage(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -1827,6 +1845,9 @@ func expandComputeInterconnectApplicationAwareInterconnectBandwidthPercentagePol
 }
 
 func expandComputeInterconnectApplicationAwareInterconnectShapeAveragePercentage(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {

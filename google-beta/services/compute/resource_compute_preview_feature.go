@@ -358,6 +358,9 @@ func expandComputePreviewFeatureActivationStatus(v interface{}, d tpgresource.Te
 }
 
 func expandComputePreviewFeatureRolloutOperation(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -377,6 +380,9 @@ func expandComputePreviewFeatureRolloutOperation(v interface{}, d tpgresource.Te
 }
 
 func expandComputePreviewFeatureRolloutOperationRolloutInput(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil

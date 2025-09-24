@@ -703,6 +703,9 @@ func flattenVertexAIFeaturestoreEffectiveLabels(v interface{}, d *schema.Resourc
 }
 
 func expandVertexAIFeaturestoreOnlineServingConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -733,6 +736,9 @@ func expandVertexAIFeaturestoreOnlineServingConfigFixedNodeCount(v interface{}, 
 }
 
 func expandVertexAIFeaturestoreOnlineServingConfigScaling(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -771,6 +777,9 @@ func expandVertexAIFeaturestoreOnlineStorageTtlDays(v interface{}, d tpgresource
 }
 
 func expandVertexAIFeaturestoreEncryptionSpec(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
