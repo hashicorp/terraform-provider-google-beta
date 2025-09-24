@@ -1510,6 +1510,9 @@ func expandDataprocMetastoreServiceTier(v interface{}, d tpgresource.TerraformRe
 }
 
 func expandDataprocMetastoreServiceScalingConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1551,6 +1554,9 @@ func expandDataprocMetastoreServiceScalingConfigScalingFactor(v interface{}, d t
 }
 
 func expandDataprocMetastoreServiceScalingConfigAutoscalingConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1592,6 +1598,9 @@ func expandDataprocMetastoreServiceScalingConfigAutoscalingConfigAutoscalingFact
 }
 
 func expandDataprocMetastoreServiceScalingConfigAutoscalingConfigLimitConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1626,6 +1635,9 @@ func expandDataprocMetastoreServiceScalingConfigAutoscalingConfigLimitConfigMaxS
 }
 
 func expandDataprocMetastoreServiceScheduledBackup(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1686,6 +1698,9 @@ func expandDataprocMetastoreServiceDeletionProtection(v interface{}, d tpgresour
 }
 
 func expandDataprocMetastoreServiceMaintenanceWindow(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1720,6 +1735,9 @@ func expandDataprocMetastoreServiceMaintenanceWindowDayOfWeek(v interface{}, d t
 }
 
 func expandDataprocMetastoreServiceEncryptionConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1743,6 +1761,9 @@ func expandDataprocMetastoreServiceEncryptionConfigKmsKey(v interface{}, d tpgre
 }
 
 func expandDataprocMetastoreServiceHiveMetastoreConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1809,6 +1830,9 @@ func expandDataprocMetastoreServiceHiveMetastoreConfigConfigOverrides(v interfac
 }
 
 func expandDataprocMetastoreServiceHiveMetastoreConfigKerberosConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1842,6 +1866,9 @@ func expandDataprocMetastoreServiceHiveMetastoreConfigKerberosConfig(v interface
 }
 
 func expandDataprocMetastoreServiceHiveMetastoreConfigKerberosConfigKeytab(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1920,6 +1947,9 @@ func expandDataprocMetastoreServiceHiveMetastoreConfigAuxiliaryVersionsConfigOve
 }
 
 func expandDataprocMetastoreServiceNetworkConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1946,6 +1976,9 @@ func expandDataprocMetastoreServiceNetworkConfig(v interface{}, d tpgresource.Te
 }
 
 func expandDataprocMetastoreServiceNetworkConfigConsumers(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -1995,6 +2028,9 @@ func expandDataprocMetastoreServiceReleaseChannel(v interface{}, d tpgresource.T
 }
 
 func expandDataprocMetastoreServiceMetadataIntegration(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2014,6 +2050,9 @@ func expandDataprocMetastoreServiceMetadataIntegration(v interface{}, d tpgresou
 }
 
 func expandDataprocMetastoreServiceMetadataIntegrationDataCatalogConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2037,6 +2076,9 @@ func expandDataprocMetastoreServiceMetadataIntegrationDataCatalogConfigEnabled(v
 }
 
 func expandDataprocMetastoreServiceTelemetryConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil

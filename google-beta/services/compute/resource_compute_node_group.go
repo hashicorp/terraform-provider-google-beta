@@ -886,6 +886,9 @@ func expandComputeNodeGroupMaintenancePolicy(v interface{}, d tpgresource.Terraf
 }
 
 func expandComputeNodeGroupMaintenanceWindow(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -909,6 +912,9 @@ func expandComputeNodeGroupMaintenanceWindowStartTime(v interface{}, d tpgresour
 }
 
 func expandComputeNodeGroupAutoscalingPolicy(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -954,6 +960,9 @@ func expandComputeNodeGroupAutoscalingPolicyMaxNodes(v interface{}, d tpgresourc
 }
 
 func expandComputeNodeGroupShareSettings(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil

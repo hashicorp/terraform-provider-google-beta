@@ -886,6 +886,9 @@ func expandWorkstationsWorkstationClusterEtag(v interface{}, d tpgresource.Terra
 }
 
 func expandWorkstationsWorkstationClusterPrivateClusterConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -942,6 +945,9 @@ func expandWorkstationsWorkstationClusterPrivateClusterConfigAllowedProjects(v i
 }
 
 func expandWorkstationsWorkstationClusterDomainConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil

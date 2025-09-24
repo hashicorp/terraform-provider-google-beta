@@ -1008,6 +1008,9 @@ func flattenPrivilegedAccessManagerEntitlementAdditionalNotificationTargetsReque
 }
 
 func expandPrivilegedAccessManagerEntitlementEligibleUsers(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -1035,6 +1038,9 @@ func expandPrivilegedAccessManagerEntitlementEligibleUsersPrincipals(v interface
 }
 
 func expandPrivilegedAccessManagerEntitlementApprovalWorkflow(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1054,6 +1060,9 @@ func expandPrivilegedAccessManagerEntitlementApprovalWorkflow(v interface{}, d t
 }
 
 func expandPrivilegedAccessManagerEntitlementApprovalWorkflowManualApprovals(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1084,6 +1093,9 @@ func expandPrivilegedAccessManagerEntitlementApprovalWorkflowManualApprovalsRequ
 }
 
 func expandPrivilegedAccessManagerEntitlementApprovalWorkflowManualApprovalsSteps(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -1127,6 +1139,9 @@ func expandPrivilegedAccessManagerEntitlementApprovalWorkflowManualApprovalsStep
 }
 
 func expandPrivilegedAccessManagerEntitlementApprovalWorkflowManualApprovalsStepsApprovers(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -1167,6 +1182,9 @@ func expandPrivilegedAccessManagerEntitlementApprovalWorkflowManualApprovalsStep
 }
 
 func expandPrivilegedAccessManagerEntitlementPrivilegedAccess(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1186,6 +1204,9 @@ func expandPrivilegedAccessManagerEntitlementPrivilegedAccess(v interface{}, d t
 }
 
 func expandPrivilegedAccessManagerEntitlementPrivilegedAccessGcpIamAccess(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1227,6 +1248,9 @@ func expandPrivilegedAccessManagerEntitlementPrivilegedAccessGcpIamAccessResourc
 }
 
 func expandPrivilegedAccessManagerEntitlementPrivilegedAccessGcpIamAccessRoleBindings(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -1283,6 +1307,9 @@ func expandPrivilegedAccessManagerEntitlementEtag(v interface{}, d tpgresource.T
 }
 
 func expandPrivilegedAccessManagerEntitlementRequesterJustificationConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 {
 		return nil, nil
@@ -1314,6 +1341,9 @@ func expandPrivilegedAccessManagerEntitlementRequesterJustificationConfig(v inte
 }
 
 func expandPrivilegedAccessManagerEntitlementRequesterJustificationConfigNotMandatory(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 {
 		return nil, nil
@@ -1329,6 +1359,9 @@ func expandPrivilegedAccessManagerEntitlementRequesterJustificationConfigNotMand
 }
 
 func expandPrivilegedAccessManagerEntitlementRequesterJustificationConfigUnstructured(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 {
 		return nil, nil
@@ -1344,6 +1377,9 @@ func expandPrivilegedAccessManagerEntitlementRequesterJustificationConfigUnstruc
 }
 
 func expandPrivilegedAccessManagerEntitlementAdditionalNotificationTargets(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 {
 		return nil, nil

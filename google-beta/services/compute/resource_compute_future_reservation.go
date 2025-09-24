@@ -2151,6 +2151,9 @@ func expandComputeFutureReservationDescription(v interface{}, d tpgresource.Terr
 }
 
 func expandComputeFutureReservationTimeWindow(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2192,6 +2195,9 @@ func expandComputeFutureReservationTimeWindowEndTime(v interface{}, d tpgresourc
 }
 
 func expandComputeFutureReservationTimeWindowDuration(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2226,6 +2232,9 @@ func expandComputeFutureReservationTimeWindowDurationNanos(v interface{}, d tpgr
 }
 
 func expandComputeFutureReservationShareSettings(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2324,6 +2333,9 @@ func expandComputeFutureReservationReservationMode(v interface{}, d tpgresource.
 }
 
 func expandComputeFutureReservationCommitmentInfo(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2373,6 +2385,9 @@ func expandComputeFutureReservationSchedulingType(v interface{}, d tpgresource.T
 }
 
 func expandComputeFutureReservationSpecificSkuProperties(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2406,6 +2421,9 @@ func expandComputeFutureReservationSpecificSkuProperties(v interface{}, d tpgres
 }
 
 func expandComputeFutureReservationSpecificSkuPropertiesInstanceProperties(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2471,6 +2489,9 @@ func expandComputeFutureReservationSpecificSkuPropertiesInstancePropertiesMachin
 }
 
 func expandComputeFutureReservationSpecificSkuPropertiesInstancePropertiesGuestAccelerators(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -2512,6 +2533,9 @@ func expandComputeFutureReservationSpecificSkuPropertiesInstancePropertiesMinCpu
 }
 
 func expandComputeFutureReservationSpecificSkuPropertiesInstancePropertiesLocalSsds(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -2573,6 +2597,9 @@ func expandComputeFutureReservationAutoCreatedReservationsDeleteTime(v interface
 }
 
 func expandComputeFutureReservationAutoCreatedReservationsDuration(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2607,6 +2634,9 @@ func expandComputeFutureReservationAutoCreatedReservationsDurationNanos(v interf
 }
 
 func expandComputeFutureReservationAggregateReservation(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2644,6 +2674,9 @@ func expandComputeFutureReservationAggregateReservationVmFamily(v interface{}, d
 }
 
 func expandComputeFutureReservationAggregateReservationReservedResources(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -2666,6 +2699,9 @@ func expandComputeFutureReservationAggregateReservationReservedResources(v inter
 }
 
 func expandComputeFutureReservationAggregateReservationReservedResourcesAccelerator(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil

@@ -1531,6 +1531,9 @@ func expandDatastreamConnectionProfileDisplayName(v interface{}, d tpgresource.T
 }
 
 func expandDatastreamConnectionProfileOracleProfile(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1627,6 +1630,9 @@ func expandDatastreamConnectionProfileOracleProfileConnectionAttributes(v interf
 }
 
 func expandDatastreamConnectionProfileGcsProfile(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1661,6 +1667,9 @@ func expandDatastreamConnectionProfileGcsProfileRootPath(v interface{}, d tpgres
 }
 
 func expandDatastreamConnectionProfileMysqlProfile(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1735,6 +1744,9 @@ func expandDatastreamConnectionProfileMysqlProfileSecretManagerStoredPassword(v 
 }
 
 func expandDatastreamConnectionProfileMysqlProfileSslConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1813,6 +1825,9 @@ func expandDatastreamConnectionProfileMysqlProfileSslConfigCaCertificateSet(v in
 }
 
 func expandDatastreamConnectionProfileBigqueryProfile(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 {
 		return nil, nil
@@ -1828,6 +1843,9 @@ func expandDatastreamConnectionProfileBigqueryProfile(v interface{}, d tpgresour
 }
 
 func expandDatastreamConnectionProfilePostgresqlProfile(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1906,6 +1924,9 @@ func expandDatastreamConnectionProfilePostgresqlProfileDatabase(v interface{}, d
 }
 
 func expandDatastreamConnectionProfileSalesforceProfile(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1943,6 +1964,9 @@ func expandDatastreamConnectionProfileSalesforceProfileDomain(v interface{}, d t
 }
 
 func expandDatastreamConnectionProfileSalesforceProfileUserCredentials(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2010,6 +2034,9 @@ func expandDatastreamConnectionProfileSalesforceProfileUserCredentialsSecretMana
 }
 
 func expandDatastreamConnectionProfileSalesforceProfileOauth2ClientCredentials(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2055,6 +2082,9 @@ func expandDatastreamConnectionProfileSalesforceProfileOauth2ClientCredentialsSe
 }
 
 func expandDatastreamConnectionProfileSqlServerProfile(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2133,6 +2163,9 @@ func expandDatastreamConnectionProfileSqlServerProfileDatabase(v interface{}, d 
 }
 
 func expandDatastreamConnectionProfileForwardSshConnectivity(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2200,6 +2233,9 @@ func expandDatastreamConnectionProfileForwardSshConnectivityPrivateKey(v interfa
 }
 
 func expandDatastreamConnectionProfilePrivateConnectivity(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
