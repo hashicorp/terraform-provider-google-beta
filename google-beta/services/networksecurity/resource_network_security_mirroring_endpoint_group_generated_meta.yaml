@@ -19,6 +19,7 @@ fields:
   - field: 'location'
     provider_only: true
   - field: 'mirroring_deployment_group'
+  - field: 'mirroring_deployment_groups'
   - field: 'mirroring_endpoint_group_id'
     provider_only: true
   - field: 'name'
@@ -26,4 +27,5 @@ fields:
   - field: 'state'
   - field: 'terraform_labels'
     provider_only: true
+  - field: 'type'
   - field: 'update_time'
