@@ -76,14 +76,13 @@ func TestAccPrivatecaCaPool_privatecaCapoolAllFieldsExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"cloud_kms_key": acctest.BootstrapKMSKeyWithPurposeInLocation(t, "ENCRYPT_DECRYPT", "asia-east1").CryptoKey.Name,
-		"pool_location": "asia-east1",
+		"cloud_kms_key": acctest.BootstrapKMSKeyWithPurposeInLocation(t, "ENCRYPT_DECRYPT", "us-central1").CryptoKey.Name,
 		"random_suffix": acctest.RandString(t, 10),
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckPrivatecaCaPoolDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -102,18 +101,21 @@ func TestAccPrivatecaCaPool_privatecaCapoolAllFieldsExample(t *testing.T) {
 func testAccPrivatecaCaPool_privatecaCapoolAllFieldsExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_project_service_identity" "privateca_sa" {
+  provider = google-beta
   service = "privateca.googleapis.com"
 }
 
 resource "google_kms_crypto_key_iam_member" "privateca_sa_keyuser_encrypterdecrypter" {
+  provider = google-beta
   crypto_key_id = "%{cloud_kms_key}"
   role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
   member = google_project_service_identity.privateca_sa.member
 }
 
 resource "google_privateca_ca_pool" "default" {
+  provider = google-beta
   name = "tf-test-my-pool%{random_suffix}"
-  location = "%{pool_location}"
+  location = "us-central1"
   tier = "ENTERPRISE"
   publishing_options {
     publish_ca_cert = false
