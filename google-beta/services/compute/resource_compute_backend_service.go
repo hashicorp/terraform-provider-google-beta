@@ -1604,6 +1604,28 @@ UTILIZATION balancing modes.
 For CONNECTION mode, either maxConnections or
 maxConnectionsPerInstance must be set.`,
 			},
+			"max_in_flight_requests": {
+				Type:     schema.TypeInt,
+				Computed: true,
+				Optional: true,
+				Description: `Defines a maximum number of in-flight requests for the whole NEG
+or instance group. Not available if backend's balancingMode is RATE
+or CONNECTION.`,
+			},
+			"max_in_flight_requests_per_endpoint": {
+				Type:     schema.TypeInt,
+				Computed: true,
+				Optional: true,
+				Description: `Defines a maximum number of in-flight requests for a single endpoint.
+Not available if backend's balancingMode is RATE or CONNECTION.`,
+			},
+			"max_in_flight_requests_per_instance": {
+				Type:     schema.TypeInt,
+				Computed: true,
+				Optional: true,
+				Description: `Defines a maximum number of in-flight requests for a single VM.
+Not available if backend's balancingMode is RATE or CONNECTION.`,
+			},
 			"max_rate": {
 				Type:     schema.TypeInt,
 				Computed: true,
@@ -1650,6 +1672,15 @@ with default preference. This field cannot be set when loadBalancingScheme is se
     based on RTT.
   - DEFAULT: If preferred backends don't have enough capacity, backends in this layer would be used and
     traffic would be assigned based on the load balancing algorithm you use. This is the default Possible values: ["PREFERRED", "DEFAULT"]`,
+			},
+			"traffic_duration": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: verify.ValidateEnum([]string{"LONG", "SHORT", ""}),
+				Description: `This field specifies how long a connection should be kept alive for:
+- LONG: Most of the requests are expected to take more than multiple
+  seconds to finish.
+- SHORT: Most requests are expected to finish with a sub-second latency. Possible values: ["LONG", "SHORT"]`,
 			},
 		},
 	}
@@ -2617,19 +2648,23 @@ func flattenComputeBackendServiceBackend(v interface{}, d *schema.ResourceData, 
 			continue
 		}
 		transformed.Add(map[string]interface{}{
-			"balancing_mode":               flattenComputeBackendServiceBackendBalancingMode(original["balancingMode"], d, config),
-			"capacity_scaler":              flattenComputeBackendServiceBackendCapacityScaler(original["capacityScaler"], d, config),
-			"preference":                   flattenComputeBackendServiceBackendPreference(original["preference"], d, config),
-			"description":                  flattenComputeBackendServiceBackendDescription(original["description"], d, config),
-			"group":                        flattenComputeBackendServiceBackendGroup(original["group"], d, config),
-			"max_connections":              flattenComputeBackendServiceBackendMaxConnections(original["maxConnections"], d, config),
-			"max_connections_per_instance": flattenComputeBackendServiceBackendMaxConnectionsPerInstance(original["maxConnectionsPerInstance"], d, config),
-			"max_connections_per_endpoint": flattenComputeBackendServiceBackendMaxConnectionsPerEndpoint(original["maxConnectionsPerEndpoint"], d, config),
-			"max_rate":                     flattenComputeBackendServiceBackendMaxRate(original["maxRate"], d, config),
-			"max_rate_per_instance":        flattenComputeBackendServiceBackendMaxRatePerInstance(original["maxRatePerInstance"], d, config),
-			"max_rate_per_endpoint":        flattenComputeBackendServiceBackendMaxRatePerEndpoint(original["maxRatePerEndpoint"], d, config),
-			"max_utilization":              flattenComputeBackendServiceBackendMaxUtilization(original["maxUtilization"], d, config),
-			"custom_metrics":               flattenComputeBackendServiceBackendCustomMetrics(original["customMetrics"], d, config),
+			"balancing_mode":                      flattenComputeBackendServiceBackendBalancingMode(original["balancingMode"], d, config),
+			"capacity_scaler":                     flattenComputeBackendServiceBackendCapacityScaler(original["capacityScaler"], d, config),
+			"preference":                          flattenComputeBackendServiceBackendPreference(original["preference"], d, config),
+			"description":                         flattenComputeBackendServiceBackendDescription(original["description"], d, config),
+			"group":                               flattenComputeBackendServiceBackendGroup(original["group"], d, config),
+			"max_connections":                     flattenComputeBackendServiceBackendMaxConnections(original["maxConnections"], d, config),
+			"max_connections_per_instance":        flattenComputeBackendServiceBackendMaxConnectionsPerInstance(original["maxConnectionsPerInstance"], d, config),
+			"max_connections_per_endpoint":        flattenComputeBackendServiceBackendMaxConnectionsPerEndpoint(original["maxConnectionsPerEndpoint"], d, config),
+			"max_rate":                            flattenComputeBackendServiceBackendMaxRate(original["maxRate"], d, config),
+			"max_rate_per_instance":               flattenComputeBackendServiceBackendMaxRatePerInstance(original["maxRatePerInstance"], d, config),
+			"max_rate_per_endpoint":               flattenComputeBackendServiceBackendMaxRatePerEndpoint(original["maxRatePerEndpoint"], d, config),
+			"max_utilization":                     flattenComputeBackendServiceBackendMaxUtilization(original["maxUtilization"], d, config),
+			"max_in_flight_requests":              flattenComputeBackendServiceBackendMaxInFlightRequests(original["maxInFlightRequests"], d, config),
+			"max_in_flight_requests_per_instance": flattenComputeBackendServiceBackendMaxInFlightRequestsPerInstance(original["maxInFlightRequestsPerInstance"], d, config),
+			"max_in_flight_requests_per_endpoint": flattenComputeBackendServiceBackendMaxInFlightRequestsPerEndpoint(original["maxInFlightRequestsPerEndpoint"], d, config),
+			"traffic_duration":                    flattenComputeBackendServiceBackendTrafficDuration(original["trafficDuration"], d, config),
+			"custom_metrics":                      flattenComputeBackendServiceBackendCustomMetrics(original["customMetrics"], d, config),
 		})
 	}
 	return transformed
@@ -2734,6 +2769,61 @@ func flattenComputeBackendServiceBackendMaxRatePerEndpoint(v interface{}, d *sch
 }
 
 func flattenComputeBackendServiceBackendMaxUtilization(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenComputeBackendServiceBackendMaxInFlightRequests(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	// Handles the string fixed64 format
+	if strVal, ok := v.(string); ok {
+		if intVal, err := tpgresource.StringToFixed64(strVal); err == nil {
+			return intVal
+		}
+	}
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
+}
+
+func flattenComputeBackendServiceBackendMaxInFlightRequestsPerInstance(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	// Handles the string fixed64 format
+	if strVal, ok := v.(string); ok {
+		if intVal, err := tpgresource.StringToFixed64(strVal); err == nil {
+			return intVal
+		}
+	}
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
+}
+
+func flattenComputeBackendServiceBackendMaxInFlightRequestsPerEndpoint(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	// Handles the string fixed64 format
+	if strVal, ok := v.(string); ok {
+		if intVal, err := tpgresource.StringToFixed64(strVal); err == nil {
+			return intVal
+		}
+	}
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
+}
+
+func flattenComputeBackendServiceBackendTrafficDuration(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -4288,6 +4378,34 @@ func expandComputeBackendServiceBackend(v interface{}, d tpgresource.TerraformRe
 			transformed["maxUtilization"] = transformedMaxUtilization
 		}
 
+		transformedMaxInFlightRequests, err := expandComputeBackendServiceBackendMaxInFlightRequests(original["max_in_flight_requests"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedMaxInFlightRequests); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["maxInFlightRequests"] = transformedMaxInFlightRequests
+		}
+
+		transformedMaxInFlightRequestsPerInstance, err := expandComputeBackendServiceBackendMaxInFlightRequestsPerInstance(original["max_in_flight_requests_per_instance"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedMaxInFlightRequestsPerInstance); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["maxInFlightRequestsPerInstance"] = transformedMaxInFlightRequestsPerInstance
+		}
+
+		transformedMaxInFlightRequestsPerEndpoint, err := expandComputeBackendServiceBackendMaxInFlightRequestsPerEndpoint(original["max_in_flight_requests_per_endpoint"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedMaxInFlightRequestsPerEndpoint); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["maxInFlightRequestsPerEndpoint"] = transformedMaxInFlightRequestsPerEndpoint
+		}
+
+		transformedTrafficDuration, err := expandComputeBackendServiceBackendTrafficDuration(original["traffic_duration"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedTrafficDuration); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["trafficDuration"] = transformedTrafficDuration
+		}
+
 		transformedCustomMetrics, err := expandComputeBackendServiceBackendCustomMetrics(original["custom_metrics"], d, config)
 		if err != nil {
 			return nil, err
@@ -4345,6 +4463,22 @@ func expandComputeBackendServiceBackendMaxRatePerEndpoint(v interface{}, d tpgre
 }
 
 func expandComputeBackendServiceBackendMaxUtilization(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeBackendServiceBackendMaxInFlightRequests(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeBackendServiceBackendMaxInFlightRequestsPerInstance(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeBackendServiceBackendMaxInFlightRequestsPerEndpoint(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeBackendServiceBackendTrafficDuration(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
