@@ -616,9 +616,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 709
+// Generated resources: 710
 // Generated IAM resources: 348
-// Total generated resources: 1057
+// Total generated resources: 1058
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -1344,6 +1344,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_kms_ekm_connection_iam_binding":                                      tpgiamresource.ResourceIamBinding(kms.KMSEkmConnectionIamSchema, kms.KMSEkmConnectionIamUpdaterProducer, kms.KMSEkmConnectionIdParseFunc),
 	"google_kms_ekm_connection_iam_member":                                       tpgiamresource.ResourceIamMember(kms.KMSEkmConnectionIamSchema, kms.KMSEkmConnectionIamUpdaterProducer, kms.KMSEkmConnectionIdParseFunc),
 	"google_kms_ekm_connection_iam_policy":                                       tpgiamresource.ResourceIamPolicy(kms.KMSEkmConnectionIamSchema, kms.KMSEkmConnectionIamUpdaterProducer, kms.KMSEkmConnectionIdParseFunc),
+	"google_kms_folder_kaj_policy_config":                                        kms.ResourceKMSFolderKajPolicyConfig(),
 	"google_kms_key_handle":                                                      kms.ResourceKMSKeyHandle(),
 	"google_kms_key_ring":                                                        kms.ResourceKMSKeyRing(),
 	"google_kms_key_ring_import_job":                                             kms.ResourceKMSKeyRingImportJob(),

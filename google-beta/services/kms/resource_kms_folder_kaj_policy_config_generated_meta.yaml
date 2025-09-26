@@ -1,0 +1,12 @@
+resource: 'google_kms_folder_kaj_policy_config'
+generation_type: 'mmv1'
+source_file: 'products/kms/FolderKajPolicyConfig.yaml'
+api_service_name: 'cloudkms.googleapis.com'
+api_version: 'v1'
+api_resource_type_kind: 'KeyAccessJustificationsPolicyConfig'
+api_variant_patterns:
+  - 'folders/{{folder}}/kajPolicyConfig'
+fields:
+  - field: 'default_key_access_justification_policy.allowed_access_reasons'
+  - field: 'folder'
+    provider_only: true
