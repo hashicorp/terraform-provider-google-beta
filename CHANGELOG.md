@@ -1,9 +1,7 @@
 ## 7.5.0 (Unreleased)
 
-NOTES:
-* `google_managed_kafka_connect_cluster` and `google_managed_kafka_connector` (ga) ([#10761](https://github.com/hashicorp/terraform-provider-google-beta/pull/10761))
 BREAKING CHANGES:
-* netapp: `peerIpAddresses` field of `google_netapp_volume` resource changing type from String to Array of Strings ([#10757](https://github.com/hashicorp/terraform-provider-google-beta/pull/10757))
+* netapp: changed `peerIpAddresses` field type from String to Array in `google_netapp_volume` resource ([#10757](https://github.com/hashicorp/terraform-provider-google-beta/pull/10757))
 
 FEATURES:
 * **New Data Source:** `google_artifact_registry_maven_artifacts` ([#10785](https://github.com/hashicorp/terraform-provider-google-beta/pull/10785))
@@ -14,7 +12,6 @@ FEATURES:
 * **New Resource:** `google_saas_runtime_rollout_kind` ([#10764](https://github.com/hashicorp/terraform-provider-google-beta/pull/10764))
 
 IMPROVEMENTS:
-* cloudrunv2: added `mount_options` in gcsfuse volumes for `google_cloud_run_v2_service`, `google_cloud_run_v2_job`, and `google_cloud_run_v2_workerpool` resources. (ga) ([#10747](https://github.com/hashicorp/terraform-provider-google-beta/pull/10747))
 * cloudrunv2: added `startup_probe` and `liveness_probe` to `google_cloud_run_v2_worker_pool` resource ([#10749](https://github.com/hashicorp/terraform-provider-google-beta/pull/10749))
 * compute: added `bandwidth_allocation` field to `google_compute_wire_group` resource ([#10770](https://github.com/hashicorp/terraform-provider-google-beta/pull/10770))
 * compute: added `shared_secret_wo` and `shared_secret_wo_version` fields for `google_compute_vpn_tunnel` resource, enabling write-only management of the shared secret. ([#10788](https://github.com/hashicorp/terraform-provider-google-beta/pull/10788))
@@ -23,11 +20,11 @@ IMPROVEMENTS:
 * dlp: added `other_cloud_target` and `other_cloud_starting_location` to `google_data_loss_prevention_discovery_config` ([#10773](https://github.com/hashicorp/terraform-provider-google-beta/pull/10773))
 * gkebackup: added `backup_config.selected_namespace_labels` field to `google_gke_backup_backup_plan` resource ([#10756](https://github.com/hashicorp/terraform-provider-google-beta/pull/10756))
 * looker: added `gemini_enabled` field to `google_looker_instance` resource ([#10771](https://github.com/hashicorp/terraform-provider-google-beta/pull/10771))
-* netapp: promoted `hot_tier_bypass_mode_enabled` field of `google_netapp_volume` resource to GA and added `hot_tier_size_used_gib` fields to `google_netapp_volume` ([#10766](https://github.com/hashicorp/terraform-provider-google-beta/pull/10766))
-* netapp: promoted `hot_tier_size_gib`, `enable_hot_tier_auto_resize` fields of `google_netapp_storage_pool` resource to GA and added `cold_tier_size_used_gib` and `hot_tier_size_used_gib` fields to `google_netapp_storage_pool` ([#10766](https://github.com/hashicorp/terraform-provider-google-beta/pull/10766))
-* networksecurity: added `type` and `mirroring_deployment_groups` fields to `google_network_security_mirroring_endpoint_group` resource (beta) ([#10783](https://github.com/hashicorp/terraform-provider-google-beta/pull/10783))
+* netapp: added `hot_tier_size_used_gib` fields to `google_netapp_volume` ([#10766](https://github.com/hashicorp/terraform-provider-google-beta/pull/10766))
+* netapp: added `cold_tier_size_used_gib` and `hot_tier_size_used_gib` fields to `google_netapp_storage_pool` ([#10766](https://github.com/hashicorp/terraform-provider-google-beta/pull/10766))
+* networksecurity: added `type` and `mirroring_deployment_groups` fields to `google_network_security_mirroring_endpoint_group` resource ([#10783](https://github.com/hashicorp/terraform-provider-google-beta/pull/10783))
 * oracledatabase: added `gcp_oracle_zone` field to `google_oracle_database_odb_network` resource ([#10767](https://github.com/hashicorp/terraform-provider-google-beta/pull/10767))
-* privilegedaccessmanager: added `id` field to `google_privileged_access_manager_entitlement` resource ([#10750](https://github.com/hashicorp/terraform-provider-google-beta/pull/10750))
+* privilegedaccessmanager: added `approval_workflow.steps.id` field to `google_privileged_access_manager_entitlement` resource ([#10750](https://github.com/hashicorp/terraform-provider-google-beta/pull/10750))
 * pubsub: added support for `tags` field to `google_pubsub_topic` and `google_pubsub_subscription` resources ([#10760](https://github.com/hashicorp/terraform-provider-google-beta/pull/10760))
 * sql: added `point_in_time_restore_context` field to `google_sql_database_instance` ([#10786](https://github.com/hashicorp/terraform-provider-google-beta/pull/10786))
 * storage: added `force_destroy` field to `google_storage_insights_report_config` resource ([#10772](https://github.com/hashicorp/terraform-provider-google-beta/pull/10772))
