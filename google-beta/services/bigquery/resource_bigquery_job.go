@@ -937,6 +937,13 @@ Creation, truncation and append actions occur as one atomic update upon job comp
 				},
 				ExactlyOneOf: []string{"query", "load", "copy", "extract"},
 			},
+			"reservation": {
+				Type:     schema.TypeString,
+				Optional: true,
+				ForceNew: true,
+				Description: `The reservation that job would use. User can specify a reservation to execute the job. If this field is not set, reservation is determined based on the rules defined by the reservation assignments.
+The expected format is 'projects/{project}/locations/{location}/reservations/{reservation}'.`,
+			},
 			"effective_labels": {
 				Type:        schema.TypeMap,
 				Computed:    true,
@@ -1316,6 +1323,8 @@ func flattenBigQueryJobConfiguration(v interface{}, d *schema.ResourceData, conf
 		flattenBigQueryJobConfigurationCopy(original["copy"], d, config)
 	transformed["extract"] =
 		flattenBigQueryJobConfigurationExtract(original["extract"], d, config)
+	transformed["reservation"] =
+		flattenBigQueryJobConfigurationReservation(original["reservation"], d, config)
 	transformed["terraform_labels"] =
 		flattenBigQueryJobConfigurationTerraformLabels(original["labels"], d, config)
 	transformed["effective_labels"] =
@@ -2052,6 +2061,10 @@ func flattenBigQueryJobConfigurationExtractSourceModelModelId(v interface{}, d *
 	return v
 }
 
+func flattenBigQueryJobConfigurationReservation(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenBigQueryJobConfigurationTerraformLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
@@ -2218,6 +2231,13 @@ func expandBigQueryJobConfiguration(v interface{}, d tpgresource.TerraformResour
 		return nil, err
 	} else if val := reflect.ValueOf(transformedExtract); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["extract"] = transformedExtract
+	}
+
+	transformedReservation, err := expandBigQueryJobConfigurationReservation(d.Get("reservation"), d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedReservation); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["reservation"] = transformedReservation
 	}
 
 	transformedEffectiveLabels, err := expandBigQueryJobConfigurationEffectiveLabels(d.Get("effective_labels"), d, config)
@@ -3442,6 +3462,10 @@ func expandBigQueryJobConfigurationExtractSourceModelDatasetId(v interface{}, d 
 }
 
 func expandBigQueryJobConfigurationExtractSourceModelModelId(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandBigQueryJobConfigurationReservation(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

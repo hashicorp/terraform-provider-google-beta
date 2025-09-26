@@ -169,6 +169,8 @@ fields:
     api_field: 'configuration.query.user_defined_function_resources.resource_uri'
   - field: 'query.write_disposition'
     api_field: 'configuration.query.write_disposition'
+  - field: 'reservation'
+    api_field: 'configuration.reservation'
   - field: 'status.error_result.location'
   - field: 'status.error_result.message'
   - field: 'status.error_result.reason'
