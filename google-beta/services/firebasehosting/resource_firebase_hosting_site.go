@@ -261,20 +261,21 @@ func resourceFirebaseHostingSiteRead(d *schema.ResourceData, meta interface{}) e
 	}
 
 	identity, err := d.Identity()
-	if err != nil {
-		return fmt.Errorf("Error getting identity: %s", err)
-	}
-	if v, ok := identity.GetOk("site_id"); ok && v != "" {
-		err = identity.Set("site_id", d.Get("site_id").(string))
-		if err != nil {
-			return fmt.Errorf("Error setting site_id: %s", err)
+	if err != nil && identity != nil {
+		if v, ok := identity.GetOk("site_id"); ok && v != "" {
+			err = identity.Set("site_id", d.Get("site_id").(string))
+			if err != nil {
+				return fmt.Errorf("Error setting site_id: %s", err)
+			}
 		}
-	}
-	if v, ok := identity.GetOk("project"); ok && v != "" {
-		err = identity.Set("project", d.Get("project").(string))
-		if err != nil {
-			return fmt.Errorf("Error setting project: %s", err)
+		if v, ok := identity.GetOk("project"); ok && v != "" {
+			err = identity.Set("project", d.Get("project").(string))
+			if err != nil {
+				return fmt.Errorf("Error setting project: %s", err)
+			}
 		}
+	} else {
+		fmt.Printf("[DEBUG] identity not set: %s", err)
 	}
 	return nil
 }
