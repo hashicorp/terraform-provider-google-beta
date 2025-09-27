@@ -225,20 +225,21 @@ func resourceComputeOrganizationSecurityPolicyAssociationRead(d *schema.Resource
 	}
 
 	identity, err := d.Identity()
-	if err != nil {
-		return fmt.Errorf("Error getting identity: %s", err)
-	}
-	if v, ok := identity.GetOk("name"); ok && v != "" {
-		err = identity.Set("name", d.Get("name").(string))
-		if err != nil {
-			return fmt.Errorf("Error setting name: %s", err)
+	if err != nil && identity != nil {
+		if v, ok := identity.GetOk("name"); ok && v != "" {
+			err = identity.Set("name", d.Get("name").(string))
+			if err != nil {
+				return fmt.Errorf("Error setting name: %s", err)
+			}
 		}
-	}
-	if v, ok := identity.GetOk("policy_id"); ok && v != "" {
-		err = identity.Set("policy_id", d.Get("policy_id").(string))
-		if err != nil {
-			return fmt.Errorf("Error setting policy_id: %s", err)
+		if v, ok := identity.GetOk("policy_id"); ok && v != "" {
+			err = identity.Set("policy_id", d.Get("policy_id").(string))
+			if err != nil {
+				return fmt.Errorf("Error setting policy_id: %s", err)
+			}
 		}
+	} else {
+		fmt.Printf("[DEBUG] identity not set: %s", err)
 	}
 	return nil
 }

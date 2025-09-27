@@ -295,26 +295,27 @@ func resourceApiGatewayGatewayRead(d *schema.ResourceData, meta interface{}) err
 	}
 
 	identity, err := d.Identity()
-	if err != nil {
-		return fmt.Errorf("Error getting identity: %s", err)
-	}
-	if v, ok := identity.GetOk("region"); ok && v != "" {
-		err = identity.Set("region", d.Get("region").(string))
-		if err != nil {
-			return fmt.Errorf("Error setting region: %s", err)
+	if err != nil && identity != nil {
+		if v, ok := identity.GetOk("region"); ok && v != "" {
+			err = identity.Set("region", d.Get("region").(string))
+			if err != nil {
+				return fmt.Errorf("Error setting region: %s", err)
+			}
 		}
-	}
-	if v, ok := identity.GetOk("gateway_id"); ok && v != "" {
-		err = identity.Set("gateway_id", d.Get("gateway_id").(string))
-		if err != nil {
-			return fmt.Errorf("Error setting gateway_id: %s", err)
+		if v, ok := identity.GetOk("gateway_id"); ok && v != "" {
+			err = identity.Set("gateway_id", d.Get("gateway_id").(string))
+			if err != nil {
+				return fmt.Errorf("Error setting gateway_id: %s", err)
+			}
 		}
-	}
-	if v, ok := identity.GetOk("project"); ok && v != "" {
-		err = identity.Set("project", d.Get("project").(string))
-		if err != nil {
-			return fmt.Errorf("Error setting project: %s", err)
+		if v, ok := identity.GetOk("project"); ok && v != "" {
+			err = identity.Set("project", d.Get("project").(string))
+			if err != nil {
+				return fmt.Errorf("Error setting project: %s", err)
+			}
 		}
+	} else {
+		fmt.Printf("[DEBUG] identity not set: %s", err)
 	}
 	return nil
 }
