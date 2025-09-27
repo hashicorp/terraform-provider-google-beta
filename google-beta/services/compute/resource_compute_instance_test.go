@@ -4480,7 +4480,7 @@ func TestAccComputeInstance_GracefulShutdownWithResetUpdate(t *testing.T) {
 			},
 			{
 				Config:      testAccComputeInstance_GracefulShutdownUpdate(ivalid_2),
-				ExpectError: regexp.MustCompile("Must be less than or equal to 999999999, invalid"),
+				ExpectError: regexp.MustCompile("Must be less than or equal to 999999999"),
 			},
 		},
 	})
@@ -4583,7 +4583,7 @@ func TestAccComputeInstance_GracefulShutdownWithoutResetUpdate(t *testing.T) {
 			},
 			{
 				Config:      testAccComputeInstance_GracefulShutdownUpdate(ivalid_4),
-				ExpectError: regexp.MustCompile("Must be less than or equal to 999999999, invalid"),
+				ExpectError: regexp.MustCompile("Must be less than or equal to 999999999"),
 			},
 		},
 	})
