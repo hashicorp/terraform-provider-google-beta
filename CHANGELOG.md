@@ -1,7 +1,7 @@
 ## 7.5.0 (Unreleased)
 
 BREAKING CHANGES:
-* netapp: changed `peerIpAddresses` field type from String to Array in `google_netapp_volume` resource ([#10757](https://github.com/hashicorp/terraform-provider-google-beta/pull/10757))
+* netapp: changed `peerIpAddresses` field type from String to Array in `google_netapp_volume` resource, as it was unusable otherwise ([#10757](https://github.com/hashicorp/terraform-provider-google-beta/pull/10757))
 
 FEATURES:
 * **New Data Source:** `google_artifact_registry_maven_artifacts` ([#10785](https://github.com/hashicorp/terraform-provider-google-beta/pull/10785))
@@ -34,8 +34,8 @@ IMPROVEMENTS:
 * vertexai: added `kmsKeyName` field to `google_vertex_ai_index` resource ([#10759](https://github.com/hashicorp/terraform-provider-google-beta/pull/10759))
 
 BUG FIXES:
-* apihub: fixed permadiff on `config_template` in `google_apihub_plugin` resource ([#10758](https://github.com/hashicorp/terraform-provider-google-beta/pull/10758))
-* storage: fixed panic caused by empty `cors` blocks `google_storage_bucket` resource ([#10781](https://github.com/hashicorp/terraform-provider-google-beta/pull/10781))
+* apihub: fixed a permadiff on `config_template` in `google_apihub_plugin` resource ([#10758](https://github.com/hashicorp/terraform-provider-google-beta/pull/10758))
+* storage: fixed a panic caused by empty `cors` blocks `google_storage_bucket` resource ([#10781](https://github.com/hashicorp/terraform-provider-google-beta/pull/10781))
 
 ## 7.4.0 (September 23, 2025)
 
