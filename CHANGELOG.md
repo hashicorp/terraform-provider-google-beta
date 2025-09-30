@@ -1,7 +1,7 @@
 ## 7.5.0 (Unreleased)
 
 BREAKING CHANGES:
-* netapp: changed `peerIpAddresses` field type from String to Array in `google_netapp_volume` resource, as it was unusable otherwise ([#10757](https://github.com/hashicorp/terraform-provider-google-beta/pull/10757))
+* netapp: changed `peer_ip_addresses` field type from String to Array in `google_netapp_volume` resource, as it was unusable otherwise ([#10757](https://github.com/hashicorp/terraform-provider-google-beta/pull/10757))
 
 FEATURES:
 * **New Data Source:** `google_artifact_registry_maven_artifacts` ([#10785](https://github.com/hashicorp/terraform-provider-google-beta/pull/10785))
@@ -28,10 +28,10 @@ IMPROVEMENTS:
 * pubsub: added support for `tags` field to `google_pubsub_topic` and `google_pubsub_subscription` resources ([#10760](https://github.com/hashicorp/terraform-provider-google-beta/pull/10760))
 * sql: added `point_in_time_restore_context` field to `google_sql_database_instance` ([#10786](https://github.com/hashicorp/terraform-provider-google-beta/pull/10786))
 * storage: added `force_destroy` field to `google_storage_insights_report_config` resource ([#10772](https://github.com/hashicorp/terraform-provider-google-beta/pull/10772))
-* storageinsights: added `activityDataRetentionPeriodDays` fields to `google_storage_insights_dataset_config` resource ([#10769](https://github.com/hashicorp/terraform-provider-google-beta/pull/10769))
+* storageinsights: added `activity_data_retention_period_days` field to `google_storage_insights_dataset_config` resource ([#10769](https://github.com/hashicorp/terraform-provider-google-beta/pull/10769))
 * vertexai: added `endpoint_config.private_service_connect_config` block to `google_vertex_ai_endpoint_with_model_garden_deployment` resource ([#10754](https://github.com/hashicorp/terraform-provider-google-beta/pull/10754))
-* vertexai: added `kmsKeyName` field to `google_vertex_ai_index_endpoint ` resource ([#10787](https://github.com/hashicorp/terraform-provider-google-beta/pull/10787))
-* vertexai: added `kmsKeyName` field to `google_vertex_ai_index` resource ([#10759](https://github.com/hashicorp/terraform-provider-google-beta/pull/10759))
+* vertexai: added `encryption_spec.kms_key_name` field to `google_vertex_ai_index_endpoint ` resource ([#10787](https://github.com/hashicorp/terraform-provider-google-beta/pull/10787))
+* vertexai: added `encryption_spec.kms_key_name` field to `google_vertex_ai_index` resource ([#10759](https://github.com/hashicorp/terraform-provider-google-beta/pull/10759))
 
 BUG FIXES:
 * apihub: fixed a permadiff on `config_template` in `google_apihub_plugin` resource ([#10758](https://github.com/hashicorp/terraform-provider-google-beta/pull/10758))
