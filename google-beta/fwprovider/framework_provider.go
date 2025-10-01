@@ -37,9 +37,9 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/fwmodels"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/fwvalidators"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/apigee"
-	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager"
-
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebase"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/secretmanager"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/storage"
 	"github.com/hashicorp/terraform-provider-google-beta/version"
 
@@ -1344,5 +1344,6 @@ func (p *FrameworkProvider) EphemeralResources(_ context.Context) []func() ephem
 		resourcemanager.GoogleEphemeralServiceAccountIdToken,
 		resourcemanager.GoogleEphemeralServiceAccountJwt,
 		resourcemanager.GoogleEphemeralServiceAccountKey,
+		secretmanager.GoogleEphemeralSecretManagerSecretVersion,
 	}
 }
