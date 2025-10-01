@@ -631,7 +631,7 @@ func TestAccFilestoreInstance_psc(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckFilestoreInstanceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -652,18 +652,14 @@ func TestAccFilestoreInstance_psc(t *testing.T) {
 
 func testAccFilestoreInstance_psc(context map[string]interface{}) string {
 	return acctest.Nprintf(`
-data "google_client_config" "current" {
-  provider = google-beta
-}
+data "google_client_config" "current" {}
 
 resource "google_compute_network" "psc_network" {
-  provider                = google-beta
   name                    = "%{name}"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "psc_subnet" {
-  provider      = google-beta
   name          = "%{name}"
   ip_cidr_range = "10.2.0.0/16"
   region        = "%{location}"
@@ -671,7 +667,6 @@ resource "google_compute_subnetwork" "psc_subnet" {
 }
 
 resource "google_network_connectivity_service_connection_policy" "default" {
-  provider      = google-beta
   name          = "%{name}"
   location      = "%{location}"
   service_class = "google-cloud-filestore"
@@ -682,7 +677,6 @@ resource "google_network_connectivity_service_connection_policy" "default" {
 }
 
 resource "google_filestore_instance" "instance" {
-  provider = google-beta
   depends_on = [
     google_network_connectivity_service_connection_policy.default
   ]
@@ -724,7 +718,7 @@ func TestAccFilestoreInstance_nfsExportOptionsNetwork_update(t *testing.T) {
 	// Currently, we can only alternate between an empty network and the instance network of non-PSC instances.
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckFilestoreInstanceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -754,7 +748,6 @@ func TestAccFilestoreInstance_nfsExportOptionsNetwork_update(t *testing.T) {
 func testAccFilestoreInstance_nfsExportOptionsNetwork_update(name, location, tier, network string) string {
 	return fmt.Sprintf(`
 resource "google_filestore_instance" "instance" {
-  provider    = google-beta
   name        = "%s"
   zone        = "%s"
   tier        = "%s"
