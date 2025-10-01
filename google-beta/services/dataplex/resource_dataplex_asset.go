@@ -60,10 +60,10 @@ func ResourceDataplexAsset() *schema.Resource {
 			Version: 1,
 			SchemaFunc: func() map[string]*schema.Schema {
 				return map[string]*schema.Schema{
-					"lake": {
+					"dataplex_zone": {
 						Type:              schema.TypeString,
 						RequiredForImport: true,
-						Description:       "The lake for the resource",
+						Description:       "The zone for the resource",
 					},
 					"name": {
 						Type:              schema.TypeString,
@@ -75,10 +75,10 @@ func ResourceDataplexAsset() *schema.Resource {
 						OptionalForImport: true,
 						Description:       "The project for the resource",
 					},
-					"dataplex_zone": {
+					"lake": {
 						Type:              schema.TypeString,
 						RequiredForImport: true,
-						Description:       "The zone for the resource",
+						Description:       "The lake for the resource",
 					},
 					"location": {
 						Type:              schema.TypeString,
