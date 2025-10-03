@@ -47,6 +47,12 @@ func TestAccFirebaseHostingVersion_firebasehostingVersionRedirectExample(t *test
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"site_id"},
 			},
+			{
+				ResourceName:       "google_firebase_hosting_version.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }

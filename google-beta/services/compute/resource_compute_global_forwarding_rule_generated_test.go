@@ -52,6 +52,12 @@ func TestAccComputeGlobalForwardingRule_externalTcpProxyLbMigBackendExample(t *t
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"ip_address", "labels", "network", "no_automate_dns_zone", "port_range", "subnetwork", "target", "terraform_labels"},
 			},
+			{
+				ResourceName:       "google_compute_global_forwarding_rule.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }

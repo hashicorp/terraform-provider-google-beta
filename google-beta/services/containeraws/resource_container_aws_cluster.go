@@ -65,15 +65,15 @@ func ResourceContainerAwsCluster() *schema.Resource {
 						OptionalForImport: true,
 						Description:       "The project for the resource",
 					},
-					"location": {
-						Type:              schema.TypeString,
-						RequiredForImport: true,
-						Description:       "The location for the resource",
-					},
 					"name": {
 						Type:              schema.TypeString,
 						RequiredForImport: true,
 						Description:       "The name of this resource.",
+					},
+					"location": {
+						Type:              schema.TypeString,
+						RequiredForImport: true,
+						Description:       "The location for the resource",
 					},
 				}
 			},

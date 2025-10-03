@@ -50,6 +50,12 @@ func TestAccComputeOrganizationSecurityPolicy_organizationSecurityPolicyBasicExa
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
+			{
+				ResourceName:       "google_compute_organization_security_policy.policy",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }

@@ -53,6 +53,12 @@ func TestAccFirebaseDatabaseInstance_firebaseDatabaseInstanceBasicExample(t *tes
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"instance_id", "region"},
 			},
+			{
+				ResourceName:       "google_firebase_database_instance.basic",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }

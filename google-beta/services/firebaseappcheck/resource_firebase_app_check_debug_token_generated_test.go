@@ -58,6 +58,12 @@ func TestAccFirebaseAppCheckDebugToken_firebaseAppCheckDebugTokenBasicExample(t 
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"app_id", "token"},
 			},
+			{
+				ResourceName:       "google_firebase_app_check_debug_token.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
