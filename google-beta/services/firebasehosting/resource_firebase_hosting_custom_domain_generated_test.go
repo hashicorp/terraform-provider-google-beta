@@ -55,6 +55,12 @@ func TestAccFirebaseHostingCustomDomain_firebasehostingCustomdomainBasicExample(
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"custom_domain", "site_id"},
 			},
+			{
+				ResourceName:       "google_firebase_hosting_custom_domain.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }

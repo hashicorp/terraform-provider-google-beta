@@ -54,6 +54,12 @@ func TestAccFirebaseAppCheckDeviceCheckConfig_firebaseAppCheckDeviceCheckConfigF
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"app_id", "private_key"},
 			},
+			{
+				ResourceName:       "google_firebase_app_check_device_check_config.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }

@@ -53,6 +53,12 @@ func TestAccComputeNetworkEdgeSecurityService_computeNetworkEdgeSecurityServiceB
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"region"},
 			},
+			{
+				ResourceName:       "google_compute_network_edge_security_service.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }

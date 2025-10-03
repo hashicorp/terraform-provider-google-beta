@@ -51,6 +51,12 @@ func TestAccDataformRepositoryWorkflowConfig_dataformRepositoryWorkflowConfigExa
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"region", "repository"},
 			},
+			{
+				ResourceName:       "google_dataform_repository_workflow_config.workflow",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }

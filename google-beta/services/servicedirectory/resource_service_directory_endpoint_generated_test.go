@@ -51,6 +51,12 @@ func TestAccServiceDirectoryEndpoint_serviceDirectoryEndpointBasicExample(t *tes
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"endpoint_id", "service"},
 			},
+			{
+				ResourceName:       "google_service_directory_endpoint.example",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }

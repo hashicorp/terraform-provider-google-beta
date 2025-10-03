@@ -51,6 +51,12 @@ func TestAccBigqueryAnalyticsHubDataExchangeSubscription_bigqueryAnalyticshubDat
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"data_exchange_id", "data_exchange_location", "data_exchange_project", "destination_dataset", "last_modify_time", "linked_dataset_map", "linked_resources", "location", "state"},
 			},
+			{
+				ResourceName:       "google_bigquery_analytics_hub_data_exchange_subscription.subscription",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }

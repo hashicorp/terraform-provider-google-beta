@@ -53,6 +53,12 @@ func TestAccFirebaseHostingSite_firebasehostingSiteBasicExample(t *testing.T) {
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"site_id"},
 			},
+			{
+				ResourceName:       "google_firebase_hosting_site.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }

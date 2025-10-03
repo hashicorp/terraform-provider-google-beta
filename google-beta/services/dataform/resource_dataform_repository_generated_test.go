@@ -45,6 +45,12 @@ func TestAccDataformRepository_dataformRepositoryWithCloudsourceRepoExample(t *t
 			{
 				Config: testAccDataformRepository_dataformRepositoryWithCloudsourceRepoExample(context),
 			},
+			{
+				ResourceName:       "google_dataform_repository.dataform_repository",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }

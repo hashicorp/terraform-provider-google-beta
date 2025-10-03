@@ -55,6 +55,12 @@ func TestAccWorkstationsWorkstationConfig_workstationConfigBasicExample(t *testi
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"annotations", "enable_audit_agent", "labels", "location", "terraform_labels", "workstation_cluster_id", "workstation_config_id"},
 			},
+			{
+				ResourceName:       "google_workstations_workstation_config.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }

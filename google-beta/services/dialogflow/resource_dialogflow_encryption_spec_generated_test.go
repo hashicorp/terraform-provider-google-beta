@@ -45,6 +45,12 @@ func TestAccDialogflowEncryptionSpec_dialogflowEncryptionSpecBasicExample(t *tes
 			{
 				Config: testAccDialogflowEncryptionSpec_dialogflowEncryptionSpecBasicExample(context),
 			},
+			{
+				ResourceName:       "google_dialogflow_encryption_spec.my-encryption-spec",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }

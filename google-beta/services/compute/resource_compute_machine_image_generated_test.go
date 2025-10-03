@@ -51,6 +51,12 @@ func TestAccComputeMachineImage_machineImageBasicExample(t *testing.T) {
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"source_instance"},
 			},
+			{
+				ResourceName:       "google_compute_machine_image.image",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }

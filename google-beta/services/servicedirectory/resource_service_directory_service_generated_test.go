@@ -51,6 +51,12 @@ func TestAccServiceDirectoryService_serviceDirectoryServiceBasicExample(t *testi
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"namespace", "service_id"},
 			},
+			{
+				ResourceName:       "google_service_directory_service.example",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }

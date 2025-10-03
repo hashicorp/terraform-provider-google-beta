@@ -58,6 +58,12 @@ func TestAccKMSAutokeyConfig_kmsAutokeyConfigAllExample(t *testing.T) {
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"folder"},
 			},
+			{
+				ResourceName:       "google_kms_autokey_config.example-autokeyconfig",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }

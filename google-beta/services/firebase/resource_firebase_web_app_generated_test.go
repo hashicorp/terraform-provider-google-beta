@@ -54,6 +54,12 @@ func TestAccFirebaseWebApp_firebaseWebAppBasicExample(t *testing.T) {
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"deletion_policy", "project"},
 			},
+			{
+				ResourceName:       "google_firebase_web_app.basic",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
