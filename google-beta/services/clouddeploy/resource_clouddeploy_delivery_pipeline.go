@@ -61,6 +61,11 @@ func ResourceClouddeployDeliveryPipeline() *schema.Resource {
 			Version: 1,
 			SchemaFunc: func() map[string]*schema.Schema {
 				return map[string]*schema.Schema{
+					"project": {
+						Type:              schema.TypeString,
+						OptionalForImport: true,
+						Description:       "The project for the resource",
+					},
 					"location": {
 						Type:              schema.TypeString,
 						RequiredForImport: true,
@@ -70,11 +75,6 @@ func ResourceClouddeployDeliveryPipeline() *schema.Resource {
 						Type:              schema.TypeString,
 						RequiredForImport: true,
 						Description:       "Name of the `DeliveryPipeline`. Format is `[a-z]([a-z0-9-]{0,61}[a-z0-9])?`.",
-					},
-					"project": {
-						Type:              schema.TypeString,
-						OptionalForImport: true,
-						Description:       "The project for the resource",
 					},
 				}
 			},
