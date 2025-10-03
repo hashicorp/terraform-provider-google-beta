@@ -59,6 +59,11 @@ func ResourceAssuredWorkloadsWorkload() *schema.Resource {
 			Version: 1,
 			SchemaFunc: func() map[string]*schema.Schema {
 				return map[string]*schema.Schema{
+					"location": {
+						Type:              schema.TypeString,
+						RequiredForImport: true,
+						Description:       "The location for the resource",
+					},
 					"name": {
 						Type:              schema.TypeString,
 						RequiredForImport: true,
@@ -68,11 +73,6 @@ func ResourceAssuredWorkloadsWorkload() *schema.Resource {
 						Type:              schema.TypeString,
 						RequiredForImport: true,
 						Description:       "The organization for the resource",
-					},
-					"location": {
-						Type:              schema.TypeString,
-						RequiredForImport: true,
-						Description:       "The location for the resource",
 					},
 				}
 			},
