@@ -616,9 +616,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 711
+// Generated resources: 712
 // Generated IAM resources: 348
-// Total generated resources: 1059
+// Total generated resources: 1060
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -1281,6 +1281,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_iam_workforce_pool_iam_policy":                                       tpgiamresource.ResourceIamPolicy(iamworkforcepool.IAMWorkforcePoolWorkforcePoolIamSchema, iamworkforcepool.IAMWorkforcePoolWorkforcePoolIamUpdaterProducer, iamworkforcepool.IAMWorkforcePoolWorkforcePoolIdParseFunc),
 	"google_iam_workforce_pool_provider":                                         iamworkforcepool.ResourceIAMWorkforcePoolWorkforcePoolProvider(),
 	"google_iam_workforce_pool_provider_key":                                     iamworkforcepool.ResourceIAMWorkforcePoolWorkforcePoolProviderKey(),
+	"google_iam_workforce_pool_provider_scim_tenant":                             iamworkforcepool.ResourceIAMWorkforcePoolWorkforcePoolProviderScimTenant(),
 	"google_iap_app_engine_service_iam_binding":                                  tpgiamresource.ResourceIamBinding(iap.IapAppEngineServiceIamSchema, iap.IapAppEngineServiceIamUpdaterProducer, iap.IapAppEngineServiceIdParseFunc),
 	"google_iap_app_engine_service_iam_member":                                   tpgiamresource.ResourceIamMember(iap.IapAppEngineServiceIamSchema, iap.IapAppEngineServiceIamUpdaterProducer, iap.IapAppEngineServiceIdParseFunc),
 	"google_iap_app_engine_service_iam_policy":                                   tpgiamresource.ResourceIamPolicy(iap.IapAppEngineServiceIamSchema, iap.IapAppEngineServiceIamUpdaterProducer, iap.IapAppEngineServiceIdParseFunc),
