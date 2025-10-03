@@ -31,3 +31,6 @@ fields:
   - field: 'threat_prevention_profile.threat_overrides.type'
   - field: 'type'
   - field: 'update_time'
+  - field: 'url_filtering_profile.url_filters.filtering_action'
+  - field: 'url_filtering_profile.url_filters.priority'
+  - field: 'url_filtering_profile.url_filters.urls'
