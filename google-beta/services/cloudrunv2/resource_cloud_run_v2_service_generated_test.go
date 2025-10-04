@@ -1021,6 +1021,11 @@ func TestAccCloudRunV2Service_cloudrunv2ServiceFullUpdateConvertExample(t *testi
 			},
 			{
 				Config: testAccCloudRunV2Service_cloudrunv2ServiceFullUpdateConvertExample(context),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_cloud_run_v2_service.default", plancheck.ResourceActionUpdate),
+					},
+				},
 			},
 			{
 				ResourceName:            "google_cloud_run_v2_service.default",
