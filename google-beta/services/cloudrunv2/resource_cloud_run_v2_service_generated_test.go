@@ -11,7 +11,7 @@
 //     changes will be clobbered when the file is regenerated.
 //
 //     Please read more about how to change this file in
-//     .github/CONTRIBUTING.md.
+//     .github/CONTRIBUTING.md. test
 //
 // ----------------------------------------------------------------------------
 
@@ -994,6 +994,202 @@ resource "google_cloud_run_v2_service" "default" {
       image = "us-docker.pkg.dev/cloudrun/container/hello"
     }
   }
+}
+`, context)
+}
+
+func TestAccCloudRunV2Service_cloudrunv2ServiceFullUpdateConvertExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckCloudRunV2ServiceDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudRunV2Service_cloudrunv2ServiceFullConvertExample(context),
+			},
+			{
+				ResourceName:            "google_cloud_run_v2_service.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"name", "location", "annotations", "labels", "terraform_labels"},
+			},
+			{
+				Config: testAccCloudRunV2Service_cloudrunv2ServiceFullUpdateConvertExample(context),
+			},
+			{
+				ResourceName:            "google_cloud_run_v2_service.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"name", "location", "annotations", "labels", "terraform_labels", "deletion_protection"},
+			},
+		},
+	})
+}
+
+func testAccCloudRunV2Service_cloudrunv2ServiceFullConvertExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_cloud_run_v2_service" "default" {
+  name     = "tf-test-cloudrun-service%{random_suffix}"
+  description = "description creating"
+  location = "us-central1"
+  annotations = {
+    generated-by = "magic-modules"
+  }
+  ingress = "INGRESS_TRAFFIC_ALL"
+  labels = {
+    label-1 = "value-1"
+  }
+  client = "client-1"
+  client_version = "client-version-1"
+  scaling {
+    min_instance_count = 1
+    max_instance_count = 3
+  }
+  template {
+    labels = {
+      label-1 = "value-1"
+    }
+    timeout = "300s"
+    service_account = google_service_account.service_account.email
+    execution_environment = "EXECUTION_ENVIRONMENT_GEN2"
+    annotations = {
+      generated-by = "magic-modules"
+    }
+    containers {
+      name = "container-1"
+      image = "us-docker.pkg.dev/cloudrun/container/hello"
+      env {
+        name = "SOURCE"
+        value = "remote"
+      }
+      env {
+        name = "TARGET"
+        value = "home"
+      }
+      ports {
+        name = "h2c"
+        container_port = 8080
+      }
+      resources {
+        cpu_idle = true
+        startup_cpu_boost = true
+        limits = {
+          cpu = "4"
+          memory = "2Gi"
+        }
+      }
+    }
+    session_affinity = false
+  }
+}
+
+resource "google_service_account" "service_account" {
+  account_id   = "tf-test-my-account%{random_suffix}"
+  display_name = "Test Service Account"
+}
+`, context)
+}
+func testAccCloudRunV2Service_cloudrunv2ServiceFullUpdateConvertExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_cloud_run_v2_service" "default" {
+  name     = "tf-test-cloudrun-service%{random_suffix}"
+  description = "description updating"
+  location = "us-central1"
+  deletion_protection = false
+  annotations = {
+    generated-by = "magic-modules-files"
+  }
+  ingress = "INGRESS_TRAFFIC_ALL"
+  binary_authorization {
+    use_default = true
+    breakglass_justification = "Some justification"
+  }
+  labels = {
+    label-1 = "value-update"
+  }
+  client = "client-update"
+  client_version = "client-version-update"
+  scaling {
+    min_instance_count = 1
+    max_instance_count = 2
+  }
+  template {
+    labels = {
+      label-1 = "value-update"
+    }
+    timeout = "500s"
+    service_account = google_service_account.service_account.email
+    execution_environment = "EXECUTION_ENVIRONMENT_GEN1"
+    annotations = {
+      generated-by = "magic-modules"
+    }
+    containers {
+      name = "container-update"
+      image = "us-docker.pkg.dev/cloudrun/container/hello"
+      env {
+        name = "SOURCE_UPDATE"
+        value = "remote-update"
+      }
+      env {
+        name = "TARGET_UPDATE"
+        value = "home-update"
+      }
+      ports {
+        name = "h2c"
+        container_port = 8080
+      }
+      resources {
+        cpu_idle = true
+        startup_cpu_boost = false
+        limits = {
+          cpu = "2"
+          memory = "8Gi"
+        }
+      }
+    }
+    vpc_access{
+      connector = google_vpc_access_connector.connector.id
+      egress = "ALL_TRAFFIC"
+    }
+    session_affinity = true
+  }
+  traffic {
+    type = "TRAFFIC_TARGET_ALLOCATION_TYPE_LATEST"
+    percent = 100
+    tag = "tt-update"
+  }
+}
+
+resource "google_service_account" "service_account" {
+  account_id   = "tf-test-my-account%{random_suffix}"
+  display_name = "Test Service Account"
+}
+
+resource "google_vpc_access_connector" "connector" {
+  name          = "tf-test-run-vpc%{random_suffix}"
+  subnet {
+    name = google_compute_subnetwork.custom_test.name
+  }
+  machine_type = "e2-standard-4"
+  min_instances = 2
+  max_instances = 3
+  region        = "us-central1"
+}
+resource "google_compute_subnetwork" "custom_test" {
+  name          = "tf-test-run-subnetwork%{random_suffix}"
+  ip_cidr_range = "10.2.0.0/28"
+  region        = "us-central1"
+  network       = google_compute_network.custom_test.id
+}
+resource "google_compute_network" "custom_test" {
+  name                    = "tf-test-run-network%{random_suffix}"
+  auto_create_subnetworks = false
 }
 `, context)
 }
