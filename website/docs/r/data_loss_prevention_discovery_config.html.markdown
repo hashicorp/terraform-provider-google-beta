@@ -554,8 +554,8 @@ The following arguments are supported:
   Structure is [documented below](#nested_targets).
 
 * `status` -
-  (Optional)
-  Required. A status for this configuration
+  (Required)
+  A status for this configuration
   Possible values are: `RUNNING`, `PAUSED`.
 
 
