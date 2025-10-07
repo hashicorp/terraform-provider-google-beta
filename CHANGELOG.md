@@ -1,4 +1,40 @@
-## 7.6.0 (Unreleased)
+## 7.7.0 (Unreleased)
+
+## 7.6.0 (October 7th, 2025)
+DEPRECATIONS:
+* networksecurity: deprecated `ignore_case`, `exact`, `prefix`, `suffix` and `contains` fields in `http_rules.from.not_sources.principals` and `http_rules.from.sources.principals` blocks in `google_network_security_authz_policy` resource. Use the equivalent fields in `http_rules.from.not_sources.principals.principal` or `http_rules.from.sources.principals.principal` instead. ([#10809](https://github.com/hashicorp/terraform-provider-google-beta/pull/10809))
+
+BREAKING CHANGES:
+* container: `node_config` blocks that had set `kubelet_config` without explicitly setting `cpu_cfs_quota` implicitly set `cfu_cfs_quota` to `false` when unset. From this version onwards, an unset `cpu_cfs_quota` will instead match the API default of true `true`. Resources that are recreated will receive the new value; old resources are unaffected, and may change values by explicitly setting the intended one. ([#10823](https://github.com/hashicorp/terraform-provider-google-beta/pull/10823))
+* storageinsights: removed `activity_data_retention_period_days` field from `google_storage_insights_dataset_config` resource due to a delayed launch. It will be readded when the feature launches. ([#10824](https://github.com/hashicorp/terraform-provider-google-beta/pull/10824))
+
+FEATURES:
+* **New Resource:** `google_kms_folder_kaj_policy_config` ([#10798](https://github.com/hashicorp/terraform-provider-google-beta/pull/10798))
+* **New Resource:** `google_vertex_ai_cache_config` ([#10807](https://github.com/hashicorp/terraform-provider-google-beta/pull/10807))
+* **New Resource:** `google_vertex_ai_reasoning_engine` ([#10797](https://github.com/hashicorp/terraform-provider-google-beta/pull/10797))
+
+IMPROVEMENTS:
+* backupdr: added `data_source` and `rules_config_info` fields to `google_backup_dr_backup_plan_associations` datasource ([#10802](https://github.com/hashicorp/terraform-provider-google-beta/pull/10802))
+* beyondcorp: added `external`, `proxy_protocol`, and `schema` fields to `google_beyondcorp_security_gateway_application` resource ([#10808](https://github.com/hashicorp/terraform-provider-google-beta/pull/10808))
+* beyondcorp: changed `endpoint_matchers` field to not be required anymore in the `google_beyondcorp_security_gateway_application` resource ([#10808](https://github.com/hashicorp/terraform-provider-google-beta/pull/10808))
+* bigquery: added `reservation` field to `google_bigquery_job` resource ([#10796](https://github.com/hashicorp/terraform-provider-google-beta/pull/10796))
+* compute: added `backend.max_in_flight_requests`, `backend.max_in_flight_requests_per_instance`, `backend.max_in_flight_requests_per_endpoint` and `backend.traffic_duration` fields to `google_compute_backend_service` resource ([#10799](https://github.com/hashicorp/terraform-provider-google-beta/pull/10799))
+* compute: added `shared_secret_wo` and `shared_secret_wo_version` fields to `google_compute_vpn_tunnel` resource, enabling write-only management of the shared secret. ([#10788](https://github.com/hashicorp/terraform-provider-google-beta/pull/10788))
+* dlp: added `SENSITIVITY_UNKNOWN` as possible enum value for `actions.tag_resources.tag_conditions.sensitivity_score.score` in `google_data_loss_prevention_discovery_config` resource ([#10820](https://github.com/hashicorp/terraform-provider-google-beta/pull/10820))
+* dlp: added `actions.save_findings.output_config.storage_path` field to `google_data_loss_prevention_job_trigger` resource ([#10816](https://github.com/hashicorp/terraform-provider-google-beta/pull/10816))
+* lustre: increased creation timeout from 20min to 40min for `google_lustre_instance` resource ([#10817](https://github.com/hashicorp/terraform-provider-google-beta/pull/10817))
+* netapp: added `hybrid_replication_user_commands` field  with subfield `commands` to `google_netapp_volume_replication` resource ([#10813](https://github.com/hashicorp/terraform-provider-google-beta/pull/10813))
+* netapp: added `replication_schedule`, `hybrid_replication_type`, `large_volume_constituent_count` fields to `hybrid_replication_parameters` field in `google_netapp_volume` resource ([#10813](https://github.com/hashicorp/terraform-provider-google-beta/pull/10813))
+* networksecurity: added `ip_blocks` field to `google_network_security_authz_policy` resource ([#10809](https://github.com/hashicorp/terraform-provider-google-beta/pull/10809))
+* secretmanager: added ephemeral support for `google_secret_manager_secret_version` resource ([#10821](https://github.com/hashicorp/terraform-provider-google-beta/pull/10821))
+* sql: added `source_instance_deletion_time` field to `google_sql_database_instance_latest_recovery_time` data source ([#10827](https://github.com/hashicorp/terraform-provider-google-beta/pull/10827))
+* sql: added `source_instance_deletion_time` field to `google_sql_database_instance` resource ([#10827](https://github.com/hashicorp/terraform-provider-google-beta/pull/10827))
+* storagetransfer: added `user_project_override` and `billing_project` fields to  `google_storage_transfer_job` resource ([#10790](https://github.com/hashicorp/terraform-provider-google-beta/pull/10790))
+
+BUG FIXES:
+* container: fixed the default for `node_config.kubelet_config.cpu_cfs_quota` on `google_container_cluster`, `google_container_node_pool`, `google_container_cluster.node_pool` to align with the API. Terraform will now send a `true` value when the field is unset on creation, and preserve any previously set value when unset. Explicitly set values will work as defined in configuration. ([#10823](https://github.com/hashicorp/terraform-provider-google-beta/pull/10823))
+
+
 
 ## 7.5.0 (September 30, 2025)
 
