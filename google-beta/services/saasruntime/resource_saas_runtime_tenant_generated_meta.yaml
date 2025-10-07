@@ -1,0 +1,26 @@
+resource: 'google_saas_runtime_tenant'
+generation_type: 'mmv1'
+source_file: 'products/saasservicemgmt/Tenant.yaml'
+api_service_name: 'saasservicemgmt.googleapis.com'
+api_version: 'v1beta1'
+api_resource_type_kind: 'Tenant'
+autogen_status: true
+fields:
+  - field: 'annotations'
+  - field: 'consumer_resource'
+  - field: 'create_time'
+  - field: 'effective_annotations'
+    provider_only: true
+  - field: 'effective_labels'
+    provider_only: true
+  - field: 'labels'
+  - field: 'location'
+    provider_only: true
+  - field: 'name'
+  - field: 'saas'
+  - field: 'tenant_id'
+    provider_only: true
+  - field: 'terraform_labels'
+    provider_only: true
+  - field: 'uid'
+  - field: 'update_time'
