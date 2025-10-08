@@ -44,7 +44,6 @@ func TestAccFirebaseAppCheckDeviceCheckConfig_firebaseAppCheckDeviceCheckConfigF
 			"random": {},
 			"time":   {},
 		},
-		CheckDestroy: testAccCheckFirebaseAppCheckDeviceCheckConfigDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccFirebaseAppCheckDeviceCheckConfig_firebaseAppCheckDeviceCheckConfigFullExample(context),

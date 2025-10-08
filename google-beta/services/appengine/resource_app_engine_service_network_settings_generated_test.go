@@ -35,7 +35,6 @@ func TestAccAppEngineServiceNetworkSettings_appEngineServiceNetworkSettingsExamp
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
-		CheckDestroy:             testAccCheckAppEngineServiceNetworkSettingsDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccAppEngineServiceNetworkSettings_appEngineServiceNetworkSettingsExample(context),

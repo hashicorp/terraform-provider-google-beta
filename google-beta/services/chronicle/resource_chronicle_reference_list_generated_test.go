@@ -37,7 +37,6 @@ func TestAccChronicleReferenceList_chronicleReferencelistBasicExample(t *testing
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
-		CheckDestroy:             testAccCheckChronicleReferenceListDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccChronicleReferenceList_chronicleReferencelistBasicExample(context),

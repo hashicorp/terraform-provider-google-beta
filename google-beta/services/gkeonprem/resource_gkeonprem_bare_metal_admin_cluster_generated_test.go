@@ -35,7 +35,6 @@ func TestAccGkeonpremBareMetalAdminCluster_gkeonpremBareMetalAdminClusterBasicEx
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
-		CheckDestroy:             testAccCheckGkeonpremBareMetalAdminClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccGkeonpremBareMetalAdminCluster_gkeonpremBareMetalAdminClusterBasicExample(context),
@@ -123,7 +122,6 @@ func TestAccGkeonpremBareMetalAdminCluster_gkeonpremBareMetalAdminClusterFullExa
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
-		CheckDestroy:             testAccCheckGkeonpremBareMetalAdminClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccGkeonpremBareMetalAdminCluster_gkeonpremBareMetalAdminClusterFullExample(context),

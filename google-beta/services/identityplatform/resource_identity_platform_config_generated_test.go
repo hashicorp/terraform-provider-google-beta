@@ -41,7 +41,6 @@ func TestAccIdentityPlatformConfig_identityPlatformConfigBasicExample(t *testing
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
-		CheckDestroy:             testAccCheckIdentityPlatformConfigDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccIdentityPlatformConfig_identityPlatformConfigBasicExample(context),
@@ -141,7 +140,6 @@ func TestAccIdentityPlatformConfig_identityPlatformConfigMinimalExample(t *testi
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
-		CheckDestroy:             testAccCheckIdentityPlatformConfigDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccIdentityPlatformConfig_identityPlatformConfigMinimalExample(context),
@@ -223,7 +221,6 @@ func TestAccIdentityPlatformConfig_identityPlatformConfigWithFalseValuesExample(
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
-		CheckDestroy:             testAccCheckIdentityPlatformConfigDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccIdentityPlatformConfig_identityPlatformConfigWithFalseValuesExample(context),

@@ -38,7 +38,6 @@ func TestAccApigeeControlPlaneAccess_apigeeControlPlaneAccessBasicTestExample(t 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
-		CheckDestroy:             testAccCheckApigeeControlPlaneAccessDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccApigeeControlPlaneAccess_apigeeControlPlaneAccessBasicTestExample(context),

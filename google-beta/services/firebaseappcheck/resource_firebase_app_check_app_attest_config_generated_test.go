@@ -42,7 +42,6 @@ func TestAccFirebaseAppCheckAppAttestConfig_firebaseAppCheckAppAttestConfigMinim
 			"random": {},
 			"time":   {},
 		},
-		CheckDestroy: testAccCheckFirebaseAppCheckAppAttestConfigDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccFirebaseAppCheckAppAttestConfig_firebaseAppCheckAppAttestConfigMinimalExample(context),
@@ -110,7 +109,6 @@ func TestAccFirebaseAppCheckAppAttestConfig_firebaseAppCheckAppAttestConfigFullE
 			"random": {},
 			"time":   {},
 		},
-		CheckDestroy: testAccCheckFirebaseAppCheckAppAttestConfigDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccFirebaseAppCheckAppAttestConfig_firebaseAppCheckAppAttestConfigFullExample(context),

@@ -41,7 +41,6 @@ func TestAccApigeeEnvironmentAddonsConfig_apigeeEnvAddonsAnalyticsTestExample(t 
 		ExternalProviders: map[string]resource.ExternalProvider{
 			"time": {},
 		},
-		CheckDestroy: testAccCheckApigeeEnvironmentAddonsConfigDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccApigeeEnvironmentAddonsConfig_apigeeEnvAddonsAnalyticsTestExample(context),

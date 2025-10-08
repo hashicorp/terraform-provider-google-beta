@@ -38,7 +38,6 @@ func TestAccFirebaseAppHostingDefaultDomain_firebaseAppHostingDefaultDomainMinim
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
-		CheckDestroy:             testAccCheckFirebaseAppHostingDefaultDomainDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccFirebaseAppHostingDefaultDomain_firebaseAppHostingDefaultDomainMinimalExample(context),
@@ -98,7 +97,6 @@ func TestAccFirebaseAppHostingDefaultDomain_firebaseAppHostingDefaultDomainFullE
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
-		CheckDestroy:             testAccCheckFirebaseAppHostingDefaultDomainDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccFirebaseAppHostingDefaultDomain_firebaseAppHostingDefaultDomainFullExample(context),
@@ -160,7 +158,6 @@ func TestAccFirebaseAppHostingDefaultDomain_firebaseAppHostingDefaultDomainDisab
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
-		CheckDestroy:             testAccCheckFirebaseAppHostingDefaultDomainDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccFirebaseAppHostingDefaultDomain_firebaseAppHostingDefaultDomainDisabledExample(context),

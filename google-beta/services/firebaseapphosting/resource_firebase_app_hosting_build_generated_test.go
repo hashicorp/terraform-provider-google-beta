@@ -38,7 +38,6 @@ func TestAccFirebaseAppHostingBuild_firebaseAppHostingBuildMinimalExample(t *tes
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
-		CheckDestroy:             testAccCheckFirebaseAppHostingBuildDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccFirebaseAppHostingBuild_firebaseAppHostingBuildMinimalExample(context),
@@ -121,7 +120,6 @@ func TestAccFirebaseAppHostingBuild_firebaseAppHostingBuildFullExample(t *testin
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
-		CheckDestroy:             testAccCheckFirebaseAppHostingBuildDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccFirebaseAppHostingBuild_firebaseAppHostingBuildFullExample(context),
