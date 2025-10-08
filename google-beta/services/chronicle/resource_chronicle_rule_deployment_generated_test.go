@@ -37,6 +37,7 @@ func TestAccChronicleRuleDeployment_chronicleRuledeploymentBasicExample(t *testi
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckChronicleRuleDeploymentDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccChronicleRuleDeployment_chronicleRuledeploymentBasicExample(context),
@@ -84,6 +85,7 @@ func TestAccChronicleRuleDeployment_chronicleRuledeploymentDisabledExample(t *te
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckChronicleRuleDeploymentDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccChronicleRuleDeployment_chronicleRuledeploymentDisabledExample(context),
@@ -129,6 +131,7 @@ func TestAccChronicleRuleDeployment_chronicleRuledeploymentRunFrequencyMissingEx
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckChronicleRuleDeploymentDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccChronicleRuleDeployment_chronicleRuledeploymentRunFrequencyMissingExample(context),

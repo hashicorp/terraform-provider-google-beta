@@ -41,6 +41,7 @@ func TestAccApihubHostProjectRegistration_apihubHostProjectRegistrationBasicExam
 		ExternalProviders: map[string]resource.ExternalProvider{
 			"time": {},
 		},
+		CheckDestroy: testAccCheckApihubHostProjectRegistrationDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccApihubHostProjectRegistration_apihubHostProjectRegistrationBasicExample(context),

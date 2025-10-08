@@ -43,6 +43,7 @@ func TestAccFirebaseAppCheckRecaptchaEnterpriseConfig_firebaseAppCheckRecaptchaE
 			"random": {},
 			"time":   {},
 		},
+		CheckDestroy: testAccCheckFirebaseAppCheckRecaptchaEnterpriseConfigDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccFirebaseAppCheckRecaptchaEnterpriseConfig_firebaseAppCheckRecaptchaEnterpriseConfigBasicExample(context),

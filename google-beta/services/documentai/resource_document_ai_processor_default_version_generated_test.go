@@ -35,6 +35,7 @@ func TestAccDocumentAIProcessorDefaultVersion_documentaiDefaultVersionExample(t 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckDocumentAIProcessorDefaultVersionDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDocumentAIProcessorDefaultVersion_documentaiDefaultVersionExample(context),

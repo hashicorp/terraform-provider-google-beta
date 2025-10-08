@@ -41,6 +41,7 @@ func TestAccFirebaseAppCheckPlayIntegrityConfig_firebaseAppCheckPlayIntegrityCon
 			"random": {},
 			"time":   {},
 		},
+		CheckDestroy: testAccCheckFirebaseAppCheckPlayIntegrityConfigDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccFirebaseAppCheckPlayIntegrityConfig_firebaseAppCheckPlayIntegrityConfigMinimalExample(context),
@@ -116,6 +117,7 @@ func TestAccFirebaseAppCheckPlayIntegrityConfig_firebaseAppCheckPlayIntegrityCon
 			"random": {},
 			"time":   {},
 		},
+		CheckDestroy: testAccCheckFirebaseAppCheckPlayIntegrityConfigDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccFirebaseAppCheckPlayIntegrityConfig_firebaseAppCheckPlayIntegrityConfigFullExample(context),

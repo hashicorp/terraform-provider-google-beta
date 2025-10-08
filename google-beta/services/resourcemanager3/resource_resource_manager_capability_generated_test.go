@@ -40,6 +40,7 @@ func TestAccResourceManager3Capability_resourceManagerCapabilityExample(t *testi
 		ExternalProviders: map[string]resource.ExternalProvider{
 			"time": {},
 		},
+		CheckDestroy: testAccCheckResourceManager3CapabilityDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceManager3Capability_resourceManagerCapabilityExample(context),

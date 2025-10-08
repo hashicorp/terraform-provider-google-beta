@@ -35,6 +35,7 @@ func TestAccGkeonpremVmwareAdminCluster_gkeonpremVmwareAdminClusterBasicExample(
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckGkeonpremVmwareAdminClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccGkeonpremVmwareAdminCluster_gkeonpremVmwareAdminClusterBasicExample(context),
@@ -108,6 +109,7 @@ func TestAccGkeonpremVmwareAdminCluster_gkeonpremVmwareAdminClusterFullExample(t
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckGkeonpremVmwareAdminClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccGkeonpremVmwareAdminCluster_gkeonpremVmwareAdminClusterFullExample(context),
@@ -232,6 +234,7 @@ func TestAccGkeonpremVmwareAdminCluster_gkeonpremVmwareAdminClusterMetallbExampl
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckGkeonpremVmwareAdminClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccGkeonpremVmwareAdminCluster_gkeonpremVmwareAdminClusterMetallbExample(context),

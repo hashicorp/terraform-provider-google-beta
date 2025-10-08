@@ -37,6 +37,7 @@ func TestAccAppEngineServiceSplitTraffic_appEngineServiceSplitTrafficExample(t *
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckAppEngineServiceSplitTrafficDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccAppEngineServiceSplitTraffic_appEngineServiceSplitTrafficExample(context),

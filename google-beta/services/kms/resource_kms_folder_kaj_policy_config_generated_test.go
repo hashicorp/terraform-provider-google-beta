@@ -43,6 +43,7 @@ func TestAccKMSFolderKajPolicyConfig_kmsFolderKajPolicyConfigBasicExample(t *tes
 			"random": {},
 			"time":   {},
 		},
+		CheckDestroy: testAccCheckKMSFolderKajPolicyConfigDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccKMSFolderKajPolicyConfig_kmsFolderKajPolicyConfigBasicExample(context),

@@ -38,6 +38,7 @@ func TestAccFirebaseAppHostingTraffic_firebaseAppHostingTrafficTargetExample(t *
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckFirebaseAppHostingTrafficDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccFirebaseAppHostingTraffic_firebaseAppHostingTrafficTargetExample(context),
@@ -133,6 +134,7 @@ func TestAccFirebaseAppHostingTraffic_firebaseAppHostingTrafficRolloutPolicyExam
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckFirebaseAppHostingTrafficDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccFirebaseAppHostingTraffic_firebaseAppHostingTrafficRolloutPolicyExample(context),
@@ -212,6 +214,7 @@ func TestAccFirebaseAppHostingTraffic_firebaseAppHostingTrafficRolloutPolicyDisa
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckFirebaseAppHostingTrafficDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccFirebaseAppHostingTraffic_firebaseAppHostingTrafficRolloutPolicyDisabledExample(context),

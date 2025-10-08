@@ -37,6 +37,7 @@ func TestAccBackupDRServiceConfig_backupDrServiceConfigExample(t *testing.T) {
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckBackupDRServiceConfigDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccBackupDRServiceConfig_backupDrServiceConfigExample(context),

@@ -11,7 +11,7 @@
 //     changes will be clobbered when the file is regenerated.
 //
 //     Please read more about how to change this file in
-//     .github/CONTRIBUTING.md. test
+//     .github/CONTRIBUTING.md.
 //
 // ----------------------------------------------------------------------------
 
@@ -23,6 +23,7 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
@@ -230,7 +231,7 @@ resource "google_sql_database_instance" "instance" {
     tier = "db-f1-micro"
   }
 
-  deletion_protection  = %{deletion_protection}
+  deletion_protection  = true
 }
 `, context)
 }
@@ -1004,6 +1005,9 @@ func TestAccCloudRunV2Service_cloudrunv2ServiceFullUpdateConvertExample(t *testi
 	context := map[string]interface{}{
 		"random_suffix": acctest.RandString(t, 10),
 	}
+	context_1 := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -1017,10 +1021,10 @@ func TestAccCloudRunV2Service_cloudrunv2ServiceFullUpdateConvertExample(t *testi
 				ResourceName:            "google_cloud_run_v2_service.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "location", "annotations", "labels", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"annotations", "deletion_protection", "labels", "location", "name", "terraform_labels"},
 			},
 			{
-				Config: testAccCloudRunV2Service_cloudrunv2ServiceFullUpdateConvertExample(context),
+				Config: testAccCloudRunV2Service_cloudrunv2ServiceFullUpdateConvertExample(context_1),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
 						plancheck.ExpectResourceAction("google_cloud_run_v2_service.default", plancheck.ResourceActionUpdate),
@@ -1031,7 +1035,7 @@ func TestAccCloudRunV2Service_cloudrunv2ServiceFullUpdateConvertExample(t *testi
 				ResourceName:            "google_cloud_run_v2_service.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "location", "annotations", "labels", "terraform_labels", "deletion_protection"},
+				ImportStateVerifyIgnore: []string{"annotations", "deletion_protection", "labels", "location", "name", "terraform_labels"},
 			},
 		},
 	})
@@ -1100,6 +1104,7 @@ resource "google_service_account" "service_account" {
 }
 `, context)
 }
+
 func testAccCloudRunV2Service_cloudrunv2ServiceFullUpdateConvertExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_cloud_run_v2_service" "default" {

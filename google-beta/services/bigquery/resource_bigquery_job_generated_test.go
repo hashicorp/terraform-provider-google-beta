@@ -36,6 +36,7 @@ func TestAccBigQueryJob_bigqueryJobQueryExample(t *testing.T) {
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckBigQueryJobDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccBigQueryJob_bigqueryJobQueryExample(context),
@@ -102,6 +103,7 @@ func TestAccBigQueryJob_bigqueryJobQueryContinuousExample(t *testing.T) {
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckBigQueryJobDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccBigQueryJob_bigqueryJobQueryContinuousExample(context),
@@ -146,6 +148,7 @@ func TestAccBigQueryJob_bigqueryJobQueryTableReferenceExample(t *testing.T) {
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckBigQueryJobDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccBigQueryJob_bigqueryJobQueryTableReferenceExample(context),
@@ -214,6 +217,7 @@ func TestAccBigQueryJob_bigqueryJobLoadExample(t *testing.T) {
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckBigQueryJobDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccBigQueryJob_bigqueryJobLoadExample(context),
@@ -282,6 +286,7 @@ func TestAccBigQueryJob_bigqueryJobLoadGeojsonExample(t *testing.T) {
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckBigQueryJobDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccBigQueryJob_bigqueryJobLoadGeojsonExample(context),
@@ -369,6 +374,7 @@ func TestAccBigQueryJob_bigqueryJobLoadParquetExample(t *testing.T) {
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckBigQueryJobDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccBigQueryJob_bigqueryJobLoadParquetExample(context),
@@ -452,6 +458,7 @@ func TestAccBigQueryJob_bigqueryJobLoadTableReferenceExample(t *testing.T) {
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckBigQueryJobDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccBigQueryJob_bigqueryJobLoadTableReferenceExample(context),
@@ -519,6 +526,7 @@ func TestAccBigQueryJob_bigqueryJobCopyExample(t *testing.T) {
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckBigQueryJobDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccBigQueryJob_bigqueryJobCopyExample(context),
@@ -670,6 +678,7 @@ func TestAccBigQueryJob_bigqueryJobCopyTableReferenceExample(t *testing.T) {
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckBigQueryJobDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccBigQueryJob_bigqueryJobCopyTableReferenceExample(context),
@@ -814,6 +823,7 @@ func TestAccBigQueryJob_bigqueryJobExtractExample(t *testing.T) {
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckBigQueryJobDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccBigQueryJob_bigqueryJobExtractExample(context),
@@ -898,6 +908,7 @@ func TestAccBigQueryJob_bigqueryJobExtractTableReferenceExample(t *testing.T) {
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckBigQueryJobDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccBigQueryJob_bigqueryJobExtractTableReferenceExample(context),
@@ -981,6 +992,7 @@ func TestAccBigQueryJob_bigqueryJobQueryReservationExample(t *testing.T) {
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckBigQueryJobDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccBigQueryJob_bigqueryJobQueryReservationExample(context),

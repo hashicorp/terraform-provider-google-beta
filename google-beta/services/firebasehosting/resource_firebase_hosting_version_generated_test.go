@@ -37,6 +37,7 @@ func TestAccFirebaseHostingVersion_firebasehostingVersionRedirectExample(t *test
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckFirebaseHostingVersionDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccFirebaseHostingVersion_firebasehostingVersionRedirectExample(context),
@@ -91,6 +92,7 @@ func TestAccFirebaseHostingVersion_firebasehostingVersionHeadersExample(t *testi
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckFirebaseHostingVersionDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccFirebaseHostingVersion_firebasehostingVersionHeadersExample(context),
@@ -147,6 +149,7 @@ func TestAccFirebaseHostingVersion_firebasehostingVersionHeadersRegexExample(t *
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckFirebaseHostingVersionDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccFirebaseHostingVersion_firebasehostingVersionHeadersRegexExample(context),
@@ -203,6 +206,7 @@ func TestAccFirebaseHostingVersion_firebasehostingVersionPathExample(t *testing.
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckFirebaseHostingVersionDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccFirebaseHostingVersion_firebasehostingVersionPathExample(context),
@@ -257,6 +261,7 @@ func TestAccFirebaseHostingVersion_firebasehostingVersionCloudRunExample(t *test
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckFirebaseHostingVersionDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccFirebaseHostingVersion_firebasehostingVersionCloudRunExample(context),
@@ -332,6 +337,7 @@ func TestAccFirebaseHostingVersion_firebasehostingVersionCloudFunctionsExample(t
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckFirebaseHostingVersionDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccFirebaseHostingVersion_firebasehostingVersionCloudFunctionsExample(context),

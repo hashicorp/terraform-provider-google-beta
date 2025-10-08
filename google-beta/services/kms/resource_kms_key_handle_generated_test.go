@@ -42,6 +42,7 @@ func TestAccKMSKeyHandle_kmsKeyHandleBasicExample(t *testing.T) {
 			"random": {},
 			"time":   {},
 		},
+		CheckDestroy: testAccCheckKMSKeyHandleDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccKMSKeyHandle_kmsKeyHandleBasicExample(context),

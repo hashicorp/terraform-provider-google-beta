@@ -41,6 +41,7 @@ func TestAccChronicleRetrohunt_chronicleRetrohuntBasicExample(t *testing.T) {
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckChronicleRetrohuntDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccChronicleRetrohunt_chronicleRetrohuntBasicExample(context),

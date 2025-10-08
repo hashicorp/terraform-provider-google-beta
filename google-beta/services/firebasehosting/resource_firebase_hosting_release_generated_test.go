@@ -37,6 +37,7 @@ func TestAccFirebaseHostingRelease_firebasehostingReleaseInSiteExample(t *testin
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckFirebaseHostingReleaseDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccFirebaseHostingRelease_firebasehostingReleaseInSiteExample(context),
@@ -91,6 +92,7 @@ func TestAccFirebaseHostingRelease_firebasehostingReleaseInChannelExample(t *tes
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckFirebaseHostingReleaseDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccFirebaseHostingRelease_firebasehostingReleaseInChannelExample(context),
@@ -152,6 +154,7 @@ func TestAccFirebaseHostingRelease_firebasehostingReleaseDisableExample(t *testi
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckFirebaseHostingReleaseDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccFirebaseHostingRelease_firebasehostingReleaseDisableExample(context),

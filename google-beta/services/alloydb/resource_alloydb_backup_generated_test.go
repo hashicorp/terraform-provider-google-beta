@@ -11,7 +11,7 @@
 //     changes will be clobbered when the file is regenerated.
 //
 //     Please read more about how to change this file in
-//     .github/CONTRIBUTING.md. test
+//     .github/CONTRIBUTING.md.
 //
 // ----------------------------------------------------------------------------
 

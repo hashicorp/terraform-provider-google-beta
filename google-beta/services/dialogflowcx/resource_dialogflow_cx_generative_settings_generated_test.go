@@ -35,6 +35,7 @@ func TestAccDialogflowCXGenerativeSettings_dialogflowcxGenerativeSettingsFullExa
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckDialogflowCXGenerativeSettingsDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDialogflowCXGenerativeSettings_dialogflowcxGenerativeSettingsFullExample(context),
