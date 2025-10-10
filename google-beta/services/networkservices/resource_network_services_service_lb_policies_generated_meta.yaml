@@ -11,6 +11,8 @@ fields:
   - field: 'effective_labels'
     provider_only: true
   - field: 'failover_config.failover_health_threshold'
+  - field: 'isolation_config.isolation_granularity'
+  - field: 'isolation_config.isolation_mode'
   - field: 'labels'
   - field: 'load_balancing_algorithm'
   - field: 'location'
