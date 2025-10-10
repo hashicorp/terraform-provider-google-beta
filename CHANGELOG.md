@@ -1,4 +1,7 @@
 ## 7.7.0 (Unreleased)
+BREAKING CHANGES:
+* discoveryengine: changed type of `google_discovery_engine_data_connector.entities.params`. Previously, it was a map of string keys to string values; now, it must be a [JSON-encoded](https://developer.hashicorp.com/terraform/language/functions/jsonencode) string containing an object. This change is being made in a minor release because the field wasn't usable as intended – specifically, all current valid uses require mapping strings to _lists_ of strings. ([#10863](https://github.com/hashicorp/terraform-provider-google-beta/pull/10863))
+
 UNKNOWN CHANGELOG TYPE:
 * Update CHANGELOG.md for 7.6.0 release ([#10843](https://github.com/hashicorp/terraform-provider-google-beta/pull/10843))
 
@@ -15,6 +18,8 @@ IMPROVEMENTS:
 * beyondcorp: added `proxy_protocol_config` and `service_discovery` fields to `google_beyondcorp_security_gateway` resource ([#10842](https://github.com/hashicorp/terraform-provider-google-beta/pull/10842))
 * cloudrunv2: added `health_check_disabled` field to `google_cloud_run_v2_service` resource. ([#10839](https://github.com/hashicorp/terraform-provider-google-beta/pull/10839))
 * compute: added `params` field to `google_compute_router` resource (GA) ([#10844](https://github.com/hashicorp/terraform-provider-google-beta/pull/10844))
+* discoveryengine: added `connector_modes`, `sync_mode`, `incremental_refresh_interval`, `auto_run_disabled`, and `incremental_sync_disabled` fields to `google_discovery_engine_data_connector` resource ([#10863](https://github.com/hashicorp/terraform-provider-google-beta/pull/10863))
+* discoveryengine: added `kms_key_name` field to `google_discovery_engine_search_engine` resource ([#10863](https://github.com/hashicorp/terraform-provider-google-beta/pull/10863))
 * dlp: added `publish_to_dataplex_catalog` field to `discovery_config` resource ([#10849](https://github.com/hashicorp/terraform-provider-google-beta/pull/10849))
 * gkeonprem: made it possible to set the `on_prem_version` field on `google_gkeonprem_vmware_node_pool` (previously output-only) ([#10847](https://github.com/hashicorp/terraform-provider-google-beta/pull/10847))
 * memcache: added `deletion_protection` field to `memcache_instance` to make deleting them require an explicit intent. `memcache_instance` resources now cannot be destroyed unless `deletion_protection = false` is set for the resource. ([#10846](https://github.com/hashicorp/terraform-provider-google-beta/pull/10846))
@@ -27,6 +32,7 @@ IMPROVEMENTS:
 
 BUG FIXES:
 * bigqueryanalyticshub: fixed `google_bigquery_analytics_hub_listing_subscription` import ([#10855](https://github.com/hashicorp/terraform-provider-google-beta/pull/10855))
+* discoveryengine: fixed bug where it wasn't possible to specify values for `knowledgeBaseSysId` or `catalogSysId` in `google_discovery_engine_data_connector.entities.params`. ([#10863](https://github.com/hashicorp/terraform-provider-google-beta/pull/10863))
 
 ## 7.6.0 (October 7th, 2025)
 DEPRECATIONS:
