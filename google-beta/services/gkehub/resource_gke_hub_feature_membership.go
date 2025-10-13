@@ -59,11 +59,6 @@ func ResourceGkeHubFeatureMembership() *schema.Resource {
 			Version: 1,
 			SchemaFunc: func() map[string]*schema.Schema {
 				return map[string]*schema.Schema{
-					"location": {
-						Type:              schema.TypeString,
-						RequiredForImport: true,
-						Description:       "The location of the feature",
-					},
 					"membership": {
 						Type:              schema.TypeString,
 						RequiredForImport: true,
@@ -78,6 +73,11 @@ func ResourceGkeHubFeatureMembership() *schema.Resource {
 						Type:              schema.TypeString,
 						RequiredForImport: true,
 						Description:       "The name of the feature",
+					},
+					"location": {
+						Type:              schema.TypeString,
+						RequiredForImport: true,
+						Description:       "The location of the feature",
 					},
 				}
 			},
