@@ -130,6 +130,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/networksecurity"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/networkservices"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/notebooks"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/observability"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/oracledatabase"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/orgpolicy"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/osconfig"
@@ -618,9 +619,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 718
+// Generated resources: 719
 // Generated IAM resources: 348
-// Total generated resources: 1066
+// Total generated resources: 1067
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -1460,6 +1461,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_notebooks_runtime_iam_binding":                                       tpgiamresource.ResourceIamBinding(notebooks.NotebooksRuntimeIamSchema, notebooks.NotebooksRuntimeIamUpdaterProducer, notebooks.NotebooksRuntimeIdParseFunc),
 	"google_notebooks_runtime_iam_member":                                        tpgiamresource.ResourceIamMember(notebooks.NotebooksRuntimeIamSchema, notebooks.NotebooksRuntimeIamUpdaterProducer, notebooks.NotebooksRuntimeIdParseFunc),
 	"google_notebooks_runtime_iam_policy":                                        tpgiamresource.ResourceIamPolicy(notebooks.NotebooksRuntimeIamSchema, notebooks.NotebooksRuntimeIamUpdaterProducer, notebooks.NotebooksRuntimeIdParseFunc),
+	"google_observability_trace_scope":                                           observability.ResourceObservabilityTraceScope(),
 	"google_oracle_database_autonomous_database":                                 oracledatabase.ResourceOracleDatabaseAutonomousDatabase(),
 	"google_oracle_database_cloud_exadata_infrastructure":                        oracledatabase.ResourceOracleDatabaseCloudExadataInfrastructure(),
 	"google_oracle_database_cloud_vm_cluster":                                    oracledatabase.ResourceOracleDatabaseCloudVmCluster(),
@@ -1972,6 +1974,7 @@ func UseGeneratedProducts() {
 	var _ = networksecurity.ProductName
 	var _ = networkservices.ProductName
 	var _ = notebooks.ProductName
+	var _ = observability.ProductName
 	var _ = oracledatabase.ProductName
 	var _ = orgpolicy.ProductName
 	var _ = osconfig.ProductName

@@ -1,0 +1,16 @@
+resource: 'google_observability_trace_scope'
+generation_type: 'mmv1'
+source_file: 'products/observability/TraceScope.yaml'
+api_service_name: 'observability.googleapis.com'
+api_version: 'v1'
+api_resource_type_kind: 'TraceScope'
+fields:
+  - field: 'create_time'
+  - field: 'description'
+  - field: 'location'
+    provider_only: true
+  - field: 'name'
+  - field: 'resource_names'
+  - field: 'trace_scope_id'
+    provider_only: true
+  - field: 'update_time'
