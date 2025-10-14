@@ -2,9 +2,6 @@
 BREAKING CHANGES:
 * discoveryengine: changed type of `google_discovery_engine_data_connector.entities.params`. Previously, it was a map of string keys to string values; now, it must be a [JSON-encoded](https://developer.hashicorp.com/terraform/language/functions/jsonencode) string containing an object. This change is being made in a minor release because the field wasn't usable as intended – specifically, all current valid uses require mapping strings to _lists_ of strings. ([#10863](https://github.com/hashicorp/terraform-provider-google-beta/pull/10863))
 
-UNKNOWN CHANGELOG TYPE:
-* Update CHANGELOG.md for 7.6.0 release ([#10843](https://github.com/hashicorp/terraform-provider-google-beta/pull/10843))
-
 FEATURES:
 * **New Data Source:** `google_network_management_connectivity_tests` ([#10856](https://github.com/hashicorp/terraform-provider-google-beta/pull/10856))
 * **New Resource:** `google_apigee_developer_app` ([#10851](https://github.com/hashicorp/terraform-provider-google-beta/pull/10851))
