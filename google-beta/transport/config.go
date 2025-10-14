@@ -372,6 +372,7 @@ type Config struct {
 	NetworkSecurityBasePath          string
 	NetworkServicesBasePath          string
 	NotebooksBasePath                string
+	ObservabilityBasePath            string
 	OracleDatabaseBasePath           string
 	OrgPolicyBasePath                string
 	OSConfigBasePath                 string
@@ -556,6 +557,7 @@ const NetworkManagementBasePathKey = "NetworkManagement"
 const NetworkSecurityBasePathKey = "NetworkSecurity"
 const NetworkServicesBasePathKey = "NetworkServices"
 const NotebooksBasePathKey = "Notebooks"
+const ObservabilityBasePathKey = "Observability"
 const OracleDatabaseBasePathKey = "OracleDatabase"
 const OrgPolicyBasePathKey = "OrgPolicy"
 const OSConfigBasePathKey = "OSConfig"
@@ -729,6 +731,7 @@ var DefaultBasePaths = map[string]string{
 	NetworkSecurityBasePathKey:          "https://networksecurity.googleapis.com/v1beta1/",
 	NetworkServicesBasePathKey:          "https://networkservices.googleapis.com/v1/",
 	NotebooksBasePathKey:                "https://notebooks.googleapis.com/v1/",
+	ObservabilityBasePathKey:            "https://observability.googleapis.com/v1/",
 	OracleDatabaseBasePathKey:           "https://oracledatabase.googleapis.com/v1/",
 	OrgPolicyBasePathKey:                "https://orgpolicy.googleapis.com/v2/",
 	OSConfigBasePathKey:                 "https://osconfig.googleapis.com/v1beta/",
@@ -1426,6 +1429,11 @@ func SetEndpointDefaults(d *schema.ResourceData) error {
 		d.Set("notebooks_custom_endpoint", MultiEnvDefault([]string{
 			"GOOGLE_NOTEBOOKS_CUSTOM_ENDPOINT",
 		}, DefaultBasePaths[NotebooksBasePathKey]))
+	}
+	if d.Get("observability_custom_endpoint") == "" {
+		d.Set("observability_custom_endpoint", MultiEnvDefault([]string{
+			"GOOGLE_OBSERVABILITY_CUSTOM_ENDPOINT",
+		}, DefaultBasePaths[ObservabilityBasePathKey]))
 	}
 	if d.Get("oracle_database_custom_endpoint") == "" {
 		d.Set("oracle_database_custom_endpoint", MultiEnvDefault([]string{
@@ -2848,6 +2856,7 @@ func ConfigureBasePaths(c *Config) {
 	c.NetworkSecurityBasePath = DefaultBasePaths[NetworkSecurityBasePathKey]
 	c.NetworkServicesBasePath = DefaultBasePaths[NetworkServicesBasePathKey]
 	c.NotebooksBasePath = DefaultBasePaths[NotebooksBasePathKey]
+	c.ObservabilityBasePath = DefaultBasePaths[ObservabilityBasePathKey]
 	c.OracleDatabaseBasePath = DefaultBasePaths[OracleDatabaseBasePathKey]
 	c.OrgPolicyBasePath = DefaultBasePaths[OrgPolicyBasePathKey]
 	c.OSConfigBasePath = DefaultBasePaths[OSConfigBasePathKey]
