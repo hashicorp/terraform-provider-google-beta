@@ -67,17 +67,17 @@ func TestAccObservabilityTraceScope_update(t *testing.T) {
 func testAccObservabilityTraceScope_basic(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_observability_trace_scope" "observability_trace_scope" {
-    provider         = google-beta
-    trace_scope_id   = "tf-test-test-scope%{random_suffix}"
-    location         = "global"
-    resource_names   = [
-        "projects/${data.google_project.project.project_id}",
-    ]
-    description      = "A trace scope configured with Terraform"
+  provider         = google-beta
+  trace_scope_id   = "tf-test-test-scope%{random_suffix}"
+  location         = "global"
+  resource_names   = [
+    "projects/${data.google_project.project.project_id}",
+  ]
+  description      = "A trace scope configured with Terraform"
 }
 
 data "google_project" "project" {
-    provider         = google-beta
+  provider         = google-beta
 }
 `, context)
 }
@@ -85,27 +85,27 @@ data "google_project" "project" {
 func testAccObservabilityTraceScope_update(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_observability_trace_scope" "observability_trace_scope" {
-    depends_on       = [google_project.project-2]
-    provider         = google-beta
-    trace_scope_id   = "tf-test-test-scope%{random_suffix}"
-    location         = "global"
-    resource_names   = [
-        "projects/${data.google_project.project.project_id}",
-        "projects/${google_project.project-2.project_id}",
-    ]
-    description      = "A new description"
+  depends_on       = [google_project.project-2]
+  provider         = google-beta
+  trace_scope_id   = "tf-test-test-scope%{random_suffix}"
+  location         = "global"
+  resource_names   = [
+    "projects/${data.google_project.project.project_id}",
+    "projects/${google_project.project-2.project_id}",
+  ]
+  description      = "A new description"
 }
 
 data "google_project" "project" {
-    provider         = google-beta
+  provider         = google-beta
 }
 
 resource "google_project" "project-2" {
-    provider         = google-beta
-    project_id       = "tf-test%{random_suffix}"
-    name             = "tf-test%{random_suffix}"
-    org_id           = "%{org_id}"
-    deletion_policy  = "DELETE"
+  provider         = google-beta
+  project_id       = "tf-test%{random_suffix}"
+  name             = "tf-test%{random_suffix}"
+  org_id           = "%{org_id}"
+  deletion_policy  = "DELETE"
 }
 `, context)
 }
