@@ -60,8 +60,8 @@ func ResourceComputePreviewFeature() *schema.Resource {
 			"activation_status": {
 				Type:         schema.TypeString,
 				Required:     true,
-				ValidateFunc: verify.ValidateEnum([]string{"ENABLED", "DISABLED"}),
-				Description:  `The activation status of the preview feature. Possible values: ["ENABLED", "DISABLED"]`,
+				ValidateFunc: verify.ValidateEnum([]string{"ENABLED", "ACTIVATION_STATE_UNSPECIFIED"}),
+				Description:  `The activation status of the preview feature. Possible values: ["ENABLED", "ACTIVATION_STATE_UNSPECIFIED"]`,
 			},
 			"name": {
 				Type:        schema.TypeString,
