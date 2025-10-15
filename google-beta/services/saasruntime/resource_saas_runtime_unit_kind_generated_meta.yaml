@@ -8,6 +8,7 @@ autogen_status: true
 fields:
   - api_field: 'annotations'
   - api_field: 'createTime'
+  - api_field: 'defaultRelease'
   - api_field: 'dependencies.alias'
   - api_field: 'dependencies.unitKind'
   - field: 'effective_annotations'
