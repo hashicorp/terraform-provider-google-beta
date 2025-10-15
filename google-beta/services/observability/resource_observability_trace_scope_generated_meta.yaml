@@ -5,12 +5,12 @@ api_service_name: 'observability.googleapis.com'
 api_version: 'v1'
 api_resource_type_kind: 'TraceScope'
 fields:
-  - field: 'create_time'
-  - field: 'description'
+  - api_field: 'createTime'
+  - api_field: 'description'
   - field: 'location'
     provider_only: true
-  - field: 'name'
-  - field: 'resource_names'
+  - api_field: 'name'
+  - api_field: 'resourceNames'
   - field: 'trace_scope_id'
     provider_only: true
-  - field: 'update_time'
+  - api_field: 'updateTime'

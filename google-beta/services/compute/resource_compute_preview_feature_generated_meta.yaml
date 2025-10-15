@@ -5,7 +5,7 @@ api_service_name: 'compute.googleapis.com'
 api_version: 'beta'
 api_resource_type_kind: 'PreviewFeature'
 fields:
-  - field: 'activation_status'
+  - api_field: 'activationStatus'
   - field: 'name'
     provider_only: true
-  - field: 'rollout_operation.rollout_input.predefined_rollout_plan'
+  - api_field: 'rolloutOperation.rolloutInput.predefinedRolloutPlan'
