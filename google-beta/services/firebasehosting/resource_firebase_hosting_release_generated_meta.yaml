@@ -7,11 +7,11 @@ api_resource_type_kind: 'Release'
 fields:
   - field: 'channel_id'
     provider_only: true
-  - field: 'message'
-  - field: 'name'
-  - field: 'release_id'
+  - api_field: 'message'
+  - api_field: 'name'
+  - api_field: 'release_id'
   - field: 'site_id'
     provider_only: true
-  - field: 'type'
+  - api_field: 'type'
   - field: 'version_name'
     provider_only: true

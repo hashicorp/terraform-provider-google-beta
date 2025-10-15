@@ -5,16 +5,16 @@ api_service_name: 'managedidentities.googleapis.com'
 api_version: 'v1beta1'
 api_resource_type_kind: 'Peering'
 fields:
-  - field: 'authorized_network'
-  - field: 'domain_resource'
+  - api_field: 'authorizedNetwork'
+  - api_field: 'domainResource'
   - field: 'effective_labels'
     provider_only: true
-  - field: 'labels'
-  - field: 'name'
+  - api_field: 'labels'
+  - api_field: 'name'
   - field: 'peering_id'
     provider_only: true
   - field: 'status'
     provider_only: true
-  - field: 'status_message'
+  - api_field: 'statusMessage'
   - field: 'terraform_labels'
     provider_only: true

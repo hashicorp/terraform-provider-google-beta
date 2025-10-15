@@ -7,6 +7,6 @@ api_resource_type_kind: 'KeyAccessJustificationsPolicyConfig'
 api_variant_patterns:
   - 'folders/{{folder}}/kajPolicyConfig'
 fields:
-  - field: 'default_key_access_justification_policy.allowed_access_reasons'
+  - api_field: 'defaultKeyAccessJustificationPolicy.allowedAccessReasons'
   - field: 'folder'
     provider_only: true

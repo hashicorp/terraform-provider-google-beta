@@ -7,4 +7,4 @@ api_resource_type_kind: 'Bucket'
 fields:
   - field: 'bucket_id'
     provider_only: true
-  - field: 'name'
+  - api_field: 'name'
