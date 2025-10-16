@@ -25,6 +25,7 @@ import (
 	"log"
 	"net/http"
 	"reflect"
+	"strings"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
@@ -87,13 +88,6 @@ long and match the regular expression '[a-z]([-a-z0-9]*[a-z0-9])?'
 which means the first character must be a lowercase letter, and all
 following characters must be a dash, lowercase letter, or digit,
 except the last character, which cannot be a dash.`,
-			},
-			"network": {
-				Type:             schema.TypeString,
-				Required:         true,
-				ForceNew:         true,
-				DiffSuppressFunc: tpgresource.CompareSelfLinkOrResourceName,
-				Description:      `A reference to the network to which this router belongs.`,
 			},
 			"bgp": {
 				Type:        schema.TypeList,
@@ -204,6 +198,22 @@ Must be referenced by exactly one bgpPeer. Must comply with RFC1035.`,
 					},
 				},
 			},
+			"ncc_gateway": {
+				Type:             schema.TypeString,
+				Optional:         true,
+				ForceNew:         true,
+				DiffSuppressFunc: tpgresource.CompareSelfLinkOrResourceName,
+				Description:      `A URI of an NCC Gateway spoke`,
+				ConflictsWith:    []string{"network"},
+			},
+			"network": {
+				Type:             schema.TypeString,
+				Optional:         true,
+				ForceNew:         true,
+				DiffSuppressFunc: tpgresource.CompareSelfLinkOrResourceName,
+				Description:      `A reference to the network to which this router belongs.`,
+				ConflictsWith:    []string{"ncc_gateway"},
+			},
 			"params": {
 				Type:        schema.TypeList,
 				Optional:    true,
@@ -312,6 +322,12 @@ func resourceComputeRouterCreate(d *schema.ResourceData, meta interface{}) error
 		return err
 	} else if v, ok := d.GetOkExists("md5_authentication_keys"); !tpgresource.IsEmptyValue(reflect.ValueOf(md5AuthenticationKeysProp)) && (ok || !reflect.DeepEqual(v, md5AuthenticationKeysProp)) {
 		obj["md5AuthenticationKeys"] = md5AuthenticationKeysProp
+	}
+	nccGatewayProp, err := expandComputeRouterNccGateway(d.Get("ncc_gateway"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("ncc_gateway"); !tpgresource.IsEmptyValue(reflect.ValueOf(nccGatewayProp)) && (ok || !reflect.DeepEqual(v, nccGatewayProp)) {
+		obj["nccGateway"] = nccGatewayProp
 	}
 	paramsProp, err := expandComputeRouterParams(d.Get("params"), d, config)
 	if err != nil {
@@ -447,6 +463,9 @@ func resourceComputeRouterRead(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("Error reading Router: %s", err)
 	}
 	if err := d.Set("encrypted_interconnect_router", flattenComputeRouterEncryptedInterconnectRouter(res["encryptedInterconnectRouter"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Router: %s", err)
+	}
+	if err := d.Set("ncc_gateway", flattenComputeRouterNccGateway(res["nccGateway"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Router: %s", err)
 	}
 	if err := d.Set("region", flattenComputeRouterRegion(res["region"], d, config)); err != nil {
@@ -745,6 +764,13 @@ func flattenComputeRouterEncryptedInterconnectRouter(v interface{}, d *schema.Re
 	return v
 }
 
+func flattenComputeRouterNccGateway(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+	return tpgresource.ConvertSelfLinkToV1(v.(string))
+}
+
 func flattenComputeRouterRegion(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
@@ -925,6 +951,25 @@ func expandComputeRouterMd5AuthenticationKeysName(v interface{}, d tpgresource.T
 
 func expandComputeRouterMd5AuthenticationKeysKey(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func expandComputeRouterNccGateway(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	// This method returns a full self link from a partial self link.
+	if v == nil || v.(string) == "" {
+		// It does not try to construct anything from empty.
+		return "", nil
+	} else if strings.HasPrefix(v.(string), "https://") {
+		// Anything that starts with a URL scheme is assumed to be a self link worth using.
+		return v, nil
+	}
+	// Anything else is assumed to be a regional resource, with a partial link that begins with the resource name.
+	// This isn't very likely - it's a last-ditch effort to extract something useful here.  We can do a better job
+	// as soon as MultiResourceRefs are working since we'll know the types that this field is supposed to point to.
+	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkConnectivityBasePath}}")
+	if err != nil {
+		return nil, err
+	}
+	return url + v.(string), nil
 }
 
 func expandComputeRouterParams(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {

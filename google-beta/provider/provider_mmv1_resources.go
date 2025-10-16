@@ -126,6 +126,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/monitoring"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/netapp"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/networkconnectivity"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/networkconnectivityv1"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/networkmanagement"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/networksecurity"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/networkservices"
@@ -1405,11 +1406,11 @@ var generatedResources = map[string]*schema.Resource{
 	"google_netapp_kmsconfig":                                                    netapp.ResourceNetappkmsconfig(),
 	"google_network_connectivity_group":                                          networkconnectivity.ResourceNetworkConnectivityGroup(),
 	"google_network_connectivity_hub":                                            networkconnectivity.ResourceNetworkConnectivityHub(),
-	"google_network_connectivity_internal_range":                                 networkconnectivity.ResourceNetworkConnectivityInternalRange(),
 	"google_network_connectivity_policy_based_route":                             networkconnectivity.ResourceNetworkConnectivityPolicyBasedRoute(),
 	"google_network_connectivity_regional_endpoint":                              networkconnectivity.ResourceNetworkConnectivityRegionalEndpoint(),
-	"google_network_connectivity_service_connection_policy":                      networkconnectivity.ResourceNetworkConnectivityServiceConnectionPolicy(),
 	"google_network_connectivity_spoke":                                          networkconnectivity.ResourceNetworkConnectivitySpoke(),
+	"google_network_connectivity_internal_range":                                 networkconnectivityv1.ResourceNetworkConnectivityv1InternalRange(),
+	"google_network_connectivity_service_connection_policy":                      networkconnectivityv1.ResourceNetworkConnectivityv1ServiceConnectionPolicy(),
 	"google_network_management_connectivity_test":                                networkmanagement.ResourceNetworkManagementConnectivityTest(),
 	"google_network_management_organization_vpc_flow_logs_config":                networkmanagement.ResourceNetworkManagementOrganizationVpcFlowLogsConfig(),
 	"google_network_management_vpc_flow_logs_config":                             networkmanagement.ResourceNetworkManagementVpcFlowLogsConfig(),
@@ -1973,6 +1974,7 @@ func UseGeneratedProducts() {
 	var _ = monitoring.ProductName
 	var _ = netapp.ProductName
 	var _ = networkconnectivity.ProductName
+	var _ = networkconnectivityv1.ProductName
 	var _ = networkmanagement.ProductName
 	var _ = networksecurity.ProductName
 	var _ = networkservices.ProductName
