@@ -619,9 +619,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 721
+// Generated resources: 722
 // Generated IAM resources: 348
-// Total generated resources: 1069
+// Total generated resources: 1070
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -1068,6 +1068,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_dataplex_entry_group_iam_binding":                                    tpgiamresource.ResourceIamBinding(dataplex.DataplexEntryGroupIamSchema, dataplex.DataplexEntryGroupIamUpdaterProducer, dataplex.DataplexEntryGroupIdParseFunc),
 	"google_dataplex_entry_group_iam_member":                                     tpgiamresource.ResourceIamMember(dataplex.DataplexEntryGroupIamSchema, dataplex.DataplexEntryGroupIamUpdaterProducer, dataplex.DataplexEntryGroupIdParseFunc),
 	"google_dataplex_entry_group_iam_policy":                                     tpgiamresource.ResourceIamPolicy(dataplex.DataplexEntryGroupIamSchema, dataplex.DataplexEntryGroupIamUpdaterProducer, dataplex.DataplexEntryGroupIdParseFunc),
+	"google_dataplex_entry_link":                                                 dataplex.ResourceDataplexEntryLink(),
 	"google_dataplex_entry_type":                                                 dataplex.ResourceDataplexEntryType(),
 	"google_dataplex_entry_type_iam_binding":                                     tpgiamresource.ResourceIamBinding(dataplex.DataplexEntryTypeIamSchema, dataplex.DataplexEntryTypeIamUpdaterProducer, dataplex.DataplexEntryTypeIdParseFunc),
 	"google_dataplex_entry_type_iam_member":                                      tpgiamresource.ResourceIamMember(dataplex.DataplexEntryTypeIamSchema, dataplex.DataplexEntryTypeIamUpdaterProducer, dataplex.DataplexEntryTypeIdParseFunc),
