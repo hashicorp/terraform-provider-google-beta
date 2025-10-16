@@ -368,6 +368,7 @@ type Config struct {
 	MonitoringBasePath               string
 	NetappBasePath                   string
 	NetworkConnectivityBasePath      string
+	NetworkConnectivityv1BasePath    string
 	NetworkManagementBasePath        string
 	NetworkSecurityBasePath          string
 	NetworkServicesBasePath          string
@@ -553,6 +554,7 @@ const ModelArmorGlobalBasePathKey = "ModelArmorGlobal"
 const MonitoringBasePathKey = "Monitoring"
 const NetappBasePathKey = "Netapp"
 const NetworkConnectivityBasePathKey = "NetworkConnectivity"
+const NetworkConnectivityv1BasePathKey = "NetworkConnectivityv1"
 const NetworkManagementBasePathKey = "NetworkManagement"
 const NetworkSecurityBasePathKey = "NetworkSecurity"
 const NetworkServicesBasePathKey = "NetworkServices"
@@ -726,7 +728,8 @@ var DefaultBasePaths = map[string]string{
 	ModelArmorGlobalBasePathKey:         "https://modelarmor.googleapis.com/v1beta/",
 	MonitoringBasePathKey:               "https://monitoring.googleapis.com/",
 	NetappBasePathKey:                   "https://netapp.googleapis.com/v1beta1/",
-	NetworkConnectivityBasePathKey:      "https://networkconnectivity.googleapis.com/v1/",
+	NetworkConnectivityBasePathKey:      "https://networkconnectivity.googleapis.com/v1beta/",
+	NetworkConnectivityv1BasePathKey:    "https://networkconnectivity.googleapis.com/v1/",
 	NetworkManagementBasePathKey:        "https://networkmanagement.googleapis.com/v1beta1/",
 	NetworkSecurityBasePathKey:          "https://networksecurity.googleapis.com/v1beta1/",
 	NetworkServicesBasePathKey:          "https://networkservices.googleapis.com/v1/",
@@ -1409,6 +1412,11 @@ func SetEndpointDefaults(d *schema.ResourceData) error {
 		d.Set("network_connectivity_custom_endpoint", MultiEnvDefault([]string{
 			"GOOGLE_NETWORK_CONNECTIVITY_CUSTOM_ENDPOINT",
 		}, DefaultBasePaths[NetworkConnectivityBasePathKey]))
+	}
+	if d.Get("network_connectivityv1_custom_endpoint") == "" {
+		d.Set("network_connectivityv1_custom_endpoint", MultiEnvDefault([]string{
+			"GOOGLE_NETWORK_CONNECTIVITYV1_CUSTOM_ENDPOINT",
+		}, DefaultBasePaths[NetworkConnectivityv1BasePathKey]))
 	}
 	if d.Get("network_management_custom_endpoint") == "" {
 		d.Set("network_management_custom_endpoint", MultiEnvDefault([]string{
@@ -2852,6 +2860,7 @@ func ConfigureBasePaths(c *Config) {
 	c.MonitoringBasePath = DefaultBasePaths[MonitoringBasePathKey]
 	c.NetappBasePath = DefaultBasePaths[NetappBasePathKey]
 	c.NetworkConnectivityBasePath = DefaultBasePaths[NetworkConnectivityBasePathKey]
+	c.NetworkConnectivityv1BasePath = DefaultBasePaths[NetworkConnectivityv1BasePathKey]
 	c.NetworkManagementBasePath = DefaultBasePaths[NetworkManagementBasePathKey]
 	c.NetworkSecurityBasePath = DefaultBasePaths[NetworkSecurityBasePathKey]
 	c.NetworkServicesBasePath = DefaultBasePaths[NetworkServicesBasePathKey]
