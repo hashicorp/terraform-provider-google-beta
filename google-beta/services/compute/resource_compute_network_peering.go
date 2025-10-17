@@ -336,7 +336,6 @@ func findPeeringFromNetwork(network *compute.Network, peeringName string) *compu
 	return nil
 }
 func expandNetworkPeering(d *schema.ResourceData) *compute.NetworkPeering {
-
 	return &compute.NetworkPeering{
 		ExchangeSubnetRoutes:           true,
 		Name:                           d.Get("name").(string),
@@ -349,7 +348,6 @@ func expandNetworkPeering(d *schema.ResourceData) *compute.NetworkPeering {
 		UpdateStrategy:                 d.Get("update_strategy").(string),
 		ForceSendFields:                []string{"ExportSubnetRoutesWithPublicIp", "ImportCustomRoutes", "ExportCustomRoutes"},
 	}
-
 }
 
 func flattenNetworkPeeringStackType(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {

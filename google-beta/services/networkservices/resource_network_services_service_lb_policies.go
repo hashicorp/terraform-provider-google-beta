@@ -184,11 +184,11 @@ func resourceNetworkServicesServiceLbPoliciesCreate(d *schema.ResourceData, meta
 	} else if v, ok := d.GetOkExists("failover_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(failoverConfigProp)) && (ok || !reflect.DeepEqual(v, failoverConfigProp)) {
 		obj["failoverConfig"] = failoverConfigProp
 	}
-	labelsProp, err := expandNetworkServicesServiceLbPoliciesEffectiveLabels(d.Get("effective_labels"), d, config)
+	effectiveLabelsProp, err := expandNetworkServicesServiceLbPoliciesEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(labelsProp)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
-		obj["labels"] = labelsProp
+	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(effectiveLabelsProp)) && (ok || !reflect.DeepEqual(v, effectiveLabelsProp)) {
+		obj["labels"] = effectiveLabelsProp
 	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/{{location}}/serviceLbPolicies?serviceLbPolicyId={{name}}")
@@ -360,11 +360,11 @@ func resourceNetworkServicesServiceLbPoliciesUpdate(d *schema.ResourceData, meta
 	} else if v, ok := d.GetOkExists("failover_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, failoverConfigProp)) {
 		obj["failoverConfig"] = failoverConfigProp
 	}
-	labelsProp, err := expandNetworkServicesServiceLbPoliciesEffectiveLabels(d.Get("effective_labels"), d, config)
+	effectiveLabelsProp, err := expandNetworkServicesServiceLbPoliciesEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, labelsProp)) {
-		obj["labels"] = labelsProp
+	} else if v, ok := d.GetOkExists("effective_labels"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, effectiveLabelsProp)) {
+		obj["labels"] = effectiveLabelsProp
 	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/{{location}}/serviceLbPolicies/{{name}}")
