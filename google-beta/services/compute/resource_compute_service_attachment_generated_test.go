@@ -49,7 +49,7 @@ func TestAccComputeServiceAttachment_serviceAttachmentBasicExample(t *testing.T)
 				ResourceName:            "google_compute_service_attachment.psc_ilb_service_attachment",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"region"},
+				ImportStateVerifyIgnore: []string{"region", "tunneling_config"},
 			},
 		},
 	})
@@ -158,7 +158,7 @@ func TestAccComputeServiceAttachment_serviceAttachmentExplicitProjectsExample(t 
 				ResourceName:            "google_compute_service_attachment.psc_ilb_service_attachment",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"region"},
+				ImportStateVerifyIgnore: []string{"region", "tunneling_config"},
 			},
 		},
 	})
@@ -274,7 +274,7 @@ func TestAccComputeServiceAttachment_serviceAttachmentExplicitNetworksExample(t 
 				ResourceName:            "google_compute_service_attachment.psc_ilb_service_attachment",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"region"},
+				ImportStateVerifyIgnore: []string{"region", "tunneling_config"},
 			},
 		},
 	})
@@ -401,7 +401,7 @@ func TestAccComputeServiceAttachment_serviceAttachmentReconcileConnectionsExampl
 				ResourceName:            "google_compute_service_attachment.psc_ilb_service_attachment",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"region"},
+				ImportStateVerifyIgnore: []string{"region", "tunneling_config"},
 			},
 		},
 	})
@@ -482,6 +482,118 @@ resource "google_compute_subnetwork" "psc_ilb_nat" {
 `, context)
 }
 
+func TestAccComputeServiceAttachment_serviceAttachmentTunnelingConfigExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckComputeServiceAttachmentDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeServiceAttachment_serviceAttachmentTunnelingConfigExample(context),
+			},
+			{
+				ResourceName:            "google_compute_service_attachment.psc_ilb_service_attachment",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"region", "tunneling_config"},
+			},
+		},
+	})
+}
+
+func testAccComputeServiceAttachment_serviceAttachmentTunnelingConfigExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+provider "google-beta" {
+}
+
+resource "google_compute_service_attachment" "psc_ilb_service_attachment" {
+  provider = google-beta
+  
+  name        = "tf-test-my-psc-ilb%{random_suffix}"
+  region      = "us-west2"
+  description = "A service attachment configured with tunneling"
+
+  enable_proxy_protocol    = false
+  connection_preference    = "ACCEPT_AUTOMATIC"
+  nat_subnets              = [google_compute_subnetwork.psc_ilb_nat.id]
+  target_service           = google_compute_forwarding_rule.psc_ilb_target_service.id
+
+  tunneling_config {
+    routing_mode = "REGIONAL"
+    encapsulation_profile = "IPV4"
+  }
+}
+
+resource "google_compute_forwarding_rule" "psc_ilb_target_service" {
+  provider = google-beta
+  
+  name   = "tf-test-producer-forwarding-rule%{random_suffix}"
+  region = "us-west2"
+
+  load_balancing_scheme = "INTERNAL"
+  backend_service       = google_compute_region_backend_service.producer_service_backend.id
+  all_ports             = true
+  network               = google_compute_network.psc_ilb_network.name
+  subnetwork            = google_compute_subnetwork.psc_ilb_producer_subnetwork.name
+}
+
+resource "google_compute_region_backend_service" "producer_service_backend" {
+  provider = google-beta
+  
+  name   = "tf-test-producer-service%{random_suffix}"
+  region = "us-west2"
+
+  health_checks = [google_compute_health_check.producer_service_health_check.id]
+}
+
+resource "google_compute_health_check" "producer_service_health_check" {
+  provider = google-beta
+  
+  name = "tf-test-producer-service-health-check%{random_suffix}"
+
+  check_interval_sec = 1
+  timeout_sec        = 1
+  tcp_health_check {
+    port = "80"
+  }
+}
+
+resource "google_compute_network" "psc_ilb_network" {
+  provider = google-beta
+  
+  name = "tf-test-psc-ilb-network%{random_suffix}"
+  auto_create_subnetworks = false
+}
+
+resource "google_compute_subnetwork" "psc_ilb_producer_subnetwork" {
+  provider = google-beta
+  
+  name   = "tf-test-psc-ilb-producer-subnetwork%{random_suffix}"
+  region = "us-west2"
+
+  network       = google_compute_network.psc_ilb_network.id
+  ip_cidr_range = "10.0.0.0/16"
+}
+
+resource "google_compute_subnetwork" "psc_ilb_nat" {
+  provider = google-beta
+  
+  name   = "tf-test-psc-ilb-nat%{random_suffix}"
+  region = "us-west2"
+
+  network       = google_compute_network.psc_ilb_network.id
+  purpose       =  "PRIVATE_SERVICE_CONNECT"
+  ip_cidr_range = "10.1.0.0/16"
+} 
+`, context)
+}
+
 func TestAccComputeServiceAttachment_serviceAttachmentCrossRegionIlbExample(t *testing.T) {
 	t.Parallel()
 
@@ -501,7 +613,7 @@ func TestAccComputeServiceAttachment_serviceAttachmentCrossRegionIlbExample(t *t
 				ResourceName:            "google_compute_service_attachment.psc_ilb_service_attachment",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"region"},
+				ImportStateVerifyIgnore: []string{"region", "tunneling_config"},
 			},
 		},
 	})

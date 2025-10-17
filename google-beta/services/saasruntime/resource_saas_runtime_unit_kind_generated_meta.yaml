@@ -1,0 +1,40 @@
+resource: 'google_saas_runtime_unit_kind'
+generation_type: 'mmv1'
+source_file: 'products/saasservicemgmt/UnitKind.yaml'
+api_service_name: 'saasservicemgmt.googleapis.com'
+api_version: 'v1beta1'
+api_resource_type_kind: 'UnitKind'
+autogen_status: true
+fields:
+  - field: 'annotations'
+  - field: 'create_time'
+  - field: 'dependencies.alias'
+  - field: 'dependencies.unit_kind'
+  - field: 'effective_annotations'
+    provider_only: true
+  - field: 'effective_labels'
+    provider_only: true
+  - field: 'etag'
+  - field: 'input_variable_mappings.from.dependency'
+  - field: 'input_variable_mappings.from.output_variable'
+  - field: 'input_variable_mappings.to.dependency'
+  - field: 'input_variable_mappings.to.ignore_for_lookup'
+  - field: 'input_variable_mappings.to.input_variable'
+  - field: 'input_variable_mappings.variable'
+  - field: 'labels'
+  - field: 'location'
+    provider_only: true
+  - field: 'name'
+  - field: 'output_variable_mappings.from.dependency'
+  - field: 'output_variable_mappings.from.output_variable'
+  - field: 'output_variable_mappings.to.dependency'
+  - field: 'output_variable_mappings.to.ignore_for_lookup'
+  - field: 'output_variable_mappings.to.input_variable'
+  - field: 'output_variable_mappings.variable'
+  - field: 'saas'
+  - field: 'terraform_labels'
+    provider_only: true
+  - field: 'uid'
+  - field: 'unit_kind_id'
+    provider_only: true
+  - field: 'update_time'

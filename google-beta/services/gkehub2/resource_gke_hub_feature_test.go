@@ -193,21 +193,18 @@ resource "google_project_service" "mcsd" {
 resource "google_project_service" "compute" {
   project = google_project.project.project_id
   service = "compute.googleapis.com"
-  disable_on_destroy = false
   provider = google-beta
 }
 
 resource "google_project_service" "container" {
   project = google_project.project.project_id
   service = "container.googleapis.com"
-  disable_on_destroy = false
   provider = google-beta
 }
 
 resource "google_project_service" "gkehub" {
   project = google_project.project.project_id
   service = "gkehub.googleapis.com"
-  disable_on_destroy = false
   provider = google-beta
 }
 `, context)
@@ -507,23 +504,7 @@ func TestAccGKEHubFeature_FleetDefaultMemberConfigConfigManagement(t *testing.T)
 				ImportStateVerify: true,
 			},
 			{
-				Config: testAccGKEHubFeature_FleetDefaultMemberConfigConfigManagementEnableAutomaticManagementUpdate(context),
-			},
-			{
-				ResourceName:      "google_gke_hub_feature.feature",
-				ImportState:       true,
-				ImportStateVerify: true,
-			},
-			{
 				Config: testAccGKEHubFeature_FleetDefaultMemberConfigConfigManagementRemovalUpdate(context),
-			},
-			{
-				ResourceName:      "google_gke_hub_feature.feature",
-				ImportState:       true,
-				ImportStateVerify: true,
-			},
-			{
-				Config: testAccGKEHubFeature_FleetDefaultMemberConfigConfigManagementAutomaticManagement(context),
 			},
 			{
 				ResourceName:      "google_gke_hub_feature.feature",
@@ -534,25 +515,6 @@ func TestAccGKEHubFeature_FleetDefaultMemberConfigConfigManagement(t *testing.T)
 	})
 }
 
-func testAccGKEHubFeature_FleetDefaultMemberConfigConfigManagementAutomaticManagement(context map[string]interface{}) string {
-	return gkeHubFeatureProjectSetupForGA(context) + acctest.Nprintf(`
-resource "google_gke_hub_feature" "feature" {
-  name = "configmanagement"
-  location = "global"
-  fleet_default_member_config {
-    configmanagement {
-      management = "MANAGEMENT_AUTOMATIC"
-      config_sync {
-        enabled = true
-      }
-    }
-  }
-  depends_on = [google_project_service.anthos, google_project_service.gkehub, google_project_service.acm]
-  project = google_project.project.project_id
-}
-`, context)
-}
-
 func testAccGKEHubFeature_FleetDefaultMemberConfigConfigManagement(context map[string]interface{}) string {
 	return gkeHubFeatureProjectSetupForGA(context) + acctest.Nprintf(`
 resource "google_gke_hub_feature" "feature" {
@@ -560,7 +522,7 @@ resource "google_gke_hub_feature" "feature" {
   location = "global"
   fleet_default_member_config {
     configmanagement {
-      version = "1.19.1"
+      version = "1.21.2"
       config_sync {
         source_format = "hierarchy"
         git {
@@ -587,40 +549,13 @@ resource "google_gke_hub_feature" "feature" {
   location = "global"
   fleet_default_member_config {
     configmanagement {
-      version = "1.19.2"
+      version = "1.21.3"
       management = "MANAGEMENT_MANUAL"
       config_sync {
         enabled = true
         prevent_drift = true
         source_format = "unstructured"
         metrics_gcp_service_account_email = "gke-cluster-metrics@gke-foo-nonprod.iam.gserviceaccount.com"
-        oci {
-          sync_repo = "us-central1-docker.pkg.dev/corp-gke-build-artifacts/acm/configs:latest"
-          policy_dir = "/acm/nonprod-root/"
-          secret_type = "gcpserviceaccount"
-          sync_wait_secs = "15"
-          gcp_service_account_email = "gke-cluster@gke-foo-nonprod.iam.gserviceaccount.com"
-        }
-      }
-    }
-  }
-  depends_on = [google_project_service.anthos, google_project_service.gkehub, google_project_service.acm]
-  project = google_project.project.project_id
-}
-`, context)
-}
-
-func testAccGKEHubFeature_FleetDefaultMemberConfigConfigManagementEnableAutomaticManagementUpdate(context map[string]interface{}) string {
-	return gkeHubFeatureProjectSetupForGA(context) + acctest.Nprintf(`
-resource "google_gke_hub_feature" "feature" {
-  name = "configmanagement"
-  location = "global"
-  fleet_default_member_config {
-    configmanagement {
-      management = "MANAGEMENT_AUTOMATIC"
-      config_sync {
-        prevent_drift = true
-        source_format = "unstructured"
         oci {
           sync_repo = "us-central1-docker.pkg.dev/corp-gke-build-artifacts/acm/configs:latest"
           policy_dir = "/acm/nonprod-root/"
@@ -1100,13 +1035,11 @@ resource "google_project_service" "mcsd" {
 resource "google_project_service" "compute" {
   project = google_project.project.project_id
   service = "compute.googleapis.com"
-  disable_on_destroy = false
 }
 
 resource "google_project_service" "container" {
   project = google_project.project.project_id
   service = "container.googleapis.com"
-  disable_on_destroy = false
 }
 
 resource "google_project_service" "anthos" {
@@ -1117,7 +1050,6 @@ resource "google_project_service" "anthos" {
 resource "google_project_service" "gkehub" {
   project = google_project.project.project_id
   service = "gkehub.googleapis.com"
-  disable_on_destroy = false
 }
 
 resource "google_project" "project_2" {
@@ -1131,19 +1063,16 @@ resource "google_project" "project_2" {
 resource "google_project_service" "compute_2" {
   project = google_project.project_2.project_id
   service = "compute.googleapis.com"
-  disable_on_destroy = false
 }
 
 resource "google_project_service" "container_2" {
   project = google_project.project_2.project_id
   service = "container.googleapis.com"
-  disable_on_destroy = false
 }
 
 resource "google_project_service" "gkehub_2" {
   project = google_project.project_2.project_id
   service = "gkehub.googleapis.com"
-  disable_on_destroy = false
 }
 `, context)
 }

@@ -8,7 +8,6 @@ fields:
   - field: 'allow_subnet_cidr_routes_overlap'
   - field: 'creation_timestamp'
   - field: 'description'
-  - field: 'enable_flow_logs'
   - field: 'external_ipv6_prefix'
   - field: 'gateway_address'
   - field: 'internal_ipv6_prefix'

@@ -88,18 +88,6 @@ func sendSecondaryIpRangeIfEmptyDiff(_ context.Context, diff *schema.ResourceDif
 	return nil
 }
 
-// DiffSuppressFunc for `log_config`.
-func subnetworkLogConfigDiffSuppress(k, old, new string, d *schema.ResourceData) bool {
-	// If enable_flow_logs is enabled and log_config is not set, ignore the diff
-	if enable_flow_logs := d.Get("enable_flow_logs"); enable_flow_logs.(bool) {
-		logConfig := d.GetRawConfig().GetAttr("log_config")
-		logConfigIsEmpty := logConfig.IsNull() || logConfig.LengthInt() == 0
-		return logConfigIsEmpty
-	}
-
-	return false
-}
-
 func ResourceComputeSubnetwork() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceComputeSubnetworkCreate,
@@ -163,17 +151,6 @@ via BGP even if their destinations match existing subnet ranges.`,
 you create the resource. This field can be set only at resource
 creation time.`,
 			},
-			"enable_flow_logs": {
-				Type:       schema.TypeBool,
-				Computed:   true,
-				Optional:   true,
-				Deprecated: "This field is being removed in favor of log_config. If log_config is present, flow logs are enabled.",
-				ForceNew:   true,
-				Description: `Whether to enable flow logging for this subnetwork. If this field is not explicitly set,
-it will not appear in get listings. If not set the default behavior is determined by the
-org policy, if there is no org policy specified, then it will default to disabled.
-This field isn't supported if the subnet purpose field is set to REGIONAL_MANAGED_PROXY.`,
-			},
 			"external_ipv6_prefix": {
 				Type:        schema.TypeString,
 				Computed:    true,
@@ -215,9 +192,8 @@ or the first time the subnet is updated into IPV4_IPV6 dual stack. If the ipv6_t
 cannot enable direct path. Possible values: ["EXTERNAL", "INTERNAL"]`,
 			},
 			"log_config": {
-				Type:             schema.TypeList,
-				Optional:         true,
-				DiffSuppressFunc: subnetworkLogConfigDiffSuppress,
+				Type:     schema.TypeList,
+				Optional: true,
 				Description: `This field denotes the VPC flow logging options for this subnetwork. If
 logging is enabled, logs are exported to Cloud Logging. Flow logging
 isn't supported if the subnet 'purpose' field is set to subnetwork is
@@ -572,11 +548,11 @@ func resourceComputeSubnetworkCreate(d *schema.ResourceData, meta interface{}) e
 	} else if v, ok := d.GetOkExists("role"); !tpgresource.IsEmptyValue(reflect.ValueOf(roleProp)) && (ok || !reflect.DeepEqual(v, roleProp)) {
 		obj["role"] = roleProp
 	}
-	secondaryIpRangesProp, err := expandComputeSubnetworkSecondaryIpRange(d.Get("secondary_ip_range"), d, config)
+	secondaryIpRangeProp, err := expandComputeSubnetworkSecondaryIpRange(d.Get("secondary_ip_range"), d, config)
 	if err != nil {
 		return err
-	} else if v, ok := d.GetOkExists("secondary_ip_range"); ok || !reflect.DeepEqual(v, secondaryIpRangesProp) {
-		obj["secondaryIpRanges"] = secondaryIpRangesProp
+	} else if v, ok := d.GetOkExists("secondary_ip_range"); ok || !reflect.DeepEqual(v, secondaryIpRangeProp) {
+		obj["secondaryIpRanges"] = secondaryIpRangeProp
 	}
 	privateIpGoogleAccessProp, err := expandComputeSubnetworkPrivateIpGoogleAccess(d.Get("private_ip_google_access"), d, config)
 	if err != nil {
@@ -631,12 +607,6 @@ func resourceComputeSubnetworkCreate(d *schema.ResourceData, meta interface{}) e
 		return err
 	} else if v, ok := d.GetOkExists("allow_subnet_cidr_routes_overlap"); ok || !reflect.DeepEqual(v, allowSubnetCidrRoutesOverlapProp) {
 		obj["allowSubnetCidrRoutesOverlap"] = allowSubnetCidrRoutesOverlapProp
-	}
-	enableFlowLogsProp, err := expandComputeSubnetworkEnableFlowLogs(d.Get("enable_flow_logs"), d, config)
-	if err != nil {
-		return err
-	} else if v, ok := d.GetOkExists("enable_flow_logs"); !tpgresource.IsEmptyValue(reflect.ValueOf(enableFlowLogsProp)) && (ok || !reflect.DeepEqual(v, enableFlowLogsProp)) {
-		obj["enableFlowLogs"] = enableFlowLogsProp
 	}
 	paramsProp, err := expandComputeSubnetworkParams(d.Get("params"), d, config)
 	if err != nil {
@@ -808,9 +778,6 @@ func resourceComputeSubnetworkRead(d *schema.ResourceData, meta interface{}) err
 		return fmt.Errorf("Error reading Subnetwork: %s", err)
 	}
 	if err := d.Set("allow_subnet_cidr_routes_overlap", flattenComputeSubnetworkAllowSubnetCidrRoutesOverlap(res["allowSubnetCidrRoutesOverlap"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Subnetwork: %s", err)
-	}
-	if err := d.Set("enable_flow_logs", flattenComputeSubnetworkEnableFlowLogs(res["enableFlowLogs"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Subnetwork: %s", err)
 	}
 	if err := d.Set("state", flattenComputeSubnetworkState(res["state"], d, config)); err != nil {
@@ -1615,10 +1582,6 @@ func flattenComputeSubnetworkAllowSubnetCidrRoutesOverlap(v interface{}, d *sche
 	return v
 }
 
-func flattenComputeSubnetworkEnableFlowLogs(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
-	return v
-}
-
 func flattenComputeSubnetworkState(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
@@ -1768,10 +1731,6 @@ func expandComputeSubnetworkIpCollection(v interface{}, d tpgresource.TerraformR
 }
 
 func expandComputeSubnetworkAllowSubnetCidrRoutesOverlap(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
-	return v, nil
-}
-
-func expandComputeSubnetworkEnableFlowLogs(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

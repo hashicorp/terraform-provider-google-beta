@@ -131,7 +131,7 @@ func TestAccComputeVpnTunnel_vpnTunnelCipherSuiteExample(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeVpnTunnelDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -150,7 +150,6 @@ func TestAccComputeVpnTunnel_vpnTunnelCipherSuiteExample(t *testing.T) {
 func testAccComputeVpnTunnel_vpnTunnelCipherSuiteExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_vpn_tunnel" "tunnel1" {
-  provider = google-beta
   name          = "tf-test-tunnel-cipher%{random_suffix}"
   peer_ip       = "15.0.0.120"
   shared_secret = "a secret message"
@@ -183,23 +182,19 @@ resource "google_compute_vpn_tunnel" "tunnel1" {
 }
 
 resource "google_compute_vpn_gateway" "target_gateway" {
-  provider = google-beta
   name    = "tf-test-vpn-1%{random_suffix}"
   network = google_compute_network.network1.id
 }
 
 resource "google_compute_network" "network1" {
-  provider = google-beta
   name = "tf-test-network-1%{random_suffix}"
 }
 
 resource "google_compute_address" "vpn_static_ip" {
-  provider = google-beta
   name = "tf-test-vpn-static-ip%{random_suffix}"
 }
 
 resource "google_compute_forwarding_rule" "fr_esp" {
-  provider = google-beta
   name        = "tf-test-fr-esp%{random_suffix}"
   ip_protocol = "ESP"
   ip_address  = google_compute_address.vpn_static_ip.address
@@ -207,7 +202,6 @@ resource "google_compute_forwarding_rule" "fr_esp" {
 }
 
 resource "google_compute_forwarding_rule" "fr_udp500" {
-  provider = google-beta
   name        = "tf-test-fr-udp500%{random_suffix}"
   ip_protocol = "UDP"
   port_range  = "500"
@@ -216,7 +210,6 @@ resource "google_compute_forwarding_rule" "fr_udp500" {
 }
 
 resource "google_compute_forwarding_rule" "fr_udp4500" {
-  provider = google-beta
   name        = "tf-test-fr-udp4500%{random_suffix}"
   ip_protocol = "UDP"
   port_range  = "4500"
@@ -225,7 +218,6 @@ resource "google_compute_forwarding_rule" "fr_udp4500" {
 }
 
 resource "google_compute_route" "route1" {
-  provider = google-beta
   name       = "route1%{random_suffix}"
   network    = google_compute_network.network1.name
   dest_range = "15.0.0.0/24"

@@ -416,10 +416,11 @@ Google Cloud KMS. Only one of kms_key_self_link, rsa_encrypted_key and raw_key m
 			},
 
 			"metadata": {
-				Type:        schema.TypeMap,
-				Optional:    true,
-				ForceNew:    true,
-				Description: `Metadata key/value pairs to make available from within instances created from this template.`,
+				Type:         schema.TypeMap,
+				Optional:     true,
+				ForceNew:     true,
+				Description:  `Metadata key/value pairs to make available from within instances created from this template.`,
+				ValidateFunc: ValidateInstanceMetadata,
 			},
 
 			"partner_metadata": {
@@ -898,6 +899,12 @@ be from 0 to 999,999,999 inclusive.`,
 									},
 								},
 							},
+						},
+						"skip_guest_os_shutdown": {
+							Type:        schema.TypeBool,
+							Optional:    true,
+							Default:     false,
+							Description: `Default is false and there will be 120 seconds between GCE ACPI G2 Soft Off and ACPI G3 Mechanical Off for Standard VMs and 30 seconds for Spot VMs.`,
 						},
 					},
 				},
