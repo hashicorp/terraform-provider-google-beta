@@ -73,7 +73,7 @@ func TestAccComputeRegionNetworkFirewallPolicy_regionNetworkFirewallPolicyRoceEx
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeRegionNetworkFirewallPolicyDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -92,7 +92,6 @@ func TestAccComputeRegionNetworkFirewallPolicy_regionNetworkFirewallPolicyRoceEx
 func testAccComputeRegionNetworkFirewallPolicy_regionNetworkFirewallPolicyRoceExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_region_network_firewall_policy" "policy" {
-  provider = google-beta
   name = "tf-test-rnf-policy%{random_suffix}"
   description = "Terraform test"
   policy_type = "RDMA_ROCE_POLICY"
