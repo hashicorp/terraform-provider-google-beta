@@ -26,7 +26,7 @@ IMPROVEMENTS:
 * iambeta: allowed GKE workload identity pool pattern in `workload_identity_pool_id` field of `google_iam_workload_identity_pool` resource. ([#10861](https://github.com/hashicorp/terraform-provider-google-beta/pull/10861))
 * memorystore: added `maintenance_version` field to `google_memorystore_instance` resource ([#10896](https://github.com/hashicorp/terraform-provider-google-beta/pull/10896))
 * memorystore: added `available_maintenance_versions` field to `google_memorystore_instance` resource ([#10899](https://github.com/hashicorp/terraform-provider-google-beta/pull/10899))
-* networkconnectivity: added `HYBRID_INSPECTION` enum value to `preset_topology` field in `google_network_connectivity_hub` resource (ga) ([#10894](https://github.com/hashicorp/terraform-provider-google-beta/pull/10894))
+* networkconnectivity: added `HYBRID_INSPECTION` enum value to `preset_topology` field in `google_network_connectivity_hub` resource ([#10894](https://github.com/hashicorp/terraform-provider-google-beta/pull/10894))
 * networkconnectivity: added `gateway` field to `google_network_connectivity_spoke` resource (beta) ([#10894](https://github.com/hashicorp/terraform-provider-google-beta/pull/10894))
 * networkservices: added `isolationConfig` on `google_network_services_service_lb_policies` resource ([#10858](https://github.com/hashicorp/terraform-provider-google-beta/pull/10858))
 * redis: added `deletion_protection` field to `redis_instance` to make deleting them require an explicit intent. `redis_instance` resources now cannot be destroyed unless `deletion_protection = false` is set for the resource. ([#10860](https://github.com/hashicorp/terraform-provider-google-beta/pull/10860))
