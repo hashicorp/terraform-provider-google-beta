@@ -148,6 +148,7 @@ fields:
   - api_field: 'params.resourceManagerTags'
   - api_field: 'partnerMetadata'
   - field: 'project'
+  - api_field: 'reservationAffinity.key'
     field: 'reservation_affinity.specific_reservation.key'
   - api_field: 'reservationAffinity.values'
     field: 'reservation_affinity.specific_reservation.values'
