@@ -133,3 +133,4 @@ fields:
   - api_field: 'subsetting.policy'
   - api_field: 'subsetting.subsetSize'
   - api_field: 'timeoutSec'
+  - api_field: 'selfLink'

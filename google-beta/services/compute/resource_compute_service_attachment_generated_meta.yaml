@@ -31,3 +31,4 @@ fields:
   - api_field: 'targetService'
   - api_field: 'tunnelingConfig.encapsulationProfile'
   - api_field: 'tunnelingConfig.routingMode'
+  - api_field: 'selfLink'

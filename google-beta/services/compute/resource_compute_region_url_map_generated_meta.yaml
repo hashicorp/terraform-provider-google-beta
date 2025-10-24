@@ -404,3 +404,4 @@ fields:
     field: 'test.path'
   - api_field: 'tests.service'
     field: 'test.service'
+  - api_field: 'selfLink'

@@ -25,3 +25,4 @@ fields:
   - api_field: 'serverlessDeployment.urlMask'
   - api_field: 'serverlessDeployment.version'
   - api_field: 'subnetwork'
+  - api_field: 'selfLink'

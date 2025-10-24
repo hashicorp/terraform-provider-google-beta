@@ -13,3 +13,4 @@ fields:
   - api_field: 'network'
   - api_field: 'securityPolicy'
   - api_field: 'zone'
+  - api_field: 'selfLink'

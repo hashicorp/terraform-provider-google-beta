@@ -30,3 +30,4 @@ fields:
   - api_field: 'specificReservationRequired'
   - api_field: 'status'
   - api_field: 'zone'
+  - api_field: 'selfLink'
