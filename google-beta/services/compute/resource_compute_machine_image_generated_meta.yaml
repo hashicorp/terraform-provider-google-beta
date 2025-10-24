@@ -14,3 +14,4 @@ fields:
   - api_field: 'name'
   - api_field: 'sourceInstance'
   - api_field: 'storageLocations'
+  - api_field: 'selfLink'
