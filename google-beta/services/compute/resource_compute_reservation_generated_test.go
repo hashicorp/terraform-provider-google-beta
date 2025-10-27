@@ -290,7 +290,10 @@ func TestAccComputeReservation_sharedReservationBasicExample(t *testing.T) {
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
-		CheckDestroy:             testAccCheckComputeReservationDestroyProducer(t),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccCheckComputeReservationDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeReservation_sharedReservationBasicExample(context),
@@ -339,6 +342,11 @@ resource "google_org_policy_policy" "shared_reservation_org_policy" {
   }
 }
 
+resource "time_sleep" "wait_orgpolicy" {
+  depends_on = [google_org_policy_policy.shared_reservation_org_policy]
+  create_duration = "60s"
+}
+
 resource "google_compute_reservation" "gce_reservation" {
   project = google_project.owner_project.project_id
   name = "tf-test-gce-shared-reservation%{random_suffix}"
@@ -358,7 +366,7 @@ resource "google_compute_reservation" "gce_reservation" {
       project_id = google_project.guest_project.project_id
     }
   }
-  depends_on = [google_org_policy_policy.shared_reservation_org_policy,google_project_service.compute]
+  depends_on = [time_sleep.wait_orgpolicy,google_project_service.compute]
 }
 `, context)
 }
@@ -376,7 +384,10 @@ func TestAccComputeReservation_sharedReservationBetaExample(t *testing.T) {
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
-		CheckDestroy:             testAccCheckComputeReservationDestroyProducer(t),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccCheckComputeReservationDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeReservation_sharedReservationBetaExample(context),
@@ -429,6 +440,11 @@ resource "google_org_policy_policy" "shared_reservation_org_policy" {
   }
 }
 
+resource "time_sleep" "wait_orgpolicy" {
+  depends_on = [google_org_policy_policy.shared_reservation_org_policy]
+  create_duration = "60s"
+}
+
 resource "google_compute_reservation" "gce_reservation" {
   provider = google-beta
   project  = google_project.owner_project.project_id
@@ -446,7 +462,7 @@ resource "google_compute_reservation" "gce_reservation" {
     share_type = "SPECIFIC_PROJECTS"
     projects = [google_project.guest_project.name]
   }
-  depends_on = [google_org_policy_policy.shared_reservation_org_policy,google_project_service.compute]
+  depends_on = [time_sleep.wait_orgpolicy,google_project_service.compute]
 }
 `, context)
 }
