@@ -43,6 +43,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/binaryauthorization"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/blockchainnodeengine"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/certificatemanager"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/ces"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/chronicle"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/cloudasset"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/cloudbuild"
@@ -620,9 +621,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 725
+// Generated resources: 726
 // Generated IAM resources: 348
-// Total generated resources: 1073
+// Total generated resources: 1074
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -788,6 +789,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_certificate_manager_certificate_map_entry":                           certificatemanager.ResourceCertificateManagerCertificateMapEntry(),
 	"google_certificate_manager_dns_authorization":                               certificatemanager.ResourceCertificateManagerDnsAuthorization(),
 	"google_certificate_manager_trust_config":                                    certificatemanager.ResourceCertificateManagerTrustConfig(),
+	"google_ces_app":                                                             ces.ResourceCESApp(),
 	"google_chronicle_data_access_label":                                         chronicle.ResourceChronicleDataAccessLabel(),
 	"google_chronicle_data_access_scope":                                         chronicle.ResourceChronicleDataAccessScope(),
 	"google_chronicle_reference_list":                                            chronicle.ResourceChronicleReferenceList(),
@@ -1894,6 +1896,7 @@ func UseGeneratedProducts() {
 	var _ = binaryauthorization.ProductName
 	var _ = blockchainnodeengine.ProductName
 	var _ = certificatemanager.ProductName
+	var _ = ces.ProductName
 	var _ = chronicle.ProductName
 	var _ = cloudasset.ProductName
 	var _ = cloudbuild.ProductName
