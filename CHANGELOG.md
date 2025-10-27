@@ -10,8 +10,7 @@ FEATURES:
 
 IMPROVEMENTS:
 * appengine: added `ssl_policy` to `application` on `google_app_engine_application` resource ([#10915](https://github.com/hashicorp/terraform-provider-google-beta/pull/10915))
-* bigquery: supported IAM conditions in all `google_bigquery_dataset_iam_*` resources ([#10913](https://github.com/hashicorp/terraform-provider-google-beta/pull/10913))
-* compute: promoted `policy_type` to GA in `google_compute_network_firewall_policy`, `google_compute_network_firewall_policy_with_rules`, `google_compute_region_network_firewall_policy`, `google_compute_region_network_firewall_policy_with_rules`. ([#10908](https://github.com/hashicorp/terraform-provider-google-beta/pull/10908))
+* bigquery: added support for IAM conditions in `google_bigquery_dataset_iam_*` resources ([#10913](https://github.com/hashicorp/terraform-provider-google-beta/pull/10913))
 * container: added `dns_endpoint_confg.enable_k8s_tokens_via_dns` and  `dns_endpoint_config.enable_k8s_certs_via_dns` fields to `google_container_cluster` resource ([#10910](https://github.com/hashicorp/terraform-provider-google-beta/pull/10910))
 * container: added `fleet.membership_type` field to `google_container_cluster` resource ([#10901](https://github.com/hashicorp/terraform-provider-google-beta/pull/10901))
 * dataplex: added `data_classification` field to `google_dataplex_aspect_type` resource ([#10929](https://github.com/hashicorp/terraform-provider-google-beta/pull/10929))
@@ -26,7 +25,6 @@ BUG FIXES:
 * bigquery: added validation for `target_types` in `google_bigquery_dataset_access` ([#10932](https://github.com/hashicorp/terraform-provider-google-beta/pull/10932))
 * cloudquotas: resolved permadiff for `preferred_value` in `google_cloud_quotas_quota_preference` ([#10911](https://github.com/hashicorp/terraform-provider-google-beta/pull/10911))
 * compute: fixed scenario where `google_compute_instance` would not be staged for recreation if `guest_accelerator.count` was updated to 0 from non-zero value ([#10902](https://github.com/hashicorp/terraform-provider-google-beta/pull/10902))
-* managedkafka: fix the order of cluster creation and IAM binding in CMEK test. ([#10918](https://github.com/hashicorp/terraform-provider-google-beta/pull/10918))
 * sql: fixed an issue where `dataDiskSize` was unintentionally null instead of set to the current value in API requests, triggering unrelated errors ([#10919](https://github.com/hashicorp/terraform-provider-google-beta/pull/10919))
 
 ## 7.8.0 (October 21st, 2025)
