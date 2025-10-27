@@ -42,6 +42,7 @@ import (
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/binaryauthorization"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/blockchainnodeengine"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/certificatemanager"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/ces"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/chronicle"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/cloudasset"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/cloudbuild"
