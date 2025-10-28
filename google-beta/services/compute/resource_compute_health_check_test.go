@@ -62,7 +62,7 @@ func TestAccComputeHealthCheck_grpcWithTls_create(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeHealthCheckDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -84,7 +84,7 @@ func TestAccComputeHealthCheck_grpcWithTls_update(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeHealthCheckDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -260,7 +260,6 @@ resource "google_compute_health_check" "foobar" {
 func testAccComputeHealthCheck_grpcWithTls(hckName string) string {
 	return fmt.Sprintf(`
 resource "google_compute_health_check" "foobar" {
-  provider            = "google-beta"
   check_interval_sec  = 3
   description         = "Resource created for Terraform acceptance testing"
   healthy_threshold   = 3
@@ -277,7 +276,6 @@ resource "google_compute_health_check" "foobar" {
 func testAccComputeHealthCheck_grpcWithTls_update(hckName string) string {
 	return fmt.Sprintf(`
 resource "google_compute_health_check" "foobar" {
-  provider            = "google-beta"
   check_interval_sec  = 3
   healthy_threshold   = 10
   name                = "tf-test-health-test-%s"
