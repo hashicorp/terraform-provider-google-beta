@@ -605,7 +605,7 @@ func TestAccComputeRegionHealthCheck_regionHealthCheckGrpcWithTlsExample(t *test
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeRegionHealthCheckDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -624,8 +624,6 @@ func TestAccComputeRegionHealthCheck_regionHealthCheckGrpcWithTlsExample(t *test
 func testAccComputeRegionHealthCheck_regionHealthCheckGrpcWithTlsExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_region_health_check" "grpc-with-tls-region-health-check" {
-  provider = google-beta
-  
   name = "tf-test-grpc-with-tls-region-health-check%{random_suffix}"
 
   timeout_sec        = 1
@@ -647,7 +645,7 @@ func TestAccComputeRegionHealthCheck_regionHealthCheckGrpcWithTlsFullExample(t *
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeRegionHealthCheckDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -666,8 +664,6 @@ func TestAccComputeRegionHealthCheck_regionHealthCheckGrpcWithTlsFullExample(t *
 func testAccComputeRegionHealthCheck_regionHealthCheckGrpcWithTlsFullExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_region_health_check" "grpc-with-tls-region-health-check" {
-  provider = google-beta
-  
   name = "tf-test-grpc-with-tls-region-health-check%{random_suffix}"
   description = "regional health check via GRPC with TLS"
 
