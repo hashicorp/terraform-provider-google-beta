@@ -80,6 +80,7 @@ resource "google_compute_wire_group" "example-test-wire-group" {
   wire_properties {
     bandwidth_unmetered = 10
     fault_response =  "NONE"
+    bandwidth_allocation = "ALLOCATE_PER_WIRE"
   }
   wire_group_properties {
     type = "WIRE"

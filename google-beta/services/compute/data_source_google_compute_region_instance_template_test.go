@@ -37,7 +37,7 @@ func TestAccRegionInstanceTemplateDatasource_name(t *testing.T) {
 					acctest.CheckDataSourceStateMatchesResourceStateWithIgnores(
 						"data.google_compute_region_instance_template.default",
 						"google_compute_region_instance_template.default",
-						map[string]struct{}{},
+						[]string{},
 					),
 				),
 			},
@@ -58,7 +58,7 @@ func TestAccRegionInstanceTemplateDatasource_filter(t *testing.T) {
 					acctest.CheckDataSourceStateMatchesResourceStateWithIgnores(
 						"data.google_compute_region_instance_template.default",
 						"google_compute_region_instance_template.c",
-						map[string]struct{}{},
+						[]string{},
 					),
 				),
 			},
@@ -79,7 +79,7 @@ func TestAccRegionInstanceTemplateDatasource_filter_mostRecent(t *testing.T) {
 					acctest.CheckDataSourceStateMatchesResourceStateWithIgnores(
 						"data.google_compute_region_instance_template.default",
 						"google_compute_region_instance_template.c",
-						map[string]struct{}{},
+						[]string{},
 					),
 				),
 			},

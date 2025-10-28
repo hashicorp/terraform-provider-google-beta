@@ -91,6 +91,14 @@ More info: https://kubernetes.io/docs/user-guide/annotations
 Please refer to the field 'effective_annotations' for all of the annotations present on the resource.`,
 				Elem: &schema.Schema{Type: schema.TypeString},
 			},
+			"default_release": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Description: `A reference to the Release object to use as default for creating new units
+of this UnitKind.
+If not specified, a new unit must explicitly reference which release to use
+for its creation.`,
+			},
 			"dependencies": {
 				Type:     schema.TypeList,
 				Optional: true,
@@ -318,6 +326,12 @@ func resourceSaasRuntimeUnitKindCreate(d *schema.ResourceData, meta interface{})
 	}
 
 	obj := make(map[string]interface{})
+	defaultReleaseProp, err := expandSaasRuntimeUnitKindDefaultRelease(d.Get("default_release"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("default_release"); !tpgresource.IsEmptyValue(reflect.ValueOf(defaultReleaseProp)) && (ok || !reflect.DeepEqual(v, defaultReleaseProp)) {
+		obj["defaultRelease"] = defaultReleaseProp
+	}
 	dependenciesProp, err := expandSaasRuntimeUnitKindDependencies(d.Get("dependencies"), d, config)
 	if err != nil {
 		return err
@@ -449,6 +463,9 @@ func resourceSaasRuntimeUnitKindRead(d *schema.ResourceData, meta interface{}) e
 	if err := d.Set("create_time", flattenSaasRuntimeUnitKindCreateTime(res["createTime"], d, config)); err != nil {
 		return fmt.Errorf("Error reading UnitKind: %s", err)
 	}
+	if err := d.Set("default_release", flattenSaasRuntimeUnitKindDefaultRelease(res["defaultRelease"], d, config)); err != nil {
+		return fmt.Errorf("Error reading UnitKind: %s", err)
+	}
 	if err := d.Set("dependencies", flattenSaasRuntimeUnitKindDependencies(res["dependencies"], d, config)); err != nil {
 		return fmt.Errorf("Error reading UnitKind: %s", err)
 	}
@@ -505,6 +522,12 @@ func resourceSaasRuntimeUnitKindUpdate(d *schema.ResourceData, meta interface{})
 	billingProject = project
 
 	obj := make(map[string]interface{})
+	defaultReleaseProp, err := expandSaasRuntimeUnitKindDefaultRelease(d.Get("default_release"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("default_release"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, defaultReleaseProp)) {
+		obj["defaultRelease"] = defaultReleaseProp
+	}
 	inputVariableMappingsProp, err := expandSaasRuntimeUnitKindInputVariableMappings(d.Get("input_variable_mappings"), d, config)
 	if err != nil {
 		return err
@@ -538,6 +561,10 @@ func resourceSaasRuntimeUnitKindUpdate(d *schema.ResourceData, meta interface{})
 	log.Printf("[DEBUG] Updating UnitKind %q: %#v", d.Id(), obj)
 	headers := make(http.Header)
 	updateMask := []string{}
+
+	if d.HasChange("default_release") {
+		updateMask = append(updateMask, "defaultRelease")
+	}
 
 	if d.HasChange("input_variable_mappings") {
 		updateMask = append(updateMask, "inputVariableMappings")
@@ -674,6 +701,10 @@ func flattenSaasRuntimeUnitKindAnnotations(v interface{}, d *schema.ResourceData
 }
 
 func flattenSaasRuntimeUnitKindCreateTime(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenSaasRuntimeUnitKindDefaultRelease(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -914,7 +945,14 @@ func flattenSaasRuntimeUnitKindEffectiveLabels(v interface{}, d *schema.Resource
 	return v
 }
 
+func expandSaasRuntimeUnitKindDefaultRelease(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
 func expandSaasRuntimeUnitKindDependencies(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -952,6 +990,9 @@ func expandSaasRuntimeUnitKindDependenciesUnitKind(v interface{}, d tpgresource.
 }
 
 func expandSaasRuntimeUnitKindInputVariableMappings(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -988,6 +1029,9 @@ func expandSaasRuntimeUnitKindInputVariableMappings(v interface{}, d tpgresource
 }
 
 func expandSaasRuntimeUnitKindInputVariableMappingsFrom(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1022,6 +1066,9 @@ func expandSaasRuntimeUnitKindInputVariableMappingsFromOutputVariable(v interfac
 }
 
 func expandSaasRuntimeUnitKindInputVariableMappingsTo(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1071,6 +1118,9 @@ func expandSaasRuntimeUnitKindInputVariableMappingsVariable(v interface{}, d tpg
 }
 
 func expandSaasRuntimeUnitKindOutputVariableMappings(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -1107,6 +1157,9 @@ func expandSaasRuntimeUnitKindOutputVariableMappings(v interface{}, d tpgresourc
 }
 
 func expandSaasRuntimeUnitKindOutputVariableMappingsFrom(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1141,6 +1194,9 @@ func expandSaasRuntimeUnitKindOutputVariableMappingsFromOutputVariable(v interfa
 }
 
 func expandSaasRuntimeUnitKindOutputVariableMappingsTo(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil

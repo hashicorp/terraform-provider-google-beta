@@ -117,7 +117,7 @@ func listAndActionNetworkConnectivityRegionalEndpoint(action sweeper.ResourceAct
 		}
 
 		// Prepare list URL
-		listTemplate := strings.Split("https://networkconnectivity.googleapis.com/v1/projects/{{project}}/locations/{{location}}/regionalEndpoints", "?")[0]
+		listTemplate := strings.Split("https://networkconnectivity.googleapis.com/v1beta/projects/{{project}}/locations/{{location}}/regionalEndpoints", "?")[0]
 		listUrl, err := tpgresource.ReplaceVars(mockConfig, config, listTemplate)
 		if err != nil {
 			log.Printf("[INFO][SWEEPER_LOG] error preparing sweeper list url: %s", err)
@@ -195,7 +195,7 @@ func deleteResourceNetworkConnectivityRegionalEndpoint(config *transport_tpg.Con
 		return nil
 	}
 
-	deleteTemplate := "https://networkconnectivity.googleapis.com/v1/projects/{{project}}/locations/{{location}}/regionalEndpoints/{{name}}"
+	deleteTemplate := "https://networkconnectivity.googleapis.com/v1beta/projects/{{project}}/locations/{{location}}/regionalEndpoints/{{name}}"
 
 	url, err := tpgresource.ReplaceVars(d, config, deleteTemplate)
 	if err != nil {

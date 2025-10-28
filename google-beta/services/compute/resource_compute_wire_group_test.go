@@ -91,6 +91,7 @@ resource "google_compute_wire_group" "example-test-wire-group" {
   ]
   wire_properties {
     bandwidth_unmetered = 1000
+	bandwidth_allocation = "ALLOCATE_PER_WIRE"
   }
   wire_group_properties {
     type = "REDUNDANT"
@@ -122,10 +123,11 @@ resource "google_compute_wire_group" "example-test-wire-group" {
   ]
   wire_properties {
     bandwidth_unmetered = 1000
+	bandwidth_allocation = "ALLOCATE_PER_WIRE"
   }
   wire_group_properties {
     type = "REDUNDANT"
-  }
+  }	
   admin_enabled = true
 }
 `, context)

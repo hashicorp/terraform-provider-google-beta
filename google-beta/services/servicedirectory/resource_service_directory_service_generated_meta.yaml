@@ -5,8 +5,8 @@ api_service_name: 'servicedirectory.googleapis.com'
 api_version: 'v1beta1'
 api_resource_type_kind: 'Service'
 fields:
-  - field: 'metadata'
-  - field: 'name'
+  - api_field: 'metadata'
+  - api_field: 'name'
   - field: 'namespace'
     provider_only: true
   - field: 'service_id'

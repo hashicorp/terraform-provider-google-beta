@@ -1698,6 +1698,9 @@ func expandComputeRegionHealthCheckTimeoutSec(v interface{}, d tpgresource.Terra
 }
 
 func expandComputeRegionHealthCheckHttpHealthCheck(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1787,6 +1790,9 @@ func expandComputeRegionHealthCheckHttpHealthCheckPortSpecification(v interface{
 }
 
 func expandComputeRegionHealthCheckHttpsHealthCheck(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1876,6 +1882,9 @@ func expandComputeRegionHealthCheckHttpsHealthCheckPortSpecification(v interface
 }
 
 func expandComputeRegionHealthCheckTcpHealthCheck(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1954,6 +1963,9 @@ func expandComputeRegionHealthCheckTcpHealthCheckPortSpecification(v interface{}
 }
 
 func expandComputeRegionHealthCheckSslHealthCheck(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2032,6 +2044,9 @@ func expandComputeRegionHealthCheckSslHealthCheckPortSpecification(v interface{}
 }
 
 func expandComputeRegionHealthCheckHttp2HealthCheck(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2121,6 +2136,9 @@ func expandComputeRegionHealthCheckHttp2HealthCheckPortSpecification(v interface
 }
 
 func expandComputeRegionHealthCheckGrpcHealthCheck(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2177,6 +2195,9 @@ func expandComputeRegionHealthCheckGrpcHealthCheckGrpcServiceName(v interface{},
 }
 
 func expandComputeRegionHealthCheckGrpcTlsHealthCheck(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -2222,6 +2243,9 @@ func expandComputeRegionHealthCheckGrpcTlsHealthCheckGrpcServiceName(v interface
 }
 
 func expandComputeRegionHealthCheckLogConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil

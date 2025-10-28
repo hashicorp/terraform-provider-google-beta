@@ -969,3 +969,45 @@ resource "google_bigquery_job" "job" {
 }
 `, context)
 }
+
+func TestAccBigQueryJob_bigqueryJobQueryReservationExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"project":       envvar.GetTestProjectFromEnv(),
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccBigQueryJob_bigqueryJobQueryReservationExample(context),
+			},
+			{
+				ResourceName:            "google_bigquery_job.job",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"etag", "labels", "status.0.state", "terraform_labels"},
+			},
+		},
+	})
+}
+
+func testAccBigQueryJob_bigqueryJobQueryReservationExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_bigquery_job" "job" {
+  provider = google-beta
+
+  job_id     = "tf_test_job_query_reservation%{random_suffix}"
+
+  query {
+    query = "SELECT state FROM [lookerdata:cdc.project_tycho_reports]"
+
+  }
+
+  reservation = "projects/%{project}/locations/US/reservations/tf-test-my-reservation%{random_suffix}"
+}
+`, context)
+}

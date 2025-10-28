@@ -57,6 +57,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/cloudrun"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/cloudrunv2"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/cloudscheduler"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/cloudsecuritycompliance"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/cloudtasks"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/colab"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/composer"
@@ -126,10 +127,12 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/monitoring"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/netapp"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/networkconnectivity"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/networkconnectivityv1"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/networkmanagement"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/networksecurity"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/networkservices"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/notebooks"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/observability"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/oracledatabase"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/orgpolicy"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/osconfig"
@@ -202,8 +205,11 @@ var handwrittenDatasources = map[string]*schema.Resource{
 	"google_artifact_registry_docker_images":                     artifactregistry.DataSourceArtifactRegistryDockerImages(),
 	"google_artifact_registry_locations":                         artifactregistry.DataSourceGoogleArtifactRegistryLocations(),
 	"google_artifact_registry_maven_artifact":                    artifactregistry.DataSourceArtifactRegistryMavenArtifact(),
+	"google_artifact_registry_maven_artifacts":                   artifactregistry.DataSourceArtifactRegistryMavenArtifacts(),
 	"google_artifact_registry_npm_package":                       artifactregistry.DataSourceArtifactRegistryNpmPackage(),
+	"google_artifact_registry_npm_packages":                      artifactregistry.DataSourceArtifactRegistryNpmPackages(),
 	"google_artifact_registry_package":                           artifactregistry.DataSourceArtifactRegistryPackage(),
+	"google_artifact_registry_packages":                          artifactregistry.DataSourceArtifactRegistryPackages(),
 	"google_artifact_registry_python_package":                    artifactregistry.DataSourceArtifactRegistryPythonPackage(),
 	"google_artifact_registry_repositories":                      artifactregistry.DataSourceArtifactRegistryRepositories(),
 	"google_artifact_registry_repository":                        artifactregistry.DataSourceArtifactRegistryRepository(),
@@ -463,6 +469,7 @@ var handwrittenDatasources = map[string]*schema.Resource{
 	"google_vmwareengine_vcenter_credentials":                    vmwareengine.DataSourceVmwareengineVcenterCredentials(),
 	"google_compute_region_backend_service":                      compute.DataSourceGoogleComputeRegionBackendService(),
 	"google_network_management_connectivity_test_run":            networkmanagement.DataSourceGoogleNetworkManagementTestRun(),
+	"google_network_management_connectivity_tests":               networkmanagement.DataSourceGoogleNetworkManagementConnectivityTests(),
 	// ####### END handwritten datasources ###########
 }
 
@@ -614,9 +621,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 703
+// Generated resources: 727
 // Generated IAM resources: 348
-// Total generated resources: 1051
+// Total generated resources: 1075
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -660,10 +667,12 @@ var generatedResources = map[string]*schema.Resource{
 	"google_api_gateway_gateway_iam_member":                                      tpgiamresource.ResourceIamMember(apigateway.ApiGatewayGatewayIamSchema, apigateway.ApiGatewayGatewayIamUpdaterProducer, apigateway.ApiGatewayGatewayIdParseFunc),
 	"google_api_gateway_gateway_iam_policy":                                      tpgiamresource.ResourceIamPolicy(apigateway.ApiGatewayGatewayIamSchema, apigateway.ApiGatewayGatewayIamUpdaterProducer, apigateway.ApiGatewayGatewayIdParseFunc),
 	"google_apigee_addons_config":                                                apigee.ResourceApigeeAddonsConfig(),
+	"google_apigee_api_deployment":                                               apigee.ResourceApigeeApiDeployment(),
 	"google_apigee_api_product":                                                  apigee.ResourceApigeeApiProduct(),
 	"google_apigee_app_group":                                                    apigee.ResourceApigeeAppGroup(),
 	"google_apigee_control_plane_access":                                         apigee.ResourceApigeeControlPlaneAccess(),
 	"google_apigee_developer":                                                    apigee.ResourceApigeeDeveloper(),
+	"google_apigee_developer_app":                                                apigee.ResourceApigeeDeveloperApp(),
 	"google_apigee_dns_zone":                                                     apigee.ResourceApigeeDnsZone(),
 	"google_apigee_endpoint_attachment":                                          apigee.ResourceApigeeEndpointAttachment(),
 	"google_apigee_env_keystore":                                                 apigee.ResourceApigeeEnvKeystore(),
@@ -675,6 +684,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_apigee_environment_iam_member":                                       tpgiamresource.ResourceIamMember(apigee.ApigeeEnvironmentIamSchema, apigee.ApigeeEnvironmentIamUpdaterProducer, apigee.ApigeeEnvironmentIdParseFunc),
 	"google_apigee_environment_iam_policy":                                       tpgiamresource.ResourceIamPolicy(apigee.ApigeeEnvironmentIamSchema, apigee.ApigeeEnvironmentIamUpdaterProducer, apigee.ApigeeEnvironmentIdParseFunc),
 	"google_apigee_environment_addons_config":                                    apigee.ResourceApigeeEnvironmentAddonsConfig(),
+	"google_apigee_environment_api_revision_deployment":                          apigee.ResourceApigeeEnvironmentApiRevisionDeployment(),
 	"google_apigee_environment_keyvaluemaps":                                     apigee.ResourceApigeeEnvironmentKeyvaluemaps(),
 	"google_apigee_environment_keyvaluemaps_entries":                             apigee.ResourceApigeeEnvironmentKeyvaluemapsEntries(),
 	"google_apigee_instance":                                                     apigee.ResourceApigeeInstance(),
@@ -839,6 +849,8 @@ var generatedResources = map[string]*schema.Resource{
 	"google_cloud_run_v2_worker_pool_iam_member":                                 tpgiamresource.ResourceIamMember(cloudrunv2.CloudRunV2WorkerPoolIamSchema, cloudrunv2.CloudRunV2WorkerPoolIamUpdaterProducer, cloudrunv2.CloudRunV2WorkerPoolIdParseFunc),
 	"google_cloud_run_v2_worker_pool_iam_policy":                                 tpgiamresource.ResourceIamPolicy(cloudrunv2.CloudRunV2WorkerPoolIamSchema, cloudrunv2.CloudRunV2WorkerPoolIamUpdaterProducer, cloudrunv2.CloudRunV2WorkerPoolIdParseFunc),
 	"google_cloud_scheduler_job":                                                 cloudscheduler.ResourceCloudSchedulerJob(),
+	"google_cloud_security_compliance_cloud_control":                             cloudsecuritycompliance.ResourceCloudSecurityComplianceCloudControl(),
+	"google_cloud_security_compliance_framework":                                 cloudsecuritycompliance.ResourceCloudSecurityComplianceFramework(),
 	"google_cloud_tasks_queue":                                                   cloudtasks.ResourceCloudTasksQueue(),
 	"google_cloud_tasks_queue_iam_binding":                                       tpgiamresource.ResourceIamBinding(cloudtasks.CloudTasksQueueIamSchema, cloudtasks.CloudTasksQueueIamUpdaterProducer, cloudtasks.CloudTasksQueueIdParseFunc),
 	"google_cloud_tasks_queue_iam_member":                                        tpgiamresource.ResourceIamMember(cloudtasks.CloudTasksQueueIamSchema, cloudtasks.CloudTasksQueueIamUpdaterProducer, cloudtasks.CloudTasksQueueIdParseFunc),
@@ -1060,6 +1072,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_dataplex_entry_group_iam_binding":                                    tpgiamresource.ResourceIamBinding(dataplex.DataplexEntryGroupIamSchema, dataplex.DataplexEntryGroupIamUpdaterProducer, dataplex.DataplexEntryGroupIdParseFunc),
 	"google_dataplex_entry_group_iam_member":                                     tpgiamresource.ResourceIamMember(dataplex.DataplexEntryGroupIamSchema, dataplex.DataplexEntryGroupIamUpdaterProducer, dataplex.DataplexEntryGroupIdParseFunc),
 	"google_dataplex_entry_group_iam_policy":                                     tpgiamresource.ResourceIamPolicy(dataplex.DataplexEntryGroupIamSchema, dataplex.DataplexEntryGroupIamUpdaterProducer, dataplex.DataplexEntryGroupIdParseFunc),
+	"google_dataplex_entry_link":                                                 dataplex.ResourceDataplexEntryLink(),
 	"google_dataplex_entry_type":                                                 dataplex.ResourceDataplexEntryType(),
 	"google_dataplex_entry_type_iam_binding":                                     tpgiamresource.ResourceIamBinding(dataplex.DataplexEntryTypeIamSchema, dataplex.DataplexEntryTypeIamUpdaterProducer, dataplex.DataplexEntryTypeIdParseFunc),
 	"google_dataplex_entry_type_iam_member":                                      tpgiamresource.ResourceIamMember(dataplex.DataplexEntryTypeIamSchema, dataplex.DataplexEntryTypeIamUpdaterProducer, dataplex.DataplexEntryTypeIdParseFunc),
@@ -1132,9 +1145,12 @@ var generatedResources = map[string]*schema.Resource{
 	"google_dialogflow_cx_version":                                               dialogflowcx.ResourceDialogflowCXVersion(),
 	"google_dialogflow_cx_webhook":                                               dialogflowcx.ResourceDialogflowCXWebhook(),
 	"google_discovery_engine_acl_config":                                         discoveryengine.ResourceDiscoveryEngineAclConfig(),
+	"google_discovery_engine_assistant":                                          discoveryengine.ResourceDiscoveryEngineAssistant(),
 	"google_discovery_engine_chat_engine":                                        discoveryengine.ResourceDiscoveryEngineChatEngine(),
 	"google_discovery_engine_cmek_config":                                        discoveryengine.ResourceDiscoveryEngineCmekConfig(),
+	"google_discovery_engine_data_connector":                                     discoveryengine.ResourceDiscoveryEngineDataConnector(),
 	"google_discovery_engine_data_store":                                         discoveryengine.ResourceDiscoveryEngineDataStore(),
+	"google_discovery_engine_license_config":                                     discoveryengine.ResourceDiscoveryEngineLicenseConfig(),
 	"google_discovery_engine_recommendation_engine":                              discoveryengine.ResourceDiscoveryEngineRecommendationEngine(),
 	"google_discovery_engine_schema":                                             discoveryengine.ResourceDiscoveryEngineSchema(),
 	"google_discovery_engine_search_engine":                                      discoveryengine.ResourceDiscoveryEngineSearchEngine(),
@@ -1198,6 +1214,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_firestore_document":                                                  firestore.ResourceFirestoreDocument(),
 	"google_firestore_field":                                                     firestore.ResourceFirestoreField(),
 	"google_firestore_index":                                                     firestore.ResourceFirestoreIndex(),
+	"google_firestore_user_creds":                                                firestore.ResourceFirestoreUserCreds(),
 	"google_gemini_code_repository_index":                                        gemini.ResourceGeminiCodeRepositoryIndex(),
 	"google_gemini_code_tools_setting":                                           gemini.ResourceGeminiCodeToolsSetting(),
 	"google_gemini_code_tools_setting_binding":                                   gemini.ResourceGeminiCodeToolsSettingBinding(),
@@ -1277,6 +1294,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_iam_workforce_pool_iam_policy":                                       tpgiamresource.ResourceIamPolicy(iamworkforcepool.IAMWorkforcePoolWorkforcePoolIamSchema, iamworkforcepool.IAMWorkforcePoolWorkforcePoolIamUpdaterProducer, iamworkforcepool.IAMWorkforcePoolWorkforcePoolIdParseFunc),
 	"google_iam_workforce_pool_provider":                                         iamworkforcepool.ResourceIAMWorkforcePoolWorkforcePoolProvider(),
 	"google_iam_workforce_pool_provider_key":                                     iamworkforcepool.ResourceIAMWorkforcePoolWorkforcePoolProviderKey(),
+	"google_iam_workforce_pool_provider_scim_tenant":                             iamworkforcepool.ResourceIAMWorkforcePoolWorkforcePoolProviderScimTenant(),
 	"google_iap_app_engine_service_iam_binding":                                  tpgiamresource.ResourceIamBinding(iap.IapAppEngineServiceIamSchema, iap.IapAppEngineServiceIamUpdaterProducer, iap.IapAppEngineServiceIdParseFunc),
 	"google_iap_app_engine_service_iam_member":                                   tpgiamresource.ResourceIamMember(iap.IapAppEngineServiceIamSchema, iap.IapAppEngineServiceIamUpdaterProducer, iap.IapAppEngineServiceIdParseFunc),
 	"google_iap_app_engine_service_iam_policy":                                   tpgiamresource.ResourceIamPolicy(iap.IapAppEngineServiceIamSchema, iap.IapAppEngineServiceIamUpdaterProducer, iap.IapAppEngineServiceIdParseFunc),
@@ -1340,9 +1358,12 @@ var generatedResources = map[string]*schema.Resource{
 	"google_kms_ekm_connection_iam_binding":                                      tpgiamresource.ResourceIamBinding(kms.KMSEkmConnectionIamSchema, kms.KMSEkmConnectionIamUpdaterProducer, kms.KMSEkmConnectionIdParseFunc),
 	"google_kms_ekm_connection_iam_member":                                       tpgiamresource.ResourceIamMember(kms.KMSEkmConnectionIamSchema, kms.KMSEkmConnectionIamUpdaterProducer, kms.KMSEkmConnectionIdParseFunc),
 	"google_kms_ekm_connection_iam_policy":                                       tpgiamresource.ResourceIamPolicy(kms.KMSEkmConnectionIamSchema, kms.KMSEkmConnectionIamUpdaterProducer, kms.KMSEkmConnectionIdParseFunc),
+	"google_kms_folder_kaj_policy_config":                                        kms.ResourceKMSFolderKajPolicyConfig(),
 	"google_kms_key_handle":                                                      kms.ResourceKMSKeyHandle(),
 	"google_kms_key_ring":                                                        kms.ResourceKMSKeyRing(),
 	"google_kms_key_ring_import_job":                                             kms.ResourceKMSKeyRingImportJob(),
+	"google_kms_organization_kaj_policy_config":                                  kms.ResourceKMSOrganizationKajPolicyConfig(),
+	"google_kms_project_kaj_policy_config":                                       kms.ResourceKMSProjectKajPolicyConfig(),
 	"google_kms_secret_ciphertext":                                               kms.ResourceKMSSecretCiphertext(),
 	"google_logging_folder_settings":                                             logging.ResourceLoggingFolderSettings(),
 	"google_logging_linked_dataset":                                              logging.ResourceLoggingLinkedDataset(),
@@ -1389,11 +1410,11 @@ var generatedResources = map[string]*schema.Resource{
 	"google_netapp_kmsconfig":                                                    netapp.ResourceNetappkmsconfig(),
 	"google_network_connectivity_group":                                          networkconnectivity.ResourceNetworkConnectivityGroup(),
 	"google_network_connectivity_hub":                                            networkconnectivity.ResourceNetworkConnectivityHub(),
-	"google_network_connectivity_internal_range":                                 networkconnectivity.ResourceNetworkConnectivityInternalRange(),
 	"google_network_connectivity_policy_based_route":                             networkconnectivity.ResourceNetworkConnectivityPolicyBasedRoute(),
 	"google_network_connectivity_regional_endpoint":                              networkconnectivity.ResourceNetworkConnectivityRegionalEndpoint(),
-	"google_network_connectivity_service_connection_policy":                      networkconnectivity.ResourceNetworkConnectivityServiceConnectionPolicy(),
 	"google_network_connectivity_spoke":                                          networkconnectivity.ResourceNetworkConnectivitySpoke(),
+	"google_network_connectivity_internal_range":                                 networkconnectivityv1.ResourceNetworkConnectivityv1InternalRange(),
+	"google_network_connectivity_service_connection_policy":                      networkconnectivityv1.ResourceNetworkConnectivityv1ServiceConnectionPolicy(),
 	"google_network_management_connectivity_test":                                networkmanagement.ResourceNetworkManagementConnectivityTest(),
 	"google_network_management_organization_vpc_flow_logs_config":                networkmanagement.ResourceNetworkManagementOrganizationVpcFlowLogsConfig(),
 	"google_network_management_vpc_flow_logs_config":                             networkmanagement.ResourceNetworkManagementVpcFlowLogsConfig(),
@@ -1402,6 +1423,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_network_security_authz_policy":                                       networksecurity.ResourceNetworkSecurityAuthzPolicy(),
 	"google_network_security_backend_authentication_config":                      networksecurity.ResourceNetworkSecurityBackendAuthenticationConfig(),
 	"google_network_security_client_tls_policy":                                  networksecurity.ResourceNetworkSecurityClientTlsPolicy(),
+	"google_network_security_dns_threat_detector":                                networksecurity.ResourceNetworkSecurityDnsThreatDetector(),
 	"google_network_security_firewall_endpoint":                                  networksecurity.ResourceNetworkSecurityFirewallEndpoint(),
 	"google_network_security_firewall_endpoint_association":                      networksecurity.ResourceNetworkSecurityFirewallEndpointAssociation(),
 	"google_network_security_gateway_security_policy":                            networksecurity.ResourceNetworkSecurityGatewaySecurityPolicy(),
@@ -1412,6 +1434,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_network_security_intercept_endpoint_group_association":               networksecurity.ResourceNetworkSecurityInterceptEndpointGroupAssociation(),
 	"google_network_security_mirroring_deployment":                               networksecurity.ResourceNetworkSecurityMirroringDeployment(),
 	"google_network_security_mirroring_deployment_group":                         networksecurity.ResourceNetworkSecurityMirroringDeploymentGroup(),
+	"google_network_security_mirroring_endpoint":                                 networksecurity.ResourceNetworkSecurityMirroringEndpoint(),
 	"google_network_security_mirroring_endpoint_group":                           networksecurity.ResourceNetworkSecurityMirroringEndpointGroup(),
 	"google_network_security_mirroring_endpoint_group_association":               networksecurity.ResourceNetworkSecurityMirroringEndpointGroupAssociation(),
 	"google_network_security_address_group_iam_binding":                          tpgiamresource.ResourceIamBinding(networksecurity.NetworkSecurityProjectAddressGroupIamSchema, networksecurity.NetworkSecurityProjectAddressGroupIamUpdaterProducer, networksecurity.NetworkSecurityProjectAddressGroupIdParseFunc),
@@ -1437,6 +1460,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_network_services_service_lb_policies":                                networkservices.ResourceNetworkServicesServiceLbPolicies(),
 	"google_network_services_tcp_route":                                          networkservices.ResourceNetworkServicesTcpRoute(),
 	"google_network_services_tls_route":                                          networkservices.ResourceNetworkServicesTlsRoute(),
+	"google_network_services_wasm_plugin":                                        networkservices.ResourceNetworkServicesWasmPlugin(),
 	"google_notebooks_environment":                                               notebooks.ResourceNotebooksEnvironment(),
 	"google_notebooks_instance":                                                  notebooks.ResourceNotebooksInstance(),
 	"google_notebooks_instance_iam_binding":                                      tpgiamresource.ResourceIamBinding(notebooks.NotebooksInstanceIamSchema, notebooks.NotebooksInstanceIamUpdaterProducer, notebooks.NotebooksInstanceIdParseFunc),
@@ -1446,9 +1470,11 @@ var generatedResources = map[string]*schema.Resource{
 	"google_notebooks_runtime_iam_binding":                                       tpgiamresource.ResourceIamBinding(notebooks.NotebooksRuntimeIamSchema, notebooks.NotebooksRuntimeIamUpdaterProducer, notebooks.NotebooksRuntimeIdParseFunc),
 	"google_notebooks_runtime_iam_member":                                        tpgiamresource.ResourceIamMember(notebooks.NotebooksRuntimeIamSchema, notebooks.NotebooksRuntimeIamUpdaterProducer, notebooks.NotebooksRuntimeIdParseFunc),
 	"google_notebooks_runtime_iam_policy":                                        tpgiamresource.ResourceIamPolicy(notebooks.NotebooksRuntimeIamSchema, notebooks.NotebooksRuntimeIamUpdaterProducer, notebooks.NotebooksRuntimeIdParseFunc),
+	"google_observability_trace_scope":                                           observability.ResourceObservabilityTraceScope(),
 	"google_oracle_database_autonomous_database":                                 oracledatabase.ResourceOracleDatabaseAutonomousDatabase(),
 	"google_oracle_database_cloud_exadata_infrastructure":                        oracledatabase.ResourceOracleDatabaseCloudExadataInfrastructure(),
 	"google_oracle_database_cloud_vm_cluster":                                    oracledatabase.ResourceOracleDatabaseCloudVmCluster(),
+	"google_oracle_database_db_system":                                           oracledatabase.ResourceOracleDatabaseDbSystem(),
 	"google_oracle_database_odb_network":                                         oracledatabase.ResourceOracleDatabaseOdbNetwork(),
 	"google_oracle_database_odb_subnet":                                          oracledatabase.ResourceOracleDatabaseOdbSubnet(),
 	"google_org_policy_custom_constraint":                                        orgpolicy.ResourceOrgPolicyCustomConstraint(),
@@ -1497,7 +1523,10 @@ var generatedResources = map[string]*schema.Resource{
 	"google_runtimeconfig_config_iam_member":                                     tpgiamresource.ResourceIamMember(runtimeconfig.RuntimeConfigConfigIamSchema, runtimeconfig.RuntimeConfigConfigIamUpdaterProducer, runtimeconfig.RuntimeConfigConfigIdParseFunc),
 	"google_runtimeconfig_config_iam_policy":                                     tpgiamresource.ResourceIamPolicy(runtimeconfig.RuntimeConfigConfigIamSchema, runtimeconfig.RuntimeConfigConfigIamUpdaterProducer, runtimeconfig.RuntimeConfigConfigIdParseFunc),
 	"google_saas_runtime_release":                                                saasruntime.ResourceSaasRuntimeRelease(),
+	"google_saas_runtime_rollout_kind":                                           saasruntime.ResourceSaasRuntimeRolloutKind(),
 	"google_saas_runtime_saas":                                                   saasruntime.ResourceSaasRuntimeSaas(),
+	"google_saas_runtime_tenant":                                                 saasruntime.ResourceSaasRuntimeTenant(),
+	"google_saas_runtime_unit":                                                   saasruntime.ResourceSaasRuntimeUnit(),
 	"google_saas_runtime_unit_kind":                                              saasruntime.ResourceSaasRuntimeUnitKind(),
 	"google_secret_manager_secret":                                               secretmanager.ResourceSecretManagerSecret(),
 	"google_secret_manager_secret_iam_binding":                                   tpgiamresource.ResourceIamBinding(secretmanager.SecretManagerSecretIamSchema, secretmanager.SecretManagerSecretIamUpdaterProducer, secretmanager.SecretManagerSecretIdParseFunc),
@@ -1611,6 +1640,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_tpu_v2_vm":                                                           tpuv2.ResourceTpuV2Vm(),
 	"google_transcoder_job":                                                      transcoder.ResourceTranscoderJob(),
 	"google_transcoder_job_template":                                             transcoder.ResourceTranscoderJobTemplate(),
+	"google_vertex_ai_cache_config":                                              vertexai.ResourceVertexAICacheConfig(),
 	"google_vertex_ai_dataset":                                                   vertexai.ResourceVertexAIDataset(),
 	"google_vertex_ai_deployment_resource_pool":                                  vertexai.ResourceVertexAIDeploymentResourcePool(),
 	"google_vertex_ai_endpoint":                                                  vertexai.ResourceVertexAIEndpoint(),
@@ -1645,6 +1675,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_vertex_ai_index_endpoint_deployed_index":                             vertexai.ResourceVertexAIIndexEndpointDeployedIndex(),
 	"google_vertex_ai_metadata_store":                                            vertexai.ResourceVertexAIMetadataStore(),
 	"google_vertex_ai_rag_engine_config":                                         vertexai.ResourceVertexAIRagEngineConfig(),
+	"google_vertex_ai_reasoning_engine":                                          vertexai.ResourceVertexAIReasoningEngine(),
 	"google_vertex_ai_tensorboard":                                               vertexai.ResourceVertexAITensorboard(),
 	"google_vmwareengine_cluster":                                                vmwareengine.ResourceVmwareengineCluster(),
 	"google_vmwareengine_external_access_rule":                                   vmwareengine.ResourceVmwareengineExternalAccessRule(),
@@ -1880,6 +1911,7 @@ func UseGeneratedProducts() {
 	var _ = cloudrun.ProductName
 	var _ = cloudrunv2.ProductName
 	var _ = cloudscheduler.ProductName
+	var _ = cloudsecuritycompliance.ProductName
 	var _ = cloudtasks.ProductName
 	var _ = colab.ProductName
 	var _ = composer.ProductName
@@ -1949,10 +1981,12 @@ func UseGeneratedProducts() {
 	var _ = monitoring.ProductName
 	var _ = netapp.ProductName
 	var _ = networkconnectivity.ProductName
+	var _ = networkconnectivityv1.ProductName
 	var _ = networkmanagement.ProductName
 	var _ = networksecurity.ProductName
 	var _ = networkservices.ProductName
 	var _ = notebooks.ProductName
+	var _ = observability.ProductName
 	var _ = oracledatabase.ProductName
 	var _ = orgpolicy.ProductName
 	var _ = osconfig.ProductName

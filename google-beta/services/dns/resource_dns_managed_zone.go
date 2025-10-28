@@ -1309,6 +1309,9 @@ func expandDNSManagedZoneDnsName(v interface{}, d tpgresource.TerraformResourceD
 }
 
 func expandDNSManagedZoneDnssecConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1361,6 +1364,9 @@ func expandDNSManagedZoneDnssecConfigState(v interface{}, d tpgresource.Terrafor
 }
 
 func expandDNSManagedZoneDnssecConfigDefaultKeySpecs(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -1520,6 +1526,9 @@ func expandDNSManagedZonePrivateVisibilityConfigGkeClustersGkeClusterName(v inte
 }
 
 func expandDNSManagedZoneForwardingConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1540,6 +1549,9 @@ func expandDNSManagedZoneForwardingConfig(v interface{}, d tpgresource.Terraform
 
 func expandDNSManagedZoneForwardingConfigTargetNameServers(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	v = v.(*schema.Set).List()
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -1588,6 +1600,9 @@ func expandDNSManagedZoneForwardingConfigTargetNameServersForwardingPath(v inter
 }
 
 func expandDNSManagedZonePeeringConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1607,6 +1622,9 @@ func expandDNSManagedZonePeeringConfig(v interface{}, d tpgresource.TerraformRes
 }
 
 func expandDNSManagedZonePeeringConfigTargetNetwork(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1647,6 +1665,9 @@ func expandDNSManagedZoneReverseLookup(v interface{}, d tpgresource.TerraformRes
 }
 
 func expandDNSManagedZoneServiceDirectoryConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1666,6 +1687,9 @@ func expandDNSManagedZoneServiceDirectoryConfig(v interface{}, d tpgresource.Ter
 }
 
 func expandDNSManagedZoneServiceDirectoryConfigNamespace(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1700,6 +1724,9 @@ func expandDNSManagedZoneServiceDirectoryConfigNamespaceNamespaceUrl(v interface
 }
 
 func expandDNSManagedZoneCloudLoggingConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil

@@ -164,6 +164,11 @@ Format: calculate the time in seconds and concatenate it with 's' i.e. 2 hours =
 													Description: `The expression field of the IAM condition to be associated with the role. If specified, a user with an active grant for this entitlement would be able to access the resource only if this condition evaluates to true for their request.
 https://cloud.google.com/iam/docs/conditions-overview#attributes.`,
 												},
+												"id": {
+													Type:        schema.TypeString,
+													Computed:    true,
+													Description: `Output Only. The ID corresponding to this role binding in the policy binding. This will be unique within an entitlement across time. Gets re-generated each time the entitlement is updated.`,
+												},
 											},
 										},
 									},
@@ -256,7 +261,7 @@ A single user might be part of 'approvers' ACL for multiple steps in this workfl
 									"steps": {
 										Type:        schema.TypeList,
 										Required:    true,
-										Description: `List of approval steps in this workflow. These steps would be followed in the specified order sequentially.  1 step is supported for now.`,
+										Description: `List of approval steps in this workflow. These steps would be followed in the specified order sequentially.`,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"approvers": {
@@ -297,6 +302,11 @@ supported value.`,
 														Type: schema.TypeString,
 													},
 													Set: schema.HashString,
+												},
+												"id": {
+													Type:        schema.TypeString,
+													Computed:    true,
+													Description: `Output Only. The ID of the approval step.`,
 												},
 											},
 										},
@@ -803,6 +813,7 @@ func flattenPrivilegedAccessManagerEntitlementApprovalWorkflowManualApprovalsSte
 			"approvers":                 flattenPrivilegedAccessManagerEntitlementApprovalWorkflowManualApprovalsStepsApprovers(original["approvers"], d, config),
 			"approvals_needed":          flattenPrivilegedAccessManagerEntitlementApprovalWorkflowManualApprovalsStepsApprovalsNeeded(original["approvalsNeeded"], d, config),
 			"approver_email_recipients": flattenPrivilegedAccessManagerEntitlementApprovalWorkflowManualApprovalsStepsApproverEmailRecipients(original["approverEmailRecipients"], d, config),
+			"id":                        flattenPrivilegedAccessManagerEntitlementApprovalWorkflowManualApprovalsStepsId(original["id"], d, config),
 		})
 	}
 	return transformed
@@ -854,6 +865,10 @@ func flattenPrivilegedAccessManagerEntitlementApprovalWorkflowManualApprovalsSte
 		return v
 	}
 	return schema.NewSet(schema.HashString, v.([]interface{}))
+}
+
+func flattenPrivilegedAccessManagerEntitlementApprovalWorkflowManualApprovalsStepsId(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
 }
 
 func flattenPrivilegedAccessManagerEntitlementPrivilegedAccess(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -909,6 +924,7 @@ func flattenPrivilegedAccessManagerEntitlementPrivilegedAccessGcpIamAccessRoleBi
 		transformed = append(transformed, map[string]interface{}{
 			"role":                 flattenPrivilegedAccessManagerEntitlementPrivilegedAccessGcpIamAccessRoleBindingsRole(original["role"], d, config),
 			"condition_expression": flattenPrivilegedAccessManagerEntitlementPrivilegedAccessGcpIamAccessRoleBindingsConditionExpression(original["conditionExpression"], d, config),
+			"id":                   flattenPrivilegedAccessManagerEntitlementPrivilegedAccessGcpIamAccessRoleBindingsId(original["id"], d, config),
 		})
 	}
 	return transformed
@@ -918,6 +934,10 @@ func flattenPrivilegedAccessManagerEntitlementPrivilegedAccessGcpIamAccessRoleBi
 }
 
 func flattenPrivilegedAccessManagerEntitlementPrivilegedAccessGcpIamAccessRoleBindingsConditionExpression(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenPrivilegedAccessManagerEntitlementPrivilegedAccessGcpIamAccessRoleBindingsId(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -988,6 +1008,9 @@ func flattenPrivilegedAccessManagerEntitlementAdditionalNotificationTargetsReque
 }
 
 func expandPrivilegedAccessManagerEntitlementEligibleUsers(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -1015,6 +1038,9 @@ func expandPrivilegedAccessManagerEntitlementEligibleUsersPrincipals(v interface
 }
 
 func expandPrivilegedAccessManagerEntitlementApprovalWorkflow(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1034,6 +1060,9 @@ func expandPrivilegedAccessManagerEntitlementApprovalWorkflow(v interface{}, d t
 }
 
 func expandPrivilegedAccessManagerEntitlementApprovalWorkflowManualApprovals(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1064,6 +1093,9 @@ func expandPrivilegedAccessManagerEntitlementApprovalWorkflowManualApprovalsRequ
 }
 
 func expandPrivilegedAccessManagerEntitlementApprovalWorkflowManualApprovalsSteps(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -1094,12 +1126,22 @@ func expandPrivilegedAccessManagerEntitlementApprovalWorkflowManualApprovalsStep
 			transformed["approverEmailRecipients"] = transformedApproverEmailRecipients
 		}
 
+		transformedId, err := expandPrivilegedAccessManagerEntitlementApprovalWorkflowManualApprovalsStepsId(original["id"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedId); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["id"] = transformedId
+		}
+
 		req = append(req, transformed)
 	}
 	return req, nil
 }
 
 func expandPrivilegedAccessManagerEntitlementApprovalWorkflowManualApprovalsStepsApprovers(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -1135,7 +1177,14 @@ func expandPrivilegedAccessManagerEntitlementApprovalWorkflowManualApprovalsStep
 	return v, nil
 }
 
+func expandPrivilegedAccessManagerEntitlementApprovalWorkflowManualApprovalsStepsId(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
 func expandPrivilegedAccessManagerEntitlementPrivilegedAccess(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1155,6 +1204,9 @@ func expandPrivilegedAccessManagerEntitlementPrivilegedAccess(v interface{}, d t
 }
 
 func expandPrivilegedAccessManagerEntitlementPrivilegedAccessGcpIamAccess(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1196,6 +1248,9 @@ func expandPrivilegedAccessManagerEntitlementPrivilegedAccessGcpIamAccessResourc
 }
 
 func expandPrivilegedAccessManagerEntitlementPrivilegedAccessGcpIamAccessRoleBindings(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -1219,6 +1274,13 @@ func expandPrivilegedAccessManagerEntitlementPrivilegedAccessGcpIamAccessRoleBin
 			transformed["conditionExpression"] = transformedConditionExpression
 		}
 
+		transformedId, err := expandPrivilegedAccessManagerEntitlementPrivilegedAccessGcpIamAccessRoleBindingsId(original["id"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedId); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["id"] = transformedId
+		}
+
 		req = append(req, transformed)
 	}
 	return req, nil
@@ -1232,6 +1294,10 @@ func expandPrivilegedAccessManagerEntitlementPrivilegedAccessGcpIamAccessRoleBin
 	return v, nil
 }
 
+func expandPrivilegedAccessManagerEntitlementPrivilegedAccessGcpIamAccessRoleBindingsId(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
 func expandPrivilegedAccessManagerEntitlementMaxRequestDuration(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
@@ -1241,6 +1307,9 @@ func expandPrivilegedAccessManagerEntitlementEtag(v interface{}, d tpgresource.T
 }
 
 func expandPrivilegedAccessManagerEntitlementRequesterJustificationConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 {
 		return nil, nil
@@ -1272,6 +1341,9 @@ func expandPrivilegedAccessManagerEntitlementRequesterJustificationConfig(v inte
 }
 
 func expandPrivilegedAccessManagerEntitlementRequesterJustificationConfigNotMandatory(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 {
 		return nil, nil
@@ -1287,6 +1359,9 @@ func expandPrivilegedAccessManagerEntitlementRequesterJustificationConfigNotMand
 }
 
 func expandPrivilegedAccessManagerEntitlementRequesterJustificationConfigUnstructured(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 {
 		return nil, nil
@@ -1302,6 +1377,9 @@ func expandPrivilegedAccessManagerEntitlementRequesterJustificationConfigUnstruc
 }
 
 func expandPrivilegedAccessManagerEntitlementAdditionalNotificationTargets(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 {
 		return nil, nil

@@ -383,6 +383,11 @@ func Provider() *schema.Provider {
 				Optional:     true,
 				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
 			},
+			"cloud_security_compliance_custom_endpoint": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
+			},
 			"cloud_tasks_custom_endpoint": {
 				Type:         schema.TypeString,
 				Optional:     true,
@@ -728,6 +733,11 @@ func Provider() *schema.Provider {
 				Optional:     true,
 				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
 			},
+			"network_connectivityv1_custom_endpoint": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
+			},
 			"network_management_custom_endpoint": {
 				Type:         schema.TypeString,
 				Optional:     true,
@@ -744,6 +754,11 @@ func Provider() *schema.Provider {
 				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
 			},
 			"notebooks_custom_endpoint": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
+			},
+			"observability_custom_endpoint": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
@@ -1225,6 +1240,7 @@ func ProviderConfigure(ctx context.Context, d *schema.ResourceData, p *schema.Pr
 	config.CloudRunBasePath = d.Get("cloud_run_custom_endpoint").(string)
 	config.CloudRunV2BasePath = d.Get("cloud_run_v2_custom_endpoint").(string)
 	config.CloudSchedulerBasePath = d.Get("cloud_scheduler_custom_endpoint").(string)
+	config.CloudSecurityComplianceBasePath = d.Get("cloud_security_compliance_custom_endpoint").(string)
 	config.CloudTasksBasePath = d.Get("cloud_tasks_custom_endpoint").(string)
 	config.ColabBasePath = d.Get("colab_custom_endpoint").(string)
 	config.ComposerBasePath = d.Get("composer_custom_endpoint").(string)
@@ -1294,10 +1310,12 @@ func ProviderConfigure(ctx context.Context, d *schema.ResourceData, p *schema.Pr
 	config.MonitoringBasePath = d.Get("monitoring_custom_endpoint").(string)
 	config.NetappBasePath = d.Get("netapp_custom_endpoint").(string)
 	config.NetworkConnectivityBasePath = d.Get("network_connectivity_custom_endpoint").(string)
+	config.NetworkConnectivityv1BasePath = d.Get("network_connectivityv1_custom_endpoint").(string)
 	config.NetworkManagementBasePath = d.Get("network_management_custom_endpoint").(string)
 	config.NetworkSecurityBasePath = d.Get("network_security_custom_endpoint").(string)
 	config.NetworkServicesBasePath = d.Get("network_services_custom_endpoint").(string)
 	config.NotebooksBasePath = d.Get("notebooks_custom_endpoint").(string)
+	config.ObservabilityBasePath = d.Get("observability_custom_endpoint").(string)
 	config.OracleDatabaseBasePath = d.Get("oracle_database_custom_endpoint").(string)
 	config.OrgPolicyBasePath = d.Get("org_policy_custom_endpoint").(string)
 	config.OSConfigBasePath = d.Get("os_config_custom_endpoint").(string)

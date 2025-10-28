@@ -5,13 +5,13 @@ api_service_name: 'firebasedatabase.googleapis.com'
 api_version: 'v1beta'
 api_resource_type_kind: 'DatabaseInstance'
 fields:
-  - field: 'database_url'
+  - api_field: 'databaseUrl'
   - field: 'desired_state'
     provider_only: true
   - field: 'instance_id'
     provider_only: true
-  - field: 'name'
+  - api_field: 'name'
   - field: 'region'
     provider_only: true
-  - field: 'state'
-  - field: 'type'
+  - api_field: 'state'
+  - api_field: 'type'

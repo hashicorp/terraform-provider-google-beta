@@ -1110,6 +1110,9 @@ func expandBigqueryAnalyticsHubListingRequestAccess(v interface{}, d tpgresource
 }
 
 func expandBigqueryAnalyticsHubListingDataProvider(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1144,6 +1147,9 @@ func expandBigqueryAnalyticsHubListingDataProviderPrimaryContact(v interface{}, 
 }
 
 func expandBigqueryAnalyticsHubListingPublisher(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1182,6 +1188,9 @@ func expandBigqueryAnalyticsHubListingCategories(v interface{}, d tpgresource.Te
 }
 
 func expandBigqueryAnalyticsHubListingBigqueryDataset(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1212,6 +1221,9 @@ func expandBigqueryAnalyticsHubListingBigqueryDatasetDataset(v interface{}, d tp
 }
 
 func expandBigqueryAnalyticsHubListingBigqueryDatasetSelectedResources(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	req := make([]interface{}, 0, len(l))
 	for _, raw := range l {
@@ -1249,6 +1261,9 @@ func expandBigqueryAnalyticsHubListingBigqueryDatasetSelectedResourcesRoutine(v 
 }
 
 func expandBigqueryAnalyticsHubListingPubsubTopic(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1284,6 +1299,9 @@ func expandBigqueryAnalyticsHubListingPubsubTopicDataAffinityRegions(v interface
 }
 
 func expandBigqueryAnalyticsHubListingRestrictedExportConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil

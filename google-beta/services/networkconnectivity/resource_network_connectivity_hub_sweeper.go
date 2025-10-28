@@ -117,7 +117,7 @@ func listAndActionNetworkConnectivityHub(action sweeper.ResourceAction) error {
 		}
 
 		// Prepare list URL
-		listTemplate := strings.Split("https://networkconnectivity.googleapis.com/v1/projects/{{project}}/locations/global/hubs", "?")[0]
+		listTemplate := strings.Split("https://networkconnectivity.googleapis.com/v1beta/projects/{{project}}/locations/global/hubs", "?")[0]
 		listUrl, err := tpgresource.ReplaceVars(mockConfig, config, listTemplate)
 		if err != nil {
 			log.Printf("[INFO][SWEEPER_LOG] error preparing sweeper list url: %s", err)
@@ -195,7 +195,7 @@ func deleteResourceNetworkConnectivityHub(config *transport_tpg.Config, d *tpgre
 		return nil
 	}
 
-	deleteTemplate := "https://networkconnectivity.googleapis.com/v1/projects/{{project}}/locations/global/hubs/{{name}}"
+	deleteTemplate := "https://networkconnectivity.googleapis.com/v1beta/projects/{{project}}/locations/global/hubs/{{name}}"
 
 	url, err := tpgresource.ReplaceVars(d, config, deleteTemplate)
 	if err != nil {

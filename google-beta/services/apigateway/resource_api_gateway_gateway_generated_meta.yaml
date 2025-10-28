@@ -5,15 +5,15 @@ api_service_name: 'apigateway.googleapis.com'
 api_version: 'v1beta'
 api_resource_type_kind: 'Gateway'
 fields:
-  - field: 'api_config'
-  - field: 'default_hostname'
-  - field: 'display_name'
+  - api_field: 'apiConfig'
+  - api_field: 'defaultHostname'
+  - api_field: 'displayName'
   - field: 'effective_labels'
     provider_only: true
   - field: 'gateway_id'
     provider_only: true
-  - field: 'labels'
-  - field: 'name'
+  - api_field: 'labels'
+  - api_field: 'name'
   - field: 'region'
     provider_only: true
   - field: 'terraform_labels'
