@@ -5,18 +5,20 @@ api_service_name: 'networkservices.googleapis.com'
 api_version: 'v1'
 api_resource_type_kind: 'ServiceLbPolicy'
 fields:
-  - field: 'auto_capacity_drain.enable'
-  - field: 'create_time'
-  - field: 'description'
+  - api_field: 'autoCapacityDrain.enable'
+  - api_field: 'createTime'
+  - api_field: 'description'
   - field: 'effective_labels'
     provider_only: true
-  - field: 'failover_config.failover_health_threshold'
-  - field: 'labels'
-  - field: 'load_balancing_algorithm'
+  - api_field: 'failoverConfig.failoverHealthThreshold'
+  - api_field: 'isolationConfig.isolationGranularity'
+  - api_field: 'isolationConfig.isolationMode'
+  - api_field: 'labels'
+  - api_field: 'loadBalancingAlgorithm'
   - field: 'location'
     provider_only: true
   - field: 'name'
     provider_only: true
   - field: 'terraform_labels'
     provider_only: true
-  - field: 'update_time'
+  - api_field: 'updateTime'

@@ -358,8 +358,7 @@ resource "google_cloud_run_v2_service" "default" {
       gcs {
         bucket = "gcp-public-data-landsat"
         read_only = true
-mount_options = ["log-severity=info"]
-
+        mount_options = ["log-severity=info"]
       }
     }
     containers {
@@ -1175,7 +1174,7 @@ func TestAccCloudRunV2Service_cloudrunv2ServiceWithDefaultUriDisabled(t *testing
 				ResourceName:            "google_cloud_run_v2_service.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "location", "annotations", "labels", "terraform_labels", "launch_stage", "deletion_protection"},
+				ImportStateVerifyIgnore: []string{"name", "location", "annotations", "labels", "terraform_labels", "deletion_protection"},
 			},
 			{
 				Config: testAccCloudRunV2Service_cloudrunv2ServiceWithNoMinInstances(context),
@@ -1184,7 +1183,7 @@ func TestAccCloudRunV2Service_cloudrunv2ServiceWithDefaultUriDisabled(t *testing
 				ResourceName:            "google_cloud_run_v2_service.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"name", "location", "annotations", "labels", "terraform_labels", "launch_stage", "deletion_protection"},
+				ImportStateVerifyIgnore: []string{"name", "location", "annotations", "labels", "terraform_labels", "deletion_protection"},
 			},
 		},
 	})
@@ -1197,7 +1196,6 @@ resource "google_cloud_run_v2_service" "default" {
   description = "description creating"
   location = "us-central1"
   deletion_protection = false
-  launch_stage = "BETA"
   annotations = {
     generated-by = "magic-modules"
   }
@@ -1212,15 +1210,11 @@ resource "google_cloud_run_v2_service" "default" {
   }
   default_uri_disabled = true
   template {
+    health_check_disabled = true
     containers {
       name = "container-1"
       image = "us-docker.pkg.dev/cloudrun/container/hello"
     }
-  }
-  lifecycle {
-    ignore_changes = [
-      launch_stage,
-    ]
   }
 }
 

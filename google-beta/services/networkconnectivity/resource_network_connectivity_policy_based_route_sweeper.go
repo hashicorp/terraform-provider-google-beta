@@ -117,7 +117,7 @@ func listAndActionNetworkConnectivityPolicyBasedRoute(action sweeper.ResourceAct
 		}
 
 		// Prepare list URL
-		listTemplate := strings.Split("https://networkconnectivity.googleapis.com/v1/projects/{{project}}/locations/global/policyBasedRoutes", "?")[0]
+		listTemplate := strings.Split("https://networkconnectivity.googleapis.com/v1beta/projects/{{project}}/locations/global/policyBasedRoutes", "?")[0]
 		listUrl, err := tpgresource.ReplaceVars(mockConfig, config, listTemplate)
 		if err != nil {
 			log.Printf("[INFO][SWEEPER_LOG] error preparing sweeper list url: %s", err)
@@ -195,7 +195,7 @@ func deleteResourceNetworkConnectivityPolicyBasedRoute(config *transport_tpg.Con
 		return nil
 	}
 
-	deleteTemplate := "https://networkconnectivity.googleapis.com/v1/projects/{{project}}/locations/global/policyBasedRoutes/{{name}}"
+	deleteTemplate := "https://networkconnectivity.googleapis.com/v1beta/projects/{{project}}/locations/global/policyBasedRoutes/{{name}}"
 
 	url, err := tpgresource.ReplaceVars(d, config, deleteTemplate)
 	if err != nil {

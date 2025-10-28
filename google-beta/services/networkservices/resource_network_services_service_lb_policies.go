@@ -103,6 +103,29 @@ func ResourceNetworkServicesServiceLbPolicies() *schema.Resource {
 					},
 				},
 			},
+			"isolation_config": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: `Configuration to provide isolation support for the associated Backend Service.`,
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"isolation_granularity": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: verify.ValidateEnum([]string{"ISOLATION_GRANULARITY_UNSPECIFIED", "REGION", ""}),
+							Description:  `The isolation granularity of the load balancer. Possible values: ["ISOLATION_GRANULARITY_UNSPECIFIED", "REGION"]`,
+						},
+						"isolation_mode": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: verify.ValidateEnum([]string{"ISOLATION_MODE_UNSPECIFIED", "NEAREST", "STRICT", ""}),
+							Description:  `The isolation mode of the load balancer. Default value: "NEAREST" Possible values: ["ISOLATION_MODE_UNSPECIFIED", "NEAREST", "STRICT"]`,
+							Default:      "NEAREST",
+						},
+					},
+				},
+			},
 			"labels": {
 				Type:     schema.TypeMap,
 				Optional: true,
@@ -183,6 +206,12 @@ func resourceNetworkServicesServiceLbPoliciesCreate(d *schema.ResourceData, meta
 		return err
 	} else if v, ok := d.GetOkExists("failover_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(failoverConfigProp)) && (ok || !reflect.DeepEqual(v, failoverConfigProp)) {
 		obj["failoverConfig"] = failoverConfigProp
+	}
+	isolationConfigProp, err := expandNetworkServicesServiceLbPoliciesIsolationConfig(d.Get("isolation_config"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("isolation_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(isolationConfigProp)) && (ok || !reflect.DeepEqual(v, isolationConfigProp)) {
+		obj["isolationConfig"] = isolationConfigProp
 	}
 	effectiveLabelsProp, err := expandNetworkServicesServiceLbPoliciesEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
@@ -310,6 +339,9 @@ func resourceNetworkServicesServiceLbPoliciesRead(d *schema.ResourceData, meta i
 	if err := d.Set("failover_config", flattenNetworkServicesServiceLbPoliciesFailoverConfig(res["failoverConfig"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ServiceLbPolicies: %s", err)
 	}
+	if err := d.Set("isolation_config", flattenNetworkServicesServiceLbPoliciesIsolationConfig(res["isolationConfig"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ServiceLbPolicies: %s", err)
+	}
 	if err := d.Set("terraform_labels", flattenNetworkServicesServiceLbPoliciesTerraformLabels(res["labels"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ServiceLbPolicies: %s", err)
 	}
@@ -360,6 +392,12 @@ func resourceNetworkServicesServiceLbPoliciesUpdate(d *schema.ResourceData, meta
 	} else if v, ok := d.GetOkExists("failover_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, failoverConfigProp)) {
 		obj["failoverConfig"] = failoverConfigProp
 	}
+	isolationConfigProp, err := expandNetworkServicesServiceLbPoliciesIsolationConfig(d.Get("isolation_config"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("isolation_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, isolationConfigProp)) {
+		obj["isolationConfig"] = isolationConfigProp
+	}
 	effectiveLabelsProp, err := expandNetworkServicesServiceLbPoliciesEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
@@ -390,6 +428,10 @@ func resourceNetworkServicesServiceLbPoliciesUpdate(d *schema.ResourceData, meta
 
 	if d.HasChange("failover_config") {
 		updateMask = append(updateMask, "failoverConfig")
+	}
+
+	if d.HasChange("isolation_config") {
+		updateMask = append(updateMask, "isolationConfig")
 	}
 
 	if d.HasChange("effective_labels") {
@@ -592,6 +634,29 @@ func flattenNetworkServicesServiceLbPoliciesFailoverConfigFailoverHealthThreshol
 	return v // let terraform core handle it otherwise
 }
 
+func flattenNetworkServicesServiceLbPoliciesIsolationConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["isolation_granularity"] =
+		flattenNetworkServicesServiceLbPoliciesIsolationConfigIsolationGranularity(original["isolationGranularity"], d, config)
+	transformed["isolation_mode"] =
+		flattenNetworkServicesServiceLbPoliciesIsolationConfigIsolationMode(original["isolationMode"], d, config)
+	return []interface{}{transformed}
+}
+func flattenNetworkServicesServiceLbPoliciesIsolationConfigIsolationGranularity(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenNetworkServicesServiceLbPoliciesIsolationConfigIsolationMode(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenNetworkServicesServiceLbPoliciesTerraformLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
@@ -620,6 +685,9 @@ func expandNetworkServicesServiceLbPoliciesLoadBalancingAlgorithm(v interface{},
 }
 
 func expandNetworkServicesServiceLbPoliciesAutoCapacityDrain(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -643,6 +711,9 @@ func expandNetworkServicesServiceLbPoliciesAutoCapacityDrainEnable(v interface{}
 }
 
 func expandNetworkServicesServiceLbPoliciesFailoverConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -662,6 +733,43 @@ func expandNetworkServicesServiceLbPoliciesFailoverConfig(v interface{}, d tpgre
 }
 
 func expandNetworkServicesServiceLbPoliciesFailoverConfigFailoverHealthThreshold(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandNetworkServicesServiceLbPoliciesIsolationConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedIsolationGranularity, err := expandNetworkServicesServiceLbPoliciesIsolationConfigIsolationGranularity(original["isolation_granularity"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedIsolationGranularity); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["isolationGranularity"] = transformedIsolationGranularity
+	}
+
+	transformedIsolationMode, err := expandNetworkServicesServiceLbPoliciesIsolationConfigIsolationMode(original["isolation_mode"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedIsolationMode); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["isolationMode"] = transformedIsolationMode
+	}
+
+	return transformed, nil
+}
+
+func expandNetworkServicesServiceLbPoliciesIsolationConfigIsolationGranularity(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandNetworkServicesServiceLbPoliciesIsolationConfigIsolationMode(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

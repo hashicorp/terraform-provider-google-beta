@@ -47,8 +47,8 @@ func TestAccDataSourceGoogleFirebaseAppleApp(t *testing.T) {
 					acctest.CheckDataSourceStateMatchesResourceStateWithIgnores(
 						resourceName,
 						"google_firebase_apple_app.my_app",
-						map[string]struct{}{
-							"deletion_policy": {},
+						[]string{
+							"deletion_policy",
 						},
 					),
 				),

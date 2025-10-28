@@ -5,12 +5,12 @@ api_service_name: 'servicedirectory.googleapis.com'
 api_version: 'v1beta1'
 api_resource_type_kind: 'Endpoint'
 fields:
-  - field: 'address'
+  - api_field: 'address'
   - field: 'endpoint_id'
     provider_only: true
-  - field: 'metadata'
-  - field: 'name'
-  - field: 'network'
-  - field: 'port'
+  - api_field: 'metadata'
+  - api_field: 'name'
+  - api_field: 'network'
+  - api_field: 'port'
   - field: 'service'
     provider_only: true

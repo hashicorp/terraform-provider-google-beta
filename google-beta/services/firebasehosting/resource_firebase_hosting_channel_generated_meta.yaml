@@ -9,12 +9,12 @@ fields:
     provider_only: true
   - field: 'effective_labels'
     provider_only: true
-  - field: 'expire_time'
-  - field: 'labels'
-  - field: 'name'
-  - field: 'retained_release_count'
+  - api_field: 'expireTime'
+  - api_field: 'labels'
+  - api_field: 'name'
+  - api_field: 'retainedReleaseCount'
   - field: 'site_id'
     provider_only: true
   - field: 'terraform_labels'
     provider_only: true
-  - field: 'ttl'
+  - api_field: 'ttl'

@@ -7,12 +7,12 @@ api_resource_type_kind: 'Api'
 fields:
   - field: 'api_id'
     provider_only: true
-  - field: 'create_time'
-  - field: 'display_name'
+  - api_field: 'createTime'
+  - api_field: 'displayName'
   - field: 'effective_labels'
     provider_only: true
-  - field: 'labels'
-  - field: 'managed_service'
-  - field: 'name'
+  - api_field: 'labels'
+  - api_field: 'managedService'
+  - api_field: 'name'
   - field: 'terraform_labels'
     provider_only: true

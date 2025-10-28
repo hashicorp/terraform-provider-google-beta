@@ -1,0 +1,10 @@
+resource: 'google_kms_project_kaj_policy_config'
+generation_type: 'mmv1'
+source_file: 'products/kms/ProjectKajPolicyConfig.yaml'
+api_service_name: 'cloudkms.googleapis.com'
+api_version: 'v1'
+api_resource_type_kind: 'KeyAccessJustificationsPolicyConfig'
+api_variant_patterns:
+  - 'projects/{{project}}/kajPolicyConfig'
+fields:
+  - api_field: 'defaultKeyAccessJustificationPolicy.allowedAccessReasons'

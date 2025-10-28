@@ -34,7 +34,7 @@ func TestAccComputePreviewFeature_previewFeatureBasicExample(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputePreviewFeature_previewFeatureBasicExample(context),
@@ -52,9 +52,8 @@ func TestAccComputePreviewFeature_previewFeatureBasicExample(t *testing.T) {
 func testAccComputePreviewFeature_previewFeatureBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_preview_feature" "gce_preview_feature" {
-  provider          = google-beta
   name              = "alpha-api-access"
-  activation_status = "DISABLED"
+  activation_status = "ACTIVATION_STATE_UNSPECIFIED"
   rollout_operation {
     rollout_input {
       predefined_rollout_plan = "ROLLOUT_PLAN_FAST_ROLLOUT"

@@ -299,6 +299,7 @@ type Config struct {
 	CloudRunBasePath                 string
 	CloudRunV2BasePath               string
 	CloudSchedulerBasePath           string
+	CloudSecurityComplianceBasePath  string
 	CloudTasksBasePath               string
 	ColabBasePath                    string
 	ComposerBasePath                 string
@@ -368,10 +369,12 @@ type Config struct {
 	MonitoringBasePath               string
 	NetappBasePath                   string
 	NetworkConnectivityBasePath      string
+	NetworkConnectivityv1BasePath    string
 	NetworkManagementBasePath        string
 	NetworkSecurityBasePath          string
 	NetworkServicesBasePath          string
 	NotebooksBasePath                string
+	ObservabilityBasePath            string
 	OracleDatabaseBasePath           string
 	OrgPolicyBasePath                string
 	OSConfigBasePath                 string
@@ -483,6 +486,7 @@ const CloudQuotasBasePathKey = "CloudQuotas"
 const CloudRunBasePathKey = "CloudRun"
 const CloudRunV2BasePathKey = "CloudRunV2"
 const CloudSchedulerBasePathKey = "CloudScheduler"
+const CloudSecurityComplianceBasePathKey = "CloudSecurityCompliance"
 const CloudTasksBasePathKey = "CloudTasks"
 const ColabBasePathKey = "Colab"
 const ComposerBasePathKey = "Composer"
@@ -552,10 +556,12 @@ const ModelArmorGlobalBasePathKey = "ModelArmorGlobal"
 const MonitoringBasePathKey = "Monitoring"
 const NetappBasePathKey = "Netapp"
 const NetworkConnectivityBasePathKey = "NetworkConnectivity"
+const NetworkConnectivityv1BasePathKey = "NetworkConnectivityv1"
 const NetworkManagementBasePathKey = "NetworkManagement"
 const NetworkSecurityBasePathKey = "NetworkSecurity"
 const NetworkServicesBasePathKey = "NetworkServices"
 const NotebooksBasePathKey = "Notebooks"
+const ObservabilityBasePathKey = "Observability"
 const OracleDatabaseBasePathKey = "OracleDatabase"
 const OrgPolicyBasePathKey = "OrgPolicy"
 const OSConfigBasePathKey = "OSConfig"
@@ -656,6 +662,7 @@ var DefaultBasePaths = map[string]string{
 	CloudRunBasePathKey:                 "https://{{location}}-run.googleapis.com/",
 	CloudRunV2BasePathKey:               "https://run.googleapis.com/v2/",
 	CloudSchedulerBasePathKey:           "https://cloudscheduler.googleapis.com/v1/",
+	CloudSecurityComplianceBasePathKey:  "https://cloudsecuritycompliance.googleapis.com/v1/",
 	CloudTasksBasePathKey:               "https://cloudtasks.googleapis.com/v2/",
 	ColabBasePathKey:                    "https://{{location}}-aiplatform.googleapis.com/v1beta1/",
 	ComposerBasePathKey:                 "https://composer.googleapis.com/v1beta1/",
@@ -724,11 +731,13 @@ var DefaultBasePaths = map[string]string{
 	ModelArmorGlobalBasePathKey:         "https://modelarmor.googleapis.com/v1beta/",
 	MonitoringBasePathKey:               "https://monitoring.googleapis.com/",
 	NetappBasePathKey:                   "https://netapp.googleapis.com/v1beta1/",
-	NetworkConnectivityBasePathKey:      "https://networkconnectivity.googleapis.com/v1/",
+	NetworkConnectivityBasePathKey:      "https://networkconnectivity.googleapis.com/v1beta/",
+	NetworkConnectivityv1BasePathKey:    "https://networkconnectivity.googleapis.com/v1/",
 	NetworkManagementBasePathKey:        "https://networkmanagement.googleapis.com/v1beta1/",
 	NetworkSecurityBasePathKey:          "https://networksecurity.googleapis.com/v1beta1/",
 	NetworkServicesBasePathKey:          "https://networkservices.googleapis.com/v1/",
 	NotebooksBasePathKey:                "https://notebooks.googleapis.com/v1/",
+	ObservabilityBasePathKey:            "https://observability.googleapis.com/v1/",
 	OracleDatabaseBasePathKey:           "https://oracledatabase.googleapis.com/v1/",
 	OrgPolicyBasePathKey:                "https://orgpolicy.googleapis.com/v2/",
 	OSConfigBasePathKey:                 "https://osconfig.googleapis.com/v1beta/",
@@ -1061,6 +1070,11 @@ func SetEndpointDefaults(d *schema.ResourceData) error {
 		d.Set("cloud_scheduler_custom_endpoint", MultiEnvDefault([]string{
 			"GOOGLE_CLOUD_SCHEDULER_CUSTOM_ENDPOINT",
 		}, DefaultBasePaths[CloudSchedulerBasePathKey]))
+	}
+	if d.Get("cloud_security_compliance_custom_endpoint") == "" {
+		d.Set("cloud_security_compliance_custom_endpoint", MultiEnvDefault([]string{
+			"GOOGLE_CLOUD_SECURITY_COMPLIANCE_CUSTOM_ENDPOINT",
+		}, DefaultBasePaths[CloudSecurityComplianceBasePathKey]))
 	}
 	if d.Get("cloud_tasks_custom_endpoint") == "" {
 		d.Set("cloud_tasks_custom_endpoint", MultiEnvDefault([]string{
@@ -1407,6 +1421,11 @@ func SetEndpointDefaults(d *schema.ResourceData) error {
 			"GOOGLE_NETWORK_CONNECTIVITY_CUSTOM_ENDPOINT",
 		}, DefaultBasePaths[NetworkConnectivityBasePathKey]))
 	}
+	if d.Get("network_connectivityv1_custom_endpoint") == "" {
+		d.Set("network_connectivityv1_custom_endpoint", MultiEnvDefault([]string{
+			"GOOGLE_NETWORK_CONNECTIVITYV1_CUSTOM_ENDPOINT",
+		}, DefaultBasePaths[NetworkConnectivityv1BasePathKey]))
+	}
 	if d.Get("network_management_custom_endpoint") == "" {
 		d.Set("network_management_custom_endpoint", MultiEnvDefault([]string{
 			"GOOGLE_NETWORK_MANAGEMENT_CUSTOM_ENDPOINT",
@@ -1426,6 +1445,11 @@ func SetEndpointDefaults(d *schema.ResourceData) error {
 		d.Set("notebooks_custom_endpoint", MultiEnvDefault([]string{
 			"GOOGLE_NOTEBOOKS_CUSTOM_ENDPOINT",
 		}, DefaultBasePaths[NotebooksBasePathKey]))
+	}
+	if d.Get("observability_custom_endpoint") == "" {
+		d.Set("observability_custom_endpoint", MultiEnvDefault([]string{
+			"GOOGLE_OBSERVABILITY_CUSTOM_ENDPOINT",
+		}, DefaultBasePaths[ObservabilityBasePathKey]))
 	}
 	if d.Get("oracle_database_custom_endpoint") == "" {
 		d.Set("oracle_database_custom_endpoint", MultiEnvDefault([]string{
@@ -2775,6 +2799,7 @@ func ConfigureBasePaths(c *Config) {
 	c.CloudRunBasePath = DefaultBasePaths[CloudRunBasePathKey]
 	c.CloudRunV2BasePath = DefaultBasePaths[CloudRunV2BasePathKey]
 	c.CloudSchedulerBasePath = DefaultBasePaths[CloudSchedulerBasePathKey]
+	c.CloudSecurityComplianceBasePath = DefaultBasePaths[CloudSecurityComplianceBasePathKey]
 	c.CloudTasksBasePath = DefaultBasePaths[CloudTasksBasePathKey]
 	c.ColabBasePath = DefaultBasePaths[ColabBasePathKey]
 	c.ComposerBasePath = DefaultBasePaths[ComposerBasePathKey]
@@ -2844,10 +2869,12 @@ func ConfigureBasePaths(c *Config) {
 	c.MonitoringBasePath = DefaultBasePaths[MonitoringBasePathKey]
 	c.NetappBasePath = DefaultBasePaths[NetappBasePathKey]
 	c.NetworkConnectivityBasePath = DefaultBasePaths[NetworkConnectivityBasePathKey]
+	c.NetworkConnectivityv1BasePath = DefaultBasePaths[NetworkConnectivityv1BasePathKey]
 	c.NetworkManagementBasePath = DefaultBasePaths[NetworkManagementBasePathKey]
 	c.NetworkSecurityBasePath = DefaultBasePaths[NetworkSecurityBasePathKey]
 	c.NetworkServicesBasePath = DefaultBasePaths[NetworkServicesBasePathKey]
 	c.NotebooksBasePath = DefaultBasePaths[NotebooksBasePathKey]
+	c.ObservabilityBasePath = DefaultBasePaths[ObservabilityBasePathKey]
 	c.OracleDatabaseBasePath = DefaultBasePaths[OracleDatabaseBasePathKey]
 	c.OrgPolicyBasePath = DefaultBasePaths[OrgPolicyBasePathKey]
 	c.OSConfigBasePath = DefaultBasePaths[OSConfigBasePathKey]

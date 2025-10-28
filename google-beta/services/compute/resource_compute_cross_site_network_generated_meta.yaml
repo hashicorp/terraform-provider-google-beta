@@ -5,5 +5,5 @@ api_service_name: 'compute.googleapis.com'
 api_version: 'beta'
 api_resource_type_kind: 'CrossSiteNetwork'
 fields:
-  - field: 'description'
-  - field: 'name'
+  - api_field: 'description'
+  - api_field: 'name'

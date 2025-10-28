@@ -20,6 +20,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
 	"regexp"
 	"strings"
 	"sync"
@@ -166,14 +167,24 @@ func (instanceGroupManagerCache *instanceGroupManagerCache) needsRefresh(fullyQu
 	return time.Since(igm.updateTime) > instanceGroupManagerCache.ttl
 }
 
+// We need to set ttl to 0 to disable caching in VCR testing.
+// This ensure all NP/MIG LIST requests are made consistently,
+// preventing non-deterministic behavior that would break VCR.
+func getCacheTTL() time.Duration {
+	if os.Getenv("VCR_PATH") != "" && os.Getenv("VCR_MODE") != "" {
+		return 0 * time.Second
+	}
+	return 30 * time.Second
+}
+
 var (
 	npCache = &nodePoolCache{
 		nodePools: make(map[string]*nodePoolWithUpdateTime),
-		ttl:       30 * time.Second,
+		ttl:       getCacheTTL(),
 	}
 	igmCache = &instanceGroupManagerCache{
 		instanceGroupManagers: make(map[string]*instanceGroupManagerWithUpdateTime),
-		ttl:                   30 * time.Second,
+		ttl:                   getCacheTTL(),
 	}
 )
 
@@ -1110,7 +1121,7 @@ func expandNodePool(d *schema.ResourceData, prefix string) (*container.NodePool,
 	np := &container.NodePool{
 		Name:             name,
 		InitialNodeCount: int64(nodeCount),
-		Config:           expandNodeConfig(d.Get(prefix + "node_config")),
+		Config:           expandNodeConfig(d, prefix, d.Get(prefix+"node_config")),
 		Locations:        locations,
 		Version:          d.Get(prefix + "version").(string),
 		NetworkConfig:    expandNodeNetworkConfig(d.Get(prefix + "network_config")),

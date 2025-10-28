@@ -149,6 +149,14 @@ BOX_AND_CROSS: four pseudowires over four Interconnect connections, with two con
 				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"bandwidth_allocation": {
+							Type:     schema.TypeString,
+							Required: true,
+							Description: `The configuration of a wire's bandwidth allocation.
+ALLOCATE_PER_WIRE: configures a separate unmetered bandwidth allocation (and associated charges) for each wire in the group.
+SHARED_WITH_WIRE_GROUP: this is the default behavior, which configures one unmetered bandwidth allocation for the wire group. The unmetered bandwidth is divided equally across each wire in the group, but dynamic
+throttling reallocates unused unmetered bandwidth from unused or underused wires to other wires in the group.`,
+						},
 						"bandwidth_unmetered": {
 							Type:        schema.TypeInt,
 							Optional:    true,
@@ -728,6 +736,8 @@ func flattenComputeWireGroupWireProperties(v interface{}, d *schema.ResourceData
 		flattenComputeWireGroupWirePropertiesBandwidthUnmetered(original["bandwidthUnmetered"], d, config)
 	transformed["fault_response"] =
 		flattenComputeWireGroupWirePropertiesFaultResponse(original["faultResponse"], d, config)
+	transformed["bandwidth_allocation"] =
+		flattenComputeWireGroupWirePropertiesBandwidthAllocation(original["bandwidthAllocation"], d, config)
 	return []interface{}{transformed}
 }
 func flattenComputeWireGroupWirePropertiesBandwidthUnmetered(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -748,6 +758,10 @@ func flattenComputeWireGroupWirePropertiesBandwidthUnmetered(v interface{}, d *s
 }
 
 func flattenComputeWireGroupWirePropertiesFaultResponse(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenComputeWireGroupWirePropertiesBandwidthAllocation(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -974,6 +988,9 @@ func expandComputeWireGroupAdminEnabled(v interface{}, d tpgresource.TerraformRe
 }
 
 func expandComputeWireGroupWireGroupProperties(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -997,6 +1014,9 @@ func expandComputeWireGroupWireGroupPropertiesType(v interface{}, d tpgresource.
 }
 
 func expandComputeWireGroupWireProperties(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
 		return nil, nil
@@ -1019,6 +1039,13 @@ func expandComputeWireGroupWireProperties(v interface{}, d tpgresource.Terraform
 		transformed["faultResponse"] = transformedFaultResponse
 	}
 
+	transformedBandwidthAllocation, err := expandComputeWireGroupWirePropertiesBandwidthAllocation(original["bandwidth_allocation"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedBandwidthAllocation); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["bandwidthAllocation"] = transformedBandwidthAllocation
+	}
+
 	return transformed, nil
 }
 
@@ -1027,5 +1054,9 @@ func expandComputeWireGroupWirePropertiesBandwidthUnmetered(v interface{}, d tpg
 }
 
 func expandComputeWireGroupWirePropertiesFaultResponse(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeWireGroupWirePropertiesBandwidthAllocation(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }

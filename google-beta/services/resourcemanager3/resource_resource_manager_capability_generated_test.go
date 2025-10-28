@@ -36,7 +36,7 @@ func TestAccResourceManager3Capability_resourceManagerCapabilityExample(t *testi
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		ExternalProviders: map[string]resource.ExternalProvider{
 			"time": {},
 		},
@@ -57,7 +57,6 @@ func TestAccResourceManager3Capability_resourceManagerCapabilityExample(t *testi
 func testAccResourceManager3Capability_resourceManagerCapabilityExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_folder" "folder" {
-  provider         = google-beta
   display_name     = "tf-test-my-folder%{random_suffix}"
   parent           = "organizations/%{org_id}"
   deletion_protection = false
@@ -67,7 +66,6 @@ resource "time_sleep" "wait_60s" {
   create_duration = "60s"
 }
 resource "google_resource_manager_capability" "capability" {
-  provider         = google-beta
   value            = true
   parent           = "${google_folder.folder.name}"
   capability_name  = "app-management"

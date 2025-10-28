@@ -692,6 +692,77 @@ resource "google_network_connectivity_spoke" "primary"  {
 `, context)
 }
 
+func TestAccNetworkConnectivitySpoke_networkConnectivitySpokeGatewayExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckNetworkConnectivitySpokeDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccNetworkConnectivitySpoke_networkConnectivitySpokeGatewayExample(context),
+			},
+			{
+				ResourceName:            "google_network_connectivity_spoke.primary",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"hub", "labels", "location", "terraform_labels"},
+			},
+		},
+	})
+}
+
+func testAccNetworkConnectivitySpoke_networkConnectivitySpokeGatewayExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_compute_network" "network" {
+  provider = google-beta
+  name        = "tf-test-net-spoke%{random_suffix}"
+  auto_create_subnetworks = false
+}
+
+resource "google_compute_subnetwork" "subnetwork" {
+  provider = google-beta
+  name          = "tf-test-subnet%{random_suffix}"
+  ip_cidr_range = "10.0.0.0/28"
+  region        = "us-central1"
+  network       = google_compute_network.network.self_link
+}
+
+resource "google_network_connectivity_hub" "basic_hub" {
+  provider = google-beta
+  name        = "hub%{random_suffix}"
+  description = "A sample hub"
+  labels = {
+    label-two = "value-one"
+  }
+  preset_topology = "HYBRID_INSPECTION"
+}
+
+resource "google_network_connectivity_spoke" "primary" {
+  provider = google-beta
+  name        = "gateway%{random_suffix}"
+  location = "us-central1"
+  description = "A sample spoke of type Gateway"
+  labels = {
+    label-one = "value-one"
+  }
+  hub =  google_network_connectivity_hub.basic_hub.id
+  gateway {
+    ip_range_reservations {
+      ip_range = "10.0.0.0/23"
+    }
+    capacity = "CAPACITY_1_GBPS"
+  }
+  group = "gateways"
+}
+`, context)
+}
+
 func testAccCheckNetworkConnectivitySpokeDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		for name, rs := range s.RootModule().Resources {
