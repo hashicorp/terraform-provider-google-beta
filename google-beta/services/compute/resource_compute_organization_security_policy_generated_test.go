@@ -46,9 +46,10 @@ func TestAccComputeOrganizationSecurityPolicy_organizationSecurityPolicyBasicExa
 				Config: testAccComputeOrganizationSecurityPolicy_organizationSecurityPolicyBasicExample(context),
 			},
 			{
-				ResourceName:      "google_compute_organization_security_policy.policy",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_compute_organization_security_policy.policy",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"display_name"},
 			},
 		},
 	})
