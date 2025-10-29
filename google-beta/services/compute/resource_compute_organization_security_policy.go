@@ -249,9 +249,6 @@ func resourceComputeOrganizationSecurityPolicyRead(d *schema.ResourceData, meta 
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("ComputeOrganizationSecurityPolicy %q", d.Id()))
 	}
 
-	if err := d.Set("display_name", flattenComputeOrganizationSecurityPolicyDisplayName(res["displayName"], d, config)); err != nil {
-		return fmt.Errorf("Error reading OrganizationSecurityPolicy: %s", err)
-	}
 	if err := d.Set("description", flattenComputeOrganizationSecurityPolicyDescription(res["description"], d, config)); err != nil {
 		return fmt.Errorf("Error reading OrganizationSecurityPolicy: %s", err)
 	}
@@ -410,10 +407,6 @@ func resourceComputeOrganizationSecurityPolicyImport(d *schema.ResourceData, met
 	d.SetId(id)
 
 	return []*schema.ResourceData{d}, nil
-}
-
-func flattenComputeOrganizationSecurityPolicyDisplayName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
-	return v
 }
 
 func flattenComputeOrganizationSecurityPolicyDescription(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
