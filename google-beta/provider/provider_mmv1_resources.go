@@ -621,9 +621,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 729
+// Generated resources: 730
 // Generated IAM resources: 348
-// Total generated resources: 1077
+// Total generated resources: 1078
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -1502,6 +1502,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_privateca_certificate_template_iam_member":                           tpgiamresource.ResourceIamMember(privateca.PrivatecaCertificateTemplateIamSchema, privateca.PrivatecaCertificateTemplateIamUpdaterProducer, privateca.PrivatecaCertificateTemplateIdParseFunc),
 	"google_privateca_certificate_template_iam_policy":                           tpgiamresource.ResourceIamPolicy(privateca.PrivatecaCertificateTemplateIamSchema, privateca.PrivatecaCertificateTemplateIamUpdaterProducer, privateca.PrivatecaCertificateTemplateIdParseFunc),
 	"google_privileged_access_manager_entitlement":                               privilegedaccessmanager.ResourcePrivilegedAccessManagerEntitlement(),
+	"google_privileged_access_manager_settings":                                  privilegedaccessmanager.ResourcePrivilegedAccessManagerSettings(),
 	"google_public_ca_external_account_key":                                      publicca.ResourcePublicCAExternalAccountKey(),
 	"google_pubsub_schema":                                                       pubsub.ResourcePubsubSchema(),
 	"google_pubsub_schema_iam_binding":                                           tpgiamresource.ResourceIamBinding(pubsub.PubsubSchemaIamSchema, pubsub.PubsubSchemaIamUpdaterProducer, pubsub.PubsubSchemaIdParseFunc),
