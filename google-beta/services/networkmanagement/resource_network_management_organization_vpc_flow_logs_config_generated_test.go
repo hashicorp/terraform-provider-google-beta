@@ -41,7 +41,7 @@ func TestAccNetworkManagementOrganizationVpcFlowLogsConfig_networkManagementOrgV
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckNetworkManagementOrganizationVpcFlowLogsConfigDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -60,7 +60,6 @@ func TestAccNetworkManagementOrganizationVpcFlowLogsConfig_networkManagementOrgV
 func testAccNetworkManagementOrganizationVpcFlowLogsConfig_networkManagementOrgVpcFlowLogsConfigBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_network_management_organization_vpc_flow_logs_config" "org-test" {
-  provider                = google-beta
   vpc_flow_logs_config_id = "tf-test-basic-org-test-id%{random_suffix}"
   location                = "global"
   organization            = "%{org_id}"
