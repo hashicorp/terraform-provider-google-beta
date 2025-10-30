@@ -193,7 +193,7 @@ func TestAccNetworkManagementVpcFlowLogsConfig_networkManagementVpcFlowLogsConfi
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckNetworkManagementVpcFlowLogsConfigDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -212,18 +212,15 @@ func TestAccNetworkManagementVpcFlowLogsConfig_networkManagementVpcFlowLogsConfi
 func testAccNetworkManagementVpcFlowLogsConfig_networkManagementVpcFlowLogsConfigNetworkBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 data "google_project" "project" {
-  provider = google-beta
 }
 
 resource "google_network_management_vpc_flow_logs_config" "network-test" {
-  provider                = google-beta
   vpc_flow_logs_config_id = "tf-test-basic-network-test-id%{random_suffix}"
   location                = "global"
   network                 = "projects/${data.google_project.project.number}/global/networks/${google_compute_network.network.name}"
 }
 
 resource "google_compute_network" "network" {
-  provider = google-beta
   name     = "tf-test-basic-network-test-network%{random_suffix}"
 }
 `, context)
@@ -238,7 +235,7 @@ func TestAccNetworkManagementVpcFlowLogsConfig_networkManagementVpcFlowLogsConfi
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckNetworkManagementVpcFlowLogsConfigDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -257,24 +254,20 @@ func TestAccNetworkManagementVpcFlowLogsConfig_networkManagementVpcFlowLogsConfi
 func testAccNetworkManagementVpcFlowLogsConfig_networkManagementVpcFlowLogsConfigSubnetBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 data "google_project" "project" {
-  provider = google-beta
 }
 
 resource "google_network_management_vpc_flow_logs_config" "subnet-test" {
-  provider                = google-beta
   vpc_flow_logs_config_id = "tf-test-basic-subnet-test-id%{random_suffix}"
   location                = "global"
   subnet                  = "projects/${data.google_project.project.number}/regions/us-central1/subnetworks/${google_compute_subnetwork.subnetwork.name}"
 }
 
 resource "google_compute_network" "network" {
-  provider                = google-beta
   name                    = "tf-test-basic-subnet-test-network%{random_suffix}"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "subnetwork" {
-  provider      = google-beta
   name          = "tf-test-basic-subnet-test-subnetwork%{random_suffix}"
   ip_cidr_range = "10.2.0.0/16"
   region        = "us-central1"
