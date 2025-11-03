@@ -251,7 +251,7 @@ func resourceWorkstationsWorkstationCreate(d *schema.ResourceData, meta interfac
 	if err != nil {
 		return err
 	} else if v, ok := d.GetOkExists("source_workstation"); !tpgresource.IsEmptyValue(reflect.ValueOf(sourceWorkstationProp)) && (ok || !reflect.DeepEqual(v, sourceWorkstationProp)) {
-		obj["source_workstation"] = sourceWorkstationProp
+		obj["sourceWorkstation"] = sourceWorkstationProp
 	}
 	effectiveLabelsProp, err := expandWorkstationsWorkstationEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
@@ -391,7 +391,7 @@ func resourceWorkstationsWorkstationRead(d *schema.ResourceData, meta interface{
 	if err := d.Set("state", flattenWorkstationsWorkstationState(res["state"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Workstation: %s", err)
 	}
-	if err := d.Set("source_workstation", flattenWorkstationsWorkstationSourceWorkstation(res["source_workstation"], d, config)); err != nil {
+	if err := d.Set("source_workstation", flattenWorkstationsWorkstationSourceWorkstation(res["sourceWorkstation"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Workstation: %s", err)
 	}
 	if err := d.Set("terraform_labels", flattenWorkstationsWorkstationTerraformLabels(res["labels"], d, config)); err != nil {
