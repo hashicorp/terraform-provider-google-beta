@@ -621,9 +621,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 731
+// Generated resources: 732
 // Generated IAM resources: 348
-// Total generated resources: 1079
+// Total generated resources: 1080
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -790,6 +790,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_certificate_manager_dns_authorization":                               certificatemanager.ResourceCertificateManagerDnsAuthorization(),
 	"google_certificate_manager_trust_config":                                    certificatemanager.ResourceCertificateManagerTrustConfig(),
 	"google_ces_app":                                                             ces.ResourceCESApp(),
+	"google_ces_deployment":                                                      ces.ResourceCESDeployment(),
 	"google_ces_toolset":                                                         ces.ResourceCESToolset(),
 	"google_chronicle_data_access_label":                                         chronicle.ResourceChronicleDataAccessLabel(),
 	"google_chronicle_data_access_scope":                                         chronicle.ResourceChronicleDataAccessScope(),
