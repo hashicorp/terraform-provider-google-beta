@@ -3,27 +3,22 @@
 FEATURES:
 * **New Resource:** `google_ces_app` ([#10950](https://github.com/hashicorp/terraform-provider-google-beta/pull/10950))
 * **New Resource:** `google_ces_toolset` ([#10967](https://github.com/hashicorp/terraform-provider-google-beta/pull/10967))
-* **New Resource:** `google_cloud_security_compliance_cloud_control` (revert) ([#10949](https://github.com/hashicorp/terraform-provider-google-beta/pull/10949))
+* **New Resource:** `google_client_config` ([#10975](https://github.com/hashicorp/terraform-provider-google-beta/pull/10975))
 * **New Resource:** `google_discovery_engine_control` ([#10966](https://github.com/hashicorp/terraform-provider-google-beta/pull/10966))
 * **New Resource:** `google_netapp_host_group` ([#10959](https://github.com/hashicorp/terraform-provider-google-beta/pull/10959))
 * **New Resource:** `google_network_security_mirroring_endpoint` (beta) ([#10941](https://github.com/hashicorp/terraform-provider-google-beta/pull/10941))
 * **New Resource:** `google_network_services_multicast_domain` ([#10952](https://github.com/hashicorp/terraform-provider-google-beta/pull/10952))
 * **New Resource:** `google_privileged_access_manager_settings` ([#10961](https://github.com/hashicorp/terraform-provider-google-beta/pull/10961))
-* **New Resource:** `google_saas_runtime_unit_operation` ([#10954](https://github.com/hashicorp/terraform-provider-google-beta/pull/10954))
-* **New Resource:** `google_saas_runtime_unit_operation` (revert) ([#10973](https://github.com/hashicorp/terraform-provider-google-beta/pull/10973))
-* **New Resource:** resourcemanager: added ephemeral `google_client_config` resource ([#10975](https://github.com/hashicorp/terraform-provider-google-beta/pull/10975))
 
 IMPROVEMENTS:
-* cloudfunctions2: added `directVpcNetworkInterface` and `directVpcEgress` field to `google_cloudfunctions2_function` resource ([#10971](https://github.com/hashicorp/terraform-provider-google-beta/pull/10971))
-* cloudrunv2: added `depends_on`  to `template.container` on `google_cloud_run_v2_worker_pool` resource ([#10970](https://github.com/hashicorp/terraform-provider-google-beta/pull/10970))
-* compute: added `grpc_tls_health_check` field to `google_compute_healthcheck` resource (ga) ([#10958](https://github.com/hashicorp/terraform-provider-google-beta/pull/10958))
+* cloudfunctions2: added `direct_vpc_network_interface` and `direct_vpc_egress` field to `google_cloudfunctions2_function` resource ([#10971](https://github.com/hashicorp/terraform-provider-google-beta/pull/10971))
+* cloudrunv2: added `template.container.depends_on` field to `google_cloud_run_v2_worker_pool` resource ([#10970](https://github.com/hashicorp/terraform-provider-google-beta/pull/10970))
 * container: added `network_tier_config` to `google_container_cluster` resource. ([#10960](https://github.com/hashicorp/terraform-provider-google-beta/pull/10960))
 * eventarc: added `labels` field to `google_eventarc_channel` resource ([#10944](https://github.com/hashicorp/terraform-provider-google-beta/pull/10944))
 * netapp: added `block_devices` field and `ISCSI` protocol support to `goolge_netapp_volume` resource, and increased timeouts on its operations ([#10974](https://github.com/hashicorp/terraform-provider-google-beta/pull/10974))
 * netapp: added additional field `type` in `google_netapp_storage_pool` resource ([#10953](https://github.com/hashicorp/terraform-provider-google-beta/pull/10953))
-* networkmanagement: promoted `google_network_management_organization_vpc_flow_logs_config` resource to GA ([#10972](https://github.com/hashicorp/terraform-provider-google-beta/pull/10972))
 * vertexai: added `psc_automation_configs` field to `google_vertex_ai_endpoint` resource ([#10956](https://github.com/hashicorp/terraform-provider-google-beta/pull/10956))
-* vertexai: added `sync_config.continuous field to `google_vertex_ai_feature_online_store_featureview` ([#10964](https://github.com/hashicorp/terraform-provider-google-beta/pull/10964))
+* vertexai: added `sync_config.continuous` field to `google_vertex_ai_feature_online_store_featureview` ([#10964](https://github.com/hashicorp/terraform-provider-google-beta/pull/10964))
 
 BUG FIXES:
 * accesscontextmanager: fixed the issue where `google_access_context_manager_service_perimeter_[dry_run_][egress|ingress]_policy` caused the provider to crash when a provided identity casing was invalid. ([#10968](https://github.com/hashicorp/terraform-provider-google-beta/pull/10968))
