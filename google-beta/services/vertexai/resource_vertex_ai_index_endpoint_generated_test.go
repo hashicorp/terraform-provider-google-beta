@@ -61,7 +61,7 @@ func TestAccVertexAIIndexEndpoint_vertexAiIndexEndpointTestExample(t *testing.T)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckVertexAIIndexEndpointDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -80,16 +80,19 @@ func TestAccVertexAIIndexEndpoint_vertexAiIndexEndpointTestExample(t *testing.T)
 func testAccVertexAIIndexEndpoint_vertexAiIndexEndpointTestExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_project_service_identity" "vertexai_sa" {
+  provider = google-beta
   service = "aiplatform.googleapis.com"
 }
 
 resource "google_kms_crypto_key_iam_member" "vertexai_encrypterdecrypter" {
+  provider = google-beta
   crypto_key_id = "%{kms_key_name}"
   role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
   member        =  google_project_service_identity.vertexai_sa.member
 }
 
 resource "google_vertex_ai_index_endpoint" "index_endpoint" {
+  provider = google-beta
   display_name = "sample-endpoint"
   description  = "A sample vertex endpoint"
   region       = "us-central1"
@@ -108,10 +111,13 @@ resource "google_vertex_ai_index_endpoint" "index_endpoint" {
 }
 
 data "google_compute_network" "vertex_network" {
+  provider = google-beta
   name       = "%{network_name}"
 }
 
-data "google_project" "project" {}
+data "google_project" "project" {
+  provider = google-beta
+}
 `, context)
 }
 
