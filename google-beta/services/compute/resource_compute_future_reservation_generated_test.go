@@ -57,6 +57,8 @@ func TestAccComputeFutureReservation_futureReservationBasicExample(t *testing.T)
 		"billing_account": envvar.GetTestBillingAccountFromEnv(t),
 		"org_id":          envvar.GetTestOrgFromEnv(t),
 		"project":         envvar.GetTestProjectFromEnv(),
+		"end_time":        time.Date(time.Now().Year(), 12, 31, 0, 0, 0, 0, time.Now().Location()).AddDate(0, 0, 10).Format(time.RFC3339),
+		"start_time":      time.Date(time.Now().Year(), 12, 31, 0, 0, 0, 0, time.Now().Location()).AddDate(0, 0, 1).Format(time.RFC3339),
 		"random_suffix":   acctest.RandString(t, 10),
 	}
 
@@ -88,8 +90,8 @@ resource "google_compute_future_reservation" "gce_future_reservation" {
   planning_status = "DRAFT"
   name_prefix = "fr-basic"
   time_window {
-    start_time = "2025-11-01T00:00:00Z"
-    end_time   = "2025-11-02T00:00:00Z"
+    start_time = "%{start_time}"
+    end_time   = "%{end_time}"
   }
   specific_sku_properties {
     total_count = "1"
@@ -109,6 +111,8 @@ func TestAccComputeFutureReservation_futureReservationAggregateReservationExampl
 		"billing_account": envvar.GetTestBillingAccountFromEnv(t),
 		"org_id":          envvar.GetTestOrgFromEnv(t),
 		"project":         envvar.GetTestProjectFromEnv(),
+		"end_time":        time.Date(time.Now().Year(), 12, 31, 0, 0, 0, 0, time.Now().Location()).AddDate(0, 0, 10).Format(time.RFC3339),
+		"start_time":      time.Date(time.Now().Year(), 12, 31, 0, 0, 0, 0, time.Now().Location()).AddDate(0, 0, 1).Format(time.RFC3339),
 		"random_suffix":   acctest.RandString(t, 10),
 	}
 
@@ -140,8 +144,8 @@ resource "google_compute_future_reservation" "gce_future_reservation" {
   planning_status = "DRAFT"
   name_prefix = "fr-basic"
   time_window {
-    start_time = "2025-11-01T00:00:00Z"
-    end_time   = "2025-11-02T00:00:00Z"
+    start_time = "%{start_time}"
+    end_time   = "%{end_time}"
   }
   aggregate_reservation {
     vm_family = "VM_FAMILY_CLOUD_TPU_DEVICE_CT3"
@@ -164,13 +168,14 @@ resource "google_compute_future_reservation" "gce_future_reservation" {
 }
 
 func TestAccComputeFutureReservation_sharedFutureReservationExample(t *testing.T) {
-	acctest.SkipIfVcr(t)
 	t.Parallel()
 
 	context := map[string]interface{}{
 		"billing_account": envvar.GetTestBillingAccountFromEnv(t),
-		"org_id":          envvar.GetTestOrgFromEnv(t),
+		"org_id":          envvar.GetTestOrgTargetFromEnv(t),
 		"project":         envvar.GetTestProjectFromEnv(),
+		"end_time":        time.Date(time.Now().Year(), 12, 31, 0, 0, 0, 0, time.Now().Location()).AddDate(0, 0, 10).Format(time.RFC3339),
+		"start_time":      time.Date(time.Now().Year(), 12, 31, 0, 0, 0, 0, time.Now().Location()).AddDate(0, 0, 1).Format(time.RFC3339),
 		"random_suffix":   acctest.RandString(t, 10),
 	}
 
@@ -217,7 +222,7 @@ resource "google_project" "guest_project" {
   deletion_policy = "DELETE"
 }
 
-resource "google_org_policy_policy" "shared_reservation_org_policy" {
+resource "google_org_policy_policy" "shared_future_reservation_org_policy" {
   provider = google-beta
   name   = "projects/${google_project.owner_project.project_id}/policies/compute.sharedReservationsOwnerProjects"
   parent = "projects/${google_project.owner_project.project_id}"
@@ -233,9 +238,10 @@ resource "google_compute_future_reservation" "gce_future_reservation" {
   provider = google-beta
   project = google_project.owner_project.project_id
   name    = "tf-test-gce-shared-future-reservation%{random_suffix}"
+  auto_delete_auto_created_reservations = true
   time_window {
-    start_time = "2025-08-01T00:00:00Z"
-    end_time   = "2025-08-02T00:00:00Z"
+    start_time = "%{start_time}"
+    end_time   = "%{end_time}"
   }
 
   share_settings {
