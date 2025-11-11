@@ -1,4 +1,4 @@
-## 7.10.0 (Unreleased)
+## 7.11.0 (Unreleased)
 
 DEPRECATIONS:
 * `pubsublite`: `google_pubsub_lite_reservation` will be turned down effective March 18, 2026. Use `google_pubsub_reservation` instead. ([#11022](https://github.com/hashicorp/terraform-provider-google-beta/pull/11022))
@@ -29,7 +29,6 @@ IMPROVEMENTS:
 * lustre: added `placement_policy` field to `google_lustre_instance` resource ([#11011](https://github.com/hashicorp/terraform-provider-google-beta/pull/11011))
 * netapp: added `cache_parameters` field to `google_netapp_volume` resource ([#10976](https://github.com/hashicorp/terraform-provider-google-beta/pull/10976))
 * secretmanager: added project and short name support for `secret` on `ephemeral_google_secret_manager_secret_version` ([#11015](https://github.com/hashicorp/terraform-provider-google-beta/pull/11015))
-* secretmanager: added project and short name support for `secret` on `google_secret_manager_secret_version` ([#11015](https://github.com/hashicorp/terraform-provider-google-beta/pull/11015))
 
 BUG FIXES:
 * alloydb: fixed issue with creation when `initial_user.password` was set to a computed value in `google_alloydb_cluster` ([#11006](https://github.com/hashicorp/terraform-provider-google-beta/pull/11006))
