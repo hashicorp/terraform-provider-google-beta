@@ -43,6 +43,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/binaryauthorization"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/blockchainnodeengine"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/certificatemanager"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/ces"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/chronicle"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/cloudasset"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/cloudbuild"
@@ -57,7 +58,6 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/cloudrun"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/cloudrunv2"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/cloudscheduler"
-	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/cloudsecuritycompliance"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/cloudtasks"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/colab"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/composer"
@@ -211,6 +211,7 @@ var handwrittenDatasources = map[string]*schema.Resource{
 	"google_artifact_registry_package":                           artifactregistry.DataSourceArtifactRegistryPackage(),
 	"google_artifact_registry_packages":                          artifactregistry.DataSourceArtifactRegistryPackages(),
 	"google_artifact_registry_python_package":                    artifactregistry.DataSourceArtifactRegistryPythonPackage(),
+	"google_artifact_registry_python_packages":                   artifactregistry.DataSourceArtifactRegistryPythonPackages(),
 	"google_artifact_registry_repositories":                      artifactregistry.DataSourceArtifactRegistryRepositories(),
 	"google_artifact_registry_repository":                        artifactregistry.DataSourceArtifactRegistryRepository(),
 	"google_artifact_registry_tag":                               artifactregistry.DataSourceArtifactRegistryTag(),
@@ -251,6 +252,7 @@ var handwrittenDatasources = map[string]*schema.Resource{
 	"google_cloud_identity_group_memberships":                    cloudidentity.DataSourceGoogleCloudIdentityGroupMemberships(),
 	"google_cloud_identity_group_transitive_memberships":         cloudidentity.DataSourceGoogleCloudIdentityGroupTransitiveMemberships(),
 	"google_cloud_identity_group_lookup":                         cloudidentity.DataSourceGoogleCloudIdentityGroupLookup(),
+	"google_cloud_identity_policy":                               cloudidentity.DataSourceGoogleCloudIdentityPolicy(),
 	"google_cloud_quotas_quota_info":                             cloudquotas.DataSourceGoogleCloudQuotasQuotaInfo(),
 	"google_cloud_quotas_quota_infos":                            cloudquotas.DataSourceGoogleCloudQuotasQuotaInfos(),
 	"google_cloud_run_locations":                                 cloudrun.DataSourceGoogleCloudRunLocations(),
@@ -301,6 +303,8 @@ var handwrittenDatasources = map[string]*schema.Resource{
 	"google_compute_region_ssl_certificate":                      compute.DataSourceGoogleRegionComputeSslCertificate(),
 	"google_compute_region_ssl_policy":                           compute.DataSourceGoogleRegionComputeSslPolicy(),
 	"google_compute_reservation":                                 compute.DataSourceGoogleComputeReservation(),
+	"google_compute_reservation_block":                           compute.DataSourceGoogleComputeReservationBlock(),
+	"google_compute_reservation_sub_block":                       compute.DataSourceGoogleComputeReservationSubBlock(),
 	"google_compute_resource_policy":                             compute.DataSourceGoogleComputeResourcePolicy(),
 	"google_compute_router":                                      compute.DataSourceGoogleComputeRouter(),
 	"google_compute_router_nat":                                  compute.DataSourceGoogleComputeRouterNat(),
@@ -621,9 +625,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 727
+// Generated resources: 735
 // Generated IAM resources: 348
-// Total generated resources: 1075
+// Total generated resources: 1083
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -789,6 +793,10 @@ var generatedResources = map[string]*schema.Resource{
 	"google_certificate_manager_certificate_map_entry":                           certificatemanager.ResourceCertificateManagerCertificateMapEntry(),
 	"google_certificate_manager_dns_authorization":                               certificatemanager.ResourceCertificateManagerDnsAuthorization(),
 	"google_certificate_manager_trust_config":                                    certificatemanager.ResourceCertificateManagerTrustConfig(),
+	"google_ces_app":                                                             ces.ResourceCESApp(),
+	"google_ces_deployment":                                                      ces.ResourceCESDeployment(),
+	"google_ces_example":                                                         ces.ResourceCESExample(),
+	"google_ces_toolset":                                                         ces.ResourceCESToolset(),
 	"google_chronicle_data_access_label":                                         chronicle.ResourceChronicleDataAccessLabel(),
 	"google_chronicle_data_access_scope":                                         chronicle.ResourceChronicleDataAccessScope(),
 	"google_chronicle_reference_list":                                            chronicle.ResourceChronicleReferenceList(),
@@ -849,8 +857,6 @@ var generatedResources = map[string]*schema.Resource{
 	"google_cloud_run_v2_worker_pool_iam_member":                                 tpgiamresource.ResourceIamMember(cloudrunv2.CloudRunV2WorkerPoolIamSchema, cloudrunv2.CloudRunV2WorkerPoolIamUpdaterProducer, cloudrunv2.CloudRunV2WorkerPoolIdParseFunc),
 	"google_cloud_run_v2_worker_pool_iam_policy":                                 tpgiamresource.ResourceIamPolicy(cloudrunv2.CloudRunV2WorkerPoolIamSchema, cloudrunv2.CloudRunV2WorkerPoolIamUpdaterProducer, cloudrunv2.CloudRunV2WorkerPoolIdParseFunc),
 	"google_cloud_scheduler_job":                                                 cloudscheduler.ResourceCloudSchedulerJob(),
-	"google_cloud_security_compliance_cloud_control":                             cloudsecuritycompliance.ResourceCloudSecurityComplianceCloudControl(),
-	"google_cloud_security_compliance_framework":                                 cloudsecuritycompliance.ResourceCloudSecurityComplianceFramework(),
 	"google_cloud_tasks_queue":                                                   cloudtasks.ResourceCloudTasksQueue(),
 	"google_cloud_tasks_queue_iam_binding":                                       tpgiamresource.ResourceIamBinding(cloudtasks.CloudTasksQueueIamSchema, cloudtasks.CloudTasksQueueIamUpdaterProducer, cloudtasks.CloudTasksQueueIdParseFunc),
 	"google_cloud_tasks_queue_iam_member":                                        tpgiamresource.ResourceIamMember(cloudtasks.CloudTasksQueueIamSchema, cloudtasks.CloudTasksQueueIamUpdaterProducer, cloudtasks.CloudTasksQueueIdParseFunc),
@@ -957,6 +963,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_compute_region_disk_iam_member":                                      tpgiamresource.ResourceIamMember(compute.ComputeRegionDiskIamSchema, compute.ComputeRegionDiskIamUpdaterProducer, compute.ComputeRegionDiskIdParseFunc),
 	"google_compute_region_disk_iam_policy":                                      tpgiamresource.ResourceIamPolicy(compute.ComputeRegionDiskIamSchema, compute.ComputeRegionDiskIamUpdaterProducer, compute.ComputeRegionDiskIdParseFunc),
 	"google_compute_region_disk_resource_policy_attachment":                      compute.ResourceComputeRegionDiskResourcePolicyAttachment(),
+	"google_compute_region_health_aggregation_policy":                            compute.ResourceComputeRegionHealthAggregationPolicy(),
 	"google_compute_region_health_check":                                         compute.ResourceComputeRegionHealthCheck(),
 	"google_compute_region_network_endpoint":                                     compute.ResourceComputeRegionNetworkEndpoint(),
 	"google_compute_region_network_endpoint_group":                               compute.ResourceComputeRegionNetworkEndpointGroup(),
@@ -1148,6 +1155,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_discovery_engine_assistant":                                          discoveryengine.ResourceDiscoveryEngineAssistant(),
 	"google_discovery_engine_chat_engine":                                        discoveryengine.ResourceDiscoveryEngineChatEngine(),
 	"google_discovery_engine_cmek_config":                                        discoveryengine.ResourceDiscoveryEngineCmekConfig(),
+	"google_discovery_engine_control":                                            discoveryengine.ResourceDiscoveryEngineControl(),
 	"google_discovery_engine_data_connector":                                     discoveryengine.ResourceDiscoveryEngineDataConnector(),
 	"google_discovery_engine_data_store":                                         discoveryengine.ResourceDiscoveryEngineDataStore(),
 	"google_discovery_engine_license_config":                                     discoveryengine.ResourceDiscoveryEngineLicenseConfig(),
@@ -1156,6 +1164,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_discovery_engine_search_engine":                                      discoveryengine.ResourceDiscoveryEngineSearchEngine(),
 	"google_discovery_engine_sitemap":                                            discoveryengine.ResourceDiscoveryEngineSitemap(),
 	"google_discovery_engine_target_site":                                        discoveryengine.ResourceDiscoveryEngineTargetSite(),
+	"google_discovery_engine_user_store":                                         discoveryengine.ResourceDiscoveryEngineUserStore(),
 	"google_dns_managed_zone":                                                    dns.ResourceDNSManagedZone(),
 	"google_dns_managed_zone_iam_binding":                                        tpgiamresource.ResourceIamBinding(dns.DNSManagedZoneIamSchema, dns.DNSManagedZoneIamUpdaterProducer, dns.DNSManagedZoneIdParseFunc),
 	"google_dns_managed_zone_iam_member":                                         tpgiamresource.ResourceIamMember(dns.DNSManagedZoneIamSchema, dns.DNSManagedZoneIamUpdaterProducer, dns.DNSManagedZoneIdParseFunc),
@@ -1402,6 +1411,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_netapp_backup":                                                       netapp.ResourceNetappBackup(),
 	"google_netapp_backup_policy":                                                netapp.ResourceNetappBackupPolicy(),
 	"google_netapp_backup_vault":                                                 netapp.ResourceNetappBackupVault(),
+	"google_netapp_host_group":                                                   netapp.ResourceNetappHostGroup(),
 	"google_netapp_storage_pool":                                                 netapp.ResourceNetappStoragePool(),
 	"google_netapp_volume":                                                       netapp.ResourceNetappVolume(),
 	"google_netapp_volume_quota_rule":                                            netapp.ResourceNetappVolumeQuotaRule(),
@@ -1456,6 +1466,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_network_services_lb_route_extension":                                 networkservices.ResourceNetworkServicesLbRouteExtension(),
 	"google_network_services_lb_traffic_extension":                               networkservices.ResourceNetworkServicesLbTrafficExtension(),
 	"google_network_services_mesh":                                               networkservices.ResourceNetworkServicesMesh(),
+	"google_network_services_multicast_domain":                                   networkservices.ResourceNetworkServicesMulticastDomain(),
 	"google_network_services_service_binding":                                    networkservices.ResourceNetworkServicesServiceBinding(),
 	"google_network_services_service_lb_policies":                                networkservices.ResourceNetworkServicesServiceLbPolicies(),
 	"google_network_services_tcp_route":                                          networkservices.ResourceNetworkServicesTcpRoute(),
@@ -1501,6 +1512,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_privateca_certificate_template_iam_member":                           tpgiamresource.ResourceIamMember(privateca.PrivatecaCertificateTemplateIamSchema, privateca.PrivatecaCertificateTemplateIamUpdaterProducer, privateca.PrivatecaCertificateTemplateIdParseFunc),
 	"google_privateca_certificate_template_iam_policy":                           tpgiamresource.ResourceIamPolicy(privateca.PrivatecaCertificateTemplateIamSchema, privateca.PrivatecaCertificateTemplateIamUpdaterProducer, privateca.PrivatecaCertificateTemplateIdParseFunc),
 	"google_privileged_access_manager_entitlement":                               privilegedaccessmanager.ResourcePrivilegedAccessManagerEntitlement(),
+	"google_privileged_access_manager_settings":                                  privilegedaccessmanager.ResourcePrivilegedAccessManagerSettings(),
 	"google_public_ca_external_account_key":                                      publicca.ResourcePublicCAExternalAccountKey(),
 	"google_pubsub_schema":                                                       pubsub.ResourcePubsubSchema(),
 	"google_pubsub_schema_iam_binding":                                           tpgiamresource.ResourceIamBinding(pubsub.PubsubSchemaIamSchema, pubsub.PubsubSchemaIamUpdaterProducer, pubsub.PubsubSchemaIdParseFunc),
@@ -1897,6 +1909,7 @@ func UseGeneratedProducts() {
 	var _ = binaryauthorization.ProductName
 	var _ = blockchainnodeengine.ProductName
 	var _ = certificatemanager.ProductName
+	var _ = ces.ProductName
 	var _ = chronicle.ProductName
 	var _ = cloudasset.ProductName
 	var _ = cloudbuild.ProductName
@@ -1911,7 +1924,6 @@ func UseGeneratedProducts() {
 	var _ = cloudrun.ProductName
 	var _ = cloudrunv2.ProductName
 	var _ = cloudscheduler.ProductName
-	var _ = cloudsecuritycompliance.ProductName
 	var _ = cloudtasks.ProductName
 	var _ = colab.ProductName
 	var _ = composer.ProductName

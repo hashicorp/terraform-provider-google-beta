@@ -133,4 +133,8 @@ fields:
   - api_field: 'subsetting.policy'
   - api_field: 'subsetting.subsetSize'
   - api_field: 'timeoutSec'
+  - api_field: 'tlsSettings.authenticationConfig'
+  - api_field: 'tlsSettings.sni'
+  - api_field: 'tlsSettings.subjectAltNames.dnsName'
+  - api_field: 'tlsSettings.subjectAltNames.uniformResourceIdentifier'
   - api_field: 'selfLink'

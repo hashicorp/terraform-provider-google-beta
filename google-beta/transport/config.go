@@ -285,6 +285,7 @@ type Config struct {
 	BinaryAuthorizationBasePath      string
 	BlockchainNodeEngineBasePath     string
 	CertificateManagerBasePath       string
+	CESBasePath                      string
 	ChronicleBasePath                string
 	CloudAssetBasePath               string
 	CloudBuildBasePath               string
@@ -299,7 +300,6 @@ type Config struct {
 	CloudRunBasePath                 string
 	CloudRunV2BasePath               string
 	CloudSchedulerBasePath           string
-	CloudSecurityComplianceBasePath  string
 	CloudTasksBasePath               string
 	ColabBasePath                    string
 	ComposerBasePath                 string
@@ -472,6 +472,7 @@ const BillingBasePathKey = "Billing"
 const BinaryAuthorizationBasePathKey = "BinaryAuthorization"
 const BlockchainNodeEngineBasePathKey = "BlockchainNodeEngine"
 const CertificateManagerBasePathKey = "CertificateManager"
+const CESBasePathKey = "CES"
 const ChronicleBasePathKey = "Chronicle"
 const CloudAssetBasePathKey = "CloudAsset"
 const CloudBuildBasePathKey = "CloudBuild"
@@ -486,7 +487,6 @@ const CloudQuotasBasePathKey = "CloudQuotas"
 const CloudRunBasePathKey = "CloudRun"
 const CloudRunV2BasePathKey = "CloudRunV2"
 const CloudSchedulerBasePathKey = "CloudScheduler"
-const CloudSecurityComplianceBasePathKey = "CloudSecurityCompliance"
 const CloudTasksBasePathKey = "CloudTasks"
 const ColabBasePathKey = "Colab"
 const ComposerBasePathKey = "Composer"
@@ -648,6 +648,7 @@ var DefaultBasePaths = map[string]string{
 	BinaryAuthorizationBasePathKey:      "https://binaryauthorization.googleapis.com/v1/",
 	BlockchainNodeEngineBasePathKey:     "https://blockchainnodeengine.googleapis.com/v1/",
 	CertificateManagerBasePathKey:       "https://certificatemanager.googleapis.com/v1/",
+	CESBasePathKey:                      "https://ces.googleapis.com/v1/",
 	ChronicleBasePathKey:                "https://{{location}}-chronicle.googleapis.com/v1beta/",
 	CloudAssetBasePathKey:               "https://cloudasset.googleapis.com/v1/",
 	CloudBuildBasePathKey:               "https://cloudbuild.googleapis.com/v1/",
@@ -662,7 +663,6 @@ var DefaultBasePaths = map[string]string{
 	CloudRunBasePathKey:                 "https://{{location}}-run.googleapis.com/",
 	CloudRunV2BasePathKey:               "https://run.googleapis.com/v2/",
 	CloudSchedulerBasePathKey:           "https://cloudscheduler.googleapis.com/v1/",
-	CloudSecurityComplianceBasePathKey:  "https://cloudsecuritycompliance.googleapis.com/v1/",
 	CloudTasksBasePathKey:               "https://cloudtasks.googleapis.com/v2/",
 	ColabBasePathKey:                    "https://{{location}}-aiplatform.googleapis.com/v1beta1/",
 	ComposerBasePathKey:                 "https://composer.googleapis.com/v1beta1/",
@@ -1001,6 +1001,11 @@ func SetEndpointDefaults(d *schema.ResourceData) error {
 			"GOOGLE_CERTIFICATE_MANAGER_CUSTOM_ENDPOINT",
 		}, DefaultBasePaths[CertificateManagerBasePathKey]))
 	}
+	if d.Get("ces_custom_endpoint") == "" {
+		d.Set("ces_custom_endpoint", MultiEnvDefault([]string{
+			"GOOGLE_CES_CUSTOM_ENDPOINT",
+		}, DefaultBasePaths[CESBasePathKey]))
+	}
 	if d.Get("chronicle_custom_endpoint") == "" {
 		d.Set("chronicle_custom_endpoint", MultiEnvDefault([]string{
 			"GOOGLE_CHRONICLE_CUSTOM_ENDPOINT",
@@ -1070,11 +1075,6 @@ func SetEndpointDefaults(d *schema.ResourceData) error {
 		d.Set("cloud_scheduler_custom_endpoint", MultiEnvDefault([]string{
 			"GOOGLE_CLOUD_SCHEDULER_CUSTOM_ENDPOINT",
 		}, DefaultBasePaths[CloudSchedulerBasePathKey]))
-	}
-	if d.Get("cloud_security_compliance_custom_endpoint") == "" {
-		d.Set("cloud_security_compliance_custom_endpoint", MultiEnvDefault([]string{
-			"GOOGLE_CLOUD_SECURITY_COMPLIANCE_CUSTOM_ENDPOINT",
-		}, DefaultBasePaths[CloudSecurityComplianceBasePathKey]))
 	}
 	if d.Get("cloud_tasks_custom_endpoint") == "" {
 		d.Set("cloud_tasks_custom_endpoint", MultiEnvDefault([]string{
@@ -2785,6 +2785,7 @@ func ConfigureBasePaths(c *Config) {
 	c.BinaryAuthorizationBasePath = DefaultBasePaths[BinaryAuthorizationBasePathKey]
 	c.BlockchainNodeEngineBasePath = DefaultBasePaths[BlockchainNodeEngineBasePathKey]
 	c.CertificateManagerBasePath = DefaultBasePaths[CertificateManagerBasePathKey]
+	c.CESBasePath = DefaultBasePaths[CESBasePathKey]
 	c.ChronicleBasePath = DefaultBasePaths[ChronicleBasePathKey]
 	c.CloudAssetBasePath = DefaultBasePaths[CloudAssetBasePathKey]
 	c.CloudBuildBasePath = DefaultBasePaths[CloudBuildBasePathKey]
@@ -2799,7 +2800,6 @@ func ConfigureBasePaths(c *Config) {
 	c.CloudRunBasePath = DefaultBasePaths[CloudRunBasePathKey]
 	c.CloudRunV2BasePath = DefaultBasePaths[CloudRunV2BasePathKey]
 	c.CloudSchedulerBasePath = DefaultBasePaths[CloudSchedulerBasePathKey]
-	c.CloudSecurityComplianceBasePath = DefaultBasePaths[CloudSecurityComplianceBasePathKey]
 	c.CloudTasksBasePath = DefaultBasePaths[CloudTasksBasePathKey]
 	c.ColabBasePath = DefaultBasePaths[ColabBasePathKey]
 	c.ComposerBasePath = DefaultBasePaths[ComposerBasePathKey]
