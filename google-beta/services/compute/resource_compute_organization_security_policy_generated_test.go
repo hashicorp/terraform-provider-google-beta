@@ -18,15 +18,36 @@
 package compute_test
 
 import (
+	"fmt"
 	"log"
+	"strconv"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
+
+	"google.golang.org/api/googleapi"
+)
+
+var (
+	_ = fmt.Sprintf
+	_ = log.Print
+	_ = strconv.Atoi
+	_ = strings.Trim
+	_ = time.Now
+	_ = resource.TestMain
+	_ = terraform.NewState
+	_ = envvar.TestEnvVar
+	_ = tpgresource.SetLabels
+	_ = transport_tpg.Config{}
+	_ = googleapi.Error{}
 )
 
 func TestAccComputeOrganizationSecurityPolicy_organizationSecurityPolicyBasicExample(t *testing.T) {
@@ -46,9 +67,10 @@ func TestAccComputeOrganizationSecurityPolicy_organizationSecurityPolicyBasicExa
 				Config: testAccComputeOrganizationSecurityPolicy_organizationSecurityPolicyBasicExample(context),
 			},
 			{
-				ResourceName:      "google_compute_organization_security_policy.policy",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "google_compute_organization_security_policy.policy",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"display_name"},
 			},
 		},
 	})

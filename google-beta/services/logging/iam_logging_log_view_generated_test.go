@@ -20,6 +20,7 @@
 package logging_test
 
 import (
+	"fmt"
 	"strings"
 	"testing"
 
@@ -28,6 +29,13 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
+)
+
+var (
+	_ = fmt.Sprintf
+	_ = strings.Trim
+	_ = envvar.TestEnvVar
+	_ = tpgresource.SetLabels
 )
 
 func TestAccLoggingLogViewIamBindingGenerated(t *testing.T) {

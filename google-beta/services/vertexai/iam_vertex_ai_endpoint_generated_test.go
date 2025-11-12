@@ -21,12 +21,21 @@ package vertexai_test
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
+)
+
+var (
+	_ = fmt.Sprintf
+	_ = strings.Trim
+	_ = envvar.TestEnvVar
+	_ = tpgresource.SetLabels
 )
 
 func TestAccVertexAIEndpointIamBindingGenerated(t *testing.T) {
@@ -127,6 +136,10 @@ func TestAccVertexAIEndpointIamPolicyGenerated(t *testing.T) {
 
 func testAccVertexAIEndpointIamMember_basicGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
+resource "google_compute_network" "default" {
+  name = "tf-test-psc-network%{random_suffix}-%{random_suffix}"
+}
+
 resource "google_vertex_ai_endpoint" "endpoint" {
   name         = "endpoint-name%{random_suffix}"
   display_name = "sample-endpoint"
@@ -141,6 +154,11 @@ resource "google_vertex_ai_endpoint" "endpoint" {
     project_allowlist = [
       "${data.google_project.project.project_id}"
     ]
+
+    psc_automation_configs {
+      project_id = data.google_project.project.project_id
+      network    = google_compute_network.default.id
+    }
   }
 }
 
@@ -158,6 +176,10 @@ resource "google_vertex_ai_endpoint_iam_member" "foo" {
 
 func testAccVertexAIEndpointIamPolicy_basicGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
+resource "google_compute_network" "default" {
+  name = "tf-test-psc-network%{random_suffix}-%{random_suffix}"
+}
+
 resource "google_vertex_ai_endpoint" "endpoint" {
   name         = "endpoint-name%{random_suffix}"
   display_name = "sample-endpoint"
@@ -172,6 +194,11 @@ resource "google_vertex_ai_endpoint" "endpoint" {
     project_allowlist = [
       "${data.google_project.project.project_id}"
     ]
+
+    psc_automation_configs {
+      project_id = data.google_project.project.project_id
+      network    = google_compute_network.default.id
+    }
   }
 }
 
@@ -204,6 +231,10 @@ data "google_vertex_ai_endpoint_iam_policy" "foo" {
 
 func testAccVertexAIEndpointIamPolicy_emptyBinding(context map[string]interface{}) string {
 	return acctest.Nprintf(`
+resource "google_compute_network" "default" {
+  name = "tf-test-psc-network%{random_suffix}-%{random_suffix}"
+}
+
 resource "google_vertex_ai_endpoint" "endpoint" {
   name         = "endpoint-name%{random_suffix}"
   display_name = "sample-endpoint"
@@ -218,6 +249,11 @@ resource "google_vertex_ai_endpoint" "endpoint" {
     project_allowlist = [
       "${data.google_project.project.project_id}"
     ]
+
+    psc_automation_configs {
+      project_id = data.google_project.project.project_id
+      network    = google_compute_network.default.id
+    }
   }
 }
 
@@ -237,6 +273,10 @@ resource "google_vertex_ai_endpoint_iam_policy" "foo" {
 
 func testAccVertexAIEndpointIamBinding_basicGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
+resource "google_compute_network" "default" {
+  name = "tf-test-psc-network%{random_suffix}-%{random_suffix}"
+}
+
 resource "google_vertex_ai_endpoint" "endpoint" {
   name         = "endpoint-name%{random_suffix}"
   display_name = "sample-endpoint"
@@ -251,6 +291,11 @@ resource "google_vertex_ai_endpoint" "endpoint" {
     project_allowlist = [
       "${data.google_project.project.project_id}"
     ]
+
+    psc_automation_configs {
+      project_id = data.google_project.project.project_id
+      network    = google_compute_network.default.id
+    }
   }
 }
 
@@ -268,6 +313,10 @@ resource "google_vertex_ai_endpoint_iam_binding" "foo" {
 
 func testAccVertexAIEndpointIamBinding_updateGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
+resource "google_compute_network" "default" {
+  name = "tf-test-psc-network%{random_suffix}-%{random_suffix}"
+}
+
 resource "google_vertex_ai_endpoint" "endpoint" {
   name         = "endpoint-name%{random_suffix}"
   display_name = "sample-endpoint"
@@ -282,6 +331,11 @@ resource "google_vertex_ai_endpoint" "endpoint" {
     project_allowlist = [
       "${data.google_project.project.project_id}"
     ]
+
+    psc_automation_configs {
+      project_id = data.google_project.project.project_id
+      network    = google_compute_network.default.id
+    }
   }
 }
 
