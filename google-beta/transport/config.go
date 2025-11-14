@@ -688,7 +688,7 @@ var DefaultBasePaths = map[string]string{
 	DeploymentManagerBasePathKey:        "https://www.googleapis.com/deploymentmanager/v2/",
 	DeveloperConnectBasePathKey:         "https://developerconnect.googleapis.com/v1/",
 	DialogflowBasePathKey:               "https://dialogflow.googleapis.com/v2/",
-	DialogflowCXBasePathKey:             "https://{{location}}-dialogflow.googleapis.com/v3/",
+	DialogflowCXBasePathKey:             "https://{{location}}-dialogflow.googleapis.com/v3beta1/",
 	DiscoveryEngineBasePathKey:          "https://{{location}}-discoveryengine.googleapis.com/v1/",
 	DNSBasePathKey:                      "https://dns.googleapis.com/dns/v1beta2/",
 	DocumentAIBasePathKey:               "https://{{location}}-documentai.googleapis.com/v1/",

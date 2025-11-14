@@ -115,7 +115,7 @@ func listAndActionDialogflowCXSecuritySettings(action sweeper.ResourceAction) er
 		}
 
 		// Prepare list URL
-		listTemplate := strings.Split("https://{{location}}-dialogflow.googleapis.com/v3/projects/{{project}}/locations/{{location}}/securitySettings", "?")[0]
+		listTemplate := strings.Split("https://{{location}}-dialogflow.googleapis.com/v3beta1/projects/{{project}}/locations/{{location}}/securitySettings", "?")[0]
 		listUrl, err := tpgresource.ReplaceVars(mockConfig, config, listTemplate)
 		if err != nil {
 			log.Printf("[INFO][SWEEPER_LOG] error preparing sweeper list url: %s", err)
@@ -193,7 +193,7 @@ func deleteResourceDialogflowCXSecuritySettings(config *transport_tpg.Config, d 
 		return nil
 	}
 
-	deleteTemplate := "https://{{location}}-dialogflow.googleapis.com/v3/projects/{{project}}/locations/{{location}}/securitySettings/{{name}}"
+	deleteTemplate := "https://{{location}}-dialogflow.googleapis.com/v3beta1/projects/{{project}}/locations/{{location}}/securitySettings/{{name}}"
 
 	url, err := tpgresource.ReplaceVars(d, config, deleteTemplate)
 	if err != nil {
