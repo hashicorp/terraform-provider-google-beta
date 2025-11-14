@@ -1,5 +1,40 @@
 ## 7.12.0 (Unreleased)
 
+DEPRECATIONS:
+* backupdr: deprecated `required_type` in `google_backup_dr_backup_plan_associations` and `google_backup_dr_data_source_references`. It no longer has any functionality, and will be removed in the next major release. ([#11034](https://github.com/hashicorp/terraform-provider-google-beta/pull/11034))
+
+FEATURES:
+* **New Resource:** `google_ces_agent` ([#11033](https://github.com/hashicorp/terraform-provider-google-beta/pull/11033))
+* **New Resource:** `google_ces_guardrail` ([#11037](https://github.com/hashicorp/terraform-provider-google-beta/pull/11037))
+* **New Resource:** `google_ces_tool` ([#11038](https://github.com/hashicorp/terraform-provider-google-beta/pull/11038))
+* **New Resource:** `google_cloud_security_compliance_cloud_control` ([#11056](https://github.com/hashicorp/terraform-provider-google-beta/pull/11056))
+* **New Resource:** `google_cloud_security_compliance_framework_deployment` ([#11057](https://github.com/hashicorp/terraform-provider-google-beta/pull/11057))
+* **New Resource:** `google_cloud_security_compliance_framework` ([#11036](https://github.com/hashicorp/terraform-provider-google-beta/pull/11036))
+* **New Resource:** `google_discovery_engine_serving_config` ([#11032](https://github.com/hashicorp/terraform-provider-google-beta/pull/11032))
+* **New Resource:** `google_oracle_database_exascale_db_storage_vault` ([#11048](https://github.com/hashicorp/terraform-provider-google-beta/pull/11048))
+
+IMPROVEMENTS:
+* apphub: added `functional_type`, `registration_type`, and `extended_metadata` fields to `google_apphub_service` and `google_apphub_workload` resources ([#11062](https://github.com/hashicorp/terraform-provider-google-beta/pull/11062))
+* ces: added `bearer_token_config` field to `google_ces_toolset` ([#11044](https://github.com/hashicorp/terraform-provider-google-beta/pull/11044))
+* ces: added `client_certificate_settings` field to `google_ces_app` resource ([#11042](https://github.com/hashicorp/terraform-provider-google-beta/pull/11042))
+* compute: added `block_names` field to `google_compute_reservation` resource ([#11046](https://github.com/hashicorp/terraform-provider-google-beta/pull/11046))
+* compute: added `resolve_subnetwork_mask` field to the `google_compute_subnetwork` ([#11051](https://github.com/hashicorp/terraform-provider-google-beta/pull/11051))
+* compute: added `sub_block_names` field to `google_compute_reservation_block` data source ([#11046](https://github.com/hashicorp/terraform-provider-google-beta/pull/11046))
+* compute: added `tls_settings` field to `google_compute_regional_backend_service` resource ([#11025](https://github.com/hashicorp/terraform-provider-google-beta/pull/11025))
+* container: added `end_time_behavior` field to `google_container_cluster` resource ([#11045](https://github.com/hashicorp/terraform-provider-google-beta/pull/11045))
+* container: added `secret_sync_config` field to `google_container_cluster` resource (beta) ([#11049](https://github.com/hashicorp/terraform-provider-google-beta/pull/11049))
+* container: added `writable_cgroups` field to node `containerd_config` resource ([#11059](https://github.com/hashicorp/terraform-provider-google-beta/pull/11059))
+* dataplex: added `catalog_publishing_enabled` field to `dataQualitySpec` in `google_dataplex_datascan` resource ([#11060](https://github.com/hashicorp/terraform-provider-google-beta/pull/11060))
+* dns: added `forwarding_config.target_name_servers.ipv6_address` argument to `google_dns_managed_zone` resource ([#11050](https://github.com/hashicorp/terraform-provider-google-beta/pull/11050))
+* gkeonprem: added `advanced_networking`, `multiple_network_interfaces_config` and `bgp_lb_config` fields to `google_gkeonprem_bare_metal_cluster` resource ([#11055](https://github.com/hashicorp/terraform-provider-google-beta/pull/11055))
+* managedkafka: added `broker_capacity_config` field to `google_managed_kafka_cluster` resource ([#11027](https://github.com/hashicorp/terraform-provider-google-beta/pull/11027))
+* networksecurity: added `endpoint_settings.jumbo_frames_enabled` field to `google_network_security_firewall_endpoint` resource ([#11026](https://github.com/hashicorp/terraform-provider-google-beta/pull/11026))
+* run: added `readiness_probe` field to `cloud_run_service` resource ([#11039](https://github.com/hashicorp/terraform-provider-google-beta/pull/11039))
+
+BUG FIXES:
+* backupdr: updated `google_backup_dr_backup_plan_associations` and `google_backup_dr_data_source_references` to use LIST APIs, and require the correct List permissions ([#11034](https://github.com/hashicorp/terraform-provider-google-beta/pull/11034))
+* provider: an issue preventing X.509 certificates from being used for authentication when supplied as Application Default Credentials as been resolved ([#11061](https://github.com/hashicorp/terraform-provider-google-beta/pull/11061))
+
 ## 7.11.0 (November 11, 2025)
 
 DEPRECATIONS:
