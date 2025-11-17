@@ -626,9 +626,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 744
+// Generated resources: 745
 // Generated IAM resources: 348
-// Total generated resources: 1092
+// Total generated resources: 1093
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -1475,6 +1475,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_network_services_lb_traffic_extension":                               networkservices.ResourceNetworkServicesLbTrafficExtension(),
 	"google_network_services_mesh":                                               networkservices.ResourceNetworkServicesMesh(),
 	"google_network_services_multicast_domain":                                   networkservices.ResourceNetworkServicesMulticastDomain(),
+	"google_network_services_multicast_domain_activation":                        networkservices.ResourceNetworkServicesMulticastDomainActivation(),
 	"google_network_services_multicast_domain_group":                             networkservices.ResourceNetworkServicesMulticastDomainGroup(),
 	"google_network_services_service_binding":                                    networkservices.ResourceNetworkServicesServiceBinding(),
 	"google_network_services_service_lb_policies":                                networkservices.ResourceNetworkServicesServiceLbPolicies(),
