@@ -767,7 +767,7 @@ var DefaultBasePaths = map[string]string{
 	SecurityCenterV2BasePathKey:         "https://securitycenter.googleapis.com/v2/",
 	SecuritypostureBasePathKey:          "https://securityposture.googleapis.com/v1/",
 	SecurityScannerBasePathKey:          "https://websecurityscanner.googleapis.com/v1beta/",
-	ServiceDirectoryBasePathKey:         "https://servicedirectory.googleapis.com/v1beta1/",
+	ServiceDirectoryBasePathKey:         "https://servicedirectory.googleapis.com/v1/",
 	ServiceManagementBasePathKey:        "https://servicemanagement.googleapis.com/v1/",
 	ServiceNetworkingBasePathKey:        "https://servicenetworking.googleapis.com/v1/",
 	ServiceUsageBasePathKey:             "https://serviceusage.googleapis.com/v1beta1/",
