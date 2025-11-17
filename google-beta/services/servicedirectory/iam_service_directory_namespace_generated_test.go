@@ -48,7 +48,7 @@ func TestAccServiceDirectoryNamespaceIamBindingGenerated(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccServiceDirectoryNamespaceIamBinding_basicGenerated(context),
@@ -71,7 +71,7 @@ func TestAccServiceDirectoryNamespaceIamMemberGenerated(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
 				// Test Iam Member creation (no update for member, no need to test)
@@ -91,7 +91,7 @@ func TestAccServiceDirectoryNamespaceIamPolicyGenerated(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccServiceDirectoryNamespaceIamPolicy_basicGenerated(context),
@@ -107,7 +107,6 @@ func TestAccServiceDirectoryNamespaceIamPolicyGenerated(t *testing.T) {
 func testAccServiceDirectoryNamespaceIamMember_basicGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_service_directory_namespace" "example" {
-  provider     = google-beta
   namespace_id = "tf-test-example-namespace%{random_suffix}"
   location     = "us-central1"
 
@@ -118,7 +117,6 @@ resource "google_service_directory_namespace" "example" {
 }
 
 resource "google_service_directory_namespace_iam_member" "foo" {
-  provider = google-beta
   name = google_service_directory_namespace.example.name
   role = "%{role}"
   member = "user:admin@hashicorptest.com"
@@ -129,7 +127,6 @@ resource "google_service_directory_namespace_iam_member" "foo" {
 func testAccServiceDirectoryNamespaceIamPolicy_basicGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_service_directory_namespace" "example" {
-  provider     = google-beta
   namespace_id = "tf-test-example-namespace%{random_suffix}"
   location     = "us-central1"
 
@@ -140,7 +137,6 @@ resource "google_service_directory_namespace" "example" {
 }
 
 data "google_iam_policy" "foo" {
-  provider = google-beta
   binding {
     role = "%{role}"
     members = ["user:admin@hashicorptest.com"]
@@ -148,13 +144,11 @@ data "google_iam_policy" "foo" {
 }
 
 resource "google_service_directory_namespace_iam_policy" "foo" {
-  provider = google-beta
   name = google_service_directory_namespace.example.name
   policy_data = data.google_iam_policy.foo.policy_data
 }
 
 data "google_service_directory_namespace_iam_policy" "foo" {
-  provider = google-beta
   name = google_service_directory_namespace.example.name
   depends_on = [
     google_service_directory_namespace_iam_policy.foo
@@ -166,7 +160,6 @@ data "google_service_directory_namespace_iam_policy" "foo" {
 func testAccServiceDirectoryNamespaceIamPolicy_emptyBinding(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_service_directory_namespace" "example" {
-  provider     = google-beta
   namespace_id = "tf-test-example-namespace%{random_suffix}"
   location     = "us-central1"
 
@@ -177,11 +170,9 @@ resource "google_service_directory_namespace" "example" {
 }
 
 data "google_iam_policy" "foo" {
-  provider = google-beta
 }
 
 resource "google_service_directory_namespace_iam_policy" "foo" {
-  provider = google-beta
   name = google_service_directory_namespace.example.name
   policy_data = data.google_iam_policy.foo.policy_data
 }
@@ -191,7 +182,6 @@ resource "google_service_directory_namespace_iam_policy" "foo" {
 func testAccServiceDirectoryNamespaceIamBinding_basicGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_service_directory_namespace" "example" {
-  provider     = google-beta
   namespace_id = "tf-test-example-namespace%{random_suffix}"
   location     = "us-central1"
 
@@ -202,7 +192,6 @@ resource "google_service_directory_namespace" "example" {
 }
 
 resource "google_service_directory_namespace_iam_binding" "foo" {
-  provider = google-beta
   name = google_service_directory_namespace.example.name
   role = "%{role}"
   members = ["user:admin@hashicorptest.com"]
@@ -213,7 +202,6 @@ resource "google_service_directory_namespace_iam_binding" "foo" {
 func testAccServiceDirectoryNamespaceIamBinding_updateGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_service_directory_namespace" "example" {
-  provider     = google-beta
   namespace_id = "tf-test-example-namespace%{random_suffix}"
   location     = "us-central1"
 
@@ -224,7 +212,6 @@ resource "google_service_directory_namespace" "example" {
 }
 
 resource "google_service_directory_namespace_iam_binding" "foo" {
-  provider = google-beta
   name = google_service_directory_namespace.example.name
   role = "%{role}"
   members = ["user:admin@hashicorptest.com", "user:gterraformtest1@gmail.com"]
