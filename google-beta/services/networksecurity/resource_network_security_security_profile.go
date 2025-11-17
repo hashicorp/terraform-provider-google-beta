@@ -137,7 +137,7 @@ Format: projects/{project_id}/locations/global/interceptEndpointGroups/{endpoint
 						},
 					},
 				},
-				ConflictsWith: []string{"threat_prevention_profile", "url_filtering_profile", "custom_mirroring_profile"},
+				ConflictsWith: []string{"custom_mirroring_profile", "threat_prevention_profile", "url_filtering_profile"},
 			},
 			"custom_mirroring_profile": {
 				Type:     schema.TypeList,
@@ -155,7 +155,7 @@ Format: projects/{project_id}/locations/global/mirroringEndpointGroups/{endpoint
 						},
 					},
 				},
-				ConflictsWith: []string{"threat_prevention_profile", "url_filtering_profile", "custom_intercept_profile"},
+				ConflictsWith: []string{"custom_intercept_profile", "threat_prevention_profile", "url_filtering_profile"},
 			},
 			"description": {
 				Type:        schema.TypeString,
@@ -219,7 +219,7 @@ and threat overrides, the threat overrides action is applied.`,
 						},
 					},
 				},
-				ConflictsWith: []string{"url_filtering_profile", "custom_mirroring_profile", "custom_intercept_profile"},
+				ConflictsWith: []string{"custom_intercept_profile", "custom_mirroring_profile", "url_filtering_profile"},
 			},
 			"url_filtering_profile": {
 				Type:        schema.TypeList,
@@ -239,7 +239,7 @@ and the first filter that a domain name matches with is the one whose actions ge
 						},
 					},
 				},
-				ConflictsWith: []string{"threat_prevention_profile", "custom_mirroring_profile", "custom_intercept_profile"},
+				ConflictsWith: []string{"custom_intercept_profile", "custom_mirroring_profile", "threat_prevention_profile"},
 			},
 			"create_time": {
 				Type:        schema.TypeString,

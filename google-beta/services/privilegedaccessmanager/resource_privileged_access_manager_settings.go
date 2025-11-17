@@ -253,7 +253,7 @@ func ResourcePrivilegedAccessManagerSettings() *schema.Resource {
 									},
 								},
 							},
-							ExactlyOneOf: []string{"email_notification_settings.0.disable_all_notifications", "email_notification_settings.0.custom_notification_behavior"},
+							ExactlyOneOf: []string{"email_notification_settings.0.custom_notification_behavior", "email_notification_settings.0.disable_all_notifications"},
 						},
 						"disable_all_notifications": {
 							Type:        schema.TypeList,
@@ -263,7 +263,7 @@ func ResourcePrivilegedAccessManagerSettings() *schema.Resource {
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{},
 							},
-							ExactlyOneOf: []string{"email_notification_settings.0.disable_all_notifications", "email_notification_settings.0.custom_notification_behavior"},
+							ExactlyOneOf: []string{"email_notification_settings.0.custom_notification_behavior", "email_notification_settings.0.disable_all_notifications"},
 						},
 					},
 				},
