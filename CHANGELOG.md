@@ -1,7 +1,7 @@
 ## 7.12.0 (Unreleased)
 
 DEPRECATIONS:
-* backupdr: deprecated `required_type` in `google_backup_dr_backup_plan_associations` and `google_backup_dr_data_source_references`. It no longer has any functionality, and will be removed in the next major release. ([#11034](https://github.com/hashicorp/terraform-provider-google-beta/pull/11034))
+* backupdr: deprecated `required_type` in `google_backup_dr_backup_plan_associations` and `google_backup_dr_data_source_references`. Both resources no longer have functionality, and will be removed in the next major release. ([#25107](https://github.com/hashicorp/terraform-provider-google/pull/25107))
 
 FEATURES:
 * **New Resource:** `google_ces_agent` ([#11033](https://github.com/hashicorp/terraform-provider-google-beta/pull/11033))
@@ -23,7 +23,7 @@ IMPROVEMENTS:
 * compute: added `tls_settings` field to `google_compute_regional_backend_service` resource ([#11025](https://github.com/hashicorp/terraform-provider-google-beta/pull/11025))
 * container: added `end_time_behavior` field to `google_container_cluster` resource ([#11045](https://github.com/hashicorp/terraform-provider-google-beta/pull/11045))
 * container: added `secret_sync_config` field to `google_container_cluster` resource (beta) ([#11049](https://github.com/hashicorp/terraform-provider-google-beta/pull/11049))
-* container: added `writable_cgroups` field to node `containerd_config` resource ([#11059](https://github.com/hashicorp/terraform-provider-google-beta/pull/11059))
+* container: added `writable_cgroups` field to `node_config.defaults.containerd_config` in `google_container_cluster` resource ([#25140](https://github.com/hashicorp/terraform-provider-google/pull/25140))
 * dataplex: added `catalog_publishing_enabled` field to `data_profile_spec` in `google_dataplex_datascan` resource ([#11060](https://github.com/hashicorp/terraform-provider-google-beta/pull/11060))
 * dns: added `forwarding_config.target_name_servers.ipv6_address` argument to `google_dns_managed_zone` resource ([#11050](https://github.com/hashicorp/terraform-provider-google-beta/pull/11050))
 * gkeonprem: added `advanced_networking`, `multiple_network_interfaces_config` and `bgp_lb_config` fields to `google_gkeonprem_bare_metal_cluster` resource ([#11055](https://github.com/hashicorp/terraform-provider-google-beta/pull/11055))
