@@ -33,7 +33,7 @@ IMPROVEMENTS:
 
 BUG FIXES:
 * backupdr: updated `google_backup_dr_backup_plan_associations` and `google_backup_dr_data_source_references` to use LIST APIs, and require the correct List permissions ([#11034](https://github.com/hashicorp/terraform-provider-google-beta/pull/11034))
-* provider: an issue preventing X.509 certificates from being used for authentication when supplied as Application Default Credentials as been resolved ([#11061](https://github.com/hashicorp/terraform-provider-google-beta/pull/11061))
+* provider: resolved an issue preventing X.509 certificates from being used for authentication when supplied as Application Default Credentials ([#11061](https://github.com/hashicorp/terraform-provider-google-beta/pull/11061))
 
 ## 7.11.0 (November 11, 2025)
 
