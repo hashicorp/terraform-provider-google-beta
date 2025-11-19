@@ -80,7 +80,7 @@ resource "google_firebase_extensions_instance" "resize_image" {
   instance_id = "tf-test-storage-resize-images%{random_suffix}"
   config {
     extension_ref = "firebase/storage-resize-images"
-    extension_version = "0.2.2"
+    extension_version = "0.2.10"
 
     # The following params apply to the firebase/storage-resize-images extension. 
     # Different extensions may have different params
@@ -93,6 +93,9 @@ resource "google_firebase_extensions_instance" "resize_image" {
       DO_BACKFILL          = false
       IMG_SIZES            = "200x200"
       IMG_BUCKET           = google_storage_bucket.images.name
+      BACKFILL_BATCH_SIZE  = 3
+      CONTENT_FILTER_LEVEL = "OFF"
+      REGENERATE_TOKEN     = "true"
     }
 
     system_params = {
@@ -131,7 +134,7 @@ resource "google_firebase_extensions_instance" "resize_image" {
   instance_id = "tf-test-storage-resize-images%{random_suffix}"
   config {
     extension_ref = "firebase/storage-resize-images"
-    extension_version = "0.2.2"
+    extension_version = "0.2.10"
 
     # The following params apply to the firebase/storage-resize-images extension. 
     # Different extensions may have different params
@@ -145,6 +148,9 @@ resource "google_firebase_extensions_instance" "resize_image" {
       DO_BACKFILL          = true
       IMG_SIZES            = "400x400"
       IMG_BUCKET           = google_storage_bucket.images.name
+      BACKFILL_BATCH_SIZE  = 3
+      CONTENT_FILTER_LEVEL = "OFF"
+      REGENERATE_TOKEN     = "true"
     }
 
     system_params = {
