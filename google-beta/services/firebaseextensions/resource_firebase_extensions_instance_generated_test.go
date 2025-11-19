@@ -50,7 +50,7 @@ var (
 	_ = googleapi.Error{}
 )
 
-func TestAccFirebaseExtensionsInstance_firebaseExtentionsInstanceResizeImageExample(t *testing.T) {
+func TestAccFirebaseExtensionsInstance_firebaseExtensionsInstanceResizeImageExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
@@ -65,7 +65,7 @@ func TestAccFirebaseExtensionsInstance_firebaseExtentionsInstanceResizeImageExam
 		CheckDestroy:             testAccCheckFirebaseExtensionsInstanceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccFirebaseExtensionsInstance_firebaseExtentionsInstanceResizeImageExample(context),
+				Config: testAccFirebaseExtensionsInstance_firebaseExtensionsInstanceResizeImageExample(context),
 			},
 			{
 				ResourceName:            "google_firebase_extensions_instance.resize_image",
@@ -77,7 +77,7 @@ func TestAccFirebaseExtensionsInstance_firebaseExtentionsInstanceResizeImageExam
 	})
 }
 
-func testAccFirebaseExtensionsInstance_firebaseExtentionsInstanceResizeImageExample(context map[string]interface{}) string {
+func testAccFirebaseExtensionsInstance_firebaseExtensionsInstanceResizeImageExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_storage_bucket" "images" {
   provider                    = google-beta
@@ -96,7 +96,7 @@ resource "google_firebase_extensions_instance" "resize_image" {
   instance_id = "tf-test-storage-resize-images%{random_suffix}"
   config {
     extension_ref = "firebase/storage-resize-images"
-    extension_version = "0.2.2"
+    extension_version = "0.2.10"
 
     # The following params apply to the firebase/storage-resize-images extension. 
     # Different extensions may have different params
@@ -109,6 +109,9 @@ resource "google_firebase_extensions_instance" "resize_image" {
       DO_BACKFILL          = false
       IMG_SIZES            = "200x200"
       IMG_BUCKET           = google_storage_bucket.images.name
+      BACKFILL_BATCH_SIZE  = 3
+      CONTENT_FILTER_LEVEL = "OFF"
+      REGENERATE_TOKEN     = "true"
     }
 
     system_params = {
