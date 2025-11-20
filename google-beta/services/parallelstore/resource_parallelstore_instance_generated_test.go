@@ -71,6 +71,12 @@ func TestAccParallelstoreInstance_parallelstoreInstanceBasicBetaExample(t *testi
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"instance_id", "labels", "location", "terraform_labels", "update_time"},
 			},
+			{
+				ResourceName:       "google_parallelstore_instance.instance",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -140,6 +146,12 @@ func TestAccParallelstoreInstance_parallelstoreInstanceBasicExample(t *testing.T
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"instance_id", "labels", "location", "terraform_labels", "update_time"},
+			},
+			{
+				ResourceName:       "google_parallelstore_instance.instance",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})

@@ -103,6 +103,21 @@ func ResourceComputeOrganizationSecurityPolicyRule() *schema.Resource {
 			Delete: schema.DefaultTimeout(20 * time.Minute),
 		},
 
+		Identity: &schema.ResourceIdentity{
+			Version: 1,
+			SchemaFunc: func() map[string]*schema.Schema {
+				return map[string]*schema.Schema{
+					"priority": {
+						Type:              schema.TypeString,
+						RequiredForImport: true,
+					},
+					"policy_id": {
+						Type:              schema.TypeString,
+						RequiredForImport: true,
+					},
+				}
+			},
+		},
 		Schema: map[string]*schema.Schema{
 			"action": {
 				Type:     schema.TypeString,
@@ -450,6 +465,23 @@ func resourceComputeOrganizationSecurityPolicyRuleRead(d *schema.ResourceData, m
 		return fmt.Errorf("Error reading OrganizationSecurityPolicyRule: %s", err)
 	}
 
+	identity, err := d.Identity()
+	if err != nil && identity != nil {
+		if v, ok := identity.GetOk("priority"); ok && v != "" {
+			err = identity.Set("priority", d.Get("priority").(string))
+			if err != nil {
+				return fmt.Errorf("Error setting priority: %s", err)
+			}
+		}
+		if v, ok := identity.GetOk("policy_id"); ok && v != "" {
+			err = identity.Set("policy_id", d.Get("policy_id").(string))
+			if err != nil {
+				return fmt.Errorf("Error setting policy_id: %s", err)
+			}
+		}
+	} else {
+		log.Printf("[DEBUG] identity not set: %s", err)
+	}
 	return nil
 }
 

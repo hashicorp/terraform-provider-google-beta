@@ -77,6 +77,12 @@ func TestAccSaasRuntimeRolloutKind_saasRuntimeRolloutKindBasicExample(t *testing
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"annotations", "labels", "location", "rollout_kind_id", "terraform_labels"},
 			},
+			{
+				ResourceName:       "google_saas_runtime_rollout_kind.example",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }

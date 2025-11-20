@@ -107,6 +107,21 @@ func ResourceOSConfigGuestPolicies() *schema.Resource {
 			tpgresource.DefaultProviderProject,
 		),
 
+		Identity: &schema.ResourceIdentity{
+			Version: 1,
+			SchemaFunc: func() map[string]*schema.Schema {
+				return map[string]*schema.Schema{
+					"guest_policy_id": {
+						Type:              schema.TypeString,
+						RequiredForImport: true,
+					},
+					"project": {
+						Type:              schema.TypeString,
+						OptionalForImport: true,
+					},
+				}
+			},
+		},
 		Schema: map[string]*schema.Schema{
 			"assignment": {
 				Type:     schema.TypeList,
@@ -1101,6 +1116,23 @@ func resourceOSConfigGuestPoliciesRead(d *schema.ResourceData, meta interface{})
 		return fmt.Errorf("Error reading GuestPolicies: %s", err)
 	}
 
+	identity, err := d.Identity()
+	if err != nil && identity != nil {
+		if v, ok := identity.GetOk("guest_policy_id"); ok && v != "" {
+			err = identity.Set("guest_policy_id", d.Get("guest_policy_id").(string))
+			if err != nil {
+				return fmt.Errorf("Error setting guest_policy_id: %s", err)
+			}
+		}
+		if v, ok := identity.GetOk("project"); ok && v != "" {
+			err = identity.Set("project", d.Get("project").(string))
+			if err != nil {
+				return fmt.Errorf("Error setting project: %s", err)
+			}
+		}
+	} else {
+		log.Printf("[DEBUG] identity not set: %s", err)
+	}
 	return nil
 }
 

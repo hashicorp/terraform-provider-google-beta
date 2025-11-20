@@ -71,6 +71,12 @@ func TestAccBigqueryAnalyticsHubListing_bigqueryAnalyticshubListingBasicExample(
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"data_exchange_id", "listing_id", "location"},
 			},
+			{
+				ResourceName:       "google_bigquery_analytics_hub_listing.listing",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -125,6 +131,12 @@ func TestAccBigqueryAnalyticsHubListing_bigqueryAnalyticshubListingRestrictedExa
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"data_exchange_id", "listing_id", "location"},
+			},
+			{
+				ResourceName:       "google_bigquery_analytics_hub_listing.listing",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})
@@ -185,6 +197,12 @@ func TestAccBigqueryAnalyticsHubListing_bigqueryAnalyticshubListingDcrExample(t 
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"data_exchange_id", "listing_id", "location"},
+			},
+			{
+				ResourceName:       "google_bigquery_analytics_hub_listing.listing",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})
@@ -276,6 +294,12 @@ func TestAccBigqueryAnalyticsHubListing_bigqueryAnalyticshubListingLogLinkedData
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"data_exchange_id", "listing_id", "location"},
 			},
+			{
+				ResourceName:       "google_bigquery_analytics_hub_listing.listing",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -332,6 +356,12 @@ func TestAccBigqueryAnalyticsHubListing_bigqueryAnalyticshubListingPubsubExample
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"data_exchange_id", "listing_id", "location"},
 			},
+			{
+				ResourceName:       "google_bigquery_analytics_hub_listing.listing",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -387,6 +417,12 @@ func TestAccBigqueryAnalyticsHubListing_bigqueryAnalyticshubListingDcrRoutineExa
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"data_exchange_id", "listing_id", "location"},
+			},
+			{
+				ResourceName:       "google_bigquery_analytics_hub_listing.listing",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})
@@ -476,6 +512,12 @@ func TestAccBigqueryAnalyticsHubListing_bigqueryAnalyticshubPublicListingExample
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"data_exchange_id", "listing_id", "location"},
 			},
+			{
+				ResourceName:       "google_bigquery_analytics_hub_listing.listing",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -533,6 +575,12 @@ func TestAccBigqueryAnalyticsHubListing_bigqueryAnalyticshubListingMarketplaceEx
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"data_exchange_id", "delete_commercial", "listing_id", "location"},
+			},
+			{
+				ResourceName:       "google_bigquery_analytics_hub_listing.listing",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})

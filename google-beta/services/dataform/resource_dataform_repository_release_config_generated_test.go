@@ -71,6 +71,12 @@ func TestAccDataformRepositoryReleaseConfig_dataformRepositoryReleaseConfigExamp
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"region", "repository"},
 			},
+			{
+				ResourceName:       "google_dataform_repository_release_config.release",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }

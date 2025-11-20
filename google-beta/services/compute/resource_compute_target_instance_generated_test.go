@@ -71,6 +71,12 @@ func TestAccComputeTargetInstance_targetInstanceBasicExample(t *testing.T) {
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"instance", "zone"},
 			},
+			{
+				ResourceName:       "google_compute_target_instance.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -125,6 +131,12 @@ func TestAccComputeTargetInstance_targetInstanceCustomNetworkExample(t *testing.
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"instance", "zone"},
+			},
+			{
+				ResourceName:       "google_compute_target_instance.custom_network",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})
@@ -189,6 +201,12 @@ func TestAccComputeTargetInstance_targetInstanceWithSecurityPolicyExample(t *tes
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"instance", "zone"},
+			},
+			{
+				ResourceName:       "google_compute_target_instance.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})

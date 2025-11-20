@@ -76,6 +76,12 @@ func TestAccFirebaseAppCheckAppAttestConfig_firebaseAppCheckAppAttestConfigMinim
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"app_id"},
 			},
+			{
+				ResourceName:       "google_firebase_app_check_app_attest_config.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -142,6 +148,12 @@ func TestAccFirebaseAppCheckAppAttestConfig_firebaseAppCheckAppAttestConfigFullE
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"app_id"},
+			},
+			{
+				ResourceName:       "google_firebase_app_check_app_attest_config.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})

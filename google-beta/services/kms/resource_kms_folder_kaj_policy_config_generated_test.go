@@ -77,6 +77,12 @@ func TestAccKMSFolderKajPolicyConfig_kmsFolderKajPolicyConfigBasicExample(t *tes
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"folder"},
 			},
+			{
+				ResourceName:       "google_kms_folder_kaj_policy_config.example",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }

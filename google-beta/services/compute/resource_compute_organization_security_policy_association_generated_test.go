@@ -72,6 +72,12 @@ func TestAccComputeOrganizationSecurityPolicyAssociation_organizationSecurityPol
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"policy_id"},
 			},
+			{
+				ResourceName:       "google_compute_organization_security_policy_association.policy",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
