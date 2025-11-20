@@ -72,6 +72,12 @@ func TestAccFirebaseHostingSite_firebasehostingSiteBasicExample(t *testing.T) {
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"site_id"},
 			},
+			{
+				ResourceName:       "google_firebase_hosting_site.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -108,6 +114,12 @@ func TestAccFirebaseHostingSite_firebasehostingSiteFullExample(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"site_id"},
+			},
+			{
+				ResourceName:       "google_firebase_hosting_site.full",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})
@@ -151,6 +163,12 @@ func TestAccFirebaseHostingSite_firebasehostingSiteDefaultExample(t *testing.T) 
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"site_id"},
+			},
+			{
+				ResourceName:       "google_firebase_hosting_site.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})

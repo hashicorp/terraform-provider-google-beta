@@ -72,6 +72,12 @@ func TestAccFirebaseStorageBucket_firebasestorageBucketBasicExample(t *testing.T
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"bucket_id"},
 			},
+			{
+				ResourceName:       "google_firebase_storage_bucket.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }

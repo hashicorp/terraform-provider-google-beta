@@ -71,6 +71,12 @@ func TestAccComputeCrossSiteNetwork_computeCrossSiteNetworkBasicExample(t *testi
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
+			{
+				ResourceName:       "google_compute_cross_site_network.example-cross-site-network",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }

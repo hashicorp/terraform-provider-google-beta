@@ -71,6 +71,12 @@ func TestAccKMSOrganizationKajPolicyConfig_kmsOrganizationKajPolicyConfigBasicEx
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"organization"},
 			},
+			{
+				ResourceName:       "google_kms_organization_kaj_policy_config.example",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }

@@ -101,6 +101,21 @@ func ResourceFirebaseHostingVersion() *schema.Resource {
 			Delete: schema.DefaultTimeout(20 * time.Minute),
 		},
 
+		Identity: &schema.ResourceIdentity{
+			Version: 1,
+			SchemaFunc: func() map[string]*schema.Schema {
+				return map[string]*schema.Schema{
+					"version_id": {
+						Type:              schema.TypeString,
+						RequiredForImport: true,
+					},
+					"site_id": {
+						Type:              schema.TypeString,
+						RequiredForImport: true,
+					},
+				}
+			},
+		},
 		Schema: map[string]*schema.Schema{
 			"site_id": {
 				Type:        schema.TypeString,
@@ -404,6 +419,23 @@ func resourceFirebaseHostingVersionRead(d *schema.ResourceData, meta interface{}
 		return fmt.Errorf("Error reading Version: %s", err)
 	}
 
+	identity, err := d.Identity()
+	if err != nil && identity != nil {
+		if v, ok := identity.GetOk("version_id"); ok && v != "" {
+			err = identity.Set("version_id", d.Get("version_id").(string))
+			if err != nil {
+				return fmt.Errorf("Error setting version_id: %s", err)
+			}
+		}
+		if v, ok := identity.GetOk("site_id"); ok && v != "" {
+			err = identity.Set("site_id", d.Get("site_id").(string))
+			if err != nil {
+				return fmt.Errorf("Error setting site_id: %s", err)
+			}
+		}
+	} else {
+		log.Printf("[DEBUG] identity not set: %s", err)
+	}
 	return nil
 }
 

@@ -71,6 +71,12 @@ func TestAccFirebaseHostingRelease_firebasehostingReleaseInSiteExample(t *testin
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"channel_id", "site_id", "version_name"},
 			},
+			{
+				ResourceName:       "google_firebase_hosting_release.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -124,6 +130,12 @@ func TestAccFirebaseHostingRelease_firebasehostingReleaseInChannelExample(t *tes
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"channel_id", "site_id", "version_name"},
+			},
+			{
+				ResourceName:       "google_firebase_hosting_release.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})
@@ -185,6 +197,12 @@ func TestAccFirebaseHostingRelease_firebasehostingReleaseDisableExample(t *testi
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"channel_id", "site_id", "version_name"},
+			},
+			{
+				ResourceName:       "google_firebase_hosting_release.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})

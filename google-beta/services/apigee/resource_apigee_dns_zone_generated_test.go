@@ -77,6 +77,12 @@ func TestAccApigeeDnsZone_apigeeDnsZoneBasicTestExample(t *testing.T) {
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"dns_zone_id", "org_id"},
 			},
+			{
+				ResourceName:       "google_apigee_dns_zone.apigee_dns_zone",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }

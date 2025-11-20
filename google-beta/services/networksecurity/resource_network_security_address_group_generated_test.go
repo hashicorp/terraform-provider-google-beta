@@ -72,6 +72,12 @@ func TestAccNetworkSecurityAddressGroup_networkSecurityAddressGroupsBasicExample
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"labels", "location", "name", "parent", "terraform_labels"},
 			},
+			{
+				ResourceName:       "google_network_security_address_group.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -110,6 +116,12 @@ func TestAccNetworkSecurityAddressGroup_networkSecurityAddressGroupsOrganization
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"labels", "location", "name", "parent", "terraform_labels"},
+			},
+			{
+				ResourceName:       "google_network_security_address_group.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})
@@ -150,6 +162,12 @@ func TestAccNetworkSecurityAddressGroup_networkSecurityAddressGroupsAdvancedExam
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"labels", "location", "name", "parent", "terraform_labels"},
 			},
+			{
+				ResourceName:       "google_network_security_address_group.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -189,6 +207,12 @@ func TestAccNetworkSecurityAddressGroup_networkSecurityAddressGroupsCloudArmorEx
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"labels", "location", "name", "parent", "terraform_labels"},
+			},
+			{
+				ResourceName:       "google_network_security_address_group.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})

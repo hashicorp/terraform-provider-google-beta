@@ -74,6 +74,12 @@ func TestAccFirebaseAndroidApp_firebaseAndroidAppBasicExample(t *testing.T) {
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"deletion_policy", "project"},
 			},
+			{
+				ResourceName:       "google_firebase_android_app.basic",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -114,6 +120,12 @@ func TestAccFirebaseAndroidApp_firebaseAndroidAppCustomApiKeyExample(t *testing.
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"deletion_policy", "project"},
+			},
+			{
+				ResourceName:       "google_firebase_android_app.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})

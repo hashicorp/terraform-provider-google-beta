@@ -75,6 +75,12 @@ func TestAccGKEHub2MembershipRBACRoleBinding_gkehubMembershipRbacRoleBindingBasi
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"location", "membership_id", "membership_rbac_role_binding_id"},
 			},
+			{
+				ResourceName:       "google_gke_hub_membership_rbac_role_binding.membership_rbac_role_binding",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }

@@ -173,6 +173,12 @@ func TestAccDataformRepository_dataformRepositoryWithCloudsourceRepoAndSshExampl
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"labels", "region", "terraform_labels"},
 			},
+			{
+				ResourceName:       "google_dataform_repository.dataform_repository",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }

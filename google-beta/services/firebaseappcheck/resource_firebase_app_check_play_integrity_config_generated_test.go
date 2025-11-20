@@ -75,6 +75,12 @@ func TestAccFirebaseAppCheckPlayIntegrityConfig_firebaseAppCheckPlayIntegrityCon
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"app_id"},
 			},
+			{
+				ResourceName:       "google_firebase_app_check_play_integrity_config.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -149,6 +155,12 @@ func TestAccFirebaseAppCheckPlayIntegrityConfig_firebaseAppCheckPlayIntegrityCon
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"app_id"},
+			},
+			{
+				ResourceName:       "google_firebase_app_check_play_integrity_config.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})

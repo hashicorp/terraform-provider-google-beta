@@ -103,6 +103,17 @@ func ResourceKMSOrganizationKajPolicyConfig() *schema.Resource {
 			Delete: schema.DefaultTimeout(20 * time.Minute),
 		},
 
+		Identity: &schema.ResourceIdentity{
+			Version: 1,
+			SchemaFunc: func() map[string]*schema.Schema {
+				return map[string]*schema.Schema{
+					"organization": {
+						Type:              schema.TypeString,
+						RequiredForImport: true,
+					},
+				}
+			},
+		},
 		Schema: map[string]*schema.Schema{
 			"organization": {
 				Type:        schema.TypeString,
@@ -234,6 +245,17 @@ func resourceKMSOrganizationKajPolicyConfigRead(d *schema.ResourceData, meta int
 		return fmt.Errorf("Error reading OrganizationKajPolicyConfig: %s", err)
 	}
 
+	identity, err := d.Identity()
+	if err != nil && identity != nil {
+		if v, ok := identity.GetOk("organization"); ok && v != "" {
+			err = identity.Set("organization", d.Get("organization").(string))
+			if err != nil {
+				return fmt.Errorf("Error setting organization: %s", err)
+			}
+		}
+	} else {
+		log.Printf("[DEBUG] identity not set: %s", err)
+	}
 	return nil
 }
 
