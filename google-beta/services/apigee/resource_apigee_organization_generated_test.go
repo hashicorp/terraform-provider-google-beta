@@ -51,7 +51,6 @@ var (
 )
 
 func TestAccApigeeOrganization_apigeeOrganizationCloudBasicTestExample(t *testing.T) {
-	acctest.SkipIfVcr(t)
 	t.Parallel()
 
 	context := map[string]interface{}{
@@ -150,11 +149,15 @@ resource "google_apigee_organization" "org" {
     google_project_service.apigee,
   ]
 }
+
+resource "time_sleep" "wait_after_destroy" {
+  destroy_duration = "150s"
+  depends_on = [google_apigee_organization.org]
+}
 `, context)
 }
 
 func TestAccApigeeOrganization_apigeeOrganizationCloudBasicDisableVpcPeeringTestExample(t *testing.T) {
-	acctest.SkipIfVcr(t)
 	t.Parallel()
 
 	context := map[string]interface{}{
@@ -166,7 +169,10 @@ func TestAccApigeeOrganization_apigeeOrganizationCloudBasicDisableVpcPeeringTest
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
-		CheckDestroy:             testAccCheckApigeeOrganizationDestroyProducer(t),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccCheckApigeeOrganizationDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccApigeeOrganization_apigeeOrganizationCloudBasicDisableVpcPeeringTestExample(context),
@@ -196,20 +202,30 @@ resource "google_project_service" "apigee" {
   service = "apigee.googleapis.com"
 }
 
+resource "time_sleep" "wait_120_seconds" {
+  create_duration = "120s"
+  depends_on = [google_project_service.apigee]
+}
+
+
 resource "google_apigee_organization" "org" {
   description         = "Terraform-provisioned basic Apigee Org without VPC Peering."
   analytics_region    = "us-central1"
   project_id          = google_project.project.project_id
   disable_vpc_peering = true
   depends_on          = [
-    google_project_service.apigee,
+    time_sleep.wait_120_seconds,
   ]
+}
+
+resource "time_sleep" "wait_after_destroy" {
+  destroy_duration = "150s"
+  depends_on = [google_apigee_organization.org]
 }
 `, context)
 }
 
 func TestAccApigeeOrganization_apigeeOrganizationCloudBasicDataResidencyTestExample(t *testing.T) {
-	acctest.SkipIfVcr(t)
 	t.Parallel()
 
 	context := map[string]interface{}{
@@ -221,7 +237,10 @@ func TestAccApigeeOrganization_apigeeOrganizationCloudBasicDataResidencyTestExam
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
-		CheckDestroy:             testAccCheckApigeeOrganizationDestroyProducer(t),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccCheckApigeeOrganizationDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccApigeeOrganization_apigeeOrganizationCloudBasicDataResidencyTestExample(context),
@@ -255,6 +274,11 @@ resource "google_project_service" "apigee" {
   service = "apigee.googleapis.com"
 }
 
+resource "time_sleep" "wait_120_seconds" {
+  create_duration = "120s"
+  depends_on = [google_project_service.apigee]
+}
+
 resource "google_apigee_organization" "org" {
   description                = "Terraform-provisioned basic Apigee Org under European Union hosting jurisdiction."
   project_id                 = google_project.project.project_id
@@ -262,14 +286,18 @@ resource "google_apigee_organization" "org" {
   billing_type               = "PAYG"
   disable_vpc_peering        = true
   depends_on                 = [
-    google_project_service.apigee,
+    time_sleep.wait_120_seconds,
   ]
+}
+
+resource "time_sleep" "wait_after_destroy" {
+  destroy_duration = "150s"
+  depends_on = [google_apigee_organization.org]
 }
 `, context)
 }
 
 func TestAccApigeeOrganization_apigeeOrganizationCloudFullTestExample(t *testing.T) {
-	acctest.SkipIfVcr(t)
 	t.Parallel()
 
 	context := map[string]interface{}{
@@ -348,7 +376,7 @@ resource "google_project_service" "kms" {
   depends_on = [google_project_service.servicenetworking]
 }
 
-resource "time_sleep" "wait_120_seconds" {
+resource "time_sleep" "wait_for_services" {
   create_duration = "120s"
   depends_on = [google_project_service.kms]
 }
@@ -358,7 +386,7 @@ resource "google_compute_network" "apigee_network" {
 
   name       = "apigee-network"
   project    = google_project.project.project_id
-  depends_on = [time_sleep.wait_120_seconds]
+  depends_on = [time_sleep.wait_for_services]
 }
 
 resource "google_compute_global_address" "apigee_range" {
@@ -413,6 +441,11 @@ resource "google_kms_crypto_key_iam_member" "apigee_sa_keyuser" {
   member = google_project_service_identity.apigee_sa.member
 }
 
+resource "time_sleep" "wait_for_iam" {
+  create_duration = "120s"
+  depends_on = [google_kms_crypto_key_iam_member.apigee_sa_keyuser]
+}
+
 resource "google_apigee_organization" "org" {
   provider = google-beta
 
@@ -436,14 +469,18 @@ resource "google_apigee_organization" "org" {
 
   depends_on = [
     google_service_networking_connection.apigee_vpc_connection,
-    google_kms_crypto_key_iam_member.apigee_sa_keyuser,
+    time_sleep.wait_for_iam,
   ]
+}
+
+resource "time_sleep" "wait_after_destroy" {
+  destroy_duration = "150s"
+  depends_on = [google_apigee_organization.org]
 }
 `, context)
 }
 
 func TestAccApigeeOrganization_apigeeOrganizationCloudFullDisableVpcPeeringTestExample(t *testing.T) {
-	acctest.SkipIfVcr(t)
 	t.Parallel()
 
 	context := map[string]interface{}{
@@ -514,13 +551,18 @@ resource "google_project_service" "kms" {
   depends_on = [google_project_service.compute]
 }
 
+resource "time_sleep" "wait_for_services" {
+  create_duration = "120s"
+  depends_on = [google_project_service.kms]
+}
+
 resource "google_kms_key_ring" "apigee_keyring" {
   provider = google-beta
 
   name       = "apigee-keyring"
   location   = "us-central1"
   project    = google_project.project.project_id
-  depends_on = [google_project_service.kms]
+  depends_on = [time_sleep.wait_for_services]
 }
 
 resource "google_kms_crypto_key" "apigee_key" {
@@ -546,6 +588,11 @@ resource "google_kms_crypto_key_iam_member" "apigee_sa_keyuser" {
   member = google_project_service_identity.apigee_sa.member
 }
 
+resource "time_sleep" "wait_for_iam" {
+  create_duration = "120s"
+  depends_on = [google_kms_crypto_key_iam_member.apigee_sa_keyuser]
+}
+
 resource "google_apigee_organization" "org" {
   provider = google-beta
 
@@ -568,14 +615,18 @@ resource "google_apigee_organization" "org" {
   }
 
   depends_on = [
-    google_kms_crypto_key_iam_member.apigee_sa_keyuser,
+    time_sleep.wait_for_iam,
   ]
+}
+
+resource "time_sleep" "wait_after_destroy" {
+  destroy_duration = "150s"
+  depends_on = [google_apigee_organization.org]
 }
 `, context)
 }
 
 func TestAccApigeeOrganization_apigeeOrganizationRetentionTestExample(t *testing.T) {
-	acctest.SkipIfVcr(t)
 	t.Parallel()
 
 	context := map[string]interface{}{
@@ -654,7 +705,7 @@ resource "google_project_service" "kms" {
   depends_on = [google_project_service.servicenetworking]
 }
 
-resource "time_sleep" "wait_120_seconds" {
+resource "time_sleep" "wait_for_services" {
   create_duration = "120s"
   depends_on = [google_project_service.kms]
 }
@@ -664,7 +715,7 @@ resource "google_compute_network" "apigee_network" {
 
   name       = "apigee-network"
   project    = google_project.project.project_id
-  depends_on = [time_sleep.wait_120_seconds]
+  depends_on = [time_sleep.wait_for_services]
 }
 
 resource "google_compute_global_address" "apigee_range" {
@@ -719,6 +770,11 @@ resource "google_kms_crypto_key_iam_member" "apigee_sa_keyuser" {
   member = google_project_service_identity.apigee_sa.member
 }
 
+resource "time_sleep" "wait_for_iam" {
+  create_duration = "120s"
+  depends_on = [google_kms_crypto_key_iam_member.apigee_sa_keyuser]
+}
+
 resource "google_apigee_organization" "org" {
   provider = google-beta
 
@@ -732,14 +788,18 @@ resource "google_apigee_organization" "org" {
   depends_on = [
     google_service_networking_connection.apigee_vpc_connection,
     google_project_service.apigee,
-    google_kms_crypto_key_iam_member.apigee_sa_keyuser,
+    time_sleep.wait_for_iam,
   ]
+}
+
+resource "time_sleep" "wait_after_destroy" {
+  destroy_duration = "150s"
+  depends_on = [google_apigee_organization.org]
 }
 `, context)
 }
 
 func TestAccApigeeOrganization_apigeeOrganizationDrzTestExample(t *testing.T) {
-	acctest.SkipIfVcr(t)
 	t.Parallel()
 
 	context := map[string]interface{}{
@@ -822,7 +882,7 @@ resource "google_project_service" "kms" {
   depends_on = [google_project_service.servicenetworking]
 }
 
-resource "time_sleep" "wait_120_seconds" {
+resource "time_sleep" "wait_for_services" {
   create_duration = "120s"
   depends_on = [google_project_service.kms]
 }
@@ -832,7 +892,7 @@ resource "google_compute_network" "apigee_network" {
 
   name       = "apigee-network"
   project    = google_project.project.project_id
-  depends_on = [time_sleep.wait_120_seconds]
+  depends_on = [time_sleep.wait_for_services]
 }
 
 resource "google_compute_global_address" "apigee_range" {
@@ -887,6 +947,11 @@ resource "google_kms_crypto_key_iam_member" "apigee_sa_keyuser" {
   member = google_project_service_identity.apigee_sa.member
 }
 
+resource "time_sleep" "wait_for_iam" {
+  create_duration = "120s"
+  depends_on = [google_kms_crypto_key_iam_member.apigee_sa_keyuser]
+}
+
 resource "google_apigee_organization" "org" {
   provider = google-beta
 
@@ -901,8 +966,13 @@ resource "google_apigee_organization" "org" {
   depends_on = [
     google_service_networking_connection.apigee_vpc_connection,
     google_project_service.apigee,
-    google_kms_crypto_key_iam_member.apigee_sa_keyuser,
+    time_sleep.wait_for_iam,
   ]
+}
+
+resource "time_sleep" "wait_after_destroy" {
+  destroy_duration = "150s"
+  depends_on = [google_apigee_organization.org]
 }
 `, context)
 }
