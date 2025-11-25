@@ -267,7 +267,7 @@ When the load balancing scheme is INTERNAL, this field is not used.`,
 										Type:         schema.TypeBool,
 										Optional:     true,
 										Description:  `If true requests to different hosts will be cached separately.`,
-										AtLeastOneOf: []string{"cdn_policy.0.cache_key_policy.0.include_host", "cdn_policy.0.cache_key_policy.0.include_protocol", "cdn_policy.0.cache_key_policy.0.include_query_string", "cdn_policy.0.cache_key_policy.0.query_string_blacklist", "cdn_policy.0.cache_key_policy.0.query_string_whitelist", "cdn_policy.0.cache_key_policy.0.include_named_cookies"},
+										AtLeastOneOf: []string{"cdn_policy.0.cache_key_policy.0.include_host", "cdn_policy.0.cache_key_policy.0.include_named_cookies", "cdn_policy.0.cache_key_policy.0.include_protocol", "cdn_policy.0.cache_key_policy.0.include_query_string", "cdn_policy.0.cache_key_policy.0.query_string_blacklist", "cdn_policy.0.cache_key_policy.0.query_string_whitelist"},
 									},
 									"include_named_cookies": {
 										Type:        schema.TypeList,
@@ -276,13 +276,13 @@ When the load balancing scheme is INTERNAL, this field is not used.`,
 										Elem: &schema.Schema{
 											Type: schema.TypeString,
 										},
-										AtLeastOneOf: []string{"cdn_policy.0.cache_key_policy.0.include_host", "cdn_policy.0.cache_key_policy.0.include_protocol", "cdn_policy.0.cache_key_policy.0.include_query_string", "cdn_policy.0.cache_key_policy.0.query_string_blacklist", "cdn_policy.0.cache_key_policy.0.query_string_whitelist", "cdn_policy.0.cache_key_policy.0.include_named_cookies"},
+										AtLeastOneOf: []string{"cdn_policy.0.cache_key_policy.0.include_host", "cdn_policy.0.cache_key_policy.0.include_named_cookies", "cdn_policy.0.cache_key_policy.0.include_protocol", "cdn_policy.0.cache_key_policy.0.include_query_string", "cdn_policy.0.cache_key_policy.0.query_string_blacklist", "cdn_policy.0.cache_key_policy.0.query_string_whitelist"},
 									},
 									"include_protocol": {
 										Type:         schema.TypeBool,
 										Optional:     true,
 										Description:  `If true, http and https requests will be cached separately.`,
-										AtLeastOneOf: []string{"cdn_policy.0.cache_key_policy.0.include_host", "cdn_policy.0.cache_key_policy.0.include_protocol", "cdn_policy.0.cache_key_policy.0.include_query_string", "cdn_policy.0.cache_key_policy.0.query_string_blacklist", "cdn_policy.0.cache_key_policy.0.query_string_whitelist", "cdn_policy.0.cache_key_policy.0.include_named_cookies"},
+										AtLeastOneOf: []string{"cdn_policy.0.cache_key_policy.0.include_host", "cdn_policy.0.cache_key_policy.0.include_named_cookies", "cdn_policy.0.cache_key_policy.0.include_protocol", "cdn_policy.0.cache_key_policy.0.include_query_string", "cdn_policy.0.cache_key_policy.0.query_string_blacklist", "cdn_policy.0.cache_key_policy.0.query_string_whitelist"},
 									},
 									"include_query_string": {
 										Type:     schema.TypeBool,
@@ -294,7 +294,7 @@ string will be included.
 
 If false, the query string will be excluded from the cache
 key entirely.`,
-										AtLeastOneOf: []string{"cdn_policy.0.cache_key_policy.0.include_host", "cdn_policy.0.cache_key_policy.0.include_protocol", "cdn_policy.0.cache_key_policy.0.include_query_string", "cdn_policy.0.cache_key_policy.0.query_string_blacklist", "cdn_policy.0.cache_key_policy.0.query_string_whitelist", "cdn_policy.0.cache_key_policy.0.include_named_cookies"},
+										AtLeastOneOf: []string{"cdn_policy.0.cache_key_policy.0.include_host", "cdn_policy.0.cache_key_policy.0.include_named_cookies", "cdn_policy.0.cache_key_policy.0.include_protocol", "cdn_policy.0.cache_key_policy.0.include_query_string", "cdn_policy.0.cache_key_policy.0.query_string_blacklist", "cdn_policy.0.cache_key_policy.0.query_string_whitelist"},
 									},
 									"query_string_blacklist": {
 										Type:     schema.TypeSet,
@@ -309,7 +309,7 @@ delimiters.`,
 											Type: schema.TypeString,
 										},
 										Set:          schema.HashString,
-										AtLeastOneOf: []string{"cdn_policy.0.cache_key_policy.0.include_host", "cdn_policy.0.cache_key_policy.0.include_protocol", "cdn_policy.0.cache_key_policy.0.include_query_string", "cdn_policy.0.cache_key_policy.0.query_string_blacklist", "cdn_policy.0.cache_key_policy.0.query_string_whitelist", "cdn_policy.0.cache_key_policy.0.include_named_cookies"},
+										AtLeastOneOf: []string{"cdn_policy.0.cache_key_policy.0.include_host", "cdn_policy.0.cache_key_policy.0.include_named_cookies", "cdn_policy.0.cache_key_policy.0.include_protocol", "cdn_policy.0.cache_key_policy.0.include_query_string", "cdn_policy.0.cache_key_policy.0.query_string_blacklist", "cdn_policy.0.cache_key_policy.0.query_string_whitelist"},
 									},
 									"query_string_whitelist": {
 										Type:     schema.TypeSet,
@@ -324,7 +324,7 @@ delimiters.`,
 											Type: schema.TypeString,
 										},
 										Set:          schema.HashString,
-										AtLeastOneOf: []string{"cdn_policy.0.cache_key_policy.0.include_host", "cdn_policy.0.cache_key_policy.0.include_protocol", "cdn_policy.0.cache_key_policy.0.include_query_string", "cdn_policy.0.cache_key_policy.0.query_string_blacklist", "cdn_policy.0.cache_key_policy.0.query_string_whitelist", "cdn_policy.0.cache_key_policy.0.include_named_cookies"},
+										AtLeastOneOf: []string{"cdn_policy.0.cache_key_policy.0.include_host", "cdn_policy.0.cache_key_policy.0.include_named_cookies", "cdn_policy.0.cache_key_policy.0.include_protocol", "cdn_policy.0.cache_key_policy.0.include_query_string", "cdn_policy.0.cache_key_policy.0.query_string_blacklist", "cdn_policy.0.cache_key_policy.0.query_string_whitelist"},
 									},
 								},
 							},
@@ -442,7 +442,7 @@ be from 0 to 999,999,999 inclusive.`,
 									},
 								},
 							},
-							AtLeastOneOf: []string{"circuit_breakers.0.connect_timeout", "circuit_breakers.0.max_requests_per_connection", "circuit_breakers.0.max_connections", "circuit_breakers.0.max_pending_requests", "circuit_breakers.0.max_requests", "circuit_breakers.0.max_retries"},
+							AtLeastOneOf: []string{"circuit_breakers.0.connect_timeout", "circuit_breakers.0.max_connections", "circuit_breakers.0.max_pending_requests", "circuit_breakers.0.max_requests", "circuit_breakers.0.max_requests_per_connection", "circuit_breakers.0.max_retries"},
 						},
 						"max_connections": {
 							Type:     schema.TypeInt,
@@ -450,7 +450,7 @@ be from 0 to 999,999,999 inclusive.`,
 							Description: `The maximum number of connections to the backend cluster.
 Defaults to 1024.`,
 							Default:      1024,
-							AtLeastOneOf: []string{"circuit_breakers.0.connect_timeout", "circuit_breakers.0.max_requests_per_connection", "circuit_breakers.0.max_connections", "circuit_breakers.0.max_pending_requests", "circuit_breakers.0.max_requests", "circuit_breakers.0.max_retries"},
+							AtLeastOneOf: []string{"circuit_breakers.0.connect_timeout", "circuit_breakers.0.max_connections", "circuit_breakers.0.max_pending_requests", "circuit_breakers.0.max_requests", "circuit_breakers.0.max_requests_per_connection", "circuit_breakers.0.max_retries"},
 						},
 						"max_pending_requests": {
 							Type:     schema.TypeInt,
@@ -458,7 +458,7 @@ Defaults to 1024.`,
 							Description: `The maximum number of pending requests to the backend cluster.
 Defaults to 1024.`,
 							Default:      1024,
-							AtLeastOneOf: []string{"circuit_breakers.0.connect_timeout", "circuit_breakers.0.max_requests_per_connection", "circuit_breakers.0.max_connections", "circuit_breakers.0.max_pending_requests", "circuit_breakers.0.max_requests", "circuit_breakers.0.max_retries"},
+							AtLeastOneOf: []string{"circuit_breakers.0.connect_timeout", "circuit_breakers.0.max_connections", "circuit_breakers.0.max_pending_requests", "circuit_breakers.0.max_requests", "circuit_breakers.0.max_requests_per_connection", "circuit_breakers.0.max_retries"},
 						},
 						"max_requests": {
 							Type:     schema.TypeInt,
@@ -466,7 +466,7 @@ Defaults to 1024.`,
 							Description: `The maximum number of parallel requests to the backend cluster.
 Defaults to 1024.`,
 							Default:      1024,
-							AtLeastOneOf: []string{"circuit_breakers.0.connect_timeout", "circuit_breakers.0.max_requests_per_connection", "circuit_breakers.0.max_connections", "circuit_breakers.0.max_pending_requests", "circuit_breakers.0.max_requests", "circuit_breakers.0.max_retries"},
+							AtLeastOneOf: []string{"circuit_breakers.0.connect_timeout", "circuit_breakers.0.max_connections", "circuit_breakers.0.max_pending_requests", "circuit_breakers.0.max_requests", "circuit_breakers.0.max_requests_per_connection", "circuit_breakers.0.max_retries"},
 						},
 						"max_requests_per_connection": {
 							Type:     schema.TypeInt,
@@ -475,7 +475,7 @@ Defaults to 1024.`,
 is respected by both the HTTP/1.1 and HTTP/2 implementations. If
 not specified, there is no limit. Setting this parameter to 1
 will effectively disable keep alive.`,
-							AtLeastOneOf: []string{"circuit_breakers.0.connect_timeout", "circuit_breakers.0.max_requests_per_connection", "circuit_breakers.0.max_connections", "circuit_breakers.0.max_pending_requests", "circuit_breakers.0.max_requests", "circuit_breakers.0.max_retries"},
+							AtLeastOneOf: []string{"circuit_breakers.0.connect_timeout", "circuit_breakers.0.max_connections", "circuit_breakers.0.max_pending_requests", "circuit_breakers.0.max_requests", "circuit_breakers.0.max_requests_per_connection", "circuit_breakers.0.max_retries"},
 						},
 						"max_retries": {
 							Type:     schema.TypeInt,
@@ -483,7 +483,7 @@ will effectively disable keep alive.`,
 							Description: `The maximum number of parallel retries to the backend cluster.
 Defaults to 3.`,
 							Default:      3,
-							AtLeastOneOf: []string{"circuit_breakers.0.connect_timeout", "circuit_breakers.0.max_requests_per_connection", "circuit_breakers.0.max_connections", "circuit_breakers.0.max_pending_requests", "circuit_breakers.0.max_requests", "circuit_breakers.0.max_retries"},
+							AtLeastOneOf: []string{"circuit_breakers.0.connect_timeout", "circuit_breakers.0.max_connections", "circuit_breakers.0.max_pending_requests", "circuit_breakers.0.max_requests", "circuit_breakers.0.max_requests_per_connection", "circuit_breakers.0.max_retries"},
 						},
 					},
 				},
@@ -588,13 +588,13 @@ This field is applicable if the sessionAffinity is set to HTTP_COOKIE.`,
 										Type:         schema.TypeString,
 										Optional:     true,
 										Description:  `Name of the cookie.`,
-										AtLeastOneOf: []string{"consistent_hash.0.http_cookie.0.ttl", "consistent_hash.0.http_cookie.0.name", "consistent_hash.0.http_cookie.0.path"},
+										AtLeastOneOf: []string{"consistent_hash.0.http_cookie.0.name", "consistent_hash.0.http_cookie.0.path", "consistent_hash.0.http_cookie.0.ttl"},
 									},
 									"path": {
 										Type:         schema.TypeString,
 										Optional:     true,
 										Description:  `Path to set for the cookie.`,
-										AtLeastOneOf: []string{"consistent_hash.0.http_cookie.0.ttl", "consistent_hash.0.http_cookie.0.name", "consistent_hash.0.http_cookie.0.path"},
+										AtLeastOneOf: []string{"consistent_hash.0.http_cookie.0.name", "consistent_hash.0.http_cookie.0.path", "consistent_hash.0.http_cookie.0.ttl"},
 									},
 									"ttl": {
 										Type:        schema.TypeList,
@@ -619,7 +619,7 @@ be from 0 to 999,999,999 inclusive.`,
 												},
 											},
 										},
-										AtLeastOneOf: []string{"consistent_hash.0.http_cookie.0.ttl", "consistent_hash.0.http_cookie.0.name", "consistent_hash.0.http_cookie.0.path"},
+										AtLeastOneOf: []string{"consistent_hash.0.http_cookie.0.name", "consistent_hash.0.http_cookie.0.path", "consistent_hash.0.http_cookie.0.ttl"},
 									},
 								},
 							},
@@ -828,7 +828,7 @@ already be attached to the NEG specified in the haPolicy.leader.backendGroup.`,
 						},
 					},
 				},
-				ConflictsWith: []string{"session_affinity", "connection_tracking_policy", "failover_policy", "health_checks"},
+				ConflictsWith: []string{"connection_tracking_policy", "failover_policy", "health_checks", "session_affinity"},
 			},
 			"health_checks": {
 				Type:     schema.TypeSet,
@@ -978,7 +978,7 @@ If logging is enabled, logs will be exported to Stackdriver.`,
 							Type:         schema.TypeBool,
 							Optional:     true,
 							Description:  `Whether to enable logging for the load balancer traffic served by this backend service.`,
-							AtLeastOneOf: []string{"log_config.0.enable", "log_config.0.sample_rate", "log_config.0.optional_mode"},
+							AtLeastOneOf: []string{"log_config.0.enable", "log_config.0.optional_mode", "log_config.0.sample_rate"},
 						},
 						"optional_fields": {
 							Type:        schema.TypeList,
@@ -996,7 +996,7 @@ If logging is enabled, logs will be exported to Stackdriver.`,
 							ValidateFunc: verify.ValidateEnum([]string{"INCLUDE_ALL_OPTIONAL", "EXCLUDE_ALL_OPTIONAL", "CUSTOM", ""}),
 							Description: `Specifies the optional logging mode for the load balancer traffic.
 Supported values: INCLUDE_ALL_OPTIONAL, EXCLUDE_ALL_OPTIONAL, CUSTOM. Possible values: ["INCLUDE_ALL_OPTIONAL", "EXCLUDE_ALL_OPTIONAL", "CUSTOM"]`,
-							AtLeastOneOf: []string{"log_config.0.enable", "log_config.0.sample_rate", "log_config.0.optional_mode"},
+							AtLeastOneOf: []string{"log_config.0.enable", "log_config.0.optional_mode", "log_config.0.sample_rate"},
 						},
 						"sample_rate": {
 							Type:             schema.TypeFloat,
@@ -1007,7 +1007,7 @@ the field must be in [0, 1]. This configures the sampling rate of requests to th
 where 1.0 means all logged requests are reported and 0.0 means no logged requests are reported.
 The default value is 1.0.`,
 							Default:      1.0,
-							AtLeastOneOf: []string{"log_config.0.enable", "log_config.0.sample_rate", "log_config.0.optional_mode"},
+							AtLeastOneOf: []string{"log_config.0.enable", "log_config.0.optional_mode", "log_config.0.sample_rate"},
 						},
 					},
 				},
@@ -1021,6 +1021,42 @@ The default value is 1.0.`,
 This field must be set for Internal Passthrough Network Load Balancers when the haPolicy is enabled, and for External Passthrough Network Load Balancers when the haPolicy fastIpMove is enabled.
 This field can only be specified when the load balancing scheme is set to INTERNAL, or when the load balancing scheme is set to EXTERNAL and haPolicy fastIpMove is enabled.
 Changes to this field force recreation of the resource.`,
+			},
+			"network_pass_through_lb_traffic_policy": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: `Configures traffic steering properties of internal passthrough Network Load Balancers.`,
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"zonal_affinity": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							Description: `When configured, new connections are load balanced across healthy backend endpoints in the local zone.`,
+							MaxItems:    1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"spillover": {
+										Type:         schema.TypeString,
+										Optional:     true,
+										ValidateFunc: verify.ValidateEnum([]string{"ZONAL_AFFINITY_DISABLED", "ZONAL_AFFINITY_SPILL_CROSS_ZONE", "ZONAL_AFFINITY_STAY_WITHIN_ZONE", ""}),
+										Description:  `This field indicates whether zonal affinity is enabled or not. Default value: "ZONAL_AFFINITY_DISABLED" Possible values: ["ZONAL_AFFINITY_DISABLED", "ZONAL_AFFINITY_SPILL_CROSS_ZONE", "ZONAL_AFFINITY_STAY_WITHIN_ZONE"]`,
+										Default:      "ZONAL_AFFINITY_DISABLED",
+									},
+									"spillover_ratio": {
+										Type:     schema.TypeFloat,
+										Optional: true,
+										Description: `The value of the field must be in [0, 1]. When the ratio of the count of healthy backend endpoints in a zone
+to the count of backend endpoints in that same zone is equal to or above this threshold, the load balancer
+distributes new connections to all healthy endpoints in the local zone only. When the ratio of the count
+of healthy backend endpoints in a zone to the count of backend endpoints in that same zone is below this
+threshold, the load balancer distributes all new connections to all healthy endpoints across all zones.`,
+									},
+								},
+							},
+						},
+					},
+				},
 			},
 			"outlier_detection": {
 				Type:     schema.TypeList,
@@ -1237,13 +1273,13 @@ not applicable if the protocol is UDP. Possible values: ["NONE", "CLIENT_IP", "C
 							Type:         schema.TypeString,
 							Optional:     true,
 							Description:  `Name of the cookie.`,
-							AtLeastOneOf: []string{"strong_session_affinity_cookie.0.ttl", "strong_session_affinity_cookie.0.name", "strong_session_affinity_cookie.0.path"},
+							AtLeastOneOf: []string{"strong_session_affinity_cookie.0.name", "strong_session_affinity_cookie.0.path", "strong_session_affinity_cookie.0.ttl"},
 						},
 						"path": {
 							Type:         schema.TypeString,
 							Optional:     true,
 							Description:  `Path to set for the cookie.`,
-							AtLeastOneOf: []string{"strong_session_affinity_cookie.0.ttl", "strong_session_affinity_cookie.0.name", "strong_session_affinity_cookie.0.path"},
+							AtLeastOneOf: []string{"strong_session_affinity_cookie.0.name", "strong_session_affinity_cookie.0.path", "strong_session_affinity_cookie.0.ttl"},
 						},
 						"ttl": {
 							Type:        schema.TypeList,
@@ -1268,7 +1304,7 @@ be from 0 to 999,999,999 inclusive.`,
 									},
 								},
 							},
-							AtLeastOneOf: []string{"strong_session_affinity_cookie.0.ttl", "strong_session_affinity_cookie.0.name", "strong_session_affinity_cookie.0.path"},
+							AtLeastOneOf: []string{"strong_session_affinity_cookie.0.name", "strong_session_affinity_cookie.0.path", "strong_session_affinity_cookie.0.ttl"},
 						},
 					},
 				},
@@ -1706,6 +1742,12 @@ func resourceComputeRegionBackendServiceCreate(d *schema.ResourceData, meta inte
 	} else if v, ok := d.GetOkExists("custom_metrics"); !tpgresource.IsEmptyValue(reflect.ValueOf(customMetricsProp)) && (ok || !reflect.DeepEqual(v, customMetricsProp)) {
 		obj["customMetrics"] = customMetricsProp
 	}
+	networkPassThroughLbTrafficPolicyProp, err := expandComputeRegionBackendServiceNetworkPassThroughLbTrafficPolicy(d.Get("network_pass_through_lb_traffic_policy"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("network_pass_through_lb_traffic_policy"); !tpgresource.IsEmptyValue(reflect.ValueOf(networkPassThroughLbTrafficPolicyProp)) && (ok || !reflect.DeepEqual(v, networkPassThroughLbTrafficPolicyProp)) {
+		obj["networkPassThroughLbTrafficPolicy"] = networkPassThroughLbTrafficPolicyProp
+	}
 	outlierDetectionProp, err := expandComputeRegionBackendServiceOutlierDetection(d.Get("outlier_detection"), d, config)
 	if err != nil {
 		return err
@@ -2025,6 +2067,9 @@ func resourceComputeRegionBackendServiceRead(d *schema.ResourceData, meta interf
 	if err := d.Set("custom_metrics", flattenComputeRegionBackendServiceCustomMetrics(res["customMetrics"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionBackendService: %s", err)
 	}
+	if err := d.Set("network_pass_through_lb_traffic_policy", flattenComputeRegionBackendServiceNetworkPassThroughLbTrafficPolicy(res["networkPassThroughLbTrafficPolicy"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RegionBackendService: %s", err)
+	}
 	if err := d.Set("outlier_detection", flattenComputeRegionBackendServiceOutlierDetection(res["outlierDetection"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionBackendService: %s", err)
 	}
@@ -2217,6 +2262,12 @@ func resourceComputeRegionBackendServiceUpdate(d *schema.ResourceData, meta inte
 		return err
 	} else if v, ok := d.GetOkExists("custom_metrics"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, customMetricsProp)) {
 		obj["customMetrics"] = customMetricsProp
+	}
+	networkPassThroughLbTrafficPolicyProp, err := expandComputeRegionBackendServiceNetworkPassThroughLbTrafficPolicy(d.Get("network_pass_through_lb_traffic_policy"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("network_pass_through_lb_traffic_policy"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, networkPassThroughLbTrafficPolicyProp)) {
+		obj["networkPassThroughLbTrafficPolicy"] = networkPassThroughLbTrafficPolicyProp
 	}
 	outlierDetectionProp, err := expandComputeRegionBackendServiceOutlierDetection(d.Get("outlier_detection"), d, config)
 	if err != nil {
@@ -3393,6 +3444,42 @@ func flattenComputeRegionBackendServiceCustomMetricsName(v interface{}, d *schem
 }
 
 func flattenComputeRegionBackendServiceCustomMetricsDryRun(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenComputeRegionBackendServiceNetworkPassThroughLbTrafficPolicy(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["zonal_affinity"] =
+		flattenComputeRegionBackendServiceNetworkPassThroughLbTrafficPolicyZonalAffinity(original["zonalAffinity"], d, config)
+	return []interface{}{transformed}
+}
+func flattenComputeRegionBackendServiceNetworkPassThroughLbTrafficPolicyZonalAffinity(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["spillover"] =
+		flattenComputeRegionBackendServiceNetworkPassThroughLbTrafficPolicyZonalAffinitySpillover(original["spillover"], d, config)
+	transformed["spillover_ratio"] =
+		flattenComputeRegionBackendServiceNetworkPassThroughLbTrafficPolicyZonalAffinitySpilloverRatio(original["spilloverRatio"], d, config)
+	return []interface{}{transformed}
+}
+func flattenComputeRegionBackendServiceNetworkPassThroughLbTrafficPolicyZonalAffinitySpillover(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenComputeRegionBackendServiceNetworkPassThroughLbTrafficPolicyZonalAffinitySpilloverRatio(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -4978,6 +5065,65 @@ func expandComputeRegionBackendServiceCustomMetricsName(v interface{}, d tpgreso
 }
 
 func expandComputeRegionBackendServiceCustomMetricsDryRun(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeRegionBackendServiceNetworkPassThroughLbTrafficPolicy(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedZonalAffinity, err := expandComputeRegionBackendServiceNetworkPassThroughLbTrafficPolicyZonalAffinity(original["zonal_affinity"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedZonalAffinity); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["zonalAffinity"] = transformedZonalAffinity
+	}
+
+	return transformed, nil
+}
+
+func expandComputeRegionBackendServiceNetworkPassThroughLbTrafficPolicyZonalAffinity(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedSpillover, err := expandComputeRegionBackendServiceNetworkPassThroughLbTrafficPolicyZonalAffinitySpillover(original["spillover"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedSpillover); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["spillover"] = transformedSpillover
+	}
+
+	transformedSpilloverRatio, err := expandComputeRegionBackendServiceNetworkPassThroughLbTrafficPolicyZonalAffinitySpilloverRatio(original["spillover_ratio"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedSpilloverRatio); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["spilloverRatio"] = transformedSpilloverRatio
+	}
+
+	return transformed, nil
+}
+
+func expandComputeRegionBackendServiceNetworkPassThroughLbTrafficPolicyZonalAffinitySpillover(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeRegionBackendServiceNetworkPassThroughLbTrafficPolicyZonalAffinitySpilloverRatio(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

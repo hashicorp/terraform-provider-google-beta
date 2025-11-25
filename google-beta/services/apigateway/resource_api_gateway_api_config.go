@@ -233,7 +233,7 @@ $ protoc --include_imports --include_source_info test.proto -o out.pb`,
 						},
 					},
 				},
-				ExactlyOneOf: []string{"openapi_documents", "grpc_services"},
+				ExactlyOneOf: []string{"grpc_services", "openapi_documents"},
 				RequiredWith: []string{"managed_service_configs"},
 			},
 			"labels": {
@@ -300,7 +300,7 @@ If multiple files are specified, the files are merged with the following rules: 
 						},
 					},
 				},
-				ExactlyOneOf: []string{"openapi_documents", "grpc_services"},
+				ExactlyOneOf: []string{"grpc_services", "openapi_documents"},
 			},
 			"effective_labels": {
 				Type:        schema.TypeMap,

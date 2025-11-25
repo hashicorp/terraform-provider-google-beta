@@ -151,7 +151,7 @@ for example "env=prod or env=staging".`,
 									},
 								},
 							},
-							AtLeastOneOf: []string{"assignment.0.group_labels", "assignment.0.zones", "assignment.0.instances", "assignment.0.instance_name_prefixes", "assignment.0.os_types"},
+							AtLeastOneOf: []string{"assignment.0.group_labels", "assignment.0.instance_name_prefixes", "assignment.0.instances", "assignment.0.os_types", "assignment.0.zones"},
 						},
 						"instance_name_prefixes": {
 							Type:     schema.TypeList,
@@ -163,7 +163,7 @@ Only supported for project-level policies.`,
 							Elem: &schema.Schema{
 								Type: schema.TypeString,
 							},
-							AtLeastOneOf: []string{"assignment.0.group_labels", "assignment.0.zones", "assignment.0.instances", "assignment.0.instance_name_prefixes", "assignment.0.os_types"},
+							AtLeastOneOf: []string{"assignment.0.group_labels", "assignment.0.instance_name_prefixes", "assignment.0.instances", "assignment.0.os_types", "assignment.0.zones"},
 						},
 						"instances": {
 							Type:     schema.TypeList,
@@ -176,7 +176,7 @@ Only supported for project-level policies and must reference instances within th
 							Elem: &schema.Schema{
 								Type: schema.TypeString,
 							},
-							AtLeastOneOf: []string{"assignment.0.group_labels", "assignment.0.zones", "assignment.0.instances", "assignment.0.instance_name_prefixes", "assignment.0.os_types"},
+							AtLeastOneOf: []string{"assignment.0.group_labels", "assignment.0.instance_name_prefixes", "assignment.0.instances", "assignment.0.os_types", "assignment.0.zones"},
 						},
 						"os_types": {
 							Type:     schema.TypeList,
@@ -202,7 +202,7 @@ VM instances must match all supplied criteria for a given OsType to be included.
 									},
 								},
 							},
-							AtLeastOneOf: []string{"assignment.0.group_labels", "assignment.0.zones", "assignment.0.instances", "assignment.0.instance_name_prefixes", "assignment.0.os_types"},
+							AtLeastOneOf: []string{"assignment.0.group_labels", "assignment.0.instance_name_prefixes", "assignment.0.instances", "assignment.0.os_types", "assignment.0.zones"},
 						},
 						"zones": {
 							Type:     schema.TypeList,
@@ -212,7 +212,7 @@ Zonal targeting is uncommon and is supported to facilitate the management of cha
 							Elem: &schema.Schema{
 								Type: schema.TypeString,
 							},
-							AtLeastOneOf: []string{"assignment.0.group_labels", "assignment.0.zones", "assignment.0.instances", "assignment.0.instance_name_prefixes", "assignment.0.os_types"},
+							AtLeastOneOf: []string{"assignment.0.group_labels", "assignment.0.instance_name_prefixes", "assignment.0.instances", "assignment.0.os_types", "assignment.0.zones"},
 						},
 					},
 				},

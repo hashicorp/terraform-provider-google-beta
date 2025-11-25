@@ -364,6 +364,59 @@ resource "google_compute_network" "custom-test" {
 `, context)
 }
 
+func TestAccComputeSubnetwork_subnetworkResolveSubnetMaskExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckComputeSubnetworkDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeSubnetwork_subnetworkResolveSubnetMaskExample(context),
+			},
+			{
+				ResourceName:            "google_compute_subnetwork.subnetwork-resolve-subnet-mask",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"ip_collection", "network", "params", "region", "reserved_internal_range"},
+			},
+			{
+				ResourceName:       "google_compute_subnetwork.subnetwork-resolve-subnet-mask",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
+		},
+	})
+}
+
+func testAccComputeSubnetwork_subnetworkResolveSubnetMaskExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_compute_subnetwork" "subnetwork-resolve-subnet-mask" {
+  provider         = google-beta
+
+  name             = "tf-test-subnet-resolve-subnet-mask-test-subnetwork%{random_suffix}"
+  region           = "us-west2"
+  ip_cidr_range    = "10.10.0.0/24"
+  purpose          = "PRIVATE"
+  resolve_subnet_mask = "ARP_PRIMARY_RANGE"
+  network          = google_compute_network.custom-test.id
+}
+
+resource "google_compute_network" "custom-test" {
+  provider                = google-beta
+
+  name                    = "tf-test-subnet-resolve-subnet-mask-test-network%{random_suffix}"
+  auto_create_subnetworks = false
+}
+`, context)
+}
+
 func TestAccComputeSubnetwork_subnetworkCidrOverlapExample(t *testing.T) {
 	t.Parallel()
 

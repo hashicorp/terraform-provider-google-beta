@@ -48,7 +48,7 @@ func TestAccServiceDirectoryServiceIamBindingGenerated(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccServiceDirectoryServiceIamBinding_basicGenerated(context),
@@ -71,7 +71,7 @@ func TestAccServiceDirectoryServiceIamMemberGenerated(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
 				// Test Iam Member creation (no update for member, no need to test)
@@ -91,7 +91,7 @@ func TestAccServiceDirectoryServiceIamPolicyGenerated(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccServiceDirectoryServiceIamPolicy_basicGenerated(context),
@@ -107,13 +107,11 @@ func TestAccServiceDirectoryServiceIamPolicyGenerated(t *testing.T) {
 func testAccServiceDirectoryServiceIamMember_basicGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_service_directory_namespace" "example" {
-  provider     = google-beta
   namespace_id = "tf-test-example-namespace%{random_suffix}"
   location     = "us-central1"
 }
 
 resource "google_service_directory_service" "example" {
-  provider   = google-beta
   service_id = "tf-test-example-service%{random_suffix}"
   namespace  = google_service_directory_namespace.example.id
 
@@ -124,7 +122,6 @@ resource "google_service_directory_service" "example" {
 }
 
 resource "google_service_directory_service_iam_member" "foo" {
-  provider = google-beta
   name = google_service_directory_service.example.name
   role = "%{role}"
   member = "user:admin@hashicorptest.com"
@@ -135,13 +132,11 @@ resource "google_service_directory_service_iam_member" "foo" {
 func testAccServiceDirectoryServiceIamPolicy_basicGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_service_directory_namespace" "example" {
-  provider     = google-beta
   namespace_id = "tf-test-example-namespace%{random_suffix}"
   location     = "us-central1"
 }
 
 resource "google_service_directory_service" "example" {
-  provider   = google-beta
   service_id = "tf-test-example-service%{random_suffix}"
   namespace  = google_service_directory_namespace.example.id
 
@@ -152,7 +147,6 @@ resource "google_service_directory_service" "example" {
 }
 
 data "google_iam_policy" "foo" {
-  provider = google-beta
   binding {
     role = "%{role}"
     members = ["user:admin@hashicorptest.com"]
@@ -160,13 +154,11 @@ data "google_iam_policy" "foo" {
 }
 
 resource "google_service_directory_service_iam_policy" "foo" {
-  provider = google-beta
   name = google_service_directory_service.example.name
   policy_data = data.google_iam_policy.foo.policy_data
 }
 
 data "google_service_directory_service_iam_policy" "foo" {
-  provider = google-beta
   name = google_service_directory_service.example.name
   depends_on = [
     google_service_directory_service_iam_policy.foo
@@ -178,13 +170,11 @@ data "google_service_directory_service_iam_policy" "foo" {
 func testAccServiceDirectoryServiceIamPolicy_emptyBinding(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_service_directory_namespace" "example" {
-  provider     = google-beta
   namespace_id = "tf-test-example-namespace%{random_suffix}"
   location     = "us-central1"
 }
 
 resource "google_service_directory_service" "example" {
-  provider   = google-beta
   service_id = "tf-test-example-service%{random_suffix}"
   namespace  = google_service_directory_namespace.example.id
 
@@ -195,11 +185,9 @@ resource "google_service_directory_service" "example" {
 }
 
 data "google_iam_policy" "foo" {
-  provider = google-beta
 }
 
 resource "google_service_directory_service_iam_policy" "foo" {
-  provider = google-beta
   name = google_service_directory_service.example.name
   policy_data = data.google_iam_policy.foo.policy_data
 }
@@ -209,13 +197,11 @@ resource "google_service_directory_service_iam_policy" "foo" {
 func testAccServiceDirectoryServiceIamBinding_basicGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_service_directory_namespace" "example" {
-  provider     = google-beta
   namespace_id = "tf-test-example-namespace%{random_suffix}"
   location     = "us-central1"
 }
 
 resource "google_service_directory_service" "example" {
-  provider   = google-beta
   service_id = "tf-test-example-service%{random_suffix}"
   namespace  = google_service_directory_namespace.example.id
 
@@ -226,7 +212,6 @@ resource "google_service_directory_service" "example" {
 }
 
 resource "google_service_directory_service_iam_binding" "foo" {
-  provider = google-beta
   name = google_service_directory_service.example.name
   role = "%{role}"
   members = ["user:admin@hashicorptest.com"]
@@ -237,13 +222,11 @@ resource "google_service_directory_service_iam_binding" "foo" {
 func testAccServiceDirectoryServiceIamBinding_updateGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_service_directory_namespace" "example" {
-  provider     = google-beta
   namespace_id = "tf-test-example-namespace%{random_suffix}"
   location     = "us-central1"
 }
 
 resource "google_service_directory_service" "example" {
-  provider   = google-beta
   service_id = "tf-test-example-service%{random_suffix}"
   namespace  = google_service_directory_namespace.example.id
 
@@ -254,7 +237,6 @@ resource "google_service_directory_service" "example" {
 }
 
 resource "google_service_directory_service_iam_binding" "foo" {
-  provider = google-beta
   name = google_service_directory_service.example.name
   role = "%{role}"
   members = ["user:admin@hashicorptest.com", "user:gterraformtest1@gmail.com"]

@@ -156,7 +156,7 @@ Format: projects/{project_id}/locations/global/interceptEndpointGroups/{endpoint
 						},
 					},
 				},
-				ConflictsWith: []string{"threat_prevention_profile", "url_filtering_profile", "custom_mirroring_profile"},
+				ConflictsWith: []string{"custom_mirroring_profile", "threat_prevention_profile", "url_filtering_profile"},
 			},
 			"custom_mirroring_profile": {
 				Type:     schema.TypeList,
@@ -169,12 +169,34 @@ mirror traffic to third-party collectors.`,
 						"mirroring_endpoint_group": {
 							Type:     schema.TypeString,
 							Required: true,
-							Description: `The Mirroring Endpoint Group to which matching traffic should be mirrored.
+							Description: `The target Mirroring Endpoint Group.
+When a mirroring rule with this security profile attached matches a packet,
+a replica will be mirrored to the location-local target in this group.
 Format: projects/{project_id}/locations/global/mirroringEndpointGroups/{endpoint_group_id}`,
+						},
+						"mirroring_deployment_groups": {
+							Type:     schema.TypeList,
+							Optional: true,
+							ForceNew: true,
+							Description: `The target downstream Mirroring Deployment Groups.
+This field is used for Packet Broker mirroring endpoint groups to specify
+the deployment groups that the packet should be mirrored to by the broker.
+Format: projects/{project_id}/locations/global/mirroringDeploymentGroups/{deployment_group_id}`,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+						},
+						"mirroring_endpoint_group_type": {
+							Type:     schema.TypeString,
+							Computed: true,
+							Description: `The type of the mirroring endpoint group this profile is attached to.
+Possible values:
+DIRECT
+BROKER`,
 						},
 					},
 				},
-				ConflictsWith: []string{"threat_prevention_profile", "url_filtering_profile", "custom_intercept_profile"},
+				ConflictsWith: []string{"custom_intercept_profile", "threat_prevention_profile", "url_filtering_profile"},
 			},
 			"description": {
 				Type:        schema.TypeString,
@@ -238,7 +260,7 @@ and threat overrides, the threat overrides action is applied.`,
 						},
 					},
 				},
-				ConflictsWith: []string{"url_filtering_profile", "custom_mirroring_profile", "custom_intercept_profile"},
+				ConflictsWith: []string{"custom_intercept_profile", "custom_mirroring_profile", "url_filtering_profile"},
 			},
 			"url_filtering_profile": {
 				Type:        schema.TypeList,
@@ -258,7 +280,7 @@ and the first filter that a domain name matches with is the one whose actions ge
 						},
 					},
 				},
-				ConflictsWith: []string{"threat_prevention_profile", "custom_mirroring_profile", "custom_intercept_profile"},
+				ConflictsWith: []string{"custom_intercept_profile", "custom_mirroring_profile", "threat_prevention_profile"},
 			},
 			"create_time": {
 				Type:        schema.TypeString,
@@ -1014,9 +1036,21 @@ func flattenNetworkSecuritySecurityProfileCustomMirroringProfile(v interface{}, 
 	transformed := make(map[string]interface{})
 	transformed["mirroring_endpoint_group"] =
 		flattenNetworkSecuritySecurityProfileCustomMirroringProfileMirroringEndpointGroup(original["mirroringEndpointGroup"], d, config)
+	transformed["mirroring_deployment_groups"] =
+		flattenNetworkSecuritySecurityProfileCustomMirroringProfileMirroringDeploymentGroups(original["mirroringDeploymentGroups"], d, config)
+	transformed["mirroring_endpoint_group_type"] =
+		flattenNetworkSecuritySecurityProfileCustomMirroringProfileMirroringEndpointGroupType(original["mirroringEndpointGroupType"], d, config)
 	return []interface{}{transformed}
 }
 func flattenNetworkSecuritySecurityProfileCustomMirroringProfileMirroringEndpointGroup(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenNetworkSecuritySecurityProfileCustomMirroringProfileMirroringDeploymentGroups(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenNetworkSecuritySecurityProfileCustomMirroringProfileMirroringEndpointGroupType(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -1327,10 +1361,32 @@ func expandNetworkSecuritySecurityProfileCustomMirroringProfile(v interface{}, d
 		transformed["mirroringEndpointGroup"] = transformedMirroringEndpointGroup
 	}
 
+	transformedMirroringDeploymentGroups, err := expandNetworkSecuritySecurityProfileCustomMirroringProfileMirroringDeploymentGroups(original["mirroring_deployment_groups"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedMirroringDeploymentGroups); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["mirroringDeploymentGroups"] = transformedMirroringDeploymentGroups
+	}
+
+	transformedMirroringEndpointGroupType, err := expandNetworkSecuritySecurityProfileCustomMirroringProfileMirroringEndpointGroupType(original["mirroring_endpoint_group_type"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedMirroringEndpointGroupType); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["mirroringEndpointGroupType"] = transformedMirroringEndpointGroupType
+	}
+
 	return transformed, nil
 }
 
 func expandNetworkSecuritySecurityProfileCustomMirroringProfileMirroringEndpointGroup(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandNetworkSecuritySecurityProfileCustomMirroringProfileMirroringDeploymentGroups(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandNetworkSecuritySecurityProfileCustomMirroringProfileMirroringEndpointGroupType(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

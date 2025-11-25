@@ -179,7 +179,7 @@ EGRESS rules.`,
 										Elem: &schema.Schema{
 											Type: schema.TypeString,
 										},
-										ExactlyOneOf: []string{"match.0.config.0.src_ip_ranges", "match.0.config.0.dest_ip_ranges"},
+										ExactlyOneOf: []string{"match.0.config.0.dest_ip_ranges", "match.0.config.0.src_ip_ranges"},
 									},
 									"src_ip_ranges": {
 										Type:     schema.TypeList,
@@ -189,7 +189,7 @@ INGRESS rules.`,
 										Elem: &schema.Schema{
 											Type: schema.TypeString,
 										},
-										ExactlyOneOf: []string{"match.0.config.0.src_ip_ranges", "match.0.config.0.dest_ip_ranges"},
+										ExactlyOneOf: []string{"match.0.config.0.dest_ip_ranges", "match.0.config.0.src_ip_ranges"},
 									},
 								},
 							},

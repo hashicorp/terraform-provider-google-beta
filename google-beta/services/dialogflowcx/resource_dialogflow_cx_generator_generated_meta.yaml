@@ -2,7 +2,7 @@ resource: 'google_dialogflow_cx_generator'
 generation_type: 'mmv1'
 source_file: 'products/dialogflowcx/Generator.yaml'
 api_service_name: 'dialogflow.googleapis.com'
-api_version: 'v3'
+api_version: 'v3beta1'
 api_resource_type_kind: 'Generator'
 fields:
   - api_field: 'displayName'
