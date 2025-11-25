@@ -312,7 +312,6 @@ Possible values include: STANDARD, PREMIUM, BASIC_HDD, BASIC_SSD, HIGH_SCALE_SSD
 			"directory_services": {
 				Type:     schema.TypeList,
 				Optional: true,
-				ForceNew: true,
 				Description: `Directory Services configuration.
 Should only be set if protocol is "NFS_V4_1".`,
 				MaxItems: 1,
@@ -321,7 +320,6 @@ Should only be set if protocol is "NFS_V4_1".`,
 						"ldap": {
 							Type:        schema.TypeList,
 							Optional:    true,
-							ForceNew:    true,
 							Description: `Configuration for LDAP servers.`,
 							MaxItems:    1,
 							Elem: &schema.Resource{
@@ -329,13 +327,11 @@ Should only be set if protocol is "NFS_V4_1".`,
 									"domain": {
 										Type:        schema.TypeString,
 										Required:    true,
-										ForceNew:    true,
 										Description: `The LDAP domain name in the format of 'my-domain.com'.`,
 									},
 									"servers": {
 										Type:     schema.TypeList,
 										Required: true,
-										ForceNew: true,
 										Description: `The servers names are used for specifying the LDAP servers names.
 The LDAP servers names can come with two formats:
 1. DNS name, for example: 'ldap.example1.com', 'ldap.example2.com'.
@@ -349,7 +345,6 @@ IP addresses.`,
 									"groups_ou": {
 										Type:     schema.TypeString,
 										Optional: true,
-										ForceNew: true,
 										Description: `The groups Organizational Unit (OU) is optional. This parameter is a hint
 to allow faster lookup in the LDAP namespace. In case that this parameter
 is not provided, Filestore instance will query the whole LDAP namespace.`,
@@ -357,7 +352,6 @@ is not provided, Filestore instance will query the whole LDAP namespace.`,
 									"users_ou": {
 										Type:     schema.TypeString,
 										Optional: true,
-										ForceNew: true,
 										Description: `The users Organizational Unit (OU) is optional. This parameter is a hint
 to allow faster lookup in the LDAP namespace. In case that this parameter
 is not provided, Filestore instance will query the whole LDAP namespace.`,
@@ -896,6 +890,12 @@ func resourceFilestoreInstanceUpdate(d *schema.ResourceData, meta interface{}) e
 	} else if v, ok := d.GetOkExists("performance_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, performanceConfigProp)) {
 		obj["performanceConfig"] = performanceConfigProp
 	}
+	directoryServicesProp, err := expandFilestoreInstanceDirectoryServices(d.Get("directory_services"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("directory_services"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, directoryServicesProp)) {
+		obj["directoryServices"] = directoryServicesProp
+	}
 	effectiveLabelsProp, err := expandFilestoreInstanceEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
@@ -930,6 +930,10 @@ func resourceFilestoreInstanceUpdate(d *schema.ResourceData, meta interface{}) e
 
 	if d.HasChange("performance_config") {
 		updateMask = append(updateMask, "performanceConfig")
+	}
+
+	if d.HasChange("directory_services") {
+		updateMask = append(updateMask, "directoryServices")
 	}
 
 	if d.HasChange("effective_labels") {
