@@ -59,7 +59,7 @@ func TestAccServiceDirectoryService_serviceDirectoryServiceBasicExample(t *testi
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckServiceDirectoryServiceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -84,13 +84,11 @@ func TestAccServiceDirectoryService_serviceDirectoryServiceBasicExample(t *testi
 func testAccServiceDirectoryService_serviceDirectoryServiceBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_service_directory_namespace" "example" {
-  provider     = google-beta
   namespace_id = "tf-test-example-namespace%{random_suffix}"
   location     = "us-central1"
 }
 
 resource "google_service_directory_service" "example" {
-  provider   = google-beta
   service_id = "tf-test-example-service%{random_suffix}"
   namespace  = google_service_directory_namespace.example.id
 

@@ -205,6 +205,11 @@ func resourceServiceDirectoryEndpointCreate(d *schema.ResourceData, meta interfa
 		obj["network"] = networkProp
 	}
 
+	obj, err = resourceServiceDirectoryEndpointEncoder(d, meta, obj)
+	if err != nil {
+		return err
+	}
+
 	url, err := tpgresource.ReplaceVars(d, config, "{{ServiceDirectoryBasePath}}{{service}}/endpoints?endpointId={{endpoint_id}}")
 	if err != nil {
 		return err
@@ -283,6 +288,18 @@ func resourceServiceDirectoryEndpointRead(d *schema.ResourceData, meta interface
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("ServiceDirectoryEndpoint %q", d.Id()))
 	}
 
+	res, err = resourceServiceDirectoryEndpointDecoder(d, meta, res)
+	if err != nil {
+		return err
+	}
+
+	if res == nil {
+		// Decoding the object has resulted in it being gone. It may be marked deleted
+		log.Printf("[DEBUG] Removing ServiceDirectoryEndpoint because it no longer exists.")
+		d.SetId("")
+		return nil
+	}
+
 	if err := d.Set("name", flattenServiceDirectoryEndpointName(res["name"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Endpoint: %s", err)
 	}
@@ -348,6 +365,11 @@ func resourceServiceDirectoryEndpointUpdate(d *schema.ResourceData, meta interfa
 		obj["metadata"] = metadataProp
 	}
 
+	obj, err = resourceServiceDirectoryEndpointEncoder(d, meta, obj)
+	if err != nil {
+		return err
+	}
+
 	url, err := tpgresource.ReplaceVars(d, config, "{{ServiceDirectoryBasePath}}{{name}}")
 	if err != nil {
 		return err
@@ -366,7 +388,7 @@ func resourceServiceDirectoryEndpointUpdate(d *schema.ResourceData, meta interfa
 	}
 
 	if d.HasChange("metadata") {
-		updateMask = append(updateMask, "metadata")
+		updateMask = append(updateMask, "annotations")
 	}
 	// updateMask is a URL parameter but not present in the schema, so ReplaceVars
 	// won't set it
@@ -560,8 +582,32 @@ func expandServiceDirectoryEndpointNetwork(v interface{}, d tpgresource.Terrafor
 	return v, nil
 }
 
+func resourceServiceDirectoryEndpointEncoder(d *schema.ResourceData, meta interface{}, obj map[string]interface{}) (map[string]interface{}, error) {
+	if obj["metadata"] == nil {
+		return nil, nil
+	}
+
+	obj["annotations"] = obj["metadata"].(map[string]string)
+	delete(obj, "metadata")
+	return obj, nil
+}
+
+func resourceServiceDirectoryEndpointDecoder(d *schema.ResourceData, meta interface{}, res map[string]interface{}) (map[string]interface{}, error) {
+	if _, ok := res["annotations"]; ok {
+		res["metadata"] = res["annotations"].(map[string]interface{})
+		delete(res, "annotations")
+	}
+	return res, nil
+}
 func resourceServiceDirectoryEndpointPostCreateSetComputedFields(d *schema.ResourceData, meta interface{}, res map[string]interface{}) error {
 	config := meta.(*transport_tpg.Config)
+	res, err := resourceServiceDirectoryEndpointDecoder(d, meta, res)
+	if err != nil {
+		return fmt.Errorf("decoding response: %w", err)
+	}
+	if res == nil {
+		return fmt.Errorf("decoding response, could not find object")
+	}
 	if err := d.Set("name", flattenServiceDirectoryEndpointName(res["name"], d, config)); err != nil {
 		return fmt.Errorf(`Error setting computed identity field "name": %s`, err)
 	}
