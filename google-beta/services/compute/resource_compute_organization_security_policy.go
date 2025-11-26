@@ -130,11 +130,13 @@ Format: organizations/{organization_id} or folders/{folder_id}`,
 			},
 			"type": {
 				Type:         schema.TypeString,
+				Computed:     true,
 				Optional:     true,
 				ForceNew:     true,
 				ValidateFunc: verify.ValidateEnum([]string{"FIREWALL", "CLOUD_ARMOR", "CLOUD_ARMOR_EDGE", "CLOUD_ARMOR_INTERNAL_SERVICE", "CLOUD_ARMOR_NETWORK", ""}),
-				Description:  `The type indicates the intended use of the security policy. This field can be set only at resource creation time. Default value: "FIREWALL" Possible values: ["FIREWALL", "CLOUD_ARMOR", "CLOUD_ARMOR_EDGE", "CLOUD_ARMOR_INTERNAL_SERVICE", "CLOUD_ARMOR_NETWORK"]`,
-				Default:      "FIREWALL",
+				Description: `The type indicates the intended use of the security policy. This field can be set only at resource creation time.
+
+**NOTE** : 'FIREWALL' type is deprecated and will be removed in a future major release. Please use 'google_compute_firewall_policy' instead." Possible values: ["FIREWALL", "CLOUD_ARMOR", "CLOUD_ARMOR_EDGE", "CLOUD_ARMOR_INTERNAL_SERVICE", "CLOUD_ARMOR_NETWORK"]`,
 			},
 			"fingerprint": {
 				Type:     schema.TypeString,
