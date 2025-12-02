@@ -1767,7 +1767,6 @@ resource "google_cloud_run_v2_service" "default" {
     generated-by = "magic-modules"
   }
   ingress = "INGRESS_TRAFFIC_ALL"
-  launch_stage = "BETA"
   scaling {
     scaling_mode = "MANUAL"
     manual_instance_count = 2
@@ -1792,7 +1791,6 @@ resource "google_cloud_run_v2_service" "default" {
     generated-by = "magic-modules"
   }
   ingress = "INGRESS_TRAFFIC_ALL"
-  launch_stage = "BETA"
   scaling {
     scaling_mode = "MANUAL"
     manual_instance_count = 10
