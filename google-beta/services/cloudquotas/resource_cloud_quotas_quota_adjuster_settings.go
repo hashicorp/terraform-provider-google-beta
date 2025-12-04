@@ -118,14 +118,18 @@ func ResourceCloudQuotasQuotaAdjusterSettings() *schema.Resource {
 				Description: `The parent of the quota preference. Allowed parent format is "projects/[project-id / number]".`,
 			},
 			"effective_container": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: `The resource container that determines if the quota adjuster is set for this project.`,
+				Type:       schema.TypeString,
+				Computed:   true,
+				Deprecated: "`effectiveContainer` is deprecated and will be removed in a future major release. Use `inherited_from` instead.",
+				Description: `The resource container that determines if the quota adjuster is set for this project.
+Expect this field to be empty currently.`,
 			},
 			"effective_enablement": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: `Based on the effective container's setting above, determines Whether this resource container has the quota adjuster enabled.`,
+				Type:       schema.TypeString,
+				Computed:   true,
+				Deprecated: "`effectiveEnablement` is deprecated and will be removed in a future major release. Use `inherited` instead.",
+				Description: `Based on the effective container's setting above, determines Whether this resource container has the quota adjuster enabled.
+Expect this field to be empty currently.`,
 			},
 			"inherited": {
 				Type:        schema.TypeBool,
