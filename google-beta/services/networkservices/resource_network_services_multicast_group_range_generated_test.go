@@ -50,7 +50,7 @@ var (
 	_ = googleapi.Error{}
 )
 
-func TestAccNetworkServicesServiceBinding_networkServicesServiceBindingBasicExample(t *testing.T) {
+func TestAccNetworkServicesMulticastGroupRange_networkServicesMulticastGroupRangeBasicExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
@@ -60,19 +60,19 @@ func TestAccNetworkServicesServiceBinding_networkServicesServiceBindingBasicExam
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
-		CheckDestroy:             testAccCheckNetworkServicesServiceBindingDestroyProducer(t),
+		CheckDestroy:             testAccCheckNetworkServicesMulticastGroupRangeDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccNetworkServicesServiceBinding_networkServicesServiceBindingBasicExample(context),
+				Config: testAccNetworkServicesMulticastGroupRange_networkServicesMulticastGroupRangeBasicExample(context),
 			},
 			{
-				ResourceName:            "google_network_services_service_binding.default",
+				ResourceName:            "google_network_services_multicast_group_range.mgr_test",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"labels", "name", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"labels", "location", "multicast_group_range_id", "terraform_labels"},
 			},
 			{
-				ResourceName:       "google_network_services_service_binding.default",
+				ResourceName:       "google_network_services_multicast_group_range.mgr_test",
 				RefreshState:       true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
@@ -81,38 +81,43 @@ func TestAccNetworkServicesServiceBinding_networkServicesServiceBindingBasicExam
 	})
 }
 
-func testAccNetworkServicesServiceBinding_networkServicesServiceBindingBasicExample(context map[string]interface{}) string {
+func testAccNetworkServicesMulticastGroupRange_networkServicesMulticastGroupRangeBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
-resource "google_service_directory_namespace" "default" {
-  namespace_id = "tf-test-my-namespace%{random_suffix}"
-  location     = "us-central1"
+resource "google_compute_network" "network" {
+  name                    = "tf-test-test-mgr-network%{random_suffix}"
+  auto_create_subnetworks = false
 }
 
-resource "google_service_directory_service" "default" {
-  service_id = "tf-test-my-service%{random_suffix}"
-  namespace  = google_service_directory_namespace.default.id
-
-  metadata = {
-    stage  = "prod"
-    region = "us-central1"
-  }
+resource "google_network_services_multicast_domain" "multicast_domain" {
+  multicast_domain_id                    = "tf-test-test-mgr-domain%{random_suffix}"
+  location = "global"
+  admin_network = google_compute_network.network.id
+  connection_config  { connection_type="SAME_VPC"}
+  depends_on = [google_compute_network.network]
 }
 
-resource "google_network_services_service_binding" "default" {
-  name        = "tf-test-my-service-binding%{random_suffix}"
-  labels      = {
-    foo = "bar"
-  }
-  description = "my description"
-  service = google_service_directory_service.default.id
+resource "google_network_connectivity_internal_range" "internal_range" {
+  name    = "tf-test-test-mgr-internal-range%{random_suffix}"
+  network = google_compute_network.network.self_link
+  usage   = "FOR_VPC"
+  peering = "FOR_SELF"
+  ip_cidr_range = "224.2.0.2/32"
+}
+
+resource "google_network_services_multicast_group_range" mgr_test {
+  multicast_group_range_id                   = "tf-test-test-mgr-group-range%{random_suffix}"
+  location = "global"
+  reserved_internal_range = google_network_connectivity_internal_range.internal_range.id
+  multicast_domain = google_network_services_multicast_domain.multicast_domain.id
+  distribution_scope = "INTRA_ZONE"
 }
 `, context)
 }
 
-func testAccCheckNetworkServicesServiceBindingDestroyProducer(t *testing.T) func(s *terraform.State) error {
+func testAccCheckNetworkServicesMulticastGroupRangeDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		for name, rs := range s.RootModule().Resources {
-			if rs.Type != "google_network_services_service_binding" {
+			if rs.Type != "google_network_services_multicast_group_range" {
 				continue
 			}
 			if strings.HasPrefix(name, "data.") {
@@ -121,7 +126,7 @@ func testAccCheckNetworkServicesServiceBindingDestroyProducer(t *testing.T) func
 
 			config := acctest.GoogleProviderConfig(t)
 
-			url, err := tpgresource.ReplaceVarsForTest(config, rs, "{{NetworkServicesBasePath}}projects/{{project}}/locations/global/serviceBindings/{{name}}")
+			url, err := tpgresource.ReplaceVarsForTest(config, rs, "{{NetworkServicesBasePath}}projects/{{project}}/locations/{{location}}/multicastGroupRanges/{{multicast_group_range_id}}")
 			if err != nil {
 				return err
 			}
@@ -140,7 +145,7 @@ func testAccCheckNetworkServicesServiceBindingDestroyProducer(t *testing.T) func
 				UserAgent: config.UserAgent,
 			})
 			if err == nil {
-				return fmt.Errorf("NetworkServicesServiceBinding still exists at %s", url)
+				return fmt.Errorf("NetworkServicesMulticastGroupRange still exists at %s", url)
 			}
 		}
 

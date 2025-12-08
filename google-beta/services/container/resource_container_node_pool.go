@@ -255,8 +255,9 @@ var schemaBlueGreenSettings = &schema.Schema{
 	Elem: &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"standard_rollout_policy": {
-				Type:        schema.TypeList,
-				Required:    true,
+				Type: schema.TypeList,
+
+				Optional:    true,
 				MaxItems:    1,
 				Description: `Standard rollout policy is the default policy for blue-green.`,
 				Elem: &schema.Resource{
@@ -288,6 +289,22 @@ var schemaBlueGreenSettings = &schema.Schema{
 				Optional:    true,
 				Computed:    true,
 				Description: `Time needed after draining entire blue pool. After this period, blue pool will be cleaned up.`,
+			},
+			"autoscaled_rollout_policy": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				MaxItems:    1,
+				Description: `Autoscaled rollout policy for blue-green upgrade.`,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"wait_for_drain_duration": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Computed:    true,
+							Description: `Time in seconds to wait after cordoning the blue pool before draining the nodes.`,
+						},
+					},
+				},
 			},
 		},
 	},
@@ -1214,6 +1231,12 @@ func expandNodePool(d *schema.ResourceData, prefix string) (*container.NodePool,
 				return nil, fmt.Errorf("Blue-green upgrade settings may not be changed when blue-green strategy is not enabled")
 			}
 
+			if _, ok1 := blueGreenSettingsConfig["standard_rollout_policy"]; ok1 {
+				if _, ok2 := blueGreenSettingsConfig["autoscaled_rollout_policy"]; ok2 {
+					return nil, fmt.Errorf("`standard_rollout_policy` and `autoscaled_rollout_policy` cannot be set at the same time")
+				}
+			}
+
 			if v, ok := blueGreenSettingsConfig["node_pool_soak_duration"]; ok {
 				np.UpgradeSettings.BlueGreenSettings.NodePoolSoakDuration = v.(string)
 			}
@@ -1233,6 +1256,15 @@ func expandNodePool(d *schema.ResourceData, prefix string) (*container.NodePool,
 				}
 
 				np.UpgradeSettings.BlueGreenSettings.StandardRolloutPolicy = standardRolloutPolicy
+			}
+			if v, ok := blueGreenSettingsConfig["autoscaled_rollout_policy"]; ok && len(v.([]interface{})) > 0 {
+				autoscaledRolloutPolicyConfig := v.([]interface{})[0].(map[string]interface{})
+				autoscaledRolloutPolicy := &container.AutoscaledRolloutPolicy{}
+
+				if v, ok := autoscaledRolloutPolicyConfig["wait_for_drain_duration"]; ok {
+					autoscaledRolloutPolicy.WaitForDrainDuration = v.(string)
+				}
+				np.UpgradeSettings.BlueGreenSettings.AutoscaledRolloutPolicy = autoscaledRolloutPolicy
 			}
 		}
 	}
@@ -1254,14 +1286,27 @@ func flattenNodePoolStandardRolloutPolicy(rp *container.StandardRolloutPolicy) [
 	}
 }
 
+func flattenNodePoolAutoscaledRolloutPolicy(rp *container.AutoscaledRolloutPolicy) []map[string]interface{} {
+	if rp == nil {
+		return nil
+	}
+
+	return []map[string]interface{}{
+		{
+			"wait_for_drain_duration": rp.WaitForDrainDuration,
+		},
+	}
+}
+
 func flattenNodePoolBlueGreenSettings(bg *container.BlueGreenSettings) []map[string]interface{} {
 	if bg == nil {
 		return nil
 	}
 	return []map[string]interface{}{
 		{
-			"node_pool_soak_duration": bg.NodePoolSoakDuration,
-			"standard_rollout_policy": flattenNodePoolStandardRolloutPolicy(bg.StandardRolloutPolicy),
+			"node_pool_soak_duration":   bg.NodePoolSoakDuration,
+			"standard_rollout_policy":   flattenNodePoolStandardRolloutPolicy(bg.StandardRolloutPolicy),
+			"autoscaled_rollout_policy": flattenNodePoolAutoscaledRolloutPolicy(bg.AutoscaledRolloutPolicy),
 		},
 	}
 }
@@ -1758,6 +1803,15 @@ func nodePoolUpdate(d *schema.ResourceData, meta interface{}, nodePoolInfo *Node
 						}
 					}
 					blueGreenSettings.StandardRolloutPolicy = standardRolloutPolicy
+				}
+				if v, ok := blueGreenSettingsConfig["autoscaled_rollout_policy"]; ok && len(v.([]interface{})) > 0 {
+					autoscaledRolloutPolicy := &container.AutoscaledRolloutPolicy{}
+					if autoscaledRolloutPolicyConfig, ok := v.([]interface{})[0].(map[string]interface{}); ok {
+						if v, ok := autoscaledRolloutPolicyConfig["wait_for_drain_duration"]; ok {
+							autoscaledRolloutPolicy.WaitForDrainDuration = v.(string)
+						}
+					}
+					blueGreenSettings.AutoscaledRolloutPolicy = autoscaledRolloutPolicy
 				}
 				upgradeSettings.BlueGreenSettings = blueGreenSettings
 			}

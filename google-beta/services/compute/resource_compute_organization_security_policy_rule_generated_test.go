@@ -85,9 +85,10 @@ func TestAccComputeOrganizationSecurityPolicyRule_organizationSecurityPolicyRule
 func testAccComputeOrganizationSecurityPolicyRule_organizationSecurityPolicyRuleBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_organization_security_policy" "policy" {
-  provider = google-beta
+  provider     = google-beta
   display_name = "tf-test%{random_suffix}"
   parent       = "organizations/%{org_id}"
+  type         = "FIREWALL"
 }
 
 resource "google_compute_organization_security_policy_rule" "policy" {

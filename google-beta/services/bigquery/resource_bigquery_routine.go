@@ -202,6 +202,51 @@ the schema as returned by the API.`,
 				ValidateFunc: verify.ValidateEnum([]string{"DETERMINISM_LEVEL_UNSPECIFIED", "DETERMINISTIC", "NOT_DETERMINISTIC", ""}),
 				Description:  `The determinism level of the JavaScript UDF if defined. Possible values: ["DETERMINISM_LEVEL_UNSPECIFIED", "DETERMINISTIC", "NOT_DETERMINISTIC"]`,
 			},
+			"external_runtime_options": {
+				Type:     schema.TypeList,
+				Optional: true,
+				Description: `Options for the runtime of the external system.
+This field is only applicable for Python UDFs.`,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"container_cpu": {
+							Type:     schema.TypeFloat,
+							Optional: true,
+							Description: `Amount of CPU provisioned for a Python UDF container instance. For more
+information, see [Configure container limits for Python
+UDFs](https://cloud.google.com/bigquery/docs/user-defined-functions-python#configure-container-limits)`,
+						},
+						"container_memory": {
+							Type:     schema.TypeString,
+							Optional: true,
+							Description: `Amount of memory provisioned for a Python UDF container instance. Format:
+{number}{unit} where unit is one of "M", "G", "Mi" and "Gi" (e.g. 1G,
+512Mi). If not specified, the default value is 512Mi. For more information,
+see [Configure container limits for Python
+UDFs](https://cloud.google.com/bigquery/docs/user-defined-functions-python#configure-container-limits)`,
+						},
+						"max_batching_rows": {
+							Type:     schema.TypeString,
+							Optional: true,
+							Description: `Maximum number of rows in each batch sent to the external runtime. If
+absent or if 0, BigQuery dynamically decides the number of rows in a batch.`,
+						},
+						"runtime_connection": {
+							Type:     schema.TypeString,
+							Optional: true,
+							Description: `Fully qualified name of the connection whose service account will be used
+to execute the code in the container. Format:
+'"projects/{project_id}/locations/{location_id}/connections/{connection_id}"'`,
+						},
+						"runtime_version": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: `Language runtime version. Example: 'python-3.11'.`,
+						},
+					},
+				},
+			},
 			"imported_libraries": {
 				Type:     schema.TypeList,
 				Optional: true,
@@ -216,6 +261,33 @@ imported JAVASCRIPT libraries.`,
 				Optional:     true,
 				ValidateFunc: verify.ValidateEnum([]string{"SQL", "JAVASCRIPT", "PYTHON", "JAVA", "SCALA", ""}),
 				Description:  `The language of the routine. Possible values: ["SQL", "JAVASCRIPT", "PYTHON", "JAVA", "SCALA"]`,
+			},
+			"python_options": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: `Options for a user-defined Python function.`,
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"entry_point": {
+							Type:     schema.TypeString,
+							Required: true,
+							Description: `The name of the function defined in Python code as the entry point when the
+Python UDF is invoked.`,
+						},
+						"packages": {
+							Type:     schema.TypeList,
+							Optional: true,
+							Description: `A list of Python package names along with versions to be installed.
+Example: ["pandas>=2.1", "google-cloud-translate==3.11"]. For more
+information, see [Use third-party
+packages](https://cloud.google.com/bigquery/docs/user-defined-functions-python#third-party-packages).`,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+						},
+					},
+				},
 			},
 			"remote_function_options": {
 				Type:        schema.TypeList,
@@ -489,6 +561,18 @@ func resourceBigQueryRoutineCreate(d *schema.ResourceData, meta interface{}) err
 	} else if v, ok := d.GetOkExists("remote_function_options"); !tpgresource.IsEmptyValue(reflect.ValueOf(remoteFunctionOptionsProp)) && (ok || !reflect.DeepEqual(v, remoteFunctionOptionsProp)) {
 		obj["remoteFunctionOptions"] = remoteFunctionOptionsProp
 	}
+	pythonOptionsProp, err := expandBigQueryRoutinePythonOptions(d.Get("python_options"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("python_options"); !tpgresource.IsEmptyValue(reflect.ValueOf(pythonOptionsProp)) && (ok || !reflect.DeepEqual(v, pythonOptionsProp)) {
+		obj["pythonOptions"] = pythonOptionsProp
+	}
+	externalRuntimeOptionsProp, err := expandBigQueryRoutineExternalRuntimeOptions(d.Get("external_runtime_options"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("external_runtime_options"); !tpgresource.IsEmptyValue(reflect.ValueOf(externalRuntimeOptionsProp)) && (ok || !reflect.DeepEqual(v, externalRuntimeOptionsProp)) {
+		obj["externalRuntimeOptions"] = externalRuntimeOptionsProp
+	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{BigQueryBasePath}}projects/{{project}}/datasets/{{dataset_id}}/routines")
 	if err != nil {
@@ -638,6 +722,12 @@ func resourceBigQueryRoutineRead(d *schema.ResourceData, meta interface{}) error
 	if err := d.Set("remote_function_options", flattenBigQueryRoutineRemoteFunctionOptions(res["remoteFunctionOptions"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Routine: %s", err)
 	}
+	if err := d.Set("python_options", flattenBigQueryRoutinePythonOptions(res["pythonOptions"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Routine: %s", err)
+	}
+	if err := d.Set("external_runtime_options", flattenBigQueryRoutineExternalRuntimeOptions(res["externalRuntimeOptions"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Routine: %s", err)
+	}
 
 	identity, err := d.Identity()
 	if err != nil && identity != nil {
@@ -752,6 +842,18 @@ func resourceBigQueryRoutineUpdate(d *schema.ResourceData, meta interface{}) err
 		return err
 	} else if v, ok := d.GetOkExists("remote_function_options"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, remoteFunctionOptionsProp)) {
 		obj["remoteFunctionOptions"] = remoteFunctionOptionsProp
+	}
+	pythonOptionsProp, err := expandBigQueryRoutinePythonOptions(d.Get("python_options"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("python_options"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, pythonOptionsProp)) {
+		obj["pythonOptions"] = pythonOptionsProp
+	}
+	externalRuntimeOptionsProp, err := expandBigQueryRoutineExternalRuntimeOptions(d.Get("external_runtime_options"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("external_runtime_options"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, externalRuntimeOptionsProp)) {
+		obj["externalRuntimeOptions"] = externalRuntimeOptionsProp
 	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{BigQueryBasePath}}projects/{{project}}/datasets/{{dataset_id}}/routines/{{routine_id}}")
@@ -1119,6 +1221,70 @@ func flattenBigQueryRoutineRemoteFunctionOptionsMaxBatchingRows(v interface{}, d
 	return v
 }
 
+func flattenBigQueryRoutinePythonOptions(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["entry_point"] =
+		flattenBigQueryRoutinePythonOptionsEntryPoint(original["entryPoint"], d, config)
+	transformed["packages"] =
+		flattenBigQueryRoutinePythonOptionsPackages(original["packages"], d, config)
+	return []interface{}{transformed}
+}
+func flattenBigQueryRoutinePythonOptionsEntryPoint(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenBigQueryRoutinePythonOptionsPackages(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenBigQueryRoutineExternalRuntimeOptions(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["container_memory"] =
+		flattenBigQueryRoutineExternalRuntimeOptionsContainerMemory(original["containerMemory"], d, config)
+	transformed["container_cpu"] =
+		flattenBigQueryRoutineExternalRuntimeOptionsContainerCpu(original["containerCpu"], d, config)
+	transformed["runtime_connection"] =
+		flattenBigQueryRoutineExternalRuntimeOptionsRuntimeConnection(original["runtimeConnection"], d, config)
+	transformed["max_batching_rows"] =
+		flattenBigQueryRoutineExternalRuntimeOptionsMaxBatchingRows(original["maxBatchingRows"], d, config)
+	transformed["runtime_version"] =
+		flattenBigQueryRoutineExternalRuntimeOptionsRuntimeVersion(original["runtimeVersion"], d, config)
+	return []interface{}{transformed}
+}
+func flattenBigQueryRoutineExternalRuntimeOptionsContainerMemory(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenBigQueryRoutineExternalRuntimeOptionsContainerCpu(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenBigQueryRoutineExternalRuntimeOptionsRuntimeConnection(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenBigQueryRoutineExternalRuntimeOptionsMaxBatchingRows(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenBigQueryRoutineExternalRuntimeOptionsRuntimeVersion(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func expandBigQueryRoutineRoutineReference(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 
 	transformed := make(map[string]interface{})
@@ -1451,5 +1617,112 @@ func expandBigQueryRoutineRemoteFunctionOptionsUserDefinedContext(v interface{},
 }
 
 func expandBigQueryRoutineRemoteFunctionOptionsMaxBatchingRows(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandBigQueryRoutinePythonOptions(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedEntryPoint, err := expandBigQueryRoutinePythonOptionsEntryPoint(original["entry_point"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedEntryPoint); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["entryPoint"] = transformedEntryPoint
+	}
+
+	transformedPackages, err := expandBigQueryRoutinePythonOptionsPackages(original["packages"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedPackages); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["packages"] = transformedPackages
+	}
+
+	return transformed, nil
+}
+
+func expandBigQueryRoutinePythonOptionsEntryPoint(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandBigQueryRoutinePythonOptionsPackages(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandBigQueryRoutineExternalRuntimeOptions(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedContainerMemory, err := expandBigQueryRoutineExternalRuntimeOptionsContainerMemory(original["container_memory"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedContainerMemory); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["containerMemory"] = transformedContainerMemory
+	}
+
+	transformedContainerCpu, err := expandBigQueryRoutineExternalRuntimeOptionsContainerCpu(original["container_cpu"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedContainerCpu); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["containerCpu"] = transformedContainerCpu
+	}
+
+	transformedRuntimeConnection, err := expandBigQueryRoutineExternalRuntimeOptionsRuntimeConnection(original["runtime_connection"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedRuntimeConnection); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["runtimeConnection"] = transformedRuntimeConnection
+	}
+
+	transformedMaxBatchingRows, err := expandBigQueryRoutineExternalRuntimeOptionsMaxBatchingRows(original["max_batching_rows"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedMaxBatchingRows); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["maxBatchingRows"] = transformedMaxBatchingRows
+	}
+
+	transformedRuntimeVersion, err := expandBigQueryRoutineExternalRuntimeOptionsRuntimeVersion(original["runtime_version"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedRuntimeVersion); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["runtimeVersion"] = transformedRuntimeVersion
+	}
+
+	return transformed, nil
+}
+
+func expandBigQueryRoutineExternalRuntimeOptionsContainerMemory(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandBigQueryRoutineExternalRuntimeOptionsContainerCpu(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandBigQueryRoutineExternalRuntimeOptionsRuntimeConnection(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandBigQueryRoutineExternalRuntimeOptionsMaxBatchingRows(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandBigQueryRoutineExternalRuntimeOptionsRuntimeVersion(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
