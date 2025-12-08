@@ -1894,7 +1894,6 @@ resource "google_cloud_run_service" "default" {
     namespace = "%s"
     annotations = {
       generated-by = "magic-modules"
-      "run.googleapis.com/launch-stage": "BETA"
       "run.googleapis.com/scalingMode": "manual"
       "run.googleapis.com/manualInstanceCount": "2"
     }
@@ -1921,7 +1920,6 @@ resource "google_cloud_run_service" "default" {
     namespace = "%s"
     annotations = {
       generated-by = "magic-modules"
-      "run.googleapis.com/launch-stage": "BETA"
       "run.googleapis.com/scalingMode": "manual"
       "run.googleapis.com/manualInstanceCount": "5"
 

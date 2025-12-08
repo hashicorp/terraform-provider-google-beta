@@ -461,6 +461,75 @@ resource "google_bigquery_routine" "custom_masking_routine" {
 `, context)
 }
 
+func TestAccBigQueryRoutine_bigqueryRoutinePythonFunctionExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckBigQueryRoutineDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccBigQueryRoutine_bigqueryRoutinePythonFunctionExample(context),
+			},
+			{
+				ResourceName:      "google_bigquery_routine.python_function",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
+				ResourceName:       "google_bigquery_routine.python_function",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
+		},
+	})
+}
+
+func testAccBigQueryRoutine_bigqueryRoutinePythonFunctionExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_bigquery_dataset" "test" {
+  provider = google-beta
+  dataset_id = "tf_test_dataset_id%{random_suffix}"
+}
+
+resource "google_bigquery_routine" "python_function" {
+  provider = google-beta
+  dataset_id = google_bigquery_dataset.test.dataset_id
+  routine_id = "tf_test_routine_id%{random_suffix}"
+  routine_type = "SCALAR_FUNCTION"
+  language = "PYTHON"
+  arguments {
+    name = "x"
+    data_type = "{\"typeKind\" :  \"FLOAT64\"}"
+  }
+  arguments {
+    name = "y"
+    data_type = "{\"typeKind\" :  \"FLOAT64\"}"
+  }
+  definition_body = <<-EOS
+    def multiply(x, y):
+      return x * y
+  EOS
+  return_type = "{\"typeKind\" :  \"FLOAT64\"}"
+  python_options {
+    entry_point = "multiply"
+  }
+  external_runtime_options {
+    container_memory = "512Mi"
+    container_cpu = 0.5
+    runtime_version = "python-3.11"
+  }
+
+}
+`, context)
+}
+
 func testAccCheckBigQueryRoutineDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		for name, rs := range s.RootModule().Resources {
