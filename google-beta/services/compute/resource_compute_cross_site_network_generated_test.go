@@ -60,7 +60,7 @@ func TestAccComputeCrossSiteNetwork_computeCrossSiteNetworkBasicExample(t *testi
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeCrossSiteNetworkDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -78,13 +78,11 @@ func TestAccComputeCrossSiteNetwork_computeCrossSiteNetworkBasicExample(t *testi
 func testAccComputeCrossSiteNetwork_computeCrossSiteNetworkBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 data "google_project" "project" {
-  provider = google-beta
 }
 
 resource "google_compute_cross_site_network" "example-cross-site-network" {
   name                 = "tf-test-test-cross-site-network%{random_suffix}"
   description         = "Example cross site network%{random_suffix}"
-  provider = google-beta
 }
 `, context)
 }
