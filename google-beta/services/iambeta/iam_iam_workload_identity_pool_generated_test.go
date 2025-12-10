@@ -25,6 +25,7 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
@@ -60,7 +61,7 @@ func TestAccIAMBetaWorkloadIdentityPoolIamBindingGenerated(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_iam_workload_identity_pool_iam_binding.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/locations/global/workloadIdentityPools/%s roles/iam.workloadIdentityPoolViewer", envvar.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-example-pool%s", context["random_suffix"])),
+				ImportStateIdFunc: generateIAMBetaWorkloadIdentityPoolIAMBindingStateID("google_iam_workload_identity_pool_iam_binding.foo"),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -70,7 +71,7 @@ func TestAccIAMBetaWorkloadIdentityPoolIamBindingGenerated(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_iam_workload_identity_pool_iam_binding.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/locations/global/workloadIdentityPools/%s roles/iam.workloadIdentityPoolViewer", envvar.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-example-pool%s", context["random_suffix"])),
+				ImportStateIdFunc: generateIAMBetaWorkloadIdentityPoolIAMBindingStateID("google_iam_workload_identity_pool_iam_binding.foo"),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -101,7 +102,7 @@ func TestAccIAMBetaWorkloadIdentityPoolIamMemberGenerated(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_iam_workload_identity_pool_iam_member.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/locations/global/workloadIdentityPools/%s roles/iam.workloadIdentityPoolViewer user:admin@hashicorptest.com", envvar.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-example-pool%s", context["random_suffix"])),
+				ImportStateIdFunc: generateIAMBetaWorkloadIdentityPoolIAMMemberStateID("google_iam_workload_identity_pool_iam_member.foo"),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -132,7 +133,7 @@ func TestAccIAMBetaWorkloadIdentityPoolIamPolicyGenerated(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_iam_workload_identity_pool_iam_policy.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/locations/global/workloadIdentityPools/%s", envvar.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-example-pool%s", context["random_suffix"])),
+				ImportStateIdFunc: generateIAMBetaWorkloadIdentityPoolIAMPolicyStateID("google_iam_workload_identity_pool_iam_policy.foo"),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -141,7 +142,7 @@ func TestAccIAMBetaWorkloadIdentityPoolIamPolicyGenerated(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_iam_workload_identity_pool_iam_policy.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/locations/global/workloadIdentityPools/%s", envvar.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-example-pool%s", context["random_suffix"])),
+				ImportStateIdFunc: generateIAMBetaWorkloadIdentityPoolIAMPolicyStateID("google_iam_workload_identity_pool_iam_policy.foo"),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -171,7 +172,7 @@ func TestAccIAMBetaWorkloadIdentityPoolIamBindingGenerated_withCondition(t *test
 			},
 			{
 				ResourceName:      "google_iam_workload_identity_pool_iam_binding.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/locations/global/workloadIdentityPools/%s roles/iam.workloadIdentityPoolViewer %s", envvar.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-example-pool%s", context["random_suffix"]), context["condition_title"]),
+				ImportStateIdFunc: generateIAMBetaWorkloadIdentityPoolIAMBindingStateID("google_iam_workload_identity_pool_iam_binding.foo"),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -203,19 +204,19 @@ func TestAccIAMBetaWorkloadIdentityPoolIamBindingGenerated_withAndWithoutConditi
 			},
 			{
 				ResourceName:      "google_iam_workload_identity_pool_iam_binding.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/locations/global/workloadIdentityPools/%s roles/iam.workloadIdentityPoolViewer", envvar.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-example-pool%s", context["random_suffix"])),
+				ImportStateIdFunc: generateIAMBetaWorkloadIdentityPoolIAMBindingStateID("google_iam_workload_identity_pool_iam_binding.foo"),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
 			{
 				ResourceName:      "google_iam_workload_identity_pool_iam_binding.foo2",
-				ImportStateId:     fmt.Sprintf("projects/%s/locations/global/workloadIdentityPools/%s roles/iam.workloadIdentityPoolViewer %s", envvar.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-example-pool%s", context["random_suffix"]), context["condition_title"]),
+				ImportStateIdFunc: generateIAMBetaWorkloadIdentityPoolIAMBindingStateID("google_iam_workload_identity_pool_iam_binding.foo2"),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
 			{
 				ResourceName:      "google_iam_workload_identity_pool_iam_binding.foo3",
-				ImportStateId:     fmt.Sprintf("projects/%s/locations/global/workloadIdentityPools/%s roles/iam.workloadIdentityPoolViewer %s", envvar.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-example-pool%s", context["random_suffix"]), context["condition_title_no_desc"]),
+				ImportStateIdFunc: generateIAMBetaWorkloadIdentityPoolIAMBindingStateID("google_iam_workload_identity_pool_iam_binding.foo3"),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -245,7 +246,7 @@ func TestAccIAMBetaWorkloadIdentityPoolIamMemberGenerated_withCondition(t *testi
 			},
 			{
 				ResourceName:      "google_iam_workload_identity_pool_iam_member.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/locations/global/workloadIdentityPools/%s roles/iam.workloadIdentityPoolViewer user:admin@hashicorptest.com %s", envvar.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-example-pool%s", context["random_suffix"]), context["condition_title"]),
+				ImportStateIdFunc: generateIAMBetaWorkloadIdentityPoolIAMMemberStateID("google_iam_workload_identity_pool_iam_member.foo"),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -277,19 +278,19 @@ func TestAccIAMBetaWorkloadIdentityPoolIamMemberGenerated_withAndWithoutConditio
 			},
 			{
 				ResourceName:      "google_iam_workload_identity_pool_iam_member.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/locations/global/workloadIdentityPools/%s roles/iam.workloadIdentityPoolViewer user:admin@hashicorptest.com", envvar.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-example-pool%s", context["random_suffix"])),
+				ImportStateIdFunc: generateIAMBetaWorkloadIdentityPoolIAMMemberStateID("google_iam_workload_identity_pool_iam_member.foo"),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
 			{
 				ResourceName:      "google_iam_workload_identity_pool_iam_member.foo2",
-				ImportStateId:     fmt.Sprintf("projects/%s/locations/global/workloadIdentityPools/%s roles/iam.workloadIdentityPoolViewer user:admin@hashicorptest.com %s", envvar.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-example-pool%s", context["random_suffix"]), context["condition_title"]),
+				ImportStateIdFunc: generateIAMBetaWorkloadIdentityPoolIAMMemberStateID("google_iam_workload_identity_pool_iam_member.foo2"),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
 			{
 				ResourceName:      "google_iam_workload_identity_pool_iam_member.foo3",
-				ImportStateId:     fmt.Sprintf("projects/%s/locations/global/workloadIdentityPools/%s roles/iam.workloadIdentityPoolViewer user:admin@hashicorptest.com %s", envvar.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-example-pool%s", context["random_suffix"]), context["condition_title_no_desc"]),
+				ImportStateIdFunc: generateIAMBetaWorkloadIdentityPoolIAMMemberStateID("google_iam_workload_identity_pool_iam_member.foo3"),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -329,7 +330,7 @@ func TestAccIAMBetaWorkloadIdentityPoolIamPolicyGenerated_withCondition(t *testi
 			},
 			{
 				ResourceName:      "google_iam_workload_identity_pool_iam_policy.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/locations/global/workloadIdentityPools/%s", envvar.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-example-pool%s", context["random_suffix"])),
+				ImportStateIdFunc: generateIAMBetaWorkloadIdentityPoolIAMPolicyStateID("google_iam_workload_identity_pool_iam_policy.foo"),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -582,4 +583,54 @@ resource "google_iam_workload_identity_pool_iam_policy" "foo" {
   policy_data = data.google_iam_policy.foo.policy_data
 }
 `, context)
+}
+func generateIAMBetaWorkloadIdentityPoolIAMPolicyStateID(iamResourceAddr string) func(*terraform.State) (string, error) {
+	return func(state *terraform.State) (string, error) {
+		var rawState map[string]string
+		for _, m := range state.Modules {
+			if len(m.Resources) > 0 {
+				if v, ok := m.Resources[iamResourceAddr]; ok {
+					rawState = v.Primary.Attributes
+				}
+			}
+		}
+		fmt.Printf("raw state %s\n", rawState)
+		project := tpgresource.GetResourceNameFromSelfLink(rawState["project"])
+		workload_identity_pool_id := tpgresource.GetResourceNameFromSelfLink(rawState["workload_identity_pool_id"])
+		return acctest.BuildIAMImportId(fmt.Sprintf("projects/%s/locations/global/workloadIdentityPools/%s", project, workload_identity_pool_id), "", "", rawState["condition.0.title"]), nil
+	}
+}
+
+func generateIAMBetaWorkloadIdentityPoolIAMBindingStateID(iamResourceAddr string) func(*terraform.State) (string, error) {
+	return func(state *terraform.State) (string, error) {
+		var rawState map[string]string
+		for _, m := range state.Modules {
+			if len(m.Resources) > 0 {
+				if v, ok := m.Resources[iamResourceAddr]; ok {
+					rawState = v.Primary.Attributes
+				}
+			}
+		}
+		fmt.Printf("raw state %s\n", rawState)
+		project := tpgresource.GetResourceNameFromSelfLink(rawState["project"])
+		workload_identity_pool_id := tpgresource.GetResourceNameFromSelfLink(rawState["workload_identity_pool_id"])
+		return acctest.BuildIAMImportId(fmt.Sprintf("projects/%s/locations/global/workloadIdentityPools/%s", project, workload_identity_pool_id), rawState["role"], "", rawState["condition.0.title"]), nil
+	}
+}
+
+func generateIAMBetaWorkloadIdentityPoolIAMMemberStateID(iamResourceAddr string) func(*terraform.State) (string, error) {
+	return func(state *terraform.State) (string, error) {
+		var rawState map[string]string
+		for _, m := range state.Modules {
+			if len(m.Resources) > 0 {
+				if v, ok := m.Resources[iamResourceAddr]; ok {
+					rawState = v.Primary.Attributes
+				}
+			}
+		}
+		fmt.Printf("raw state %s\n", rawState)
+		project := tpgresource.GetResourceNameFromSelfLink(rawState["project"])
+		workload_identity_pool_id := tpgresource.GetResourceNameFromSelfLink(rawState["workload_identity_pool_id"])
+		return acctest.BuildIAMImportId(fmt.Sprintf("projects/%s/locations/global/workloadIdentityPools/%s", project, workload_identity_pool_id), rawState["role"], rawState["member"], rawState["condition.0.title"]), nil
+	}
 }
