@@ -25,6 +25,7 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
@@ -55,7 +56,7 @@ func TestAccRuntimeConfigConfigIamBindingGenerated(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_runtimeconfig_config_iam_binding.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/configs/%s roles/viewer", envvar.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-my-config%s", context["random_suffix"])),
+				ImportStateIdFunc: generateRuntimeConfigConfigIAMBindingStateID("google_runtimeconfig_config_iam_binding.foo"),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -65,7 +66,7 @@ func TestAccRuntimeConfigConfigIamBindingGenerated(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_runtimeconfig_config_iam_binding.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/configs/%s roles/viewer", envvar.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-my-config%s", context["random_suffix"])),
+				ImportStateIdFunc: generateRuntimeConfigConfigIAMBindingStateID("google_runtimeconfig_config_iam_binding.foo"),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -91,7 +92,7 @@ func TestAccRuntimeConfigConfigIamMemberGenerated(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_runtimeconfig_config_iam_member.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/configs/%s roles/viewer user:admin@hashicorptest.com", envvar.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-my-config%s", context["random_suffix"])),
+				ImportStateIdFunc: generateRuntimeConfigConfigIAMMemberStateID("google_runtimeconfig_config_iam_member.foo"),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -117,7 +118,7 @@ func TestAccRuntimeConfigConfigIamPolicyGenerated(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_runtimeconfig_config_iam_policy.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/configs/%s", envvar.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-my-config%s", context["random_suffix"])),
+				ImportStateIdFunc: generateRuntimeConfigConfigIAMPolicyStateID("google_runtimeconfig_config_iam_policy.foo"),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -126,7 +127,7 @@ func TestAccRuntimeConfigConfigIamPolicyGenerated(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_runtimeconfig_config_iam_policy.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/configs/%s", envvar.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-my-config%s", context["random_suffix"])),
+				ImportStateIdFunc: generateRuntimeConfigConfigIAMPolicyStateID("google_runtimeconfig_config_iam_policy.foo"),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -241,4 +242,55 @@ resource "google_runtimeconfig_config_iam_binding" "foo" {
   members = ["user:admin@hashicorptest.com", "user:gterraformtest1@gmail.com"]
 }
 `, context)
+}
+
+func generateRuntimeConfigConfigIAMPolicyStateID(iamResourceAddr string) func(*terraform.State) (string, error) {
+	return func(state *terraform.State) (string, error) {
+		var rawState map[string]string
+		for _, m := range state.Modules {
+			if len(m.Resources) > 0 {
+				if v, ok := m.Resources[iamResourceAddr]; ok {
+					rawState = v.Primary.Attributes
+				}
+			}
+		}
+		fmt.Printf("raw state %s\n", rawState)
+		project := tpgresource.GetResourceNameFromSelfLink(rawState["project"])
+		config := tpgresource.GetResourceNameFromSelfLink(rawState["config"])
+		return acctest.BuildIAMImportId(fmt.Sprintf("projects/%s/configs/%s", project, config), "", "", rawState["condition.0.title"]), nil
+	}
+}
+
+func generateRuntimeConfigConfigIAMBindingStateID(iamResourceAddr string) func(*terraform.State) (string, error) {
+	return func(state *terraform.State) (string, error) {
+		var rawState map[string]string
+		for _, m := range state.Modules {
+			if len(m.Resources) > 0 {
+				if v, ok := m.Resources[iamResourceAddr]; ok {
+					rawState = v.Primary.Attributes
+				}
+			}
+		}
+		fmt.Printf("raw state %s\n", rawState)
+		project := tpgresource.GetResourceNameFromSelfLink(rawState["project"])
+		config := tpgresource.GetResourceNameFromSelfLink(rawState["config"])
+		return acctest.BuildIAMImportId(fmt.Sprintf("projects/%s/configs/%s", project, config), rawState["role"], "", rawState["condition.0.title"]), nil
+	}
+}
+
+func generateRuntimeConfigConfigIAMMemberStateID(iamResourceAddr string) func(*terraform.State) (string, error) {
+	return func(state *terraform.State) (string, error) {
+		var rawState map[string]string
+		for _, m := range state.Modules {
+			if len(m.Resources) > 0 {
+				if v, ok := m.Resources[iamResourceAddr]; ok {
+					rawState = v.Primary.Attributes
+				}
+			}
+		}
+		fmt.Printf("raw state %s\n", rawState)
+		project := tpgresource.GetResourceNameFromSelfLink(rawState["project"])
+		config := tpgresource.GetResourceNameFromSelfLink(rawState["config"])
+		return acctest.BuildIAMImportId(fmt.Sprintf("projects/%s/configs/%s", project, config), rawState["role"], rawState["member"], rawState["condition.0.title"]), nil
+	}
 }

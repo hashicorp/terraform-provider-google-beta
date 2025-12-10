@@ -25,6 +25,7 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
@@ -55,7 +56,7 @@ func TestAccVertexAIFeatureOnlineStoreFeatureviewIamBindingGenerated(t *testing.
 			},
 			{
 				ResourceName:      "google_vertex_ai_feature_online_store_featureview_iam_binding.foo",
-				ImportStateId:     fmt.Sprintf("%s/featureViews/%s roles/viewer", fmt.Sprintf("projects/%s/locations/%s/featureOnlineStores/%s", envvar.GetTestProjectFromEnv(), envvar.GetTestRegionFromEnv(), fmt.Sprintf("tf_test_example_feature_view%s", context["random_suffix"])), fmt.Sprintf("tf_test_example_feature_view%s", context["random_suffix"])),
+				ImportStateIdFunc: generateVertexAIFeatureOnlineStoreFeatureviewIAMBindingStateID("google_vertex_ai_feature_online_store_featureview_iam_binding.foo"),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -65,7 +66,7 @@ func TestAccVertexAIFeatureOnlineStoreFeatureviewIamBindingGenerated(t *testing.
 			},
 			{
 				ResourceName:      "google_vertex_ai_feature_online_store_featureview_iam_binding.foo",
-				ImportStateId:     fmt.Sprintf("%s/featureViews/%s roles/viewer", fmt.Sprintf("projects/%s/locations/%s/featureOnlineStores/%s", envvar.GetTestProjectFromEnv(), envvar.GetTestRegionFromEnv(), fmt.Sprintf("tf_test_example_feature_view%s", context["random_suffix"])), fmt.Sprintf("tf_test_example_feature_view%s", context["random_suffix"])),
+				ImportStateIdFunc: generateVertexAIFeatureOnlineStoreFeatureviewIAMBindingStateID("google_vertex_ai_feature_online_store_featureview_iam_binding.foo"),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -91,7 +92,7 @@ func TestAccVertexAIFeatureOnlineStoreFeatureviewIamMemberGenerated(t *testing.T
 			},
 			{
 				ResourceName:      "google_vertex_ai_feature_online_store_featureview_iam_member.foo",
-				ImportStateId:     fmt.Sprintf("%s/featureViews/%s roles/viewer user:admin@hashicorptest.com", fmt.Sprintf("projects/%s/locations/%s/featureOnlineStores/%s", envvar.GetTestProjectFromEnv(), envvar.GetTestRegionFromEnv(), fmt.Sprintf("tf_test_example_feature_view%s", context["random_suffix"])), fmt.Sprintf("tf_test_example_feature_view%s", context["random_suffix"])),
+				ImportStateIdFunc: generateVertexAIFeatureOnlineStoreFeatureviewIAMMemberStateID("google_vertex_ai_feature_online_store_featureview_iam_member.foo"),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -117,7 +118,7 @@ func TestAccVertexAIFeatureOnlineStoreFeatureviewIamPolicyGenerated(t *testing.T
 			},
 			{
 				ResourceName:      "google_vertex_ai_feature_online_store_featureview_iam_policy.foo",
-				ImportStateId:     fmt.Sprintf("%s/featureViews/%s", fmt.Sprintf("projects/%s/locations/%s/featureOnlineStores/%s", envvar.GetTestProjectFromEnv(), envvar.GetTestRegionFromEnv(), fmt.Sprintf("tf_test_example_feature_view%s", context["random_suffix"])), fmt.Sprintf("tf_test_example_feature_view%s", context["random_suffix"])),
+				ImportStateIdFunc: generateVertexAIFeatureOnlineStoreFeatureviewIAMPolicyStateID("google_vertex_ai_feature_online_store_featureview_iam_policy.foo"),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -126,7 +127,7 @@ func TestAccVertexAIFeatureOnlineStoreFeatureviewIamPolicyGenerated(t *testing.T
 			},
 			{
 				ResourceName:      "google_vertex_ai_feature_online_store_featureview_iam_policy.foo",
-				ImportStateId:     fmt.Sprintf("%s/featureViews/%s", fmt.Sprintf("projects/%s/locations/%s/featureOnlineStores/%s", envvar.GetTestProjectFromEnv(), envvar.GetTestRegionFromEnv(), fmt.Sprintf("tf_test_example_feature_view%s", context["random_suffix"])), fmt.Sprintf("tf_test_example_feature_view%s", context["random_suffix"])),
+				ImportStateIdFunc: generateVertexAIFeatureOnlineStoreFeatureviewIAMPolicyStateID("google_vertex_ai_feature_online_store_featureview_iam_policy.foo"),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -559,4 +560,55 @@ resource "google_vertex_ai_feature_online_store_featureview_iam_binding" "foo" {
   members = ["user:admin@hashicorptest.com", "user:gterraformtest1@gmail.com"]
 }
 `, context)
+}
+
+func generateVertexAIFeatureOnlineStoreFeatureviewIAMPolicyStateID(iamResourceAddr string) func(*terraform.State) (string, error) {
+	return func(state *terraform.State) (string, error) {
+		var rawState map[string]string
+		for _, m := range state.Modules {
+			if len(m.Resources) > 0 {
+				if v, ok := m.Resources[iamResourceAddr]; ok {
+					rawState = v.Primary.Attributes
+				}
+			}
+		}
+		fmt.Printf("raw state %s\n", rawState)
+		feature_online_store := tpgresource.GetResourceNameFromSelfLink(rawState["feature_online_store"])
+		feature_view := tpgresource.GetResourceNameFromSelfLink(rawState["feature_view"])
+		return acctest.BuildIAMImportId(fmt.Sprintf("%s/featureViews/%s", feature_online_store, feature_view), "", "", rawState["condition.0.title"]), nil
+	}
+}
+
+func generateVertexAIFeatureOnlineStoreFeatureviewIAMBindingStateID(iamResourceAddr string) func(*terraform.State) (string, error) {
+	return func(state *terraform.State) (string, error) {
+		var rawState map[string]string
+		for _, m := range state.Modules {
+			if len(m.Resources) > 0 {
+				if v, ok := m.Resources[iamResourceAddr]; ok {
+					rawState = v.Primary.Attributes
+				}
+			}
+		}
+		fmt.Printf("raw state %s\n", rawState)
+		feature_online_store := tpgresource.GetResourceNameFromSelfLink(rawState["feature_online_store"])
+		feature_view := tpgresource.GetResourceNameFromSelfLink(rawState["feature_view"])
+		return acctest.BuildIAMImportId(fmt.Sprintf("%s/featureViews/%s", feature_online_store, feature_view), rawState["role"], "", rawState["condition.0.title"]), nil
+	}
+}
+
+func generateVertexAIFeatureOnlineStoreFeatureviewIAMMemberStateID(iamResourceAddr string) func(*terraform.State) (string, error) {
+	return func(state *terraform.State) (string, error) {
+		var rawState map[string]string
+		for _, m := range state.Modules {
+			if len(m.Resources) > 0 {
+				if v, ok := m.Resources[iamResourceAddr]; ok {
+					rawState = v.Primary.Attributes
+				}
+			}
+		}
+		fmt.Printf("raw state %s\n", rawState)
+		feature_online_store := tpgresource.GetResourceNameFromSelfLink(rawState["feature_online_store"])
+		feature_view := tpgresource.GetResourceNameFromSelfLink(rawState["feature_view"])
+		return acctest.BuildIAMImportId(fmt.Sprintf("%s/featureViews/%s", feature_online_store, feature_view), rawState["role"], rawState["member"], rawState["condition.0.title"]), nil
+	}
 }
