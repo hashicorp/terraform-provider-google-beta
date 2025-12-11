@@ -158,7 +158,6 @@ Format: projects/{project_id}/locations/global/mirroringEndpointGroups/{endpoint
 						"mirroring_deployment_groups": {
 							Type:     schema.TypeList,
 							Optional: true,
-							ForceNew: true,
 							Description: `The target downstream Mirroring Deployment Groups.
 This field is used for Packet Broker mirroring endpoint groups to specify
 the deployment groups that the packet should be mirrored to by the broker.
