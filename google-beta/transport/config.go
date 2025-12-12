@@ -273,6 +273,7 @@ type Config struct {
 	BackupDRBasePath                 string
 	BeyondcorpBasePath               string
 	BiglakeBasePath                  string
+	BiglakeIcebergBasePath           string
 	BigQueryBasePath                 string
 	BigqueryAnalyticsHubBasePath     string
 	BigqueryConnectionBasePath       string
@@ -461,6 +462,7 @@ const ArtifactRegistryBasePathKey = "ArtifactRegistry"
 const BackupDRBasePathKey = "BackupDR"
 const BeyondcorpBasePathKey = "Beyondcorp"
 const BiglakeBasePathKey = "Biglake"
+const BiglakeIcebergBasePathKey = "BiglakeIceberg"
 const BigQueryBasePathKey = "BigQuery"
 const BigqueryAnalyticsHubBasePathKey = "BigqueryAnalyticsHub"
 const BigqueryConnectionBasePathKey = "BigqueryConnection"
@@ -638,6 +640,7 @@ var DefaultBasePaths = map[string]string{
 	BackupDRBasePathKey:                 "https://backupdr.googleapis.com/v1/",
 	BeyondcorpBasePathKey:               "https://beyondcorp.googleapis.com/v1/",
 	BiglakeBasePathKey:                  "https://biglake.googleapis.com/v1/",
+	BiglakeIcebergBasePathKey:           "https://biglake.googleapis.com/iceberg/v1/",
 	BigQueryBasePathKey:                 "https://bigquery.googleapis.com/bigquery/v2/",
 	BigqueryAnalyticsHubBasePathKey:     "https://analyticshub.googleapis.com/v1/",
 	BigqueryConnectionBasePathKey:       "https://bigqueryconnection.googleapis.com/v1/",
@@ -943,6 +946,11 @@ func SetEndpointDefaults(d *schema.ResourceData) error {
 		d.Set("biglake_custom_endpoint", MultiEnvDefault([]string{
 			"GOOGLE_BIGLAKE_CUSTOM_ENDPOINT",
 		}, DefaultBasePaths[BiglakeBasePathKey]))
+	}
+	if d.Get("biglake_iceberg_custom_endpoint") == "" {
+		d.Set("biglake_iceberg_custom_endpoint", MultiEnvDefault([]string{
+			"GOOGLE_BIGLAKE_ICEBERG_CUSTOM_ENDPOINT",
+		}, DefaultBasePaths[BiglakeIcebergBasePathKey]))
 	}
 	if d.Get("big_query_custom_endpoint") == "" {
 		d.Set("big_query_custom_endpoint", MultiEnvDefault([]string{
@@ -2820,6 +2828,7 @@ func ConfigureBasePaths(c *Config) {
 	c.BackupDRBasePath = DefaultBasePaths[BackupDRBasePathKey]
 	c.BeyondcorpBasePath = DefaultBasePaths[BeyondcorpBasePathKey]
 	c.BiglakeBasePath = DefaultBasePaths[BiglakeBasePathKey]
+	c.BiglakeIcebergBasePath = DefaultBasePaths[BiglakeIcebergBasePathKey]
 	c.BigQueryBasePath = DefaultBasePaths[BigQueryBasePathKey]
 	c.BigqueryAnalyticsHubBasePath = DefaultBasePaths[BigqueryAnalyticsHubBasePathKey]
 	c.BigqueryConnectionBasePath = DefaultBasePaths[BigqueryConnectionBasePathKey]

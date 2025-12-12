@@ -31,6 +31,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/backupdr"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/beyondcorp"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/biglake"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/biglakeiceberg"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/bigquery"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/bigqueryanalyticshub"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/bigqueryconnection"
@@ -630,9 +631,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 761
+// Generated resources: 762
 // Generated IAM resources: 348
-// Total generated resources: 1109
+// Total generated resources: 1110
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -746,6 +747,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_biglake_catalog":                                                     biglake.ResourceBiglakeCatalog(),
 	"google_biglake_database":                                                    biglake.ResourceBiglakeDatabase(),
 	"google_biglake_table":                                                       biglake.ResourceBiglakeTable(),
+	"google_biglake_iceberg_catalog":                                             biglakeiceberg.ResourceBiglakeIcebergIcebergCatalog(),
 	"google_bigquery_dataset":                                                    bigquery.ResourceBigQueryDataset(),
 	"google_bigquery_dataset_access":                                             bigquery.ResourceBigQueryDatasetAccess(),
 	"google_bigquery_job":                                                        bigquery.ResourceBigQueryJob(),
@@ -1928,6 +1930,7 @@ func UseGeneratedProducts() {
 	var _ = backupdr.ProductName
 	var _ = beyondcorp.ProductName
 	var _ = biglake.ProductName
+	var _ = biglakeiceberg.ProductName
 	var _ = bigquery.ProductName
 	var _ = bigqueryanalyticshub.ProductName
 	var _ = bigqueryconnection.ProductName
