@@ -1,28 +1,28 @@
-resource: 'google_api_gateway_api_config'
-generation_type: 'mmv1'
-source_file: 'products/apigateway/ApiConfig.yaml'
-api_service_name: 'apigateway.googleapis.com'
-api_version: 'v1beta'
-api_resource_type_kind: 'ApiConfig'
+resource: google_api_gateway_api_config
+generation_type: mmv1
+source_file: products/apigateway/ApiConfig.yaml
+api_service_name: apigateway.googleapis.com
+api_version: v1beta
+api_resource_type_kind: ApiConfig
 fields:
-  - field: 'api'
-    provider_only: true
-  - field: 'api_config_id'
-    provider_only: true
-  - api_field: 'displayName'
-  - field: 'effective_labels'
-    provider_only: true
-  - api_field: 'gatewayConfig.backendConfig.googleServiceAccount'
-  - api_field: 'grpcServices.fileDescriptorSet.contents'
-  - api_field: 'grpcServices.fileDescriptorSet.path'
-  - api_field: 'grpcServices.source.contents'
-  - api_field: 'grpcServices.source.path'
-  - api_field: 'labels'
-  - api_field: 'managedServiceConfigs.contents'
-  - api_field: 'managedServiceConfigs.path'
-  - api_field: 'name'
-  - api_field: 'openapiDocuments.document.contents'
-  - api_field: 'openapiDocuments.document.path'
-  - api_field: 'serviceConfigId'
-  - field: 'terraform_labels'
-    provider_only: true
+    - field: api
+      provider_only: true
+    - field: api_config_id
+      provider_only: true
+    - api_field: displayName
+    - field: effective_labels
+      provider_only: true
+    - api_field: gatewayConfig.backendConfig.googleServiceAccount
+    - api_field: grpcServices.fileDescriptorSet.contents
+    - api_field: grpcServices.fileDescriptorSet.path
+    - api_field: grpcServices.source.contents
+    - api_field: grpcServices.source.path
+    - api_field: labels
+    - api_field: managedServiceConfigs.contents
+    - api_field: managedServiceConfigs.path
+    - api_field: name
+    - api_field: openapiDocuments.document.contents
+    - api_field: openapiDocuments.document.path
+    - api_field: serviceConfigId
+    - field: terraform_labels
+      provider_only: true

@@ -1,39 +1,39 @@
-resource: 'google_bigquery_analytics_hub_data_exchange_subscription'
-generation_type: 'mmv1'
-source_file: 'products/bigqueryanalyticshub/DataExchangeSubscription.yaml'
-api_service_name: 'analyticshub.googleapis.com'
-api_version: 'v1'
-api_resource_type_kind: 'Subscription'
+resource: google_bigquery_analytics_hub_data_exchange_subscription
+generation_type: mmv1
+source_file: products/bigqueryanalyticshub/DataExchangeSubscription.yaml
+api_service_name: analyticshub.googleapis.com
+api_version: v1
+api_resource_type_kind: Subscription
 fields:
-  - api_field: 'creationTime'
-  - api_field: 'dataExchange'
-  - field: 'data_exchange_id'
-    provider_only: true
-  - field: 'data_exchange_location'
-    provider_only: true
-  - field: 'data_exchange_project'
-    provider_only: true
-  - api_field: 'destinationDataset.datasetReference.datasetId'
-  - api_field: 'destinationDataset.datasetReference.projectId'
-  - api_field: 'destinationDataset.description'
-  - api_field: 'destinationDataset.friendlyName'
-  - api_field: 'destinationDataset.labels'
-  - api_field: 'destinationDataset.location'
-  - api_field: 'lastModifyTime'
-  - api_field: 'linkedDatasetMap.linked_resource.linkedDataset'
-  - api_field: 'linkedDatasetMap.linked_resource.linkedPubsubSubscription'
-  - api_field: 'linkedDatasetMap.linked_resource.listing'
-  - api_field: 'linkedResources.linkedDataset'
-  - api_field: 'linkedResources.listing'
-  - field: 'location'
-    provider_only: true
-  - api_field: 'logLinkedDatasetQueryUserEmail'
-  - api_field: 'name'
-  - api_field: 'organizationDisplayName'
-  - api_field: 'organizationId'
-  - field: 'refresh_policy'
-    provider_only: true
-  - api_field: 'resourceType'
-  - api_field: 'state'
-  - api_field: 'subscriberContact'
-  - api_field: 'subscriptionId'
+    - api_field: creationTime
+    - api_field: dataExchange
+    - field: data_exchange_id
+      provider_only: true
+    - field: data_exchange_location
+      provider_only: true
+    - field: data_exchange_project
+      provider_only: true
+    - api_field: destinationDataset.datasetReference.datasetId
+    - api_field: destinationDataset.datasetReference.projectId
+    - api_field: destinationDataset.description
+    - api_field: destinationDataset.friendlyName
+    - api_field: destinationDataset.labels
+    - api_field: destinationDataset.location
+    - api_field: lastModifyTime
+    - api_field: linkedDatasetMap.linked_resource.linkedDataset
+    - api_field: linkedDatasetMap.linked_resource.linkedPubsubSubscription
+    - api_field: linkedDatasetMap.linked_resource.listing
+    - api_field: linkedResources.linkedDataset
+    - api_field: linkedResources.listing
+    - field: location
+      provider_only: true
+    - api_field: logLinkedDatasetQueryUserEmail
+    - api_field: name
+    - api_field: organizationDisplayName
+    - api_field: organizationId
+    - field: refresh_policy
+      provider_only: true
+    - api_field: resourceType
+    - api_field: state
+    - api_field: subscriberContact
+    - api_field: subscriptionId

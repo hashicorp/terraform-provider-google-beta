@@ -1,14 +1,14 @@
-resource: 'google_firebase_web_app'
-generation_type: 'mmv1'
-source_file: 'products/firebase/WebApp.yaml'
-api_service_name: 'firebase.googleapis.com'
-api_version: 'v1beta1'
-api_resource_type_kind: 'WebApp'
+resource: google_firebase_web_app
+generation_type: mmv1
+source_file: products/firebase/WebApp.yaml
+api_service_name: firebase.googleapis.com
+api_version: v1beta1
+api_resource_type_kind: WebApp
 fields:
-  - api_field: 'apiKeyId'
-  - api_field: 'appId'
-  - api_field: 'appUrls'
-  - field: 'deletion_policy'
-    provider_only: true
-  - api_field: 'displayName'
-  - api_field: 'name'
+    - api_field: apiKeyId
+    - api_field: appId
+    - api_field: appUrls
+    - field: deletion_policy
+      provider_only: true
+    - api_field: displayName
+    - api_field: name
