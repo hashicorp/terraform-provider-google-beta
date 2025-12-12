@@ -1,54 +1,54 @@
-resource: 'google_tpu_v2_vm'
-generation_type: 'mmv1'
-source_file: 'products/tpuv2/Vm.yaml'
-api_service_name: 'tpu.googleapis.com'
-api_version: 'v2alpha1'
-api_resource_type_kind: 'Node'
+resource: google_tpu_v2_vm
+generation_type: mmv1
+source_file: products/tpuv2/Vm.yaml
+api_service_name: tpu.googleapis.com
+api_version: v2alpha1
+api_resource_type_kind: Node
 fields:
-  - api_field: 'acceleratorConfig.topology'
-  - api_field: 'acceleratorConfig.type'
-  - api_field: 'acceleratorType'
-  - api_field: 'apiVersion'
-  - api_field: 'cidrBlock'
-  - api_field: 'dataDisks.mode'
-  - api_field: 'dataDisks.sourceDisk'
-  - api_field: 'description'
-  - field: 'effective_labels'
-    provider_only: true
-  - api_field: 'health'
-  - api_field: 'healthDescription'
-  - api_field: 'labels'
-  - api_field: 'metadata'
-  - api_field: 'multisliceNode'
-  - api_field: 'name'
-  - api_field: 'networkConfig.canIpForward'
-  - api_field: 'networkConfig.enableExternalIps'
-  - api_field: 'networkConfig.network'
-  - api_field: 'networkConfig.queueCount'
-  - api_field: 'networkConfig.subnetwork'
-  - api_field: 'networkConfigs.canIpForward'
-  - api_field: 'networkConfigs.enableExternalIps'
-  - api_field: 'networkConfigs.network'
-  - api_field: 'networkConfigs.queueCount'
-  - api_field: 'networkConfigs.subnetwork'
-  - api_field: 'networkEndpoints.accessConfig.externalIp'
-  - api_field: 'networkEndpoints.ipAddress'
-  - api_field: 'networkEndpoints.port'
-  - api_field: 'queuedResource'
-  - api_field: 'runtimeVersion'
-  - api_field: 'schedulingConfig.preemptible'
-  - api_field: 'schedulingConfig.reserved'
-  - api_field: 'schedulingConfig.spot'
-  - api_field: 'serviceAccount.email'
-  - api_field: 'serviceAccount.scope'
-  - api_field: 'shieldedInstanceConfig.enableSecureBoot'
-  - api_field: 'state'
-  - api_field: 'symptoms.createTime'
-  - api_field: 'symptoms.details'
-  - api_field: 'symptoms.symptomType'
-  - api_field: 'symptoms.workerId'
-  - api_field: 'tags'
-  - field: 'terraform_labels'
-    provider_only: true
-  - field: 'zone'
-    provider_only: true
+    - api_field: acceleratorConfig.topology
+    - api_field: acceleratorConfig.type
+    - api_field: acceleratorType
+    - api_field: apiVersion
+    - api_field: cidrBlock
+    - api_field: dataDisks.mode
+    - api_field: dataDisks.sourceDisk
+    - api_field: description
+    - field: effective_labels
+      provider_only: true
+    - api_field: health
+    - api_field: healthDescription
+    - api_field: labels
+    - api_field: metadata
+    - api_field: multisliceNode
+    - api_field: name
+    - api_field: networkConfig.canIpForward
+    - api_field: networkConfig.enableExternalIps
+    - api_field: networkConfig.network
+    - api_field: networkConfig.queueCount
+    - api_field: networkConfig.subnetwork
+    - api_field: networkConfigs.canIpForward
+    - api_field: networkConfigs.enableExternalIps
+    - api_field: networkConfigs.network
+    - api_field: networkConfigs.queueCount
+    - api_field: networkConfigs.subnetwork
+    - api_field: networkEndpoints.accessConfig.externalIp
+    - api_field: networkEndpoints.ipAddress
+    - api_field: networkEndpoints.port
+    - api_field: queuedResource
+    - api_field: runtimeVersion
+    - api_field: schedulingConfig.preemptible
+    - api_field: schedulingConfig.reserved
+    - api_field: schedulingConfig.spot
+    - api_field: serviceAccount.email
+    - api_field: serviceAccount.scope
+    - api_field: shieldedInstanceConfig.enableSecureBoot
+    - api_field: state
+    - api_field: symptoms.createTime
+    - api_field: symptoms.details
+    - api_field: symptoms.symptomType
+    - api_field: symptoms.workerId
+    - api_field: tags
+    - field: terraform_labels
+      provider_only: true
+    - field: zone
+      provider_only: true

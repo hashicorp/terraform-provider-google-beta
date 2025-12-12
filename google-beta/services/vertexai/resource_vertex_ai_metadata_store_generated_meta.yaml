@@ -1,16 +1,16 @@
-resource: 'google_vertex_ai_metadata_store'
-generation_type: 'mmv1'
-source_file: 'products/vertexai/MetadataStore.yaml'
-api_service_name: 'aiplatform.googleapis.com'
-api_version: 'v1beta1'
-api_resource_type_kind: 'MetadataStore'
+resource: google_vertex_ai_metadata_store
+generation_type: mmv1
+source_file: products/vertexai/MetadataStore.yaml
+api_service_name: aiplatform.googleapis.com
+api_version: v1beta1
+api_resource_type_kind: MetadataStore
 fields:
-  - api_field: 'createTime'
-  - api_field: 'description'
-  - api_field: 'encryptionSpec.kmsKeyName'
-  - field: 'name'
-    provider_only: true
-  - field: 'region'
-    provider_only: true
-  - api_field: 'state.diskUtilizationBytes'
-  - api_field: 'updateTime'
+    - api_field: createTime
+    - api_field: description
+    - api_field: encryptionSpec.kmsKeyName
+    - field: name
+      provider_only: true
+    - field: region
+      provider_only: true
+    - api_field: state.diskUtilizationBytes
+    - api_field: updateTime

@@ -1,27 +1,27 @@
-resource: 'google_network_security_authorization_policy'
-generation_type: 'mmv1'
-source_file: 'products/networksecurity/AuthorizationPolicy.yaml'
-api_service_name: 'networksecurity.googleapis.com'
-api_version: 'v1beta1'
-api_resource_type_kind: 'AuthorizationPolicy'
+resource: google_network_security_authorization_policy
+generation_type: mmv1
+source_file: products/networksecurity/AuthorizationPolicy.yaml
+api_service_name: networksecurity.googleapis.com
+api_version: v1beta1
+api_resource_type_kind: AuthorizationPolicy
 fields:
-  - api_field: 'action'
-  - api_field: 'createTime'
-  - api_field: 'description'
-  - field: 'effective_labels'
-    provider_only: true
-  - api_field: 'labels'
-  - field: 'location'
-    provider_only: true
-  - field: 'name'
-    provider_only: true
-  - api_field: 'rules.destinations.hosts'
-  - api_field: 'rules.destinations.httpHeaderMatch.headerName'
-  - api_field: 'rules.destinations.httpHeaderMatch.regexMatch'
-  - api_field: 'rules.destinations.methods'
-  - api_field: 'rules.destinations.ports'
-  - api_field: 'rules.sources.ipBlocks'
-  - api_field: 'rules.sources.principals'
-  - field: 'terraform_labels'
-    provider_only: true
-  - api_field: 'updateTime'
+    - api_field: action
+    - api_field: createTime
+    - api_field: description
+    - field: effective_labels
+      provider_only: true
+    - api_field: labels
+    - field: location
+      provider_only: true
+    - field: name
+      provider_only: true
+    - api_field: rules.destinations.hosts
+    - api_field: rules.destinations.httpHeaderMatch.headerName
+    - api_field: rules.destinations.httpHeaderMatch.regexMatch
+    - api_field: rules.destinations.methods
+    - api_field: rules.destinations.ports
+    - api_field: rules.sources.ipBlocks
+    - api_field: rules.sources.principals
+    - field: terraform_labels
+      provider_only: true
+    - api_field: updateTime

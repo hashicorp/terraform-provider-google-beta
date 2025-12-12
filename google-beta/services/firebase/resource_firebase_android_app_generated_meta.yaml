@@ -1,17 +1,17 @@
-resource: 'google_firebase_android_app'
-generation_type: 'mmv1'
-source_file: 'products/firebase/AndroidApp.yaml'
-api_service_name: 'firebase.googleapis.com'
-api_version: 'v1beta1'
-api_resource_type_kind: 'AndroidApp'
+resource: google_firebase_android_app
+generation_type: mmv1
+source_file: products/firebase/AndroidApp.yaml
+api_service_name: firebase.googleapis.com
+api_version: v1beta1
+api_resource_type_kind: AndroidApp
 fields:
-  - api_field: 'apiKeyId'
-  - api_field: 'appId'
-  - field: 'deletion_policy'
-    provider_only: true
-  - api_field: 'displayName'
-  - api_field: 'etag'
-  - api_field: 'name'
-  - api_field: 'packageName'
-  - api_field: 'sha1Hashes'
-  - api_field: 'sha256Hashes'
+    - api_field: apiKeyId
+    - api_field: appId
+    - field: deletion_policy
+      provider_only: true
+    - api_field: displayName
+    - api_field: etag
+    - api_field: name
+    - api_field: packageName
+    - api_field: sha1Hashes
+    - api_field: sha256Hashes

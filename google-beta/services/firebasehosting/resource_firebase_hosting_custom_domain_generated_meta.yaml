@@ -1,56 +1,56 @@
-resource: 'google_firebase_hosting_custom_domain'
-generation_type: 'mmv1'
-source_file: 'products/firebasehosting/CustomDomain.yaml'
-api_service_name: 'firebasehosting.googleapis.com'
-api_version: 'v1beta1'
-api_resource_type_kind: 'CustomDomain'
+resource: google_firebase_hosting_custom_domain
+generation_type: mmv1
+source_file: products/firebasehosting/CustomDomain.yaml
+api_service_name: firebasehosting.googleapis.com
+api_version: v1beta1
+api_resource_type_kind: CustomDomain
 fields:
-  - api_field: 'cert.state'
-  - api_field: 'cert.type'
-  - api_field: 'cert.verification.dns.checkTime'
-  - api_field: 'cert.verification.dns.desired.domainName'
-  - api_field: 'cert.verification.dns.desired.records.domainName'
-  - api_field: 'cert.verification.dns.desired.records.rdata'
-  - api_field: 'cert.verification.dns.desired.records.requiredAction'
-  - api_field: 'cert.verification.dns.desired.records.type'
-  - api_field: 'cert.verification.dns.discovered.domainName'
-  - api_field: 'cert.verification.dns.discovered.records.domainName'
-  - api_field: 'cert.verification.dns.discovered.records.rdata'
-  - api_field: 'cert.verification.dns.discovered.records.requiredAction'
-  - api_field: 'cert.verification.dns.discovered.records.type'
-  - api_field: 'cert.verification.http.desired'
-  - api_field: 'cert.verification.http.discovered'
-  - api_field: 'cert.verification.http.lastCheckTime'
-  - api_field: 'cert.verification.http.path'
-  - api_field: 'certPreference'
-  - api_field: 'createTime'
-  - field: 'custom_domain'
-    provider_only: true
-  - api_field: 'deleteTime'
-  - api_field: 'etag'
-  - api_field: 'expireTime'
-  - api_field: 'hostState'
-  - api_field: 'issues.code'
-  - api_field: 'issues.details'
-    json: true
-  - api_field: 'issues.message'
-  - api_field: 'name'
-  - api_field: 'ownershipState'
-  - api_field: 'reconciling'
-  - api_field: 'redirectTarget'
-  - api_field: 'requiredDnsUpdates.checkTime'
-  - api_field: 'requiredDnsUpdates.desired.domainName'
-  - api_field: 'requiredDnsUpdates.desired.records.domainName'
-  - api_field: 'requiredDnsUpdates.desired.records.rdata'
-  - api_field: 'requiredDnsUpdates.desired.records.requiredAction'
-  - api_field: 'requiredDnsUpdates.desired.records.type'
-  - api_field: 'requiredDnsUpdates.discovered.domainName'
-  - api_field: 'requiredDnsUpdates.discovered.records.domainName'
-  - api_field: 'requiredDnsUpdates.discovered.records.rdata'
-  - api_field: 'requiredDnsUpdates.discovered.records.requiredAction'
-  - api_field: 'requiredDnsUpdates.discovered.records.type'
-  - field: 'site_id'
-    provider_only: true
-  - api_field: 'updateTime'
-  - field: 'wait_dns_verification'
-    provider_only: true
+    - api_field: cert.state
+    - api_field: cert.type
+    - api_field: cert.verification.dns.checkTime
+    - api_field: cert.verification.dns.desired.domainName
+    - api_field: cert.verification.dns.desired.records.domainName
+    - api_field: cert.verification.dns.desired.records.rdata
+    - api_field: cert.verification.dns.desired.records.requiredAction
+    - api_field: cert.verification.dns.desired.records.type
+    - api_field: cert.verification.dns.discovered.domainName
+    - api_field: cert.verification.dns.discovered.records.domainName
+    - api_field: cert.verification.dns.discovered.records.rdata
+    - api_field: cert.verification.dns.discovered.records.requiredAction
+    - api_field: cert.verification.dns.discovered.records.type
+    - api_field: cert.verification.http.desired
+    - api_field: cert.verification.http.discovered
+    - api_field: cert.verification.http.lastCheckTime
+    - api_field: cert.verification.http.path
+    - api_field: certPreference
+    - api_field: createTime
+    - field: custom_domain
+      provider_only: true
+    - api_field: deleteTime
+    - api_field: etag
+    - api_field: expireTime
+    - api_field: hostState
+    - api_field: issues.code
+    - api_field: issues.details
+      json: true
+    - api_field: issues.message
+    - api_field: name
+    - api_field: ownershipState
+    - api_field: reconciling
+    - api_field: redirectTarget
+    - api_field: requiredDnsUpdates.checkTime
+    - api_field: requiredDnsUpdates.desired.domainName
+    - api_field: requiredDnsUpdates.desired.records.domainName
+    - api_field: requiredDnsUpdates.desired.records.rdata
+    - api_field: requiredDnsUpdates.desired.records.requiredAction
+    - api_field: requiredDnsUpdates.desired.records.type
+    - api_field: requiredDnsUpdates.discovered.domainName
+    - api_field: requiredDnsUpdates.discovered.records.domainName
+    - api_field: requiredDnsUpdates.discovered.records.rdata
+    - api_field: requiredDnsUpdates.discovered.records.requiredAction
+    - api_field: requiredDnsUpdates.discovered.records.type
+    - field: site_id
+      provider_only: true
+    - api_field: updateTime
+    - field: wait_dns_verification
+      provider_only: true

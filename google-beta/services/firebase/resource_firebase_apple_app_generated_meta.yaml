@@ -1,16 +1,16 @@
-resource: 'google_firebase_apple_app'
-generation_type: 'mmv1'
-source_file: 'products/firebase/AppleApp.yaml'
-api_service_name: 'firebase.googleapis.com'
-api_version: 'v1beta1'
-api_resource_type_kind: 'IosApp'
+resource: google_firebase_apple_app
+generation_type: mmv1
+source_file: products/firebase/AppleApp.yaml
+api_service_name: firebase.googleapis.com
+api_version: v1beta1
+api_resource_type_kind: IosApp
 fields:
-  - api_field: 'apiKeyId'
-  - api_field: 'appId'
-  - api_field: 'appStoreId'
-  - api_field: 'bundleId'
-  - field: 'deletion_policy'
-    provider_only: true
-  - api_field: 'displayName'
-  - api_field: 'name'
-  - api_field: 'teamId'
+    - api_field: apiKeyId
+    - api_field: appId
+    - api_field: appStoreId
+    - api_field: bundleId
+    - field: deletion_policy
+      provider_only: true
+    - api_field: displayName
+    - api_field: name
+    - api_field: teamId
