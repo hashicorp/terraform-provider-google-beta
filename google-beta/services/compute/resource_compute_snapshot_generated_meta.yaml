@@ -11,6 +11,7 @@ fields:
     - api_field: diskSizeGb
     - field: effective_labels
       provider_only: true
+    - api_field: guestFlush
     - api_field: labelFingerprint
     - api_field: labels
     - api_field: licenses
