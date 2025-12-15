@@ -348,46 +348,55 @@ the same instance.`,
 					Schema: map[string]*schema.Schema{
 						"assistive_experiences_enabled": {
 							Type:        schema.TypeBool,
+							Computed:    true,
 							Optional:    true,
 							Description: `Whether assistive experiences are enabled for this AlloyDB instance.`,
 						},
 						"enabled": {
 							Type:        schema.TypeBool,
+							Computed:    true,
 							Optional:    true,
 							Description: `Observability feature status for an instance.`,
 						},
 						"max_query_string_length": {
 							Type:        schema.TypeInt,
+							Computed:    true,
 							Optional:    true,
 							Description: `Query string length. The default value is 10240. Any integer between 1024 and 100000 is considered valid.`,
 						},
 						"preserve_comments": {
 							Type:        schema.TypeBool,
+							Computed:    true,
 							Optional:    true,
 							Description: `Preserve comments in the query string.`,
 						},
 						"query_plans_per_minute": {
 							Type:        schema.TypeInt,
+							Computed:    true,
 							Optional:    true,
 							Description: `Number of query execution plans captured by Insights per minute for all queries combined. The default value is 5. Any integer between 0 and 200 is considered valid.`,
 						},
 						"record_application_tags": {
 							Type:        schema.TypeBool,
+							Computed:    true,
 							Optional:    true,
 							Description: `Record application tags for an instance. This flag is turned "on" by default.`,
 						},
 						"track_active_queries": {
 							Type:        schema.TypeBool,
+							Computed:    true,
 							Optional:    true,
 							Description: `Track actively running queries. If not set, default value is "off".`,
 						},
 						"track_wait_event_types": {
 							Type:        schema.TypeBool,
+							Computed:    true,
 							Optional:    true,
 							Description: `Record wait event types during query execution for an instance.`,
 						},
 						"track_wait_events": {
 							Type:        schema.TypeBool,
+							Computed:    true,
 							Optional:    true,
 							Description: `Record wait events during query execution for an instance.`,
 						},
@@ -1858,29 +1867,22 @@ func expandAlloydbInstanceObservabilityConfig(v interface{}, d tpgresource.Terra
 	transformedEnabled, err := expandAlloydbInstanceObservabilityConfigEnabled(original["enabled"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedEnabled); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+	} else if transformedEnabled != nil {
 		transformed["enabled"] = transformedEnabled
 	}
 
 	transformedPreserveComments, err := expandAlloydbInstanceObservabilityConfigPreserveComments(original["preserve_comments"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedPreserveComments); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+	} else if transformedPreserveComments != nil {
 		transformed["preserveComments"] = transformedPreserveComments
 	}
 
 	transformedTrackWaitEvents, err := expandAlloydbInstanceObservabilityConfigTrackWaitEvents(original["track_wait_events"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedTrackWaitEvents); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+	} else if transformedTrackWaitEvents != nil {
 		transformed["trackWaitEvents"] = transformedTrackWaitEvents
-	}
-
-	transformedTrackWaitEventTypes, err := expandAlloydbInstanceObservabilityConfigTrackWaitEventTypes(original["track_wait_event_types"], d, config)
-	if err != nil {
-		return nil, err
-	} else if val := reflect.ValueOf(transformedTrackWaitEventTypes); val.IsValid() && !tpgresource.IsEmptyValue(val) {
-		transformed["trackWaitEventTypes"] = transformedTrackWaitEventTypes
 	}
 
 	transformedMaxQueryStringLength, err := expandAlloydbInstanceObservabilityConfigMaxQueryStringLength(original["max_query_string_length"], d, config)
@@ -1893,7 +1895,7 @@ func expandAlloydbInstanceObservabilityConfig(v interface{}, d tpgresource.Terra
 	transformedRecordApplicationTags, err := expandAlloydbInstanceObservabilityConfigRecordApplicationTags(original["record_application_tags"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedRecordApplicationTags); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+	} else if transformedRecordApplicationTags != nil {
 		transformed["recordApplicationTags"] = transformedRecordApplicationTags
 	}
 
@@ -1907,17 +1909,17 @@ func expandAlloydbInstanceObservabilityConfig(v interface{}, d tpgresource.Terra
 	transformedTrackActiveQueries, err := expandAlloydbInstanceObservabilityConfigTrackActiveQueries(original["track_active_queries"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedTrackActiveQueries); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+	} else if transformedTrackActiveQueries != nil {
 		transformed["trackActiveQueries"] = transformedTrackActiveQueries
 	}
 
 	transformedAssistiveExperiencesEnabled, err := expandAlloydbInstanceObservabilityConfigAssistiveExperiencesEnabled(original["assistive_experiences_enabled"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedAssistiveExperiencesEnabled); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+	} else if transformedAssistiveExperiencesEnabled != nil {
 		transformed["assistiveExperiencesEnabled"] = transformedAssistiveExperiencesEnabled
 	}
-
+	log.Printf("vkanishk: expandAlloydbInstanceObservabilityConfig transformed %v", transformed)
 	return transformed, nil
 }
 
