@@ -1,5 +1,34 @@
 ## 7.14.0 (Unreleased)
 
+DEPRECATIONS:
+* managedkafka: added deprecation warning for `google_managed_kafka_connect_cluster` `additional_subnets` field ([#11253](https://github.com/hashicorp/terraform-provider-google-beta/pull/11253))
+
+FEATURES:
+* **New Data Source:** `google_artifact_registry_versions` ([#11266](https://github.com/hashicorp/terraform-provider-google-beta/pull/11266))
+* **New Data Source:** `google_cloud_identity_policies` ([#11267](https://github.com/hashicorp/terraform-provider-google-beta/pull/11267))
+* **New Data Source:** `google_compute_region_security_policy` ([#11254](https://github.com/hashicorp/terraform-provider-google-beta/pull/11254))
+* **New Data Source:** `google_compute_storage_pool` ([#11251](https://github.com/hashicorp/terraform-provider-google-beta/pull/11251))
+* **New Resource:** `google_compute_region_health_sources` ([#11271](https://github.com/hashicorp/terraform-provider-google-beta/pull/11271))
+* **New Resource:** `google_network_services_multicast_group_consumer_activation` ([#11269](https://github.com/hashicorp/terraform-provider-google-beta/pull/11269))
+* **New Resource:** `google_network_services_multicast_group_producer_activation` ([#11243](https://github.com/hashicorp/terraform-provider-google-beta/pull/11243))
+
+IMPROVEMENTS:
+* alloydb: added `connection_pool_config`, `connection_pool_config.enabled` and `connection_pool_config.flags` in `google_alloydb_instance` resource ([#11250](https://github.com/hashicorp/terraform-provider-google-beta/pull/11250))
+* colab: added `software_config.post_startup_script_config` field to `google_colab_runtime_template` ([#11264](https://github.com/hashicorp/terraform-provider-google-beta/pull/11264))
+* compute: added new field `instance_flexibility_policy.instance_selection.min_cpu_platform` & `instance_flexibility_policy.instance_selection.disks` to `google_compute_region_instance_group_manager` ([#11231](https://github.com/hashicorp/terraform-provider-google-beta/pull/11231))
+* dataplex: removed the need for import in `google_dataplex_entry` when using first party source systems ([#11262](https://github.com/hashicorp/terraform-provider-google-beta/pull/11262))
+* dataproc: added `auto_stop_time` and  `idle_stop_ttl` to `google_dataproc_cluster` resource ([#11236](https://github.com/hashicorp/terraform-provider-google-beta/pull/11236))
+* eventarc: added `retry_policy` field to `google_eventarc_trigger` resource ([#11239](https://github.com/hashicorp/terraform-provider-google-beta/pull/11239))
+* networksecurity: enabled in-place update for `custom_mirroring_profile.mirroring_deployment_groups` on `google_network_security_security_profile` ([#11263](https://github.com/hashicorp/terraform-provider-google-beta/pull/11263))
+* spanner: added `autoscaling_config.autoscaling_targets.total_cpu_utilization_percent` field to  `google_spanner_instance` resource ([#11257](https://github.com/hashicorp/terraform-provider-google-beta/pull/11257))
+* sql: added changes to ignore changes in backup configuration's fields like `enabled`, `binary_log_enabled`, `start_time`, `point_in_time_recovery_enabled`, `transaction_log_retention_days` and `backup_retention_settings.retained_backups` in `google_sql_database_instance` if the instance is managed by Google Cloud Backup and Disaster (DR) Recovery Service. ([#11270](https://github.com/hashicorp/terraform-provider-google-beta/pull/11270))
+
+BUG FIXES:
+* compute: fixed `google_compute_network` in-place update to enable `enable_ula_internal_ipv6`. ([#11240](https://github.com/hashicorp/terraform-provider-google-beta/pull/11240))
+* iam: fixed error 409 concurrency policy changes by correctly detecting the error type. ([#11244](https://github.com/hashicorp/terraform-provider-google-beta/pull/11244))
+* sql: fixed an issue where the computed `psc_service_attachment_link` attribute was not being exported properly in `google_sql_database_instance` resource and datasources ([#11265](https://github.com/hashicorp/terraform-provider-google-beta/pull/11265))
+
+
 ## 7.13.0 (December 9, 2025)
 
 NOTES:
