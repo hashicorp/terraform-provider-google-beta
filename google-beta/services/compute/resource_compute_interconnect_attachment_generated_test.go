@@ -240,7 +240,7 @@ func TestAccComputeInterconnectAttachment_computeInterconnectAttachmentCustomRan
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeInterconnectAttachmentDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -270,7 +270,6 @@ resource "google_compute_interconnect_attachment" "custom-ranges-interconnect-at
   candidate_customer_router_ip_address   = "192.169.0.2/29"
   candidate_cloud_router_ipv6_address    = "748d:2f23:6651:9455:828b:ca81:6fe0:fed1/125"
   candidate_customer_router_ipv6_address = "748d:2f23:6651:9455:828b:ca81:6fe0:fed2/125"
-  provider                               = google-beta
 }
 
 resource "google_compute_router" "foobar" {
@@ -279,13 +278,11 @@ resource "google_compute_router" "foobar" {
   bgp {
     asn = 16550
   }
-  provider = google-beta
 }
 
 resource "google_compute_network" "foobar" {
   name                    = "tf-test-test-network%{random_suffix}"
   auto_create_subnetworks = false
-  provider                = google-beta
 }
 `, context)
 }
