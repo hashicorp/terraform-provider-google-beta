@@ -26,7 +26,10 @@ fields:
     - api_field: reservationName
     - api_field: schedulingType
     - api_field: selfLinkWithId
-    - api_field: shareSettings.projectMap.projectConfig.projectId
+    - api_field: shareSettings.projectMap.key
+      field: share_settings.project_map.id
+    - api_field: shareSettings.projectMap.value.projectId
+      field: share_settings.project_map.project_id
     - api_field: shareSettings.projects
     - api_field: shareSettings.shareType
     - api_field: specificReservationRequired
@@ -47,7 +50,10 @@ fields:
     - api_field: status.lastKnownGoodState.description
     - api_field: status.lastKnownGoodState.existingMatchingUsageInfo.count
     - api_field: status.lastKnownGoodState.existingMatchingUsageInfo.timeStamp
-    - api_field: status.lastKnownGoodState.futureReservationSpecs.shareSettings.projectMap.projectConfig.projectId
+    - api_field: status.lastKnownGoodState.futureReservationSpecs.shareSettings.projectMap.key
+      field: status.last_known_good_state.future_reservation_specs.share_settings.project_map.project
+    - api_field: status.lastKnownGoodState.futureReservationSpecs.shareSettings.projectMap.value.projectId
+      field: status.last_known_good_state.future_reservation_specs.share_settings.project_map.project_id
     - api_field: status.lastKnownGoodState.futureReservationSpecs.shareSettings.projects
     - api_field: status.lastKnownGoodState.futureReservationSpecs.shareSettings.shareType
     - api_field: status.lastKnownGoodState.futureReservationSpecs.specificSkuProperties.instanceProperties.guestAccelerators.acceleratorCount
