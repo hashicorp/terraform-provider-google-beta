@@ -21,7 +21,7 @@ IMPROVEMENTS:
 * eventarc: added `retry_policy` field to `google_eventarc_trigger` resource ([#11239](https://github.com/hashicorp/terraform-provider-google-beta/pull/11239))
 * networksecurity: enabled in-place update for `custom_mirroring_profile.mirroring_deployment_groups` on `google_network_security_security_profile` ([#11263](https://github.com/hashicorp/terraform-provider-google-beta/pull/11263))
 * spanner: added `autoscaling_config.autoscaling_targets.total_cpu_utilization_percent` field to  `google_spanner_instance` resource ([#11257](https://github.com/hashicorp/terraform-provider-google-beta/pull/11257))
-* sql: added changes to ignore changes in backup configuration's fields like enabled, binary_log_enabled, start_time, point_in_time_recovery_enabled, transaction_log_retention_days and backup_retention_settings.retained_backups if the instance is managed by Google Cloud Backup and Disaster (DR) Recovery Service. ([#11270](https://github.com/hashicorp/terraform-provider-google-beta/pull/11270))
+* sql: added changes to ignore changes in backup configuration's fields like `enabled`, `binary_log_enabled`, `start_time`, `point_in_time_recovery_enabled`, `transaction_log_retention_days` and `backup_retention_settings.retained_backups` in `google_sql_database_instance` if the instance is managed by Google Cloud Backup and Disaster (DR) Recovery Service. ([#11270](https://github.com/hashicorp/terraform-provider-google-beta/pull/11270))
 
 BUG FIXES:
 * compute: fixed `google_compute_network` in-place update to enable `enable_ula_internal_ipv6`. ([#11240](https://github.com/hashicorp/terraform-provider-google-beta/pull/11240))
