@@ -415,6 +415,22 @@ func resourceFirebaseExtensionsInstanceCreate(d *schema.ResourceData, meta inter
 	}
 	d.SetId(id)
 
+	identity, err := d.Identity()
+	if err == nil && identity != nil {
+		if instanceIdValue, ok := d.GetOk("instance_id"); ok && instanceIdValue.(string) != "" {
+			if err = identity.Set("instance_id", instanceIdValue.(string)); err != nil {
+				return fmt.Errorf("Error setting instance_id: %s", err)
+			}
+		}
+		if projectValue, ok := d.GetOk("project"); ok && projectValue.(string) != "" {
+			if err = identity.Set("project", projectValue.(string)); err != nil {
+				return fmt.Errorf("Error setting project: %s", err)
+			}
+		}
+	} else {
+		log.Printf("[DEBUG] (Create) identity not set: %s", err)
+	}
+
 	err = FirebaseExtensionsOperationWaitTime(
 		config, res, project, "Creating Instance", userAgent,
 		d.Timeout(schema.TimeoutCreate))
@@ -507,21 +523,21 @@ func resourceFirebaseExtensionsInstanceRead(d *schema.ResourceData, meta interfa
 	}
 
 	identity, err := d.Identity()
-	if err != nil && identity != nil {
-		if v, ok := identity.GetOk("instance_id"); ok && v != "" {
+	if err == nil && identity != nil {
+		if v, ok := identity.GetOk("instance_id"); !ok && v == "" {
 			err = identity.Set("instance_id", d.Get("instance_id").(string))
 			if err != nil {
 				return fmt.Errorf("Error setting instance_id: %s", err)
 			}
 		}
-		if v, ok := identity.GetOk("project"); ok && v != "" {
+		if v, ok := identity.GetOk("project"); !ok && v == "" {
 			err = identity.Set("project", d.Get("project").(string))
 			if err != nil {
 				return fmt.Errorf("Error setting project: %s", err)
 			}
 		}
 	} else {
-		log.Printf("[DEBUG] identity not set: %s", err)
+		log.Printf("[DEBUG] (Read) identity not set: %s", err)
 	}
 	return nil
 }
@@ -531,6 +547,22 @@ func resourceFirebaseExtensionsInstanceUpdate(d *schema.ResourceData, meta inter
 	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
+	}
+
+	identity, err := d.Identity()
+	if err == nil && identity != nil {
+		if instanceIdValue, ok := d.GetOk("instance_id"); ok && instanceIdValue.(string) != "" {
+			if err = identity.Set("instance_id", instanceIdValue.(string)); err != nil {
+				return fmt.Errorf("Error setting instance_id: %s", err)
+			}
+		}
+		if projectValue, ok := d.GetOk("project"); ok && projectValue.(string) != "" {
+			if err = identity.Set("project", projectValue.(string)); err != nil {
+				return fmt.Errorf("Error setting project: %s", err)
+			}
+		}
+	} else {
+		log.Printf("[DEBUG] (Update) identity not set: %s", err)
 	}
 
 	billingProject := ""

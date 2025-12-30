@@ -242,6 +242,27 @@ func resourceFirebaseHostingReleaseCreate(d *schema.ResourceData, meta interface
 	}
 	d.SetId(id)
 
+	identity, err := d.Identity()
+	if err == nil && identity != nil {
+		if releaseIdValue, ok := d.GetOk("release_id"); ok && releaseIdValue.(string) != "" {
+			if err = identity.Set("release_id", releaseIdValue.(string)); err != nil {
+				return fmt.Errorf("Error setting release_id: %s", err)
+			}
+		}
+		if siteIdValue, ok := d.GetOk("site_id"); ok && siteIdValue.(string) != "" {
+			if err = identity.Set("site_id", siteIdValue.(string)); err != nil {
+				return fmt.Errorf("Error setting site_id: %s", err)
+			}
+		}
+		if channelIdValue, ok := d.GetOk("channel_id"); ok && channelIdValue.(string) != "" {
+			if err = identity.Set("channel_id", channelIdValue.(string)); err != nil {
+				return fmt.Errorf("Error setting channel_id: %s", err)
+			}
+		}
+	} else {
+		log.Printf("[DEBUG] (Create) identity not set: %s", err)
+	}
+
 	// Store the name as ID
 	d.SetId(res["name"].(string))
 
@@ -300,27 +321,27 @@ func resourceFirebaseHostingReleaseRead(d *schema.ResourceData, meta interface{}
 	}
 
 	identity, err := d.Identity()
-	if err != nil && identity != nil {
-		if v, ok := identity.GetOk("release_id"); ok && v != "" {
+	if err == nil && identity != nil {
+		if v, ok := identity.GetOk("release_id"); !ok && v == "" {
 			err = identity.Set("release_id", d.Get("release_id").(string))
 			if err != nil {
 				return fmt.Errorf("Error setting release_id: %s", err)
 			}
 		}
-		if v, ok := identity.GetOk("site_id"); ok && v != "" {
+		if v, ok := identity.GetOk("site_id"); !ok && v == "" {
 			err = identity.Set("site_id", d.Get("site_id").(string))
 			if err != nil {
 				return fmt.Errorf("Error setting site_id: %s", err)
 			}
 		}
-		if v, ok := identity.GetOk("channel_id"); ok && v != "" {
+		if v, ok := identity.GetOk("channel_id"); !ok && v == "" {
 			err = identity.Set("channel_id", d.Get("channel_id").(string))
 			if err != nil {
 				return fmt.Errorf("Error setting channel_id: %s", err)
 			}
 		}
 	} else {
-		log.Printf("[DEBUG] identity not set: %s", err)
+		log.Printf("[DEBUG] (Read) identity not set: %s", err)
 	}
 	return nil
 }

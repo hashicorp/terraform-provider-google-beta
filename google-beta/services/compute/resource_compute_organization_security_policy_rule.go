@@ -370,6 +370,22 @@ func resourceComputeOrganizationSecurityPolicyRuleCreate(d *schema.ResourceData,
 	}
 	d.SetId(id)
 
+	identity, err := d.Identity()
+	if err == nil && identity != nil {
+		if priorityValue, ok := d.GetOk("priority"); ok && priorityValue.(string) != "" {
+			if err = identity.Set("priority", priorityValue.(string)); err != nil {
+				return fmt.Errorf("Error setting priority: %s", err)
+			}
+		}
+		if policyIdValue, ok := d.GetOk("policy_id"); ok && policyIdValue.(string) != "" {
+			if err = identity.Set("policy_id", policyIdValue.(string)); err != nil {
+				return fmt.Errorf("Error setting policy_id: %s", err)
+			}
+		}
+	} else {
+		log.Printf("[DEBUG] (Create) identity not set: %s", err)
+	}
+
 	// `parent` is needed to poll the asynchronous operations but its available only on the policy.
 
 	policyUrl := fmt.Sprintf("{{ComputeBasePath}}%s", d.Get("policy_id"))
@@ -466,21 +482,21 @@ func resourceComputeOrganizationSecurityPolicyRuleRead(d *schema.ResourceData, m
 	}
 
 	identity, err := d.Identity()
-	if err != nil && identity != nil {
-		if v, ok := identity.GetOk("priority"); ok && v != "" {
+	if err == nil && identity != nil {
+		if v, ok := identity.GetOk("priority"); !ok && v == "" {
 			err = identity.Set("priority", d.Get("priority").(string))
 			if err != nil {
 				return fmt.Errorf("Error setting priority: %s", err)
 			}
 		}
-		if v, ok := identity.GetOk("policy_id"); ok && v != "" {
+		if v, ok := identity.GetOk("policy_id"); !ok && v == "" {
 			err = identity.Set("policy_id", d.Get("policy_id").(string))
 			if err != nil {
 				return fmt.Errorf("Error setting policy_id: %s", err)
 			}
 		}
 	} else {
-		log.Printf("[DEBUG] identity not set: %s", err)
+		log.Printf("[DEBUG] (Read) identity not set: %s", err)
 	}
 	return nil
 }
@@ -490,6 +506,22 @@ func resourceComputeOrganizationSecurityPolicyRuleUpdate(d *schema.ResourceData,
 	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
+	}
+
+	identity, err := d.Identity()
+	if err == nil && identity != nil {
+		if priorityValue, ok := d.GetOk("priority"); ok && priorityValue.(string) != "" {
+			if err = identity.Set("priority", priorityValue.(string)); err != nil {
+				return fmt.Errorf("Error setting priority: %s", err)
+			}
+		}
+		if policyIdValue, ok := d.GetOk("policy_id"); ok && policyIdValue.(string) != "" {
+			if err = identity.Set("policy_id", policyIdValue.(string)); err != nil {
+				return fmt.Errorf("Error setting policy_id: %s", err)
+			}
+		}
+	} else {
+		log.Printf("[DEBUG] (Update) identity not set: %s", err)
 	}
 
 	billingProject := ""
