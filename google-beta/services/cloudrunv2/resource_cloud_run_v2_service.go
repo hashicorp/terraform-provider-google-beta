@@ -364,6 +364,42 @@ If omitted, a port number will be chosen and passed to the container through the
 											},
 										},
 									},
+									"source_code": {
+										Type:        schema.TypeList,
+										Optional:    true,
+										Description: `Location of the source.`,
+										MaxItems:    1,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"cloud_storage_source": {
+													Type:        schema.TypeList,
+													Optional:    true,
+													Description: `Cloud Storage source.`,
+													MaxItems:    1,
+													Elem: &schema.Resource{
+														Schema: map[string]*schema.Schema{
+															"bucket": {
+																Type:        schema.TypeString,
+																Required:    true,
+																Description: `The Cloud Storage bucket name.`,
+															},
+															"object": {
+																Type:        schema.TypeString,
+																Required:    true,
+																Description: `The Cloud Storage object name.`,
+															},
+															"generation": {
+																Type:        schema.TypeString,
+																Optional:    true,
+																Description: `The Cloud Storage object generation. The is an int64 value. As with most Google APIs, its JSON representation will be a string instead of an integer.`,
+															},
+														},
+													},
+													ExactlyOneOf: []string{},
+												},
+											},
+										},
+									},
 									"startup_probe": {
 										Type:        schema.TypeList,
 										Computed:    true,
@@ -2391,6 +2427,7 @@ func flattenCloudRunV2ServiceTemplateContainers(v interface{}, d *schema.Resourc
 			"depends_on":     flattenCloudRunV2ServiceTemplateContainersDependsOn(original["dependsOn"], d, config),
 			"base_image_uri": flattenCloudRunV2ServiceTemplateContainersBaseImageUri(original["baseImageUri"], d, config),
 			"build_info":     flattenCloudRunV2ServiceTemplateContainersBuildInfo(original["buildInfo"], d, config),
+			"source_code":    flattenCloudRunV2ServiceTemplateContainersSourceCode(original["sourceCode"], d, config),
 		})
 	}
 	return transformed
@@ -3041,6 +3078,48 @@ func flattenCloudRunV2ServiceTemplateContainersBuildInfoFunctionTarget(v interfa
 }
 
 func flattenCloudRunV2ServiceTemplateContainersBuildInfoSourceLocation(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenCloudRunV2ServiceTemplateContainersSourceCode(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["cloud_storage_source"] =
+		flattenCloudRunV2ServiceTemplateContainersSourceCodeCloudStorageSource(original["cloudStorageSource"], d, config)
+	return []interface{}{transformed}
+}
+func flattenCloudRunV2ServiceTemplateContainersSourceCodeCloudStorageSource(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["bucket"] =
+		flattenCloudRunV2ServiceTemplateContainersSourceCodeCloudStorageSourceBucket(original["bucket"], d, config)
+	transformed["object"] =
+		flattenCloudRunV2ServiceTemplateContainersSourceCodeCloudStorageSourceObject(original["object"], d, config)
+	transformed["generation"] =
+		flattenCloudRunV2ServiceTemplateContainersSourceCodeCloudStorageSourceGeneration(original["generation"], d, config)
+	return []interface{}{transformed}
+}
+func flattenCloudRunV2ServiceTemplateContainersSourceCodeCloudStorageSourceBucket(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenCloudRunV2ServiceTemplateContainersSourceCodeCloudStorageSourceObject(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenCloudRunV2ServiceTemplateContainersSourceCodeCloudStorageSourceGeneration(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -4240,6 +4319,13 @@ func expandCloudRunV2ServiceTemplateContainers(v interface{}, d tpgresource.Terr
 			transformed["buildInfo"] = transformedBuildInfo
 		}
 
+		transformedSourceCode, err := expandCloudRunV2ServiceTemplateContainersSourceCode(original["source_code"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedSourceCode); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["sourceCode"] = transformedSourceCode
+		}
+
 		req = append(req, transformed)
 	}
 	return req, nil
@@ -5039,6 +5125,76 @@ func expandCloudRunV2ServiceTemplateContainersBuildInfoFunctionTarget(v interfac
 }
 
 func expandCloudRunV2ServiceTemplateContainersBuildInfoSourceLocation(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandCloudRunV2ServiceTemplateContainersSourceCode(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedCloudStorageSource, err := expandCloudRunV2ServiceTemplateContainersSourceCodeCloudStorageSource(original["cloud_storage_source"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedCloudStorageSource); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["cloudStorageSource"] = transformedCloudStorageSource
+	}
+
+	return transformed, nil
+}
+
+func expandCloudRunV2ServiceTemplateContainersSourceCodeCloudStorageSource(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedBucket, err := expandCloudRunV2ServiceTemplateContainersSourceCodeCloudStorageSourceBucket(original["bucket"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedBucket); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["bucket"] = transformedBucket
+	}
+
+	transformedObject, err := expandCloudRunV2ServiceTemplateContainersSourceCodeCloudStorageSourceObject(original["object"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedObject); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["object"] = transformedObject
+	}
+
+	transformedGeneration, err := expandCloudRunV2ServiceTemplateContainersSourceCodeCloudStorageSourceGeneration(original["generation"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedGeneration); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["generation"] = transformedGeneration
+	}
+
+	return transformed, nil
+}
+
+func expandCloudRunV2ServiceTemplateContainersSourceCodeCloudStorageSourceBucket(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandCloudRunV2ServiceTemplateContainersSourceCodeCloudStorageSourceObject(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandCloudRunV2ServiceTemplateContainersSourceCodeCloudStorageSourceGeneration(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
