@@ -92,6 +92,9 @@ fields:
     - api_field: template.containers.resources.cpuIdle
     - api_field: template.containers.resources.limits
     - api_field: template.containers.resources.startupCpuBoost
+    - api_field: template.containers.sourceCode.cloudStorageSource.bucket
+    - api_field: template.containers.sourceCode.cloudStorageSource.generation
+    - api_field: template.containers.sourceCode.cloudStorageSource.object
     - api_field: template.containers.startupProbe.failureThreshold
     - api_field: template.containers.startupProbe.grpc.port
     - api_field: template.containers.startupProbe.grpc.service

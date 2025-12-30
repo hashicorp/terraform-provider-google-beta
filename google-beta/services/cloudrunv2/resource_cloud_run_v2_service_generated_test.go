@@ -928,6 +928,76 @@ resource "google_cloud_run_v2_service" "default" {
 `, context)
 }
 
+func TestAccCloudRunV2Service_cloudrunv2ServiceZipDeployExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckCloudRunV2ServiceDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudRunV2Service_cloudrunv2ServiceZipDeployExample(context),
+			},
+			{
+				ResourceName:            "google_cloud_run_v2_service.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"annotations", "deletion_protection", "labels", "location", "name", "terraform_labels"},
+			},
+		},
+	})
+}
+
+func testAccCloudRunV2Service_cloudrunv2ServiceZipDeployExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_storage_bucket" "sourcebucket" {
+  provider = google-beta
+  name     = "${data.google_project.project.project_id}-tf-test-gcf-source%{random_suffix}"  # Every bucket name must be globally unique
+  location = "US"
+  uniform_bucket_level_access = true
+}
+
+resource "google_storage_bucket_object" "source_tar" {
+  provider = google-beta
+  name   = "function-source.zip"
+  bucket = google_storage_bucket.sourcebucket.name
+  source = "./test-fixtures/cr-zip-nodejs-hello.tar.gz"
+}
+
+resource "google_cloud_run_v2_service" "default" {
+  provider = google-beta
+  name     = "tf-test-cloudrun-zip-service%{random_suffix}"
+  location = "us-central1"
+  deletion_protection = false
+
+  template {
+    containers {
+      image = "scratch"
+      base_image_uri = "us-central1-docker.pkg.dev/serverless-runtimes/google-24-full/runtimes/nodejs24"
+      command = ["node"]
+      args = ["index.js"]
+      source_code {
+        cloud_storage_source {
+          bucket = google_storage_bucket.sourcebucket.name
+          object = google_storage_bucket_object.source_tar.name
+          generation = google_storage_bucket_object.source_tar.generation
+        }
+      }
+    }
+  }
+}
+
+data "google_project" "project" {
+  provider = google-beta
+}
+`, context)
+}
+
 func testAccCheckCloudRunV2ServiceDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		for name, rs := range s.RootModule().Resources {
