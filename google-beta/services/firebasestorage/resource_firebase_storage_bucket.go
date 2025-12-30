@@ -193,6 +193,22 @@ func resourceFirebaseStorageBucketCreate(d *schema.ResourceData, meta interface{
 	}
 	d.SetId(id)
 
+	identity, err := d.Identity()
+	if err == nil && identity != nil {
+		if bucketIdValue, ok := d.GetOk("bucket_id"); ok && bucketIdValue.(string) != "" {
+			if err = identity.Set("bucket_id", bucketIdValue.(string)); err != nil {
+				return fmt.Errorf("Error setting bucket_id: %s", err)
+			}
+		}
+		if projectValue, ok := d.GetOk("project"); ok && projectValue.(string) != "" {
+			if err = identity.Set("project", projectValue.(string)); err != nil {
+				return fmt.Errorf("Error setting project: %s", err)
+			}
+		}
+	} else {
+		log.Printf("[DEBUG] (Create) identity not set: %s", err)
+	}
+
 	log.Printf("[DEBUG] Finished creating Bucket %q: %#v", d.Id(), res)
 
 	return resourceFirebaseStorageBucketRead(d, meta)
@@ -245,21 +261,21 @@ func resourceFirebaseStorageBucketRead(d *schema.ResourceData, meta interface{})
 	}
 
 	identity, err := d.Identity()
-	if err != nil && identity != nil {
-		if v, ok := identity.GetOk("bucket_id"); ok && v != "" {
+	if err == nil && identity != nil {
+		if v, ok := identity.GetOk("bucket_id"); !ok && v == "" {
 			err = identity.Set("bucket_id", d.Get("bucket_id").(string))
 			if err != nil {
 				return fmt.Errorf("Error setting bucket_id: %s", err)
 			}
 		}
-		if v, ok := identity.GetOk("project"); ok && v != "" {
+		if v, ok := identity.GetOk("project"); !ok && v == "" {
 			err = identity.Set("project", d.Get("project").(string))
 			if err != nil {
 				return fmt.Errorf("Error setting project: %s", err)
 			}
 		}
 	} else {
-		log.Printf("[DEBUG] identity not set: %s", err)
+		log.Printf("[DEBUG] (Read) identity not set: %s", err)
 	}
 	return nil
 }

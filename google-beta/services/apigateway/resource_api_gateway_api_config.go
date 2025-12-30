@@ -435,6 +435,27 @@ func resourceApiGatewayApiConfigCreate(d *schema.ResourceData, meta interface{})
 	}
 	d.SetId(id)
 
+	identity, err := d.Identity()
+	if err == nil && identity != nil {
+		if apiValue, ok := d.GetOk("api"); ok && apiValue.(string) != "" {
+			if err = identity.Set("api", apiValue.(string)); err != nil {
+				return fmt.Errorf("Error setting api: %s", err)
+			}
+		}
+		if apiConfigIdValue, ok := d.GetOk("api_config_id"); ok && apiConfigIdValue.(string) != "" {
+			if err = identity.Set("api_config_id", apiConfigIdValue.(string)); err != nil {
+				return fmt.Errorf("Error setting api_config_id: %s", err)
+			}
+		}
+		if projectValue, ok := d.GetOk("project"); ok && projectValue.(string) != "" {
+			if err = identity.Set("project", projectValue.(string)); err != nil {
+				return fmt.Errorf("Error setting project: %s", err)
+			}
+		}
+	} else {
+		log.Printf("[DEBUG] (Create) identity not set: %s", err)
+	}
+
 	err = ApiGatewayOperationWaitTime(
 		config, res, project, "Creating ApiConfig", userAgent,
 		d.Timeout(schema.TimeoutCreate))
@@ -518,27 +539,27 @@ func resourceApiGatewayApiConfigRead(d *schema.ResourceData, meta interface{}) e
 	}
 
 	identity, err := d.Identity()
-	if err != nil && identity != nil {
-		if v, ok := identity.GetOk("api"); ok && v != "" {
+	if err == nil && identity != nil {
+		if v, ok := identity.GetOk("api"); !ok && v == "" {
 			err = identity.Set("api", d.Get("api").(string))
 			if err != nil {
 				return fmt.Errorf("Error setting api: %s", err)
 			}
 		}
-		if v, ok := identity.GetOk("api_config_id"); ok && v != "" {
+		if v, ok := identity.GetOk("api_config_id"); !ok && v == "" {
 			err = identity.Set("api_config_id", d.Get("api_config_id").(string))
 			if err != nil {
 				return fmt.Errorf("Error setting api_config_id: %s", err)
 			}
 		}
-		if v, ok := identity.GetOk("project"); ok && v != "" {
+		if v, ok := identity.GetOk("project"); !ok && v == "" {
 			err = identity.Set("project", d.Get("project").(string))
 			if err != nil {
 				return fmt.Errorf("Error setting project: %s", err)
 			}
 		}
 	} else {
-		log.Printf("[DEBUG] identity not set: %s", err)
+		log.Printf("[DEBUG] (Read) identity not set: %s", err)
 	}
 	return nil
 }
@@ -548,6 +569,27 @@ func resourceApiGatewayApiConfigUpdate(d *schema.ResourceData, meta interface{})
 	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
+	}
+
+	identity, err := d.Identity()
+	if err == nil && identity != nil {
+		if apiValue, ok := d.GetOk("api"); ok && apiValue.(string) != "" {
+			if err = identity.Set("api", apiValue.(string)); err != nil {
+				return fmt.Errorf("Error setting api: %s", err)
+			}
+		}
+		if apiConfigIdValue, ok := d.GetOk("api_config_id"); ok && apiConfigIdValue.(string) != "" {
+			if err = identity.Set("api_config_id", apiConfigIdValue.(string)); err != nil {
+				return fmt.Errorf("Error setting api_config_id: %s", err)
+			}
+		}
+		if projectValue, ok := d.GetOk("project"); ok && projectValue.(string) != "" {
+			if err = identity.Set("project", projectValue.(string)); err != nil {
+				return fmt.Errorf("Error setting project: %s", err)
+			}
+		}
+	} else {
+		log.Printf("[DEBUG] (Update) identity not set: %s", err)
 	}
 
 	billingProject := ""
