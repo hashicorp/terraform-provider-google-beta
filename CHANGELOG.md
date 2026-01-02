@@ -11,11 +11,9 @@ FEATURES:
 * **New Resource:** `google_biglake_iceberg_catalog_iam_member` ([#11322](https://github.com/hashicorp/terraform-provider-google-beta/pull/11322))
 * **New Resource:** `google_biglake_iceberg_catalog_iam_policy` ([#11322](https://github.com/hashicorp/terraform-provider-google-beta/pull/11322))
 * **New Resource:** `google_biglake_iceberg_catalog` ([#11273](https://github.com/hashicorp/terraform-provider-google-beta/pull/11273))
-* **New Resource:** `google_compute_organization_security_policy_association`  (GA) ([#11327](https://github.com/hashicorp/terraform-provider-google-beta/pull/11327))
-* **New Resource:** `google_compute_region_health_sources` (beta) ([#11271](https://github.com/hashicorp/terraform-provider-google-beta/pull/11271))
+* **New Resource:** `google_compute_region_health_sources` ([#11271](https://github.com/hashicorp/terraform-provider-google-beta/pull/11271))
 * **New Resource:** `google_network_connectivity_destination` ([#11340](https://github.com/hashicorp/terraform-provider-google-beta/pull/11340))
 * **New Resource:** `google_network_connectivity_multicloud_data_transfer_config` ([#11307](https://github.com/hashicorp/terraform-provider-google-beta/pull/11307))
-* **New Resource:** `google_network_security_dns_threat_detector` (GA) ([#11319](https://github.com/hashicorp/terraform-provider-google-beta/pull/11319))
 
 IMPROVEMENTS:
 * biglakeiceberg: made `google_biglake_iceberg_catalog` use the resource project as the quota project when `user_project_override` is `true` ([#11322](https://github.com/hashicorp/terraform-provider-google-beta/pull/11322))
