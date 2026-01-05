@@ -16,6 +16,7 @@ FEATURES:
 * **New Resource:** `google_network_connectivity_multicloud_data_transfer_config` ([#11307](https://github.com/hashicorp/terraform-provider-google-beta/pull/11307))
 
 IMPROVEMENTS:
+* backupdr: added ignore_read to `encryption_config` field in `google_backup_dr_backup_vault` resource ([#11345](https://github.com/hashicorp/terraform-provider-google-beta/pull/11345))
 * biglakeiceberg: made `google_biglake_iceberg_catalog` use the resource project as the quota project when `user_project_override` is `true` ([#11322](https://github.com/hashicorp/terraform-provider-google-beta/pull/11322))
 * cloudrunv2: added `source_code` field to `template.container` in `google_cloud_run_v2_service` resource ([#11336](https://github.com/hashicorp/terraform-provider-google-beta/pull/11336))
 * composer: added new enum `ENVIRONMENT_SIZE_EXTRA_LARGE` to `environment_size` field to `google_composer_environment` resource ([#11276](https://github.com/hashicorp/terraform-provider-google-beta/pull/11276))
