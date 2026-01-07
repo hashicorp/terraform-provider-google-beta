@@ -104,6 +104,63 @@ resource "google_network_services_authz_extension" "default" {
 `, context)
 }
 
+func TestAccNetworkServicesAuthzExtension_networkServicesAuthzExtensionBasicWithAuthGrpcExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"project":       envvar.GetTestProjectFromEnv(),
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckNetworkServicesAuthzExtensionDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccNetworkServicesAuthzExtension_networkServicesAuthzExtensionBasicWithAuthGrpcExample(context),
+			},
+			{
+				ResourceName:            "google_network_services_authz_extension.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"labels", "location", "service", "terraform_labels"},
+			},
+		},
+	})
+}
+
+func testAccNetworkServicesAuthzExtension_networkServicesAuthzExtensionBasicWithAuthGrpcExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_compute_region_backend_service" "default" {
+  provider              = google-beta
+  name                  = "tf-test-authz-service-grpc%{random_suffix}"
+  project               = "%{project}"
+  region                = "us-west1"
+
+  protocol              = "HTTP2"
+  load_balancing_scheme = "INTERNAL_MANAGED"
+  port_name             = "grpc"
+}
+
+resource "google_network_services_authz_extension" "default" {
+  provider = google-beta
+  name     = "tf-test-my-authz-ext-with-grpc%{random_suffix}"
+  project  = "%{project}"
+  location = "us-west1"
+
+  description           = "my description"
+  load_balancing_scheme = "INTERNAL_MANAGED"
+  wire_format           = "EXT_AUTHZ_GRPC"
+  authority       = "ext11.com"
+  service         = google_compute_region_backend_service.default.self_link
+  timeout         = "0.1s"
+  fail_open       = false
+  forward_headers = ["Authorization"]
+}
+`, context)
+}
+
 func testAccCheckNetworkServicesAuthzExtensionDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		for name, rs := range s.RootModule().Resources {
