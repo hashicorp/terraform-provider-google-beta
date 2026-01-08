@@ -1033,6 +1033,7 @@ func resourceComputeInterconnectRead(d *schema.ResourceData, meta interface{}) e
 	} else {
 		log.Printf("[DEBUG] (Read) identity not set: %s", err)
 	}
+
 	return nil
 }
 

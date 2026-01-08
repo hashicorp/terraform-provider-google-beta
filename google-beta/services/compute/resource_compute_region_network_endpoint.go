@@ -484,6 +484,7 @@ func resourceComputeRegionNetworkEndpointRead(d *schema.ResourceData, meta inter
 	} else {
 		log.Printf("[DEBUG] (Read) identity not set: %s", err)
 	}
+
 	return nil
 }
 

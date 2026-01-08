@@ -509,6 +509,7 @@ func resourceSaasRuntimeRolloutKindRead(d *schema.ResourceData, meta interface{}
 	} else {
 		log.Printf("[DEBUG] (Read) identity not set: %s", err)
 	}
+
 	return nil
 }
 

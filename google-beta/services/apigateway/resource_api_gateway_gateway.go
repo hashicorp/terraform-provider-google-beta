@@ -390,6 +390,7 @@ func resourceApiGatewayGatewayRead(d *schema.ResourceData, meta interface{}) err
 	} else {
 		log.Printf("[DEBUG] (Read) identity not set: %s", err)
 	}
+
 	return nil
 }
 
