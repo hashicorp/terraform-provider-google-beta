@@ -2163,6 +2163,7 @@ func resourceComputeRegionBackendServiceRead(d *schema.ResourceData, meta interf
 	} else {
 		log.Printf("[DEBUG] (Read) identity not set: %s", err)
 	}
+
 	return nil
 }
 

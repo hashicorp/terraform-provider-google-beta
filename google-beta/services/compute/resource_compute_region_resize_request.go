@@ -749,6 +749,7 @@ func resourceComputeRegionResizeRequestRead(d *schema.ResourceData, meta interfa
 	} else {
 		log.Printf("[DEBUG] (Read) identity not set: %s", err)
 	}
+
 	return nil
 }
 
