@@ -85,7 +85,7 @@ func testAccKMSKeyHandle_kmsKeyHandleBasicExample(context map[string]interface{}
 # Create Folder in GCP Organization
 resource "google_folder" "autokms_folder" {
   provider     = google-beta
-  display_name = "tf-test-my-folder%{random_suffix}"
+  display_name = "tf-test-folder-kh%{random_suffix}"
   parent       = "organizations/%{org_id}"
   deletion_protection = false
 }
