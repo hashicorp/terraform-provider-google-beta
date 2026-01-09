@@ -76,7 +76,7 @@ func testAccKMSFolderKajPolicyConfig_basic(context map[string]interface{}) strin
 # Create Folder in GCP Organization.
 resource "google_folder" "kaj_folder" {
 	provider     = google-beta
-	display_name = "tf-test-my-folder%{random_suffix}"
+	display_name = "tf-test-folder-kaj-%{random_suffix}"
 	parent       = "organizations/%{org_id}"
 	deletion_protection = false
 }
@@ -129,7 +129,7 @@ func testAccKMSFolderKajPolicyConfig_update(context map[string]interface{}) stri
 # Create Folder in GCP Organization.
 resource "google_folder" "kaj_folder" {
 	provider     = google-beta
-	display_name = "tf-test-my-folder%{random_suffix}"
+	display_name = "tf-test-folder-kaup-%{random_suffix}"
 	parent       = "organizations/%{org_id}"
 	deletion_protection = false
 }
