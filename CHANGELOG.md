@@ -15,7 +15,6 @@ FEATURES:
 * **New Resource:** `google_biglake_iceberg_catalog_iam_member` ([#11322](https://github.com/hashicorp/terraform-provider-google-beta/pull/11322))
 * **New Resource:** `google_biglake_iceberg_catalog_iam_policy` ([#11322](https://github.com/hashicorp/terraform-provider-google-beta/pull/11322))
 * **New Resource:** `google_biglake_iceberg_catalog` ([#11273](https://github.com/hashicorp/terraform-provider-google-beta/pull/11273))
-* **New Resource:** `google_compute_region_health_sources` ([#11271](https://github.com/hashicorp/terraform-provider-google-beta/pull/11271))
 * **New Resource:** `google_network_connectivity_destination` ([#11340](https://github.com/hashicorp/terraform-provider-google-beta/pull/11340))
 * **New Resource:** `google_network_connectivity_multicloud_data_transfer_config` ([#11307](https://github.com/hashicorp/terraform-provider-google-beta/pull/11307))
 
@@ -62,7 +61,7 @@ FEATURES:
 * **New Data Source:** `google_cloud_identity_policies` ([#11267](https://github.com/hashicorp/terraform-provider-google-beta/pull/11267))
 * **New Data Source:** `google_compute_region_security_policy` ([#11254](https://github.com/hashicorp/terraform-provider-google-beta/pull/11254))
 * **New Data Source:** `google_compute_storage_pool` ([#11251](https://github.com/hashicorp/terraform-provider-google-beta/pull/11251))
-* **New Resource:** `google_compute_region_health_sources` ([#11271](https://github.com/hashicorp/terraform-provider-google-beta/pull/11271))
+* **New Resource:** `google_compute_region_health_source` ([#11271](https://github.com/hashicorp/terraform-provider-google-beta/pull/11271))
 * **New Resource:** `google_network_services_multicast_group_consumer_activation` ([#11269](https://github.com/hashicorp/terraform-provider-google-beta/pull/11269))
 * **New Resource:** `google_network_services_multicast_group_producer_activation` ([#11243](https://github.com/hashicorp/terraform-provider-google-beta/pull/11243))
 
