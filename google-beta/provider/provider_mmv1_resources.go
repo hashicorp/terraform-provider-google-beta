@@ -633,9 +633,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 766
+// Generated resources: 767
 // Generated IAM resources: 351
-// Total generated resources: 1117
+// Total generated resources: 1118
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -736,6 +736,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_backup_dr_backup_plan_association":                                   backupdr.ResourceBackupDRBackupPlanAssociation(),
 	"google_backup_dr_backup_vault":                                              backupdr.ResourceBackupDRBackupVault(),
 	"google_backup_dr_management_server":                                         backupdr.ResourceBackupDRManagementServer(),
+	"google_backup_dr_restore_workload":                                          backupdr.ResourceBackupDRRestoreWorkload(),
 	"google_backup_dr_service_config":                                            backupdr.ResourceBackupDRServiceConfig(),
 	"google_beyondcorp_app_connection":                                           beyondcorp.ResourceBeyondcorpAppConnection(),
 	"google_beyondcorp_app_connector":                                            beyondcorp.ResourceBeyondcorpAppConnector(),
