@@ -5069,7 +5069,10 @@ func TestAccContainerCluster_sharedVpc(t *testing.T) {
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
-		CheckDestroy:             testAccCheckContainerClusterDestroyProducer(t),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccContainerCluster_sharedVpc(org, billingId, projectName, clusterName, suffix),
@@ -11511,10 +11514,6 @@ resource "google_project_service" "host_project" {
   service = "container.googleapis.com"
 }
 
-resource "google_compute_shared_vpc_host_project" "host_project" {
-  project = google_project_service.host_project.project
-}
-
 resource "google_project" "service_project" {
   name            = "Test Project XPN Service"
   project_id      = "%s-service"
@@ -11526,6 +11525,16 @@ resource "google_project" "service_project" {
 resource "google_project_service" "service_project" {
   project = google_project.service_project.project_id
   service = "container.googleapis.com"
+}
+
+resource "time_sleep" "wait_120_seconds" {
+  create_duration = "120s"
+  depends_on = [google_project_service.host_project, google_project_service.service_project]
+}
+
+resource "google_compute_shared_vpc_host_project" "host_project" {
+  project = google_project_service.host_project.project
+  depends_on = [time_sleep.wait_120_seconds]
 }
 
 resource "google_compute_shared_vpc_service_project" "service_project" {
