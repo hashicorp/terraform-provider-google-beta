@@ -916,7 +916,10 @@ func TestAccComputeRegionSecurityPolicy_regionSecurityPolicyWithRulesNetworkMatc
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
-		CheckDestroy:             testAccCheckComputeRegionSecurityPolicyDestroyProducer(t),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccCheckComputeRegionSecurityPolicyDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccComputeRegionSecurityPolicy_withNetworkMatch(context),
@@ -953,17 +956,27 @@ func testAccComputeRegionSecurityPolicy_withNetworkMatch(context map[string]inte
 		deletion_policy = "DELETE"
 	}
 
+	resource "time_sleep" "wait_60_seconds" {
+		create_duration = "60s"
+		depends_on = [google_project.project]
+	}
+
 	resource "google_project_service" "compute_api" {
 		project = google_project.project.project_id
 		service = "compute.googleapis.com"
 
-		depends_on = [google_project.project]
+		depends_on = [time_sleep.wait_60_seconds]
+	}
+
+	resource "time_sleep" "wait_120_seconds" {
+		create_duration = "120s"
+		depends_on = [google_project_service.compute_api]
 	}
 
 	resource "google_compute_project_cloud_armor_tier" "cloud_armor_tier_config" {
 		project          = google_project.project.project_id  
 		cloud_armor_tier = "CA_ENTERPRISE_PAYGO"
-		depends_on       = [google_project_service.compute_api]
+		depends_on       = [time_sleep.wait_120_seconds]
 	}
 
 	resource "google_compute_region_security_policy" "policy_ddos_enable" {
@@ -1045,17 +1058,27 @@ func testAccComputeRegionSecurityPolicy_withNetworkMatch_update(context map[stri
 		deletion_policy = "DELETE"
 	}
 
+	resource "time_sleep" "wait_60_seconds" {
+		create_duration = "60s"
+		depends_on = [google_project.project]
+	}
+
 	resource "google_project_service" "compute_api" {
 		project = google_project.project.project_id
 		service = "compute.googleapis.com"
 
-		depends_on = [google_project.project]
+		depends_on = [time_sleep.wait_60_seconds]
+	}
+
+	resource "time_sleep" "wait_120_seconds" {
+		create_duration = "120s"
+		depends_on = [google_project_service.compute_api]
 	}
 
 	resource "google_compute_project_cloud_armor_tier" "cloud_armor_tier_config" {
 		project          = google_project.project.project_id  
 		cloud_armor_tier = "CA_ENTERPRISE_PAYGO"
-		depends_on       = [google_project_service.compute_api]
+		depends_on       = [time_sleep.wait_120_seconds]
 	}
 
 	resource "google_compute_region_security_policy" "policy_ddos_enable" {

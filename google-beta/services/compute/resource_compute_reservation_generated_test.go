@@ -362,8 +362,8 @@ resource "google_org_policy_policy" "shared_reservation_org_policy" {
 }
 
 resource "time_sleep" "wait_orgpolicy" {
-  depends_on = [google_org_policy_policy.shared_reservation_org_policy]
-  create_duration = "60s"
+  depends_on = [google_org_policy_policy.shared_reservation_org_policy, google_project_service.compute]
+  create_duration = "120s"
 }
 
 resource "google_compute_reservation" "gce_reservation" {
@@ -385,7 +385,7 @@ resource "google_compute_reservation" "gce_reservation" {
       project_id = google_project.guest_project.project_id
     }
   }
-  depends_on = [time_sleep.wait_orgpolicy,google_project_service.compute]
+  depends_on = [time_sleep.wait_orgpolicy]
 }
 `, context)
 }
@@ -460,8 +460,8 @@ resource "google_org_policy_policy" "shared_reservation_org_policy" {
 }
 
 resource "time_sleep" "wait_orgpolicy" {
-  depends_on = [google_org_policy_policy.shared_reservation_org_policy]
-  create_duration = "60s"
+  depends_on = [google_org_policy_policy.shared_reservation_org_policy, google_project_service.compute]
+  create_duration = "120s"
 }
 
 resource "google_compute_reservation" "gce_reservation" {
@@ -481,7 +481,7 @@ resource "google_compute_reservation" "gce_reservation" {
     share_type = "SPECIFIC_PROJECTS"
     projects = [google_project.guest_project.name]
   }
-  depends_on = [time_sleep.wait_orgpolicy,google_project_service.compute]
+  depends_on = [time_sleep.wait_orgpolicy]
 }
 `, context)
 }
