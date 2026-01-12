@@ -1,20 +1,20 @@
-resource: 'google_tpu_v2_queued_resource'
-generation_type: 'mmv1'
-source_file: 'products/tpuv2/QueuedResource.yaml'
-api_service_name: 'tpu.googleapis.com'
-api_version: 'v2alpha1'
-api_resource_type_kind: 'QueuedResource'
+resource: google_tpu_v2_queued_resource
+generation_type: mmv1
+source_file: products/tpuv2/QueuedResource.yaml
+api_service_name: tpu.googleapis.com
+api_version: v2alpha1
+api_resource_type_kind: QueuedResource
 fields:
-  - api_field: 'name'
-  - api_field: 'tpu.nodeSpec.node.acceleratorType'
-  - api_field: 'tpu.nodeSpec.node.description'
-  - api_field: 'tpu.nodeSpec.node.networkConfig.canIpForward'
-  - api_field: 'tpu.nodeSpec.node.networkConfig.enableExternalIps'
-  - api_field: 'tpu.nodeSpec.node.networkConfig.network'
-  - api_field: 'tpu.nodeSpec.node.networkConfig.queueCount'
-  - api_field: 'tpu.nodeSpec.node.networkConfig.subnetwork'
-  - api_field: 'tpu.nodeSpec.node.runtimeVersion'
-  - api_field: 'tpu.nodeSpec.nodeId'
-  - api_field: 'tpu.nodeSpec.parent'
-  - field: 'zone'
-    provider_only: true
+    - api_field: name
+    - api_field: tpu.nodeSpec.node.acceleratorType
+    - api_field: tpu.nodeSpec.node.description
+    - api_field: tpu.nodeSpec.node.networkConfig.canIpForward
+    - api_field: tpu.nodeSpec.node.networkConfig.enableExternalIps
+    - api_field: tpu.nodeSpec.node.networkConfig.network
+    - api_field: tpu.nodeSpec.node.networkConfig.queueCount
+    - api_field: tpu.nodeSpec.node.networkConfig.subnetwork
+    - api_field: tpu.nodeSpec.node.runtimeVersion
+    - api_field: tpu.nodeSpec.nodeId
+    - api_field: tpu.nodeSpec.parent
+    - field: zone
+      provider_only: true

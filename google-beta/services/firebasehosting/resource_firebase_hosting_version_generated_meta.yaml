@@ -1,24 +1,24 @@
-resource: 'google_firebase_hosting_version'
-generation_type: 'mmv1'
-source_file: 'products/firebasehosting/Version.yaml'
-api_service_name: 'firebasehosting.googleapis.com'
-api_version: 'v1beta1'
-api_resource_type_kind: 'Version'
+resource: google_firebase_hosting_version
+generation_type: mmv1
+source_file: products/firebasehosting/Version.yaml
+api_service_name: firebasehosting.googleapis.com
+api_version: v1beta1
+api_resource_type_kind: Version
 fields:
-  - api_field: 'config.headers.glob'
-  - api_field: 'config.headers.headers'
-  - api_field: 'config.headers.regex'
-  - api_field: 'config.redirects.glob'
-  - api_field: 'config.redirects.location'
-  - api_field: 'config.redirects.regex'
-  - api_field: 'config.redirects.statusCode'
-  - api_field: 'config.rewrites.function'
-  - api_field: 'config.rewrites.glob'
-  - api_field: 'config.rewrites.path'
-  - api_field: 'config.rewrites.regex'
-  - api_field: 'config.rewrites.run.region'
-  - api_field: 'config.rewrites.run.serviceId'
-  - api_field: 'name'
-  - field: 'site_id'
-    provider_only: true
-  - api_field: 'version_id'
+    - api_field: config.headers.glob
+    - api_field: config.headers.headers
+    - api_field: config.headers.regex
+    - api_field: config.redirects.glob
+    - api_field: config.redirects.location
+    - api_field: config.redirects.regex
+    - api_field: config.redirects.statusCode
+    - api_field: config.rewrites.function
+    - api_field: config.rewrites.glob
+    - api_field: config.rewrites.path
+    - api_field: config.rewrites.regex
+    - api_field: config.rewrites.run.region
+    - api_field: config.rewrites.run.serviceId
+    - api_field: name
+    - field: site_id
+      provider_only: true
+    - api_field: version_id

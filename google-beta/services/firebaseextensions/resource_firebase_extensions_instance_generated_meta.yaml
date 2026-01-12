@@ -1,33 +1,33 @@
-resource: 'google_firebase_extensions_instance'
-generation_type: 'mmv1'
-source_file: 'products/firebaseextensions/Instance.yaml'
-api_service_name: 'firebaseextensions.googleapis.com'
-api_version: 'v1beta'
-api_resource_type_kind: 'ExtensionInstance'
+resource: google_firebase_extensions_instance
+generation_type: mmv1
+source_file: products/firebaseextensions/Instance.yaml
+api_service_name: firebaseextensions.googleapis.com
+api_version: v1beta
+api_resource_type_kind: ExtensionInstance
 fields:
-  - api_field: 'config.allowedEventTypes'
-  - api_field: 'config.createTime'
-  - api_field: 'config.eventarcChannel'
-  - api_field: 'config.extensionRef'
-  - api_field: 'config.extensionVersion'
-  - api_field: 'config.name'
-  - api_field: 'config.params'
-  - api_field: 'config.populatedPostinstallContent'
-  - api_field: 'config.systemParams'
-  - api_field: 'createTime'
-  - api_field: 'errorStatus.code'
-  - api_field: 'errorStatus.details'
-  - api_field: 'errorStatus.message'
-  - api_field: 'etag'
-  - field: 'instance_id'
-    provider_only: true
-  - api_field: 'lastOperationName'
-  - api_field: 'lastOperationType'
-  - api_field: 'name'
-  - api_field: 'runtimeData.fatalError.errorMessage'
-  - api_field: 'runtimeData.processingState.detailMessage'
-  - api_field: 'runtimeData.processingState.state'
-  - api_field: 'runtimeData.stateUpdateTime'
-  - api_field: 'serviceAccountEmail'
-  - api_field: 'state'
-  - api_field: 'updateTime'
+    - api_field: config.allowedEventTypes
+    - api_field: config.createTime
+    - api_field: config.eventarcChannel
+    - api_field: config.extensionRef
+    - api_field: config.extensionVersion
+    - api_field: config.name
+    - api_field: config.params
+    - api_field: config.populatedPostinstallContent
+    - api_field: config.systemParams
+    - api_field: createTime
+    - api_field: errorStatus.code
+    - api_field: errorStatus.details
+    - api_field: errorStatus.message
+    - api_field: etag
+    - field: instance_id
+      provider_only: true
+    - api_field: lastOperationName
+    - api_field: lastOperationType
+    - api_field: name
+    - api_field: runtimeData.fatalError.errorMessage
+    - api_field: runtimeData.processingState.detailMessage
+    - api_field: runtimeData.processingState.state
+    - api_field: runtimeData.stateUpdateTime
+    - api_field: serviceAccountEmail
+    - api_field: state
+    - api_field: updateTime

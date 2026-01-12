@@ -1,18 +1,18 @@
-resource: 'google_api_gateway_api'
-generation_type: 'mmv1'
-source_file: 'products/apigateway/Api.yaml'
-api_service_name: 'apigateway.googleapis.com'
-api_version: 'v1beta'
-api_resource_type_kind: 'Api'
+resource: google_api_gateway_api
+generation_type: mmv1
+source_file: products/apigateway/Api.yaml
+api_service_name: apigateway.googleapis.com
+api_version: v1beta
+api_resource_type_kind: Api
 fields:
-  - field: 'api_id'
-    provider_only: true
-  - api_field: 'createTime'
-  - api_field: 'displayName'
-  - field: 'effective_labels'
-    provider_only: true
-  - api_field: 'labels'
-  - api_field: 'managedService'
-  - api_field: 'name'
-  - field: 'terraform_labels'
-    provider_only: true
+    - field: api_id
+      provider_only: true
+    - api_field: createTime
+    - api_field: displayName
+    - field: effective_labels
+      provider_only: true
+    - api_field: labels
+    - api_field: managedService
+    - api_field: name
+    - field: terraform_labels
+      provider_only: true

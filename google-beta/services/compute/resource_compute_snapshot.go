@@ -160,6 +160,12 @@ resource, this field is visible only if it has a non-empty value.`,
 				ForceNew:    true,
 				Description: `An optional description of this resource.`,
 			},
+			"guest_flush": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				ForceNew:    true,
+				Description: `Whether to attempt an application consistent snapshot by informing the OS to prepare for the snapshot process.`,
+			},
 			"labels": {
 				Type:     schema.TypeMap,
 				Optional: true,
@@ -398,6 +404,12 @@ func resourceComputeSnapshotCreate(d *schema.ResourceData, meta interface{}) err
 		return err
 	} else if v, ok := d.GetOkExists("label_fingerprint"); !tpgresource.IsEmptyValue(reflect.ValueOf(labelFingerprintProp)) && (ok || !reflect.DeepEqual(v, labelFingerprintProp)) {
 		obj["labelFingerprint"] = labelFingerprintProp
+	}
+	guestFlushProp, err := expandComputeSnapshotGuestFlush(d.Get("guest_flush"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("guest_flush"); !tpgresource.IsEmptyValue(reflect.ValueOf(guestFlushProp)) && (ok || !reflect.DeepEqual(v, guestFlushProp)) {
+		obj["guestFlush"] = guestFlushProp
 	}
 	snapshotTypeProp, err := expandComputeSnapshotSnapshotType(d.Get("snapshot_type"), d, config)
 	if err != nil {
@@ -988,6 +1000,10 @@ func expandComputeSnapshotStorageLocations(v interface{}, d tpgresource.Terrafor
 }
 
 func expandComputeSnapshotLabelFingerprint(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeSnapshotGuestFlush(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

@@ -25,6 +25,7 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
@@ -322,4 +323,58 @@ resource "google_api_gateway_gateway_iam_binding" "foo" {
   members = ["user:admin@hashicorptest.com", "user:gterraformtest1@gmail.com"]
 }
 `, context)
+}
+
+func generateApiGatewayGatewayIAMPolicyStateID(iamResourceAddr string) func(*terraform.State) (string, error) {
+	return func(state *terraform.State) (string, error) {
+		var rawState map[string]string
+		for _, m := range state.Modules {
+			if len(m.Resources) > 0 {
+				if v, ok := m.Resources[iamResourceAddr]; ok {
+					rawState = v.Primary.Attributes
+				}
+			}
+		}
+		fmt.Printf("raw state %s\n", rawState)
+		project := tpgresource.GetResourceNameFromSelfLink(rawState["project"])
+		region := tpgresource.GetResourceNameFromSelfLink(rawState["region"])
+		gateway := tpgresource.GetResourceNameFromSelfLink(rawState["gateway"])
+		return acctest.BuildIAMImportId(fmt.Sprintf("projects/%s/locations/%s/gateways/%s", project, region, gateway), "", "", rawState["condition.0.title"]), nil
+	}
+}
+
+func generateApiGatewayGatewayIAMBindingStateID(iamResourceAddr string) func(*terraform.State) (string, error) {
+	return func(state *terraform.State) (string, error) {
+		var rawState map[string]string
+		for _, m := range state.Modules {
+			if len(m.Resources) > 0 {
+				if v, ok := m.Resources[iamResourceAddr]; ok {
+					rawState = v.Primary.Attributes
+				}
+			}
+		}
+		fmt.Printf("raw state %s\n", rawState)
+		project := tpgresource.GetResourceNameFromSelfLink(rawState["project"])
+		region := tpgresource.GetResourceNameFromSelfLink(rawState["region"])
+		gateway := tpgresource.GetResourceNameFromSelfLink(rawState["gateway"])
+		return acctest.BuildIAMImportId(fmt.Sprintf("projects/%s/locations/%s/gateways/%s", project, region, gateway), rawState["role"], "", rawState["condition.0.title"]), nil
+	}
+}
+
+func generateApiGatewayGatewayIAMMemberStateID(iamResourceAddr string) func(*terraform.State) (string, error) {
+	return func(state *terraform.State) (string, error) {
+		var rawState map[string]string
+		for _, m := range state.Modules {
+			if len(m.Resources) > 0 {
+				if v, ok := m.Resources[iamResourceAddr]; ok {
+					rawState = v.Primary.Attributes
+				}
+			}
+		}
+		fmt.Printf("raw state %s\n", rawState)
+		project := tpgresource.GetResourceNameFromSelfLink(rawState["project"])
+		region := tpgresource.GetResourceNameFromSelfLink(rawState["region"])
+		gateway := tpgresource.GetResourceNameFromSelfLink(rawState["gateway"])
+		return acctest.BuildIAMImportId(fmt.Sprintf("projects/%s/locations/%s/gateways/%s", project, region, gateway), rawState["role"], rawState["member"], rawState["condition.0.title"]), nil
+	}
 }

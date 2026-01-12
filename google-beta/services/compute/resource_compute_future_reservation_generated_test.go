@@ -111,6 +111,7 @@ resource "google_compute_future_reservation" "gce_future_reservation" {
 }
 
 func TestAccComputeFutureReservation_futureReservationAggregateReservationExample(t *testing.T) {
+	acctest.SkipIfVcr(t)
 	t.Parallel()
 
 	context := map[string]interface{}{
@@ -180,6 +181,7 @@ resource "google_compute_future_reservation" "gce_future_reservation" {
 }
 
 func TestAccComputeFutureReservation_sharedFutureReservationExample(t *testing.T) {
+	acctest.SkipIfVcr(t)
 	t.Parallel()
 
 	context := map[string]interface{}{

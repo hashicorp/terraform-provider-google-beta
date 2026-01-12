@@ -31,6 +31,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/backupdr"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/beyondcorp"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/biglake"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/biglakeiceberg"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/bigquery"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/bigqueryanalyticshub"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/bigqueryconnection"
@@ -218,6 +219,7 @@ var handwrittenDatasources = map[string]*schema.Resource{
 	"google_artifact_registry_tag":                               artifactregistry.DataSourceArtifactRegistryTag(),
 	"google_artifact_registry_tags":                              artifactregistry.DataSourceArtifactRegistryTags(),
 	"google_artifact_registry_version":                           artifactregistry.DataSourceArtifactRegistryVersion(),
+	"google_artifact_registry_versions":                          artifactregistry.DataSourceArtifactRegistryVersions(),
 	"google_apphub_discovered_workload":                          apphub.DataSourceApphubDiscoveredWorkload(),
 	"google_app_engine_default_service_account":                  appengine.DataSourceGoogleAppEngineDefaultServiceAccount(),
 	"google_apphub_application":                                  apphub.DataSourceGoogleApphubApplication(),
@@ -253,6 +255,7 @@ var handwrittenDatasources = map[string]*schema.Resource{
 	"google_cloud_identity_group_memberships":                    cloudidentity.DataSourceGoogleCloudIdentityGroupMemberships(),
 	"google_cloud_identity_group_transitive_memberships":         cloudidentity.DataSourceGoogleCloudIdentityGroupTransitiveMemberships(),
 	"google_cloud_identity_group_lookup":                         cloudidentity.DataSourceGoogleCloudIdentityGroupLookup(),
+	"google_cloud_identity_policies":                             cloudidentity.DataSourceGoogleCloudIdentityPolicies(),
 	"google_cloud_identity_policy":                               cloudidentity.DataSourceGoogleCloudIdentityPolicy(),
 	"google_cloud_quotas_quota_info":                             cloudquotas.DataSourceGoogleCloudQuotasQuotaInfo(),
 	"google_cloud_quotas_quota_infos":                            cloudquotas.DataSourceGoogleCloudQuotasQuotaInfos(),
@@ -301,6 +304,7 @@ var handwrittenDatasources = map[string]*schema.Resource{
 	"google_compute_region_instance_group_manager":               compute.DataSourceGoogleComputeRegionInstanceGroupManager(),
 	"google_compute_region_instance_template":                    compute.DataSourceGoogleComputeRegionInstanceTemplate(),
 	"google_compute_region_network_endpoint_group":               compute.DataSourceGoogleComputeRegionNetworkEndpointGroup(),
+	"google_compute_region_security_policy":                      compute.DataSourceGoogleComputeRegionSecurityPolicy(),
 	"google_compute_region_ssl_certificate":                      compute.DataSourceGoogleRegionComputeSslCertificate(),
 	"google_compute_region_ssl_policy":                           compute.DataSourceGoogleRegionComputeSslPolicy(),
 	"google_compute_reservation":                                 compute.DataSourceGoogleComputeReservation(),
@@ -314,6 +318,7 @@ var handwrittenDatasources = map[string]*schema.Resource{
 	"google_compute_snapshot":                                    compute.DataSourceGoogleComputeSnapshot(),
 	"google_compute_ssl_certificate":                             compute.DataSourceGoogleComputeSslCertificate(),
 	"google_compute_ssl_policy":                                  compute.DataSourceGoogleComputeSslPolicy(),
+	"google_compute_storage_pool":                                compute.DataSourceGoogleComputeStoragePool(),
 	"google_compute_storage_pool_types":                          compute.DataSourceGoogleComputeStoragePoolTypes(),
 	"google_compute_subnetwork":                                  compute.DataSourceGoogleComputeSubnetwork(),
 	"google_compute_subnetworks":                                 compute.DataSourceGoogleComputeSubnetworks(),
@@ -488,6 +493,7 @@ var generatedIAMDatasources = map[string]*schema.Resource{
 	"google_artifact_registry_repository_iam_policy":               tpgiamresource.DataSourceIamPolicy(artifactregistry.ArtifactRegistryRepositoryIamSchema, artifactregistry.ArtifactRegistryRepositoryIamUpdaterProducer),
 	"google_beyondcorp_security_gateway_iam_policy":                tpgiamresource.DataSourceIamPolicy(beyondcorp.BeyondcorpSecurityGatewayIamSchema, beyondcorp.BeyondcorpSecurityGatewayIamUpdaterProducer),
 	"google_beyondcorp_security_gateway_application_iam_policy":    tpgiamresource.DataSourceIamPolicy(beyondcorp.BeyondcorpSecurityGatewayApplicationIamSchema, beyondcorp.BeyondcorpSecurityGatewayApplicationIamUpdaterProducer),
+	"google_biglake_iceberg_catalog_iam_policy":                    tpgiamresource.DataSourceIamPolicy(biglakeiceberg.BiglakeIcebergIcebergCatalogIamSchema, biglakeiceberg.BiglakeIcebergIcebergCatalogIamUpdaterProducer),
 	"google_bigquery_table_iam_policy":                             tpgiamresource.DataSourceIamPolicy(bigquery.BigQueryTableIamSchema, bigquery.BigQueryTableIamUpdaterProducer),
 	"google_bigquery_analytics_hub_data_exchange_iam_policy":       tpgiamresource.DataSourceIamPolicy(bigqueryanalyticshub.BigqueryAnalyticsHubDataExchangeIamSchema, bigqueryanalyticshub.BigqueryAnalyticsHubDataExchangeIamUpdaterProducer),
 	"google_bigquery_analytics_hub_listing_iam_policy":             tpgiamresource.DataSourceIamPolicy(bigqueryanalyticshub.BigqueryAnalyticsHubListingIamSchema, bigqueryanalyticshub.BigqueryAnalyticsHubListingIamUpdaterProducer),
@@ -553,15 +559,15 @@ var generatedIAMDatasources = map[string]*schema.Resource{
 	"google_iam_workforce_pool_iam_policy":                         tpgiamresource.DataSourceIamPolicy(iamworkforcepool.IAMWorkforcePoolWorkforcePoolIamSchema, iamworkforcepool.IAMWorkforcePoolWorkforcePoolIamUpdaterProducer),
 	"google_iap_app_engine_service_iam_policy":                     tpgiamresource.DataSourceIamPolicy(iap.IapAppEngineServiceIamSchema, iap.IapAppEngineServiceIamUpdaterProducer),
 	"google_iap_app_engine_version_iam_policy":                     tpgiamresource.DataSourceIamPolicy(iap.IapAppEngineVersionIamSchema, iap.IapAppEngineVersionIamUpdaterProducer),
-	"google_iap_web_cloud_run_service_iam_policy":                  tpgiamresource.DataSourceIamPolicy(iap.IapWebCloudRunServiceIamSchema, iap.IapWebCloudRunServiceIamUpdaterProducer),
-	"google_iap_web_region_forwarding_rule_service_iam_policy":     tpgiamresource.DataSourceIamPolicy(iap.IapWebRegionForwardingRuleServiceIamSchema, iap.IapWebRegionForwardingRuleServiceIamUpdaterProducer),
-	"google_iap_web_forwarding_rule_service_iam_policy":            tpgiamresource.DataSourceIamPolicy(iap.IapWebForwardingRuleServiceIamSchema, iap.IapWebForwardingRuleServiceIamUpdaterProducer),
 	"google_iap_tunnel_iam_policy":                                 tpgiamresource.DataSourceIamPolicy(iap.IapTunnelIamSchema, iap.IapTunnelIamUpdaterProducer),
 	"google_iap_tunnel_dest_group_iam_policy":                      tpgiamresource.DataSourceIamPolicy(iap.IapTunnelDestGroupIamSchema, iap.IapTunnelDestGroupIamUpdaterProducer),
 	"google_iap_tunnel_instance_iam_policy":                        tpgiamresource.DataSourceIamPolicy(iap.IapTunnelInstanceIamSchema, iap.IapTunnelInstanceIamUpdaterProducer),
 	"google_iap_web_iam_policy":                                    tpgiamresource.DataSourceIamPolicy(iap.IapWebIamSchema, iap.IapWebIamUpdaterProducer),
 	"google_iap_web_backend_service_iam_policy":                    tpgiamresource.DataSourceIamPolicy(iap.IapWebBackendServiceIamSchema, iap.IapWebBackendServiceIamUpdaterProducer),
+	"google_iap_web_cloud_run_service_iam_policy":                  tpgiamresource.DataSourceIamPolicy(iap.IapWebCloudRunServiceIamSchema, iap.IapWebCloudRunServiceIamUpdaterProducer),
+	"google_iap_web_forwarding_rule_service_iam_policy":            tpgiamresource.DataSourceIamPolicy(iap.IapWebForwardingRuleServiceIamSchema, iap.IapWebForwardingRuleServiceIamUpdaterProducer),
 	"google_iap_web_region_backend_service_iam_policy":             tpgiamresource.DataSourceIamPolicy(iap.IapWebRegionBackendServiceIamSchema, iap.IapWebRegionBackendServiceIamUpdaterProducer),
+	"google_iap_web_region_forwarding_rule_service_iam_policy":     tpgiamresource.DataSourceIamPolicy(iap.IapWebRegionForwardingRuleServiceIamSchema, iap.IapWebRegionForwardingRuleServiceIamUpdaterProducer),
 	"google_iap_web_type_app_engine_iam_policy":                    tpgiamresource.DataSourceIamPolicy(iap.IapWebTypeAppEngineIamSchema, iap.IapWebTypeAppEngineIamUpdaterProducer),
 	"google_iap_web_type_compute_iam_policy":                       tpgiamresource.DataSourceIamPolicy(iap.IapWebTypeComputeIamSchema, iap.IapWebTypeComputeIamUpdaterProducer),
 	"google_kms_ekm_connection_iam_policy":                         tpgiamresource.DataSourceIamPolicy(kms.KMSEkmConnectionIamSchema, kms.KMSEkmConnectionIamUpdaterProducer),
@@ -626,9 +632,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 758
-// Generated IAM resources: 348
-// Total generated resources: 1106
+// Generated resources: 766
+// Generated IAM resources: 351
+// Total generated resources: 1117
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -698,6 +704,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_apigee_nat_address":                                                  apigee.ResourceApigeeNatAddress(),
 	"google_apigee_organization":                                                 apigee.ResourceApigeeOrganization(),
 	"google_apigee_security_action":                                              apigee.ResourceApigeeSecurityAction(),
+	"google_apigee_security_feedback":                                            apigee.ResourceApigeeSecurityFeedback(),
 	"google_apigee_security_monitoring_condition":                                apigee.ResourceApigeeSecurityMonitoringCondition(),
 	"google_apigee_security_profile_v2":                                          apigee.ResourceApigeeSecurityProfileV2(),
 	"google_apigee_sync_authorization":                                           apigee.ResourceApigeeSyncAuthorization(),
@@ -715,6 +722,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_app_engine_service_split_traffic":                                    appengine.ResourceAppEngineServiceSplitTraffic(),
 	"google_app_engine_standard_app_version":                                     appengine.ResourceAppEngineStandardAppVersion(),
 	"google_apphub_application":                                                  apphub.ResourceApphubApplication(),
+	"google_apphub_boundary":                                                     apphub.ResourceApphubBoundary(),
 	"google_apphub_service":                                                      apphub.ResourceApphubService(),
 	"google_apphub_service_project_attachment":                                   apphub.ResourceApphubServiceProjectAttachment(),
 	"google_apphub_workload":                                                     apphub.ResourceApphubWorkload(),
@@ -742,6 +750,10 @@ var generatedResources = map[string]*schema.Resource{
 	"google_biglake_catalog":                                                     biglake.ResourceBiglakeCatalog(),
 	"google_biglake_database":                                                    biglake.ResourceBiglakeDatabase(),
 	"google_biglake_table":                                                       biglake.ResourceBiglakeTable(),
+	"google_biglake_iceberg_catalog":                                             biglakeiceberg.ResourceBiglakeIcebergIcebergCatalog(),
+	"google_biglake_iceberg_catalog_iam_binding":                                 tpgiamresource.ResourceIamBinding(biglakeiceberg.BiglakeIcebergIcebergCatalogIamSchema, biglakeiceberg.BiglakeIcebergIcebergCatalogIamUpdaterProducer, biglakeiceberg.BiglakeIcebergIcebergCatalogIdParseFunc),
+	"google_biglake_iceberg_catalog_iam_member":                                  tpgiamresource.ResourceIamMember(biglakeiceberg.BiglakeIcebergIcebergCatalogIamSchema, biglakeiceberg.BiglakeIcebergIcebergCatalogIamUpdaterProducer, biglakeiceberg.BiglakeIcebergIcebergCatalogIdParseFunc),
+	"google_biglake_iceberg_catalog_iam_policy":                                  tpgiamresource.ResourceIamPolicy(biglakeiceberg.BiglakeIcebergIcebergCatalogIamSchema, biglakeiceberg.BiglakeIcebergIcebergCatalogIamUpdaterProducer, biglakeiceberg.BiglakeIcebergIcebergCatalogIdParseFunc),
 	"google_bigquery_dataset":                                                    bigquery.ResourceBigQueryDataset(),
 	"google_bigquery_dataset_access":                                             bigquery.ResourceBigQueryDatasetAccess(),
 	"google_bigquery_job":                                                        bigquery.ResourceBigQueryJob(),
@@ -973,6 +985,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_compute_region_disk_resource_policy_attachment":                      compute.ResourceComputeRegionDiskResourcePolicyAttachment(),
 	"google_compute_region_health_aggregation_policy":                            compute.ResourceComputeRegionHealthAggregationPolicy(),
 	"google_compute_region_health_check":                                         compute.ResourceComputeRegionHealthCheck(),
+	"google_compute_region_health_source":                                        compute.ResourceComputeRegionHealthSource(),
 	"google_compute_region_network_endpoint":                                     compute.ResourceComputeRegionNetworkEndpoint(),
 	"google_compute_region_network_endpoint_group":                               compute.ResourceComputeRegionNetworkEndpointGroup(),
 	"google_compute_region_network_firewall_policy":                              compute.ResourceComputeRegionNetworkFirewallPolicy(),
@@ -1325,15 +1338,6 @@ var generatedResources = map[string]*schema.Resource{
 	"google_iap_app_engine_version_iam_policy":                                   tpgiamresource.ResourceIamPolicy(iap.IapAppEngineVersionIamSchema, iap.IapAppEngineVersionIamUpdaterProducer, iap.IapAppEngineVersionIdParseFunc),
 	"google_iap_brand":                                                           iap.ResourceIapBrand(),
 	"google_iap_client":                                                          iap.ResourceIapClient(),
-	"google_iap_web_cloud_run_service_iam_binding":                               tpgiamresource.ResourceIamBinding(iap.IapWebCloudRunServiceIamSchema, iap.IapWebCloudRunServiceIamUpdaterProducer, iap.IapWebCloudRunServiceIdParseFunc),
-	"google_iap_web_cloud_run_service_iam_member":                                tpgiamresource.ResourceIamMember(iap.IapWebCloudRunServiceIamSchema, iap.IapWebCloudRunServiceIamUpdaterProducer, iap.IapWebCloudRunServiceIdParseFunc),
-	"google_iap_web_cloud_run_service_iam_policy":                                tpgiamresource.ResourceIamPolicy(iap.IapWebCloudRunServiceIamSchema, iap.IapWebCloudRunServiceIamUpdaterProducer, iap.IapWebCloudRunServiceIdParseFunc),
-	"google_iap_web_region_forwarding_rule_service_iam_binding":                  tpgiamresource.ResourceIamBinding(iap.IapWebRegionForwardingRuleServiceIamSchema, iap.IapWebRegionForwardingRuleServiceIamUpdaterProducer, iap.IapWebRegionForwardingRuleServiceIdParseFunc),
-	"google_iap_web_region_forwarding_rule_service_iam_member":                   tpgiamresource.ResourceIamMember(iap.IapWebRegionForwardingRuleServiceIamSchema, iap.IapWebRegionForwardingRuleServiceIamUpdaterProducer, iap.IapWebRegionForwardingRuleServiceIdParseFunc),
-	"google_iap_web_region_forwarding_rule_service_iam_policy":                   tpgiamresource.ResourceIamPolicy(iap.IapWebRegionForwardingRuleServiceIamSchema, iap.IapWebRegionForwardingRuleServiceIamUpdaterProducer, iap.IapWebRegionForwardingRuleServiceIdParseFunc),
-	"google_iap_web_forwarding_rule_service_iam_binding":                         tpgiamresource.ResourceIamBinding(iap.IapWebForwardingRuleServiceIamSchema, iap.IapWebForwardingRuleServiceIamUpdaterProducer, iap.IapWebForwardingRuleServiceIdParseFunc),
-	"google_iap_web_forwarding_rule_service_iam_member":                          tpgiamresource.ResourceIamMember(iap.IapWebForwardingRuleServiceIamSchema, iap.IapWebForwardingRuleServiceIamUpdaterProducer, iap.IapWebForwardingRuleServiceIdParseFunc),
-	"google_iap_web_forwarding_rule_service_iam_policy":                          tpgiamresource.ResourceIamPolicy(iap.IapWebForwardingRuleServiceIamSchema, iap.IapWebForwardingRuleServiceIamUpdaterProducer, iap.IapWebForwardingRuleServiceIdParseFunc),
 	"google_iap_settings":                                                        iap.ResourceIapSettings(),
 	"google_iap_tunnel_iam_binding":                                              tpgiamresource.ResourceIamBinding(iap.IapTunnelIamSchema, iap.IapTunnelIamUpdaterProducer, iap.IapTunnelIdParseFunc),
 	"google_iap_tunnel_iam_member":                                               tpgiamresource.ResourceIamMember(iap.IapTunnelIamSchema, iap.IapTunnelIamUpdaterProducer, iap.IapTunnelIdParseFunc),
@@ -1351,9 +1355,18 @@ var generatedResources = map[string]*schema.Resource{
 	"google_iap_web_backend_service_iam_binding":                                 tpgiamresource.ResourceIamBinding(iap.IapWebBackendServiceIamSchema, iap.IapWebBackendServiceIamUpdaterProducer, iap.IapWebBackendServiceIdParseFunc),
 	"google_iap_web_backend_service_iam_member":                                  tpgiamresource.ResourceIamMember(iap.IapWebBackendServiceIamSchema, iap.IapWebBackendServiceIamUpdaterProducer, iap.IapWebBackendServiceIdParseFunc),
 	"google_iap_web_backend_service_iam_policy":                                  tpgiamresource.ResourceIamPolicy(iap.IapWebBackendServiceIamSchema, iap.IapWebBackendServiceIamUpdaterProducer, iap.IapWebBackendServiceIdParseFunc),
+	"google_iap_web_cloud_run_service_iam_binding":                               tpgiamresource.ResourceIamBinding(iap.IapWebCloudRunServiceIamSchema, iap.IapWebCloudRunServiceIamUpdaterProducer, iap.IapWebCloudRunServiceIdParseFunc),
+	"google_iap_web_cloud_run_service_iam_member":                                tpgiamresource.ResourceIamMember(iap.IapWebCloudRunServiceIamSchema, iap.IapWebCloudRunServiceIamUpdaterProducer, iap.IapWebCloudRunServiceIdParseFunc),
+	"google_iap_web_cloud_run_service_iam_policy":                                tpgiamresource.ResourceIamPolicy(iap.IapWebCloudRunServiceIamSchema, iap.IapWebCloudRunServiceIamUpdaterProducer, iap.IapWebCloudRunServiceIdParseFunc),
+	"google_iap_web_forwarding_rule_service_iam_binding":                         tpgiamresource.ResourceIamBinding(iap.IapWebForwardingRuleServiceIamSchema, iap.IapWebForwardingRuleServiceIamUpdaterProducer, iap.IapWebForwardingRuleServiceIdParseFunc),
+	"google_iap_web_forwarding_rule_service_iam_member":                          tpgiamresource.ResourceIamMember(iap.IapWebForwardingRuleServiceIamSchema, iap.IapWebForwardingRuleServiceIamUpdaterProducer, iap.IapWebForwardingRuleServiceIdParseFunc),
+	"google_iap_web_forwarding_rule_service_iam_policy":                          tpgiamresource.ResourceIamPolicy(iap.IapWebForwardingRuleServiceIamSchema, iap.IapWebForwardingRuleServiceIamUpdaterProducer, iap.IapWebForwardingRuleServiceIdParseFunc),
 	"google_iap_web_region_backend_service_iam_binding":                          tpgiamresource.ResourceIamBinding(iap.IapWebRegionBackendServiceIamSchema, iap.IapWebRegionBackendServiceIamUpdaterProducer, iap.IapWebRegionBackendServiceIdParseFunc),
 	"google_iap_web_region_backend_service_iam_member":                           tpgiamresource.ResourceIamMember(iap.IapWebRegionBackendServiceIamSchema, iap.IapWebRegionBackendServiceIamUpdaterProducer, iap.IapWebRegionBackendServiceIdParseFunc),
 	"google_iap_web_region_backend_service_iam_policy":                           tpgiamresource.ResourceIamPolicy(iap.IapWebRegionBackendServiceIamSchema, iap.IapWebRegionBackendServiceIamUpdaterProducer, iap.IapWebRegionBackendServiceIdParseFunc),
+	"google_iap_web_region_forwarding_rule_service_iam_binding":                  tpgiamresource.ResourceIamBinding(iap.IapWebRegionForwardingRuleServiceIamSchema, iap.IapWebRegionForwardingRuleServiceIamUpdaterProducer, iap.IapWebRegionForwardingRuleServiceIdParseFunc),
+	"google_iap_web_region_forwarding_rule_service_iam_member":                   tpgiamresource.ResourceIamMember(iap.IapWebRegionForwardingRuleServiceIamSchema, iap.IapWebRegionForwardingRuleServiceIamUpdaterProducer, iap.IapWebRegionForwardingRuleServiceIdParseFunc),
+	"google_iap_web_region_forwarding_rule_service_iam_policy":                   tpgiamresource.ResourceIamPolicy(iap.IapWebRegionForwardingRuleServiceIamSchema, iap.IapWebRegionForwardingRuleServiceIamUpdaterProducer, iap.IapWebRegionForwardingRuleServiceIdParseFunc),
 	"google_iap_web_type_app_engine_iam_binding":                                 tpgiamresource.ResourceIamBinding(iap.IapWebTypeAppEngineIamSchema, iap.IapWebTypeAppEngineIamUpdaterProducer, iap.IapWebTypeAppEngineIdParseFunc),
 	"google_iap_web_type_app_engine_iam_member":                                  tpgiamresource.ResourceIamMember(iap.IapWebTypeAppEngineIamSchema, iap.IapWebTypeAppEngineIamUpdaterProducer, iap.IapWebTypeAppEngineIdParseFunc),
 	"google_iap_web_type_app_engine_iam_policy":                                  tpgiamresource.ResourceIamPolicy(iap.IapWebTypeAppEngineIamSchema, iap.IapWebTypeAppEngineIamUpdaterProducer, iap.IapWebTypeAppEngineIdParseFunc),
@@ -1431,9 +1444,11 @@ var generatedResources = map[string]*schema.Resource{
 	"google_netapp_volume_replication":                                           netapp.ResourceNetappVolumeReplication(),
 	"google_netapp_volume_snapshot":                                              netapp.ResourceNetappVolumeSnapshot(),
 	"google_netapp_kmsconfig":                                                    netapp.ResourceNetappkmsconfig(),
+	"google_network_connectivity_destination":                                    networkconnectivity.ResourceNetworkConnectivityDestination(),
 	"google_network_connectivity_gateway_advertised_route":                       networkconnectivity.ResourceNetworkConnectivityGatewayAdvertisedRoute(),
 	"google_network_connectivity_group":                                          networkconnectivity.ResourceNetworkConnectivityGroup(),
 	"google_network_connectivity_hub":                                            networkconnectivity.ResourceNetworkConnectivityHub(),
+	"google_network_connectivity_multicloud_data_transfer_config":                networkconnectivity.ResourceNetworkConnectivityMulticloudDataTransferConfig(),
 	"google_network_connectivity_policy_based_route":                             networkconnectivity.ResourceNetworkConnectivityPolicyBasedRoute(),
 	"google_network_connectivity_regional_endpoint":                              networkconnectivity.ResourceNetworkConnectivityRegionalEndpoint(),
 	"google_network_connectivity_spoke":                                          networkconnectivity.ResourceNetworkConnectivitySpoke(),
@@ -1487,6 +1502,8 @@ var generatedResources = map[string]*schema.Resource{
 	"google_network_services_multicast_domain":                                   networkservices.ResourceNetworkServicesMulticastDomain(),
 	"google_network_services_multicast_domain_activation":                        networkservices.ResourceNetworkServicesMulticastDomainActivation(),
 	"google_network_services_multicast_domain_group":                             networkservices.ResourceNetworkServicesMulticastDomainGroup(),
+	"google_network_services_multicast_group_consumer_activation":                networkservices.ResourceNetworkServicesMulticastGroupConsumerActivation(),
+	"google_network_services_multicast_group_producer_activation":                networkservices.ResourceNetworkServicesMulticastGroupProducerActivation(),
 	"google_network_services_multicast_group_range":                              networkservices.ResourceNetworkServicesMulticastGroupRange(),
 	"google_network_services_multicast_group_range_activation":                   networkservices.ResourceNetworkServicesMulticastGroupRangeActivation(),
 	"google_network_services_multicast_producer_association":                     networkservices.ResourceNetworkServicesMulticastProducerAssociation(),
@@ -1921,6 +1938,7 @@ func UseGeneratedProducts() {
 	var _ = backupdr.ProductName
 	var _ = beyondcorp.ProductName
 	var _ = biglake.ProductName
+	var _ = biglakeiceberg.ProductName
 	var _ = bigquery.ProductName
 	var _ = bigqueryanalyticshub.ProductName
 	var _ = bigqueryconnection.ProductName
