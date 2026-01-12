@@ -60,7 +60,7 @@ func TestAccComputeOrganizationSecurityPolicyAssociation_organizationSecurityPol
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeOrganizationSecurityPolicyAssociationDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -85,21 +85,18 @@ func TestAccComputeOrganizationSecurityPolicyAssociation_organizationSecurityPol
 func testAccComputeOrganizationSecurityPolicyAssociation_organizationSecurityPolicyAssociationBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_folder" "security_policy_target" {
-  provider     = google-beta
   display_name = "tf-test-secpol-%{random_suffix}"
   parent       = "organizations/%{org_id}"
   deletion_protection = false
 }
 
 resource "google_compute_organization_security_policy" "policy" {
-  provider     = google-beta
-  display_name = "tf-test%{random_suffix}"
+  short_name   = "tf-test%{random_suffix}"
   parent       = google_folder.security_policy_target.name
-  type         = "FIREWALL"
+  type         = "CLOUD_ARMOR"
 }
 
 resource "google_compute_organization_security_policy_association" "policy" {
-  provider = google-beta
   name          = "tf-test%{random_suffix}"
   attachment_id = google_compute_organization_security_policy.policy.parent
   policy_id     = google_compute_organization_security_policy.policy.id

@@ -1,20 +1,20 @@
-resource: 'google_api_gateway_gateway'
-generation_type: 'mmv1'
-source_file: 'products/apigateway/Gateway.yaml'
-api_service_name: 'apigateway.googleapis.com'
-api_version: 'v1beta'
-api_resource_type_kind: 'Gateway'
+resource: google_api_gateway_gateway
+generation_type: mmv1
+source_file: products/apigateway/Gateway.yaml
+api_service_name: apigateway.googleapis.com
+api_version: v1beta
+api_resource_type_kind: Gateway
 fields:
-  - api_field: 'apiConfig'
-  - api_field: 'defaultHostname'
-  - api_field: 'displayName'
-  - field: 'effective_labels'
-    provider_only: true
-  - field: 'gateway_id'
-    provider_only: true
-  - api_field: 'labels'
-  - api_field: 'name'
-  - field: 'region'
-    provider_only: true
-  - field: 'terraform_labels'
-    provider_only: true
+    - api_field: apiConfig
+    - api_field: defaultHostname
+    - api_field: displayName
+    - field: effective_labels
+      provider_only: true
+    - field: gateway_id
+      provider_only: true
+    - api_field: labels
+    - api_field: name
+    - field: region
+      provider_only: true
+    - field: terraform_labels
+      provider_only: true

@@ -1,22 +1,22 @@
-resource: 'google_security_scanner_scan_config'
-generation_type: 'mmv1'
-source_file: 'products/securityscanner/ScanConfig.yaml'
-api_service_name: 'websecurityscanner.googleapis.com'
-api_version: 'v1beta'
-api_resource_type_kind: 'ScanConfig'
+resource: google_security_scanner_scan_config
+generation_type: mmv1
+source_file: products/securityscanner/ScanConfig.yaml
+api_service_name: websecurityscanner.googleapis.com
+api_version: v1beta
+api_resource_type_kind: ScanConfig
 fields:
-  - api_field: 'authentication.customAccount.loginUrl'
-  - api_field: 'authentication.customAccount.password'
-  - api_field: 'authentication.customAccount.username'
-  - api_field: 'authentication.googleAccount.password'
-  - api_field: 'authentication.googleAccount.username'
-  - api_field: 'blacklistPatterns'
-  - api_field: 'displayName'
-  - api_field: 'exportToSecurityCommandCenter'
-  - api_field: 'maxQps'
-  - api_field: 'name'
-  - api_field: 'schedule.intervalDurationDays'
-  - api_field: 'schedule.scheduleTime'
-  - api_field: 'startingUrls'
-  - api_field: 'targetPlatforms'
-  - api_field: 'userAgent'
+    - api_field: authentication.customAccount.loginUrl
+    - api_field: authentication.customAccount.password
+    - api_field: authentication.customAccount.username
+    - api_field: authentication.googleAccount.password
+    - api_field: authentication.googleAccount.username
+    - api_field: blacklistPatterns
+    - api_field: displayName
+    - api_field: exportToSecurityCommandCenter
+    - api_field: maxQps
+    - api_field: name
+    - api_field: schedule.intervalDurationDays
+    - api_field: schedule.scheduleTime
+    - api_field: startingUrls
+    - api_field: targetPlatforms
+    - api_field: userAgent

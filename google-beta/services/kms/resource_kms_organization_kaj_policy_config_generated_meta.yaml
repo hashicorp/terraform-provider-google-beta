@@ -1,12 +1,12 @@
-resource: 'google_kms_organization_kaj_policy_config'
-generation_type: 'mmv1'
-source_file: 'products/kms/OrganizationKajPolicyConfig.yaml'
-api_service_name: 'cloudkms.googleapis.com'
-api_version: 'v1'
-api_resource_type_kind: 'KeyAccessJustificationsPolicyConfig'
+resource: google_kms_organization_kaj_policy_config
+generation_type: mmv1
+source_file: products/kms/OrganizationKajPolicyConfig.yaml
+api_service_name: cloudkms.googleapis.com
+api_version: v1
+api_resource_type_kind: KeyAccessJustificationsPolicyConfig
 api_variant_patterns:
-  - 'organizations/{{organization}}/kajPolicyConfig'
+    - organizations/{{organization}}/kajPolicyConfig
 fields:
-  - api_field: 'defaultKeyAccessJustificationPolicy.allowedAccessReasons'
-  - field: 'organization'
-    provider_only: true
+    - api_field: defaultKeyAccessJustificationPolicy.allowedAccessReasons
+    - field: organization
+      provider_only: true

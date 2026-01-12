@@ -25,6 +25,7 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
@@ -60,7 +61,7 @@ func TestAccComputeMachineImageIamBindingGenerated(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_compute_machine_image_iam_binding.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/global/machineImages/%s roles/compute.admin", envvar.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-my-image%s", context["random_suffix"])),
+				ImportStateIdFunc: generateComputeMachineImageIAMBindingStateID("google_compute_machine_image_iam_binding.foo"),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -70,7 +71,7 @@ func TestAccComputeMachineImageIamBindingGenerated(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_compute_machine_image_iam_binding.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/global/machineImages/%s roles/compute.admin", envvar.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-my-image%s", context["random_suffix"])),
+				ImportStateIdFunc: generateComputeMachineImageIAMBindingStateID("google_compute_machine_image_iam_binding.foo"),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -101,7 +102,7 @@ func TestAccComputeMachineImageIamMemberGenerated(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_compute_machine_image_iam_member.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/global/machineImages/%s roles/compute.admin user:admin@hashicorptest.com", envvar.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-my-image%s", context["random_suffix"])),
+				ImportStateIdFunc: generateComputeMachineImageIAMMemberStateID("google_compute_machine_image_iam_member.foo"),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -132,7 +133,7 @@ func TestAccComputeMachineImageIamPolicyGenerated(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_compute_machine_image_iam_policy.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/global/machineImages/%s", envvar.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-my-image%s", context["random_suffix"])),
+				ImportStateIdFunc: generateComputeMachineImageIAMPolicyStateID("google_compute_machine_image_iam_policy.foo"),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -141,7 +142,7 @@ func TestAccComputeMachineImageIamPolicyGenerated(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_compute_machine_image_iam_policy.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/global/machineImages/%s", envvar.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-my-image%s", context["random_suffix"])),
+				ImportStateIdFunc: generateComputeMachineImageIAMPolicyStateID("google_compute_machine_image_iam_policy.foo"),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -171,7 +172,7 @@ func TestAccComputeMachineImageIamBindingGenerated_withCondition(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_compute_machine_image_iam_binding.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/global/machineImages/%s roles/compute.admin %s", envvar.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-my-image%s", context["random_suffix"]), context["condition_title"]),
+				ImportStateIdFunc: generateComputeMachineImageIAMBindingStateID("google_compute_machine_image_iam_binding.foo"),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -203,19 +204,19 @@ func TestAccComputeMachineImageIamBindingGenerated_withAndWithoutCondition(t *te
 			},
 			{
 				ResourceName:      "google_compute_machine_image_iam_binding.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/global/machineImages/%s roles/compute.admin", envvar.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-my-image%s", context["random_suffix"])),
+				ImportStateIdFunc: generateComputeMachineImageIAMBindingStateID("google_compute_machine_image_iam_binding.foo"),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
 			{
 				ResourceName:      "google_compute_machine_image_iam_binding.foo2",
-				ImportStateId:     fmt.Sprintf("projects/%s/global/machineImages/%s roles/compute.admin %s", envvar.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-my-image%s", context["random_suffix"]), context["condition_title"]),
+				ImportStateIdFunc: generateComputeMachineImageIAMBindingStateID("google_compute_machine_image_iam_binding.foo2"),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
 			{
 				ResourceName:      "google_compute_machine_image_iam_binding.foo3",
-				ImportStateId:     fmt.Sprintf("projects/%s/global/machineImages/%s roles/compute.admin %s", envvar.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-my-image%s", context["random_suffix"]), context["condition_title_no_desc"]),
+				ImportStateIdFunc: generateComputeMachineImageIAMBindingStateID("google_compute_machine_image_iam_binding.foo3"),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -245,7 +246,7 @@ func TestAccComputeMachineImageIamMemberGenerated_withCondition(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_compute_machine_image_iam_member.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/global/machineImages/%s roles/compute.admin user:admin@hashicorptest.com %s", envvar.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-my-image%s", context["random_suffix"]), context["condition_title"]),
+				ImportStateIdFunc: generateComputeMachineImageIAMMemberStateID("google_compute_machine_image_iam_member.foo"),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -277,19 +278,19 @@ func TestAccComputeMachineImageIamMemberGenerated_withAndWithoutCondition(t *tes
 			},
 			{
 				ResourceName:      "google_compute_machine_image_iam_member.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/global/machineImages/%s roles/compute.admin user:admin@hashicorptest.com", envvar.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-my-image%s", context["random_suffix"])),
+				ImportStateIdFunc: generateComputeMachineImageIAMMemberStateID("google_compute_machine_image_iam_member.foo"),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
 			{
 				ResourceName:      "google_compute_machine_image_iam_member.foo2",
-				ImportStateId:     fmt.Sprintf("projects/%s/global/machineImages/%s roles/compute.admin user:admin@hashicorptest.com %s", envvar.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-my-image%s", context["random_suffix"]), context["condition_title"]),
+				ImportStateIdFunc: generateComputeMachineImageIAMMemberStateID("google_compute_machine_image_iam_member.foo2"),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
 			{
 				ResourceName:      "google_compute_machine_image_iam_member.foo3",
-				ImportStateId:     fmt.Sprintf("projects/%s/global/machineImages/%s roles/compute.admin user:admin@hashicorptest.com %s", envvar.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-my-image%s", context["random_suffix"]), context["condition_title_no_desc"]),
+				ImportStateIdFunc: generateComputeMachineImageIAMMemberStateID("google_compute_machine_image_iam_member.foo3"),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -329,7 +330,7 @@ func TestAccComputeMachineImageIamPolicyGenerated_withCondition(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_compute_machine_image_iam_policy.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/global/machineImages/%s", envvar.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-my-image%s", context["random_suffix"])),
+				ImportStateIdFunc: generateComputeMachineImageIAMPolicyStateID("google_compute_machine_image_iam_policy.foo"),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -780,4 +781,54 @@ resource "google_compute_machine_image_iam_policy" "foo" {
   policy_data = data.google_iam_policy.foo.policy_data
 }
 `, context)
+}
+func generateComputeMachineImageIAMPolicyStateID(iamResourceAddr string) func(*terraform.State) (string, error) {
+	return func(state *terraform.State) (string, error) {
+		var rawState map[string]string
+		for _, m := range state.Modules {
+			if len(m.Resources) > 0 {
+				if v, ok := m.Resources[iamResourceAddr]; ok {
+					rawState = v.Primary.Attributes
+				}
+			}
+		}
+		fmt.Printf("raw state %s\n", rawState)
+		project := tpgresource.GetResourceNameFromSelfLink(rawState["project"])
+		machine_image := tpgresource.GetResourceNameFromSelfLink(rawState["machine_image"])
+		return acctest.BuildIAMImportId(fmt.Sprintf("projects/%s/global/machineImages/%s", project, machine_image), "", "", rawState["condition.0.title"]), nil
+	}
+}
+
+func generateComputeMachineImageIAMBindingStateID(iamResourceAddr string) func(*terraform.State) (string, error) {
+	return func(state *terraform.State) (string, error) {
+		var rawState map[string]string
+		for _, m := range state.Modules {
+			if len(m.Resources) > 0 {
+				if v, ok := m.Resources[iamResourceAddr]; ok {
+					rawState = v.Primary.Attributes
+				}
+			}
+		}
+		fmt.Printf("raw state %s\n", rawState)
+		project := tpgresource.GetResourceNameFromSelfLink(rawState["project"])
+		machine_image := tpgresource.GetResourceNameFromSelfLink(rawState["machine_image"])
+		return acctest.BuildIAMImportId(fmt.Sprintf("projects/%s/global/machineImages/%s", project, machine_image), rawState["role"], "", rawState["condition.0.title"]), nil
+	}
+}
+
+func generateComputeMachineImageIAMMemberStateID(iamResourceAddr string) func(*terraform.State) (string, error) {
+	return func(state *terraform.State) (string, error) {
+		var rawState map[string]string
+		for _, m := range state.Modules {
+			if len(m.Resources) > 0 {
+				if v, ok := m.Resources[iamResourceAddr]; ok {
+					rawState = v.Primary.Attributes
+				}
+			}
+		}
+		fmt.Printf("raw state %s\n", rawState)
+		project := tpgresource.GetResourceNameFromSelfLink(rawState["project"])
+		machine_image := tpgresource.GetResourceNameFromSelfLink(rawState["machine_image"])
+		return acctest.BuildIAMImportId(fmt.Sprintf("projects/%s/global/machineImages/%s", project, machine_image), rawState["role"], rawState["member"], rawState["condition.0.title"]), nil
+	}
 }

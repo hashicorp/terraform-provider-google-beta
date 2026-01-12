@@ -69,7 +69,7 @@ func TestAccComputeSnapshot_snapshotBasicExample(t *testing.T) {
 				ResourceName:            "google_compute_snapshot.snapshot",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"labels", "snapshot_encryption_key.0.raw_key", "snapshot_encryption_key.0.rsa_encrypted_key", "source_disk", "source_disk_encryption_key", "terraform_labels", "zone"},
+				ImportStateVerifyIgnore: []string{"guest_flush", "labels", "snapshot_encryption_key.0.raw_key", "snapshot_encryption_key.0.rsa_encrypted_key", "source_disk", "source_disk_encryption_key", "terraform_labels", "zone"},
 			},
 			{
 				ResourceName:       "google_compute_snapshot.snapshot",
@@ -108,6 +108,68 @@ resource "google_compute_disk" "persistent" {
 `, context)
 }
 
+func TestAccComputeSnapshot_snapshotBasic2Example(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckComputeSnapshotDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeSnapshot_snapshotBasic2Example(context),
+			},
+			{
+				ResourceName:            "google_compute_snapshot.snapshot",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"guest_flush", "labels", "snapshot_encryption_key.0.raw_key", "snapshot_encryption_key.0.rsa_encrypted_key", "source_disk", "source_disk_encryption_key", "terraform_labels", "zone"},
+			},
+			{
+				ResourceName:       "google_compute_snapshot.snapshot",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
+		},
+	})
+}
+
+func testAccComputeSnapshot_snapshotBasic2Example(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_compute_snapshot" "snapshot" {
+  provider    = google-beta
+  name        = "tf-test-my-snapshot%{random_suffix}"
+  source_disk = google_compute_disk.persistent.id
+  zone        = "us-central1-a"
+  labels = {
+    my_label = "value"
+  }
+  storage_locations = ["us-central1"]
+  guest_flush = true
+}
+
+data "google_compute_image" "debian" {
+  provider = google-beta
+  family  = "debian-11"
+  project = "debian-cloud"
+}
+
+resource "google_compute_disk" "persistent" {
+  provider = google-beta
+  name  = "tf-test-debian-disk%{random_suffix}"
+  image = data.google_compute_image.debian.self_link
+  size  = 10
+  type  = "pd-ssd"
+  zone  = "us-central1-a"
+}
+`, context)
+}
+
 func TestAccComputeSnapshot_snapshotChainnameExample(t *testing.T) {
 	t.Parallel()
 
@@ -127,7 +189,7 @@ func TestAccComputeSnapshot_snapshotChainnameExample(t *testing.T) {
 				ResourceName:            "google_compute_snapshot.snapshot",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"labels", "snapshot_encryption_key.0.raw_key", "snapshot_encryption_key.0.rsa_encrypted_key", "source_disk", "source_disk_encryption_key", "terraform_labels", "zone"},
+				ImportStateVerifyIgnore: []string{"guest_flush", "labels", "snapshot_encryption_key.0.raw_key", "snapshot_encryption_key.0.rsa_encrypted_key", "source_disk", "source_disk_encryption_key", "terraform_labels", "zone"},
 			},
 			{
 				ResourceName:       "google_compute_snapshot.snapshot",

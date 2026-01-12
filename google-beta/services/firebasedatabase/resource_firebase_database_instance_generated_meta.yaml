@@ -1,17 +1,17 @@
-resource: 'google_firebase_database_instance'
-generation_type: 'mmv1'
-source_file: 'products/firebasedatabase/Instance.yaml'
-api_service_name: 'firebasedatabase.googleapis.com'
-api_version: 'v1beta'
-api_resource_type_kind: 'DatabaseInstance'
+resource: google_firebase_database_instance
+generation_type: mmv1
+source_file: products/firebasedatabase/Instance.yaml
+api_service_name: firebasedatabase.googleapis.com
+api_version: v1beta
+api_resource_type_kind: DatabaseInstance
 fields:
-  - api_field: 'databaseUrl'
-  - field: 'desired_state'
-    provider_only: true
-  - field: 'instance_id'
-    provider_only: true
-  - api_field: 'name'
-  - field: 'region'
-    provider_only: true
-  - api_field: 'state'
-  - api_field: 'type'
+    - api_field: databaseUrl
+    - field: desired_state
+      provider_only: true
+    - field: instance_id
+      provider_only: true
+    - api_field: name
+    - field: region
+      provider_only: true
+    - api_field: state
+    - api_field: type

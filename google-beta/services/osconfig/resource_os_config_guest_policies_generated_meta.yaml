@@ -1,91 +1,91 @@
-resource: 'google_os_config_guest_policies'
-generation_type: 'mmv1'
-source_file: 'products/osconfig/GuestPolicies.yaml'
-api_service_name: 'osconfig.googleapis.com'
-api_version: 'v1beta'
-api_resource_type_kind: 'GuestPolicy'
+resource: google_os_config_guest_policies
+generation_type: mmv1
+source_file: products/osconfig/GuestPolicies.yaml
+api_service_name: osconfig.googleapis.com
+api_version: v1beta
+api_resource_type_kind: GuestPolicy
 api_variant_patterns:
-  - 'folders/{folder}/guestPolicies/{guestPolicy}'
-  - 'organizations/{organization}/guestPolicies/{guestPolicy}'
-  - 'projects/{project}/guestPolicies/{guestPolicy}'
+    - folders/{folder}/guestPolicies/{guestPolicy}
+    - organizations/{organization}/guestPolicies/{guestPolicy}
+    - projects/{project}/guestPolicies/{guestPolicy}
 fields:
-  - api_field: 'assignment.groupLabels.labels'
-  - api_field: 'assignment.instanceNamePrefixes'
-  - api_field: 'assignment.instances'
-  - api_field: 'assignment.osTypes.osArchitecture'
-  - api_field: 'assignment.osTypes.osShortName'
-  - api_field: 'assignment.osTypes.osVersion'
-  - api_field: 'assignment.zones'
-  - api_field: 'createTime'
-  - api_field: 'description'
-  - api_field: 'etag'
-  - field: 'guest_policy_id'
-    provider_only: true
-  - api_field: 'name'
-  - api_field: 'packageRepositories.apt.archiveType'
-  - api_field: 'packageRepositories.apt.components'
-  - api_field: 'packageRepositories.apt.distribution'
-  - api_field: 'packageRepositories.apt.gpgKey'
-  - api_field: 'packageRepositories.apt.uri'
-  - api_field: 'packageRepositories.goo.name'
-  - api_field: 'packageRepositories.goo.url'
-  - api_field: 'packageRepositories.yum.baseUrl'
-  - api_field: 'packageRepositories.yum.displayName'
-  - api_field: 'packageRepositories.yum.gpgKeys'
-  - api_field: 'packageRepositories.yum.id'
-  - api_field: 'packageRepositories.zypper.baseUrl'
-  - api_field: 'packageRepositories.zypper.displayName'
-  - api_field: 'packageRepositories.zypper.gpgKeys'
-  - api_field: 'packageRepositories.zypper.id'
-  - api_field: 'packages.desiredState'
-  - api_field: 'packages.manager'
-  - api_field: 'packages.name'
-  - api_field: 'recipes.artifacts.allowInsecure'
-  - api_field: 'recipes.artifacts.gcs.bucket'
-  - api_field: 'recipes.artifacts.gcs.generation'
-  - api_field: 'recipes.artifacts.gcs.object'
-  - api_field: 'recipes.artifacts.id'
-  - api_field: 'recipes.artifacts.remote.checkSum'
-  - api_field: 'recipes.artifacts.remote.uri'
-  - api_field: 'recipes.desiredState'
-  - api_field: 'recipes.installSteps.archiveExtraction.artifactId'
-  - api_field: 'recipes.installSteps.archiveExtraction.destination'
-  - api_field: 'recipes.installSteps.archiveExtraction.type'
-  - api_field: 'recipes.installSteps.dpkgInstallation.artifactId'
-  - api_field: 'recipes.installSteps.fileCopy.artifactId'
-  - api_field: 'recipes.installSteps.fileCopy.destination'
-  - api_field: 'recipes.installSteps.fileCopy.overwrite'
-  - api_field: 'recipes.installSteps.fileCopy.permissions'
-  - api_field: 'recipes.installSteps.fileExec.allowedExitCodes'
-  - api_field: 'recipes.installSteps.fileExec.args'
-  - api_field: 'recipes.installSteps.fileExec.artifactId'
-  - api_field: 'recipes.installSteps.fileExec.localPath'
-  - api_field: 'recipes.installSteps.msiInstallation.allowedExitCodes'
-  - api_field: 'recipes.installSteps.msiInstallation.artifactId'
-  - api_field: 'recipes.installSteps.msiInstallation.flags'
-  - api_field: 'recipes.installSteps.rpmInstallation.artifactId'
-  - api_field: 'recipes.installSteps.scriptRun.allowedExitCodes'
-  - api_field: 'recipes.installSteps.scriptRun.interpreter'
-  - api_field: 'recipes.installSteps.scriptRun.script'
-  - api_field: 'recipes.name'
-  - api_field: 'recipes.updateSteps.archiveExtraction.artifactId'
-  - api_field: 'recipes.updateSteps.archiveExtraction.destination'
-  - api_field: 'recipes.updateSteps.archiveExtraction.type'
-  - api_field: 'recipes.updateSteps.dpkgInstallation.artifactId'
-  - api_field: 'recipes.updateSteps.fileCopy.artifactId'
-  - api_field: 'recipes.updateSteps.fileCopy.destination'
-  - api_field: 'recipes.updateSteps.fileCopy.overwrite'
-  - api_field: 'recipes.updateSteps.fileCopy.permissions'
-  - api_field: 'recipes.updateSteps.fileExec.allowedExitCodes'
-  - api_field: 'recipes.updateSteps.fileExec.args'
-  - api_field: 'recipes.updateSteps.fileExec.artifactId'
-  - api_field: 'recipes.updateSteps.fileExec.localPath'
-  - api_field: 'recipes.updateSteps.msiInstallation.allowedExitCodes'
-  - api_field: 'recipes.updateSteps.msiInstallation.artifactId'
-  - api_field: 'recipes.updateSteps.msiInstallation.flags'
-  - api_field: 'recipes.updateSteps.rpmInstallation.artifactId'
-  - api_field: 'recipes.updateSteps.scriptRun.allowedExitCodes'
-  - api_field: 'recipes.updateSteps.scriptRun.interpreter'
-  - api_field: 'recipes.updateSteps.scriptRun.script'
-  - api_field: 'recipes.version'
-  - api_field: 'updateTime'
+    - api_field: assignment.groupLabels.labels
+    - api_field: assignment.instanceNamePrefixes
+    - api_field: assignment.instances
+    - api_field: assignment.osTypes.osArchitecture
+    - api_field: assignment.osTypes.osShortName
+    - api_field: assignment.osTypes.osVersion
+    - api_field: assignment.zones
+    - api_field: createTime
+    - api_field: description
+    - api_field: etag
+    - field: guest_policy_id
+      provider_only: true
+    - api_field: name
+    - api_field: packageRepositories.apt.archiveType
+    - api_field: packageRepositories.apt.components
+    - api_field: packageRepositories.apt.distribution
+    - api_field: packageRepositories.apt.gpgKey
+    - api_field: packageRepositories.apt.uri
+    - api_field: packageRepositories.goo.name
+    - api_field: packageRepositories.goo.url
+    - api_field: packageRepositories.yum.baseUrl
+    - api_field: packageRepositories.yum.displayName
+    - api_field: packageRepositories.yum.gpgKeys
+    - api_field: packageRepositories.yum.id
+    - api_field: packageRepositories.zypper.baseUrl
+    - api_field: packageRepositories.zypper.displayName
+    - api_field: packageRepositories.zypper.gpgKeys
+    - api_field: packageRepositories.zypper.id
+    - api_field: packages.desiredState
+    - api_field: packages.manager
+    - api_field: packages.name
+    - api_field: recipes.artifacts.allowInsecure
+    - api_field: recipes.artifacts.gcs.bucket
+    - api_field: recipes.artifacts.gcs.generation
+    - api_field: recipes.artifacts.gcs.object
+    - api_field: recipes.artifacts.id
+    - api_field: recipes.artifacts.remote.checkSum
+    - api_field: recipes.artifacts.remote.uri
+    - api_field: recipes.desiredState
+    - api_field: recipes.installSteps.archiveExtraction.artifactId
+    - api_field: recipes.installSteps.archiveExtraction.destination
+    - api_field: recipes.installSteps.archiveExtraction.type
+    - api_field: recipes.installSteps.dpkgInstallation.artifactId
+    - api_field: recipes.installSteps.fileCopy.artifactId
+    - api_field: recipes.installSteps.fileCopy.destination
+    - api_field: recipes.installSteps.fileCopy.overwrite
+    - api_field: recipes.installSteps.fileCopy.permissions
+    - api_field: recipes.installSteps.fileExec.allowedExitCodes
+    - api_field: recipes.installSteps.fileExec.args
+    - api_field: recipes.installSteps.fileExec.artifactId
+    - api_field: recipes.installSteps.fileExec.localPath
+    - api_field: recipes.installSteps.msiInstallation.allowedExitCodes
+    - api_field: recipes.installSteps.msiInstallation.artifactId
+    - api_field: recipes.installSteps.msiInstallation.flags
+    - api_field: recipes.installSteps.rpmInstallation.artifactId
+    - api_field: recipes.installSteps.scriptRun.allowedExitCodes
+    - api_field: recipes.installSteps.scriptRun.interpreter
+    - api_field: recipes.installSteps.scriptRun.script
+    - api_field: recipes.name
+    - api_field: recipes.updateSteps.archiveExtraction.artifactId
+    - api_field: recipes.updateSteps.archiveExtraction.destination
+    - api_field: recipes.updateSteps.archiveExtraction.type
+    - api_field: recipes.updateSteps.dpkgInstallation.artifactId
+    - api_field: recipes.updateSteps.fileCopy.artifactId
+    - api_field: recipes.updateSteps.fileCopy.destination
+    - api_field: recipes.updateSteps.fileCopy.overwrite
+    - api_field: recipes.updateSteps.fileCopy.permissions
+    - api_field: recipes.updateSteps.fileExec.allowedExitCodes
+    - api_field: recipes.updateSteps.fileExec.args
+    - api_field: recipes.updateSteps.fileExec.artifactId
+    - api_field: recipes.updateSteps.fileExec.localPath
+    - api_field: recipes.updateSteps.msiInstallation.allowedExitCodes
+    - api_field: recipes.updateSteps.msiInstallation.artifactId
+    - api_field: recipes.updateSteps.msiInstallation.flags
+    - api_field: recipes.updateSteps.rpmInstallation.artifactId
+    - api_field: recipes.updateSteps.scriptRun.allowedExitCodes
+    - api_field: recipes.updateSteps.scriptRun.interpreter
+    - api_field: recipes.updateSteps.scriptRun.script
+    - api_field: recipes.version
+    - api_field: updateTime

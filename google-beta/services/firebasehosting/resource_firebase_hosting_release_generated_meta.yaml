@@ -1,17 +1,17 @@
-resource: 'google_firebase_hosting_release'
-generation_type: 'mmv1'
-source_file: 'products/firebasehosting/Release.yaml'
-api_service_name: 'firebasehosting.googleapis.com'
-api_version: 'v1beta1'
-api_resource_type_kind: 'Release'
+resource: google_firebase_hosting_release
+generation_type: mmv1
+source_file: products/firebasehosting/Release.yaml
+api_service_name: firebasehosting.googleapis.com
+api_version: v1beta1
+api_resource_type_kind: Release
 fields:
-  - field: 'channel_id'
-    provider_only: true
-  - api_field: 'message'
-  - api_field: 'name'
-  - api_field: 'release_id'
-  - field: 'site_id'
-    provider_only: true
-  - api_field: 'type'
-  - field: 'version_name'
-    provider_only: true
+    - field: channel_id
+      provider_only: true
+    - api_field: message
+    - api_field: name
+    - api_field: release_id
+    - field: site_id
+      provider_only: true
+    - api_field: type
+    - field: version_name
+      provider_only: true

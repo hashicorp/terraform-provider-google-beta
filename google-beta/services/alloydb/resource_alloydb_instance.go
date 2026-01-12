@@ -224,6 +224,40 @@ Possible values are: 'AVAILABILITY_TYPE_UNSPECIFIED', 'ZONAL', 'REGIONAL'.' Poss
 					},
 				},
 			},
+			"connection_pool_config": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: `Configuration for Managed Connection Pool.`,
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"enabled": {
+							Type:        schema.TypeBool,
+							Required:    true,
+							Description: `Whether to enabled Managed Connection Pool.`,
+						},
+						"flags": {
+							Type:     schema.TypeMap,
+							Optional: true,
+							Description: `Flags for configuring managed connection pooling when it is enabled.
+These flags will only be set if 'connection_pool_config.enabled' is
+true.
+Please see
+https://cloud.google.com/alloydb/docs/configure-managed-connection-pooling#configuration-options
+for a comprehensive list of flags that can be set. To specify the flags
+in Terraform, please remove the "connection-pooling-" prefix and use
+underscores instead of dashes in the name. For example,
+"connection-pooling-pool-mode" would be "pool_mode".`,
+							Elem: &schema.Schema{Type: schema.TypeString},
+						},
+						"pooler_count": {
+							Type:        schema.TypeInt,
+							Computed:    true,
+							Description: `The number of running poolers per instance.`,
+						},
+					},
+				},
+			},
 			"database_flags": {
 				Type:        schema.TypeMap,
 				Computed:    true,
@@ -333,46 +367,55 @@ the same instance.`,
 					Schema: map[string]*schema.Schema{
 						"assistive_experiences_enabled": {
 							Type:        schema.TypeBool,
+							Computed:    true,
 							Optional:    true,
 							Description: `Whether assistive experiences are enabled for this AlloyDB instance.`,
 						},
 						"enabled": {
 							Type:        schema.TypeBool,
+							Computed:    true,
 							Optional:    true,
 							Description: `Observability feature status for an instance.`,
 						},
 						"max_query_string_length": {
 							Type:        schema.TypeInt,
+							Computed:    true,
 							Optional:    true,
 							Description: `Query string length. The default value is 10240. Any integer between 1024 and 100000 is considered valid.`,
 						},
 						"preserve_comments": {
 							Type:        schema.TypeBool,
+							Computed:    true,
 							Optional:    true,
 							Description: `Preserve comments in the query string.`,
 						},
 						"query_plans_per_minute": {
 							Type:        schema.TypeInt,
+							Computed:    true,
 							Optional:    true,
 							Description: `Number of query execution plans captured by Insights per minute for all queries combined. The default value is 5. Any integer between 0 and 200 is considered valid.`,
 						},
 						"record_application_tags": {
 							Type:        schema.TypeBool,
+							Computed:    true,
 							Optional:    true,
 							Description: `Record application tags for an instance. This flag is turned "on" by default.`,
 						},
 						"track_active_queries": {
 							Type:        schema.TypeBool,
+							Computed:    true,
 							Optional:    true,
 							Description: `Track actively running queries. If not set, default value is "off".`,
 						},
 						"track_wait_event_types": {
 							Type:        schema.TypeBool,
+							Computed:    true,
 							Optional:    true,
 							Description: `Record wait event types during query execution for an instance.`,
 						},
 						"track_wait_events": {
 							Type:        schema.TypeBool,
+							Computed:    true,
 							Optional:    true,
 							Description: `Record wait events during query execution for an instance.`,
 						},
@@ -679,6 +722,12 @@ func resourceAlloydbInstanceCreate(d *schema.ResourceData, meta interface{}) err
 	} else if v, ok := d.GetOkExists("network_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(networkConfigProp)) && (ok || !reflect.DeepEqual(v, networkConfigProp)) {
 		obj["networkConfig"] = networkConfigProp
 	}
+	connectionPoolConfigProp, err := expandAlloydbInstanceConnectionPoolConfig(d.Get("connection_pool_config"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("connection_pool_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(connectionPoolConfigProp)) && (ok || !reflect.DeepEqual(v, connectionPoolConfigProp)) {
+		obj["connectionPoolConfig"] = connectionPoolConfigProp
+	}
 	effectiveLabelsProp, err := expandAlloydbInstanceEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
@@ -869,6 +918,9 @@ func resourceAlloydbInstanceRead(d *schema.ResourceData, meta interface{}) error
 	if err := d.Set("outbound_public_ip_addresses", flattenAlloydbInstanceOutboundPublicIpAddresses(res["outboundPublicIpAddresses"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
+	if err := d.Set("connection_pool_config", flattenAlloydbInstanceConnectionPoolConfig(res["connectionPoolConfig"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Instance: %s", err)
+	}
 	if err := d.Set("terraform_labels", flattenAlloydbInstanceTerraformLabels(res["labels"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
@@ -1010,6 +1062,12 @@ func resourceAlloydbInstanceUpdate(d *schema.ResourceData, meta interface{}) err
 	} else if v, ok := d.GetOkExists("network_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, networkConfigProp)) {
 		obj["networkConfig"] = networkConfigProp
 	}
+	connectionPoolConfigProp, err := expandAlloydbInstanceConnectionPoolConfig(d.Get("connection_pool_config"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("connection_pool_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, connectionPoolConfigProp)) {
+		obj["connectionPoolConfig"] = connectionPoolConfigProp
+	}
 	effectiveLabelsProp, err := expandAlloydbInstanceEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
@@ -1078,6 +1136,10 @@ func resourceAlloydbInstanceUpdate(d *schema.ResourceData, meta interface{}) err
 
 	if d.HasChange("network_config") {
 		updateMask = append(updateMask, "networkConfig")
+	}
+
+	if d.HasChange("connection_pool_config") {
+		updateMask = append(updateMask, "connectionPoolConfig")
 	}
 
 	if d.HasChange("effective_labels") {
@@ -1709,6 +1771,59 @@ func flattenAlloydbInstanceOutboundPublicIpAddresses(v interface{}, d *schema.Re
 	return v
 }
 
+func flattenAlloydbInstanceConnectionPoolConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return flattenAlloyDBInstanceEmptyConnectionPoolConfig(v, d, config)
+	}
+	transformed := make(map[string]interface{})
+	transformed["enabled"] =
+		flattenAlloydbInstanceConnectionPoolConfigEnabled(original["enabled"], d, config)
+	transformed["pooler_count"] =
+		flattenAlloydbInstanceConnectionPoolConfigPoolerCount(original["poolerCount"], d, config)
+	transformed["flags"] =
+		flattenAlloydbInstanceConnectionPoolConfigFlags(original["flags"], d, config)
+	return []interface{}{transformed}
+}
+
+func flattenAlloyDBInstanceEmptyConnectionPoolConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	// The API returns an nil/empty value for connectionPoolConfig.enabled when
+	// it's set to false. So keep the user's value to avoid a permadiff.
+	return []interface{}{
+		map[string]interface{}{
+			"enabled": d.Get("connection_pool_config.0.enabled"),
+		},
+	}
+}
+
+func flattenAlloydbInstanceConnectionPoolConfigEnabled(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenAlloydbInstanceConnectionPoolConfigPoolerCount(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	// Handles the string fixed64 format
+	if strVal, ok := v.(string); ok {
+		if intVal, err := tpgresource.StringToFixed64(strVal); err == nil {
+			return intVal
+		}
+	}
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
+}
+
+func flattenAlloydbInstanceConnectionPoolConfigFlags(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenAlloydbInstanceTerraformLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
@@ -1837,29 +1952,22 @@ func expandAlloydbInstanceObservabilityConfig(v interface{}, d tpgresource.Terra
 	transformedEnabled, err := expandAlloydbInstanceObservabilityConfigEnabled(original["enabled"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedEnabled); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+	} else if transformedEnabled != nil {
 		transformed["enabled"] = transformedEnabled
 	}
 
 	transformedPreserveComments, err := expandAlloydbInstanceObservabilityConfigPreserveComments(original["preserve_comments"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedPreserveComments); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+	} else if transformedPreserveComments != nil {
 		transformed["preserveComments"] = transformedPreserveComments
 	}
 
 	transformedTrackWaitEvents, err := expandAlloydbInstanceObservabilityConfigTrackWaitEvents(original["track_wait_events"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedTrackWaitEvents); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+	} else if transformedTrackWaitEvents != nil {
 		transformed["trackWaitEvents"] = transformedTrackWaitEvents
-	}
-
-	transformedTrackWaitEventTypes, err := expandAlloydbInstanceObservabilityConfigTrackWaitEventTypes(original["track_wait_event_types"], d, config)
-	if err != nil {
-		return nil, err
-	} else if val := reflect.ValueOf(transformedTrackWaitEventTypes); val.IsValid() && !tpgresource.IsEmptyValue(val) {
-		transformed["trackWaitEventTypes"] = transformedTrackWaitEventTypes
 	}
 
 	transformedMaxQueryStringLength, err := expandAlloydbInstanceObservabilityConfigMaxQueryStringLength(original["max_query_string_length"], d, config)
@@ -1872,7 +1980,7 @@ func expandAlloydbInstanceObservabilityConfig(v interface{}, d tpgresource.Terra
 	transformedRecordApplicationTags, err := expandAlloydbInstanceObservabilityConfigRecordApplicationTags(original["record_application_tags"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedRecordApplicationTags); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+	} else if transformedRecordApplicationTags != nil {
 		transformed["recordApplicationTags"] = transformedRecordApplicationTags
 	}
 
@@ -1886,17 +1994,17 @@ func expandAlloydbInstanceObservabilityConfig(v interface{}, d tpgresource.Terra
 	transformedTrackActiveQueries, err := expandAlloydbInstanceObservabilityConfigTrackActiveQueries(original["track_active_queries"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedTrackActiveQueries); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+	} else if transformedTrackActiveQueries != nil {
 		transformed["trackActiveQueries"] = transformedTrackActiveQueries
 	}
 
 	transformedAssistiveExperiencesEnabled, err := expandAlloydbInstanceObservabilityConfigAssistiveExperiencesEnabled(original["assistive_experiences_enabled"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedAssistiveExperiencesEnabled); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+	} else if transformedAssistiveExperiencesEnabled != nil {
 		transformed["assistiveExperiencesEnabled"] = transformedAssistiveExperiencesEnabled
 	}
-
+	log.Printf("vkanishk: expandAlloydbInstanceObservabilityConfig transformed %v", transformed)
 	return transformed, nil
 }
 
@@ -2304,6 +2412,61 @@ func expandAlloydbInstanceNetworkConfigEnableOutboundPublicIp(v interface{}, d t
 
 func expandAlloydbInstanceNetworkConfigAllocatedIpRangeOverride(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func expandAlloydbInstanceConnectionPoolConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedEnabled, err := expandAlloydbInstanceConnectionPoolConfigEnabled(original["enabled"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedEnabled); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["enabled"] = transformedEnabled
+	}
+
+	transformedPoolerCount, err := expandAlloydbInstanceConnectionPoolConfigPoolerCount(original["pooler_count"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedPoolerCount); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["poolerCount"] = transformedPoolerCount
+	}
+
+	transformedFlags, err := expandAlloydbInstanceConnectionPoolConfigFlags(original["flags"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedFlags); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["flags"] = transformedFlags
+	}
+
+	return transformed, nil
+}
+
+func expandAlloydbInstanceConnectionPoolConfigEnabled(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandAlloydbInstanceConnectionPoolConfigPoolerCount(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandAlloydbInstanceConnectionPoolConfigFlags(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+	if v == nil {
+		return map[string]string{}, nil
+	}
+	m := make(map[string]string)
+	for k, val := range v.(map[string]interface{}) {
+		m[k] = val.(string)
+	}
+	return m, nil
 }
 
 func expandAlloydbInstanceEffectiveLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {

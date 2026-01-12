@@ -1,18 +1,18 @@
-resource: 'google_service_usage_consumer_quota_override'
-generation_type: 'mmv1'
-source_file: 'products/serviceusage/ConsumerQuotaOverride.yaml'
-api_service_name: 'serviceusage.googleapis.com'
-api_version: 'v1beta1'
-api_resource_type_kind: 'QuotaOverride'
+resource: google_service_usage_consumer_quota_override
+generation_type: mmv1
+source_file: products/serviceusage/ConsumerQuotaOverride.yaml
+api_service_name: serviceusage.googleapis.com
+api_version: v1beta1
+api_resource_type_kind: QuotaOverride
 fields:
-  - api_field: 'dimensions'
-  - field: 'force'
-    provider_only: true
-  - field: 'limit'
-    provider_only: true
-  - field: 'metric'
-    provider_only: true
-  - api_field: 'name'
-  - api_field: 'overrideValue'
-  - field: 'service'
-    provider_only: true
+    - api_field: dimensions
+    - field: force
+      provider_only: true
+    - field: limit
+      provider_only: true
+    - field: metric
+      provider_only: true
+    - api_field: name
+    - api_field: overrideValue
+    - field: service
+      provider_only: true

@@ -15,7 +15,7 @@
 //
 // ----------------------------------------------------------------------------
 
-package discoveryengine_test
+package biglakeiceberg_test
 
 import (
 	"fmt"
@@ -50,30 +50,29 @@ var (
 	_ = googleapi.Error{}
 )
 
-func TestAccDiscoveryEngineCmekConfig_discoveryengineCmekconfigDefaultExample(t *testing.T) {
+func TestAccBiglakeIcebergIcebergCatalog_biglakeIcebergCatalogExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"kms_key_name":  acctest.BootstrapKMSKeyWithPurposeInLocationAndName(t, "ENCRYPT_DECRYPT", "us", "tftest-shared-key-5").CryptoKey.Name,
 		"random_suffix": acctest.RandString(t, 10),
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
-		CheckDestroy:             testAccCheckDiscoveryEngineCmekConfigDestroyProducer(t),
+		CheckDestroy:             testAccCheckBiglakeIcebergIcebergCatalogDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDiscoveryEngineCmekConfig_discoveryengineCmekconfigDefaultExample(context),
+				Config: testAccBiglakeIcebergIcebergCatalog_biglakeIcebergCatalogExample(context),
 			},
 			{
-				ResourceName:            "google_discovery_engine_cmek_config.default",
+				ResourceName:            "google_biglake_iceberg_catalog.my_iceberg_catalog",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"cmek_config_id", "location", "project", "set_default"},
+				ImportStateVerifyIgnore: []string{"name"},
 			},
 			{
-				ResourceName:       "google_discovery_engine_cmek_config.default",
+				ResourceName:       "google_biglake_iceberg_catalog.my_iceberg_catalog",
 				RefreshState:       true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
@@ -82,29 +81,29 @@ func TestAccDiscoveryEngineCmekConfig_discoveryengineCmekconfigDefaultExample(t 
 	})
 }
 
-func testAccDiscoveryEngineCmekConfig_discoveryengineCmekconfigDefaultExample(context map[string]interface{}) string {
+func testAccBiglakeIcebergIcebergCatalog_biglakeIcebergCatalogExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
-resource "google_discovery_engine_cmek_config" "default" {
-  location            = "us"
-  cmek_config_id      = "tf-test-cmek-config-id%{random_suffix}"
-  kms_key             = "%{kms_key_name}"
-  depends_on = [google_kms_crypto_key_iam_member.crypto_key]
+resource "google_storage_bucket" "bucket_for_my_iceberg_catalog" {
+  name          = "tf_test_my_iceberg_catalog%{random_suffix}"
+  location      = "us-central1"
+  force_destroy = true
+  uniform_bucket_level_access = true
 }
 
-data "google_project" "project" {}
-
-resource "google_kms_crypto_key_iam_member" "crypto_key" {
-  crypto_key_id = "%{kms_key_name}"
-  role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
-  member = "serviceAccount:service-${data.google_project.project.number}@gcp-sa-discoveryengine.iam.gserviceaccount.com"
+resource "google_biglake_iceberg_catalog" "my_iceberg_catalog" {
+    name = "tf_test_my_iceberg_catalog%{random_suffix}"
+    catalog_type = "CATALOG_TYPE_GCS_BUCKET"
+    depends_on = [
+      google_storage_bucket.bucket_for_my_iceberg_catalog
+    ]
 }
 `, context)
 }
 
-func testAccCheckDiscoveryEngineCmekConfigDestroyProducer(t *testing.T) func(s *terraform.State) error {
+func testAccCheckBiglakeIcebergIcebergCatalogDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		for name, rs := range s.RootModule().Resources {
-			if rs.Type != "google_discovery_engine_cmek_config" {
+			if rs.Type != "google_biglake_iceberg_catalog" {
 				continue
 			}
 			if strings.HasPrefix(name, "data.") {
@@ -113,7 +112,7 @@ func testAccCheckDiscoveryEngineCmekConfigDestroyProducer(t *testing.T) func(s *
 
 			config := acctest.GoogleProviderConfig(t)
 
-			url, err := tpgresource.ReplaceVarsForTest(config, rs, "{{DiscoveryEngineBasePath}}projects/{{project}}/locations/{{location}}/cmekConfigs/{{cmek_config_id}}")
+			url, err := tpgresource.ReplaceVarsForTest(config, rs, "{{BiglakeIcebergBasePath}}iceberg/v1/restcatalog/extensions/projects/{{project}}/catalogs/{{name}}")
 			if err != nil {
 				return err
 			}
@@ -132,7 +131,7 @@ func testAccCheckDiscoveryEngineCmekConfigDestroyProducer(t *testing.T) func(s *
 				UserAgent: config.UserAgent,
 			})
 			if err == nil {
-				return fmt.Errorf("DiscoveryEngineCmekConfig still exists at %s", url)
+				return fmt.Errorf("BiglakeIcebergIcebergCatalog still exists at %s", url)
 			}
 		}
 

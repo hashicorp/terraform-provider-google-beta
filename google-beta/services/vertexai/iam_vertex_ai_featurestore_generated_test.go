@@ -25,6 +25,7 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
@@ -59,7 +60,7 @@ func TestAccVertexAIFeaturestoreIamBindingGenerated(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_vertex_ai_featurestore_iam_binding.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/locations/%s/featurestores/%s roles/viewer", envvar.GetTestProjectFromEnv(), envvar.GetTestRegionFromEnv(), fmt.Sprintf("terraform%s", context["random_suffix"])),
+				ImportStateIdFunc: generateVertexAIFeaturestoreIAMBindingStateID("google_vertex_ai_featurestore_iam_binding.foo"),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -69,7 +70,7 @@ func TestAccVertexAIFeaturestoreIamBindingGenerated(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_vertex_ai_featurestore_iam_binding.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/locations/%s/featurestores/%s roles/viewer", envvar.GetTestProjectFromEnv(), envvar.GetTestRegionFromEnv(), fmt.Sprintf("terraform%s", context["random_suffix"])),
+				ImportStateIdFunc: generateVertexAIFeaturestoreIAMBindingStateID("google_vertex_ai_featurestore_iam_binding.foo"),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -99,7 +100,7 @@ func TestAccVertexAIFeaturestoreIamMemberGenerated(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_vertex_ai_featurestore_iam_member.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/locations/%s/featurestores/%s roles/viewer user:admin@hashicorptest.com", envvar.GetTestProjectFromEnv(), envvar.GetTestRegionFromEnv(), fmt.Sprintf("terraform%s", context["random_suffix"])),
+				ImportStateIdFunc: generateVertexAIFeaturestoreIAMMemberStateID("google_vertex_ai_featurestore_iam_member.foo"),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -129,7 +130,7 @@ func TestAccVertexAIFeaturestoreIamPolicyGenerated(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_vertex_ai_featurestore_iam_policy.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/locations/%s/featurestores/%s", envvar.GetTestProjectFromEnv(), envvar.GetTestRegionFromEnv(), fmt.Sprintf("terraform%s", context["random_suffix"])),
+				ImportStateIdFunc: generateVertexAIFeaturestoreIAMPolicyStateID("google_vertex_ai_featurestore_iam_policy.foo"),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -138,7 +139,7 @@ func TestAccVertexAIFeaturestoreIamPolicyGenerated(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_vertex_ai_featurestore_iam_policy.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/locations/%s/featurestores/%s", envvar.GetTestProjectFromEnv(), envvar.GetTestRegionFromEnv(), fmt.Sprintf("terraform%s", context["random_suffix"])),
+				ImportStateIdFunc: generateVertexAIFeaturestoreIAMPolicyStateID("google_vertex_ai_featurestore_iam_policy.foo"),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -296,4 +297,58 @@ resource "google_vertex_ai_featurestore_iam_binding" "foo" {
   members = ["user:admin@hashicorptest.com", "user:gterraformtest1@gmail.com"]
 }
 `, context)
+}
+
+func generateVertexAIFeaturestoreIAMPolicyStateID(iamResourceAddr string) func(*terraform.State) (string, error) {
+	return func(state *terraform.State) (string, error) {
+		var rawState map[string]string
+		for _, m := range state.Modules {
+			if len(m.Resources) > 0 {
+				if v, ok := m.Resources[iamResourceAddr]; ok {
+					rawState = v.Primary.Attributes
+				}
+			}
+		}
+		fmt.Printf("raw state %s\n", rawState)
+		project := tpgresource.GetResourceNameFromSelfLink(rawState["project"])
+		region := tpgresource.GetResourceNameFromSelfLink(rawState["region"])
+		featurestore := tpgresource.GetResourceNameFromSelfLink(rawState["featurestore"])
+		return acctest.BuildIAMImportId(fmt.Sprintf("projects/%s/locations/%s/featurestores/%s", project, region, featurestore), "", "", rawState["condition.0.title"]), nil
+	}
+}
+
+func generateVertexAIFeaturestoreIAMBindingStateID(iamResourceAddr string) func(*terraform.State) (string, error) {
+	return func(state *terraform.State) (string, error) {
+		var rawState map[string]string
+		for _, m := range state.Modules {
+			if len(m.Resources) > 0 {
+				if v, ok := m.Resources[iamResourceAddr]; ok {
+					rawState = v.Primary.Attributes
+				}
+			}
+		}
+		fmt.Printf("raw state %s\n", rawState)
+		project := tpgresource.GetResourceNameFromSelfLink(rawState["project"])
+		region := tpgresource.GetResourceNameFromSelfLink(rawState["region"])
+		featurestore := tpgresource.GetResourceNameFromSelfLink(rawState["featurestore"])
+		return acctest.BuildIAMImportId(fmt.Sprintf("projects/%s/locations/%s/featurestores/%s", project, region, featurestore), rawState["role"], "", rawState["condition.0.title"]), nil
+	}
+}
+
+func generateVertexAIFeaturestoreIAMMemberStateID(iamResourceAddr string) func(*terraform.State) (string, error) {
+	return func(state *terraform.State) (string, error) {
+		var rawState map[string]string
+		for _, m := range state.Modules {
+			if len(m.Resources) > 0 {
+				if v, ok := m.Resources[iamResourceAddr]; ok {
+					rawState = v.Primary.Attributes
+				}
+			}
+		}
+		fmt.Printf("raw state %s\n", rawState)
+		project := tpgresource.GetResourceNameFromSelfLink(rawState["project"])
+		region := tpgresource.GetResourceNameFromSelfLink(rawState["region"])
+		featurestore := tpgresource.GetResourceNameFromSelfLink(rawState["featurestore"])
+		return acctest.BuildIAMImportId(fmt.Sprintf("projects/%s/locations/%s/featurestores/%s", project, region, featurestore), rawState["role"], rawState["member"], rawState["condition.0.title"]), nil
+	}
 }

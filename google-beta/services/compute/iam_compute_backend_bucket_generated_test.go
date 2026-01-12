@@ -25,6 +25,7 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
@@ -55,7 +56,7 @@ func TestAccComputeBackendBucketIamBindingGenerated(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_compute_backend_bucket_iam_binding.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/global/backendBuckets/%s roles/viewer", envvar.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-image-backend-bucket%s", context["random_suffix"])),
+				ImportStateIdFunc: generateComputeBackendBucketIAMBindingStateID("google_compute_backend_bucket_iam_binding.foo"),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -65,7 +66,7 @@ func TestAccComputeBackendBucketIamBindingGenerated(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_compute_backend_bucket_iam_binding.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/global/backendBuckets/%s roles/viewer", envvar.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-image-backend-bucket%s", context["random_suffix"])),
+				ImportStateIdFunc: generateComputeBackendBucketIAMBindingStateID("google_compute_backend_bucket_iam_binding.foo"),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -91,7 +92,7 @@ func TestAccComputeBackendBucketIamMemberGenerated(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_compute_backend_bucket_iam_member.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/global/backendBuckets/%s roles/viewer user:admin@hashicorptest.com", envvar.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-image-backend-bucket%s", context["random_suffix"])),
+				ImportStateIdFunc: generateComputeBackendBucketIAMMemberStateID("google_compute_backend_bucket_iam_member.foo"),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -117,7 +118,7 @@ func TestAccComputeBackendBucketIamPolicyGenerated(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_compute_backend_bucket_iam_policy.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/global/backendBuckets/%s", envvar.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-image-backend-bucket%s", context["random_suffix"])),
+				ImportStateIdFunc: generateComputeBackendBucketIAMPolicyStateID("google_compute_backend_bucket_iam_policy.foo"),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -126,7 +127,7 @@ func TestAccComputeBackendBucketIamPolicyGenerated(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_compute_backend_bucket_iam_policy.foo",
-				ImportStateId:     fmt.Sprintf("projects/%s/global/backendBuckets/%s", envvar.GetTestProjectFromEnv(), fmt.Sprintf("tf-test-image-backend-bucket%s", context["random_suffix"])),
+				ImportStateIdFunc: generateComputeBackendBucketIAMPolicyStateID("google_compute_backend_bucket_iam_policy.foo"),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -263,4 +264,55 @@ resource "google_compute_backend_bucket_iam_binding" "foo" {
   members = ["user:admin@hashicorptest.com", "user:gterraformtest1@gmail.com"]
 }
 `, context)
+}
+
+func generateComputeBackendBucketIAMPolicyStateID(iamResourceAddr string) func(*terraform.State) (string, error) {
+	return func(state *terraform.State) (string, error) {
+		var rawState map[string]string
+		for _, m := range state.Modules {
+			if len(m.Resources) > 0 {
+				if v, ok := m.Resources[iamResourceAddr]; ok {
+					rawState = v.Primary.Attributes
+				}
+			}
+		}
+		fmt.Printf("raw state %s\n", rawState)
+		project := tpgresource.GetResourceNameFromSelfLink(rawState["project"])
+		name := tpgresource.GetResourceNameFromSelfLink(rawState["name"])
+		return acctest.BuildIAMImportId(fmt.Sprintf("projects/%s/global/backendBuckets/%s", project, name), "", "", rawState["condition.0.title"]), nil
+	}
+}
+
+func generateComputeBackendBucketIAMBindingStateID(iamResourceAddr string) func(*terraform.State) (string, error) {
+	return func(state *terraform.State) (string, error) {
+		var rawState map[string]string
+		for _, m := range state.Modules {
+			if len(m.Resources) > 0 {
+				if v, ok := m.Resources[iamResourceAddr]; ok {
+					rawState = v.Primary.Attributes
+				}
+			}
+		}
+		fmt.Printf("raw state %s\n", rawState)
+		project := tpgresource.GetResourceNameFromSelfLink(rawState["project"])
+		name := tpgresource.GetResourceNameFromSelfLink(rawState["name"])
+		return acctest.BuildIAMImportId(fmt.Sprintf("projects/%s/global/backendBuckets/%s", project, name), rawState["role"], "", rawState["condition.0.title"]), nil
+	}
+}
+
+func generateComputeBackendBucketIAMMemberStateID(iamResourceAddr string) func(*terraform.State) (string, error) {
+	return func(state *terraform.State) (string, error) {
+		var rawState map[string]string
+		for _, m := range state.Modules {
+			if len(m.Resources) > 0 {
+				if v, ok := m.Resources[iamResourceAddr]; ok {
+					rawState = v.Primary.Attributes
+				}
+			}
+		}
+		fmt.Printf("raw state %s\n", rawState)
+		project := tpgresource.GetResourceNameFromSelfLink(rawState["project"])
+		name := tpgresource.GetResourceNameFromSelfLink(rawState["name"])
+		return acctest.BuildIAMImportId(fmt.Sprintf("projects/%s/global/backendBuckets/%s", project, name), rawState["role"], rawState["member"], rawState["condition.0.title"]), nil
+	}
 }

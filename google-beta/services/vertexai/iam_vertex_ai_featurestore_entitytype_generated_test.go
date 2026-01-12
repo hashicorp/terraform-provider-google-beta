@@ -25,6 +25,7 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
@@ -59,7 +60,7 @@ func TestAccVertexAIFeaturestoreEntitytypeIamBindingGenerated(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_vertex_ai_featurestore_entitytype_iam_binding.foo",
-				ImportStateId:     fmt.Sprintf("%s/entityTypes/%s roles/viewer", fmt.Sprintf("projects/%s/locations/%s/featurestores/%s", envvar.GetTestProjectFromEnv(), envvar.GetTestRegionFromEnv(), fmt.Sprintf("terraform%s", context["random_suffix"])), fmt.Sprintf("terraform%s", context["random_suffix"])),
+				ImportStateIdFunc: generateVertexAIFeaturestoreEntitytypeIAMBindingStateID("google_vertex_ai_featurestore_entitytype_iam_binding.foo"),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -69,7 +70,7 @@ func TestAccVertexAIFeaturestoreEntitytypeIamBindingGenerated(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_vertex_ai_featurestore_entitytype_iam_binding.foo",
-				ImportStateId:     fmt.Sprintf("%s/entityTypes/%s roles/viewer", fmt.Sprintf("projects/%s/locations/%s/featurestores/%s", envvar.GetTestProjectFromEnv(), envvar.GetTestRegionFromEnv(), fmt.Sprintf("terraform%s", context["random_suffix"])), fmt.Sprintf("terraform%s", context["random_suffix"])),
+				ImportStateIdFunc: generateVertexAIFeaturestoreEntitytypeIAMBindingStateID("google_vertex_ai_featurestore_entitytype_iam_binding.foo"),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -99,7 +100,7 @@ func TestAccVertexAIFeaturestoreEntitytypeIamMemberGenerated(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_vertex_ai_featurestore_entitytype_iam_member.foo",
-				ImportStateId:     fmt.Sprintf("%s/entityTypes/%s roles/viewer user:admin@hashicorptest.com", fmt.Sprintf("projects/%s/locations/%s/featurestores/%s", envvar.GetTestProjectFromEnv(), envvar.GetTestRegionFromEnv(), fmt.Sprintf("terraform%s", context["random_suffix"])), fmt.Sprintf("terraform%s", context["random_suffix"])),
+				ImportStateIdFunc: generateVertexAIFeaturestoreEntitytypeIAMMemberStateID("google_vertex_ai_featurestore_entitytype_iam_member.foo"),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -129,7 +130,7 @@ func TestAccVertexAIFeaturestoreEntitytypeIamPolicyGenerated(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_vertex_ai_featurestore_entitytype_iam_policy.foo",
-				ImportStateId:     fmt.Sprintf("%s/entityTypes/%s", fmt.Sprintf("projects/%s/locations/%s/featurestores/%s", envvar.GetTestProjectFromEnv(), envvar.GetTestRegionFromEnv(), fmt.Sprintf("terraform%s", context["random_suffix"])), fmt.Sprintf("terraform%s", context["random_suffix"])),
+				ImportStateIdFunc: generateVertexAIFeaturestoreEntitytypeIAMPolicyStateID("google_vertex_ai_featurestore_entitytype_iam_policy.foo"),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -138,7 +139,7 @@ func TestAccVertexAIFeaturestoreEntitytypeIamPolicyGenerated(t *testing.T) {
 			},
 			{
 				ResourceName:      "google_vertex_ai_featurestore_entitytype_iam_policy.foo",
-				ImportStateId:     fmt.Sprintf("%s/entityTypes/%s", fmt.Sprintf("projects/%s/locations/%s/featurestores/%s", envvar.GetTestProjectFromEnv(), envvar.GetTestRegionFromEnv(), fmt.Sprintf("terraform%s", context["random_suffix"])), fmt.Sprintf("terraform%s", context["random_suffix"])),
+				ImportStateIdFunc: generateVertexAIFeaturestoreEntitytypeIAMPolicyStateID("google_vertex_ai_featurestore_entitytype_iam_policy.foo"),
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -415,4 +416,55 @@ resource "google_vertex_ai_featurestore_entitytype_iam_binding" "foo" {
   members = ["user:admin@hashicorptest.com", "user:gterraformtest1@gmail.com"]
 }
 `, context)
+}
+
+func generateVertexAIFeaturestoreEntitytypeIAMPolicyStateID(iamResourceAddr string) func(*terraform.State) (string, error) {
+	return func(state *terraform.State) (string, error) {
+		var rawState map[string]string
+		for _, m := range state.Modules {
+			if len(m.Resources) > 0 {
+				if v, ok := m.Resources[iamResourceAddr]; ok {
+					rawState = v.Primary.Attributes
+				}
+			}
+		}
+		fmt.Printf("raw state %s\n", rawState)
+		featurestore := rawState["featurestore"]
+		entitytype := tpgresource.GetResourceNameFromSelfLink(rawState["entitytype"])
+		return acctest.BuildIAMImportId(fmt.Sprintf("%s/entityTypes/%s", featurestore, entitytype), "", "", rawState["condition.0.title"]), nil
+	}
+}
+
+func generateVertexAIFeaturestoreEntitytypeIAMBindingStateID(iamResourceAddr string) func(*terraform.State) (string, error) {
+	return func(state *terraform.State) (string, error) {
+		var rawState map[string]string
+		for _, m := range state.Modules {
+			if len(m.Resources) > 0 {
+				if v, ok := m.Resources[iamResourceAddr]; ok {
+					rawState = v.Primary.Attributes
+				}
+			}
+		}
+		fmt.Printf("raw state %s\n", rawState)
+		featurestore := rawState["featurestore"]
+		entitytype := tpgresource.GetResourceNameFromSelfLink(rawState["entitytype"])
+		return acctest.BuildIAMImportId(fmt.Sprintf("%s/entityTypes/%s", featurestore, entitytype), rawState["role"], "", rawState["condition.0.title"]), nil
+	}
+}
+
+func generateVertexAIFeaturestoreEntitytypeIAMMemberStateID(iamResourceAddr string) func(*terraform.State) (string, error) {
+	return func(state *terraform.State) (string, error) {
+		var rawState map[string]string
+		for _, m := range state.Modules {
+			if len(m.Resources) > 0 {
+				if v, ok := m.Resources[iamResourceAddr]; ok {
+					rawState = v.Primary.Attributes
+				}
+			}
+		}
+		fmt.Printf("raw state %s\n", rawState)
+		featurestore := rawState["featurestore"]
+		entitytype := tpgresource.GetResourceNameFromSelfLink(rawState["entitytype"])
+		return acctest.BuildIAMImportId(fmt.Sprintf("%s/entityTypes/%s", featurestore, entitytype), rawState["role"], rawState["member"], rawState["condition.0.title"]), nil
+	}
 }

@@ -825,7 +825,7 @@ func flattenComputeWireGroupEndpointsInterconnects(v interface{}, d *schema.Reso
 		transformed = append(transformed, map[string]interface{}{
 			"interconnect_name": k,
 			"interconnect":      flattenComputeWireGroupEndpointsInterconnectsInterconnect(original["interconnect"], d, config),
-			"vlan_tags":         flattenComputeWireGroupEndpointsInterconnectsVlanTags(original["vlan_tags"], d, config),
+			"vlan_tags":         flattenComputeWireGroupEndpointsInterconnectsVlanTags(original["vlanTags"], d, config),
 		})
 	}
 	return transformed
@@ -1099,7 +1099,7 @@ func expandComputeWireGroupEndpointsInterconnects(v interface{}, d tpgresource.T
 		if err != nil {
 			return nil, err
 		} else if val := reflect.ValueOf(transformedVlanTags); val.IsValid() && !tpgresource.IsEmptyValue(val) {
-			transformed["vlan_tags"] = transformedVlanTags
+			transformed["vlanTags"] = transformedVlanTags
 		}
 
 		transformedInterconnectName, err := tpgresource.ExpandString(original["interconnect_name"], d, config)

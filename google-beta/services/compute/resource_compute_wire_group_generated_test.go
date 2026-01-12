@@ -60,7 +60,7 @@ func TestAccComputeWireGroup_computeWireGroupBasicExample(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeWireGroupDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -85,20 +85,79 @@ func TestAccComputeWireGroup_computeWireGroupBasicExample(t *testing.T) {
 func testAccComputeWireGroup_computeWireGroupBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 data "google_project" "project" {
-provider = google-beta
 }
 
 resource "google_compute_cross_site_network" "example-cross-site-network" {
   name        = "tf-test-test-cross-site-network%{random_suffix}"
   description = "Example cross site network"
-  provider    = google-beta
 }
 
 resource "google_compute_wire_group" "example-test-wire-group" {
   name               = "tf-test-test-wire-group%{random_suffix}"
   description        = "Example Wire Group%{random_suffix}"
   cross_site_network = "tf-test-test-cross-site-network%{random_suffix}"
-  provider           = google-beta
+  depends_on = [
+    google_compute_cross_site_network.example-cross-site-network
+  ]
+  wire_properties {
+    bandwidth_unmetered = 10
+    fault_response =  "NONE"
+    bandwidth_allocation = "ALLOCATE_PER_WIRE"
+  }
+  admin_enabled = true
+}
+`, context)
+}
+
+func TestAccComputeWireGroup_computeWireGroupBasicBetaExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"project":       envvar.GetTestProjectFromEnv(),
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckComputeWireGroupDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeWireGroup_computeWireGroupBasicBetaExample(context),
+			},
+			{
+				ResourceName:            "google_compute_wire_group.example-test-wire-group-beta",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"cross_site_network"},
+			},
+			{
+				ResourceName:       "google_compute_wire_group.example-test-wire-group-beta",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
+		},
+	})
+}
+
+func testAccComputeWireGroup_computeWireGroupBasicBetaExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+data "google_project" "project" {
+provider = "google-beta"
+}
+
+resource "google_compute_cross_site_network" "example-cross-site-network" {
+  provider = "google-beta"
+  name        = "tf-test-test-cross-site-network-beta%{random_suffix}"
+  description = "Example cross site network"
+}
+
+resource "google_compute_wire_group" "example-test-wire-group-beta" {
+  provider = "google-beta"
+  name               = "tf-test-test-wire-group-beta%{random_suffix}"
+  description        = "Example Wire Group Beta%{random_suffix}"
+  cross_site_network = "tf-test-test-cross-site-network-beta%{random_suffix}"
   depends_on = [
     google_compute_cross_site_network.example-cross-site-network
   ]
