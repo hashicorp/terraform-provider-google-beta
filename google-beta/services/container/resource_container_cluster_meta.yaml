@@ -21,6 +21,7 @@ fields:
   - api_field: 'addonsConfig.istioConfig.auth'
   - api_field: 'addonsConfig.istioConfig.disabled'
   - api_field: 'addonsConfig.kalmConfig.enabled'
+  - api_field: 'addonsConfig.podSnapshotConfig.enabled'
   - api_field: 'addonsConfig.lustreCsiDriverConfig.enableLegacyLustrePort'
   - api_field: 'addonsConfig.lustreCsiDriverConfig.enabled'
   - api_field: 'addonsConfig.networkPolicyConfig.disabled'
