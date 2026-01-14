@@ -1526,12 +1526,11 @@ resource "google_compute_security_policy" "policy" {
 }
 `, spName)
 }
+
 func testAccComputeSecurityPolicy_withAdvancedOptionsConfig_update4(spName string) string {
 	return fmt.Sprintf(`
 resource "google_compute_security_policy" "policy" {
   name        = "%s"
-  description = "updated description changing json_parsing to STANDARD_WITH_GRAPHQL"
-
   advanced_options_config {
     json_parsing = "STANDARD_WITH_GRAPHQL"
     json_custom_config {
