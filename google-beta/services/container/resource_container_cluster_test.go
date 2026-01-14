@@ -7600,6 +7600,9 @@ resource "google_container_cluster" "primary" {
     kalm_config {
       enabled = false
     }
+    pod_snapshot_config {
+      enabled = false
+    }
   }
   network    = "%s"
   subnetwork = "%s"
@@ -7678,6 +7681,9 @@ resource "google_container_cluster" "primary" {
       auth     = "AUTH_NONE"
     }
     kalm_config {
+      enabled = true
+    }
+    pod_snapshot_config {
       enabled = true
     }
 	}
