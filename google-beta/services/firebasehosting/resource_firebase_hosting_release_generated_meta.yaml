@@ -9,7 +9,8 @@ fields:
       provider_only: true
     - api_field: message
     - api_field: name
-    - api_field: release_id
+    - api_field: name
+      field: release_id
     - field: site_id
       provider_only: true
     - api_field: type
