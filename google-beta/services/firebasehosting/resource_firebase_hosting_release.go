@@ -270,7 +270,7 @@ func resourceFirebaseHostingReleaseRead(d *schema.ResourceData, meta interface{}
 	if err := d.Set("name", flattenFirebaseHostingReleaseName(res["name"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Release: %s", err)
 	}
-	if err := d.Set("release_id", flattenFirebaseHostingReleaseReleaseId(res["release_id"], d, config)); err != nil {
+	if err := d.Set("release_id", flattenFirebaseHostingReleaseReleaseId(res["name"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Release: %s", err)
 	}
 	if err := d.Set("type", flattenFirebaseHostingReleaseType(res["type"], d, config)); err != nil {
@@ -344,7 +344,7 @@ func resourceFirebaseHostingReleasePostCreateSetComputedFields(d *schema.Resourc
 	if err := d.Set("name", flattenFirebaseHostingReleaseName(res["name"], d, config)); err != nil {
 		return fmt.Errorf(`Error setting computed identity field "name": %s`, err)
 	}
-	if err := d.Set("release_id", flattenFirebaseHostingReleaseReleaseId(res["release_id"], d, config)); err != nil {
+	if err := d.Set("release_id", flattenFirebaseHostingReleaseReleaseId(res["name"], d, config)); err != nil {
 		return fmt.Errorf(`Error setting computed identity field "release_id": %s`, err)
 	}
 	return nil

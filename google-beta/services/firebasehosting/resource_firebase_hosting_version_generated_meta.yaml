@@ -21,4 +21,5 @@ fields:
     - api_field: name
     - field: site_id
       provider_only: true
-    - api_field: version_id
+    - api_field: name
+      field: version_id
