@@ -1,6 +1,6 @@
 ## 7.17.0 (Unreleased)
 
-## 7.16.0 (Unreleased)
+## 7.16.0 (January 13, 2026)
 
 DEPRECATIONS:
 * cloudrunv2: deprecated `custom_audience` field in the `google_cloud_run_v2_worker_pool` resource, as this field is not applicable to the WorkerPools resource ([#11348](https://github.com/hashicorp/terraform-provider-google-beta/pull/11348))
