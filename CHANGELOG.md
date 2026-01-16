@@ -1,4 +1,29 @@
+## 7.17.0 (Unreleased)
+
 ## 7.16.0 (Unreleased)
+
+DEPRECATIONS:
+* cloudrunv2: deprecated `custom_audience` field in the `google_cloud_run_v2_worker_pool` resource, as this field is not applicable to the WorkerPools resource ([#11348](https://github.com/hashicorp/terraform-provider-google-beta/pull/11348))
+
+FEATURES:
+* **New Data Source:** `google_compute_routers` ([#11367](https://github.com/hashicorp/terraform-provider-google-beta/pull/11367))
+* **New Resource:** `google_network_connectivity_destination` ([#11340](https://github.com/hashicorp/terraform-provider-google-beta/pull/11340))
+* **New Resource:** `google_backup_dr_restore_workload` ([#11373](https://github.com/hashicorp/terraform-provider-google-beta/pull/11373))
+
+IMPROVEMENTS:
+* backupdr: added `max_custom_on_demand_retention_days` field to `google_backup_dr_backup_plan` resource ([#11359](https://github.com/hashicorp/terraform-provider-google-beta/pull/11359))
+* bigquery: added support for merge and update operations for dataPolicies in `schema` field in `google_bigquery_table` resource when `ignore_schema_changes` is defined ([#11371](https://github.com/hashicorp/terraform-provider-google-beta/pull/11371))
+* bigtable: added `etag` field to `google_bigtable_schema_bundle` resource ([#11346](https://github.com/hashicorp/terraform-provider-google-beta/pull/11346))
+* compute: added `BPS_400G` enum value to `bandwidth` field in `google_compute_interconnect_attachment` resource ([#11366](https://github.com/hashicorp/terraform-provider-google-beta/pull/11366))
+* container: added `registry_hosts` field to `containerd_config` in `google_container_cluster` and `google_container_node_pool` resources ([#11360](https://github.com/hashicorp/terraform-provider-google-beta/pull/11360))
+* dataplex: added `one_time` field to `google_dataplex_datascan` resource ([#11351](https://github.com/hashicorp/terraform-provider-google-beta/pull/11351))
+* datastream: added `postgresql_profile.ssl_config` to `google_datastream_connection_profile` resource ([#11344](https://github.com/hashicorp/terraform-provider-google-beta/pull/11344))
+* networkservices: added `EXT_AUTHZ_GRPC` enum value to `wire_format` field in `google_network_services_authz_extension` resource ([#11361](https://github.com/hashicorp/terraform-provider-google-beta/pull/11361))
+* networkservices: added `disable_placement_policy` field to `google_network_services_multicast_domain_activation` resource ([#11370](https://github.com/hashicorp/terraform-provider-google-beta/pull/11370))
+* networkservices: added `metadata`, `supported_events`, `request_body_send_mode`, and `observability_mode` fields to `google_network_services_lb_route_extension` resource ([#11356](https://github.com/hashicorp/terraform-provider-google-beta/pull/11356))
+* securitycenterv2: added support for supplying `location` values other than "GLOBAL" to `google_scc_v2_project_notification_config` resource ([#11354](https://github.com/hashicorp/terraform-provider-google-beta/pull/11354))
+* storageinsights: added `activity_data_retention_period_days` field to `google_storage_insights_dataset_config` resource ([#11357](https://github.com/hashicorp/terraform-provider-google-beta/pull/11357))
+* workbench: added support to set post-startup script metadata keys with managed EUC in `google_workbench_instance` resource ([#11369](https://github.com/hashicorp/terraform-provider-google-beta/pull/11369))
 
 ## 7.15.0 (January 6, 2026)
 
