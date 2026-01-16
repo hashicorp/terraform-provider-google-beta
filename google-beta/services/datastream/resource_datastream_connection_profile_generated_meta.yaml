@@ -77,6 +77,8 @@ fields:
     - api_field: salesforceProfile.userCredentials.secretManagerStoredSecurityToken
     - api_field: salesforceProfile.userCredentials.securityToken
     - api_field: salesforceProfile.userCredentials.username
+    - api_field: spannerProfile.database
+    - api_field: spannerProfile.host
     - api_field: sqlServerProfile.database
     - api_field: sqlServerProfile.hostname
     - api_field: sqlServerProfile.password
