@@ -51,7 +51,6 @@ fields:
     - api_field: computeInstanceRestoreProperties.instanceEncryptionKey.rsaEncryptedKey
     - api_field: computeInstanceRestoreProperties.keyRevocationActionType
     - api_field: computeInstanceRestoreProperties.labels.key
-      field: compute_instance_restore_properties.labels.key
     - api_field: computeInstanceRestoreProperties.labels.value.value
       field: compute_instance_restore_properties.labels.value
     - api_field: computeInstanceRestoreProperties.machineType
@@ -89,7 +88,6 @@ fields:
     - api_field: computeInstanceRestoreProperties.networkInterfaces.subnetwork
     - api_field: computeInstanceRestoreProperties.networkPerformanceConfig.totalEgressBandwidthTier
     - api_field: computeInstanceRestoreProperties.params.resourceManagerTags.key
-      field: compute_instance_restore_properties.params.resource_manager_tags.key
     - api_field: computeInstanceRestoreProperties.params.resourceManagerTags.value.value
       field: compute_instance_restore_properties.params.resource_manager_tags.value
     - api_field: computeInstanceRestoreProperties.privateIpv6GoogleAccess
@@ -129,7 +127,6 @@ fields:
     - api_field: diskRestoreProperties.enableConfidentialCompute
     - api_field: diskRestoreProperties.guestOsFeature.type
     - api_field: diskRestoreProperties.labels.key
-      field: disk_restore_properties.labels.key
     - api_field: diskRestoreProperties.labels.value.value
       field: disk_restore_properties.labels.value
     - api_field: diskRestoreProperties.licenses
@@ -138,7 +135,6 @@ fields:
     - api_field: diskRestoreProperties.provisionedIops
     - api_field: diskRestoreProperties.provisionedThroughput
     - api_field: diskRestoreProperties.resourceManagerTags.key
-      field: disk_restore_properties.resource_manager_tags.key
     - api_field: diskRestoreProperties.resourceManagerTags.value.value
       field: disk_restore_properties.resource_manager_tags.value
     - api_field: diskRestoreProperties.resourcePolicy
