@@ -39,7 +39,6 @@ DEPRECATIONS:
 
 FEATURES:
 * **New Data Source:** `google_compute_routers` ([#11367](https://github.com/hashicorp/terraform-provider-google-beta/pull/11367))
-* **New Resource:** `google_network_connectivity_destination` ([#11340](https://github.com/hashicorp/terraform-provider-google-beta/pull/11340))
 * **New Resource:** `google_backup_dr_restore_workload` ([#11373](https://github.com/hashicorp/terraform-provider-google-beta/pull/11373))
 
 IMPROVEMENTS:
