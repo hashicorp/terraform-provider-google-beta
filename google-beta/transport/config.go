@@ -335,6 +335,7 @@ type Config struct {
 	EventarcBasePath                 string
 	FilestoreBasePath                string
 	FirebaseBasePath                 string
+	FirebaseAILogicBasePath          string
 	FirebaseAppCheckBasePath         string
 	FirebaseAppHostingBasePath       string
 	FirebaseDatabaseBasePath         string
@@ -524,6 +525,7 @@ const EssentialContactsBasePathKey = "EssentialContacts"
 const EventarcBasePathKey = "Eventarc"
 const FilestoreBasePathKey = "Filestore"
 const FirebaseBasePathKey = "Firebase"
+const FirebaseAILogicBasePathKey = "FirebaseAILogic"
 const FirebaseAppCheckBasePathKey = "FirebaseAppCheck"
 const FirebaseAppHostingBasePathKey = "FirebaseAppHosting"
 const FirebaseDatabaseBasePathKey = "FirebaseDatabase"
@@ -702,6 +704,7 @@ var DefaultBasePaths = map[string]string{
 	EventarcBasePathKey:                 "https://eventarc.googleapis.com/v1/",
 	FilestoreBasePathKey:                "https://file.googleapis.com/v1beta1/",
 	FirebaseBasePathKey:                 "https://firebase.googleapis.com/v1beta1/",
+	FirebaseAILogicBasePathKey:          "https://firebasevertexai.googleapis.com/v1beta/",
 	FirebaseAppCheckBasePathKey:         "https://firebaseappcheck.googleapis.com/v1beta/",
 	FirebaseAppHostingBasePathKey:       "https://firebaseapphosting.googleapis.com/v1beta/",
 	FirebaseDatabaseBasePathKey:         "https://firebasedatabase.googleapis.com/v1beta/",
@@ -1256,6 +1259,11 @@ func SetEndpointDefaults(d *schema.ResourceData) error {
 		d.Set("firebase_custom_endpoint", MultiEnvDefault([]string{
 			"GOOGLE_FIREBASE_CUSTOM_ENDPOINT",
 		}, DefaultBasePaths[FirebaseBasePathKey]))
+	}
+	if d.Get("firebase_ai_logic_custom_endpoint") == "" {
+		d.Set("firebase_ai_logic_custom_endpoint", MultiEnvDefault([]string{
+			"GOOGLE_FIREBASE_AI_LOGIC_CUSTOM_ENDPOINT",
+		}, DefaultBasePaths[FirebaseAILogicBasePathKey]))
 	}
 	if d.Get("firebase_app_check_custom_endpoint") == "" {
 		d.Set("firebase_app_check_custom_endpoint", MultiEnvDefault([]string{
@@ -2890,6 +2898,7 @@ func ConfigureBasePaths(c *Config) {
 	c.EventarcBasePath = DefaultBasePaths[EventarcBasePathKey]
 	c.FilestoreBasePath = DefaultBasePaths[FilestoreBasePathKey]
 	c.FirebaseBasePath = DefaultBasePaths[FirebaseBasePathKey]
+	c.FirebaseAILogicBasePath = DefaultBasePaths[FirebaseAILogicBasePathKey]
 	c.FirebaseAppCheckBasePath = DefaultBasePaths[FirebaseAppCheckBasePathKey]
 	c.FirebaseAppHostingBasePath = DefaultBasePaths[FirebaseAppHostingBasePathKey]
 	c.FirebaseDatabaseBasePath = DefaultBasePaths[FirebaseDatabaseBasePathKey]
