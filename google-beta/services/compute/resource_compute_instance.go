@@ -809,6 +809,11 @@ func ResourceComputeInstance() *schema.Resource {
 							DiffSuppressFunc: ipv6RepresentationDiffSuppress,
 							Description:      `An IPv6 internal network address for this network interface. If not specified, Google Cloud will automatically assign an internal IPv6 address from the instance's subnetwork.`,
 						},
+						"mac_address": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: `MAC address assigned to this network interface.`,
+						},
 
 						"queue_count": {
 							Type:        schema.TypeInt,
