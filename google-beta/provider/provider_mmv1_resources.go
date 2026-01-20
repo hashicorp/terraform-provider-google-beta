@@ -633,9 +633,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 769
+// Generated resources: 770
 // Generated IAM resources: 351
-// Total generated resources: 1120
+// Total generated resources: 1121
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -1289,6 +1289,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_gke_hub_membership_binding":                                          gkehub2.ResourceGKEHub2MembershipBinding(),
 	"google_gke_hub_membership_rbac_role_binding":                                gkehub2.ResourceGKEHub2MembershipRBACRoleBinding(),
 	"google_gke_hub_namespace":                                                   gkehub2.ResourceGKEHub2Namespace(),
+	"google_gke_hub_rollout_sequence":                                            gkehub2.ResourceGKEHub2RolloutSequence(),
 	"google_gke_hub_scope":                                                       gkehub2.ResourceGKEHub2Scope(),
 	"google_gke_hub_scope_iam_binding":                                           tpgiamresource.ResourceIamBinding(gkehub2.GKEHub2ScopeIamSchema, gkehub2.GKEHub2ScopeIamUpdaterProducer, gkehub2.GKEHub2ScopeIdParseFunc),
 	"google_gke_hub_scope_iam_member":                                            tpgiamresource.ResourceIamMember(gkehub2.GKEHub2ScopeIamSchema, gkehub2.GKEHub2ScopeIamUpdaterProducer, gkehub2.GKEHub2ScopeIdParseFunc),
