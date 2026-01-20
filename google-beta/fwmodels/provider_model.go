@@ -127,6 +127,7 @@ type ProviderModel struct {
 	EventarcCustomEndpoint                 types.String `tfsdk:"eventarc_custom_endpoint"`
 	FilestoreCustomEndpoint                types.String `tfsdk:"filestore_custom_endpoint"`
 	FirebaseCustomEndpoint                 types.String `tfsdk:"firebase_custom_endpoint"`
+	FirebaseAILogicCustomEndpoint          types.String `tfsdk:"firebase_ai_logic_custom_endpoint"`
 	FirebaseAppCheckCustomEndpoint         types.String `tfsdk:"firebase_app_check_custom_endpoint"`
 	FirebaseAppHostingCustomEndpoint       types.String `tfsdk:"firebase_app_hosting_custom_endpoint"`
 	FirebaseDatabaseCustomEndpoint         types.String `tfsdk:"firebase_database_custom_endpoint"`
