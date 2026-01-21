@@ -1946,6 +1946,24 @@ func ResourceContainerCluster() *schema.Resource {
 					},
 				},
 			},
+			"managed_opentelemetry_config": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Computed:    true,
+				MaxItems:    1,
+				Description: "The configuration for the Managed OpenTelemetry pipeline inside the cluster.",
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"scope": {
+							Type:             schema.TypeString,
+							Optional:         true,
+							Description:      "The scope of the Managed OpenTelemetry pipeline. Available options include SCOPE_UNSPECIFIED, NONE, and COLLECTION_AND_INSTRUMENTATION_COMPONENTS.",
+							ValidateFunc:     validation.StringInSlice([]string{"SCOPE_UNSPECIFIED", "NONE", "COLLECTION_AND_INSTRUMENTATION_COMPONENTS"}, false),
+							DiffSuppressFunc: tpgresource.EmptyOrDefaultStringSuppress("SCOPE_UNSPECIFIED"),
+						},
+					},
+				},
+			},
 
 			// Defaults to "VPC_NATIVE" during create only
 			"networking_mode": {
@@ -2829,18 +2847,19 @@ func resourceContainerClusterCreate(d *schema.ResourceData, meta interface{}) er
 			Enabled:         d.Get("enable_legacy_abac").(bool),
 			ForceSendFields: []string{"Enabled"},
 		},
-		LoggingService:          d.Get("logging_service").(string),
-		MonitoringService:       d.Get("monitoring_service").(string),
-		NetworkPolicy:           expandNetworkPolicy(d.Get("network_policy")),
-		AddonsConfig:            expandClusterAddonsConfig(d.Get("addons_config")),
-		EnableKubernetesAlpha:   d.Get("enable_kubernetes_alpha").(bool),
-		IpAllocationPolicy:      ipAllocationBlock,
-		PodSecurityPolicyConfig: expandPodSecurityPolicyConfig(d.Get("pod_security_policy_config")),
-		PodAutoscaling:          expandPodAutoscaling(d.Get("pod_autoscaling")),
-		SecretManagerConfig:     expandSecretManagerConfig(d.Get("secret_manager_config")),
-		SecretSyncConfig:        expandSecretSyncConfig(d.Get("secret_sync_config")),
-		Autoscaling:             expandClusterAutoscaling(d.Get("cluster_autoscaling"), d),
-		BinaryAuthorization:     expandBinaryAuthorization(d.Get("binary_authorization")),
+		LoggingService:             d.Get("logging_service").(string),
+		MonitoringService:          d.Get("monitoring_service").(string),
+		NetworkPolicy:              expandNetworkPolicy(d.Get("network_policy")),
+		AddonsConfig:               expandClusterAddonsConfig(d.Get("addons_config")),
+		ManagedOpentelemetryConfig: expandManagedOpenTelemetryConfig(d.Get("managed_opentelemetry_config")),
+		EnableKubernetesAlpha:      d.Get("enable_kubernetes_alpha").(bool),
+		IpAllocationPolicy:         ipAllocationBlock,
+		PodSecurityPolicyConfig:    expandPodSecurityPolicyConfig(d.Get("pod_security_policy_config")),
+		PodAutoscaling:             expandPodAutoscaling(d.Get("pod_autoscaling")),
+		SecretManagerConfig:        expandSecretManagerConfig(d.Get("secret_manager_config")),
+		SecretSyncConfig:           expandSecretSyncConfig(d.Get("secret_sync_config")),
+		Autoscaling:                expandClusterAutoscaling(d.Get("cluster_autoscaling"), d),
+		BinaryAuthorization:        expandBinaryAuthorization(d.Get("binary_authorization")),
 		Autopilot: &container.Autopilot{
 			Enabled:              d.Get("enable_autopilot").(bool),
 			WorkloadPolicyConfig: workloadPolicyConfig,
@@ -3589,6 +3608,10 @@ func resourceContainerClusterRead(d *schema.ResourceData, meta interface{}) erro
 	}
 
 	if err := d.Set("monitoring_config", flattenMonitoringConfig(cluster.MonitoringConfig)); err != nil {
+		return err
+	}
+
+	if err := d.Set("managed_opentelemetry_config", flattenManagedOpenTelemetryConfig(cluster.ManagedOpentelemetryConfig)); err != nil {
 		return err
 	}
 
@@ -4858,6 +4881,21 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 		}
 
 		log.Printf("[INFO] GKE cluster %s monitoring config has been updated", d.Id())
+	}
+
+	if d.HasChange("managed_opentelemetry_config") {
+		req := &container.UpdateClusterRequest{
+			Update: &container.ClusterUpdate{
+				DesiredManagedOpentelemetryConfig: expandManagedOpenTelemetryConfig(d.Get("managed_opentelemetry_config")),
+			},
+		}
+		updateF := updateFunc(req, "updating GKE cluster managed opentelemetry config")
+		// Call update serially.
+		if err := transport_tpg.LockedCall(lockKey, updateF); err != nil {
+			return err
+		}
+
+		log.Printf("[INFO] GKE cluster %s managed opentelemetry config has been updated", d.Id())
 	}
 
 	if d.HasChange("effective_labels") {
@@ -6290,6 +6328,27 @@ func expandManCidrBlocks(configured interface{}) []*container.CidrBlock {
 		})
 	}
 	return result
+}
+func expandManagedOpenTelemetryConfig(configured interface{}) *container.ManagedOpenTelemetryConfig {
+	l := configured.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil
+	}
+	config := l[0].(map[string]interface{})
+	return &container.ManagedOpenTelemetryConfig{
+		Scope: config["scope"].(string),
+	}
+}
+
+func flattenManagedOpenTelemetryConfig(c *container.ManagedOpenTelemetryConfig) []map[string]interface{} {
+	if c == nil {
+		return nil
+	}
+	return []map[string]interface{}{
+		{
+			"scope": c.Scope,
+		},
+	}
 }
 
 func expandNetworkPolicy(configured interface{}) *container.NetworkPolicy {
