@@ -504,7 +504,7 @@ See https://cloud.google.com/workstations/docs/reference/rest/v1beta/projects.lo
 										Optional: true,
 										Description: `Resource manager tags to be bound to the VM instances backing the Workstations.
 Tag keys and values have the same definition as
-https://cloud.google.com/resource-manager/docs/tags/tags-overview
+https://docs.cloud.google.com/resource-manager/docs/tags/tags-overview
 Keys must be in the format 'tagKeys/{tag_key_id}', and
 values are in the format 'tagValues/456'.`,
 										Elem: &schema.Schema{Type: schema.TypeString},

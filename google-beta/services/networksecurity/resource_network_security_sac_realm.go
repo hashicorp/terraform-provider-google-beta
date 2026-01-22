@@ -125,7 +125,7 @@ func ResourceNetworkSecuritySacRealm() *schema.Resource {
 			"labels": {
 				Type:     schema.TypeMap,
 				Optional: true,
-				Description: `Optional labels in key:value format. For more information about labels, see [Requirements for labels](https://cloud.google.com/resource-manager/docs/creating-managing-labels#requirements).
+				Description: `Optional labels in key:value format. For more information about labels, see [Requirements for labels](https://docs.cloud.google.com/resource-manager/docs/creating-managing-labels#requirements).
 
 
 **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
