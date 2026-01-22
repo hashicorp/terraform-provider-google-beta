@@ -1,0 +1,19 @@
+resource: google_firebase_ai_logic_prompt_template
+generation_type: mmv1
+source_file: products/firebaseailogic/PromptTemplate.yaml
+api_service_name: firebasevertexai.googleapis.com
+api_version: v1beta
+api_resource_type_kind: PromptTemplate
+autogen_status: true
+fields:
+    - api_field: createTime
+    - api_field: displayName
+    - field: location
+      provider_only: true
+    - api_field: locked
+    - api_field: model
+    - api_field: name
+    - api_field: stateChangeTime
+    - api_field: templateId
+    - api_field: templateString
+    - api_field: updateTime
