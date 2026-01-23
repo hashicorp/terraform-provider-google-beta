@@ -115,21 +115,22 @@ func testAccCheckFirebaseAILogicPromptTemplateLockDestroyProducer(t *testing.T) 
 				return err
 			}
 
-			billingProject := ""
-
-			if config.BillingProject != "" {
-				billingProject = config.BillingProject
-			}
-
-			_, err = transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
+			res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 				Config:    config,
 				Method:    "GET",
-				Project:   billingProject,
 				RawURL:    url,
 				UserAgent: config.UserAgent,
 			})
-			if err == nil {
-				return fmt.Errorf("FirebaseAILogicPromptTemplateLock still exists at %s", url)
+			if err != nil {
+				if gerr, ok := err.(*googleapi.Error); ok && gerr.Code == 404 {
+					return nil
+				}
+				return fmt.Errorf("error reading PromptTemplate to verify lock destruction: %v", err)
+			}
+
+			locked, ok := res["locked"].(bool)
+			if ok && locked {
+				return fmt.Errorf("FirebaseAILogicPromptTemplate %s is still locked after destroy", rs.Primary.Attributes["template_id"])
 			}
 		}
 
