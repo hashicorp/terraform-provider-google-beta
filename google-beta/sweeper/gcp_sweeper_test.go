@@ -92,6 +92,7 @@ import (
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/eventarc"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/filestore"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebase"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebaseailogic"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebaseappcheck"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebaseapphosting"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebasedatabase"

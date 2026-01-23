@@ -93,6 +93,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/eventarc"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/filestore"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebase"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebaseailogic"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebaseappcheck"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebaseapphosting"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebasedatabase"
@@ -478,6 +479,7 @@ var handwrittenDatasources = map[string]*schema.Resource{
 	"google_vmwareengine_private_cloud":                          vmwareengine.DataSourceVmwareenginePrivateCloud(),
 	"google_vmwareengine_subnet":                                 vmwareengine.DataSourceVmwareengineSubnet(),
 	"google_vmwareengine_vcenter_credentials":                    vmwareengine.DataSourceVmwareengineVcenterCredentials(),
+	"google_vmwareengine_datastore":                              vmwareengine.DataSourceVmwareengineDatastore(),
 	"google_compute_region_backend_service":                      compute.DataSourceGoogleComputeRegionBackendService(),
 	"google_network_management_connectivity_test_run":            networkmanagement.DataSourceGoogleNetworkManagementTestRun(),
 	"google_network_management_connectivity_tests":               networkmanagement.DataSourceGoogleNetworkManagementConnectivityTests(),
@@ -633,9 +635,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 768
+// Generated resources: 776
 // Generated IAM resources: 351
-// Total generated resources: 1119
+// Total generated resources: 1127
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -980,6 +982,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_compute_region_backend_service_iam_member":                           tpgiamresource.ResourceIamMember(compute.ComputeRegionBackendServiceIamSchema, compute.ComputeRegionBackendServiceIamUpdaterProducer, compute.ComputeRegionBackendServiceIdParseFunc),
 	"google_compute_region_backend_service_iam_policy":                           tpgiamresource.ResourceIamPolicy(compute.ComputeRegionBackendServiceIamSchema, compute.ComputeRegionBackendServiceIamUpdaterProducer, compute.ComputeRegionBackendServiceIdParseFunc),
 	"google_compute_region_commitment":                                           compute.ResourceComputeRegionCommitment(),
+	"google_compute_region_composite_health_check":                               compute.ResourceComputeRegionCompositeHealthCheck(),
 	"google_compute_region_disk":                                                 compute.ResourceComputeRegionDisk(),
 	"google_compute_region_disk_iam_binding":                                     tpgiamresource.ResourceIamBinding(compute.ComputeRegionDiskIamSchema, compute.ComputeRegionDiskIamUpdaterProducer, compute.ComputeRegionDiskIdParseFunc),
 	"google_compute_region_disk_iam_member":                                      tpgiamresource.ResourceIamMember(compute.ComputeRegionDiskIamSchema, compute.ComputeRegionDiskIamUpdaterProducer, compute.ComputeRegionDiskIdParseFunc),
@@ -1093,6 +1096,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_dataplex_asset_iam_binding":                                          tpgiamresource.ResourceIamBinding(dataplex.DataplexAssetIamSchema, dataplex.DataplexAssetIamUpdaterProducer, dataplex.DataplexAssetIdParseFunc),
 	"google_dataplex_asset_iam_member":                                           tpgiamresource.ResourceIamMember(dataplex.DataplexAssetIamSchema, dataplex.DataplexAssetIamUpdaterProducer, dataplex.DataplexAssetIdParseFunc),
 	"google_dataplex_asset_iam_policy":                                           tpgiamresource.ResourceIamPolicy(dataplex.DataplexAssetIamSchema, dataplex.DataplexAssetIamUpdaterProducer, dataplex.DataplexAssetIdParseFunc),
+	"google_dataplex_data_product":                                               dataplex.ResourceDataplexDataProduct(),
 	"google_dataplex_datascan":                                                   dataplex.ResourceDataplexDatascan(),
 	"google_dataplex_datascan_iam_binding":                                       tpgiamresource.ResourceIamBinding(dataplex.DataplexDatascanIamSchema, dataplex.DataplexDatascanIamUpdaterProducer, dataplex.DataplexDatascanIdParseFunc),
 	"google_dataplex_datascan_iam_member":                                        tpgiamresource.ResourceIamMember(dataplex.DataplexDatascanIamSchema, dataplex.DataplexDatascanIamUpdaterProducer, dataplex.DataplexDatascanIdParseFunc),
@@ -1174,6 +1178,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_dialogflow_cx_security_settings":                                     dialogflowcx.ResourceDialogflowCXSecuritySettings(),
 	"google_dialogflow_cx_test_case":                                             dialogflowcx.ResourceDialogflowCXTestCase(),
 	"google_dialogflow_cx_tool":                                                  dialogflowcx.ResourceDialogflowCXTool(),
+	"google_dialogflow_cx_tool_version":                                          dialogflowcx.ResourceDialogflowCXToolVersion(),
 	"google_dialogflow_cx_version":                                               dialogflowcx.ResourceDialogflowCXVersion(),
 	"google_dialogflow_cx_webhook":                                               dialogflowcx.ResourceDialogflowCXWebhook(),
 	"google_discovery_engine_acl_config":                                         discoveryengine.ResourceDiscoveryEngineAclConfig(),
@@ -1224,6 +1229,9 @@ var generatedResources = map[string]*schema.Resource{
 	"google_firebase_apple_app":                                                  firebase.ResourceFirebaseAppleApp(),
 	"google_firebase_project":                                                    firebase.ResourceFirebaseProject(),
 	"google_firebase_web_app":                                                    firebase.ResourceFirebaseWebApp(),
+	"google_firebase_ai_logic_config":                                            firebaseailogic.ResourceFirebaseAILogicConfig(),
+	"google_firebase_ai_logic_prompt_template":                                   firebaseailogic.ResourceFirebaseAILogicPromptTemplate(),
+	"google_firebase_ai_logic_prompt_template_lock":                              firebaseailogic.ResourceFirebaseAILogicPromptTemplateLock(),
 	"google_firebase_app_check_app_attest_config":                                firebaseappcheck.ResourceFirebaseAppCheckAppAttestConfig(),
 	"google_firebase_app_check_debug_token":                                      firebaseappcheck.ResourceFirebaseAppCheckDebugToken(),
 	"google_firebase_app_check_device_check_config":                              firebaseappcheck.ResourceFirebaseAppCheckDeviceCheckConfig(),
@@ -1288,6 +1296,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_gke_hub_membership_binding":                                          gkehub2.ResourceGKEHub2MembershipBinding(),
 	"google_gke_hub_membership_rbac_role_binding":                                gkehub2.ResourceGKEHub2MembershipRBACRoleBinding(),
 	"google_gke_hub_namespace":                                                   gkehub2.ResourceGKEHub2Namespace(),
+	"google_gke_hub_rollout_sequence":                                            gkehub2.ResourceGKEHub2RolloutSequence(),
 	"google_gke_hub_scope":                                                       gkehub2.ResourceGKEHub2Scope(),
 	"google_gke_hub_scope_iam_binding":                                           tpgiamresource.ResourceIamBinding(gkehub2.GKEHub2ScopeIamSchema, gkehub2.GKEHub2ScopeIamUpdaterProducer, gkehub2.GKEHub2ScopeIdParseFunc),
 	"google_gke_hub_scope_iam_member":                                            tpgiamresource.ResourceIamMember(gkehub2.GKEHub2ScopeIamSchema, gkehub2.GKEHub2ScopeIamUpdaterProducer, gkehub2.GKEHub2ScopeIdParseFunc),
@@ -1734,6 +1743,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_vertex_ai_reasoning_engine":                                          vertexai.ResourceVertexAIReasoningEngine(),
 	"google_vertex_ai_tensorboard":                                               vertexai.ResourceVertexAITensorboard(),
 	"google_vmwareengine_cluster":                                                vmwareengine.ResourceVmwareengineCluster(),
+	"google_vmwareengine_datastore":                                              vmwareengine.ResourceVmwareengineDatastore(),
 	"google_vmwareengine_external_access_rule":                                   vmwareengine.ResourceVmwareengineExternalAccessRule(),
 	"google_vmwareengine_external_address":                                       vmwareengine.ResourceVmwareengineExternalAddress(),
 	"google_vmwareengine_network":                                                vmwareengine.ResourceVmwareengineNetwork(),
@@ -2003,6 +2013,7 @@ func UseGeneratedProducts() {
 	var _ = eventarc.ProductName
 	var _ = filestore.ProductName
 	var _ = firebase.ProductName
+	var _ = firebaseailogic.ProductName
 	var _ = firebaseappcheck.ProductName
 	var _ = firebaseapphosting.ProductName
 	var _ = firebasedatabase.ProductName

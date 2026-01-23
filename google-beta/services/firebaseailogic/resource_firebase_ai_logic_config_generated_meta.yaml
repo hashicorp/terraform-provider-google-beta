@@ -1,0 +1,18 @@
+resource: google_firebase_ai_logic_config
+generation_type: mmv1
+source_file: products/firebaseailogic/Config.yaml
+api_service_name: firebasevertexai.googleapis.com
+api_version: v1beta
+api_resource_type_kind: Config
+autogen_status: true
+fields:
+    - api_field: generativeLanguageConfig.apiKey
+    - api_field: generativeLanguageConfig.apiKey
+      field: generative_language_config.api_key_wo
+    - field: generative_language_config.api_key_wo_version
+      provider_only: true
+    - field: location
+      provider_only: true
+    - api_field: name
+    - api_field: telemetryConfig.mode
+    - api_field: telemetryConfig.samplingRate

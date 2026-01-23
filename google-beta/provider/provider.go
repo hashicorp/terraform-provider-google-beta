@@ -563,6 +563,11 @@ func Provider() *schema.Provider {
 				Optional:     true,
 				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
 			},
+			"firebase_ai_logic_custom_endpoint": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
+			},
 			"firebase_app_check_custom_endpoint": {
 				Type:         schema.TypeString,
 				Optional:     true,
@@ -1286,6 +1291,7 @@ func ProviderConfigure(ctx context.Context, d *schema.ResourceData, p *schema.Pr
 	config.EventarcBasePath = d.Get("eventarc_custom_endpoint").(string)
 	config.FilestoreBasePath = d.Get("filestore_custom_endpoint").(string)
 	config.FirebaseBasePath = d.Get("firebase_custom_endpoint").(string)
+	config.FirebaseAILogicBasePath = d.Get("firebase_ai_logic_custom_endpoint").(string)
 	config.FirebaseAppCheckBasePath = d.Get("firebase_app_check_custom_endpoint").(string)
 	config.FirebaseAppHostingBasePath = d.Get("firebase_app_hosting_custom_endpoint").(string)
 	config.FirebaseDatabaseBasePath = d.Get("firebase_database_custom_endpoint").(string)

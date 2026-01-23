@@ -248,6 +248,8 @@ func ResourceContainerCluster() *schema.Resource {
 			containerClusterEnableK8sBetaApisCustomizeDiff,
 			containerClusterNodeVersionCustomizeDiff,
 			tpgresource.SetDiffForLabelsWithCustomizedName("resource_labels"),
+
+			clusterAcceleratorNetworkProfileCustomizeDiff,
 		),
 
 		Timeouts: &schema.ResourceTimeout{
@@ -1944,6 +1946,24 @@ func ResourceContainerCluster() *schema.Resource {
 					},
 				},
 			},
+			"managed_opentelemetry_config": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Computed:    true,
+				MaxItems:    1,
+				Description: "The configuration for the Managed OpenTelemetry pipeline inside the cluster.",
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"scope": {
+							Type:             schema.TypeString,
+							Optional:         true,
+							Description:      "The scope of the Managed OpenTelemetry pipeline. Available options include SCOPE_UNSPECIFIED, NONE, and COLLECTION_AND_INSTRUMENTATION_COMPONENTS.",
+							ValidateFunc:     validation.StringInSlice([]string{"SCOPE_UNSPECIFIED", "NONE", "COLLECTION_AND_INSTRUMENTATION_COMPONENTS"}, false),
+							DiffSuppressFunc: tpgresource.EmptyOrDefaultStringSuppress("SCOPE_UNSPECIFIED"),
+						},
+					},
+				},
+			},
 
 			// Defaults to "VPC_NATIVE" during create only
 			"networking_mode": {
@@ -2827,18 +2847,19 @@ func resourceContainerClusterCreate(d *schema.ResourceData, meta interface{}) er
 			Enabled:         d.Get("enable_legacy_abac").(bool),
 			ForceSendFields: []string{"Enabled"},
 		},
-		LoggingService:          d.Get("logging_service").(string),
-		MonitoringService:       d.Get("monitoring_service").(string),
-		NetworkPolicy:           expandNetworkPolicy(d.Get("network_policy")),
-		AddonsConfig:            expandClusterAddonsConfig(d.Get("addons_config")),
-		EnableKubernetesAlpha:   d.Get("enable_kubernetes_alpha").(bool),
-		IpAllocationPolicy:      ipAllocationBlock,
-		PodSecurityPolicyConfig: expandPodSecurityPolicyConfig(d.Get("pod_security_policy_config")),
-		PodAutoscaling:          expandPodAutoscaling(d.Get("pod_autoscaling")),
-		SecretManagerConfig:     expandSecretManagerConfig(d.Get("secret_manager_config")),
-		SecretSyncConfig:        expandSecretSyncConfig(d.Get("secret_sync_config")),
-		Autoscaling:             expandClusterAutoscaling(d.Get("cluster_autoscaling"), d),
-		BinaryAuthorization:     expandBinaryAuthorization(d.Get("binary_authorization")),
+		LoggingService:             d.Get("logging_service").(string),
+		MonitoringService:          d.Get("monitoring_service").(string),
+		NetworkPolicy:              expandNetworkPolicy(d.Get("network_policy")),
+		AddonsConfig:               expandClusterAddonsConfig(d.Get("addons_config")),
+		ManagedOpentelemetryConfig: expandManagedOpenTelemetryConfig(d.Get("managed_opentelemetry_config")),
+		EnableKubernetesAlpha:      d.Get("enable_kubernetes_alpha").(bool),
+		IpAllocationPolicy:         ipAllocationBlock,
+		PodSecurityPolicyConfig:    expandPodSecurityPolicyConfig(d.Get("pod_security_policy_config")),
+		PodAutoscaling:             expandPodAutoscaling(d.Get("pod_autoscaling")),
+		SecretManagerConfig:        expandSecretManagerConfig(d.Get("secret_manager_config")),
+		SecretSyncConfig:           expandSecretSyncConfig(d.Get("secret_sync_config")),
+		Autoscaling:                expandClusterAutoscaling(d.Get("cluster_autoscaling"), d),
+		BinaryAuthorization:        expandBinaryAuthorization(d.Get("binary_authorization")),
 		Autopilot: &container.Autopilot{
 			Enabled:              d.Get("enable_autopilot").(bool),
 			WorkloadPolicyConfig: workloadPolicyConfig,
@@ -3587,6 +3608,10 @@ func resourceContainerClusterRead(d *schema.ResourceData, meta interface{}) erro
 	}
 
 	if err := d.Set("monitoring_config", flattenMonitoringConfig(cluster.MonitoringConfig)); err != nil {
+		return err
+	}
+
+	if err := d.Set("managed_opentelemetry_config", flattenManagedOpenTelemetryConfig(cluster.ManagedOpentelemetryConfig)); err != nil {
 		return err
 	}
 
@@ -4856,6 +4881,21 @@ func resourceContainerClusterUpdate(d *schema.ResourceData, meta interface{}) er
 		}
 
 		log.Printf("[INFO] GKE cluster %s monitoring config has been updated", d.Id())
+	}
+
+	if d.HasChange("managed_opentelemetry_config") {
+		req := &container.UpdateClusterRequest{
+			Update: &container.ClusterUpdate{
+				DesiredManagedOpentelemetryConfig: expandManagedOpenTelemetryConfig(d.Get("managed_opentelemetry_config")),
+			},
+		}
+		updateF := updateFunc(req, "updating GKE cluster managed opentelemetry config")
+		// Call update serially.
+		if err := transport_tpg.LockedCall(lockKey, updateF); err != nil {
+			return err
+		}
+
+		log.Printf("[INFO] GKE cluster %s managed opentelemetry config has been updated", d.Id())
 	}
 
 	if d.HasChange("effective_labels") {
@@ -6288,6 +6328,27 @@ func expandManCidrBlocks(configured interface{}) []*container.CidrBlock {
 		})
 	}
 	return result
+}
+func expandManagedOpenTelemetryConfig(configured interface{}) *container.ManagedOpenTelemetryConfig {
+	l := configured.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil
+	}
+	config := l[0].(map[string]interface{})
+	return &container.ManagedOpenTelemetryConfig{
+		Scope: config["scope"].(string),
+	}
+}
+
+func flattenManagedOpenTelemetryConfig(c *container.ManagedOpenTelemetryConfig) []map[string]interface{} {
+	if c == nil {
+		return nil
+	}
+	return []map[string]interface{}{
+		{
+			"scope": c.Scope,
+		},
+	}
 }
 
 func expandNetworkPolicy(configured interface{}) *container.NetworkPolicy {
@@ -8413,6 +8474,159 @@ func containerClusterNodeVersionCustomizeDiffFunc(diff tpgresource.TerraformReso
 
 	if masterVersion != nodeVersion {
 		return fmt.Errorf("Resource argument node_version (value: %s) must either be unset or set to the same value as min_master_version (value: %s) on create.", newValueNode, newValueMaster)
+	}
+
+	return nil
+}
+
+func clusterAcceleratorNetworkProfileCustomizeDiff(_ context.Context, diff *schema.ResourceDiff, meta any) error {
+	// 1. SKIP ON CREATE
+	if diff.Id() == "" {
+		return nil
+	}
+
+	// 2. PREPARE TO UPDATE THE FULL LIST
+	oldNodePools := diff.Get("node_pool").([]interface{})
+	newNodePools := make([]interface{}, len(oldNodePools))
+	listChanged := false
+
+	// We need Raw Config to check what the user actually wrote
+	rawConfig := diff.GetRawConfig()
+	rawNodePools := rawConfig.GetAttr("node_pool")
+
+	// 3. ITERATE OVER ALL POOLS IN STATE
+	for i, np := range oldNodePools {
+		// Deep copy the node pool map
+		npMap := np.(map[string]interface{})
+		newNpMap := make(map[string]interface{})
+		for k, v := range npMap {
+			newNpMap[k] = v
+		}
+
+		// Check if this specific node pool is actually defined in the Raw Config (Inline).
+		// If it is not in Raw Config, it is a Standalone resource (or API generated).
+		// We must not touch Standalone resources from the Cluster resource.
+		isInline := false
+		currentName := npMap["name"].(string)
+
+		// Iterate over Raw Config to find a match by name
+		if !rawNodePools.IsNull() && rawNodePools.Type().IsCollectionType() {
+			it := rawNodePools.ElementIterator()
+			for it.Next() {
+				_, val := it.Element()
+				rawNameVal := val.GetAttr("name")
+				if !rawNameVal.IsNull() && rawNameVal.AsString() == currentName {
+					isInline = true
+					break
+				}
+			}
+		}
+
+		// If this is NOT an inline pool, copy it as-is and skip logic.
+		if !isInline {
+			newNodePools[i] = newNpMap
+			continue
+		}
+
+		// A. DETECT USER CONFIG (Raw Config Check for this specific pool)
+		userHasAdditionalConfigs := false
+
+		// Re-find the specific raw block for logic checking
+		if !rawNodePools.IsNull() {
+			it := rawNodePools.ElementIterator()
+			for it.Next() {
+				_, val := it.Element()
+				rawNameVal := val.GetAttr("name")
+				if !rawNameVal.IsNull() && rawNameVal.AsString() == currentName {
+					// We found the matching raw block, now check its network config
+					rawNc := val.GetAttr("network_config")
+					if !rawNc.IsNull() && rawNc.Type().IsCollectionType() {
+						ncIt := rawNc.ElementIterator()
+						for ncIt.Next() {
+							_, ncVal := ncIt.Element()
+							userConfig := ncVal.GetAttr("additional_node_network_configs")
+							if !userConfig.IsNull() && userConfig.LengthInt() > 0 {
+								userHasAdditionalConfigs = true
+							}
+						}
+					}
+					break
+				}
+			}
+		}
+
+		// B. CHECK TRANSITION LOGIC
+		shouldClear := false
+		basePath := fmt.Sprintf("node_pool.%d", i)
+		networkConfigPath := basePath + ".network_config.0"
+
+		oldProfile, newProfile := diff.GetChange(networkConfigPath + ".accelerator_network_profile")
+
+		newProfileStr := ""
+		if newProfile != nil {
+			newProfileStr = newProfile.(string)
+		}
+		oldProfileStr := ""
+		if oldProfile != nil {
+			oldProfileStr = oldProfile.(string)
+		}
+
+		anpIsActive := newProfileStr != ""
+		anpIsChanging := oldProfileStr != newProfileStr
+
+		if !userHasAdditionalConfigs {
+			if anpIsActive && anpIsChanging {
+				shouldClear = true
+			}
+			if !anpIsActive {
+				shouldClear = true
+			}
+		}
+
+		// Check if additional configs currently exist to avoid no-op
+		currentCount := 0
+		if c, ok := diff.Get(networkConfigPath + ".additional_node_network_configs.#").(int); ok {
+			currentCount = c
+		}
+		if shouldClear && currentCount == 0 {
+			shouldClear = false
+		}
+
+		// C. APPLY FIX TO THE MAP
+		if shouldClear {
+			log.Printf("[DEBUG] Cluster ANP CustomizeDiff: Clearing additional configs for INLINE pool %s", currentName)
+
+			var newConfigMap map[string]interface{}
+
+			if ncList, ok := newNpMap["network_config"].([]interface{}); ok && len(ncList) > 0 {
+				if existingMap, ok := ncList[0].(map[string]interface{}); ok {
+					newConfigMap = make(map[string]interface{})
+					for k, v := range existingMap {
+						newConfigMap[k] = v
+					}
+				}
+			}
+
+			if newConfigMap == nil {
+				newConfigMap = make(map[string]interface{})
+			}
+
+			newConfigMap["additional_node_network_configs"] = []interface{}{}
+
+			if !anpIsActive {
+				newConfigMap["accelerator_network_profile"] = ""
+			}
+
+			newNpMap["network_config"] = []interface{}{newConfigMap}
+			listChanged = true
+		}
+
+		newNodePools[i] = newNpMap
+	}
+
+	// 4. WRITE THE FULL LIST BACK
+	if listChanged {
+		return diff.SetNew("node_pool", newNodePools)
 	}
 
 	return nil
