@@ -1,0 +1,13 @@
+resource: google_firebase_ai_logic_prompt_template_lock
+generation_type: mmv1
+source_file: products/firebaseailogic/PromptTemplateLock.yaml
+api_service_name: firebasevertexai.googleapis.com
+api_version: v1beta
+api_resource_type_kind: PromptTemplateLock
+fields:
+    - field: location
+      provider_only: true
+    - api_field: locked
+    - api_field: name
+    - field: template_id
+      provider_only: true
