@@ -1259,8 +1259,8 @@ func expandNodePool(d *schema.ResourceData, prefix string) (*container.NodePool,
 				return nil, fmt.Errorf("Blue-green upgrade settings may not be changed when blue-green strategy is not enabled")
 			}
 
-			if _, ok1 := blueGreenSettingsConfig["standard_rollout_policy"]; ok1 {
-				if _, ok2 := blueGreenSettingsConfig["autoscaled_rollout_policy"]; ok2 {
+			if s, ok1 := blueGreenSettingsConfig["standard_rollout_policy"]; ok1 && len(s.([]interface{})) > 0 {
+				if a, ok2 := blueGreenSettingsConfig["autoscaled_rollout_policy"]; ok2 && len(a.([]interface{})) > 0 {
 					return nil, fmt.Errorf("`standard_rollout_policy` and `autoscaled_rollout_policy` cannot be set at the same time")
 				}
 			}
