@@ -50,42 +50,40 @@ var (
 	_ = googleapi.Error{}
 )
 
-func TestAccDataplexDataProduct_dataplexDataProductBasicExample(t *testing.T) {
+func TestAccDataplexDataAsset_dataplexDataAssetBasicExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"project_name":    envvar.GetTestProjectFromEnv(),
-		"data_product_id": fmt.Sprintf("tf-test-dp%s", acctest.RandString(t, 10)),
-		"random_suffix":   acctest.RandString(t, 10),
+		"project_name":  envvar.GetTestProjectFromEnv(),
+		"random_suffix": acctest.RandString(t, 10),
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
-		CheckDestroy:             testAccCheckDataplexDataProductDestroyProducer(t),
+		CheckDestroy:             testAccCheckDataplexDataAssetDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataplexDataProduct_dataplexDataProductBasicExample(context),
+				Config: testAccDataplexDataAsset_dataplexDataAssetBasicExample(context),
 			},
 			{
-				ResourceName:            "google_dataplex_data_product.example",
+				ResourceName:            "google_dataplex_data_asset.example",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"data_product_id", "labels", "location", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"data_asset_id", "data_product_id", "labels", "location", "terraform_labels"},
 			},
 		},
 	})
 }
 
-func testAccDataplexDataProduct_dataplexDataProductBasicExample(context map[string]interface{}) string {
+func testAccDataplexDataAsset_dataplexDataAssetBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_dataplex_data_product" "example" {
   project         = "%{project_name}"
   location        = "us-central1"
-  data_product_id = "%{data_product_id}"
-  display_name    = "terraform data product"
-
-  owner_emails = ["gterraformtestuser@gmail.com"]
+  data_product_id = "tf-test-dp-%{random_suffix}"
+  display_name    = "Parent Data Product"
+  owner_emails    = ["gterraformtestuser@gmail.com"]
 
   access_groups {
     id           = "analyst"
@@ -98,60 +96,67 @@ resource "google_dataplex_data_product" "example" {
 
   provider = google-beta
 }
+
+resource "google_bigquery_dataset" "example" {
+  project    = "%{project_name}"
+  dataset_id = "tf_test_dataset_%{random_suffix}"
+  location   = "us-central1"
+  provider   = google-beta
+}
+
+resource "google_dataplex_data_asset" "example" {
+  project         = "%{project_name}"
+  location        = "us-central1"
+  data_product_id = google_dataplex_data_product.example.data_product_id
+  data_asset_id   = "tf-test-data-asset%{random_suffix}"
+  resource        = "//bigquery.googleapis.com/projects/${google_bigquery_dataset.example.project}/datasets/${google_bigquery_dataset.example.dataset_id}"
+
+  provider = google-beta
+}
 `, context)
 }
 
-func TestAccDataplexDataProduct_dataplexDataProductFullExample(t *testing.T) {
+func TestAccDataplexDataAsset_dataplexDataAssetFullExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"project_name":    envvar.GetTestProjectFromEnv(),
-		"data_product_id": fmt.Sprintf("tf-test-dp%s", acctest.RandString(t, 10)),
-		"random_suffix":   acctest.RandString(t, 10),
+		"project_name":  envvar.GetTestProjectFromEnv(),
+		"random_suffix": acctest.RandString(t, 10),
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
-		CheckDestroy:             testAccCheckDataplexDataProductDestroyProducer(t),
+		CheckDestroy:             testAccCheckDataplexDataAssetDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataplexDataProduct_dataplexDataProductFullExample(context),
+				Config: testAccDataplexDataAsset_dataplexDataAssetFullExample(context),
 			},
 			{
-				ResourceName:            "google_dataplex_data_product.example",
+				ResourceName:            "google_dataplex_data_asset.example",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"data_product_id", "labels", "location", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"data_asset_id", "data_product_id", "labels", "location", "terraform_labels"},
 			},
 		},
 	})
 }
 
-func testAccDataplexDataProduct_dataplexDataProductFullExample(context map[string]interface{}) string {
+func testAccDataplexDataAsset_dataplexDataAssetFullExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_dataplex_data_product" "example" {
   project         = "%{project_name}"
   location        = "us-central1"
-  data_product_id = "%{data_product_id}"
-  display_name    = "DP Full Test: Special Chars !@#$"
-
-  # UTF-8 verification
-  description     = "Updated with emojis 🚀 and brackets {test}"
-
-  owner_emails = ["gterraformtestuser@gmail.com"]
-
-  labels = {
-    env = "manual-test"
-  }
+  data_product_id = "tf-test-dp-%{random_suffix}"
+  display_name    = "Full Example Parent DP"
+  owner_emails    = ["gterraformtestuser@gmail.com"]
 
   access_groups {
     id           = "analyst"
     group_id     = "analyst"
-    display_name = "Data Analyst - Updated"
-    description  = "In-place update verified"
+    display_name = "Data Analyst"
     principal {
-      google_group = "tf-test-analysts-%{random_suffix}@example.com"
+      google_group = "dataproduct-terraform-examples@google.com"
     }
   }
 
@@ -160,8 +165,40 @@ resource "google_dataplex_data_product" "example" {
     group_id     = "scientist"
     display_name = "Data Scientist"
     principal {
-      google_group = "tf-test-scientists-%{random_suffix}@example.com"
+      google_group = "dataproduct-terraform-examples-2@google.com"
     }
+  }
+
+  provider = google-beta
+}
+
+resource "google_bigquery_dataset" "example" {
+  project    = "%{project_name}"
+  dataset_id = "tf_test_dataset_%{random_suffix}"
+  location   = "us-central1"
+  provider   = google-beta
+}
+
+resource "google_dataplex_data_asset" "example" {
+  project         = "%{project_name}"
+  location        = "us-central1"
+  data_product_id = google_dataplex_data_product.example.data_product_id
+  data_asset_id   = "tf-test-data-asset%{random_suffix}"
+  resource        = "//bigquery.googleapis.com/projects/${google_bigquery_dataset.example.project}/datasets/${google_bigquery_dataset.example.dataset_id}"
+
+  labels = {
+    env      = "prod"
+    critical = "true"
+  }
+
+  access_group_configs {
+    access_group = "analyst"
+    iam_roles    = ["roles/bigquery.dataViewer"]
+  }
+
+  access_group_configs {
+    access_group = "scientist"
+    iam_roles    = ["roles/bigquery.dataEditor"]
   }
 
   provider = google-beta
@@ -169,10 +206,10 @@ resource "google_dataplex_data_product" "example" {
 `, context)
 }
 
-func testAccCheckDataplexDataProductDestroyProducer(t *testing.T) func(s *terraform.State) error {
+func testAccCheckDataplexDataAssetDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		for name, rs := range s.RootModule().Resources {
-			if rs.Type != "google_dataplex_data_product" {
+			if rs.Type != "google_dataplex_data_asset" {
 				continue
 			}
 			if strings.HasPrefix(name, "data.") {
@@ -181,7 +218,7 @@ func testAccCheckDataplexDataProductDestroyProducer(t *testing.T) func(s *terraf
 
 			config := acctest.GoogleProviderConfig(t)
 
-			url, err := tpgresource.ReplaceVarsForTest(config, rs, "{{DataplexBasePath}}projects/{{project}}/locations/{{location}}/dataProducts/{{data_product_id}}")
+			url, err := tpgresource.ReplaceVarsForTest(config, rs, "{{DataplexBasePath}}projects/{{project}}/locations/{{location}}/dataProducts/{{data_product_id}}/dataAssets/{{data_asset_id}}")
 			if err != nil {
 				return err
 			}
@@ -200,7 +237,7 @@ func testAccCheckDataplexDataProductDestroyProducer(t *testing.T) func(s *terraf
 				UserAgent: config.UserAgent,
 			})
 			if err == nil {
-				return fmt.Errorf("DataplexDataProduct still exists at %s", url)
+				return fmt.Errorf("DataplexDataAsset still exists at %s", url)
 			}
 		}
 
