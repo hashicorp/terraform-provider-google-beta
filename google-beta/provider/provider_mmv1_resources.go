@@ -635,9 +635,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 777
+// Generated resources: 778
 // Generated IAM resources: 351
-// Total generated resources: 1128
+// Total generated resources: 1129
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     accessapproval.ResourceAccessApprovalFolderSettings(),
 	"google_organization_access_approval_settings":                               accessapproval.ResourceAccessApprovalOrganizationSettings(),
@@ -1096,6 +1096,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_dataplex_asset_iam_binding":                                          tpgiamresource.ResourceIamBinding(dataplex.DataplexAssetIamSchema, dataplex.DataplexAssetIamUpdaterProducer, dataplex.DataplexAssetIdParseFunc),
 	"google_dataplex_asset_iam_member":                                           tpgiamresource.ResourceIamMember(dataplex.DataplexAssetIamSchema, dataplex.DataplexAssetIamUpdaterProducer, dataplex.DataplexAssetIdParseFunc),
 	"google_dataplex_asset_iam_policy":                                           tpgiamresource.ResourceIamPolicy(dataplex.DataplexAssetIamSchema, dataplex.DataplexAssetIamUpdaterProducer, dataplex.DataplexAssetIdParseFunc),
+	"google_dataplex_data_asset":                                                 dataplex.ResourceDataplexDataAsset(),
 	"google_dataplex_data_product":                                               dataplex.ResourceDataplexDataProduct(),
 	"google_dataplex_datascan":                                                   dataplex.ResourceDataplexDatascan(),
 	"google_dataplex_datascan_iam_binding":                                       tpgiamresource.ResourceIamBinding(dataplex.DataplexDatascanIamSchema, dataplex.DataplexDatascanIamUpdaterProducer, dataplex.DataplexDatascanIdParseFunc),

@@ -597,7 +597,6 @@ func resourceDataplexDataProductImport(d *schema.ResourceData, meta interface{})
 		"^projects/(?P<project>[^/]+)/locations/(?P<location>[^/]+)/dataProducts/(?P<data_product_id>[^/]+)$",
 		"^(?P<project>[^/]+)/(?P<location>[^/]+)/(?P<data_product_id>[^/]+)$",
 		"^(?P<location>[^/]+)/(?P<data_product_id>[^/]+)$",
-		"^(?P<data_product_id>[^/]+)$",
 	}, d, config); err != nil {
 		return nil, err
 	}
