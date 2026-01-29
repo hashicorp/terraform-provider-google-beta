@@ -4160,10 +4160,14 @@ func TestAccContainerCluster_nodeAutoprovisioning(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerCluster_autoprovisioning(clusterName, networkName, subnetworkName, true, false),
+				Config: testAccContainerCluster_autoprovisioning(clusterName, networkName, subnetworkName, false, false, true),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_cluster.with_autoprovisioning",
-						"cluster_autoscaling.0.enabled", "true"),
+						"cluster_autoscaling.0.enabled", "false"),
+					resource.TestCheckResourceAttr("google_container_cluster.with_autoprovisioning",
+						"cluster_autoscaling.0.resource_limits.0.resource_type", "cpu"),
+					resource.TestCheckResourceAttr("google_container_cluster.with_autoprovisioning",
+						"cluster_autoscaling.0.resource_limits.1.resource_type", "memory"),
 				),
 			},
 			{
@@ -4173,10 +4177,32 @@ func TestAccContainerCluster_nodeAutoprovisioning(t *testing.T) {
 				ImportStateVerifyIgnore: []string{"min_master_version", "deletion_protection"},
 			},
 			{
-				Config: testAccContainerCluster_autoprovisioning(clusterName, networkName, subnetworkName, false, false),
+				Config: testAccContainerCluster_autoprovisioning(clusterName, networkName, subnetworkName, true, false, true),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("google_container_cluster.with_autoprovisioning",
+						"cluster_autoscaling.0.enabled", "true"),
+					resource.TestCheckResourceAttr("google_container_cluster.with_autoprovisioning",
+						"cluster_autoscaling.0.resource_limits.0.resource_type", "cpu"),
+					resource.TestCheckResourceAttr("google_container_cluster.with_autoprovisioning",
+						"cluster_autoscaling.0.resource_limits.1.resource_type", "memory"),
+				),
+			},
+			{
+				ResourceName:            "google_container_cluster.with_autoprovisioning",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"min_master_version", "deletion_protection"},
+			},
+			{
+				Config: testAccContainerCluster_autoprovisioning(clusterName, networkName, subnetworkName, false, false, false),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_cluster.with_autoprovisioning",
 						"cluster_autoscaling.0.enabled", "false"),
+					// currently, unsetting the resource limits is not supported
+					resource.TestCheckResourceAttr("google_container_cluster.with_autoprovisioning",
+						"cluster_autoscaling.0.resource_limits.0.resource_type", "cpu"),
+					resource.TestCheckResourceAttr("google_container_cluster.with_autoprovisioning",
+						"cluster_autoscaling.0.resource_limits.1.resource_type", "memory"),
 				),
 			},
 			{
@@ -4293,7 +4319,7 @@ func TestAccContainerCluster_nodeAutoprovisioningNetworkTags(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerCluster_autoprovisioning(clusterName, networkName, subnetworkName, true, true),
+				Config: testAccContainerCluster_autoprovisioning(clusterName, networkName, subnetworkName, true, true, true),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_cluster.with_autoprovisioning",
 						"node_pool_auto_config.0.network_tags.0.tags.0", "test-network-tag"),
@@ -10178,7 +10204,7 @@ resource "google_container_cluster" "autoscaling_with_profile" {
 	return config
 }
 
-func testAccContainerCluster_autoprovisioning(cluster, networkName, subnetworkName string, autoprovisioning, withNetworkTag bool) string {
+func testAccContainerCluster_autoprovisioning(cluster, networkName, subnetworkName string, autoprovisioning, withNetworkTag, withLimits bool) string {
 	config := fmt.Sprintf(`
 data "google_container_engine_versions" "central1a" {
   location = "us-central1-a"
@@ -10195,10 +10221,7 @@ resource "google_container_cluster" "with_autoprovisioning" {
 
   deletion_protection = false
 `, cluster, networkName, subnetworkName)
-	if autoprovisioning {
-		config += `
-  cluster_autoscaling {
-    enabled = true
+	limits := `
     resource_limits {
       resource_type = "cpu"
       maximum       = 2
@@ -10207,13 +10230,23 @@ resource "google_container_cluster" "with_autoprovisioning" {
       resource_type = "memory"
       maximum       = 2048
     }
-  }`
+`
+	var enabled string
+	if autoprovisioning {
+		enabled = "true"
 	} else {
-		config += `
-  cluster_autoscaling {
-    enabled = false
-  }`
+		enabled = "false"
 	}
+	config += fmt.Sprintf(`
+  cluster_autoscaling {
+    enabled = %s
+  `, enabled)
+	if withLimits {
+		config += limits
+	}
+	config += `
+	}`
+
 	if withNetworkTag {
 		config += `
   node_pool_auto_config {
