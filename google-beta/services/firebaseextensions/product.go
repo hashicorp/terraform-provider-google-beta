@@ -18,4 +18,15 @@
 // Package firebaseextensions contains resources, datasources, etc. for the firebase extensions service.
 package firebaseextensions
 
+import (
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
+)
+
 const ProductName = "firebaseextensions"
+
+func init() {
+	registry.Product{
+		Name:    "firebaseextensions",
+		BaseUrl: "https://firebaseextensions.googleapis.com/v1beta/",
+	}.Register()
+}

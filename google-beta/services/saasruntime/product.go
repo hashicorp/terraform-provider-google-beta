@@ -18,4 +18,15 @@
 // Package saasruntime contains resources, datasources, etc. for the saas runtime service.
 package saasruntime
 
+import (
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
+)
+
 const ProductName = "saasruntime"
+
+func init() {
+	registry.Product{
+		Name:    "saasruntime",
+		BaseUrl: "https://saasservicemgmt.googleapis.com/v1beta1/",
+	}.Register()
+}

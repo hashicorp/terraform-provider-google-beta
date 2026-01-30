@@ -18,4 +18,15 @@
 // Package firebasedatabase contains resources, datasources, etc. for the firebase realtime database service.
 package firebasedatabase
 
+import (
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
+)
+
 const ProductName = "firebasedatabase"
+
+func init() {
+	registry.Product{
+		Name:    "firebasedatabase",
+		BaseUrl: "https://firebasedatabase.googleapis.com/v1beta/",
+	}.Register()
+}

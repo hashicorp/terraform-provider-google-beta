@@ -18,4 +18,15 @@
 // Package workstations contains resources, datasources, etc. for the cloud workstations service.
 package workstations
 
+import (
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
+)
+
 const ProductName = "workstations"
+
+func init() {
+	registry.Product{
+		Name:    "workstations",
+		BaseUrl: "https://workstations.googleapis.com/v1beta/",
+	}.Register()
+}

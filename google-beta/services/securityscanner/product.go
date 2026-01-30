@@ -18,4 +18,15 @@
 // Package securityscanner contains resources, datasources, etc. for the cloud security scanner service.
 package securityscanner
 
+import (
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
+)
+
 const ProductName = "securityscanner"
+
+func init() {
+	registry.Product{
+		Name:    "securityscanner",
+		BaseUrl: "https://websecurityscanner.googleapis.com/v1beta/",
+	}.Register()
+}

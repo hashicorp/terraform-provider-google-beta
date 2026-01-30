@@ -18,4 +18,15 @@
 // Package gkehub contains resources, datasources, etc. for the gkehub service.
 package gkehub
 
+import (
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
+)
+
 const ProductName = "gkehub"
+
+func init() {
+	registry.Product{
+		Name:    "gkehub",
+		BaseUrl: "https://gkehub.googleapis.com/v1beta/",
+	}.Register()
+}

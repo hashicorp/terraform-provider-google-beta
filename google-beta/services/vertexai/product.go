@@ -18,4 +18,15 @@
 // Package vertexai contains resources, datasources, etc. for the vertex ai service.
 package vertexai
 
+import (
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
+)
+
 const ProductName = "vertexai"
+
+func init() {
+	registry.Product{
+		Name:    "vertexai",
+		BaseUrl: "https://{{region}}-aiplatform.googleapis.com/v1beta1/",
+	}.Register()
+}

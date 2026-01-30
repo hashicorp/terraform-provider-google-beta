@@ -18,4 +18,15 @@
 // Package cloudquotas contains resources, datasources, etc. for the cloud quotas service.
 package cloudquotas
 
+import (
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
+)
+
 const ProductName = "cloudquotas"
+
+func init() {
+	registry.Product{
+		Name:    "cloudquotas",
+		BaseUrl: "https://cloudquotas.googleapis.com/v1beta/",
+	}.Register()
+}

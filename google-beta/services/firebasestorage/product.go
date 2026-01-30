@@ -18,4 +18,15 @@
 // Package firebasestorage contains resources, datasources, etc. for the cloud storage for firebase service.
 package firebasestorage
 
+import (
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
+)
+
 const ProductName = "firebasestorage"
+
+func init() {
+	registry.Product{
+		Name:    "firebasestorage",
+		BaseUrl: "https://firebasestorage.googleapis.com/v1beta/",
+	}.Register()
+}

@@ -18,4 +18,15 @@
 // Package publicca contains resources, datasources, etc. for the public ca service.
 package publicca
 
+import (
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
+)
+
 const ProductName = "publicca"
+
+func init() {
+	registry.Product{
+		Name:    "publicca",
+		BaseUrl: "https://publicca.googleapis.com/v1beta1/",
+	}.Register()
+}

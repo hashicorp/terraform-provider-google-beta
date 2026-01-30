@@ -18,4 +18,15 @@
 // Package integrations contains resources, datasources, etc. for the application integration service.
 package integrations
 
+import (
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
+)
+
 const ProductName = "integrations"
+
+func init() {
+	registry.Product{
+		Name:    "integrations",
+		BaseUrl: "https://integrations.googleapis.com/v1/",
+	}.Register()
+}

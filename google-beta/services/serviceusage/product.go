@@ -18,4 +18,15 @@
 // Package serviceusage contains resources, datasources, etc. for the service usage service.
 package serviceusage
 
+import (
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
+)
+
 const ProductName = "serviceusage"
+
+func init() {
+	registry.Product{
+		Name:    "serviceusage",
+		BaseUrl: "https://serviceusage.googleapis.com/v1beta1/",
+	}.Register()
+}

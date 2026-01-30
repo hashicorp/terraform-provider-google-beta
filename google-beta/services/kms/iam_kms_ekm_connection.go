@@ -28,6 +28,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"google.golang.org/api/cloudresourcemanager/v1"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgiamresource"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
@@ -39,6 +40,33 @@ var (
 	_ = errwrap.Wrap
 	_ = schema.Noop
 )
+
+func init() {
+	registry.Schema{
+		Name:        "google_kms_ekm_connection_iam_binding",
+		ProductName: "KMS",
+		Type:        registry.SchemaTypeIAMResource,
+		Schema:      tpgiamresource.ResourceIamBinding(KMSEkmConnectionIamSchema, KMSEkmConnectionIamUpdaterProducer, KMSEkmConnectionIdParseFunc),
+	}.Register()
+	registry.Schema{
+		Name:        "google_kms_ekm_connection_iam_member",
+		ProductName: "KMS",
+		Type:        registry.SchemaTypeIAMResource,
+		Schema:      tpgiamresource.ResourceIamMember(KMSEkmConnectionIamSchema, KMSEkmConnectionIamUpdaterProducer, KMSEkmConnectionIdParseFunc),
+	}.Register()
+	registry.Schema{
+		Name:        "google_kms_ekm_connection_iam_policy",
+		ProductName: "KMS",
+		Type:        registry.SchemaTypeIAMResource,
+		Schema:      tpgiamresource.ResourceIamPolicy(KMSEkmConnectionIamSchema, KMSEkmConnectionIamUpdaterProducer, KMSEkmConnectionIdParseFunc),
+	}.Register()
+	registry.Schema{
+		Name:        "google_kms_ekm_connection_iam_policy",
+		ProductName: "KMS",
+		Type:        registry.SchemaTypeIAMDataSource,
+		Schema:      tpgiamresource.DataSourceIamPolicy(KMSEkmConnectionIamSchema, KMSEkmConnectionIamUpdaterProducer),
+	}.Register()
+}
 
 var KMSEkmConnectionIamSchema = map[string]*schema.Schema{
 	"project": {

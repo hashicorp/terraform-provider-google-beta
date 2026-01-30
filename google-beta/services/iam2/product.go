@@ -18,4 +18,15 @@
 // Package iam2 contains resources, datasources, etc. for the cloud iam service.
 package iam2
 
+import (
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
+)
+
 const ProductName = "iam2"
+
+func init() {
+	registry.Product{
+		Name:    "iam2",
+		BaseUrl: "https://iam.googleapis.com/v2beta/",
+	}.Register()
+}
