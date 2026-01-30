@@ -18,4 +18,15 @@
 // Package firebaseailogic contains resources, datasources, etc. for the firebase ai logic service.
 package firebaseailogic
 
+import (
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
+)
+
 const ProductName = "firebaseailogic"
+
+func init() {
+	registry.Product{
+		Name:    "firebaseailogic",
+		BaseUrl: "https://firebasevertexai.googleapis.com/v1beta/",
+	}.Register()
+}

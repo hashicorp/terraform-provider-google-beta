@@ -18,4 +18,15 @@
 // Package firebase contains resources, datasources, etc. for the firebase service.
 package firebase
 
+import (
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
+)
+
 const ProductName = "firebase"
+
+func init() {
+	registry.Product{
+		Name:    "firebase",
+		BaseUrl: "https://firebase.googleapis.com/v1beta1/",
+	}.Register()
+}

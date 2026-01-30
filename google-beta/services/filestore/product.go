@@ -18,4 +18,15 @@
 // Package filestore contains resources, datasources, etc. for the filestore service.
 package filestore
 
+import (
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
+)
+
 const ProductName = "filestore"
+
+func init() {
+	registry.Product{
+		Name:    "filestore",
+		BaseUrl: "https://file.googleapis.com/v1beta1/",
+	}.Register()
+}

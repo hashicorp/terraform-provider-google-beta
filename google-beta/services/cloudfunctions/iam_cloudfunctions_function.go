@@ -28,6 +28,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"google.golang.org/api/cloudresourcemanager/v1"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgiamresource"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
@@ -39,6 +40,33 @@ var (
 	_ = errwrap.Wrap
 	_ = schema.Noop
 )
+
+func init() {
+	registry.Schema{
+		Name:        "google_cloudfunctions_function_iam_binding",
+		ProductName: "CloudFunctions",
+		Type:        registry.SchemaTypeIAMResource,
+		Schema:      tpgiamresource.ResourceIamBinding(CloudFunctionsCloudFunctionIamSchema, CloudFunctionsCloudFunctionIamUpdaterProducer, CloudFunctionsCloudFunctionIdParseFunc),
+	}.Register()
+	registry.Schema{
+		Name:        "google_cloudfunctions_function_iam_member",
+		ProductName: "CloudFunctions",
+		Type:        registry.SchemaTypeIAMResource,
+		Schema:      tpgiamresource.ResourceIamMember(CloudFunctionsCloudFunctionIamSchema, CloudFunctionsCloudFunctionIamUpdaterProducer, CloudFunctionsCloudFunctionIdParseFunc),
+	}.Register()
+	registry.Schema{
+		Name:        "google_cloudfunctions_function_iam_policy",
+		ProductName: "CloudFunctions",
+		Type:        registry.SchemaTypeIAMResource,
+		Schema:      tpgiamresource.ResourceIamPolicy(CloudFunctionsCloudFunctionIamSchema, CloudFunctionsCloudFunctionIamUpdaterProducer, CloudFunctionsCloudFunctionIdParseFunc),
+	}.Register()
+	registry.Schema{
+		Name:        "google_cloudfunctions_function_iam_policy",
+		ProductName: "CloudFunctions",
+		Type:        registry.SchemaTypeIAMDataSource,
+		Schema:      tpgiamresource.DataSourceIamPolicy(CloudFunctionsCloudFunctionIamSchema, CloudFunctionsCloudFunctionIamUpdaterProducer),
+	}.Register()
+}
 
 var CloudFunctionsCloudFunctionIamSchema = map[string]*schema.Schema{
 	"project": {

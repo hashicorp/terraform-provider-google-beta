@@ -18,4 +18,15 @@
 // Package apigateway contains resources, datasources, etc. for the api gateway service.
 package apigateway
 
+import (
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
+)
+
 const ProductName = "apigateway"
+
+func init() {
+	registry.Product{
+		Name:    "apigateway",
+		BaseUrl: "https://apigateway.googleapis.com/v1beta/",
+	}.Register()
+}

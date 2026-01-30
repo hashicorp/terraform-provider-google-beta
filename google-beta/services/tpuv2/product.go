@@ -18,4 +18,15 @@
 // Package tpuv2 contains resources, datasources, etc. for the cloud tpu v2 service.
 package tpuv2
 
+import (
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
+)
+
 const ProductName = "tpuv2"
+
+func init() {
+	registry.Product{
+		Name:    "tpuv2",
+		BaseUrl: "https://tpu.googleapis.com/v2alpha1/",
+	}.Register()
+}

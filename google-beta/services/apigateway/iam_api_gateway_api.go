@@ -28,6 +28,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"google.golang.org/api/cloudresourcemanager/v1"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgiamresource"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
@@ -39,6 +40,33 @@ var (
 	_ = errwrap.Wrap
 	_ = schema.Noop
 )
+
+func init() {
+	registry.Schema{
+		Name:        "google_api_gateway_api_iam_binding",
+		ProductName: "ApiGateway",
+		Type:        registry.SchemaTypeIAMResource,
+		Schema:      tpgiamresource.ResourceIamBinding(ApiGatewayApiIamSchema, ApiGatewayApiIamUpdaterProducer, ApiGatewayApiIdParseFunc),
+	}.Register()
+	registry.Schema{
+		Name:        "google_api_gateway_api_iam_member",
+		ProductName: "ApiGateway",
+		Type:        registry.SchemaTypeIAMResource,
+		Schema:      tpgiamresource.ResourceIamMember(ApiGatewayApiIamSchema, ApiGatewayApiIamUpdaterProducer, ApiGatewayApiIdParseFunc),
+	}.Register()
+	registry.Schema{
+		Name:        "google_api_gateway_api_iam_policy",
+		ProductName: "ApiGateway",
+		Type:        registry.SchemaTypeIAMResource,
+		Schema:      tpgiamresource.ResourceIamPolicy(ApiGatewayApiIamSchema, ApiGatewayApiIamUpdaterProducer, ApiGatewayApiIdParseFunc),
+	}.Register()
+	registry.Schema{
+		Name:        "google_api_gateway_api_iam_policy",
+		ProductName: "ApiGateway",
+		Type:        registry.SchemaTypeIAMDataSource,
+		Schema:      tpgiamresource.DataSourceIamPolicy(ApiGatewayApiIamSchema, ApiGatewayApiIamUpdaterProducer),
+	}.Register()
+}
 
 var ApiGatewayApiIamSchema = map[string]*schema.Schema{
 	"project": {

@@ -18,4 +18,15 @@
 // Package dataform contains resources, datasources, etc. for the dataform service.
 package dataform
 
+import (
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
+)
+
 const ProductName = "dataform"
+
+func init() {
+	registry.Product{
+		Name:    "dataform",
+		BaseUrl: "https://dataform.googleapis.com/v1beta1/",
+	}.Register()
+}

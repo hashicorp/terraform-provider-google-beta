@@ -47,6 +47,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
@@ -85,6 +86,15 @@ var (
 	_ = verify.ValidateEnum
 	_ = googleapi.Error{}
 )
+
+func init() {
+	registry.Schema{
+		Name:        "google_discovery_engine_widget_config",
+		ProductName: "discoveryengine",
+		Type:        registry.SchemaTypeResource,
+		Schema:      ResourceDiscoveryEngineWidgetConfig(),
+	}.Register()
+}
 
 func ResourceDiscoveryEngineWidgetConfig() *schema.Resource {
 	return &schema.Resource{

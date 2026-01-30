@@ -28,6 +28,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"google.golang.org/api/cloudresourcemanager/v1"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgiamresource"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
@@ -39,6 +40,33 @@ var (
 	_ = errwrap.Wrap
 	_ = schema.Noop
 )
+
+func init() {
+	registry.Schema{
+		Name:        "google_iam_workload_identity_pool_iam_binding",
+		ProductName: "IAMBeta",
+		Type:        registry.SchemaTypeIAMResource,
+		Schema:      tpgiamresource.ResourceIamBinding(IAMBetaWorkloadIdentityPoolIamSchema, IAMBetaWorkloadIdentityPoolIamUpdaterProducer, IAMBetaWorkloadIdentityPoolIdParseFunc),
+	}.Register()
+	registry.Schema{
+		Name:        "google_iam_workload_identity_pool_iam_member",
+		ProductName: "IAMBeta",
+		Type:        registry.SchemaTypeIAMResource,
+		Schema:      tpgiamresource.ResourceIamMember(IAMBetaWorkloadIdentityPoolIamSchema, IAMBetaWorkloadIdentityPoolIamUpdaterProducer, IAMBetaWorkloadIdentityPoolIdParseFunc),
+	}.Register()
+	registry.Schema{
+		Name:        "google_iam_workload_identity_pool_iam_policy",
+		ProductName: "IAMBeta",
+		Type:        registry.SchemaTypeIAMResource,
+		Schema:      tpgiamresource.ResourceIamPolicy(IAMBetaWorkloadIdentityPoolIamSchema, IAMBetaWorkloadIdentityPoolIamUpdaterProducer, IAMBetaWorkloadIdentityPoolIdParseFunc),
+	}.Register()
+	registry.Schema{
+		Name:        "google_iam_workload_identity_pool_iam_policy",
+		ProductName: "IAMBeta",
+		Type:        registry.SchemaTypeIAMDataSource,
+		Schema:      tpgiamresource.DataSourceIamPolicy(IAMBetaWorkloadIdentityPoolIamSchema, IAMBetaWorkloadIdentityPoolIamUpdaterProducer),
+	}.Register()
+}
 
 var IAMBetaWorkloadIdentityPoolIamSchema = map[string]*schema.Schema{
 	"project": {

@@ -28,6 +28,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"google.golang.org/api/cloudresourcemanager/v1"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgiamresource"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
@@ -39,6 +40,33 @@ var (
 	_ = errwrap.Wrap
 	_ = schema.Noop
 )
+
+func init() {
+	registry.Schema{
+		Name:        "google_compute_subnetwork_iam_binding",
+		ProductName: "Compute",
+		Type:        registry.SchemaTypeIAMResource,
+		Schema:      tpgiamresource.ResourceIamBinding(ComputeSubnetworkIamSchema, ComputeSubnetworkIamUpdaterProducer, ComputeSubnetworkIdParseFunc),
+	}.Register()
+	registry.Schema{
+		Name:        "google_compute_subnetwork_iam_member",
+		ProductName: "Compute",
+		Type:        registry.SchemaTypeIAMResource,
+		Schema:      tpgiamresource.ResourceIamMember(ComputeSubnetworkIamSchema, ComputeSubnetworkIamUpdaterProducer, ComputeSubnetworkIdParseFunc),
+	}.Register()
+	registry.Schema{
+		Name:        "google_compute_subnetwork_iam_policy",
+		ProductName: "Compute",
+		Type:        registry.SchemaTypeIAMResource,
+		Schema:      tpgiamresource.ResourceIamPolicy(ComputeSubnetworkIamSchema, ComputeSubnetworkIamUpdaterProducer, ComputeSubnetworkIdParseFunc),
+	}.Register()
+	registry.Schema{
+		Name:        "google_compute_subnetwork_iam_policy",
+		ProductName: "Compute",
+		Type:        registry.SchemaTypeIAMDataSource,
+		Schema:      tpgiamresource.DataSourceIamPolicy(ComputeSubnetworkIamSchema, ComputeSubnetworkIamUpdaterProducer),
+	}.Register()
+}
 
 var ComputeSubnetworkIamSchema = map[string]*schema.Schema{
 	"project": {

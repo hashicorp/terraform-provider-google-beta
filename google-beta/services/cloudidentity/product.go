@@ -18,4 +18,15 @@
 // Package cloudidentity contains resources, datasources, etc. for the cloud identity service.
 package cloudidentity
 
+import (
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
+)
+
 const ProductName = "cloudidentity"
+
+func init() {
+	registry.Product{
+		Name:    "cloudidentity",
+		BaseUrl: "https://cloudidentity.googleapis.com/v1beta1/",
+	}.Register()
+}

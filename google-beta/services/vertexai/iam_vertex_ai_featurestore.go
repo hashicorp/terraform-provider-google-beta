@@ -28,6 +28,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"google.golang.org/api/cloudresourcemanager/v1"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgiamresource"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
@@ -39,6 +40,33 @@ var (
 	_ = errwrap.Wrap
 	_ = schema.Noop
 )
+
+func init() {
+	registry.Schema{
+		Name:        "google_vertex_ai_featurestore_iam_binding",
+		ProductName: "VertexAI",
+		Type:        registry.SchemaTypeIAMResource,
+		Schema:      tpgiamresource.ResourceIamBinding(VertexAIFeaturestoreIamSchema, VertexAIFeaturestoreIamUpdaterProducer, VertexAIFeaturestoreIdParseFunc),
+	}.Register()
+	registry.Schema{
+		Name:        "google_vertex_ai_featurestore_iam_member",
+		ProductName: "VertexAI",
+		Type:        registry.SchemaTypeIAMResource,
+		Schema:      tpgiamresource.ResourceIamMember(VertexAIFeaturestoreIamSchema, VertexAIFeaturestoreIamUpdaterProducer, VertexAIFeaturestoreIdParseFunc),
+	}.Register()
+	registry.Schema{
+		Name:        "google_vertex_ai_featurestore_iam_policy",
+		ProductName: "VertexAI",
+		Type:        registry.SchemaTypeIAMResource,
+		Schema:      tpgiamresource.ResourceIamPolicy(VertexAIFeaturestoreIamSchema, VertexAIFeaturestoreIamUpdaterProducer, VertexAIFeaturestoreIdParseFunc),
+	}.Register()
+	registry.Schema{
+		Name:        "google_vertex_ai_featurestore_iam_policy",
+		ProductName: "VertexAI",
+		Type:        registry.SchemaTypeIAMDataSource,
+		Schema:      tpgiamresource.DataSourceIamPolicy(VertexAIFeaturestoreIamSchema, VertexAIFeaturestoreIamUpdaterProducer),
+	}.Register()
+}
 
 var VertexAIFeaturestoreIamSchema = map[string]*schema.Schema{
 	"project": {

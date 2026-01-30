@@ -28,6 +28,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"google.golang.org/api/cloudresourcemanager/v1"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgiamresource"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
@@ -39,6 +40,33 @@ var (
 	_ = errwrap.Wrap
 	_ = schema.Noop
 )
+
+func init() {
+	registry.Schema{
+		Name:        "google_iap_web_region_forwarding_rule_service_iam_binding",
+		ProductName: "Iap",
+		Type:        registry.SchemaTypeIAMResource,
+		Schema:      tpgiamresource.ResourceIamBinding(IapWebRegionForwardingRuleServiceIamSchema, IapWebRegionForwardingRuleServiceIamUpdaterProducer, IapWebRegionForwardingRuleServiceIdParseFunc),
+	}.Register()
+	registry.Schema{
+		Name:        "google_iap_web_region_forwarding_rule_service_iam_member",
+		ProductName: "Iap",
+		Type:        registry.SchemaTypeIAMResource,
+		Schema:      tpgiamresource.ResourceIamMember(IapWebRegionForwardingRuleServiceIamSchema, IapWebRegionForwardingRuleServiceIamUpdaterProducer, IapWebRegionForwardingRuleServiceIdParseFunc),
+	}.Register()
+	registry.Schema{
+		Name:        "google_iap_web_region_forwarding_rule_service_iam_policy",
+		ProductName: "Iap",
+		Type:        registry.SchemaTypeIAMResource,
+		Schema:      tpgiamresource.ResourceIamPolicy(IapWebRegionForwardingRuleServiceIamSchema, IapWebRegionForwardingRuleServiceIamUpdaterProducer, IapWebRegionForwardingRuleServiceIdParseFunc),
+	}.Register()
+	registry.Schema{
+		Name:        "google_iap_web_region_forwarding_rule_service_iam_policy",
+		ProductName: "Iap",
+		Type:        registry.SchemaTypeIAMDataSource,
+		Schema:      tpgiamresource.DataSourceIamPolicy(IapWebRegionForwardingRuleServiceIamSchema, IapWebRegionForwardingRuleServiceIamUpdaterProducer),
+	}.Register()
+}
 
 var IapWebRegionForwardingRuleServiceIamSchema = map[string]*schema.Schema{
 	"project": {

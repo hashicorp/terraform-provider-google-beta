@@ -18,4 +18,15 @@
 // Package runtimeconfig contains resources, datasources, etc. for the runtime configurator service.
 package runtimeconfig
 
+import (
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
+)
+
 const ProductName = "runtimeconfig"
+
+func init() {
+	registry.Product{
+		Name:    "runtimeconfig",
+		BaseUrl: "https://runtimeconfig.googleapis.com/v1beta1/",
+	}.Register()
+}
