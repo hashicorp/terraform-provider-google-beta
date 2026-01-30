@@ -162,14 +162,12 @@ Please refer to the field 'effective_labels' for all of the labels present on th
 			"priority": {
 				Type:     schema.TypeInt,
 				Optional: true,
-				ForceNew: true,
 				Description: `The priority of this advertised route. You can choose a value from 0 to 65335.
 If you don't provide a value, Google Cloud assigns a priority of 100 to the ranges.`,
 			},
 			"recipient": {
 				Type:         schema.TypeString,
 				Optional:     true,
-				ForceNew:     true,
 				ValidateFunc: verify.ValidateEnum([]string{"RECIPIENT_UNSPECIFIED", "ADVERTISE_TO_HUB", ""}),
 				Description:  `the recipient of this advertised route Possible values: ["RECIPIENT_UNSPECIFIED", "ADVERTISE_TO_HUB"]`,
 			},
@@ -404,7 +402,90 @@ func resourceNetworkConnectivityGatewayAdvertisedRouteRead(d *schema.ResourceDat
 }
 
 func resourceNetworkConnectivityGatewayAdvertisedRouteUpdate(d *schema.ResourceData, meta interface{}) error {
-	// Only the root field "labels", "terraform_labels", and virtual fields are mutable
+	config := meta.(*transport_tpg.Config)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
+	if err != nil {
+		return err
+	}
+
+	billingProject := ""
+
+	project, err := tpgresource.GetProject(d, config)
+	if err != nil {
+		return fmt.Errorf("Error fetching project for GatewayAdvertisedRoute: %s", err)
+	}
+	billingProject = project
+
+	obj := make(map[string]interface{})
+	recipientProp, err := expandNetworkConnectivityGatewayAdvertisedRouteRecipient(d.Get("recipient"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("recipient"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, recipientProp)) {
+		obj["recipient"] = recipientProp
+	}
+	priorityProp, err := expandNetworkConnectivityGatewayAdvertisedRoutePriority(d.Get("priority"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("priority"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, priorityProp)) {
+		obj["priority"] = priorityProp
+	}
+
+	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkConnectivityBasePath}}projects/{{project}}/locations/{{location}}/spokes/{{spoke}}/gatewayAdvertisedRoutes/{{name}}")
+	if err != nil {
+		return err
+	}
+
+	log.Printf("[DEBUG] Updating GatewayAdvertisedRoute %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
+	updateMask := []string{}
+
+	if d.HasChange("recipient") {
+		updateMask = append(updateMask, "recipient")
+	}
+
+	if d.HasChange("priority") {
+		updateMask = append(updateMask, "priority")
+	}
+	// updateMask is a URL parameter but not present in the schema, so ReplaceVars
+	// won't set it
+	url, err = transport_tpg.AddQueryParams(url, map[string]string{"updateMask": strings.Join(updateMask, ",")})
+	if err != nil {
+		return err
+	}
+
+	// err == nil indicates that the billing_project value was found
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
+		billingProject = bp
+	}
+
+	// if updateMask is empty we are not updating anything so skip the post
+	if len(updateMask) > 0 {
+		res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
+			Config:    config,
+			Method:    "PATCH",
+			Project:   billingProject,
+			RawURL:    url,
+			UserAgent: userAgent,
+			Body:      obj,
+			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
+		})
+
+		if err != nil {
+			return fmt.Errorf("Error updating GatewayAdvertisedRoute %q: %s", d.Id(), err)
+		} else {
+			log.Printf("[DEBUG] Finished updating GatewayAdvertisedRoute %q: %#v", d.Id(), res)
+		}
+
+		err = NetworkConnectivityOperationWaitTime(
+			config, res, project, "Updating GatewayAdvertisedRoute", userAgent,
+			d.Timeout(schema.TimeoutUpdate))
+
+		if err != nil {
+			return err
+		}
+	}
+
 	return resourceNetworkConnectivityGatewayAdvertisedRouteRead(d, meta)
 }
 
