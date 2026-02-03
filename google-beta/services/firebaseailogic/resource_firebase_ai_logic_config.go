@@ -557,18 +557,11 @@ func expandFirebaseAILogicConfigGenerativeLanguageConfig(v interface{}, d tpgres
 		transformed["apiKey"] = transformedApiKey
 	}
 
-	transformedApiKeyWo, err := expandFirebaseAILogicConfigGenerativeLanguageConfigApiKeyWo(original["api_key_wo"], d, config)
+	transformedApiKeyWo, err := expandFirebaseAILogicConfigGenerativeLanguageConfigApiKeyWo(tpgresource.GetRawConfigAttributeAsString(d.(*schema.ResourceData), "generative_language_config.0.api_key_wo"), d, config)
 	if err != nil {
 		return nil, err
 	} else if val := reflect.ValueOf(transformedApiKeyWo); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["apiKey"] = transformedApiKeyWo
-	}
-
-	transformedApiKeyWoVersion, err := expandFirebaseAILogicConfigGenerativeLanguageConfigApiKeyWoVersion(original["api_key_wo_version"], d, config)
-	if err != nil {
-		return nil, err
-	} else if val := reflect.ValueOf(transformedApiKeyWoVersion); val.IsValid() && !tpgresource.IsEmptyValue(val) {
-		transformed["apiKeyWoVersion"] = transformedApiKeyWoVersion
 	}
 
 	return transformed, nil
