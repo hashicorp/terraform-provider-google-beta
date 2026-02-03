@@ -1,7 +1,7 @@
 ## 7.18.0 (Unreleased)
 
 BREAKING CHANGES:
-* alloydb: removed the incorrect top-level field `last_successful_backup_consistency_time` from `google_backup_dr_backup_plan_association`. No value has been present in the field. ([#11473](https://github.com/hashicorp/terraform-provider-google-beta/pull/11473))
+* alloydb: removed the incorrect top-level field `last_successful_backup_consistency_time` from `google_backup_dr_backup_plan_association`. No value has been present in this output-only field. ([#11473](https://github.com/hashicorp/terraform-provider-google-beta/pull/11473))
 
 FEATURES:
 * **New Resource:** `google_dataplex_data_asset` ([#11467](https://github.com/hashicorp/terraform-provider-google-beta/pull/11467))
@@ -9,7 +9,7 @@ FEATURES:
 * **New Resource:** `google_logging_saved_query` ([#11466](https://github.com/hashicorp/terraform-provider-google-beta/pull/11466))
 
 IMPROVEMENTS:
-* alloydb: added `restore_backupdr_backup_source`, `restore_backupdr_pitr_source`, and `backupdr_backup_source` `google_alloydb_cluster` ([#11473](https://github.com/hashicorp/terraform-provider-google-beta/pull/11473))
+* alloydb: added `restore_backupdr_backup_source`, `restore_backupdr_pitr_source`, and `backupdr_backup_source` in `google_alloydb_cluster` ([#11473](https://github.com/hashicorp/terraform-provider-google-beta/pull/11473))
 * alloydb: added `rules_config_info.last_successful_backup_consistency_time` to `google_backup_dr_backup_plan_association` ([#11473](https://github.com/hashicorp/terraform-provider-google-beta/pull/11473))
 * compute: updated `target_service` field to be mutable in `google_compute_service_attachment` resource ([#11469](https://github.com/hashicorp/terraform-provider-google-beta/pull/11469))
 * datafusion: added `patch_revision` field to `google_data_fusion_instance` resource ([#11468](https://github.com/hashicorp/terraform-provider-google-beta/pull/11468))
@@ -19,8 +19,8 @@ IMPROVEMENTS:
 
 BUG FIXES:
 * cloudbuild: fixed `google_cloudbuild_trigger` to allow creation without source configuration for manual triggers ([#11470](https://github.com/hashicorp/terraform-provider-google-beta/pull/11470))
-* cloudrunv2: fix permadiff on `scaling.0.scaling_mode` in `google_cloud_run_v2_worker_pool` ([#11472](https://github.com/hashicorp/terraform-provider-google-beta/pull/11472))
-* compute: Resolved issues where `show_nat_ips` and `nat_ips` in `google_compute_service_attachment` were causing test failures due to an underlying API problem. These fields are now temporarily non-functional and will be ignored. ([#11460](https://github.com/hashicorp/terraform-provider-google-beta/pull/11460))
+* cloudrunv2: fix permadiff on `scaling.scaling_mode` in `google_cloud_run_v2_worker_pool` ([#11472](https://github.com/hashicorp/terraform-provider-google-beta/pull/11472))
+* compute: resolved issues where `show_nat_ips` and `nat_ips` in `google_compute_service_attachment` were causing test failures due to an underlying API problem. These fields are now temporarily non-functional and will be ignored. ([#11460](https://github.com/hashicorp/terraform-provider-google-beta/pull/11460))
 * container: fixed a bug in `google_container_node_pool` that prevented creation when `blue_green_settings` was specified ([#11464](https://github.com/hashicorp/terraform-provider-google-beta/pull/11464))
 * container: fixed perma-diff in `google_container_cluster` when setting `resource_limits` with disabled node autoprovisioning ([#11474](https://github.com/hashicorp/terraform-provider-google-beta/pull/11474))
 
