@@ -67,7 +67,7 @@ func TestAccBigqueryAnalyticsHubListingSubscription_multiregion(t *testing.T) {
 	randomDatasetSuffix := acctest.RandString(t, 10)
 	datasetID := fmt.Sprintf("tf_test_sub_replica_%s", randomDatasetSuffix)
 
-	bqdataset, err := acctest.AddBigQueryDatasetReplica(envvar.GetTestProjectFromEnv(), datasetID, "us", "eu")
+	bqdataset, err := acctest.AddBigQueryDatasetReplica(t, envvar.GetTestProjectFromEnv(), datasetID, "us", "eu")
 	if err != nil {
 		t.Fatalf("Failed to create BigQuery dataset and add replica: %v", err)
 	}
@@ -78,7 +78,7 @@ func TestAccBigqueryAnalyticsHubListingSubscription_multiregion(t *testing.T) {
 	}
 
 	t.Cleanup(func() {
-		acctest.CleanupBigQueryDatasetAndReplica(envvar.GetTestProjectFromEnv(), datasetID, "eu")
+		acctest.CleanupBigQueryDatasetAndReplica(t, envvar.GetTestProjectFromEnv(), datasetID, "eu")
 	})
 
 	acctest.VcrTest(t, resource.TestCase{
