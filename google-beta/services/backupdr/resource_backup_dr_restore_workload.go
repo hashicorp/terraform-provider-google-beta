@@ -136,12 +136,6 @@ func ResourceBackupDRRestoreWorkload() *schema.Resource {
 				ForceNew:    true,
 				Description: `Required. The location for the backup vault.`,
 			},
-			"name": {
-				Type:        schema.TypeString,
-				Required:    true,
-				ForceNew:    true,
-				Description: `Required. The resource name of the backup instance.`,
-			},
 			"clear_overrides_field_mask": {
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -1328,6 +1322,13 @@ If false, only the restore record is removed from the state, leaving the resourc
 					},
 				},
 			},
+			"name": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Deprecated:  "`name` is deprecated and will be removed in a future major release. The backup is identified by the parameters (location, backup_vault_id, data_source_id, backup_id).",
+				ForceNew:    true,
+				Description: `The resource name of the backup instance.`,
+			},
 			"region_disk_target_environment": {
 				Type:        schema.TypeList,
 				Optional:    true,
@@ -1487,9 +1488,6 @@ func resourceBackupDRRestoreWorkloadCreate(d *schema.ResourceData, meta interfac
 	obj := make(map[string]interface{})
 
 	// ==================== Top-Level Request Fields ====================
-	if v, ok := d.GetOk("name"); ok && v.(string) != "" {
-		obj["name"] = v.(string)
-	}
 	if v, ok := d.GetOk("request_id"); ok && v.(string) != "" {
 		obj["requestId"] = v.(string)
 	}
@@ -2611,10 +2609,6 @@ func resourceBackupDRRestoreWorkloadImport(d *schema.ResourceData, meta interfac
 	d.SetId(id)
 
 	return []*schema.ResourceData{d}, nil
-}
-
-func flattenBackupDRRestoreWorkloadName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
-	return v
 }
 
 func flattenBackupDRRestoreWorkloadRequestId(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {

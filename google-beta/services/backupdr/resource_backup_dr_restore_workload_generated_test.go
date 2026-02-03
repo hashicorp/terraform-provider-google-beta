@@ -71,7 +71,7 @@ func TestAccBackupDRRestoreWorkload_backupDrRestoreWorkloadComputeInstanceBasicE
 				ResourceName:            "google_backup_dr_restore_workload.restore_compute_basic",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"backup_id", "backup_vault_id", "data_source_id", "location"},
+				ImportStateVerifyIgnore: []string{"backup_id", "backup_vault_id", "data_source_id", "location", "name"},
 			},
 		},
 	})
@@ -84,8 +84,6 @@ resource "google_backup_dr_restore_workload" "restore_compute_basic" {
   backup_vault_id  = "tf-test-backup-vault%{random_suffix}"
   data_source_id   = "tf-test-data-source%{random_suffix}"
   backup_id        = "backup%{random_suffix}"
-  
-  name = "tf-test-projects/my-project/locations/us-central1/back%{random_suffix}"
 
   compute_instance_target_environment {
     project = "%{project}"
@@ -94,7 +92,7 @@ resource "google_backup_dr_restore_workload" "restore_compute_basic" {
 
   compute_instance_restore_properties {
     name         = "tf-test-restored-instance%{random_suffix}"
-    machine_type = "e2-medium"
+    machine_type = "zones/us-central1-a/machineTypes/e2-medium"
   }
 }
 `, context)
@@ -121,7 +119,7 @@ func TestAccBackupDRRestoreWorkload_backupDrRestoreWorkloadComputeInstanceFullEx
 				ResourceName:            "google_backup_dr_restore_workload.restore_compute_full",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"backup_id", "backup_vault_id", "data_source_id", "location"},
+				ImportStateVerifyIgnore: []string{"backup_id", "backup_vault_id", "data_source_id", "location", "name"},
 			},
 		},
 	})
@@ -134,8 +132,6 @@ resource "google_backup_dr_restore_workload" "restore_compute_full" {
   backup_vault_id  = "tf-test-backup-vault%{random_suffix}"
   data_source_id   = "tf-test-data-source%{random_suffix}"
   backup_id        = "backup%{random_suffix}"
-  
-  name = "tf-test-projects/my-project/locations/us-central1/back%{random_suffix}"
 
   compute_instance_target_environment {
     project = "%{project}"
@@ -144,16 +140,25 @@ resource "google_backup_dr_restore_workload" "restore_compute_full" {
 
   compute_instance_restore_properties {
     name         = "tf-test-restored-instance-full%{random_suffix}"
-    machine_type = "e2-medium"
+    machine_type = "zones/us-central1-a/machineTypes/e2-medium"
     description  = "Restored compute instance with advanced configuration"
     
     can_ip_forward      = true
     deletion_protection = false
     
-    labels = {
-      environment = "production"
-      restored    = "true"
-      team        = "infrastructure"
+    labels {
+      key   = "environment"
+      value = "production"
+    }
+
+    labels {
+      key   = "restored"
+      value = "true"
+    }
+
+    labels {
+      key   = "team"
+      value = "infrastructure"
     }
     
     tags {
@@ -161,11 +166,11 @@ resource "google_backup_dr_restore_workload" "restore_compute_full" {
     }
     
     network_interfaces {
-      network    = "default"
+      network    = "projects/%{project}/global/networks/default"
       subnetwork = "projects/%{project}/regions/us-central1/subnetworks/default"
       
       access_configs {
-        name         = "External NAT"
+        name         = "ONE_TO_ONE_NAT"
         network_tier = "PREMIUM"
       }
     }
@@ -232,7 +237,7 @@ func TestAccBackupDRRestoreWorkload_backupDrRestoreWorkloadDiskBasicExample(t *t
 				ResourceName:            "google_backup_dr_restore_workload.restore_disk_basic",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"backup_id", "backup_vault_id", "data_source_id", "location"},
+				ImportStateVerifyIgnore: []string{"backup_id", "backup_vault_id", "data_source_id", "location", "name"},
 			},
 		},
 	})
@@ -245,8 +250,6 @@ resource "google_backup_dr_restore_workload" "restore_disk_basic" {
   backup_vault_id  = "tf-test-backup-vault%{random_suffix}"
   data_source_id   = "tf-test-data-source%{random_suffix}"
   backup_id        = "backup%{random_suffix}"
-  
-  name = "tf-test-projects/my-project/locations/us-central1/back%{random_suffix}"
 
   disk_target_environment {
     project = "%{project}"
@@ -256,7 +259,7 @@ resource "google_backup_dr_restore_workload" "restore_disk_basic" {
   disk_restore_properties {
     name    = "tf-test-restored-disk%{random_suffix}"
     size_gb = 100
-    type    = "pd-standard"
+    type    = "projects/%{project}/zones/us-central1-a/diskTypes/pd-standard"
     
     description = "Restored persistent disk from backup"
     
@@ -290,7 +293,7 @@ func TestAccBackupDRRestoreWorkload_backupDrRestoreWorkloadRegionalDiskExample(t
 				ResourceName:            "google_backup_dr_restore_workload.restore_regional_disk",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"backup_id", "backup_vault_id", "data_source_id", "location"},
+				ImportStateVerifyIgnore: []string{"backup_id", "backup_vault_id", "data_source_id", "location", "name"},
 			},
 		},
 	})
@@ -303,15 +306,13 @@ resource "google_backup_dr_restore_workload" "restore_regional_disk" {
   backup_vault_id  = "tf-test-backup-vault%{random_suffix}"
   data_source_id   = "tf-test-data-source%{random_suffix}"
   backup_id        = "backup%{random_suffix}"
-  
-  name = "tf-test-projects/my-project/locations/us-central1/back%{random_suffix}"
 
   region_disk_target_environment {
     project = "%{project}"
     region  = "us-central1"
     replica_zones = [
-      "us-central1-a",
-      "us-central1-b"
+      "projects/%{project}/zones/us-central1-a",
+      "projects/%{project}/zones/us-central1-b"
     ]
   }
 
@@ -355,7 +356,7 @@ func TestAccBackupDRRestoreWorkload_backupDrRestoreWorkloadWithoutDeleteExample(
 				ResourceName:            "google_backup_dr_restore_workload.restore_without_delete",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"backup_id", "backup_vault_id", "data_source_id", "location"},
+				ImportStateVerifyIgnore: []string{"backup_id", "backup_vault_id", "data_source_id", "location", "name"},
 			},
 		},
 	})
@@ -369,8 +370,6 @@ resource "google_backup_dr_restore_workload" "restore_without_delete" {
   data_source_id   = "tf-test-data-source%{random_suffix}"
   backup_id        = "backup%{random_suffix}"
   
-  name = "tf-test-projects/my-project/locations/us-central1/back%{random_suffix}"
-  
   # Set to false to keep the restored resource in GCP after terraform destroy
   delete_restored_instance = false
 
@@ -380,9 +379,9 @@ resource "google_backup_dr_restore_workload" "restore_without_delete" {
   }
 
   disk_restore_properties {
-    name    = "tf-test-persistent-disk%{random_suffix}"
-    size_gb = 50
-    type    = "pd-standard"
+    name        = "tf-test-persistent-disk%{random_suffix}"
+    size_gb     = 100
+    type        = "projects/%{project}/zones/us-central1-a/diskTypes/pd-standard"
   }
 }
 `, context)
