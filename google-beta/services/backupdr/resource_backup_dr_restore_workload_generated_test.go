@@ -61,7 +61,7 @@ func TestAccBackupDRRestoreWorkload_backupDrRestoreWorkloadComputeInstanceBasicE
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckBackupDRRestoreWorkloadDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -109,7 +109,7 @@ func TestAccBackupDRRestoreWorkload_backupDrRestoreWorkloadComputeInstanceFullEx
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckBackupDRRestoreWorkloadDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -227,7 +227,7 @@ func TestAccBackupDRRestoreWorkload_backupDrRestoreWorkloadDiskBasicExample(t *t
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckBackupDRRestoreWorkloadDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -283,7 +283,7 @@ func TestAccBackupDRRestoreWorkload_backupDrRestoreWorkloadRegionalDiskExample(t
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckBackupDRRestoreWorkloadDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -346,7 +346,7 @@ func TestAccBackupDRRestoreWorkload_backupDrRestoreWorkloadWithoutDeleteExample(
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckBackupDRRestoreWorkloadDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
