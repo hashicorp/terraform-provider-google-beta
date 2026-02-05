@@ -2257,7 +2257,7 @@ func TestAccComputeRegionBackendService_withNetworkPassThroughLbTrafficPolicy(t 
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeRegionBackendServiceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -2295,13 +2295,11 @@ func TestAccComputeRegionBackendService_withNetworkPassThroughLbTrafficPolicy(t 
 func testAccComputeRegionBackendService_withNetworkPassThroughLbTrafficPolicy(randString, spillover string, ratio float64) string {
 	return fmt.Sprintf(`
 resource "google_compute_network" "default" {
-  provider                = google-beta
   name                    = "tf-test-network-%s"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "default" {
-  provider      = google-beta
   name          = "tf-test-subnet-%s"
   ip_cidr_range = "10.10.0.0/16"
   region        = "us-central1"
@@ -2309,7 +2307,6 @@ resource "google_compute_subnetwork" "default" {
 }
 
 resource "google_compute_region_health_check" "default" {
-  provider = google-beta
   name     = "tf-test-health-check-%s"
   region   = "us-central1"
   tcp_health_check {
@@ -2318,7 +2315,6 @@ resource "google_compute_region_health_check" "default" {
 }
 
 resource "google_compute_instance_template" "default" {
-  provider     = google-beta
   name  = "tf-test-instance-template-%s"
   machine_type = "e2-micro"
 
@@ -2334,7 +2330,6 @@ resource "google_compute_instance_template" "default" {
 }
 
 resource "google_compute_instance_group_manager" "default" {
-  provider = google-beta
   name     = "tf-test-igm-%s"
   zone     = "us-central1-a"
   version {
@@ -2346,7 +2341,6 @@ resource "google_compute_instance_group_manager" "default" {
 }
 
 resource "google_compute_region_backend_service" "nptlbtp" {
-  provider              = google-beta
   name                  = "tf-test-region-backend-service-%s"
   region                = "us-central1"
   load_balancing_scheme = "INTERNAL"
