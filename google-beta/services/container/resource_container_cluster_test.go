@@ -7806,6 +7806,9 @@ resource "google_container_cluster" "primary" {
     ray_operator_config {
       enabled = false
     }
+	slice_controller_config {
+      enabled = false
+    }
 	parallelstore_csi_driver_config {
       enabled = false
     }
@@ -7887,6 +7890,9 @@ resource "google_container_cluster" "primary" {
       ray_cluster_monitoring_config {
         enabled = true
       }
+    }
+	slice_controller_config {
+      enabled = true
     }
     parallelstore_csi_driver_config {
       enabled = true
