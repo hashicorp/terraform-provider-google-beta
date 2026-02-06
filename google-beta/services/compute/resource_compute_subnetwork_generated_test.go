@@ -384,7 +384,7 @@ func TestAccComputeSubnetwork_subnetworkCidrOverlapExample(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeSubnetworkDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -403,7 +403,6 @@ func TestAccComputeSubnetwork_subnetworkCidrOverlapExample(t *testing.T) {
 func testAccComputeSubnetwork_subnetworkCidrOverlapExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_subnetwork" "subnetwork-cidr-overlap" {
-  provider = google-beta
 
   name                             = "tf-test-subnet-cidr-overlap%{random_suffix}"
   region                           = "us-west2"
@@ -413,7 +412,6 @@ resource "google_compute_subnetwork" "subnetwork-cidr-overlap" {
 }
 
 resource "google_compute_network" "net-cidr-overlap" {
-  provider                = google-beta
 
   name                    = "tf-test-net-cidr-overlap%{random_suffix}"
   auto_create_subnetworks = false
