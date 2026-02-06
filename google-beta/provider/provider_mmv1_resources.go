@@ -636,9 +636,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 778
+// Generated resources: 779
 // Generated IAM resources: 351
-// Total generated resources: 1129
+// Total generated resources: 1130
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     registry.Resource("google_folder_access_approval_settings"),
 	"google_organization_access_approval_settings":                               registry.Resource("google_organization_access_approval_settings"),
@@ -1540,6 +1540,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_oracle_database_cloud_exadata_infrastructure":                        registry.Resource("google_oracle_database_cloud_exadata_infrastructure"),
 	"google_oracle_database_cloud_vm_cluster":                                    registry.Resource("google_oracle_database_cloud_vm_cluster"),
 	"google_oracle_database_db_system":                                           registry.Resource("google_oracle_database_db_system"),
+	"google_oracle_database_exadb_vm_cluster":                                    registry.Resource("google_oracle_database_exadb_vm_cluster"),
 	"google_oracle_database_exascale_db_storage_vault":                           registry.Resource("google_oracle_database_exascale_db_storage_vault"),
 	"google_oracle_database_odb_network":                                         registry.Resource("google_oracle_database_odb_network"),
 	"google_oracle_database_odb_subnet":                                          registry.Resource("google_oracle_database_odb_subnet"),
