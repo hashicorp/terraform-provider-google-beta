@@ -50,6 +50,42 @@ var (
 	_ = googleapi.Error{}
 )
 
+func TestAccFirebaseAILogicPromptTemplate_firebaseailogicPromptTemplateFileExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckFirebaseAILogicPromptTemplateDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccFirebaseAILogicPromptTemplate_firebaseailogicPromptTemplateFileExample(context),
+			},
+			{
+				ResourceName:            "google_firebase_ai_logic_prompt_template.file",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"location"},
+			},
+		},
+	})
+}
+
+func testAccFirebaseAILogicPromptTemplate_firebaseailogicPromptTemplateFileExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_firebase_ai_logic_prompt_template" "file" {
+  provider = google-beta
+  location = "global"
+  template_id = "tf-test-file-template%{random_suffix}"
+  template_string = file("test-fixtures/hello_world.prompt")
+}
+`, context)
+}
+
 func TestAccFirebaseAILogicPromptTemplate_firebaseailogicPromptTemplateBasicExample(t *testing.T) {
 	t.Parallel()
 
