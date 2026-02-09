@@ -396,6 +396,12 @@ func resourcePrivilegedAccessManagerSettingsUpdate(d *schema.ResourceData, meta 
 	billingProject := ""
 
 	obj := make(map[string]interface{})
+	etagProp, err := expandPrivilegedAccessManagerSettingsEtag(d.Get("etag"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("etag"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, etagProp)) {
+		obj["etag"] = etagProp
+	}
 	serviceAccountApproverSettingsProp, err := expandPrivilegedAccessManagerSettingsServiceAccountApproverSettings(d.Get("service_account_approver_settings"), d, config)
 	if err != nil {
 		return err
@@ -417,6 +423,10 @@ func resourcePrivilegedAccessManagerSettingsUpdate(d *schema.ResourceData, meta 
 	log.Printf("[DEBUG] Updating Settings %q: %#v", d.Id(), obj)
 	headers := make(http.Header)
 	updateMask := []string{}
+
+	if d.HasChange("etag") {
+		updateMask = append(updateMask, "etag")
+	}
 
 	if d.HasChange("service_account_approver_settings") {
 		updateMask = append(updateMask, "serviceAccountApproverSettings")
@@ -687,6 +697,10 @@ func flattenPrivilegedAccessManagerSettingsEmailNotificationSettingsCustomNotifi
 }
 func flattenPrivilegedAccessManagerSettingsEmailNotificationSettingsCustomNotificationBehaviorApproverNotificationsPendingApproval(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
+}
+
+func expandPrivilegedAccessManagerSettingsEtag(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
 }
 
 func expandPrivilegedAccessManagerSettingsServiceAccountApproverSettings(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
