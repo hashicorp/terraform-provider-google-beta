@@ -7,7 +7,6 @@ BREAKING CHANGES:
 
 FEATURES:
 * **New Resource:** `google_dataplex_data_asset` ([#11467](https://github.com/hashicorp/terraform-provider-google-beta/pull/11467))
-* **New Resource:** `google_firebase_ai_logic_prompt_template_lock` ([#11448](https://github.com/hashicorp/terraform-provider-google-beta/pull/11448))
 * **New Resource:** `google_logging_saved_query` ([#11466](https://github.com/hashicorp/terraform-provider-google-beta/pull/11466))
 
 IMPROVEMENTS:
@@ -33,7 +32,7 @@ BREAKING CHANGES:
 
 FEATURES:
 * **New Data Source:** `google_vmwareengine_datastore` ([#11428](https://github.com/hashicorp/terraform-provider-google-beta/pull/11428))
-* **New Resource:** `google_compute_region_composite_health_checks` (beta) ([#11436](https://github.com/hashicorp/terraform-provider-google-beta/pull/11436))
+* **New Resource:** `google_compute_region_composite_health_check` (beta) ([#11436](https://github.com/hashicorp/terraform-provider-google-beta/pull/11436))
 * **New Resource:** `google_dataplex_data_product` ([#11427](https://github.com/hashicorp/terraform-provider-google-beta/pull/11427))
 * **New Resource:** `google_dialogflow_cx_tool_version` ([#11421](https://github.com/hashicorp/terraform-provider-google-beta/pull/11421))
 * **New Resource:** `google_firebase_ai_logic_config` ([#11429](https://github.com/hashicorp/terraform-provider-google-beta/pull/11429))
