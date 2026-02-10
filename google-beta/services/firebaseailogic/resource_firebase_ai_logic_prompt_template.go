@@ -134,7 +134,7 @@ PromptTemplate's resource name.`,
 			"template_string": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: `The DotPrompt raw template string.`,
+				Description: `The [Dotprompt](https://google.github.io/dotprompt/getting-started) raw template string.`,
 			},
 			"display_name": {
 				Type:        schema.TypeString,

@@ -96,10 +96,7 @@ func TestAccFirebaseAILogicPromptTemplate_firebaseailogicPromptTemplateBasicExam
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
-		ExternalProviders: map[string]resource.ExternalProvider{
-			"time": {},
-		},
-		CheckDestroy: testAccCheckFirebaseAILogicPromptTemplateDestroyProducer(t),
+		CheckDestroy:             testAccCheckFirebaseAILogicPromptTemplateDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccFirebaseAILogicPromptTemplate_firebaseailogicPromptTemplateBasicExample(context),
