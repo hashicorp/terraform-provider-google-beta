@@ -637,9 +637,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 779
+// Generated resources: 780
 // Generated IAM resources: 351
-// Total generated resources: 1130
+// Total generated resources: 1131
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     registry.Resource("google_folder_access_approval_settings"),
 	"google_organization_access_approval_settings":                               registry.Resource("google_organization_access_approval_settings"),
@@ -859,6 +859,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_cloudfunctions2_function_iam_policy":                                 registry.Resource("google_cloudfunctions2_function_iam_policy"),
 	"google_cloud_identity_group":                                                registry.Resource("google_cloud_identity_group"),
 	"google_cloud_identity_group_membership":                                     registry.Resource("google_cloud_identity_group_membership"),
+	"google_cloud_identity_policy":                                               registry.Resource("google_cloud_identity_policy"),
 	"google_cloud_ids_endpoint":                                                  registry.Resource("google_cloud_ids_endpoint"),
 	"google_cloud_quotas_quota_adjuster_settings":                                registry.Resource("google_cloud_quotas_quota_adjuster_settings"),
 	"google_cloud_quotas_quota_preference":                                       registry.Resource("google_cloud_quotas_quota_preference"),
