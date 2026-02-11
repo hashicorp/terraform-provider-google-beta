@@ -6523,7 +6523,7 @@ resource "google_container_node_pool" "np" {
   }
   
   node_config {
-    machine_type = "a3-highgpu-8g"
+    machine_type = "a3-edgegpu-8g"
     
     guest_accelerator {
       type  = "nvidia-h100-80gb"
@@ -6569,7 +6569,7 @@ func TestAccContainerNodePool_acceleratorNetworkProfile(t *testing.T) {
 				Config: testAccContainerNodePool_acceleratorNetworkProfile(clusterName, npName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", npName),
-					resource.TestCheckResourceAttr(resourceName, "node_config.0.machine_type", "a3-highgpu-8g"),
+					resource.TestCheckResourceAttr(resourceName, "node_config.0.machine_type", "a3-edgegpu-8g"),
 					resource.TestCheckResourceAttr(resourceName, "network_config.0.accelerator_network_profile", "auto"),
 					resource.TestCheckResourceAttrSet(resourceName, "network_config.0.additional_node_network_configs.0.network"),
 					resource.TestCheckResourceAttrSet(resourceName, "network_config.0.additional_node_network_configs.0.subnetwork"),
@@ -6647,7 +6647,7 @@ resource "google_container_node_pool" "np" {
     max_node_count = 1
   }
   node_config {
-    machine_type = "a3-highgpu-8g"
+    machine_type = "a3-edgegpu-8g"
     oauth_scopes = [ "https://www.googleapis.com/auth/cloud-platform" ]
 	guest_accelerator {
 		type = "nvidia-h100-80gb"
@@ -6723,7 +6723,7 @@ resource "google_container_node_pool" "np" {
     max_node_count = 1
   }
   node_config {
-    machine_type = "a3-highgpu-8g"
+    machine_type = "a3-edgegpu-8g"
     oauth_scopes = [ "https://www.googleapis.com/auth/cloud-platform" ]
 	guest_accelerator {
 		type = "nvidia-h100-80gb"
@@ -6794,7 +6794,7 @@ resource "google_container_node_pool" "np" {
     max_node_count = 1
   }
   node_config {
-    machine_type = "a3-highgpu-8g"
+    machine_type = "a3-edgegpu-8g"
     oauth_scopes = [ "https://www.googleapis.com/auth/cloud-platform" ]
 	guest_accelerator {
 		type = "nvidia-h100-80gb"
@@ -6838,7 +6838,7 @@ func TestAccContainerNodePool_acceleratorNetworkProfile_Lifecycle(t *testing.T) 
 				Config: testAccContainerNodePool_acceleratorNetworkProfile_manual(clusterName, npName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", npName),
-					resource.TestCheckResourceAttr(resourceName, "node_config.0.machine_type", "a3-highgpu-8g"),
+					resource.TestCheckResourceAttr(resourceName, "node_config.0.machine_type", "a3-edgegpu-8g"),
 					resource.TestCheckResourceAttr(resourceName, "network_config.0.additional_node_network_configs.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "network_config.0.accelerator_network_profile", ""),
 				),
