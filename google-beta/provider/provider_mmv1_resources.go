@@ -637,9 +637,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 780
+// Generated resources: 781
 // Generated IAM resources: 351
-// Total generated resources: 1131
+// Total generated resources: 1132
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     registry.Resource("google_folder_access_approval_settings"),
 	"google_organization_access_approval_settings":                               registry.Resource("google_organization_access_approval_settings"),
@@ -1076,6 +1076,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_data_catalog_taxonomy_iam_binding":                                   registry.Resource("google_data_catalog_taxonomy_iam_binding"),
 	"google_data_catalog_taxonomy_iam_member":                                    registry.Resource("google_data_catalog_taxonomy_iam_member"),
 	"google_data_catalog_taxonomy_iam_policy":                                    registry.Resource("google_data_catalog_taxonomy_iam_policy"),
+	"google_dataform_folder":                                                     registry.Resource("google_dataform_folder"),
 	"google_dataform_repository":                                                 registry.Resource("google_dataform_repository"),
 	"google_dataform_repository_iam_binding":                                     registry.Resource("google_dataform_repository_iam_binding"),
 	"google_dataform_repository_iam_member":                                      registry.Resource("google_dataform_repository_iam_member"),
