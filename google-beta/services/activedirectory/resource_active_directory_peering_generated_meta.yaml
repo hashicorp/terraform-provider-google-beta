@@ -18,3 +18,5 @@ fields:
     - api_field: statusMessage
     - field: terraform_labels
       provider_only: true
+    - field: deletion_policy
+      provider_only: true
