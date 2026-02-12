@@ -100,6 +100,7 @@ func ResourceBackupDRRestoreWorkload() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceBackupDRRestoreWorkloadCreate,
 		Read:   resourceBackupDRRestoreWorkloadRead,
+		Update: resourceBackupDRRestoreWorkloadUpdate,
 		Delete: resourceBackupDRRestoreWorkloadDelete,
 
 		Importer: &schema.ResourceImporter{
@@ -1402,6 +1403,19 @@ the request if it has already been completed.`,
 					},
 				},
 			},
+
+			"deletion_policy": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Description: `Whether Terraform will be prevented from destroying the instance. Defaults to "DELETE".
+When a 'terraform destroy' or 'terraform apply' would delete the instance,
+the command will fail if this field is set to "PREVENT" in Terraform state.
+When set to "ABANDON", the command will remove the resource from Terraform
+management without updating or deleting the resource in the API.
+When set to "DELETE", deleting the resource is allowed.
+`,
+				Default: "DELETE",
+			},
 		},
 		UseJSONNumber: true,
 	}
@@ -2419,6 +2433,11 @@ func resourceBackupDRRestoreWorkloadCreate(d *schema.ResourceData, meta interfac
 func resourceBackupDRRestoreWorkloadRead(d *schema.ResourceData, meta interface{}) error {
 	// This resource could not be read from the API.
 	return nil
+}
+
+func resourceBackupDRRestoreWorkloadUpdate(d *schema.ResourceData, meta interface{}) error {
+	// Only the root field "deletion_policy", "labels", "terraform_labels", and virtual fields are mutable
+	return resourceBackupDRRestoreWorkloadRead(d, meta)
 }
 
 func resourceBackupDRRestoreWorkloadDelete(d *schema.ResourceData, meta interface{}) error {
