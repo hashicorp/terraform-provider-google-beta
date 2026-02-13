@@ -1315,7 +1315,7 @@ func TestAccCloudfunctions2function_cloudfunctions2DirectvpcExample(t *testing.T
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckCloudfunctions2functionDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -1338,18 +1338,21 @@ locals {
 }
 
 resource "google_storage_bucket" "bucket" {
+  provider = google-beta
   name     = "${local.project}-tf-test-gcf-source%{random_suffix}"  # Every bucket name must be globally unique
   location = "US"
   uniform_bucket_level_access = true
 }
 
 resource "google_storage_bucket_object" "object" {
+  provider = google-beta
   name   = "function-source.zip"
   bucket = google_storage_bucket.bucket.name
   source = "%{zip_path}"  # Add path to the zipped function source code
 }
 
 resource "google_cloudfunctions2_function" "function" {
+  provider = google-beta
   name = "tf-test-function-v2%{random_suffix}"
   location = "us-central1"
   description = "a new function"
