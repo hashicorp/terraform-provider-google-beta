@@ -1145,6 +1145,12 @@ func (p *FrameworkProvider) Schema(_ context.Context, _ provider.SchemaRequest, 
 					transport_tpg.CustomEndpointValidator(),
 				},
 			},
+			"vector_search_custom_endpoint": &schema.StringAttribute{
+				Optional: true,
+				Validators: []validator.String{
+					transport_tpg.CustomEndpointValidator(),
+				},
+			},
 			"vertex_ai_custom_endpoint": &schema.StringAttribute{
 				Optional: true,
 				Validators: []validator.String{
