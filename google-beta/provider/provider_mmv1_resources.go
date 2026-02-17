@@ -531,6 +531,7 @@ var generatedIAMDatasources = map[string]*schema.Resource{
 	"google_compute_instance_template_iam_policy":                  registry.DataSource("google_compute_instance_template_iam_policy"),
 	"google_compute_instant_snapshot_iam_policy":                   registry.DataSource("google_compute_instant_snapshot_iam_policy"),
 	"google_compute_machine_image_iam_policy":                      registry.DataSource("google_compute_machine_image_iam_policy"),
+	"google_compute_region_backend_bucket_iam_policy":              registry.DataSource("google_compute_region_backend_bucket_iam_policy"),
 	"google_compute_region_backend_service_iam_policy":             registry.DataSource("google_compute_region_backend_service_iam_policy"),
 	"google_compute_region_disk_iam_policy":                        registry.DataSource("google_compute_region_disk_iam_policy"),
 	"google_compute_snapshot_iam_policy":                           registry.DataSource("google_compute_snapshot_iam_policy"),
@@ -642,9 +643,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 786
-// Generated IAM resources: 354
-// Total generated resources: 1140
+// Generated resources: 787
+// Generated IAM resources: 357
+// Total generated resources: 1144
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     registry.Resource("google_folder_access_approval_settings"),
 	"google_organization_access_approval_settings":                               registry.Resource("google_organization_access_approval_settings"),
@@ -989,6 +990,10 @@ var generatedResources = map[string]*schema.Resource{
 	"google_compute_public_advertised_prefix":                                    registry.Resource("google_compute_public_advertised_prefix"),
 	"google_compute_public_delegated_prefix":                                     registry.Resource("google_compute_public_delegated_prefix"),
 	"google_compute_region_autoscaler":                                           registry.Resource("google_compute_region_autoscaler"),
+	"google_compute_region_backend_bucket":                                       registry.Resource("google_compute_region_backend_bucket"),
+	"google_compute_region_backend_bucket_iam_binding":                           registry.Resource("google_compute_region_backend_bucket_iam_binding"),
+	"google_compute_region_backend_bucket_iam_member":                            registry.Resource("google_compute_region_backend_bucket_iam_member"),
+	"google_compute_region_backend_bucket_iam_policy":                            registry.Resource("google_compute_region_backend_bucket_iam_policy"),
 	"google_compute_region_backend_service":                                      registry.Resource("google_compute_region_backend_service"),
 	"google_compute_region_backend_service_iam_binding":                          registry.Resource("google_compute_region_backend_service_iam_binding"),
 	"google_compute_region_backend_service_iam_member":                           registry.Resource("google_compute_region_backend_service_iam_member"),
