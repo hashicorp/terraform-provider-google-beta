@@ -9,6 +9,7 @@ FEATURES:
 * **New Resource:** `google_cloud_identity_policy` ([#11536](https://github.com/hashicorp/terraform-provider-google-beta/pull/11536))
 * **New Resource:** `google_compute_rollout_plan` ([#11562](https://github.com/hashicorp/terraform-provider-google-beta/pull/11562))
 * **New Resource:** `google_dataform_folder` ([#11542](https://github.com/hashicorp/terraform-provider-google-beta/pull/11542))
+* **New Resource:** `google_network_services_agent_gateway` (beta) ([#11571](https://github.com/hashicorp/terraform-provider-google-beta/pull/11571))
 * **New Resource:** `google_oracle_database_exadb_vm_cluster` ([#11508](https://github.com/hashicorp/terraform-provider-google-beta/pull/11508))
 * **New Resource:** `google_vector_search_collection` ([#11566](https://github.com/hashicorp/terraform-provider-google-beta/pull/11566))
 
@@ -25,13 +26,13 @@ IMPROVEMENTS:
 * compute: added `params` field to `google_compute_vpn_tunnel` resource ([#11558](https://github.com/hashicorp/terraform-provider-google-beta/pull/11558))
 * compute: added `slice_controller_config` field to `google_container_cluster` resource ([#11510](https://github.com/hashicorp/terraform-provider-google-beta/pull/11510))
 * container: added `additional_ip_ranges_config.status` to `google_container_cluster` resource ([#11534](https://github.com/hashicorp/terraform-provider-google-beta/pull/11534))
-* dataproc: added `instance_flexibility_policy` to `master_config` and `worker_config` in `google_dataproc_cluster` resource. ([#11532](https://github.com/hashicorp/terraform-provider-google-beta/pull/11532))
+* dataproc: added `instance_flexibility_policy` to `master_config` and `worker_config` in `google_dataproc_cluster` resource ([#11532](https://github.com/hashicorp/terraform-provider-google-beta/pull/11532))
 * developerconnect: added `target_projects` field to `google_developer_connect_insights_config` resource ([#11545](https://github.com/hashicorp/terraform-provider-google-beta/pull/11545))
 * filestore: added `replica_action` to `google_filestore_instance` resource ([#11553](https://github.com/hashicorp/terraform-provider-google-beta/pull/11553))
 * networksecurity: added `policy_profile`, `http_rules.0.to.0.operations.0.mcp` to `google_network_security_authz_policy` ([#11559](https://github.com/hashicorp/terraform-provider-google-beta/pull/11559))
 * networkservices: added `ull_multicast_domain` field to `google_network_services_multicast_domain` resource ([#11543](https://github.com/hashicorp/terraform-provider-google-beta/pull/11543))
 * networkservices: relaxed `load_balancing_scheme` validation to support non-Backend Service targets in `google_network_services_authz_extension` ([#11559](https://github.com/hashicorp/terraform-provider-google-beta/pull/11559))
-* spanner: supported `user_project_override` in `google_spanner_database_iam` and `google_spanner_instance_iam` resources ([#11527](https://github.com/hashicorp/terraform-provider-google-beta/pull/11527))
+* spanner: added support for `user_project_override` in `google_spanner_database_iam` and `google_spanner_instance_iam` resources ([#11527](https://github.com/hashicorp/terraform-provider-google-beta/pull/11527))
 * vmwareengine: added `datastore_mount_config` field to `google_vmwareengine_cluster` resource ([#11554](https://github.com/hashicorp/terraform-provider-google-beta/pull/11554))
 
 BUG FIXES:
@@ -39,7 +40,7 @@ BUG FIXES:
 * bigqueryanalyticshub: fixed update failure for `replica_locations` in `google_bigquery_analytics_hub_listing` (beta) ([#11523](https://github.com/hashicorp/terraform-provider-google-beta/pull/11523))
 * ces: fixed callback function definitions and invalid models in agent tests ([#11548](https://github.com/hashicorp/terraform-provider-google-beta/pull/11548))
 * iam: fixed error 409 concurrency policy changes by correctly detecting the error type. ([#11564](https://github.com/hashicorp/terraform-provider-google-beta/pull/11564))
-* publicca: fixed `mac_key` not set in `google_public_ca_external_account_key` ([#11567](https://github.com/hashicorp/terraform-provider-google-beta/pull/11567))
+* publicca: fixed `mac_key` fields not being properly set in `google_public_ca_external_account_key` ([#11567](https://github.com/hashicorp/terraform-provider-google-beta/pull/11567))
 
 ## 7.19.0 (Feb 10, 2026)
 
