@@ -38,7 +38,7 @@ IMPROVEMENTS:
 BUG FIXES:
 * bigquery: fixed permadiff with the `collation` field in `google_bigquery_table.schema` when it inherits the value from `google_bigquery_dataset.default_collation` ([#11538](https://github.com/hashicorp/terraform-provider-google-beta/pull/11538))
 * bigqueryanalyticshub: fixed update failure for `replica_locations` in `google_bigquery_analytics_hub_listing` (beta) ([#11523](https://github.com/hashicorp/terraform-provider-google-beta/pull/11523))
-* iam: fixed error 409 concurrency policy changes by correctly detecting the error type. ([#11564](https://github.com/hashicorp/terraform-provider-google-beta/pull/11564))
+* iam: fixed an issue where iam resources not retry on error 409 concurrent policy changes ([#11564](https://github.com/hashicorp/terraform-provider-google-beta/pull/11564))
 * publicca: fixed `mac_key` fields not being properly set in `google_public_ca_external_account_key` ([#11567](https://github.com/hashicorp/terraform-provider-google-beta/pull/11567))
 
 ## 7.19.0 (Feb 10, 2026)
