@@ -38,7 +38,6 @@ IMPROVEMENTS:
 BUG FIXES:
 * bigquery: fixed permadiff with the `collation` field in `google_bigquery_table.schema` when it inherits the value from `google_bigquery_dataset.default_collation` ([#11538](https://github.com/hashicorp/terraform-provider-google-beta/pull/11538))
 * bigqueryanalyticshub: fixed update failure for `replica_locations` in `google_bigquery_analytics_hub_listing` (beta) ([#11523](https://github.com/hashicorp/terraform-provider-google-beta/pull/11523))
-* ces: fixed callback function definitions and invalid models in agent tests ([#11548](https://github.com/hashicorp/terraform-provider-google-beta/pull/11548))
 * iam: fixed error 409 concurrency policy changes by correctly detecting the error type. ([#11564](https://github.com/hashicorp/terraform-provider-google-beta/pull/11564))
 * publicca: fixed `mac_key` fields not being properly set in `google_public_ca_external_account_key` ([#11567](https://github.com/hashicorp/terraform-provider-google-beta/pull/11567))
 
