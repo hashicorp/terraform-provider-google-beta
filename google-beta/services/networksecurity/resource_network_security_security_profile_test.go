@@ -110,6 +110,46 @@ func TestAccNetworkSecuritySecurityProfiles_antivirusOverrides(t *testing.T) {
 		},
 	})
 }
+
+func TestAccNetworkSecuritySecurityProfile_networkSecuritySecurityProfileMirroringBrokerUpdate(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"org_id":        envvar.GetTestOrgFromEnv(t),
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckNetworkSecuritySecurityProfileDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccNetworkSecuritySecurityProfile_networkSecuritySecurityProfileMirroringBroker_basic(context),
+			},
+			{
+				ResourceName:            "google_network_security_security_profile.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"labels", "location", "name", "parent", "terraform_labels"},
+			},
+			{
+				Config: testAccNetworkSecuritySecurityProfile_networkSecuritySecurityProfileMirroringBroker_update(context),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_network_security_security_profile.default", plancheck.ResourceActionUpdate),
+					},
+				},
+			},
+			{
+				ResourceName:            "google_network_security_security_profile.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"labels", "location", "name", "parent", "terraform_labels"},
+			},
+		},
+	})
+}
 func TestAccNetworkSecuritySecurityProfile_networkSecuritySecurityProfileUrlFilteringUpdate(t *testing.T) {
 	t.Parallel()
 
@@ -167,46 +207,6 @@ func TestAccNetworkSecuritySecurityProfile_networkSecuritySecurityProfileUrlFilt
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"labels", "location", "name", "parent", "terraform_labels", "url_filtering_profile"},
-			},
-		},
-	})
-}
-
-func TestAccNetworkSecuritySecurityProfile_networkSecuritySecurityProfileMirroringBrokerUpdate(t *testing.T) {
-	t.Parallel()
-
-	context := map[string]interface{}{
-		"org_id":        envvar.GetTestOrgFromEnv(t),
-		"random_suffix": acctest.RandString(t, 10),
-	}
-
-	acctest.VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
-		CheckDestroy:             testAccCheckNetworkSecuritySecurityProfileDestroyProducer(t),
-		Steps: []resource.TestStep{
-			{
-				Config: testAccNetworkSecuritySecurityProfile_networkSecuritySecurityProfileMirroringBroker_basic(context),
-			},
-			{
-				ResourceName:            "google_network_security_security_profile.default",
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"labels", "location", "name", "parent", "terraform_labels"},
-			},
-			{
-				Config: testAccNetworkSecuritySecurityProfile_networkSecuritySecurityProfileMirroringBroker_update(context),
-				ConfigPlanChecks: resource.ConfigPlanChecks{
-					PreApply: []plancheck.PlanCheck{
-						plancheck.ExpectResourceAction("google_network_security_security_profile.default", plancheck.ResourceActionUpdate),
-					},
-				},
-			},
-			{
-				ResourceName:            "google_network_security_security_profile.default",
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"labels", "location", "name", "parent", "terraform_labels"},
 			},
 		},
 	})
@@ -287,6 +287,74 @@ resource "google_network_security_security_profile" "foobar" {
     }
 }
 `, randomSuffix, orgId)
+}
+
+func testAccNetworkSecuritySecurityProfile_networkSecuritySecurityProfileMirroringBroker_basic(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_compute_network" "default" {
+  name                    = "tf-test-my-network%{random_suffix}"
+  auto_create_subnetworks = false
+}
+
+resource "google_network_security_mirroring_deployment_group" "default" {
+  mirroring_deployment_group_id = "tf-test-my-dg%{random_suffix}"
+  location                      = "global"
+  network                       = google_compute_network.default.id
+}
+
+resource "google_network_security_mirroring_endpoint_group" "default" {
+  mirroring_endpoint_group_id = "tf-test-my-eg%{random_suffix}"
+  location                    = "global"
+  type                        = "BROKER"
+  mirroring_deployment_groups = [google_network_security_mirroring_deployment_group.default.id]
+}
+
+resource "google_network_security_security_profile" "default" {
+  name        = "tf-test-my-security-profile%{random_suffix}"
+  parent      = "organizations/%{org_id}"
+  description = "my description"
+  type        = "CUSTOM_MIRRORING"
+
+  custom_mirroring_profile {
+    mirroring_endpoint_group = google_network_security_mirroring_endpoint_group.default.id
+    mirroring_deployment_groups = [google_network_security_mirroring_deployment_group.default.id]
+  }
+}
+`, context)
+}
+
+func testAccNetworkSecuritySecurityProfile_networkSecuritySecurityProfileMirroringBroker_update(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_compute_network" "default" {
+  name                    = "tf-test-my-network%{random_suffix}"
+  auto_create_subnetworks = false
+}
+
+resource "google_network_security_mirroring_deployment_group" "default" {
+  mirroring_deployment_group_id = "tf-test-my-dg%{random_suffix}"
+  location                      = "global"
+  network                       = google_compute_network.default.id
+}
+
+resource "google_network_security_mirroring_endpoint_group" "default" {
+  mirroring_endpoint_group_id = "tf-test-my-eg%{random_suffix}"
+  location                    = "global"
+  type                        = "BROKER"
+  mirroring_deployment_groups = [google_network_security_mirroring_deployment_group.default.id]
+}
+
+resource "google_network_security_security_profile" "default" {
+  name        = "tf-test-my-security-profile%{random_suffix}"
+  parent      = "organizations/%{org_id}"
+  description = "my description"
+  type        = "CUSTOM_MIRRORING"
+
+  custom_mirroring_profile {
+    mirroring_endpoint_group = google_network_security_mirroring_endpoint_group.default.id
+    mirroring_deployment_groups = []
+  }
+}
+`, context)
 }
 func testAccNetworkSecuritySecurityProfile_networkSecuritySecurityProfileUrlFilteringUpdateEmpty(context map[string]interface{}) string {
 	return acctest.Nprintf(`
@@ -376,82 +444,6 @@ resource "google_network_security_security_profile" "default" {
 
   labels = {
     foo = "bar"
-  }
-}
-`, context)
-}
-
-func testAccNetworkSecuritySecurityProfile_networkSecuritySecurityProfileMirroringBroker_basic(context map[string]interface{}) string {
-	return acctest.Nprintf(`
-resource "google_compute_network" "default" {
-  provider                = google-beta
-  name                    = "tf-test-my-network%{random_suffix}"
-  auto_create_subnetworks = false
-}
-
-resource "google_network_security_mirroring_deployment_group" "default" {
-  provider                      = google-beta
-  mirroring_deployment_group_id = "tf-test-my-dg%{random_suffix}"
-  location                      = "global"
-  network                       = google_compute_network.default.id
-}
-
-resource "google_network_security_mirroring_endpoint_group" "default" {
-  provider                    = google-beta
-  mirroring_endpoint_group_id = "tf-test-my-eg%{random_suffix}"
-  location                    = "global"
-  type                        = "BROKER"
-  mirroring_deployment_groups = [google_network_security_mirroring_deployment_group.default.id]
-}
-
-resource "google_network_security_security_profile" "default" {
-  provider    = google-beta
-  name        = "tf-test-my-security-profile%{random_suffix}"
-  parent      = "organizations/%{org_id}"
-  description = "my description"
-  type        = "CUSTOM_MIRRORING"
-
-  custom_mirroring_profile {
-    mirroring_endpoint_group = google_network_security_mirroring_endpoint_group.default.id
-    mirroring_deployment_groups = [google_network_security_mirroring_deployment_group.default.id]
-  }
-}
-`, context)
-}
-
-func testAccNetworkSecuritySecurityProfile_networkSecuritySecurityProfileMirroringBroker_update(context map[string]interface{}) string {
-	return acctest.Nprintf(`
-resource "google_compute_network" "default" {
-  provider                = google-beta
-  name                    = "tf-test-my-network%{random_suffix}"
-  auto_create_subnetworks = false
-}
-
-resource "google_network_security_mirroring_deployment_group" "default" {
-  provider                      = google-beta
-  mirroring_deployment_group_id = "tf-test-my-dg%{random_suffix}"
-  location                      = "global"
-  network                       = google_compute_network.default.id
-}
-
-resource "google_network_security_mirroring_endpoint_group" "default" {
-  provider                    = google-beta
-  mirroring_endpoint_group_id = "tf-test-my-eg%{random_suffix}"
-  location                    = "global"
-  type                        = "BROKER"
-  mirroring_deployment_groups = [google_network_security_mirroring_deployment_group.default.id]
-}
-
-resource "google_network_security_security_profile" "default" {
-  provider    = google-beta
-  name        = "tf-test-my-security-profile%{random_suffix}"
-  parent      = "organizations/%{org_id}"
-  description = "my description"
-  type        = "CUSTOM_MIRRORING"
-
-  custom_mirroring_profile {
-    mirroring_endpoint_group = google_network_security_mirroring_endpoint_group.default.id
-    mirroring_deployment_groups = []
   }
 }
 `, context)
