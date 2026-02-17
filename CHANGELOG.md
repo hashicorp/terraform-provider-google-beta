@@ -14,7 +14,6 @@ FEATURES:
 
 IMPROVEMENTS:
 * alloydb: added write-only support for `initial_user.password_wo` to `google_alloydb_cluster` ([#11546](https://github.com/hashicorp/terraform-provider-google-beta/pull/11546))
-* biglakeiceberg: clarified the usage of the `name` field in `google_biglake_iceberg_catalog` resource. ([#11509](https://github.com/hashicorp/terraform-provider-google-beta/pull/11509))
 * ces: added `mcp_toolset` field to `google_ces_toolset` resource ([#11513](https://github.com/hashicorp/terraform-provider-google-beta/pull/11513))
 * compute: added write-only support for `private_key` to `google_compute_region_ssl_certificate` resource ([#11544](https://github.com/hashicorp/terraform-provider-google-beta/pull/11544))
 * compute: added write-only support for `private_key` to `google_compute_ssl_certificate` resource ([#11544](https://github.com/hashicorp/terraform-provider-google-beta/pull/11544))
