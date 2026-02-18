@@ -1120,7 +1120,7 @@ For more information, see https://cloud.google.com/run/docs/configuring/custom-a
 			"iap_enabled": {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Description: `Used to enable/disable IAP for the service.`,
+				Description: `Used to enable/disable IAP for the cloud-run service.`,
 			},
 			"ingress": {
 				Type:         schema.TypeString,
