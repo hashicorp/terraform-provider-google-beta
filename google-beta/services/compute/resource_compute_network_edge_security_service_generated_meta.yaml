@@ -17,3 +17,5 @@ fields:
       field: self_link_with_service_id
     - api_field: id
       field: service_id
+    - field: deletion_policy
+      provider_only: true
