@@ -54,3 +54,5 @@ fields:
     - api_field: updateTime
     - field: wait_dns_verification
       provider_only: true
+    - field: deletion_policy
+      provider_only: true

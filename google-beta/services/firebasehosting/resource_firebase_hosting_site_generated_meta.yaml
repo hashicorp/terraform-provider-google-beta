@@ -11,3 +11,5 @@ fields:
     - field: site_id
       provider_only: true
     - api_field: type
+    - field: deletion_policy
+      provider_only: true
