@@ -35,3 +35,5 @@ fields:
     - api_field: tunnelingConfig.encapsulationProfile
     - api_field: tunnelingConfig.routingMode
     - api_field: selfLink
+    - field: deletion_policy
+      provider_only: true

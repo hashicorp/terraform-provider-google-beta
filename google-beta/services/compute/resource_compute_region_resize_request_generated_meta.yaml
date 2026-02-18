@@ -47,3 +47,5 @@ fields:
     - api_field: status.lastAttempt.error.errors.errorDetails.quotaInfo.rolloutStatus
     - api_field: status.lastAttempt.error.errors.location
     - api_field: status.lastAttempt.error.errors.message
+    - field: deletion_policy
+      provider_only: true
