@@ -25,3 +25,5 @@ fields:
     - field: repository
       provider_only: true
     - api_field: timeZone
+    - field: deletion_policy
+      provider_only: true
