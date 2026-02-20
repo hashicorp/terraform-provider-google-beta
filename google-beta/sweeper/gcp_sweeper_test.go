@@ -107,6 +107,7 @@ import (
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/gkehub2"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/gkeonprem"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/healthcare"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/hypercomputecluster"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/iam2"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/iam3"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/iambeta"
