@@ -667,15 +667,15 @@ and the server identity will be authenticated.`,
 							MaxItems:    1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
-									"client_secret": {
-										Type:        schema.TypeString,
-										Optional:    true,
-										Description: `Client secret to use for authentication.`,
-									},
 									"client_id": {
 										Type:        schema.TypeString,
 										Optional:    true,
 										Description: `Client ID to use for authentication.`,
+									},
+									"client_secret": {
+										Type:        schema.TypeString,
+										Optional:    true,
+										Description: `Client secret to use for authentication.`,
 									},
 									"secret_manager_stored_client_secret": {
 										Type:        schema.TypeString,
@@ -1770,7 +1770,7 @@ func flattenDatastreamConnectionProfileSalesforceProfileOauth2ClientCredentials(
 	}
 	transformed := make(map[string]interface{})
 	transformed["client_id"] =
-		flattenDatastreamConnectionProfileSalesforceProfileOauth2ClientCredentialsClientId(original["client_id"], d, config)
+		flattenDatastreamConnectionProfileSalesforceProfileOauth2ClientCredentialsClientId(original["clientId"], d, config)
 	transformed["client_secret"] =
 		flattenDatastreamConnectionProfileSalesforceProfileOauth2ClientCredentialsClientSecret(original["clientSecret"], d, config)
 	transformed["secret_manager_stored_client_secret"] =
@@ -2753,7 +2753,7 @@ func expandDatastreamConnectionProfileSalesforceProfileOauth2ClientCredentials(v
 	if err != nil {
 		return nil, err
 	} else if val := reflect.ValueOf(transformedClientId); val.IsValid() && !tpgresource.IsEmptyValue(val) {
-		transformed["client_id"] = transformedClientId
+		transformed["clientId"] = transformedClientId
 	}
 
 	transformedClientSecret, err := expandDatastreamConnectionProfileSalesforceProfileOauth2ClientCredentialsClientSecret(original["client_secret"], d, config)
