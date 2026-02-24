@@ -588,6 +588,19 @@ func resourceBigqueryAnalyticsHubDataExchangeSubscriptionRead(d *schema.Resource
 }
 
 func resourceBigqueryAnalyticsHubDataExchangeSubscriptionUpdate(d *schema.ResourceData, meta interface{}) error {
+	clientSideFields := map[string]bool{"deletion_policy": true}
+	clientSideOnly := true
+	for field := range ResourceBigqueryAnalyticsHubDataExchangeSubscription().Schema {
+		if d.HasChange(field) && !clientSideFields[field] {
+			clientSideOnly = false
+			break
+		}
+	}
+	if clientSideOnly {
+		log.Print("[DEBUG] Only client-side changes detected. Cancelling update operation.")
+		return resourceBigqueryAnalyticsHubDataExchangeSubscriptionRead(d, meta)
+	}
+
 	config := meta.(*transport_tpg.Config)
 	//If a mutable field is added later in the subscription resource, an update API endpoint will be created
 	//and this custom_update will have to be changed and will call a Update API as well as done by mutable resources.
