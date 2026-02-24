@@ -192,11 +192,21 @@ Example inputs include: ["22"], ["80","443"], and ["12345-12349"].`,
 								Type: schema.TypeString,
 							},
 						},
+						"dest_network_context": {
+							Type:          schema.TypeString,
+							Computed:      true,
+							Optional:      true,
+							ValidateFunc:  verify.ValidateEnum([]string{"UNSPECIFIED", "INTERNET", "INTRA_VPC", "NON_INTERNET", "VPC_NETWORKS", ""}),
+							Description:   `Network context of the traffic destination. Possible values: ["UNSPECIFIED", "INTERNET", "INTRA_VPC", "NON_INTERNET", "VPC_NETWORKS"]`,
+							ConflictsWith: []string{"match.0.src_network_scope"},
+						},
 						"dest_network_scope": {
-							Type:         schema.TypeString,
-							Optional:     true,
-							ValidateFunc: verify.ValidateEnum([]string{"INTERNET", "INTRA_VPC", "NON_INTERNET", "VPC_NETWORKS", ""}),
-							Description:  `Network scope of the traffic destination. Possible values: ["INTERNET", "INTRA_VPC", "NON_INTERNET", "VPC_NETWORKS"]`,
+							Type:          schema.TypeString,
+							Computed:      true,
+							Optional:      true,
+							ValidateFunc:  verify.ValidateEnum([]string{"UNSPECIFIED", "INTERNET", "INTRA_VPC", "NON_INTERNET", "VPC_NETWORKS", ""}),
+							Description:   `Network scope of the traffic destination. Possible values: ["UNSPECIFIED", "INTERNET", "INTRA_VPC", "NON_INTERNET", "VPC_NETWORKS"]`,
+							ConflictsWith: []string{"match.0.src_network_context"},
 						},
 						"dest_region_codes": {
 							Type:        schema.TypeList,
@@ -238,11 +248,21 @@ Example inputs include: ["22"], ["80","443"], and ["12345-12349"].`,
 								Type: schema.TypeString,
 							},
 						},
+						"src_network_context": {
+							Type:          schema.TypeString,
+							Computed:      true,
+							Optional:      true,
+							ValidateFunc:  verify.ValidateEnum([]string{"UNSPECIFIED", "INTERNET", "INTRA_VPC", "NON_INTERNET", "VPC_NETWORKS", ""}),
+							Description:   `Network context of the traffic source. Possible values: ["UNSPECIFIED", "INTERNET", "INTRA_VPC", "NON_INTERNET", "VPC_NETWORKS"]`,
+							ConflictsWith: []string{"match.0.src_network_scope"},
+						},
 						"src_network_scope": {
-							Type:         schema.TypeString,
-							Optional:     true,
-							ValidateFunc: verify.ValidateEnum([]string{"INTERNET", "INTRA_VPC", "NON_INTERNET", "VPC_NETWORKS", ""}),
-							Description:  `Network scope of the traffic source. Possible values: ["INTERNET", "INTRA_VPC", "NON_INTERNET", "VPC_NETWORKS"]`,
+							Type:          schema.TypeString,
+							Computed:      true,
+							Optional:      true,
+							ValidateFunc:  verify.ValidateEnum([]string{"UNSPECIFIED", "INTERNET", "INTRA_VPC", "NON_INTERNET", "VPC_NETWORKS", ""}),
+							Description:   `Network scope of the traffic source. Possible values: ["UNSPECIFIED", "INTERNET", "INTRA_VPC", "NON_INTERNET", "VPC_NETWORKS"]`,
+							ConflictsWith: []string{"match.0.src_network_context"},
 						},
 						"src_networks": {
 							Type:        schema.TypeList,
@@ -719,6 +739,11 @@ func resourceComputeRegionNetworkFirewallPolicyRuleUpdate(d *schema.ResourceData
 		obj["disabled"] = disabledProp
 	}
 
+	obj, err = resourceComputeRegionNetworkFirewallPolicyRuleUpdateEncoder(d, meta, obj)
+	if err != nil {
+		return err
+	}
+
 	url, err := tpgresource.ReplaceVarsForId(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/firewallPolicies/{{firewall_policy}}/patchRule?priority={{priority}}")
 	if err != nil {
 		return err
@@ -885,10 +910,14 @@ func flattenComputeRegionNetworkFirewallPolicyRuleMatch(v interface{}, d *schema
 		flattenComputeRegionNetworkFirewallPolicyRuleMatchDestIpRanges(original["destIpRanges"], d, config)
 	transformed["src_network_scope"] =
 		flattenComputeRegionNetworkFirewallPolicyRuleMatchSrcNetworkScope(original["srcNetworkScope"], d, config)
+	transformed["src_network_context"] =
+		flattenComputeRegionNetworkFirewallPolicyRuleMatchSrcNetworkContext(original["srcNetworkContext"], d, config)
 	transformed["src_networks"] =
 		flattenComputeRegionNetworkFirewallPolicyRuleMatchSrcNetworks(original["srcNetworks"], d, config)
 	transformed["dest_network_scope"] =
 		flattenComputeRegionNetworkFirewallPolicyRuleMatchDestNetworkScope(original["destNetworkScope"], d, config)
+	transformed["dest_network_context"] =
+		flattenComputeRegionNetworkFirewallPolicyRuleMatchDestNetworkContext(original["destNetworkContext"], d, config)
 	transformed["layer4_configs"] =
 		flattenComputeRegionNetworkFirewallPolicyRuleMatchLayer4Configs(original["layer4Configs"], d, config)
 	transformed["src_secure_tags"] =
@@ -923,11 +952,19 @@ func flattenComputeRegionNetworkFirewallPolicyRuleMatchSrcNetworkScope(v interfa
 	return v
 }
 
+func flattenComputeRegionNetworkFirewallPolicyRuleMatchSrcNetworkContext(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenComputeRegionNetworkFirewallPolicyRuleMatchSrcNetworks(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
 func flattenComputeRegionNetworkFirewallPolicyRuleMatchDestNetworkScope(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenComputeRegionNetworkFirewallPolicyRuleMatchDestNetworkContext(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -1134,6 +1171,13 @@ func expandComputeRegionNetworkFirewallPolicyRuleMatch(v interface{}, d tpgresou
 		transformed["srcNetworkScope"] = transformedSrcNetworkScope
 	}
 
+	transformedSrcNetworkContext, err := expandComputeRegionNetworkFirewallPolicyRuleMatchSrcNetworkContext(original["src_network_context"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedSrcNetworkContext); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["srcNetworkContext"] = transformedSrcNetworkContext
+	}
+
 	transformedSrcNetworks, err := expandComputeRegionNetworkFirewallPolicyRuleMatchSrcNetworks(original["src_networks"], d, config)
 	if err != nil {
 		return nil, err
@@ -1146,6 +1190,13 @@ func expandComputeRegionNetworkFirewallPolicyRuleMatch(v interface{}, d tpgresou
 		return nil, err
 	} else if val := reflect.ValueOf(transformedDestNetworkScope); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["destNetworkScope"] = transformedDestNetworkScope
+	}
+
+	transformedDestNetworkContext, err := expandComputeRegionNetworkFirewallPolicyRuleMatchDestNetworkContext(original["dest_network_context"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedDestNetworkContext); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["destNetworkContext"] = transformedDestNetworkContext
 	}
 
 	transformedLayer4Configs, err := expandComputeRegionNetworkFirewallPolicyRuleMatchLayer4Configs(original["layer4_configs"], d, config)
@@ -1233,11 +1284,19 @@ func expandComputeRegionNetworkFirewallPolicyRuleMatchSrcNetworkScope(v interfac
 	return v, nil
 }
 
+func expandComputeRegionNetworkFirewallPolicyRuleMatchSrcNetworkContext(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
 func expandComputeRegionNetworkFirewallPolicyRuleMatchSrcNetworks(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
 func expandComputeRegionNetworkFirewallPolicyRuleMatchDestNetworkScope(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeRegionNetworkFirewallPolicyRuleMatchDestNetworkContext(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
@@ -1419,4 +1478,18 @@ func expandComputeRegionNetworkFirewallPolicyRuleTargetSecureTagsState(v interfa
 
 func expandComputeRegionNetworkFirewallPolicyRuleDisabled(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func resourceComputeRegionNetworkFirewallPolicyRuleUpdateEncoder(d *schema.ResourceData, meta interface{}, obj map[string]interface{}) (map[string]interface{}, error) {
+	if !d.HasChange("match") {
+		return obj, nil
+	}
+	oldMatch, newMatch := d.GetChange("match")
+
+	err := adjustFirewallPolicyRuleNetworkContextFields(obj, oldMatch, newMatch)
+	if err != nil {
+		return obj, err
+	}
+
+	return obj, nil
 }
