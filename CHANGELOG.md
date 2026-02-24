@@ -12,7 +12,7 @@ IMPROVEMENTS:
 * beyondcorp: added `logging` field to `google_beyondcorp_security_gateway` resource ([#11581](https://github.com/hashicorp/terraform-provider-google-beta/pull/11581))
 * dataproc: added `wait_for_completion` field to `google_dataproc_job` resource ([#11593](https://github.com/hashicorp/terraform-provider-google-beta/pull/11593))
 * discoveryengine: added `disable_analytics` field to `google_discovery_engine_search_engine` resource ([#11589](https://github.com/hashicorp/terraform-provider-google-beta/pull/11589))
-* dlp: added `targets.cloud_storage_target.filter.collection.include_tags` to `google_data_loss_prevention_discovery_config` resource ([#11594](https://github.com/hashicorp/terraform-provider-google-beta/pull/11594))
+* dlp: added `targets.cloud_storage_target.filter.collection.include_tags` block to `google_data_loss_prevention_discovery_config` resource ([#11594](https://github.com/hashicorp/terraform-provider-google-beta/pull/11594))
 * iap: added `client_id`, `client_secret`, and `client_secret_sha256` fields to `google_iap_settings` resource ([#11588](https://github.com/hashicorp/terraform-provider-google-beta/pull/11588))
 
 BUG FIXES:
