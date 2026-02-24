@@ -191,11 +191,21 @@ Example inputs include: ["22"], ["80","443"], and ["12345-12349"].`,
 								Type: schema.TypeString,
 							},
 						},
+						"dest_network_context": {
+							Type:          schema.TypeString,
+							Computed:      true,
+							Optional:      true,
+							ValidateFunc:  verify.ValidateEnum([]string{"UNSPECIFIED", "INTERNET", "INTRA_VPC", "NON_INTERNET", "VPC_NETWORKS", ""}),
+							Description:   `Network context of the traffic destination. Possible values: ["UNSPECIFIED", "INTERNET", "INTRA_VPC", "NON_INTERNET", "VPC_NETWORKS"]`,
+							ConflictsWith: []string{"match.0.src_network_scope"},
+						},
 						"dest_network_scope": {
-							Type:         schema.TypeString,
-							Optional:     true,
-							ValidateFunc: verify.ValidateEnum([]string{"INTERNET", "INTRA_VPC", "NON_INTERNET", "VPC_NETWORKS", ""}),
-							Description:  `Network scope of the traffic destination. Possible values: ["INTERNET", "INTRA_VPC", "NON_INTERNET", "VPC_NETWORKS"]`,
+							Type:          schema.TypeString,
+							Computed:      true,
+							Optional:      true,
+							ValidateFunc:  verify.ValidateEnum([]string{"UNSPECIFIED", "INTERNET", "INTRA_VPC", "NON_INTERNET", "VPC_NETWORKS", ""}),
+							Description:   `Network scope of the traffic destination. Possible values: ["UNSPECIFIED", "INTERNET", "INTRA_VPC", "NON_INTERNET", "VPC_NETWORKS"]`,
+							ConflictsWith: []string{"match.0.src_network_context"},
 						},
 						"dest_region_codes": {
 							Type:        schema.TypeList,
@@ -237,11 +247,21 @@ Example inputs include: ["22"], ["80","443"], and ["12345-12349"].`,
 								Type: schema.TypeString,
 							},
 						},
+						"src_network_context": {
+							Type:          schema.TypeString,
+							Computed:      true,
+							Optional:      true,
+							ValidateFunc:  verify.ValidateEnum([]string{"UNSPECIFIED", "INTERNET", "INTRA_VPC", "NON_INTERNET", "VPC_NETWORKS", ""}),
+							Description:   `Network context of the traffic source. Possible values: ["UNSPECIFIED", "INTERNET", "INTRA_VPC", "NON_INTERNET", "VPC_NETWORKS"]`,
+							ConflictsWith: []string{"match.0.src_network_scope"},
+						},
 						"src_network_scope": {
-							Type:         schema.TypeString,
-							Optional:     true,
-							ValidateFunc: verify.ValidateEnum([]string{"INTERNET", "INTRA_VPC", "NON_INTERNET", "VPC_NETWORKS", ""}),
-							Description:  `Network scope of the traffic source. Possible values: ["INTERNET", "INTRA_VPC", "NON_INTERNET", "VPC_NETWORKS"]`,
+							Type:          schema.TypeString,
+							Computed:      true,
+							Optional:      true,
+							ValidateFunc:  verify.ValidateEnum([]string{"UNSPECIFIED", "INTERNET", "INTRA_VPC", "NON_INTERNET", "VPC_NETWORKS", ""}),
+							Description:   `Network scope of the traffic source. Possible values: ["UNSPECIFIED", "INTERNET", "INTRA_VPC", "NON_INTERNET", "VPC_NETWORKS"]`,
+							ConflictsWith: []string{"match.0.src_network_context"},
 						},
 						"src_networks": {
 							Type:        schema.TypeList,
@@ -701,6 +721,11 @@ func resourceComputeFirewallPolicyRuleUpdate(d *schema.ResourceData, meta interf
 		obj["firewallPolicy"] = firewallPolicyProp
 	}
 
+	obj, err = resourceComputeFirewallPolicyRuleUpdateEncoder(d, meta, obj)
+	if err != nil {
+		return err
+	}
+
 	url, err := tpgresource.ReplaceVarsForId(d, config, "{{ComputeBasePath}}locations/global/firewallPolicies/{{firewall_policy}}/patchRule?priority={{priority}}")
 	if err != nil {
 		return err
@@ -862,10 +887,14 @@ func flattenComputeFirewallPolicyRuleMatch(v interface{}, d *schema.ResourceData
 		flattenComputeFirewallPolicyRuleMatchDestIpRanges(original["destIpRanges"], d, config)
 	transformed["src_network_scope"] =
 		flattenComputeFirewallPolicyRuleMatchSrcNetworkScope(original["srcNetworkScope"], d, config)
+	transformed["src_network_context"] =
+		flattenComputeFirewallPolicyRuleMatchSrcNetworkContext(original["srcNetworkContext"], d, config)
 	transformed["src_networks"] =
 		flattenComputeFirewallPolicyRuleMatchSrcNetworks(original["srcNetworks"], d, config)
 	transformed["dest_network_scope"] =
 		flattenComputeFirewallPolicyRuleMatchDestNetworkScope(original["destNetworkScope"], d, config)
+	transformed["dest_network_context"] =
+		flattenComputeFirewallPolicyRuleMatchDestNetworkContext(original["destNetworkContext"], d, config)
 	transformed["layer4_configs"] =
 		flattenComputeFirewallPolicyRuleMatchLayer4Configs(original["layer4Configs"], d, config)
 	transformed["dest_address_groups"] =
@@ -900,11 +929,19 @@ func flattenComputeFirewallPolicyRuleMatchSrcNetworkScope(v interface{}, d *sche
 	return v
 }
 
+func flattenComputeFirewallPolicyRuleMatchSrcNetworkContext(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenComputeFirewallPolicyRuleMatchSrcNetworks(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
 func flattenComputeFirewallPolicyRuleMatchDestNetworkScope(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenComputeFirewallPolicyRuleMatchDestNetworkContext(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -1111,6 +1148,13 @@ func expandComputeFirewallPolicyRuleMatch(v interface{}, d tpgresource.Terraform
 		transformed["srcNetworkScope"] = transformedSrcNetworkScope
 	}
 
+	transformedSrcNetworkContext, err := expandComputeFirewallPolicyRuleMatchSrcNetworkContext(original["src_network_context"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedSrcNetworkContext); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["srcNetworkContext"] = transformedSrcNetworkContext
+	}
+
 	transformedSrcNetworks, err := expandComputeFirewallPolicyRuleMatchSrcNetworks(original["src_networks"], d, config)
 	if err != nil {
 		return nil, err
@@ -1123,6 +1167,13 @@ func expandComputeFirewallPolicyRuleMatch(v interface{}, d tpgresource.Terraform
 		return nil, err
 	} else if val := reflect.ValueOf(transformedDestNetworkScope); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["destNetworkScope"] = transformedDestNetworkScope
+	}
+
+	transformedDestNetworkContext, err := expandComputeFirewallPolicyRuleMatchDestNetworkContext(original["dest_network_context"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedDestNetworkContext); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["destNetworkContext"] = transformedDestNetworkContext
 	}
 
 	transformedLayer4Configs, err := expandComputeFirewallPolicyRuleMatchLayer4Configs(original["layer4_configs"], d, config)
@@ -1210,11 +1261,19 @@ func expandComputeFirewallPolicyRuleMatchSrcNetworkScope(v interface{}, d tpgres
 	return v, nil
 }
 
+func expandComputeFirewallPolicyRuleMatchSrcNetworkContext(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
 func expandComputeFirewallPolicyRuleMatchSrcNetworks(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
 func expandComputeFirewallPolicyRuleMatchDestNetworkScope(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeFirewallPolicyRuleMatchDestNetworkContext(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
@@ -1408,4 +1467,18 @@ func expandComputeFirewallPolicyRuleFirewallPolicy(v interface{}, d tpgresource.
 		return nil, fmt.Errorf("Error setting firewall_policy: %s", err)
 	}
 	return firewallPolicyId, nil
+}
+
+func resourceComputeFirewallPolicyRuleUpdateEncoder(d *schema.ResourceData, meta interface{}, obj map[string]interface{}) (map[string]interface{}, error) {
+	if !d.HasChange("match") {
+		return obj, nil
+	}
+	oldMatch, newMatch := d.GetChange("match")
+
+	err := adjustFirewallPolicyRuleNetworkContextFields(obj, oldMatch, newMatch)
+	if err != nil {
+		return obj, err
+	}
+
+	return obj, nil
 }
