@@ -1,4 +1,4 @@
-## 7.21.0 (Unreleased)
+## 7.21.0 (Feb 24, 2026)
 
 FEATURES:
 * **New Data Source:** `google_vmwareengine_announcements` ([#11577](https://github.com/hashicorp/terraform-provider-google-beta/pull/11577))
