@@ -19,3 +19,5 @@ fields:
     - api_field: uid
     - api_field: updateTime
     - api_field: user
+    - field: deletion_policy
+      provider_only: true
