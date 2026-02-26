@@ -716,10 +716,19 @@ func schemaNodeConfig() *schema.Schema {
 					Elem: &schema.Resource{
 						Schema: map[string]*schema.Schema{
 							"sandbox_type": {
-								Type:         schema.TypeString,
-								Required:     true,
-								Description:  `Type of the sandbox to use for the node (e.g. 'gvisor')`,
-								ValidateFunc: validation.StringInSlice([]string{"gvisor"}, false),
+								Type:             schema.TypeString,
+								Optional:         true,
+								Deprecated:       "`sandbox_config.sandbox_type` is deprecated and will be removed in a future major release. Use `sandbox_config.type` instead.",
+								Description:      `Type of the sandbox to use for the node (e.g. 'gvisor'). Deprecated in favor of type.`,
+								ValidateFunc:     validation.StringInSlice([]string{"gvisor"}, false),
+								DiffSuppressFunc: sandboxTypeDiffSuppress,
+							},
+							"type": {
+								Type:             schema.TypeString,
+								Optional:         true,
+								DiffSuppressFunc: sandboxTypeDiffSuppress,
+								Description:      `Type of the sandbox to use for the node (e.g. 'GVISOR').`,
+								ValidateFunc:     validation.StringInSlice([]string{"GVISOR"}, false),
 							},
 						},
 					},
@@ -1646,8 +1655,11 @@ func expandNodeConfig(d *schema.ResourceData, prefix string, v interface{}) *con
 
 	if v, ok := nodeConfig["sandbox_config"]; ok && len(v.([]interface{})) > 0 {
 		conf := v.([]interface{})[0].(map[string]interface{})
-		nc.SandboxConfig = &container.SandboxConfig{
-			SandboxType: conf["sandbox_type"].(string),
+		nc.SandboxConfig = &container.SandboxConfig{}
+		if st, ok := conf["sandbox_type"]; ok && st != "" {
+			nc.SandboxConfig.SandboxType = st.(string)
+		} else if t, ok := conf["type"]; ok {
+			nc.SandboxConfig.Type = t.(string)
 		}
 	}
 	if v, ok := nodeConfig["boot_disk_kms_key"]; ok {
@@ -2722,12 +2734,20 @@ func flattenWorkloadMetadataConfig(c *container.WorkloadMetadataConfig) []map[st
 	}
 	return result
 }
+
 func flattenSandboxConfig(c *container.SandboxConfig) []map[string]interface{} {
 	result := []map[string]interface{}{}
 	if c != nil {
-		result = append(result, map[string]interface{}{
-			"sandbox_type": c.SandboxType,
-		})
+		sandboxConfig := map[string]interface{}{}
+		if c.SandboxType != "" {
+			sandboxConfig["sandbox_type"] = c.SandboxType
+		}
+		if c.Type != "" {
+			sandboxConfig["type"] = c.Type
+		}
+		if len(sandboxConfig) > 0 {
+			result = append(result, sandboxConfig)
+		}
 	}
 	return result
 }
@@ -2745,14 +2765,16 @@ func containerNodePoolLabelsSuppress(k, old, new string, d *schema.ResourceData)
 	// Right now, GKE only applies its own out-of-band labels when you enable
 	// Sandbox. We only need to perform diff suppression in this case;
 	// otherwise, the default Terraform behavior is fine.
-	o, n := d.GetChange(root + ".sandbox_config.0.sandbox_type")
-	if o == nil || n == nil {
+	sandboxTypeOld, sandboxTypeNew := d.GetChange(root + ".sandbox_config.0.sandbox_type")
+	typeOld, typeNew := d.GetChange(root + ".sandbox_config.0.type")
+
+	if (sandboxTypeOld == nil || sandboxTypeNew == nil) && (typeOld == nil || typeNew == nil) {
 		return false
 	}
 
 	// Pull the entire changeset as a list rather than trying to deal with each
 	// element individually.
-	o, n = d.GetChange(root + ".labels")
+	o, n := d.GetChange(root + ".labels")
 	if o == nil || n == nil {
 		return false
 	}
@@ -2777,6 +2799,42 @@ func containerNodePoolLabelsSuppress(k, old, new string, d *schema.ResourceData)
 	}
 
 	return true
+}
+
+func sandboxTypeDiffSuppress(k, old, new string, d *schema.ResourceData) bool {
+	return SandboxTypeDiffSuppress(k, old, new, d)
+}
+
+func SandboxTypeDiffSuppress(k, old, new string, d tpgresource.TerraformResourceDataChange) bool {
+	isSandboxType := strings.HasSuffix(k, "sandbox_type")
+	isType := strings.HasSuffix(k, "type")
+
+	if !isSandboxType && !isType {
+		return false
+	}
+
+	var root string
+	if isSandboxType {
+		root = strings.TrimSuffix(k, "sandbox_type")
+	} else {
+		root = strings.TrimSuffix(k, "type")
+	}
+	root = strings.TrimSuffix(root, ".")
+
+	var otherFieldKey string
+	if isSandboxType {
+		otherFieldKey = root + ".type"
+	} else {
+		otherFieldKey = root + ".sandbox_type"
+	}
+
+	_, otherNew := d.GetChange(otherFieldKey)
+
+	if otherNew != nil && otherNew != "" {
+		return true
+	}
+
+	return false
 }
 
 func containerNodePoolResourceLabelsDiffSuppress(k, old, new string, d *schema.ResourceData) bool {
