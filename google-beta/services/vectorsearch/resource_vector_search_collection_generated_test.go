@@ -59,7 +59,7 @@ func TestAccVectorSearchCollection_vectorsearchCollectionBasicExample(t *testing
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckVectorSearchCollectionDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -78,6 +78,8 @@ func TestAccVectorSearchCollection_vectorsearchCollectionBasicExample(t *testing
 func testAccVectorSearchCollection_vectorsearchCollectionBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_vector_search_collection" "example-collection" {
+  provider = google-beta
+
   location      = "us-central1"
   collection_id = "tf-test-example-collection%{random_suffix}"
 
