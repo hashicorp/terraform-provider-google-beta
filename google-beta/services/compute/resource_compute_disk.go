@@ -589,6 +589,13 @@ encryption key that protects this resource.`,
 				Description: `Whether this disk is using confidential compute mode.
 Note: Only supported on hyperdisk skus, disk_encryption_key is required when setting to true`,
 			},
+			"erase_windows_vss_signature": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				ForceNew:    true,
+				Description: `Specifies whether the disk restored from a source snapshot should erase Windows specific VSS signature.`,
+				Default:     false,
+			},
 			"guest_os_features": {
 				Type:     schema.TypeSet,
 				Computed: true,
@@ -1182,6 +1189,12 @@ func resourceComputeDiskCreate(d *schema.ResourceData, meta interface{}) error {
 	} else if v, ok := d.GetOkExists("access_mode"); !tpgresource.IsEmptyValue(reflect.ValueOf(accessModeProp)) && (ok || !reflect.DeepEqual(v, accessModeProp)) {
 		obj["accessMode"] = accessModeProp
 	}
+	eraseWindowsVssSignatureProp, err := expandComputeDiskEraseWindowsVssSignature(d.Get("erase_windows_vss_signature"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("erase_windows_vss_signature"); !tpgresource.IsEmptyValue(reflect.ValueOf(eraseWindowsVssSignatureProp)) && (ok || !reflect.DeepEqual(v, eraseWindowsVssSignatureProp)) {
+		obj["eraseWindowsVssSignature"] = eraseWindowsVssSignatureProp
+	}
 	effectiveLabelsProp, err := expandComputeDiskEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
@@ -1298,6 +1311,11 @@ func resourceComputeDiskRead(d *schema.ResourceData, meta interface{}) error {
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("ComputeDisk %q", d.Id()))
+	}
+	if _, ok := d.GetOkExists("erase_windows_vss_signature"); !ok {
+		if err := d.Set("erase_windows_vss_signature", false); err != nil {
+			return fmt.Errorf("Error setting erase_windows_vss_signature: %s", err)
+		}
 	}
 
 	res, err = resourceComputeDiskDecoder(d, meta, res)
@@ -1945,6 +1963,9 @@ func resourceComputeDiskImport(d *schema.ResourceData, meta interface{}) ([]*sch
 	// Explicitly set virtual fields to default values on import
 	if err := d.Set("create_snapshot_before_destroy", false); err != nil {
 		return nil, fmt.Errorf("Error setting create_snapshot_before_destroy: %s", err)
+	}
+	if err := d.Set("erase_windows_vss_signature", false); err != nil {
+		return nil, fmt.Errorf("Error setting erase_windows_vss_signature: %s", err)
 	}
 
 	return []*schema.ResourceData{d}, nil
@@ -2697,6 +2718,10 @@ func expandComputeDiskStoragePool(v interface{}, d tpgresource.TerraformResource
 }
 
 func expandComputeDiskAccessMode(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeDiskEraseWindowsVssSignature(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

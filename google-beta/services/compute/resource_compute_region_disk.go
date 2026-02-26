@@ -236,6 +236,13 @@ encryption key that protects this resource.`,
 					},
 				},
 			},
+			"erase_windows_vss_signature": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				ForceNew:    true,
+				Description: `Specifies whether the disk restored from a source snapshot should erase Windows specific VSS signature.`,
+				Default:     false,
+			},
 			"guest_os_features": {
 				Type:     schema.TypeSet,
 				Computed: true,
@@ -604,6 +611,12 @@ func resourceComputeRegionDiskCreate(d *schema.ResourceData, meta interface{}) e
 	} else if v, ok := d.GetOkExists("provisioned_throughput"); !tpgresource.IsEmptyValue(reflect.ValueOf(provisionedThroughputProp)) && (ok || !reflect.DeepEqual(v, provisionedThroughputProp)) {
 		obj["provisionedThroughput"] = provisionedThroughputProp
 	}
+	eraseWindowsVssSignatureProp, err := expandComputeRegionDiskEraseWindowsVssSignature(d.Get("erase_windows_vss_signature"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("erase_windows_vss_signature"); !tpgresource.IsEmptyValue(reflect.ValueOf(eraseWindowsVssSignatureProp)) && (ok || !reflect.DeepEqual(v, eraseWindowsVssSignatureProp)) {
+		obj["eraseWindowsVssSignature"] = eraseWindowsVssSignatureProp
+	}
 	effectiveLabelsProp, err := expandComputeRegionDiskEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
@@ -720,6 +733,11 @@ func resourceComputeRegionDiskRead(d *schema.ResourceData, meta interface{}) err
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("ComputeRegionDisk %q", d.Id()))
+	}
+	if _, ok := d.GetOkExists("erase_windows_vss_signature"); !ok {
+		if err := d.Set("erase_windows_vss_signature", false); err != nil {
+			return fmt.Errorf("Error setting erase_windows_vss_signature: %s", err)
+		}
 	}
 
 	res, err = resourceComputeRegionDiskDecoder(d, meta, res)
@@ -1344,6 +1362,9 @@ func resourceComputeRegionDiskImport(d *schema.ResourceData, meta interface{}) (
 	if err := d.Set("create_snapshot_before_destroy", false); err != nil {
 		return nil, fmt.Errorf("Error setting create_snapshot_before_destroy: %s", err)
 	}
+	if err := d.Set("erase_windows_vss_signature", false); err != nil {
+		return nil, fmt.Errorf("Error setting erase_windows_vss_signature: %s", err)
+	}
 
 	return []*schema.ResourceData{d}, nil
 }
@@ -1875,6 +1896,10 @@ func expandComputeRegionDiskProvisionedIops(v interface{}, d tpgresource.Terrafo
 }
 
 func expandComputeRegionDiskProvisionedThroughput(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeRegionDiskEraseWindowsVssSignature(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
