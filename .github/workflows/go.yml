@@ -20,6 +20,10 @@ jobs:
       with:
         go-version-file: "go.mod"
 
+    - name: Get dependencies
+      run: |
+        go mod download
+
     - name: Build and Lint
       run: make build
 
