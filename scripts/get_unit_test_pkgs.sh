@@ -4,19 +4,19 @@
 # Ask Go for BOTH the Import Path and the exact Directory Path on disk, separated by a pipe '|'
 go list -e -f '{{.ImportPath}}|{{.Dir}}' ./... | grep -v "/scripts" | while IFS='|' read -r pkg dir; do
 
-    # For NON-SERVICE packages:
+    # 1. For NON-SERVICE packages:
     if [[ "$pkg" != *"/google-beta/services/"* ]]; then
-        # Keep ONLY if it has at least one test of ANY kind.
-        # `grep -q` will return true as soon as it finds one "func Test"
-        if cat "$dir"/*_test.go 2>/dev/null | grep -q "^func Test"; then
+        # Check if any file in this directory has a test.
+        if grep -q "^func Test" "$dir"/*_test.go 2>/dev/null; then
             echo "$pkg"
         fi
         continue
     fi
 
     # 2. For SERVICE packages: 
-    # Keep ONLY if it has at least one Unit test (a test that does NOT start with TestAcc).
-    if cat "$dir"/*_test.go 2>/dev/null | grep "^func Test" | grep -v -q "^func TestAcc"; then
+    # We use awk here. It reads the files directly (no pipes).
+    # Logic: If line starts with "func Test" AND does NOT start with "func TestAcc", exit with success immediately.
+    if awk '/^func Test/ && !/^func TestAcc/ { found=1; exit } END { exit !found }' "$dir"/*_test.go 2>/dev/null; then
         echo "$pkg"
     fi
 
