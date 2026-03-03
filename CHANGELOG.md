@@ -12,7 +12,7 @@ IMPROVEMENTS:
 * compute: added `dest_network_context`, `src_network_context` and `src_networks` fields to `google_compute_network_firewall_policy_rule` resource ([#26227](https://github.com/hashicorp/terraform-provider-google/pull/26227))
 * compute: added `dest_network_context`, `src_network_context` and `src_networks` fields to `google_compute_region_network_firewall_policy_rule` resource ([#26227](https://github.com/hashicorp/terraform-provider-google/pull/26227))
 * compute: added `consumer_accept_lists.endpoint_url` to `google_compute_service_attachment` resource ([#26234](https://github.com/hashicorp/terraform-provider-google/pull/26234))
-* compute: added `erase_windows_vss_signature` field to `google_compute_disk` (beta) ([#26249](https://github.com/hashicorp/terraform-provider-google/pull/26249))
+* compute: added `erase_windows_vss_signature` field to `google_compute_disk` resource ([#26249](https://github.com/hashicorp/terraform-provider-google/pull/26249))
 * compute: added `erase_windows_vss_signature` field to `google_compute_region_disk` (beta) ([#26249](https://github.com/hashicorp/terraform-provider-google/pull/26249))
 * developerconnect: added `http_config` field to `google_developer_connect_connection` resource ([#26232](https://github.com/hashicorp/terraform-provider-google/pull/26232))
 * filestore: added `source_backupdr_backup` field to `google_filestore_instance` resource ([#26238](https://github.com/hashicorp/terraform-provider-google/pull/26238))
