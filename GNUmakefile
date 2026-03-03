@@ -1,4 +1,4 @@
-TEST?=$$(sh scripts/get_unit_test_pkgs.sh)
+TEST?=$$(bash scripts/get_unit_test_pkgs.sh)
 WEBSITE_REPO=github.com/hashicorp/terraform-website
 PKG_NAME=google
 DIR_NAME=google-beta
