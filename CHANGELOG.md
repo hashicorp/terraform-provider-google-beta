@@ -20,7 +20,7 @@ IMPROVEMENTS:
 * iam: added AZURE_AD_GROUPS_DISPLAY_NAME enum value to `extra_attributes_oauth2_client.attribute-type` field in `google_iam_workforce_pool_provider` resource ([#26226](https://github.com/hashicorp/terraform-provider-google/pull/26226))
 * kms: added a KMS AutokeyConfig-specific 10s post-create/post-update ([#26236](https://github.com/hashicorp/terraform-provider-google/pull/26236))
 * netapp: added `large_capacity_config` block with `constituent_count` field to `google_netapp_volume` resource ([#26243](https://github.com/hashicorp/terraform-provider-google/pull/26243))
-* netapp: added `scaleTier` field to `netapp_storage_pool` resource (beta) ([#26243](https://github.com/hashicorp/terraform-provider-google/pull/26243))
+* netapp: added `scale_tier` field to `netapp_storage_pool` resource ([#26243](https://github.com/hashicorp/terraform-provider-google/pull/26243))
 * networkservices: added support for use of multiple `ports` for `google_network_services_gateway` resources of type `SECURE_WEB_GATEWAY` ([#26265](https://github.com/hashicorp/terraform-provider-google/pull/26265))
 * sql: added `auto_upgrade_enabled` field to `google_sql_database_instance` resource. ([#26205](https://github.com/hashicorp/terraform-provider-google/pull/26205))
 * sql: added `data_api_access` field to `google_sql_database_instance` resource ([#26217](https://github.com/hashicorp/terraform-provider-google/pull/26217))
