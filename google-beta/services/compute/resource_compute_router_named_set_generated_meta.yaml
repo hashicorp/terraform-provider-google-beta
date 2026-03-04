@@ -1,0 +1,19 @@
+resource: google_compute_router_named_set
+generation_type: mmv1
+source_file: products/compute/RouterNamedSet.yaml
+api_service_name: compute.googleapis.com
+api_version: beta
+api_resource_type_kind: Router
+fields:
+    - api_field: description
+    - api_field: elements.description
+    - api_field: elements.expression
+    - api_field: elements.location
+    - api_field: elements.title
+    - api_field: fingerprint
+    - api_field: name
+    - field: region
+      provider_only: true
+    - field: router
+      provider_only: true
+    - api_field: type
