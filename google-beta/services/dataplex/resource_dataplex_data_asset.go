@@ -118,6 +118,8 @@ func ResourceDataplexDataAsset() *schema.Resource {
 			tpgresource.DefaultProviderProject,
 		),
 
+		DeprecationMessage: "`google_dataplex_data_asset` is deprecated and will be removed in a future major release. Please use `google_dataplex_data_product_data_asset` resource instead.",
+
 		Schema: map[string]*schema.Schema{
 			"data_asset_id": {
 				Type:        schema.TypeString,

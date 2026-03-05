@@ -46,6 +46,7 @@ type ProviderModel struct {
 	UserProjectOverride                       types.Bool                 `tfsdk:"user_project_override"`
 	RequestTimeout                            types.String               `tfsdk:"request_timeout"`
 	RequestReason                             types.String               `tfsdk:"request_reason"`
+	PollInterval                              types.String               `tfsdk:"poll_interval"`
 	UniverseDomain                            types.String               `tfsdk:"universe_domain"`
 	DefaultLabels                             types.Map                  `tfsdk:"default_labels"`
 	AddTerraformAttributionLabel              types.Bool                 `tfsdk:"add_terraform_attribution_label"`
@@ -142,6 +143,7 @@ type ProviderModel struct {
 	GKEHub2CustomEndpoint                  types.String `tfsdk:"gke_hub2_custom_endpoint"`
 	GkeonpremCustomEndpoint                types.String `tfsdk:"gkeonprem_custom_endpoint"`
 	HealthcareCustomEndpoint               types.String `tfsdk:"healthcare_custom_endpoint"`
+	HypercomputeclusterCustomEndpoint      types.String `tfsdk:"hypercomputecluster_custom_endpoint"`
 	IAM2CustomEndpoint                     types.String `tfsdk:"iam2_custom_endpoint"`
 	IAM3CustomEndpoint                     types.String `tfsdk:"iam3_custom_endpoint"`
 	IAMBetaCustomEndpoint                  types.String `tfsdk:"iam_beta_custom_endpoint"`
@@ -212,6 +214,7 @@ type ProviderModel struct {
 	TagsCustomEndpoint                     types.String `tfsdk:"tags_custom_endpoint"`
 	TpuV2CustomEndpoint                    types.String `tfsdk:"tpu_v2_custom_endpoint"`
 	TranscoderCustomEndpoint               types.String `tfsdk:"transcoder_custom_endpoint"`
+	VectorSearchCustomEndpoint             types.String `tfsdk:"vector_search_custom_endpoint"`
 	VertexAICustomEndpoint                 types.String `tfsdk:"vertex_ai_custom_endpoint"`
 	VmwareengineCustomEndpoint             types.String `tfsdk:"vmwareengine_custom_endpoint"`
 	VPCAccessCustomEndpoint                types.String `tfsdk:"vpc_access_custom_endpoint"`

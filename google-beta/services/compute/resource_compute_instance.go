@@ -134,6 +134,7 @@ var (
 		"scheduling.0.host_error_timeout_seconds",
 		"scheduling.0.graceful_shutdown",
 		"scheduling.0.skip_guest_os_shutdown",
+		"scheduling.0.preemption_notice_duration",
 		"scheduling.0.local_ssd_recovery_timeout",
 	}
 
@@ -356,7 +357,6 @@ func ResourceComputeInstance() *schema.Resource {
 										Optional:     true,
 										AtLeastOneOf: initializeParamsKeys,
 										Computed:     true,
-										ForceNew:     true,
 										ValidateFunc: validation.IntAtLeast(1),
 										Description:  `The size of the image in gigabytes.`,
 									},
@@ -645,6 +645,20 @@ func ResourceComputeInstance() *schema.Resource {
 							Description:      `The URL of the network attachment that this interface should connect to in the following format: projects/{projectNumber}/regions/{region_name}/networkAttachments/{network_attachment_name}.`,
 						},
 
+						"parent_nic_name": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: `Name of the parent network interface of a dynamic network interface.`,
+						},
+
+						"vlan": {
+							Type:         schema.TypeInt,
+							Optional:     true,
+							ForceNew:     true,
+							ValidateFunc: validation.IntBetween(2, 255),
+							Description:  `VLAN tag of a dynamic network interface, must be an integer in the range from 2 to 255 inclusively.`,
+						},
+
 						"subnetwork_project": {
 							Type:        schema.TypeString,
 							Optional:    true,
@@ -664,6 +678,7 @@ func ResourceComputeInstance() *schema.Resource {
 							Computed:    true,
 							Description: `The name of the interface`,
 						},
+
 						"nic_type": {
 							Type:         schema.TypeString,
 							Optional:     true,
@@ -671,6 +686,7 @@ func ResourceComputeInstance() *schema.Resource {
 							ValidateFunc: validation.StringInSlice([]string{"GVNIC", "VIRTIO_NET", "IDPF", "MRDMA", "IRDMA"}, false),
 							Description:  `The type of vNIC to be used on this interface. Possible values:GVNIC, VIRTIO_NET, IDPF, MRDMA, and IRDMA`,
 						},
+
 						"access_config": {
 							Type:        schema.TypeList,
 							Optional:    true,
@@ -1274,6 +1290,27 @@ be from 0 to 999,999,999 inclusive.`,
 							Optional:    true,
 							Default:     false,
 							Description: `Default is false and there will be 120 seconds between GCE ACPI G2 Soft Off and ACPI G3 Mechanical Off for Standard VMs and 30 seconds for Spot VMs.`,
+						},
+						"preemption_notice_duration": {
+							Type:         schema.TypeList,
+							Optional:     true,
+							MaxItems:     1,
+							AtLeastOneOf: schedulingKeys,
+							Description:  `The duration of the notice that the instance will receive before it is preempted.`,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"seconds": {
+										Type:        schema.TypeInt,
+										Required:    true,
+										Description: `Span of time at a resolution of a second. Must be from 0 to 315,576,000,000 inclusive.`,
+									},
+									"nanos": {
+										Type:        schema.TypeInt,
+										Optional:    true,
+										Description: `Span of time that's a fraction of a second at nanosecond resolution. Durations less than one second are represented with a 0 seconds field and a positive nanos field. Must be from 0 to 999,999,999 inclusive.`,
+									},
+								},
+							},
 						},
 					},
 				},
@@ -2770,13 +2807,23 @@ func resourceComputeInstanceUpdate(d *schema.ResourceData, meta interface{}) err
 
 		obj := make(map[string]interface{})
 
-		if d.HasChange("boot_disk.0.initialize_params.0.labels") {
-			obj["labels"] = tpgresource.ConvertStringMap(d.Get("boot_disk.0.initialize_params.0.labels").(map[string]interface{}))
-			obj["labelFingerprint"] = disk.LabelFingerprint
-			url := "{{ComputeBasePath}}projects/{{project}}/zones/{{zone}}/disks/{{name}}/setLabels"
-			err := updateDisk(d, config, userAgent, project, url, obj)
-			if err != nil {
-				return err
+		if d.HasChange("boot_disk.0.initialize_params") {
+			if d.HasChange("boot_disk.0.initialize_params.0.size") {
+				obj["sizeGb"] = d.Get("boot_disk.0.initialize_params.0.size").(int)
+				url := "{{ComputeBasePath}}projects/{{project}}/zones/{{zone}}/disks/{{name}}/resize"
+				err := updateDisk(d, config, userAgent, project, url, obj)
+				if err != nil {
+					return err
+				}
+			}
+			if d.HasChange("boot_disk.0.initialize_params.0.labels") {
+				obj["labels"] = tpgresource.ConvertStringMap(d.Get("boot_disk.0.initialize_params.0.labels").(map[string]interface{}))
+				obj["labelFingerprint"] = disk.LabelFingerprint
+				url := "{{ComputeBasePath}}projects/{{project}}/zones/{{zone}}/disks/{{name}}/setLabels"
+				err := updateDisk(d, config, userAgent, project, url, obj)
+				if err != nil {
+					return err
+				}
 			}
 		}
 	}

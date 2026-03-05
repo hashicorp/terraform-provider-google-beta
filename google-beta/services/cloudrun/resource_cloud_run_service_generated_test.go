@@ -784,7 +784,7 @@ func TestAccCloudRunService_cloudRunServiceIapExample(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckCloudRunServiceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -803,13 +803,11 @@ func TestAccCloudRunService_cloudRunServiceIapExample(t *testing.T) {
 func testAccCloudRunService_cloudRunServiceIapExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_cloud_run_service" "default" {
-  provider = google-beta
   name     = "tf-test-cloudrun-srv%{random_suffix}"
   location = "us-central1"
 
   metadata {
     annotations = {
-      "run.googleapis.com/launch-stage" = "BETA"
       "run.googleapis.com/iap-enabled": true
     }
   }
