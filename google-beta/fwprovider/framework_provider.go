@@ -161,6 +161,13 @@ func (p *FrameworkProvider) Schema(_ context.Context, _ provider.SchemaRequest, 
 					fwvalidators.NonNegativeDurationValidator(),
 				},
 			},
+			"poll_interval": schema.StringAttribute{
+				Optional: true,
+				Validators: []validator.String{
+					fwvalidators.NonEmptyStringValidator(),
+					fwvalidators.NonNegativeDurationValidator(),
+				},
+			},
 			"request_reason": schema.StringAttribute{
 				Optional: true,
 			},
@@ -718,6 +725,12 @@ func (p *FrameworkProvider) Schema(_ context.Context, _ provider.SchemaRequest, 
 					transport_tpg.CustomEndpointValidator(),
 				},
 			},
+			"hypercomputecluster_custom_endpoint": &schema.StringAttribute{
+				Optional: true,
+				Validators: []validator.String{
+					transport_tpg.CustomEndpointValidator(),
+				},
+			},
 			"iam2_custom_endpoint": &schema.StringAttribute{
 				Optional: true,
 				Validators: []validator.String{
@@ -1133,6 +1146,12 @@ func (p *FrameworkProvider) Schema(_ context.Context, _ provider.SchemaRequest, 
 				},
 			},
 			"transcoder_custom_endpoint": &schema.StringAttribute{
+				Optional: true,
+				Validators: []validator.String{
+					transport_tpg.CustomEndpointValidator(),
+				},
+			},
+			"vector_search_custom_endpoint": &schema.StringAttribute{
 				Optional: true,
 				Validators: []validator.String{
 					transport_tpg.CustomEndpointValidator(),

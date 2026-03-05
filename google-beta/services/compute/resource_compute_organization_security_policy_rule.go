@@ -134,10 +134,21 @@ func ResourceComputeOrganizationSecurityPolicyRule() *schema.Resource {
 							MaxItems:    1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
+									"dest_ip_ranges": {
+										Type:     schema.TypeList,
+										Optional: true,
+										Description: `Destination IP address range in CIDR format. Required for EGRESS rules.
+This field may only be specified when versionedExpr is set to FIREWALL.`,
+										Elem: &schema.Schema{
+											Type: schema.TypeString,
+										},
+										ExactlyOneOf: []string{"match.0.config.0.dest_ip_ranges", "match.0.config.0.src_ip_ranges"},
+									},
 									"layer4_config": {
-										Type:        schema.TypeList,
-										Required:    true,
-										Description: `Pairs of IP protocols and ports that the rule should match.`,
+										Type:     schema.TypeList,
+										Optional: true,
+										Description: `Pairs of IP protocols and ports that the rule should match.
+This field may only be specified when versionedExpr is set to FIREWALL.`,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"ip_protocol": {
@@ -166,16 +177,6 @@ Example inputs include: ["22"], ["80","443"], and
 											},
 										},
 									},
-									"dest_ip_ranges": {
-										Type:     schema.TypeList,
-										Optional: true,
-										Description: `Destination IP address range in CIDR format. Required for
-EGRESS rules.`,
-										Elem: &schema.Schema{
-											Type: schema.TypeString,
-										},
-										ExactlyOneOf: []string{"match.0.config.0.dest_ip_ranges", "match.0.config.0.src_ip_ranges"},
-									},
 									"src_ip_ranges": {
 										Type:     schema.TypeList,
 										Optional: true,
@@ -195,11 +196,11 @@ INGRESS rules.`,
 							Description: `A description of the rule.`,
 						},
 						"versioned_expr": {
-							Type:         schema.TypeString,
-							Optional:     true,
-							ValidateFunc: verify.ValidateEnum([]string{"FIREWALL", ""}),
+							Type:     schema.TypeString,
+							Optional: true,
 							Description: `Preconfigured versioned expression. For organization security policy rules,
-the only supported type is "FIREWALL". Default value: "FIREWALL" Possible values: ["FIREWALL"]`,
+the only supported type is "SRC_IPS_V1".
+**NOTE** : 'FIREWALL' type is deprecated. Please use 'google_compute_firewall_policy_rule' resource instead.`,
 							Default: "FIREWALL",
 						},
 					},
@@ -228,14 +229,16 @@ highest priority and 2147483647 is the lowest prority.`,
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: verify.ValidateEnum([]string{"INGRESS", "EGRESS", ""}),
-				Description:  `The direction in which this rule applies. If unspecified an INGRESS rule is created. Possible values: ["INGRESS", "EGRESS"]`,
+				Description: `The direction in which this rule applies. If unspecified an INGRESS rule is created.
+This field may only be specified when the versionedExpr is set to FIREWALL. Possible values: ["INGRESS", "EGRESS"]`,
 			},
 			"enable_logging": {
 				Type:     schema.TypeBool,
 				Optional: true,
 				Description: `Denotes whether to enable logging for a particular rule.
 If logging is enabled, logs will be exported to the
-configured export destination in Stackdriver.`,
+configured export destination in Stackdriver.
+This field may only be specified when the versionedExpr is set to FIREWALL.`,
 			},
 			"preview": {
 				Type:        schema.TypeBool,

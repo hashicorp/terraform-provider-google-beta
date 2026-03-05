@@ -69,7 +69,7 @@ fields:
     - api_field: postgresqlProfile.username
     - api_field: privateConnectivity.privateConnection
     - api_field: salesforceProfile.domain
-    - api_field: salesforceProfile.oauth2ClientCredentials.client_id
+    - api_field: salesforceProfile.oauth2ClientCredentials.clientId
     - api_field: salesforceProfile.oauth2ClientCredentials.clientSecret
     - api_field: salesforceProfile.oauth2ClientCredentials.secretManagerStoredClientSecret
     - api_field: salesforceProfile.userCredentials.password

@@ -350,6 +350,7 @@ type Config struct {
 	GKEHub2BasePath                  string
 	GkeonpremBasePath                string
 	HealthcareBasePath               string
+	HypercomputeclusterBasePath      string
 	IAM2BasePath                     string
 	IAM3BasePath                     string
 	IAMBetaBasePath                  string
@@ -420,6 +421,7 @@ type Config struct {
 	TagsBasePath                     string
 	TpuV2BasePath                    string
 	TranscoderBasePath               string
+	VectorSearchBasePath             string
 	VertexAIBasePath                 string
 	VmwareengineBasePath             string
 	VPCAccessBasePath                string
@@ -540,6 +542,7 @@ const GKEHubBasePathKey = "GKEHub"
 const GKEHub2BasePathKey = "GKEHub2"
 const GkeonpremBasePathKey = "Gkeonprem"
 const HealthcareBasePathKey = "Healthcare"
+const HypercomputeclusterBasePathKey = "Hypercomputecluster"
 const IAM2BasePathKey = "IAM2"
 const IAM3BasePathKey = "IAM3"
 const IAMBetaBasePathKey = "IAMBeta"
@@ -610,6 +613,7 @@ const StorageTransferBasePathKey = "StorageTransfer"
 const TagsBasePathKey = "Tags"
 const TpuV2BasePathKey = "TpuV2"
 const TranscoderBasePathKey = "Transcoder"
+const VectorSearchBasePathKey = "VectorSearch"
 const VertexAIBasePathKey = "VertexAI"
 const VmwareengineBasePathKey = "Vmwareengine"
 const VPCAccessBasePathKey = "VPCAccess"
@@ -719,6 +723,7 @@ var DefaultBasePaths = map[string]string{
 	GKEHub2BasePathKey:                  "https://gkehub.googleapis.com/v1beta/",
 	GkeonpremBasePathKey:                "https://gkeonprem.googleapis.com/v1/",
 	HealthcareBasePathKey:               "https://healthcare.googleapis.com/v1beta1/",
+	HypercomputeclusterBasePathKey:      "https://hypercomputecluster.googleapis.com/v1beta/",
 	IAM2BasePathKey:                     "https://iam.googleapis.com/v2beta/",
 	IAM3BasePathKey:                     "https://iam.googleapis.com/v3beta/",
 	IAMBetaBasePathKey:                  "https://iam.googleapis.com/v1/",
@@ -789,6 +794,7 @@ var DefaultBasePaths = map[string]string{
 	TagsBasePathKey:                     "https://cloudresourcemanager.googleapis.com/v3/",
 	TpuV2BasePathKey:                    "https://tpu.googleapis.com/v2alpha1/",
 	TranscoderBasePathKey:               "https://transcoder.googleapis.com/v1/",
+	VectorSearchBasePathKey:             "https://vectorsearch.googleapis.com/v1beta/",
 	VertexAIBasePathKey:                 "https://{{region}}-aiplatform.googleapis.com/v1beta1/",
 	VmwareengineBasePathKey:             "https://vmwareengine.googleapis.com/v1/",
 	VPCAccessBasePathKey:                "https://vpcaccess.googleapis.com/v1beta1/",
@@ -1335,6 +1341,11 @@ func SetEndpointDefaults(d *schema.ResourceData) error {
 			"GOOGLE_HEALTHCARE_CUSTOM_ENDPOINT",
 		}, DefaultBasePaths[HealthcareBasePathKey]))
 	}
+	if d.Get("hypercomputecluster_custom_endpoint") == "" {
+		d.Set("hypercomputecluster_custom_endpoint", MultiEnvDefault([]string{
+			"GOOGLE_HYPERCOMPUTECLUSTER_CUSTOM_ENDPOINT",
+		}, DefaultBasePaths[HypercomputeclusterBasePathKey]))
+	}
 	if d.Get("iam2_custom_endpoint") == "" {
 		d.Set("iam2_custom_endpoint", MultiEnvDefault([]string{
 			"GOOGLE_IAM2_CUSTOM_ENDPOINT",
@@ -1685,6 +1696,11 @@ func SetEndpointDefaults(d *schema.ResourceData) error {
 			"GOOGLE_TRANSCODER_CUSTOM_ENDPOINT",
 		}, DefaultBasePaths[TranscoderBasePathKey]))
 	}
+	if d.Get("vector_search_custom_endpoint") == "" {
+		d.Set("vector_search_custom_endpoint", MultiEnvDefault([]string{
+			"GOOGLE_VECTOR_SEARCH_CUSTOM_ENDPOINT",
+		}, DefaultBasePaths[VectorSearchBasePathKey]))
+	}
 	if d.Get("vertex_ai_custom_endpoint") == "" {
 		d.Set("vertex_ai_custom_endpoint", MultiEnvDefault([]string{
 			"GOOGLE_VERTEX_AI_CUSTOM_ENDPOINT",
@@ -1893,7 +1909,10 @@ func (c *Config) LoadAndValidate(ctx context.Context) error {
 	c.Region = GetRegionFromRegionSelfLink(c.Region)
 	c.RequestBatcherServiceUsage = NewRequestBatcher("Service Usage", ctx, c.BatchingConfig)
 	c.RequestBatcherIam = NewRequestBatcher("IAM", ctx, c.BatchingConfig)
-	c.PollInterval = 10 * time.Second
+	// Set default of 10s if unset by user in provider.go or LoadAndValidate was invoked directly
+	if c.PollInterval == 0 {
+		c.PollInterval = 10 * time.Second
+	}
 
 	// gRPC Logging setup
 	logger := logrus.StandardLogger()
@@ -2913,6 +2932,7 @@ func ConfigureBasePaths(c *Config) {
 	c.GKEHub2BasePath = DefaultBasePaths[GKEHub2BasePathKey]
 	c.GkeonpremBasePath = DefaultBasePaths[GkeonpremBasePathKey]
 	c.HealthcareBasePath = DefaultBasePaths[HealthcareBasePathKey]
+	c.HypercomputeclusterBasePath = DefaultBasePaths[HypercomputeclusterBasePathKey]
 	c.IAM2BasePath = DefaultBasePaths[IAM2BasePathKey]
 	c.IAM3BasePath = DefaultBasePaths[IAM3BasePathKey]
 	c.IAMBetaBasePath = DefaultBasePaths[IAMBetaBasePathKey]
@@ -2983,6 +3003,7 @@ func ConfigureBasePaths(c *Config) {
 	c.TagsBasePath = DefaultBasePaths[TagsBasePathKey]
 	c.TpuV2BasePath = DefaultBasePaths[TpuV2BasePathKey]
 	c.TranscoderBasePath = DefaultBasePaths[TranscoderBasePathKey]
+	c.VectorSearchBasePath = DefaultBasePaths[VectorSearchBasePathKey]
 	c.VertexAIBasePath = DefaultBasePaths[VertexAIBasePathKey]
 	c.VmwareengineBasePath = DefaultBasePaths[VmwareengineBasePathKey]
 	c.VPCAccessBasePath = DefaultBasePaths[VPCAccessBasePathKey]

@@ -21,6 +21,7 @@ fields:
       field: disk_id
     - field: effective_labels
       provider_only: true
+    - api_field: eraseWindowsVssSignature
     - api_field: guestOsFeatures.type
     - field: interface
       provider_only: true

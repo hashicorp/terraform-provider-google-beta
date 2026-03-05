@@ -248,7 +248,7 @@ func TestAccNetworkSecuritySecurityProfileGroup_networkSecuritySecurityProfileGr
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckNetworkSecuritySecurityProfileGroupDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -267,7 +267,6 @@ func TestAccNetworkSecuritySecurityProfileGroup_networkSecuritySecurityProfileGr
 func testAccNetworkSecuritySecurityProfileGroup_networkSecuritySecurityProfileGroupUrlFilteringExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_network_security_security_profile_group" "default" {
-  provider                  = google-beta
   name                      = "tf-test-sec-profile-group%{random_suffix}"
   parent                    = "organizations/%{org_id}"
   description               = "my description"
@@ -279,7 +278,6 @@ resource "google_network_security_security_profile_group" "default" {
 }
 
 resource "google_network_security_security_profile" "security_profile" {
-  provider    = google-beta
   name        = "tf-test-sec-profile%{random_suffix}"
   location    = "global"
   type        = "URL_FILTERING"

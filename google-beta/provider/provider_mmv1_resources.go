@@ -108,6 +108,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/gkehub2"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/gkeonprem"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/healthcare"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/hypercomputecluster"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/iam2"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/iam3"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/iambeta"
@@ -178,6 +179,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/tags"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/tpuv2"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/transcoder"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/vectorsearch"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/vertexai"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/vmwareengine"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/vpcaccess"
@@ -200,6 +202,8 @@ var handwrittenDatasources = map[string]*schema.Resource{
 	"google_access_approval_organization_service_account":        accessapproval.DataSourceAccessApprovalOrganizationServiceAccount(),
 	"google_access_approval_project_service_account":             accessapproval.DataSourceAccessApprovalProjectServiceAccount(),
 	"google_access_context_manager_access_policy":                accesscontextmanager.DataSourceAccessContextManagerAccessPolicy(),
+	"google_access_context_manager_supported_service":            accesscontextmanager.DataSourceAccessContextManagerSupportedService(),
+	"google_access_context_manager_supported_services":           accesscontextmanager.DataSourceAccessContextManagerSupportedServices(),
 	"google_active_folder":                                       resourcemanager.DataSourceGoogleActiveFolder(),
 	"google_alloydb_cluster":                                     alloydb.DataSourceAlloydbDatabaseCluster(),
 	"google_alloydb_locations":                                   alloydb.DataSourceAlloydbLocations(),
@@ -232,6 +236,7 @@ var handwrittenDatasources = map[string]*schema.Resource{
 	"google_backup_dr_backup_plan":                               backupdr.DataSourceGoogleCloudBackupDRBackupPlan(),
 	"google_backup_dr_backup":                                    backupdr.DataSourceGoogleCloudBackupDRBackup(),
 	"google_backup_dr_data_source":                               backupdr.DataSourceGoogleCloudBackupDRDataSource(),
+	"google_backup_dr_data_sources":                              backupdr.DataSourceGoogleCloudBackupDRDataSources(),
 	"google_backup_dr_backup_vault":                              backupdr.DataSourceGoogleCloudBackupDRBackupVault(),
 	"google_backup_dr_data_source_references":                    backupdr.DataSourceGoogleCloudBackupDRDataSourceReferences(),
 	"google_backup_dr_data_source_reference":                     backupdr.DataSourceGoogleCloudBackupDRDataSourceReference(),
@@ -386,6 +391,8 @@ var handwrittenDatasources = map[string]*schema.Resource{
 	"google_monitoring_app_engine_service":                       monitoring.DataSourceMonitoringServiceAppEngine(),
 	"google_monitoring_uptime_check_ips":                         monitoring.DataSourceGoogleMonitoringUptimeCheckIps(),
 	"google_netblock_ip_ranges":                                  resourcemanager.DataSourceGoogleNetblockIpRanges(),
+	"google_observability_project_settings":                      observability.DataSourceObservabilityProjectSettings(),
+	"google_observability_organization_settings":                 observability.DataSourceObservabilityOrganizationSettings(),
 	"google_oracle_database_autonomous_database":                 oracledatabase.DataSourceOracleDatabaseAutonomousDatabase(),
 	"google_oracle_database_autonomous_databases":                oracledatabase.DataSourceOracleDatabaseAutonomousDatabases(),
 	"google_oracle_database_db_nodes":                            oracledatabase.DataSourceOracleDatabaseDbNodes(),
@@ -394,6 +401,8 @@ var handwrittenDatasources = map[string]*schema.Resource{
 	"google_oracle_database_cloud_exadata_infrastructure":        oracledatabase.DataSourceOracleDatabaseCloudExadataInfrastructure(),
 	"google_oracle_database_cloud_vm_clusters":                   oracledatabase.DataSourceOracleDatabaseCloudVmClusters(),
 	"google_oracle_database_cloud_vm_cluster":                    oracledatabase.DataSourceOracleDatabaseCloudVmCluster(),
+	"google_oracle_database_odb_network":                         oracledatabase.DataSourceOracleDatabaseOdbNetwork(),
+	"google_oracle_database_odb_subnet":                          oracledatabase.DataSourceOracleDatabaseOdbSubnet(),
 	"google_organization":                                        resourcemanager.DataSourceGoogleOrganization(),
 	"google_organizations":                                       resourcemanager.DataSourceGoogleOrganizations(),
 	"google_organization_iam_custom_role":                        resourcemanager.DataSourceGoogleOrganizationIamCustomRole(),
@@ -451,6 +460,7 @@ var handwrittenDatasources = map[string]*schema.Resource{
 	"google_storage_bucket_object":                               storage.DataSourceGoogleStorageBucketObject(),
 	"google_storage_bucket_objects":                              storage.DataSourceGoogleStorageBucketObjects(),
 	"google_storage_bucket_object_content":                       storage.DataSourceGoogleStorageBucketObjectContent(),
+	"google_storage_bucket_object_contents":                      storage.DataSourceGoogleStorageBucketObjectContents(),
 	"google_storage_control_folder_intelligence_config":          storagecontrol.DataSourceStorageControlFolderIntelligenceConfig(),
 	"google_storage_control_organization_intelligence_config":    storagecontrol.DataSourceStorageControlOrganizationIntelligenceConfig(),
 	"google_storage_control_project_intelligence_config":         storagecontrol.DataSourceStorageControlProjectIntelligenceConfig(),
@@ -481,6 +491,8 @@ var handwrittenDatasources = map[string]*schema.Resource{
 	"google_vmwareengine_subnet":                                 vmwareengine.DataSourceVmwareengineSubnet(),
 	"google_vmwareengine_vcenter_credentials":                    vmwareengine.DataSourceVmwareengineVcenterCredentials(),
 	"google_vmwareengine_datastore":                              vmwareengine.DataSourceVmwareengineDatastore(),
+	"google_vmwareengine_upgrades":                               vmwareengine.DataSourceVmwareengineUpgrades(),
+	"google_vmwareengine_announcements":                          vmwareengine.DataSourceVmwareengineAnnouncements(),
 	"google_compute_region_backend_service":                      compute.DataSourceGoogleComputeRegionBackendService(),
 	"google_network_management_connectivity_test_run":            networkmanagement.DataSourceGoogleNetworkManagementTestRun(),
 	"google_network_management_connectivity_tests":               networkmanagement.DataSourceGoogleNetworkManagementConnectivityTests(),
@@ -498,6 +510,7 @@ var generatedIAMDatasources = map[string]*schema.Resource{
 	"google_beyondcorp_security_gateway_iam_policy":                registry.DataSource("google_beyondcorp_security_gateway_iam_policy"),
 	"google_beyondcorp_security_gateway_application_iam_policy":    registry.DataSource("google_beyondcorp_security_gateway_application_iam_policy"),
 	"google_biglake_iceberg_catalog_iam_policy":                    registry.DataSource("google_biglake_iceberg_catalog_iam_policy"),
+	"google_biglake_iceberg_namespace_iam_policy":                  registry.DataSource("google_biglake_iceberg_namespace_iam_policy"),
 	"google_bigquery_table_iam_policy":                             registry.DataSource("google_bigquery_table_iam_policy"),
 	"google_bigquery_analytics_hub_data_exchange_iam_policy":       registry.DataSource("google_bigquery_analytics_hub_data_exchange_iam_policy"),
 	"google_bigquery_analytics_hub_listing_iam_policy":             registry.DataSource("google_bigquery_analytics_hub_listing_iam_policy"),
@@ -525,6 +538,7 @@ var generatedIAMDatasources = map[string]*schema.Resource{
 	"google_compute_instance_template_iam_policy":                  registry.DataSource("google_compute_instance_template_iam_policy"),
 	"google_compute_instant_snapshot_iam_policy":                   registry.DataSource("google_compute_instant_snapshot_iam_policy"),
 	"google_compute_machine_image_iam_policy":                      registry.DataSource("google_compute_machine_image_iam_policy"),
+	"google_compute_region_backend_bucket_iam_policy":              registry.DataSource("google_compute_region_backend_bucket_iam_policy"),
 	"google_compute_region_backend_service_iam_policy":             registry.DataSource("google_compute_region_backend_service_iam_policy"),
 	"google_compute_region_disk_iam_policy":                        registry.DataSource("google_compute_region_disk_iam_policy"),
 	"google_compute_snapshot_iam_policy":                           registry.DataSource("google_compute_snapshot_iam_policy"),
@@ -636,9 +650,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 778
-// Generated IAM resources: 351
-// Total generated resources: 1129
+// Generated resources: 792
+// Generated IAM resources: 357
+// Total generated resources: 1149
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     registry.Resource("google_folder_access_approval_settings"),
 	"google_organization_access_approval_settings":                               registry.Resource("google_organization_access_approval_settings"),
@@ -759,6 +773,10 @@ var generatedResources = map[string]*schema.Resource{
 	"google_biglake_iceberg_catalog_iam_binding":                                 registry.Resource("google_biglake_iceberg_catalog_iam_binding"),
 	"google_biglake_iceberg_catalog_iam_member":                                  registry.Resource("google_biglake_iceberg_catalog_iam_member"),
 	"google_biglake_iceberg_catalog_iam_policy":                                  registry.Resource("google_biglake_iceberg_catalog_iam_policy"),
+	"google_biglake_iceberg_namespace":                                           registry.Resource("google_biglake_iceberg_namespace"),
+	"google_biglake_iceberg_namespace_iam_binding":                               registry.Resource("google_biglake_iceberg_namespace_iam_binding"),
+	"google_biglake_iceberg_namespace_iam_member":                                registry.Resource("google_biglake_iceberg_namespace_iam_member"),
+	"google_biglake_iceberg_namespace_iam_policy":                                registry.Resource("google_biglake_iceberg_namespace_iam_policy"),
 	"google_bigquery_dataset":                                                    registry.Resource("google_bigquery_dataset"),
 	"google_bigquery_dataset_access":                                             registry.Resource("google_bigquery_dataset_access"),
 	"google_bigquery_job":                                                        registry.Resource("google_bigquery_job"),
@@ -858,6 +876,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_cloudfunctions2_function_iam_policy":                                 registry.Resource("google_cloudfunctions2_function_iam_policy"),
 	"google_cloud_identity_group":                                                registry.Resource("google_cloud_identity_group"),
 	"google_cloud_identity_group_membership":                                     registry.Resource("google_cloud_identity_group_membership"),
+	"google_cloud_identity_policy":                                               registry.Resource("google_cloud_identity_policy"),
 	"google_cloud_ids_endpoint":                                                  registry.Resource("google_cloud_ids_endpoint"),
 	"google_cloud_quotas_quota_adjuster_settings":                                registry.Resource("google_cloud_quotas_quota_adjuster_settings"),
 	"google_cloud_quotas_quota_preference":                                       registry.Resource("google_cloud_quotas_quota_preference"),
@@ -978,6 +997,10 @@ var generatedResources = map[string]*schema.Resource{
 	"google_compute_public_advertised_prefix":                                    registry.Resource("google_compute_public_advertised_prefix"),
 	"google_compute_public_delegated_prefix":                                     registry.Resource("google_compute_public_delegated_prefix"),
 	"google_compute_region_autoscaler":                                           registry.Resource("google_compute_region_autoscaler"),
+	"google_compute_region_backend_bucket":                                       registry.Resource("google_compute_region_backend_bucket"),
+	"google_compute_region_backend_bucket_iam_binding":                           registry.Resource("google_compute_region_backend_bucket_iam_binding"),
+	"google_compute_region_backend_bucket_iam_member":                            registry.Resource("google_compute_region_backend_bucket_iam_member"),
+	"google_compute_region_backend_bucket_iam_policy":                            registry.Resource("google_compute_region_backend_bucket_iam_policy"),
 	"google_compute_region_backend_service":                                      registry.Resource("google_compute_region_backend_service"),
 	"google_compute_region_backend_service_iam_binding":                          registry.Resource("google_compute_region_backend_service_iam_binding"),
 	"google_compute_region_backend_service_iam_member":                           registry.Resource("google_compute_region_backend_service_iam_member"),
@@ -1012,6 +1035,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_compute_resize_request":                                              registry.Resource("google_compute_resize_request"),
 	"google_compute_resource_policy":                                             registry.Resource("google_compute_resource_policy"),
 	"google_compute_resource_policy_attachment":                                  registry.Resource("google_compute_resource_policy_attachment"),
+	"google_compute_rollout_plan":                                                registry.Resource("google_compute_rollout_plan"),
 	"google_compute_route":                                                       registry.Resource("google_compute_route"),
 	"google_compute_router":                                                      registry.Resource("google_compute_router"),
 	"google_compute_router_nat":                                                  registry.Resource("google_compute_router_nat"),
@@ -1074,12 +1098,15 @@ var generatedResources = map[string]*schema.Resource{
 	"google_data_catalog_taxonomy_iam_binding":                                   registry.Resource("google_data_catalog_taxonomy_iam_binding"),
 	"google_data_catalog_taxonomy_iam_member":                                    registry.Resource("google_data_catalog_taxonomy_iam_member"),
 	"google_data_catalog_taxonomy_iam_policy":                                    registry.Resource("google_data_catalog_taxonomy_iam_policy"),
+	"google_dataform_config":                                                     registry.Resource("google_dataform_config"),
+	"google_dataform_folder":                                                     registry.Resource("google_dataform_folder"),
 	"google_dataform_repository":                                                 registry.Resource("google_dataform_repository"),
 	"google_dataform_repository_iam_binding":                                     registry.Resource("google_dataform_repository_iam_binding"),
 	"google_dataform_repository_iam_member":                                      registry.Resource("google_dataform_repository_iam_member"),
 	"google_dataform_repository_iam_policy":                                      registry.Resource("google_dataform_repository_iam_policy"),
 	"google_dataform_repository_release_config":                                  registry.Resource("google_dataform_repository_release_config"),
 	"google_dataform_repository_workflow_config":                                 registry.Resource("google_dataform_repository_workflow_config"),
+	"google_dataform_team_folder":                                                registry.Resource("google_dataform_team_folder"),
 	"google_data_fusion_instance":                                                registry.Resource("google_data_fusion_instance"),
 	"google_data_fusion_instance_iam_binding":                                    registry.Resource("google_data_fusion_instance_iam_binding"),
 	"google_data_fusion_instance_iam_member":                                     registry.Resource("google_data_fusion_instance_iam_member"),
@@ -1099,6 +1126,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_dataplex_asset_iam_policy":                                           registry.Resource("google_dataplex_asset_iam_policy"),
 	"google_dataplex_data_asset":                                                 registry.Resource("google_dataplex_data_asset"),
 	"google_dataplex_data_product":                                               registry.Resource("google_dataplex_data_product"),
+	"google_dataplex_data_product_data_asset":                                    registry.Resource("google_dataplex_data_product_data_asset"),
 	"google_dataplex_datascan":                                                   registry.Resource("google_dataplex_datascan"),
 	"google_dataplex_datascan_iam_binding":                                       registry.Resource("google_dataplex_datascan_iam_binding"),
 	"google_dataplex_datascan_iam_member":                                        registry.Resource("google_dataplex_datascan_iam_member"),
@@ -1320,6 +1348,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_healthcare_hl7_v2_store":                                             registry.Resource("google_healthcare_hl7_v2_store"),
 	"google_healthcare_pipeline_job":                                             registry.Resource("google_healthcare_pipeline_job"),
 	"google_healthcare_workspace":                                                registry.Resource("google_healthcare_workspace"),
+	"google_hypercomputecluster_cluster":                                         registry.Resource("google_hypercomputecluster_cluster"),
 	"google_iam_access_boundary_policy":                                          registry.Resource("google_iam_access_boundary_policy"),
 	"google_iam_deny_policy":                                                     registry.Resource("google_iam_deny_policy"),
 	"google_iam_folders_policy_binding":                                          registry.Resource("google_iam_folders_policy_binding"),
@@ -1500,6 +1529,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_network_security_server_tls_policy":                                  registry.Resource("google_network_security_server_tls_policy"),
 	"google_network_security_tls_inspection_policy":                              registry.Resource("google_network_security_tls_inspection_policy"),
 	"google_network_security_url_lists":                                          registry.Resource("google_network_security_url_lists"),
+	"google_network_services_agent_gateway":                                      registry.Resource("google_network_services_agent_gateway"),
 	"google_network_services_authz_extension":                                    registry.Resource("google_network_services_authz_extension"),
 	"google_network_services_edge_cache_keyset":                                  registry.Resource("google_network_services_edge_cache_keyset"),
 	"google_network_services_edge_cache_origin":                                  registry.Resource("google_network_services_edge_cache_origin"),
@@ -1535,11 +1565,14 @@ var generatedResources = map[string]*schema.Resource{
 	"google_notebooks_runtime_iam_binding":                                       registry.Resource("google_notebooks_runtime_iam_binding"),
 	"google_notebooks_runtime_iam_member":                                        registry.Resource("google_notebooks_runtime_iam_member"),
 	"google_notebooks_runtime_iam_policy":                                        registry.Resource("google_notebooks_runtime_iam_policy"),
+	"google_observability_organization_settings":                                 registry.Resource("google_observability_organization_settings"),
+	"google_observability_project_settings":                                      registry.Resource("google_observability_project_settings"),
 	"google_observability_trace_scope":                                           registry.Resource("google_observability_trace_scope"),
 	"google_oracle_database_autonomous_database":                                 registry.Resource("google_oracle_database_autonomous_database"),
 	"google_oracle_database_cloud_exadata_infrastructure":                        registry.Resource("google_oracle_database_cloud_exadata_infrastructure"),
 	"google_oracle_database_cloud_vm_cluster":                                    registry.Resource("google_oracle_database_cloud_vm_cluster"),
 	"google_oracle_database_db_system":                                           registry.Resource("google_oracle_database_db_system"),
+	"google_oracle_database_exadb_vm_cluster":                                    registry.Resource("google_oracle_database_exadb_vm_cluster"),
 	"google_oracle_database_exascale_db_storage_vault":                           registry.Resource("google_oracle_database_exascale_db_storage_vault"),
 	"google_oracle_database_odb_network":                                         registry.Resource("google_oracle_database_odb_network"),
 	"google_oracle_database_odb_subnet":                                          registry.Resource("google_oracle_database_odb_subnet"),
@@ -1708,6 +1741,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_tpu_v2_vm":                                                           registry.Resource("google_tpu_v2_vm"),
 	"google_transcoder_job":                                                      registry.Resource("google_transcoder_job"),
 	"google_transcoder_job_template":                                             registry.Resource("google_transcoder_job_template"),
+	"google_vector_search_collection":                                            registry.Resource("google_vector_search_collection"),
 	"google_vertex_ai_cache_config":                                              registry.Resource("google_vertex_ai_cache_config"),
 	"google_vertex_ai_dataset":                                                   registry.Resource("google_vertex_ai_dataset"),
 	"google_vertex_ai_deployment_resource_pool":                                  registry.Resource("google_vertex_ai_deployment_resource_pool"),
@@ -2031,6 +2065,7 @@ func UseGeneratedProducts() {
 	var _ = gkehub2.ProductName
 	var _ = gkeonprem.ProductName
 	var _ = healthcare.ProductName
+	var _ = hypercomputecluster.ProductName
 	var _ = iam2.ProductName
 	var _ = iam3.ProductName
 	var _ = iambeta.ProductName
@@ -2101,6 +2136,7 @@ func UseGeneratedProducts() {
 	var _ = tags.ProductName
 	var _ = tpuv2.ProductName
 	var _ = transcoder.ProductName
+	var _ = vectorsearch.ProductName
 	var _ = vertexai.ProductName
 	var _ = vmwareengine.ProductName
 	var _ = vpcaccess.ProductName

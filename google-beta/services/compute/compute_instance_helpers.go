@@ -206,6 +206,15 @@ func expandScheduling(v interface{}) (*compute.Scheduling, error) {
 		scheduling.SkipGuestOsShutdown = v.(bool)
 		scheduling.ForceSendFields = append(scheduling.ForceSendFields, "SkipGuestOsShutdown")
 	}
+
+	if v, ok := original["preemption_notice_duration"]; ok {
+		transformedPreemptionNoticeDuration, err := expandComputePreemptionNoticeDuration(v)
+		if err != nil {
+			return nil, err
+		}
+		scheduling.PreemptionNoticeDuration = transformedPreemptionNoticeDuration
+		scheduling.ForceSendFields = append(scheduling.ForceSendFields, "PreemptionNoticeDuration")
+	}
 	if v, ok := original["local_ssd_recovery_timeout"]; ok {
 		transformedLocalSsdRecoveryTimeout, err := expandComputeLocalSsdRecoveryTimeout(v)
 		if err != nil {
@@ -388,6 +397,10 @@ func flattenScheduling(resp *compute.Scheduling) []map[string]interface{} {
 		schedulingMap["graceful_shutdown"] = flattenGracefulShutdown(resp.GracefulShutdown)
 	}
 
+	if resp.PreemptionNoticeDuration != nil {
+		schedulingMap["preemption_notice_duration"] = flattenComputePreemptionNoticeDuration(resp.PreemptionNoticeDuration)
+	}
+
 	if resp.LocalSsdRecoveryTimeout != nil {
 		schedulingMap["local_ssd_recovery_timeout"] = flattenComputeLocalSsdRecoveryTimeout(resp.LocalSsdRecoveryTimeout)
 	}
@@ -454,6 +467,36 @@ func flattenGracefulShutdownMaxDuration(v *compute.Duration) []interface{} {
 	return []interface{}{transformed}
 }
 
+func expandComputePreemptionNoticeDuration(v interface{}) (*compute.Duration, error) {
+	l := v.([]interface{})
+	duration := compute.Duration{}
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+
+	if transformedNanos, ok := original["nanos"]; ok && transformedNanos != nil {
+		duration.Nanos = int64(transformedNanos.(int))
+	}
+
+	if transformedSeconds, ok := original["seconds"]; ok && transformedSeconds != nil {
+		duration.Seconds = int64(transformedSeconds.(int))
+	}
+
+	return &duration, nil
+}
+
+func flattenComputePreemptionNoticeDuration(v *compute.Duration) []interface{} {
+	if v == nil {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["nanos"] = v.Nanos
+	transformed["seconds"] = v.Seconds
+	return []interface{}{transformed}
+}
+
 func flattenAccessConfigs(accessConfigs []*compute.AccessConfig) ([]map[string]interface{}, string) {
 	flattened := make([]map[string]interface{}, len(accessConfigs))
 	natIP := ""
@@ -509,6 +552,8 @@ func flattenNetworkInterfaces(d *schema.ResourceData, config *transport_tpg.Conf
 		flattened[i] = map[string]interface{}{
 			"network_ip":                  iface.NetworkIP,
 			"network":                     tpgresource.ConvertSelfLinkToV1(iface.Network),
+			"parent_nic_name":             iface.ParentNicName,
+			"vlan":                        iface.Vlan,
 			"subnetwork":                  tpgresource.ConvertSelfLinkToV1(iface.Subnetwork),
 			"subnetwork_project":          subnet.Project,
 			"access_config":               ac,
@@ -636,6 +681,7 @@ func expandNetworkInterfaces(d tpgresource.TerraformResourceData, config *transp
 			NetworkIP:                data["network_ip"].(string),
 			Network:                  nf.RelativeLink(),
 			NetworkAttachment:        networkAttachment,
+			Vlan:                     int64(data["vlan"].(int)),
 			Subnetwork:               sf.RelativeLink(),
 			AccessConfigs:            expandAccessConfigs(data["access_config"].([]interface{})),
 			AliasIpRanges:            expandAliasIpRanges(data["alias_ip_range"].([]interface{})),

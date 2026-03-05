@@ -165,6 +165,11 @@ func Provider() *schema.Provider {
 				Optional: true,
 			},
 
+			"poll_interval": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+
 			"request_reason": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -638,6 +643,11 @@ func Provider() *schema.Provider {
 				Optional:     true,
 				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
 			},
+			"hypercomputecluster_custom_endpoint": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
+			},
 			"iam2_custom_endpoint": {
 				Type:         schema.TypeString,
 				Optional:     true,
@@ -988,6 +998,11 @@ func Provider() *schema.Provider {
 				Optional:     true,
 				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
 			},
+			"vector_search_custom_endpoint": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
+			},
 			"vertex_ai_custom_endpoint": {
 				Type:         schema.TypeString,
 				Optional:     true,
@@ -1110,7 +1125,15 @@ func ProviderConfigure(ctx context.Context, d *schema.ResourceData, p *schema.Pr
 		var err error
 		config.RequestTimeout, err = time.ParseDuration(v.(string))
 		if err != nil {
-			return nil, diag.FromErr(err)
+			return nil, diag.FromErr(fmt.Errorf("could not parse request_timeout value: %w", err))
+		}
+	}
+
+	if v, ok := d.GetOk("poll_interval"); ok {
+		var err error
+		config.PollInterval, err = time.ParseDuration(v.(string))
+		if err != nil {
+			return nil, diag.FromErr(fmt.Errorf("could not parse poll_interval value: %w", err))
 		}
 	}
 
@@ -1306,6 +1329,7 @@ func ProviderConfigure(ctx context.Context, d *schema.ResourceData, p *schema.Pr
 	config.GKEHub2BasePath = d.Get("gke_hub2_custom_endpoint").(string)
 	config.GkeonpremBasePath = d.Get("gkeonprem_custom_endpoint").(string)
 	config.HealthcareBasePath = d.Get("healthcare_custom_endpoint").(string)
+	config.HypercomputeclusterBasePath = d.Get("hypercomputecluster_custom_endpoint").(string)
 	config.IAM2BasePath = d.Get("iam2_custom_endpoint").(string)
 	config.IAM3BasePath = d.Get("iam3_custom_endpoint").(string)
 	config.IAMBetaBasePath = d.Get("iam_beta_custom_endpoint").(string)
@@ -1376,6 +1400,7 @@ func ProviderConfigure(ctx context.Context, d *schema.ResourceData, p *schema.Pr
 	config.TagsBasePath = d.Get("tags_custom_endpoint").(string)
 	config.TpuV2BasePath = d.Get("tpu_v2_custom_endpoint").(string)
 	config.TranscoderBasePath = d.Get("transcoder_custom_endpoint").(string)
+	config.VectorSearchBasePath = d.Get("vector_search_custom_endpoint").(string)
 	config.VertexAIBasePath = d.Get("vertex_ai_custom_endpoint").(string)
 	config.VmwareengineBasePath = d.Get("vmwareengine_custom_endpoint").(string)
 	config.VPCAccessBasePath = d.Get("vpc_access_custom_endpoint").(string)

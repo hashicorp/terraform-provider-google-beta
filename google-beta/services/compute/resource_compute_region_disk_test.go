@@ -360,6 +360,61 @@ func TestAccComputeRegionDisk_createSnapshotBeforeDestroy(t *testing.T) {
 	})
 }
 
+func TestAccComputeRegionDisk_VSSWindowsDefault(t *testing.T) {
+	t.Parallel()
+
+	diskName := fmt.Sprintf("tf-test-%s", acctest.RandString(t, 10))
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeRegionDisk_VSSWindowsDefault(diskName),
+			},
+			{
+				ResourceName:            "google_compute_region_disk.foobar",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"labels", "terraform_labels"},
+			},
+		},
+	})
+}
+
+func TestAccComputeRegionDisk_VSSWindows(t *testing.T) {
+	t.Parallel()
+
+	diskName := fmt.Sprintf("tf-test-%s", acctest.RandString(t, 10))
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		Steps: []resource.TestStep{
+			// When imported, erase_windows_vss_signature is set to default (false)
+			// and needs to be excluded from the import check
+			{
+				Config: testAccComputeRegionDisk_VSSWindows(diskName, true),
+			},
+			{
+				ResourceName:            "google_compute_region_disk.foobar",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"labels", "terraform_labels", "erase_windows_vss_signature"},
+			},
+			{
+				Config: testAccComputeRegionDisk_VSSWindows(diskName, false),
+			},
+			{
+				ResourceName:            "google_compute_region_disk.foobar",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"labels", "terraform_labels"},
+			},
+		},
+	})
+}
+
 func testAccCheckComputeRegionDiskExists(t *testing.T, n string, disk *compute.Disk) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		p := envvar.GetTestProjectFromEnv()
@@ -780,4 +835,31 @@ resource "google_compute_region_disk" "kms-encrypted-name" {
 }
 
 `, context)
+}
+
+func testAccComputeRegionDisk_VSSWindowsDefault(diskName string) string {
+	return fmt.Sprintf(`
+resource "google_compute_region_disk" "foobar" {
+  provider = google-beta
+  name = "%s"
+  size = 10
+  type = "pd-ssd"
+  region = "us-central1"
+  replica_zones = ["us-central1-a", "us-central1-f"]
+}
+`, diskName)
+}
+
+func testAccComputeRegionDisk_VSSWindows(diskName string, eraseWindowsVssSignature bool) string {
+	return fmt.Sprintf(`
+resource "google_compute_region_disk" "foobar" {
+  provider = google-beta
+  name = "%s"
+  size = 10
+  type = "pd-ssd"
+  region = "us-central1"
+  replica_zones = ["us-central1-a", "us-central1-f"]
+  erase_windows_vss_signature  = %t
+}
+`, diskName, eraseWindowsVssSignature)
 }
