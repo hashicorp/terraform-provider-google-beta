@@ -39,31 +39,31 @@ DEPRECATIONS:
 * dataplex: deprecated `google_dataplex_data_asset`. Use `google_dataplex_data_product_data_asset` instead. ([#11627](https://github.com/hashicorp/terraform-provider-google-beta/pull/11627))
 
 FEATURES:
-* **New Resource:** `google_hypercomputecluster_cluster` ([#26180](https://github.com/hashicorp/terraform-provider-google/pull/26180))
+* **New Resource:** `google_hypercomputecluster_cluster` ([#11596](https://github.com/hashicorp/terraform-provider-google-beta/pull/11596))
 
 IMPROVEMENTS:
-* compute: `initialize_params.size` is now updatable in-place in the `google_compute_instance` resource ([#26195](https://github.com/hashicorp/terraform-provider-google/pull/26195))
-* compute: added `dest_network_context`, `src_network_context` and `src_networks` fields to `google_compute_firewall_policy_rule` resource ([#26227](https://github.com/hashicorp/terraform-provider-google/pull/26227))
-* compute: added `dest_network_context`, `src_network_context` and `src_networks` fields to `google_compute_network_firewall_policy_rule` resource ([#26227](https://github.com/hashicorp/terraform-provider-google/pull/26227))
-* compute: added `dest_network_context`, `src_network_context` and `src_networks` fields to `google_compute_region_network_firewall_policy_rule` resource ([#26227](https://github.com/hashicorp/terraform-provider-google/pull/26227))
+* compute: `initialize_params.size` is now updatable in-place in the `google_compute_instance` resource ([#11598](https://github.com/hashicorp/terraform-provider-google-beta/pull/11598))
+* compute: added `dest_network_context`, `src_network_context` and `src_networks` fields to `google_compute_firewall_policy_rule` resource ([#11611](https://github.com/hashicorp/terraform-provider-google-beta/pull/11611))
+* compute: added `dest_network_context`, `src_network_context` and `src_networks` fields to `google_compute_network_firewall_policy_rule` resource ([#11611](https://github.com/hashicorp/terraform-provider-google-beta/pull/11611))
+* compute: added `dest_network_context`, `src_network_context` and `src_networks` fields to `google_compute_region_network_firewall_policy_rule` resource ([#11611](https://github.com/hashicorp/terraform-provider-google-beta/pull/11611))
 * compute: added `consumer_accept_lists.endpoint_url` to `google_compute_service_attachment` resource ([#11616](https://github.com/hashicorp/terraform-provider-google-beta/pull/11616))
 * compute: added `erase_windows_vss_signature` field to `google_compute_disk` resource ([#11626](https://github.com/hashicorp/terraform-provider-google-beta/pull/11626))
 * compute: added `erase_windows_vss_signature` field to `google_compute_region_disk` resource ([#11626](https://github.com/hashicorp/terraform-provider-google-beta/pull/11626))
 * developerconnect: added `http_config` field to `google_developer_connect_connection` resource ([#11614](https://github.com/hashicorp/terraform-provider-google-beta/pull/11614))
 * filestore: added `source_backupdr_backup` field to `google_filestore_instance` resource ([#11620](https://github.com/hashicorp/terraform-provider-google-beta/pull/11620))
 * gkehub2: added field `spec.workloadidentity` to resource `google_gke_hub_feature` ([#11629](https://github.com/hashicorp/terraform-provider-google-beta/pull/11629))
-* iam: added AZURE_AD_GROUPS_DISPLAY_NAME enum value to `extra_attributes_oauth2_client.attribute-type` field in `google_iam_workforce_pool_provider` resource ([#26226](https://github.com/hashicorp/terraform-provider-google/pull/26226))
+* iam: added AZURE_AD_GROUPS_DISPLAY_NAME enum value to `extra_attributes_oauth2_client.attribute-type` field in `google_iam_workforce_pool_provider` resource ([#11610](https://github.com/hashicorp/terraform-provider-google-beta/pull/11610))
 * kms: added a KMS AutokeyConfig-specific 10s post-create/post-update ([#11618](https://github.com/hashicorp/terraform-provider-google-beta/pull/11618))
 * netapp: added `large_capacity_config` block with `constituent_count` field to `google_netapp_volume` resource ([#11621](https://github.com/hashicorp/terraform-provider-google-beta/pull/11621))
 * netapp: added `scale_tier` field to `netapp_storage_pool` resource ([#11621](https://github.com/hashicorp/terraform-provider-google-beta/pull/11621))
 * networkservices: added support for use of multiple `ports` for `google_network_services_gateway` resources of type `SECURE_WEB_GATEWAY` ([#11635](https://github.com/hashicorp/terraform-provider-google-beta/pull/11635))
-* sql: added `auto_upgrade_enabled` field to `google_sql_database_instance` resource. ([#26205](https://github.com/hashicorp/terraform-provider-google/pull/26205))
-* sql: added `data_api_access` field to `google_sql_database_instance` resource ([#26217](https://github.com/hashicorp/terraform-provider-google/pull/26217))
+* sql: added `auto_upgrade_enabled` field to `google_sql_database_instance` resource ([#11604](https://github.com/hashicorp/terraform-provider-google-beta/pull/11604))
+* sql: added `data_api_access` field to `google_sql_database_instance` resource ([#11606](https://github.com/hashicorp/terraform-provider-google-beta/pull/11606))
 * sql: added `enhanced_query_insights_enabled` field to `google_sql_database_instance` resource ([#11622](https://github.com/hashicorp/terraform-provider-google-beta/pull/11622))
 
 BUG FIXES:
-* datastream: fixed permadiff where `google_datastream_connection_profile.salesforce_profile.oauth2_client_credentials.client_id` is not read properly from the API ([#26201](https://github.com/hashicorp/terraform-provider-google/pull/26201))
-* servicenetworking: added retry when creating `google_service_networking_connection` if it looks like the service account permissions haven't yet propagated ([#26220](https://github.com/hashicorp/terraform-provider-google/pull/26220))
+* datastream: fixed permadiff where `google_datastream_connection_profile.salesforce_profile.oauth2_client_credentials.client_id` is not read properly from the API ([#11600](https://github.com/hashicorp/terraform-provider-google-beta/pull/11600))
+* servicenetworking: added retry when creating `google_service_networking_connection` if it looks like the service account permissions haven't yet propagated ([#11608](https://github.com/hashicorp/terraform-provider-google-beta/pull/11608))
 
 ## 7.21.0 (Feb 24, 2026)
 
