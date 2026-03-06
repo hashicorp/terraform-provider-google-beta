@@ -400,6 +400,75 @@ resource "google_compute_region_network_firewall_policy_rule" "primary" {
 `, context)
 }
 
+func TestAccComputeRegionNetworkFirewallPolicyRule_firewallPolicyRuleTargetTypeInternalManagedLbInstanceRegionalExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"org_id":        envvar.GetTestOrgFromEnv(t),
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckComputeRegionNetworkFirewallPolicyRuleDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeRegionNetworkFirewallPolicyRule_firewallPolicyRuleTargetTypeInternalManagedLbInstanceRegionalExample(context),
+			},
+			{
+				ResourceName:            "google_compute_region_network_firewall_policy_rule.internal_managed_lb_rule",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"firewall_policy", "region"},
+			},
+		},
+	})
+}
+
+func testAccComputeRegionNetworkFirewallPolicyRule_firewallPolicyRuleTargetTypeInternalManagedLbInstanceRegionalExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_compute_network" "net" {
+  provider                = google-beta
+  name                    = "test-net"
+  auto_create_subnetworks = false
+}
+
+resource "google_compute_region_network_firewall_policy" "fw_policy" {
+  provider = google-beta
+  name     = "simple-fw-policy"
+  region   = "us-central1"
+}
+
+resource "google_compute_region_network_firewall_policy_association" "assoc" {
+  provider          = google-beta
+  name              = "fw-policy-assoc"
+  region            = "us-central1"
+  firewall_policy   = google_compute_region_network_firewall_policy.fw_policy.id
+  attachment_target = google_compute_network.net.self_link
+}
+
+resource "google_compute_region_network_firewall_policy_rule" "internal_managed_lb_rule" {
+  provider        = google-beta
+  region          = "us-central1"
+  firewall_policy = google_compute_region_network_firewall_policy.fw_policy.name
+  priority        = 1000
+  action          = "allow"
+  direction       = "INGRESS"
+
+  target_type = "INTERNAL_MANAGED_LB"
+
+  match {
+    src_ip_ranges = ["10.0.0.0/8"]
+
+    layer4_configs {
+      ip_protocol = "tcp"
+    }
+  }
+}
+`, context)
+}
+
 func testAccCheckComputeRegionNetworkFirewallPolicyRuleDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		for name, rs := range s.RootModule().Resources {
