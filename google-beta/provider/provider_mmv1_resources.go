@@ -651,9 +651,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 794
+// Generated resources: 796
 // Generated IAM resources: 357
-// Total generated resources: 1151
+// Total generated resources: 1153
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     registry.Resource("google_folder_access_approval_settings"),
 	"google_organization_access_approval_settings":                               registry.Resource("google_organization_access_approval_settings"),
@@ -1530,6 +1530,8 @@ var generatedResources = map[string]*schema.Resource{
 	"google_network_security_security_profile_group":                             registry.Resource("google_network_security_security_profile_group"),
 	"google_network_security_server_tls_policy":                                  registry.Resource("google_network_security_server_tls_policy"),
 	"google_network_security_tls_inspection_policy":                              registry.Resource("google_network_security_tls_inspection_policy"),
+	"google_network_security_ull_mirroring_collector":                            registry.Resource("google_network_security_ull_mirroring_collector"),
+	"google_network_security_ull_mirroring_engine":                               registry.Resource("google_network_security_ull_mirroring_engine"),
 	"google_network_security_url_lists":                                          registry.Resource("google_network_security_url_lists"),
 	"google_network_services_agent_gateway":                                      registry.Resource("google_network_services_agent_gateway"),
 	"google_network_services_authz_extension":                                    registry.Resource("google_network_services_authz_extension"),
