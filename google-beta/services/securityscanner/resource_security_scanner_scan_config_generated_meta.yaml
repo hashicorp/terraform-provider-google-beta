@@ -20,3 +20,5 @@ fields:
     - api_field: startingUrls
     - api_field: targetPlatforms
     - api_field: userAgent
+    - field: deletion_policy
+      provider_only: true

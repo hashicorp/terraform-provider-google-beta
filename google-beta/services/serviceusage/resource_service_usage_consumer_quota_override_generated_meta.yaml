@@ -16,3 +16,5 @@ fields:
     - api_field: overrideValue
     - field: service
       provider_only: true
+    - field: deletion_policy
+      provider_only: true
