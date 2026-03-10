@@ -29,6 +29,8 @@ IMPROVEMENTS:
 * netapp: added `mode` field to `google_netapp_storage_pool` resource ([#11656](https://github.com/hashicorp/terraform-provider-google-beta/pull/11656))
 * osconfig: added `patch_config.skip_unpatchable_vms` field to `google_os_config_patch_deployment` resource ([#11640](https://github.com/hashicorp/terraform-provider-google-beta/pull/11640))
 * pubsub: added `text_config` field to `google_pubsub_subscription` resource ([#11660](https://github.com/hashicorp/terraform-provider-google-beta/pull/11660))
+* sql: added `clone_context.source_project` field to `google_sql_database_instance` resource to support cross project clone ([#11684](https://github.com/hashicorp/terraform-provider-google-beta/pull/11684))
+
 
 BUG FIXES:
 * tags: fixed iam read-after-write consistency issue with conditions in `google_tags_tag_key_iam_member` resource ([#11661](https://github.com/hashicorp/terraform-provider-google-beta/pull/11661))
