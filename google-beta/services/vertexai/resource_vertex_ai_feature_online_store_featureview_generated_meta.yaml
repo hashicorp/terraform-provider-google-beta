@@ -32,3 +32,5 @@ fields:
     - api_field: vectorSearchConfig.embeddingDimension
     - api_field: vectorSearchConfig.filterColumns
     - api_field: vectorSearchConfig.treeAhConfig.leafNodeEmbeddingCount
+    - field: deletion_policy
+      provider_only: true
