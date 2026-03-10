@@ -43,3 +43,5 @@ fields:
     - api_field: upgrade.release
     - field: wait_for_completion
       provider_only: true
+    - field: deletion_policy
+      provider_only: true
