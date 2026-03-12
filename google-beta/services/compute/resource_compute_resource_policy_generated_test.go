@@ -485,7 +485,7 @@ func TestAccComputeResourcePolicy_resourcePolicyWorkloadPolicyAcceleratorTopolog
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckComputeResourcePolicyDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -504,6 +504,7 @@ func TestAccComputeResourcePolicy_resourcePolicyWorkloadPolicyAcceleratorTopolog
 func testAccComputeResourcePolicy_resourcePolicyWorkloadPolicyAcceleratorTopologyModeExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_resource_policy" "bar" {
+  provider = google-beta
   name   = "tf-test-gce-policy%{random_suffix}"
   region = "europe-west1"
   workload_policy {
