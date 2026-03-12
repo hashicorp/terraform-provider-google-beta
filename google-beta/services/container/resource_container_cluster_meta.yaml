@@ -202,6 +202,8 @@ fields:
     api_field: 'maintenancePolicy.window.recurringWindow.recurrence'
   - field: 'maintenance_policy.recurring_window.start_time'
     api_field: 'maintenancePolicy.window.recurringWindow.window.startTime'
+  - api_field: 'maintenancePolicy.disruptionBudget.MinorVersionDisruptionInterval'
+  - api_field: 'maintenancePolicy.disruptionBudget.PatchVersionDisruptionInterval'
   - api_field: 'managedOpentelemetryConfig.scope'
   - api_field: 'masterAuth.clientCertificate'
   - api_field: 'masterAuth.clientCertificateConfig.issueClientCertificate'
