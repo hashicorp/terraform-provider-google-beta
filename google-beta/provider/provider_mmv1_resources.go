@@ -1883,6 +1883,7 @@ var handwrittenResources = map[string]*schema.Resource{
 	"google_project_service_identity":              resourcemanager.ResourceProjectServiceIdentity(),
 	"google_service_networking_connection":         servicenetworking.ResourceServiceNetworkingConnection(),
 	"google_sql_database_instance":                 sql.ResourceSqlDatabaseInstance(),
+	"google_sql_provision_script":                  sql.ResourceSqlProvisionScript(),
 	"google_sql_ssl_cert":                          sql.ResourceSqlSslCert(),
 	"google_sql_user":                              sql.ResourceSqlUser(),
 	"google_organization_iam_custom_role":          resourcemanager.ResourceGoogleOrganizationIamCustomRole(),
