@@ -100,6 +100,7 @@ func ResourceComputeRegionNetworkFirewallPolicyAssociation() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceComputeRegionNetworkFirewallPolicyAssociationCreate,
 		Read:   resourceComputeRegionNetworkFirewallPolicyAssociationRead,
+		Update: resourceComputeRegionNetworkFirewallPolicyAssociationUpdate,
 		Delete: resourceComputeRegionNetworkFirewallPolicyAssociationDelete,
 
 		Importer: &schema.ResourceImporter{
@@ -108,6 +109,7 @@ func ResourceComputeRegionNetworkFirewallPolicyAssociation() *schema.Resource {
 
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(20 * time.Minute),
+			Update: schema.DefaultTimeout(20 * time.Minute),
 			Delete: schema.DefaultTimeout(20 * time.Minute),
 		},
 
@@ -135,6 +137,12 @@ func ResourceComputeRegionNetworkFirewallPolicyAssociation() *schema.Resource {
 				Required:    true,
 				ForceNew:    true,
 				Description: `The name for an association.`,
+			},
+			"priority": {
+				Type:        schema.TypeInt,
+				Computed:    true,
+				Optional:    true,
+				Description: `An integer indicating the priority of an association.`,
 			},
 			"region": {
 				Type:        schema.TypeString,
@@ -178,6 +186,12 @@ func resourceComputeRegionNetworkFirewallPolicyAssociationCreate(d *schema.Resou
 		return err
 	} else if v, ok := d.GetOkExists("attachment_target"); !tpgresource.IsEmptyValue(reflect.ValueOf(attachmentTargetProp)) && (ok || !reflect.DeepEqual(v, attachmentTargetProp)) {
 		obj["attachmentTarget"] = attachmentTargetProp
+	}
+	priorityProp, err := expandComputeRegionNetworkFirewallPolicyAssociationPriority(d.Get("priority"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("priority"); !tpgresource.IsEmptyValue(reflect.ValueOf(priorityProp)) && (ok || !reflect.DeepEqual(v, priorityProp)) {
+		obj["priority"] = priorityProp
 	}
 
 	url, err := tpgresource.ReplaceVarsForId(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/firewallPolicies/{{firewall_policy}}/addAssociation")
@@ -287,8 +301,87 @@ func resourceComputeRegionNetworkFirewallPolicyAssociationRead(d *schema.Resourc
 	if err := d.Set("short_name", flattenComputeRegionNetworkFirewallPolicyAssociationShortName(res["shortName"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionNetworkFirewallPolicyAssociation: %s", err)
 	}
+	if err := d.Set("priority", flattenComputeRegionNetworkFirewallPolicyAssociationPriority(res["priority"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RegionNetworkFirewallPolicyAssociation: %s", err)
+	}
 
 	return nil
+}
+
+func resourceComputeRegionNetworkFirewallPolicyAssociationUpdate(d *schema.ResourceData, meta interface{}) error {
+	config := meta.(*transport_tpg.Config)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
+	if err != nil {
+		return err
+	}
+
+	billingProject := ""
+
+	project, err := tpgresource.GetProject(d, config)
+	if err != nil {
+		return fmt.Errorf("Error fetching project for RegionNetworkFirewallPolicyAssociation: %s", err)
+	}
+	billingProject = strings.TrimPrefix(project, "projects/")
+
+	obj := make(map[string]interface{})
+	nameProp, err := expandComputeRegionNetworkFirewallPolicyAssociationName(d.Get("name"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("name"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, nameProp)) {
+		obj["name"] = nameProp
+	}
+	attachmentTargetProp, err := expandComputeRegionNetworkFirewallPolicyAssociationAttachmentTarget(d.Get("attachment_target"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("attachment_target"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, attachmentTargetProp)) {
+		obj["attachmentTarget"] = attachmentTargetProp
+	}
+	priorityProp, err := expandComputeRegionNetworkFirewallPolicyAssociationPriority(d.Get("priority"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("priority"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, priorityProp)) {
+		obj["priority"] = priorityProp
+	}
+
+	url, err := tpgresource.ReplaceVarsForId(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/firewallPolicies/{{firewall_policy}}/patchAssociation")
+	if err != nil {
+		return err
+	}
+
+	log.Printf("[DEBUG] Updating RegionNetworkFirewallPolicyAssociation %q: %#v", d.Id(), obj)
+	headers := make(http.Header)
+
+	// err == nil indicates that the billing_project value was found
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
+		billingProject = bp
+	}
+
+	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
+		Config:    config,
+		Method:    "POST",
+		Project:   billingProject,
+		RawURL:    url,
+		UserAgent: userAgent,
+		Body:      obj,
+		Timeout:   d.Timeout(schema.TimeoutUpdate),
+		Headers:   headers,
+	})
+
+	if err != nil {
+		return fmt.Errorf("Error updating RegionNetworkFirewallPolicyAssociation %q: %s", d.Id(), err)
+	} else {
+		log.Printf("[DEBUG] Finished updating RegionNetworkFirewallPolicyAssociation %q: %#v", d.Id(), res)
+	}
+
+	err = ComputeOperationWaitTime(
+		config, res, tpgresource.GetResourceNameFromSelfLink(project), "Updating RegionNetworkFirewallPolicyAssociation", userAgent,
+		d.Timeout(schema.TimeoutUpdate))
+
+	if err != nil {
+		return err
+	}
+
+	return resourceComputeRegionNetworkFirewallPolicyAssociationRead(d, meta)
 }
 
 func resourceComputeRegionNetworkFirewallPolicyAssociationDelete(d *schema.ResourceData, meta interface{}) error {
@@ -381,10 +474,31 @@ func flattenComputeRegionNetworkFirewallPolicyAssociationShortName(v interface{}
 	return v
 }
 
+func flattenComputeRegionNetworkFirewallPolicyAssociationPriority(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	// Handles the string fixed64 format
+	if strVal, ok := v.(string); ok {
+		if intVal, err := tpgresource.StringToFixed64(strVal); err == nil {
+			return intVal
+		}
+	}
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
+}
+
 func expandComputeRegionNetworkFirewallPolicyAssociationName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
 func expandComputeRegionNetworkFirewallPolicyAssociationAttachmentTarget(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeRegionNetworkFirewallPolicyAssociationPriority(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
