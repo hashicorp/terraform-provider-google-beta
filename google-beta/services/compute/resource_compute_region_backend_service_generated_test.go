@@ -779,6 +779,92 @@ resource "google_compute_region_backend_service" "default" {
 `, context)
 }
 
+func TestAccComputeRegionBackendService_regionBackendServiceDynamicForwardingForwardProxyCloudRunExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckComputeRegionBackendServiceDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeRegionBackendService_regionBackendServiceDynamicForwardingForwardProxyCloudRunExample(context),
+			},
+			{
+				ResourceName:            "google_compute_region_backend_service.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"iap.0.oauth2_client_secret", "network", "params", "region"},
+			},
+		},
+	})
+}
+
+func testAccComputeRegionBackendService_regionBackendServiceDynamicForwardingForwardProxyCloudRunExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_compute_region_backend_service" "default" {
+  provider              = google-beta
+  name                  = "tf-test-region-service%{random_suffix}"
+  region                = "us-central1"
+  load_balancing_scheme = "INTERNAL_SELF_MANAGED"
+  protocol = "HTTP2"
+  dynamic_forwarding {
+    forward_proxy {
+      enabled = true
+      proxy_mode = "CLOUD_RUN"
+    }
+  }
+}
+`, context)
+}
+
+func TestAccComputeRegionBackendService_regionBackendServiceDynamicForwardingForwardProxyDirectForwardingExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckComputeRegionBackendServiceDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeRegionBackendService_regionBackendServiceDynamicForwardingForwardProxyDirectForwardingExample(context),
+			},
+			{
+				ResourceName:            "google_compute_region_backend_service.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"iap.0.oauth2_client_secret", "network", "params", "region"},
+			},
+		},
+	})
+}
+
+func testAccComputeRegionBackendService_regionBackendServiceDynamicForwardingForwardProxyDirectForwardingExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_compute_region_backend_service" "default" {
+  provider                        = google-beta
+  name                            = "tf-test-region-service%{random_suffix}"
+  region                          = "us-central1"
+  load_balancing_scheme           = "INTERNAL_SELF_MANAGED"
+  protocol                        = "HTTP2"
+  dynamic_forwarding {
+    forward_proxy {
+      enabled = true
+      proxy_mode = "DIRECT_FORWARDING"
+    }
+  }
+}
+`, context)
+}
+
 func TestAccComputeRegionBackendService_regionBackendServiceHaPolicyExample(t *testing.T) {
 	t.Parallel()
 
