@@ -89,3 +89,5 @@ fields:
     - api_field: recipes.updateSteps.scriptRun.script
     - api_field: recipes.version
     - api_field: updateTime
+    - field: deletion_policy
+      provider_only: true
