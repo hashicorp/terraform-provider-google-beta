@@ -234,6 +234,10 @@ resource "google_firebase_ai_logic_config" "default" {
     sampling_rate = 1.0
   }
 
+  traffic_filter {
+    template_only = true
+  }
+
   depends_on = [time_sleep.wait_30s]
 }
 `, context)

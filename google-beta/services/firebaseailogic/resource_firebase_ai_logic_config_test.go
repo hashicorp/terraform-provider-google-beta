@@ -67,7 +67,7 @@ func TestAccFirebaseAILogicConfig_firebaseailogicConfigUpdate(t *testing.T) {
 		CheckDestroy: testAccCheckFirebaseAILogicConfigDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccFirebaseAILogicConfig_firebaseailogicConfigUpdateExample(context, "key1", 0.5, "ALL"),
+				Config: testAccFirebaseAILogicConfig_firebaseailogicConfigUpdateExample(context, "key1", 0.5, "ALL", true),
 			},
 			{
 				ResourceName:            "google_firebase_ai_logic_config.default",
@@ -76,7 +76,7 @@ func TestAccFirebaseAILogicConfig_firebaseailogicConfigUpdate(t *testing.T) {
 				ImportStateVerifyIgnore: []string{"generative_language_config.0.api_key", "generative_language_config.0.api_key_wo", "location"},
 			},
 			{
-				Config: testAccFirebaseAILogicConfig_firebaseailogicConfigUpdateExample(context, "key2", 1.0, "NONE"),
+				Config: testAccFirebaseAILogicConfig_firebaseailogicConfigUpdateExample(context, "key2", 1.0, "NONE", false),
 			},
 			{
 				ResourceName:            "google_firebase_ai_logic_config.default",
@@ -89,10 +89,12 @@ func TestAccFirebaseAILogicConfig_firebaseailogicConfigUpdate(t *testing.T) {
 }
 
 func testAccFirebaseAILogicConfig_firebaseailogicConfigUpdateExample(
-	context map[string]interface{}, apiKeyId string, samplingRate float32, telemetryMode string) string {
+	context map[string]interface{}, apiKeyId string, samplingRate float32, telemetryMode string, templateOnly bool) string {
 	context["api_key_id"] = apiKeyId
 	context["sampling_rate"] = samplingRate
 	context["telemetry_mode"] = telemetryMode
+	context["template_only"] = templateOnly
+
 	return acctest.Nprintf(`
 resource "google_project" "project" {
   provider = google-beta
@@ -161,6 +163,10 @@ resource "google_firebase_ai_logic_config" "default" {
   telemetry_config {
     mode = "%{telemetry_mode}"
     sampling_rate = %{sampling_rate}
+  }
+
+  traffic_filter {
+    template_only = %{template_only}
   }
 
   depends_on = [time_sleep.wait_30s]

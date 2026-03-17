@@ -16,3 +16,4 @@ fields:
     - api_field: name
     - api_field: telemetryConfig.mode
     - api_field: telemetryConfig.samplingRate
+    - api_field: trafficFilter.templateOnly
