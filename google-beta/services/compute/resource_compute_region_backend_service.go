@@ -1,4 +1,4 @@
-// Copyright (c) HashiCorp, Inc.
+// Copyright IBM Corp. 2014, 2026
 // SPDX-License-Identifier: MPL-2.0
 
 // ----------------------------------------------------------------------------
@@ -678,6 +678,28 @@ feature which together with Service Extension allows customized and complex rout
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"forward_proxy": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							Description: `Dynamic Forwarding Proxy configuration.`,
+							MaxItems:    1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"enabled": {
+										Type:        schema.TypeBool,
+										Required:    true,
+										ForceNew:    true,
+										Description: `A boolean flag enabling dynamic forwarding proxy.`,
+									},
+									"proxy_mode": {
+										Type:         schema.TypeString,
+										Required:     true,
+										ValidateFunc: verify.ValidateEnum([]string{"DIRECT_FORWARDING", "CLOUD_RUN"}),
+										Description:  `Determines the dynamic forwarding proxy mode Possible values: ["DIRECT_FORWARDING", "CLOUD_RUN"]`,
+									},
+								},
+							},
+						},
 						"ip_port_selection": {
 							Type:        schema.TypeList,
 							Optional:    true,
@@ -881,11 +903,11 @@ If OAuth client is not set, Google-managed OAuth client is used.`,
 				Type:         schema.TypeString,
 				Optional:     true,
 				ForceNew:     true,
-				ValidateFunc: verify.ValidateEnum([]string{"EXTERNAL", "EXTERNAL_MANAGED", "INTERNAL", "INTERNAL_MANAGED", ""}),
+				ValidateFunc: verify.ValidateEnum([]string{"EXTERNAL", "EXTERNAL_MANAGED", "INTERNAL", "INTERNAL_MANAGED", "INTERNAL_SELF_MANAGED", ""}),
 				Description: `Indicates what kind of load balancing this regional backend service
 will be used for. A backend service created for one type of load
 balancing cannot be used with the other(s). For more information, refer to
-[Choosing a load balancer](https://cloud.google.com/load-balancing/docs/backend-service). Default value: "INTERNAL" Possible values: ["EXTERNAL", "EXTERNAL_MANAGED", "INTERNAL", "INTERNAL_MANAGED"]`,
+[Choosing a load balancer](https://cloud.google.com/load-balancing/docs/backend-service). Default value: "INTERNAL" Possible values: ["EXTERNAL", "EXTERNAL_MANAGED", "INTERNAL", "INTERNAL_MANAGED", "INTERNAL_SELF_MANAGED"]`,
 				Default: "INTERNAL",
 			},
 			"locality_lb_policy": {
@@ -4017,6 +4039,8 @@ func flattenComputeRegionBackendServiceDynamicForwarding(v interface{}, d *schem
 	transformed := make(map[string]interface{})
 	transformed["ip_port_selection"] =
 		flattenComputeRegionBackendServiceDynamicForwardingIpPortSelection(original["ipPortSelection"], d, config)
+	transformed["forward_proxy"] =
+		flattenComputeRegionBackendServiceDynamicForwardingForwardProxy(original["forwardProxy"], d, config)
 	return []interface{}{transformed}
 }
 func flattenComputeRegionBackendServiceDynamicForwardingIpPortSelection(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -4033,6 +4057,29 @@ func flattenComputeRegionBackendServiceDynamicForwardingIpPortSelection(v interf
 	return []interface{}{transformed}
 }
 func flattenComputeRegionBackendServiceDynamicForwardingIpPortSelectionEnabled(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenComputeRegionBackendServiceDynamicForwardingForwardProxy(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["enabled"] =
+		flattenComputeRegionBackendServiceDynamicForwardingForwardProxyEnabled(original["enabled"], d, config)
+	transformed["proxy_mode"] =
+		flattenComputeRegionBackendServiceDynamicForwardingForwardProxyProxyMode(original["proxyMode"], d, config)
+	return []interface{}{transformed}
+}
+func flattenComputeRegionBackendServiceDynamicForwardingForwardProxyEnabled(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenComputeRegionBackendServiceDynamicForwardingForwardProxyProxyMode(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -4981,7 +5028,7 @@ func expandComputeRegionBackendServiceIap(v interface{}, d tpgresource.Terraform
 	transformedOauth2ClientId, err := expandComputeRegionBackendServiceIapOauth2ClientId(original["oauth2_client_id"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedOauth2ClientId); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+	} else {
 		transformed["oauth2ClientId"] = transformedOauth2ClientId
 	}
 
@@ -5618,6 +5665,13 @@ func expandComputeRegionBackendServiceDynamicForwarding(v interface{}, d tpgreso
 		transformed["ipPortSelection"] = transformedIpPortSelection
 	}
 
+	transformedForwardProxy, err := expandComputeRegionBackendServiceDynamicForwardingForwardProxy(original["forward_proxy"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedForwardProxy); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["forwardProxy"] = transformedForwardProxy
+	}
+
 	return transformed, nil
 }
 
@@ -5644,6 +5698,43 @@ func expandComputeRegionBackendServiceDynamicForwardingIpPortSelection(v interfa
 }
 
 func expandComputeRegionBackendServiceDynamicForwardingIpPortSelectionEnabled(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeRegionBackendServiceDynamicForwardingForwardProxy(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedEnabled, err := expandComputeRegionBackendServiceDynamicForwardingForwardProxyEnabled(original["enabled"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedEnabled); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["enabled"] = transformedEnabled
+	}
+
+	transformedProxyMode, err := expandComputeRegionBackendServiceDynamicForwardingForwardProxyProxyMode(original["proxy_mode"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedProxyMode); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["proxyMode"] = transformedProxyMode
+	}
+
+	return transformed, nil
+}
+
+func expandComputeRegionBackendServiceDynamicForwardingForwardProxyEnabled(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeRegionBackendServiceDynamicForwardingForwardProxyProxyMode(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
@@ -5865,7 +5956,7 @@ func expandComputeRegionBackendServiceRegion(v interface{}, d tpgresource.Terraf
 }
 
 func resourceComputeRegionBackendServiceEncoder(d *schema.ResourceData, meta interface{}, obj map[string]interface{}) (map[string]interface{}, error) {
-	if d.Get("load_balancing_scheme").(string) == "EXTERNAL_MANAGED" || d.Get("load_balancing_scheme").(string) == "INTERNAL_MANAGED" {
+	if d.Get("load_balancing_scheme").(string) == "EXTERNAL_MANAGED" || d.Get("load_balancing_scheme").(string) == "INTERNAL_MANAGED" || d.Get("load_balancing_scheme").(string) == "INTERNAL_SELF_MANAGED" {
 		return obj, nil
 	}
 

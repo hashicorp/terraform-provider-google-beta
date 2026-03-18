@@ -1,4 +1,4 @@
-// Copyright (c) HashiCorp, Inc.
+// Copyright IBM Corp. 2014, 2026
 // SPDX-License-Identifier: MPL-2.0
 // ----------------------------------------------------------------------------
 //
@@ -391,6 +391,7 @@ var handwrittenDatasources = map[string]*schema.Resource{
 	"google_monitoring_app_engine_service":                       monitoring.DataSourceMonitoringServiceAppEngine(),
 	"google_monitoring_uptime_check_ips":                         monitoring.DataSourceGoogleMonitoringUptimeCheckIps(),
 	"google_netblock_ip_ranges":                                  resourcemanager.DataSourceGoogleNetblockIpRanges(),
+	"google_observability_folder_settings":                       observability.DataSourceObservabilityFolderSettings(),
 	"google_observability_project_settings":                      observability.DataSourceObservabilityProjectSettings(),
 	"google_observability_organization_settings":                 observability.DataSourceObservabilityOrganizationSettings(),
 	"google_oracle_database_autonomous_database":                 oracledatabase.DataSourceOracleDatabaseAutonomousDatabase(),
@@ -511,6 +512,7 @@ var generatedIAMDatasources = map[string]*schema.Resource{
 	"google_beyondcorp_security_gateway_application_iam_policy":    registry.DataSource("google_beyondcorp_security_gateway_application_iam_policy"),
 	"google_biglake_iceberg_catalog_iam_policy":                    registry.DataSource("google_biglake_iceberg_catalog_iam_policy"),
 	"google_biglake_iceberg_namespace_iam_policy":                  registry.DataSource("google_biglake_iceberg_namespace_iam_policy"),
+	"google_biglake_iceberg_table_iam_policy":                      registry.DataSource("google_biglake_iceberg_table_iam_policy"),
 	"google_bigquery_table_iam_policy":                             registry.DataSource("google_bigquery_table_iam_policy"),
 	"google_bigquery_analytics_hub_data_exchange_iam_policy":       registry.DataSource("google_bigquery_analytics_hub_data_exchange_iam_policy"),
 	"google_bigquery_analytics_hub_listing_iam_policy":             registry.DataSource("google_bigquery_analytics_hub_listing_iam_policy"),
@@ -650,9 +652,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 792
-// Generated IAM resources: 357
-// Total generated resources: 1149
+// Generated resources: 799
+// Generated IAM resources: 360
+// Total generated resources: 1159
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     registry.Resource("google_folder_access_approval_settings"),
 	"google_organization_access_approval_settings":                               registry.Resource("google_organization_access_approval_settings"),
@@ -777,6 +779,10 @@ var generatedResources = map[string]*schema.Resource{
 	"google_biglake_iceberg_namespace_iam_binding":                               registry.Resource("google_biglake_iceberg_namespace_iam_binding"),
 	"google_biglake_iceberg_namespace_iam_member":                                registry.Resource("google_biglake_iceberg_namespace_iam_member"),
 	"google_biglake_iceberg_namespace_iam_policy":                                registry.Resource("google_biglake_iceberg_namespace_iam_policy"),
+	"google_biglake_iceberg_table":                                               registry.Resource("google_biglake_iceberg_table"),
+	"google_biglake_iceberg_table_iam_binding":                                   registry.Resource("google_biglake_iceberg_table_iam_binding"),
+	"google_biglake_iceberg_table_iam_member":                                    registry.Resource("google_biglake_iceberg_table_iam_member"),
+	"google_biglake_iceberg_table_iam_policy":                                    registry.Resource("google_biglake_iceberg_table_iam_policy"),
 	"google_bigquery_dataset":                                                    registry.Resource("google_bigquery_dataset"),
 	"google_bigquery_dataset_access":                                             registry.Resource("google_bigquery_dataset_access"),
 	"google_bigquery_job":                                                        registry.Resource("google_bigquery_job"),
@@ -839,6 +845,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_ces_toolset":                                                         registry.Resource("google_ces_toolset"),
 	"google_chronicle_data_access_label":                                         registry.Resource("google_chronicle_data_access_label"),
 	"google_chronicle_data_access_scope":                                         registry.Resource("google_chronicle_data_access_scope"),
+	"google_chronicle_data_table":                                                registry.Resource("google_chronicle_data_table"),
 	"google_chronicle_reference_list":                                            registry.Resource("google_chronicle_reference_list"),
 	"google_chronicle_retrohunt":                                                 registry.Resource("google_chronicle_retrohunt"),
 	"google_chronicle_rule":                                                      registry.Resource("google_chronicle_rule"),
@@ -1038,6 +1045,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_compute_rollout_plan":                                                registry.Resource("google_compute_rollout_plan"),
 	"google_compute_route":                                                       registry.Resource("google_compute_route"),
 	"google_compute_router":                                                      registry.Resource("google_compute_router"),
+	"google_compute_router_named_set":                                            registry.Resource("google_compute_router_named_set"),
 	"google_compute_router_nat":                                                  registry.Resource("google_compute_router_nat"),
 	"google_compute_router_nat_address":                                          registry.Resource("google_compute_router_nat_address"),
 	"google_compute_router_route_policy":                                         registry.Resource("google_compute_router_route_policy"),
@@ -1069,6 +1077,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_compute_vpn_tunnel":                                                  registry.Resource("google_compute_vpn_tunnel"),
 	"google_compute_wire_group":                                                  registry.Resource("google_compute_wire_group"),
 	"google_contact_center_insights_analysis_rule":                               registry.Resource("google_contact_center_insights_analysis_rule"),
+	"google_contact_center_insights_auto_labeling_rule":                          registry.Resource("google_contact_center_insights_auto_labeling_rule"),
 	"google_contact_center_insights_view":                                        registry.Resource("google_contact_center_insights_view"),
 	"google_container_analysis_note":                                             registry.Resource("google_container_analysis_note"),
 	"google_container_analysis_note_iam_binding":                                 registry.Resource("google_container_analysis_note_iam_binding"),
@@ -1528,6 +1537,8 @@ var generatedResources = map[string]*schema.Resource{
 	"google_network_security_security_profile_group":                             registry.Resource("google_network_security_security_profile_group"),
 	"google_network_security_server_tls_policy":                                  registry.Resource("google_network_security_server_tls_policy"),
 	"google_network_security_tls_inspection_policy":                              registry.Resource("google_network_security_tls_inspection_policy"),
+	"google_network_security_ull_mirroring_collector":                            registry.Resource("google_network_security_ull_mirroring_collector"),
+	"google_network_security_ull_mirroring_engine":                               registry.Resource("google_network_security_ull_mirroring_engine"),
 	"google_network_security_url_lists":                                          registry.Resource("google_network_security_url_lists"),
 	"google_network_services_agent_gateway":                                      registry.Resource("google_network_services_agent_gateway"),
 	"google_network_services_authz_extension":                                    registry.Resource("google_network_services_authz_extension"),
@@ -1565,6 +1576,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_notebooks_runtime_iam_binding":                                       registry.Resource("google_notebooks_runtime_iam_binding"),
 	"google_notebooks_runtime_iam_member":                                        registry.Resource("google_notebooks_runtime_iam_member"),
 	"google_notebooks_runtime_iam_policy":                                        registry.Resource("google_notebooks_runtime_iam_policy"),
+	"google_observability_folder_settings":                                       registry.Resource("google_observability_folder_settings"),
 	"google_observability_organization_settings":                                 registry.Resource("google_observability_organization_settings"),
 	"google_observability_project_settings":                                      registry.Resource("google_observability_project_settings"),
 	"google_observability_trace_scope":                                           registry.Resource("google_observability_trace_scope"),
@@ -1871,6 +1883,7 @@ var handwrittenResources = map[string]*schema.Resource{
 	"google_project_service_identity":              resourcemanager.ResourceProjectServiceIdentity(),
 	"google_service_networking_connection":         servicenetworking.ResourceServiceNetworkingConnection(),
 	"google_sql_database_instance":                 sql.ResourceSqlDatabaseInstance(),
+	"google_sql_provision_script":                  sql.ResourceSqlProvisionScript(),
 	"google_sql_ssl_cert":                          sql.ResourceSqlSslCert(),
 	"google_sql_user":                              sql.ResourceSqlUser(),
 	"google_organization_iam_custom_role":          resourcemanager.ResourceGoogleOrganizationIamCustomRole(),

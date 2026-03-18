@@ -2,7 +2,7 @@ resource: google_dialogflow_conversation_profile
 generation_type: mmv1
 source_file: products/dialogflow/ConversationProfile.yaml
 api_service_name: dialogflow.googleapis.com
-api_version: v2
+api_version: v2beta1
 api_resource_type_kind: ConversationProfile
 fields:
     - api_field: automatedAgentConfig.agent
@@ -85,5 +85,6 @@ fields:
     - api_field: ttsConfig.voice.name
     - api_field: ttsConfig.voice.ssmlGender
     - api_field: ttsConfig.volumeGainDb
+    - api_field: useBidiStreaming
     - field: deletion_policy
       provider_only: true

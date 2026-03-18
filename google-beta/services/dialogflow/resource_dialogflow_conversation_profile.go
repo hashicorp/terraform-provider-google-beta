@@ -1,4 +1,4 @@
-// Copyright (c) HashiCorp, Inc.
+// Copyright IBM Corp. 2014, 2026
 // SPDX-License-Identifier: MPL-2.0
 
 // ----------------------------------------------------------------------------
@@ -944,6 +944,11 @@ Leave this field unspecified to use Agent Speech settings for model selection.`,
 					},
 				},
 			},
+			"use_bidi_streaming": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: `Optional. Whether to use the bidi streaming API in telephony integration for the conversation profile.`,
+			},
 			"name": {
 				Type:        schema.TypeString,
 				Computed:    true,
@@ -985,6 +990,12 @@ func resourceDialogflowConversationProfileCreate(d *schema.ResourceData, meta in
 		return err
 	} else if v, ok := d.GetOkExists("display_name"); !tpgresource.IsEmptyValue(reflect.ValueOf(displayNameProp)) && (ok || !reflect.DeepEqual(v, displayNameProp)) {
 		obj["displayName"] = displayNameProp
+	}
+	useBidiStreamingProp, err := expandDialogflowConversationProfileUseBidiStreaming(d.Get("use_bidi_streaming"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("use_bidi_streaming"); !tpgresource.IsEmptyValue(reflect.ValueOf(useBidiStreamingProp)) && (ok || !reflect.DeepEqual(v, useBidiStreamingProp)) {
+		obj["useBidiStreaming"] = useBidiStreamingProp
 	}
 	automatedAgentConfigProp, err := expandDialogflowConversationProfileAutomatedAgentConfig(d.Get("automated_agent_config"), d, config)
 	if err != nil {
@@ -1207,6 +1218,9 @@ func resourceDialogflowConversationProfileRead(d *schema.ResourceData, meta inte
 	if err := d.Set("display_name", flattenDialogflowConversationProfileDisplayName(res["displayName"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ConversationProfile: %s", err)
 	}
+	if err := d.Set("use_bidi_streaming", flattenDialogflowConversationProfileUseBidiStreaming(res["useBidiStreaming"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ConversationProfile: %s", err)
+	}
 	if err := d.Set("automated_agent_config", flattenDialogflowConversationProfileAutomatedAgentConfig(res["automatedAgentConfig"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ConversationProfile: %s", err)
 	}
@@ -1278,6 +1292,12 @@ func resourceDialogflowConversationProfileUpdate(d *schema.ResourceData, meta in
 		return err
 	} else if v, ok := d.GetOkExists("display_name"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, displayNameProp)) {
 		obj["displayName"] = displayNameProp
+	}
+	useBidiStreamingProp, err := expandDialogflowConversationProfileUseBidiStreaming(d.Get("use_bidi_streaming"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("use_bidi_streaming"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, useBidiStreamingProp)) {
+		obj["useBidiStreaming"] = useBidiStreamingProp
 	}
 	automatedAgentConfigProp, err := expandDialogflowConversationProfileAutomatedAgentConfig(d.Get("automated_agent_config"), d, config)
 	if err != nil {
@@ -1363,6 +1383,10 @@ func resourceDialogflowConversationProfileUpdate(d *schema.ResourceData, meta in
 
 	if d.HasChange("display_name") {
 		updateMask = append(updateMask, "displayName")
+	}
+
+	if d.HasChange("use_bidi_streaming") {
+		updateMask = append(updateMask, "useBidiStreaming")
 	}
 
 	if d.HasChange("automated_agent_config") {
@@ -1570,6 +1594,10 @@ func flattenDialogflowConversationProfileName(v interface{}, d *schema.ResourceD
 }
 
 func flattenDialogflowConversationProfileDisplayName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenDialogflowConversationProfileUseBidiStreaming(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -2479,6 +2507,10 @@ func flattenDialogflowConversationProfileNewRecognitionResultNotificationConfigM
 }
 
 func expandDialogflowConversationProfileDisplayName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandDialogflowConversationProfileUseBidiStreaming(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
