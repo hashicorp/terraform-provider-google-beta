@@ -50,7 +50,7 @@ var (
 	_ = googleapi.Error{}
 )
 
-func TestAccKMSAutokeyConfig_kmsAutokeyConfigAllExample(t *testing.T) {
+func TestAccKMSProjectAutokeyConfig_kmsAutokeyConfigProjectExample(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
@@ -66,39 +66,29 @@ func TestAccKMSAutokeyConfig_kmsAutokeyConfigAllExample(t *testing.T) {
 			"random": {},
 			"time":   {},
 		},
-		CheckDestroy: testAccCheckKMSAutokeyConfigDestroyProducer(t),
+		CheckDestroy: testAccCheckKMSProjectAutokeyConfigDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccKMSAutokeyConfig_kmsAutokeyConfigAllExample(context),
+				Config: testAccKMSProjectAutokeyConfig_kmsAutokeyConfigProjectExample(context),
 			},
 			{
-				ResourceName:            "google_kms_autokey_config.example-autokeyconfig",
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"folder"},
+				ResourceName:      "google_kms_project_autokey_config.example-autokeyconfig-project",
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
 }
 
-func testAccKMSAutokeyConfig_kmsAutokeyConfigAllExample(context map[string]interface{}) string {
+func testAccKMSProjectAutokeyConfig_kmsAutokeyConfigProjectExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
-# Create Folder in GCP Organization
-resource "google_folder" "autokms_folder" {
-  provider     = google-beta
-  display_name = "tf-test-folder-cfg%{random_suffix}"
-  parent       = "organizations/%{org_id}"
-  deletion_protection = false
-}
-
-# Create the key project
-resource "google_project" "key_project" {
+# Create the resource project
+resource "google_project" "resource_project" {
   provider        = google-beta
-  project_id      = "tf-test-key-proj%{random_suffix}"
-  name            = "tf-test-key-proj%{random_suffix}"
-  folder_id       = google_folder.autokms_folder.folder_id
+  project_id      = "tf-test-my-project%{random_suffix}"
+  name            = "tf-test-my-project%{random_suffix}"
+  org_id          = "%{org_id}"
   billing_account = "%{billing_account}"
-  depends_on      = [google_folder.autokms_folder]
   deletion_policy = "DELETE"
 }
 
@@ -106,9 +96,9 @@ resource "google_project" "key_project" {
 resource "google_project_service" "kms_api_service" {
   provider                   = google-beta
   service                    = "cloudkms.googleapis.com"
-  project                    = google_project.key_project.project_id
+  project                    = google_project.resource_project.project_id
   disable_dependent_services = true
-  depends_on                 = [google_project.key_project]
+  depends_on                 = [google_project.resource_project]
 }
 
 # Wait delay after enabling APIs
@@ -117,26 +107,26 @@ resource "time_sleep" "wait_enable_service_api" {
   create_duration  = "30s"
 }
 
-#Create KMS Service Agent
+# Create KMS Service Agent
 resource "google_project_service_identity" "kms_service_agent" {
   provider   = google-beta
   service    = "cloudkms.googleapis.com"
-  project    = google_project.key_project.number
+  project    = google_project.resource_project.number
   depends_on = [time_sleep.wait_enable_service_api]
 }
 
-# Wait delay after creating service agent.
+# Wait delay after creating service agent
 resource "time_sleep" "wait_service_agent" {
   depends_on       = [google_project_service_identity.kms_service_agent]
   create_duration  = "10s"
 }
 
-#Grant the KMS Service Agent the Cloud KMS Admin role
+# Grant the KMS Service Agent the Cloud KMS Admin role
 resource "google_project_iam_member" "autokey_project_admin" {
   provider   = google-beta
-  project    = google_project.key_project.project_id
+  project    = google_project.resource_project.project_id
   role       = "roles/cloudkms.admin"
-  member     = "serviceAccount:service-${google_project.key_project.number}@gcp-sa-cloudkms.iam.gserviceaccount.com"
+  member     = "serviceAccount:service-${google_project.resource_project.number}@gcp-sa-cloudkms.iam.gserviceaccount.com"
   depends_on = [time_sleep.wait_service_agent]
 }
 
@@ -146,27 +136,19 @@ resource "time_sleep" "wait_srv_acc_permissions" {
   depends_on      = [google_project_iam_member.autokey_project_admin]
 }
 
-resource "google_kms_autokey_config" "example-autokeyconfig" {
+resource "google_kms_project_autokey_config" "example-autokeyconfig-project" {
   provider    = google-beta
-  folder      = google_folder.autokms_folder.id
-  key_project = "projects/${google_project.key_project.project_id}"
-  key_project_resolution_mode = "DEDICATED_KEY_PROJECT"
+  project     = google_project.resource_project.number
+  key_project_resolution_mode = "RESOURCE_PROJECT"
   depends_on  = [time_sleep.wait_srv_acc_permissions]
-}
-
-# Wait delay after setting AutokeyConfig, to prevent diffs on reapply,
-# because setting the config takes a little to fully propagate.
-resource "time_sleep" "wait_autokey_propagation" {
-  create_duration = "30s"
-  depends_on      = [google_kms_autokey_config.example-autokeyconfig]
 }
 `, context)
 }
 
-func testAccCheckKMSAutokeyConfigDestroyProducer(t *testing.T) func(s *terraform.State) error {
+func testAccCheckKMSProjectAutokeyConfigDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		for name, rs := range s.RootModule().Resources {
-			if rs.Type != "google_kms_autokey_config" {
+			if rs.Type != "google_kms_project_autokey_config" {
 				continue
 			}
 			if strings.HasPrefix(name, "data.") {
@@ -175,8 +157,7 @@ func testAccCheckKMSAutokeyConfigDestroyProducer(t *testing.T) func(s *terraform
 
 			config := acctest.GoogleProviderConfig(t)
 
-			url, err := tpgresource.ReplaceVarsForTest(config, rs, "{{KMSBasePath}}folders/{{folder}}/autokeyConfig")
-			url = strings.Replace(url, "folders/folders/", "folders/", 1)
+			url, err := tpgresource.ReplaceVarsForTest(config, rs, "{{KMSBasePath}}projects/{{project}}/autokeyConfig")
 			if err != nil {
 				return err
 			}
@@ -189,10 +170,6 @@ func testAccCheckKMSAutokeyConfigDestroyProducer(t *testing.T) func(s *terraform
 			})
 			if err != nil {
 				return nil
-			}
-
-			if v := res["keyProject"]; v != nil {
-				return fmt.Errorf("AutokeyConfig still exists at %s", url)
 			}
 
 			if v := res["keyProjectResolutionMode"]; v != nil {
