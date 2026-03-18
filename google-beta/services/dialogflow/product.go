@@ -1,4 +1,4 @@
-// Copyright (c) HashiCorp, Inc.
+// Copyright IBM Corp. 2014, 2026
 // SPDX-License-Identifier: MPL-2.0
 
 // ----------------------------------------------------------------------------
@@ -27,6 +27,6 @@ const ProductName = "dialogflow"
 func init() {
 	registry.Product{
 		Name:    "dialogflow",
-		BaseUrl: "https://dialogflow.googleapis.com/v2/",
+		BaseUrl: "https://dialogflow.googleapis.com/v2beta1/",
 	}.Register()
 }

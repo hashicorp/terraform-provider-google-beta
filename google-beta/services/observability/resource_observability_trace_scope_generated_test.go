@@ -1,4 +1,4 @@
-// Copyright (c) HashiCorp, Inc.
+// Copyright IBM Corp. 2014, 2026
 // SPDX-License-Identifier: MPL-2.0
 
 // ----------------------------------------------------------------------------
@@ -60,7 +60,7 @@ func TestAccObservabilityTraceScope_observabilityTraceScopeBasicExample(t *testi
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckObservabilityTraceScopeDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -80,7 +80,6 @@ func testAccObservabilityTraceScope_observabilityTraceScopeBasicExample(context 
 	return acctest.Nprintf(`
 resource "google_observability_trace_scope" "observability_trace_scope" {
     depends_on       = [google_project.project-2]
-    provider         = google-beta
     trace_scope_id   = "tf-test-test-scope%{random_suffix}"
     location         = "global"
     resource_names   = [
@@ -91,11 +90,9 @@ resource "google_observability_trace_scope" "observability_trace_scope" {
 }
 
 data "google_project" "project" {
-    provider         = google-beta
 }
 
 resource "google_project" "project-2" {
-    provider         = google-beta
     project_id       = "tf-test%{random_suffix}"
     name             = "tf-test%{random_suffix}"
     org_id           = "%{org_id}"

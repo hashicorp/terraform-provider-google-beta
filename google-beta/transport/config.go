@@ -1,4 +1,4 @@
-// Copyright (c) HashiCorp, Inc.
+// Copyright IBM Corp. 2014, 2026
 // SPDX-License-Identifier: MPL-2.0
 // ----------------------------------------------------------------------------
 //
@@ -696,7 +696,7 @@ var DefaultBasePaths = map[string]string{
 	DatastreamBasePathKey:               "https://datastream.googleapis.com/v1/",
 	DeploymentManagerBasePathKey:        "https://www.googleapis.com/deploymentmanager/v2/",
 	DeveloperConnectBasePathKey:         "https://developerconnect.googleapis.com/v1/",
-	DialogflowBasePathKey:               "https://dialogflow.googleapis.com/v2/",
+	DialogflowBasePathKey:               "https://dialogflow.googleapis.com/v2beta1/",
 	DialogflowCXBasePathKey:             "https://{{location}}-dialogflow.googleapis.com/v3beta1/",
 	DiscoveryEngineBasePathKey:          "https://{{location}}-discoveryengine.googleapis.com/v1/",
 	DNSBasePathKey:                      "https://dns.googleapis.com/dns/v1beta2/",

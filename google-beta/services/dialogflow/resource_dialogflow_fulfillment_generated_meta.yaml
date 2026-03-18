@@ -2,7 +2,7 @@ resource: google_dialogflow_fulfillment
 generation_type: mmv1
 source_file: products/dialogflow/Fulfillment.yaml
 api_service_name: dialogflow.googleapis.com
-api_version: v2
+api_version: v2beta1
 api_resource_type_kind: Fulfillment
 fields:
     - api_field: displayName
