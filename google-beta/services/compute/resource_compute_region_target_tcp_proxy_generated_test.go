@@ -200,6 +200,85 @@ resource "google_compute_region_target_tcp_proxy" "default" {
 `, context)
 }
 
+func TestAccComputeRegionTargetTcpProxy_regionTargetTcpProxyTlsRouteExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckComputeRegionTargetTcpProxyDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeRegionTargetTcpProxy_regionTargetTcpProxyTlsRouteExample(context),
+			},
+			{
+				ResourceName:            "google_compute_region_target_tcp_proxy.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"backend_service", "region"},
+			},
+		},
+	})
+}
+
+func testAccComputeRegionTargetTcpProxy_regionTargetTcpProxyTlsRouteExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_compute_region_target_tcp_proxy" "default" {
+  provider              = google-beta
+  name                  = "tf-test-test-proxy%{random_suffix}"
+  region                = "europe-west4"
+  load_balancing_scheme = "EXTERNAL_MANAGED"
+}
+
+resource "google_compute_region_backend_service" "default" {
+  provider    = google-beta
+  name        = "tf-test-backend-service%{random_suffix}"
+  protocol    = "TCP"
+  timeout_sec = 10
+  region      = "europe-west4"
+
+  health_checks         = [google_compute_region_health_check.default.id]
+  load_balancing_scheme = "EXTERNAL_MANAGED"
+}
+
+resource "google_compute_region_health_check" "default" {
+  provider           = google-beta
+  name               = "tf-test-health-check%{random_suffix}"
+  region             = "europe-west4"
+  timeout_sec        = 1
+  check_interval_sec = 1
+  tcp_health_check {
+    port = "80"
+  }
+}
+
+resource "google_network_services_tls_route" "default" {
+  provider = google-beta
+  name     = "tf-test-tls-route-check%{random_suffix}"
+  location = "europe-west4"
+
+  target_proxies = [
+    google_compute_region_target_tcp_proxy.default.self_link
+  ]
+
+  rules {
+    matches {
+      sni_host = ["example.com"]
+    }
+    action {
+      destinations {
+        service_name = google_compute_region_backend_service.default.self_link
+      }
+    }
+  }
+}
+`, context)
+}
+
 func testAccCheckComputeRegionTargetTcpProxyDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		for name, rs := range s.RootModule().Resources {
