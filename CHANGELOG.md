@@ -1,5 +1,35 @@
 ## 7.25.0 (Unreleased)
 
+FEATURES:
+* **New Data Source:** `google_compute_network_endpoint_groups` ([#11756](https://github.com/hashicorp/terraform-provider-google-beta/pull/11756))
+* **New Resource:** `google_dialogflow_environment` ([#11737](https://github.com/hashicorp/terraform-provider-google-beta/pull/11737))
+* **New Resource:** `google_kms_project_autokey_config` ([#11746](https://github.com/hashicorp/terraform-provider-google-beta/pull/11746))
+
+IMPROVEMENTS:
+* backupdr: added `disk_backup_plan_properties` field to `google_backup_dr_backup_plan` resource ([#11742](https://github.com/hashicorp/terraform-provider-google-beta/pull/11742))
+* backupdr: made backup rules optional in backup plans ([#11741](https://github.com/hashicorp/terraform-provider-google-beta/pull/11741))
+* blockchainnodeengine: added `ethereum_details.validator_config.beacon_fee_recipient` field to `google_blockchain_node_engine_blockchain_nodes` resource ([#11744](https://github.com/hashicorp/terraform-provider-google-beta/pull/11744))
+* ces: added `customHeaders` field to MCP toolset in CES `google_ces_toolset` resource ([#11727](https://github.com/hashicorp/terraform-provider-google-beta/pull/11727))
+* cloudsql: removed `max_custom_on_demand_retention_days` field from `sqladmin` resource ([#11726](https://github.com/hashicorp/terraform-provider-google-beta/pull/11726))
+* compute: added `ForwardProxy` field in `google_compute_region_backend_service` resource ([#11723](https://github.com/hashicorp/terraform-provider-google-beta/pull/11723))
+* compute: added `expr` field  to `google_compute_organization_security_policy_rule` resource ([#11749](https://github.com/hashicorp/terraform-provider-google-beta/pull/11749))
+* compute: added field `loadBalancingScheme` to resource `google_compute_target_tcp_proxy` (beta) ([#11759](https://github.com/hashicorp/terraform-provider-google-beta/pull/11759))
+* compute: added field `load_balancing_scheme` to resource `google_compute_region_target_tcp_proxy` (beta) ([#11740](https://github.com/hashicorp/terraform-provider-google-beta/pull/11740))
+* compute: added field `location` to resource `google_network_services_tls_route` ([#11755](https://github.com/hashicorp/terraform-provider-google-beta/pull/11755))
+* compute: added field `target_proxies` to resource `google_network_services_tls_route` ([#11757](https://github.com/hashicorp/terraform-provider-google-beta/pull/11757))
+* compute: made field `backendService` optional for resource `google_compute_target_tcp_proxy` ([#11759](https://github.com/hashicorp/terraform-provider-google-beta/pull/11759))
+* compute: made field `backend_service` optional for resource `google_compute_region_target_tcp_proxy` ([#11740](https://github.com/hashicorp/terraform-provider-google-beta/pull/11740))
+* dialogflow: added field `use_bidi_streaming` to resource `google_dialogflow_conversation_profile` (beta) ([#11736](https://github.com/hashicorp/terraform-provider-google-beta/pull/11736))
+* firebaseailogic: added `traffic_filter` field to `google_firebase_ai_logic_config` resource ([#11738](https://github.com/hashicorp/terraform-provider-google-beta/pull/11738))
+* iamworkforcepool: added `detailed_audit_logging` field to `google_iam_workforce_pool_provider` resource ([#11745](https://github.com/hashicorp/terraform-provider-google-beta/pull/11745))
+* kms: added `key_project_resolution_mode` field to `google_kms_autokey_config` resource ([#11746](https://github.com/hashicorp/terraform-provider-google-beta/pull/11746))
+* lustre: added `maintenance_policy` field to `google_lustre_instance` resource ([#11753](https://github.com/hashicorp/terraform-provider-google-beta/pull/11753))
+* securesourcemanager: added `private_config.custom_host_config` field to `google_secure_source_manager_instance` resource (beta) ([#11747](https://github.com/hashicorp/terraform-provider-google-beta/pull/11747))
+* sql: added `point_in_time_restore_context.region` field to `google_sql_database_instance` resource ([#11751](https://github.com/hashicorp/terraform-provider-google-beta/pull/11751))
+* vertexai: added `deletion_policy` field to `resource_vertex_ai_reasoning_engine` resource ([#11758](https://github.com/hashicorp/terraform-provider-google-beta/pull/11758))
+* vertexai: added `spec.identity_type` and `spec.effective_identity` fields to `google_vertex_ai_reasoning_engine` resource (beta) ([#11724](https://github.com/hashicorp/terraform-provider-google-beta/pull/11724))
+* vertexai: marked `spec` field as computed in `google_vertex_ai_reasoning_engine` resource ([#11724](https://github.com/hashicorp/terraform-provider-google-beta/pull/11724))
+
 ## 7.24.0 (Mar 17, 2026)
 
 DEPRECATIONS:
