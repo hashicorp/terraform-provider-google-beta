@@ -307,6 +307,7 @@ type Config struct {
 	ComposerBasePath                 string
 	ComputeBasePath                  string
 	ContactCenterInsightsBasePath    string
+	ContainerBasePath                string
 	ContainerAnalysisBasePath        string
 	ContainerAttachedBasePath        string
 	CoreBillingBasePath              string
@@ -430,7 +431,6 @@ type Config struct {
 	WorkstationsBasePath             string
 
 	CloudBillingBasePath      string
-	ContainerBasePath         string
 	DataflowBasePath          string
 	IamCredentialsBasePath    string
 	ResourceManagerV3BasePath string
@@ -499,6 +499,7 @@ const ColabBasePathKey = "Colab"
 const ComposerBasePathKey = "Composer"
 const ComputeBasePathKey = "Compute"
 const ContactCenterInsightsBasePathKey = "ContactCenterInsights"
+const ContainerBasePathKey = "Container"
 const ContainerAnalysisBasePathKey = "ContainerAnalysis"
 const ContainerAttachedBasePathKey = "ContainerAttached"
 const CoreBillingBasePathKey = "CoreBilling"
@@ -621,7 +622,6 @@ const WorkbenchBasePathKey = "Workbench"
 const WorkflowsBasePathKey = "Workflows"
 const WorkstationsBasePathKey = "Workstations"
 const CloudBillingBasePathKey = "CloudBilling"
-const ContainerBasePathKey = "Container"
 const DataflowBasePathKey = "Dataflow"
 const IAMBasePathKey = "IAM"
 const IamCredentialsBasePathKey = "IamCredentials"
@@ -680,6 +680,7 @@ var DefaultBasePaths = map[string]string{
 	ComposerBasePathKey:                 "https://composer.googleapis.com/v1beta1/",
 	ComputeBasePathKey:                  "https://compute.googleapis.com/compute/beta/",
 	ContactCenterInsightsBasePathKey:    "https://contactcenterinsights.googleapis.com/v1/",
+	ContainerBasePathKey:                "https://container.googleapis.com/v1beta1/",
 	ContainerAnalysisBasePathKey:        "https://containeranalysis.googleapis.com/v1beta1/",
 	ContainerAttachedBasePathKey:        "https://{{location}}-gkemulticloud.googleapis.com/v1/",
 	CoreBillingBasePathKey:              "https://cloudbilling.googleapis.com/v1/",
@@ -802,7 +803,6 @@ var DefaultBasePaths = map[string]string{
 	WorkflowsBasePathKey:                "https://workflows.googleapis.com/v1/",
 	WorkstationsBasePathKey:             "https://workstations.googleapis.com/v1beta/",
 	CloudBillingBasePathKey:             "https://cloudbilling.googleapis.com/v1/",
-	ContainerBasePathKey:                "https://container.googleapis.com/v1beta1/",
 	DataflowBasePathKey:                 "https://dataflow.googleapis.com/v1b3/",
 	IAMBasePathKey:                      "https://iam.googleapis.com/v1/",
 	IamCredentialsBasePathKey:           "https://iamcredentials.googleapis.com/v1/",
@@ -1125,6 +1125,11 @@ func SetEndpointDefaults(d *schema.ResourceData) error {
 		d.Set("contact_center_insights_custom_endpoint", MultiEnvDefault([]string{
 			"GOOGLE_CONTACT_CENTER_INSIGHTS_CUSTOM_ENDPOINT",
 		}, DefaultBasePaths[ContactCenterInsightsBasePathKey]))
+	}
+	if d.Get("container_custom_endpoint") == "" {
+		d.Set("container_custom_endpoint", MultiEnvDefault([]string{
+			"GOOGLE_CONTAINER_CUSTOM_ENDPOINT",
+		}, DefaultBasePaths[ContainerBasePathKey]))
 	}
 	if d.Get("container_analysis_custom_endpoint") == "" {
 		d.Set("container_analysis_custom_endpoint", MultiEnvDefault([]string{
@@ -2889,6 +2894,7 @@ func ConfigureBasePaths(c *Config) {
 	c.ComposerBasePath = DefaultBasePaths[ComposerBasePathKey]
 	c.ComputeBasePath = DefaultBasePaths[ComputeBasePathKey]
 	c.ContactCenterInsightsBasePath = DefaultBasePaths[ContactCenterInsightsBasePathKey]
+	c.ContainerBasePath = DefaultBasePaths[ContainerBasePathKey]
 	c.ContainerAnalysisBasePath = DefaultBasePaths[ContainerAnalysisBasePathKey]
 	c.ContainerAttachedBasePath = DefaultBasePaths[ContainerAttachedBasePathKey]
 	c.CoreBillingBasePath = DefaultBasePaths[CoreBillingBasePathKey]

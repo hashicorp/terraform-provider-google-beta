@@ -65,6 +65,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/composer"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/compute"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/contactcenterinsights"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/container"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/containeranalysis"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/containerattached"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/corebilling"
@@ -188,7 +189,6 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/workstations"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
-	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/container"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/containeraws"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/containerazure"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/dataflow"
@@ -2042,6 +2042,7 @@ func UseGeneratedProducts() {
 	var _ = composer.ProductName
 	var _ = compute.ProductName
 	var _ = contactcenterinsights.ProductName
+	var _ = container.ProductName
 	var _ = containeranalysis.ProductName
 	var _ = containerattached.ProductName
 	var _ = corebilling.ProductName
