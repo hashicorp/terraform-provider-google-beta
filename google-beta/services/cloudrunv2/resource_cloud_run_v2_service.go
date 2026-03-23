@@ -941,9 +941,10 @@ Flags should be passed without leading dashes.`,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"connector": {
-										Type:        schema.TypeString,
-										Optional:    true,
-										Description: `VPC Access connector name. Format: projects/{project}/locations/{location}/connectors/{connector}, where {project} can be project id or number.`,
+										Type:          schema.TypeString,
+										Optional:      true,
+										Description:   `VPC Access connector name. Format: projects/{project}/locations/{location}/connectors/{connector}, where {project} can be project id or number.`,
+										ConflictsWith: []string{"template.0.vpc_access.0.network_interfaces"},
 									},
 									"egress": {
 										Type:         schema.TypeString,
@@ -984,6 +985,7 @@ subnetwork with the same name with the network will be used.`,
 												},
 											},
 										},
+										ConflictsWith: []string{"template.0.vpc_access.0.connector"},
 									},
 								},
 							},
