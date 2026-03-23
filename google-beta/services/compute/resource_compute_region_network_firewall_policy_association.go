@@ -136,6 +136,13 @@ func ResourceComputeRegionNetworkFirewallPolicyAssociation() *schema.Resource {
 				ForceNew:    true,
 				Description: `The name for an association.`,
 			},
+			"priority": {
+				Type:        schema.TypeInt,
+				Computed:    true,
+				Optional:    true,
+				ForceNew:    true,
+				Description: `An integer indicating the priority of an association.`,
+			},
 			"region": {
 				Type:        schema.TypeString,
 				Computed:    true,
@@ -178,6 +185,12 @@ func resourceComputeRegionNetworkFirewallPolicyAssociationCreate(d *schema.Resou
 		return err
 	} else if v, ok := d.GetOkExists("attachment_target"); !tpgresource.IsEmptyValue(reflect.ValueOf(attachmentTargetProp)) && (ok || !reflect.DeepEqual(v, attachmentTargetProp)) {
 		obj["attachmentTarget"] = attachmentTargetProp
+	}
+	priorityProp, err := expandComputeRegionNetworkFirewallPolicyAssociationPriority(d.Get("priority"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("priority"); !tpgresource.IsEmptyValue(reflect.ValueOf(priorityProp)) && (ok || !reflect.DeepEqual(v, priorityProp)) {
+		obj["priority"] = priorityProp
 	}
 
 	url, err := tpgresource.ReplaceVarsForId(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/firewallPolicies/{{firewall_policy}}/addAssociation")
@@ -287,6 +300,9 @@ func resourceComputeRegionNetworkFirewallPolicyAssociationRead(d *schema.Resourc
 	if err := d.Set("short_name", flattenComputeRegionNetworkFirewallPolicyAssociationShortName(res["shortName"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionNetworkFirewallPolicyAssociation: %s", err)
 	}
+	if err := d.Set("priority", flattenComputeRegionNetworkFirewallPolicyAssociationPriority(res["priority"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RegionNetworkFirewallPolicyAssociation: %s", err)
+	}
 
 	return nil
 }
@@ -381,10 +397,31 @@ func flattenComputeRegionNetworkFirewallPolicyAssociationShortName(v interface{}
 	return v
 }
 
+func flattenComputeRegionNetworkFirewallPolicyAssociationPriority(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	// Handles the string fixed64 format
+	if strVal, ok := v.(string); ok {
+		if intVal, err := tpgresource.StringToFixed64(strVal); err == nil {
+			return intVal
+		}
+	}
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
+}
+
 func expandComputeRegionNetworkFirewallPolicyAssociationName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
 func expandComputeRegionNetworkFirewallPolicyAssociationAttachmentTarget(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeRegionNetworkFirewallPolicyAssociationPriority(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }

@@ -11,6 +11,8 @@ fields:
       provider_only: true
     - api_field: associations.name
       field: name
+    - api_field: associations.priority
+      field: priority
     - field: region
       provider_only: true
     - api_field: associations.shortName
