@@ -52,7 +52,7 @@ func TestAccWorkstationsWorkstationConfigIamBindingGenerated(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccWorkstationsWorkstationConfigIamBinding_basicGenerated(context),
@@ -90,7 +90,7 @@ func TestAccWorkstationsWorkstationConfigIamMemberGenerated(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
 				// Test Iam Member creation (no update for member, no need to test)
@@ -119,7 +119,7 @@ func TestAccWorkstationsWorkstationConfigIamPolicyGenerated(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccWorkstationsWorkstationConfigIamPolicy_basicGenerated(context),
@@ -147,25 +147,21 @@ func TestAccWorkstationsWorkstationConfigIamPolicyGenerated(t *testing.T) {
 func testAccWorkstationsWorkstationConfigIamMember_basicGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_tags_tag_key" "tag_key1" {
-  provider   = google-beta
   parent     = "organizations/%{org_id}"
   short_name = "%{key_short_name}"
 }
 
 resource "google_tags_tag_value" "tag_value1" {
-  provider   = google-beta
   parent     = google_tags_tag_key.tag_key1.id
   short_name = "%{value_short_name}"
 }
 
 resource "google_compute_network" "default" {
-  provider                = google-beta
   name                    = "tf-test-workstation-cluster%{random_suffix}"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "default" {
-  provider      = google-beta
   name          = "tf-test-workstation-cluster%{random_suffix}"
   ip_cidr_range = "10.0.0.0/24"
   region        = "us-central1"
@@ -173,7 +169,6 @@ resource "google_compute_subnetwork" "default" {
 }
 
 resource "google_workstations_workstation_cluster" "default" {
-  provider               = google-beta
   workstation_cluster_id = "tf-test-workstation-cluster%{random_suffix}"
   network                = google_compute_network.default.id
   subnetwork             = google_compute_subnetwork.default.id
@@ -189,7 +184,6 @@ resource "google_workstations_workstation_cluster" "default" {
 }
 
 resource "google_workstations_workstation_config" "default" {
-  provider               = google-beta
   workstation_config_id  = "tf-test-workstation-config%{random_suffix}"
   workstation_cluster_id = google_workstations_workstation_cluster.default.workstation_cluster_id
   location   		         = "us-central1"
@@ -222,7 +216,6 @@ resource "google_workstations_workstation_config" "default" {
 }
 
 resource "google_workstations_workstation_config_iam_member" "foo" {
-  provider = google-beta
   project = google_workstations_workstation_config.default.project
   location = google_workstations_workstation_config.default.location
   workstation_cluster_id = google_workstations_workstation_config.default.workstation_cluster_id
@@ -236,25 +229,21 @@ resource "google_workstations_workstation_config_iam_member" "foo" {
 func testAccWorkstationsWorkstationConfigIamPolicy_basicGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_tags_tag_key" "tag_key1" {
-  provider   = google-beta
   parent     = "organizations/%{org_id}"
   short_name = "%{key_short_name}"
 }
 
 resource "google_tags_tag_value" "tag_value1" {
-  provider   = google-beta
   parent     = google_tags_tag_key.tag_key1.id
   short_name = "%{value_short_name}"
 }
 
 resource "google_compute_network" "default" {
-  provider                = google-beta
   name                    = "tf-test-workstation-cluster%{random_suffix}"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "default" {
-  provider      = google-beta
   name          = "tf-test-workstation-cluster%{random_suffix}"
   ip_cidr_range = "10.0.0.0/24"
   region        = "us-central1"
@@ -262,7 +251,6 @@ resource "google_compute_subnetwork" "default" {
 }
 
 resource "google_workstations_workstation_cluster" "default" {
-  provider               = google-beta
   workstation_cluster_id = "tf-test-workstation-cluster%{random_suffix}"
   network                = google_compute_network.default.id
   subnetwork             = google_compute_subnetwork.default.id
@@ -278,7 +266,6 @@ resource "google_workstations_workstation_cluster" "default" {
 }
 
 resource "google_workstations_workstation_config" "default" {
-  provider               = google-beta
   workstation_config_id  = "tf-test-workstation-config%{random_suffix}"
   workstation_cluster_id = google_workstations_workstation_cluster.default.workstation_cluster_id
   location   		         = "us-central1"
@@ -311,7 +298,6 @@ resource "google_workstations_workstation_config" "default" {
 }
 
 data "google_iam_policy" "foo" {
-  provider = google-beta
   binding {
     role = "%{role}"
     members = ["user:admin@hashicorptest.com"]
@@ -319,7 +305,6 @@ data "google_iam_policy" "foo" {
 }
 
 resource "google_workstations_workstation_config_iam_policy" "foo" {
-  provider = google-beta
   project = google_workstations_workstation_config.default.project
   location = google_workstations_workstation_config.default.location
   workstation_cluster_id = google_workstations_workstation_config.default.workstation_cluster_id
@@ -328,7 +313,6 @@ resource "google_workstations_workstation_config_iam_policy" "foo" {
 }
 
 data "google_workstations_workstation_config_iam_policy" "foo" {
-  provider = google-beta
   project = google_workstations_workstation_config.default.project
   location = google_workstations_workstation_config.default.location
   workstation_cluster_id = google_workstations_workstation_config.default.workstation_cluster_id
@@ -343,25 +327,21 @@ data "google_workstations_workstation_config_iam_policy" "foo" {
 func testAccWorkstationsWorkstationConfigIamPolicy_emptyBinding(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_tags_tag_key" "tag_key1" {
-  provider   = google-beta
   parent     = "organizations/%{org_id}"
   short_name = "%{key_short_name}"
 }
 
 resource "google_tags_tag_value" "tag_value1" {
-  provider   = google-beta
   parent     = google_tags_tag_key.tag_key1.id
   short_name = "%{value_short_name}"
 }
 
 resource "google_compute_network" "default" {
-  provider                = google-beta
   name                    = "tf-test-workstation-cluster%{random_suffix}"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "default" {
-  provider      = google-beta
   name          = "tf-test-workstation-cluster%{random_suffix}"
   ip_cidr_range = "10.0.0.0/24"
   region        = "us-central1"
@@ -369,7 +349,6 @@ resource "google_compute_subnetwork" "default" {
 }
 
 resource "google_workstations_workstation_cluster" "default" {
-  provider               = google-beta
   workstation_cluster_id = "tf-test-workstation-cluster%{random_suffix}"
   network                = google_compute_network.default.id
   subnetwork             = google_compute_subnetwork.default.id
@@ -385,7 +364,6 @@ resource "google_workstations_workstation_cluster" "default" {
 }
 
 resource "google_workstations_workstation_config" "default" {
-  provider               = google-beta
   workstation_config_id  = "tf-test-workstation-config%{random_suffix}"
   workstation_cluster_id = google_workstations_workstation_cluster.default.workstation_cluster_id
   location   		         = "us-central1"
@@ -418,11 +396,9 @@ resource "google_workstations_workstation_config" "default" {
 }
 
 data "google_iam_policy" "foo" {
-  provider = google-beta
 }
 
 resource "google_workstations_workstation_config_iam_policy" "foo" {
-  provider = google-beta
   project = google_workstations_workstation_config.default.project
   location = google_workstations_workstation_config.default.location
   workstation_cluster_id = google_workstations_workstation_config.default.workstation_cluster_id
@@ -435,25 +411,21 @@ resource "google_workstations_workstation_config_iam_policy" "foo" {
 func testAccWorkstationsWorkstationConfigIamBinding_basicGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_tags_tag_key" "tag_key1" {
-  provider   = google-beta
   parent     = "organizations/%{org_id}"
   short_name = "%{key_short_name}"
 }
 
 resource "google_tags_tag_value" "tag_value1" {
-  provider   = google-beta
   parent     = google_tags_tag_key.tag_key1.id
   short_name = "%{value_short_name}"
 }
 
 resource "google_compute_network" "default" {
-  provider                = google-beta
   name                    = "tf-test-workstation-cluster%{random_suffix}"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "default" {
-  provider      = google-beta
   name          = "tf-test-workstation-cluster%{random_suffix}"
   ip_cidr_range = "10.0.0.0/24"
   region        = "us-central1"
@@ -461,7 +433,6 @@ resource "google_compute_subnetwork" "default" {
 }
 
 resource "google_workstations_workstation_cluster" "default" {
-  provider               = google-beta
   workstation_cluster_id = "tf-test-workstation-cluster%{random_suffix}"
   network                = google_compute_network.default.id
   subnetwork             = google_compute_subnetwork.default.id
@@ -477,7 +448,6 @@ resource "google_workstations_workstation_cluster" "default" {
 }
 
 resource "google_workstations_workstation_config" "default" {
-  provider               = google-beta
   workstation_config_id  = "tf-test-workstation-config%{random_suffix}"
   workstation_cluster_id = google_workstations_workstation_cluster.default.workstation_cluster_id
   location   		         = "us-central1"
@@ -510,7 +480,6 @@ resource "google_workstations_workstation_config" "default" {
 }
 
 resource "google_workstations_workstation_config_iam_binding" "foo" {
-  provider = google-beta
   project = google_workstations_workstation_config.default.project
   location = google_workstations_workstation_config.default.location
   workstation_cluster_id = google_workstations_workstation_config.default.workstation_cluster_id
@@ -524,25 +493,21 @@ resource "google_workstations_workstation_config_iam_binding" "foo" {
 func testAccWorkstationsWorkstationConfigIamBinding_updateGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_tags_tag_key" "tag_key1" {
-  provider   = google-beta
   parent     = "organizations/%{org_id}"
   short_name = "%{key_short_name}"
 }
 
 resource "google_tags_tag_value" "tag_value1" {
-  provider   = google-beta
   parent     = google_tags_tag_key.tag_key1.id
   short_name = "%{value_short_name}"
 }
 
 resource "google_compute_network" "default" {
-  provider                = google-beta
   name                    = "tf-test-workstation-cluster%{random_suffix}"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "default" {
-  provider      = google-beta
   name          = "tf-test-workstation-cluster%{random_suffix}"
   ip_cidr_range = "10.0.0.0/24"
   region        = "us-central1"
@@ -550,7 +515,6 @@ resource "google_compute_subnetwork" "default" {
 }
 
 resource "google_workstations_workstation_cluster" "default" {
-  provider               = google-beta
   workstation_cluster_id = "tf-test-workstation-cluster%{random_suffix}"
   network                = google_compute_network.default.id
   subnetwork             = google_compute_subnetwork.default.id
@@ -566,7 +530,6 @@ resource "google_workstations_workstation_cluster" "default" {
 }
 
 resource "google_workstations_workstation_config" "default" {
-  provider               = google-beta
   workstation_config_id  = "tf-test-workstation-config%{random_suffix}"
   workstation_cluster_id = google_workstations_workstation_cluster.default.workstation_cluster_id
   location   		         = "us-central1"
@@ -599,7 +562,6 @@ resource "google_workstations_workstation_config" "default" {
 }
 
 resource "google_workstations_workstation_config_iam_binding" "foo" {
-  provider = google-beta
   project = google_workstations_workstation_config.default.project
   location = google_workstations_workstation_config.default.location
   workstation_cluster_id = google_workstations_workstation_config.default.workstation_cluster_id

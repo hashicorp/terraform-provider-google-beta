@@ -390,7 +390,7 @@ Updating 'source_snapshot' will update content in the ephemeral directory after 
 													Optional: true,
 													Description: `Whether to enable nested virtualization on the Compute Engine VMs backing boosted Workstations.
 
-See https://cloud.google.com/workstations/docs/reference/rest/v1beta/projects.locations.workstationClusters.workstationConfigs#GceInstance.FIELDS.enable_nested_virtualization`,
+See https://cloud.google.com/workstations/docs/reference/rest/v1/projects.locations.workstationClusters.workstationConfigs#GceInstance.FIELDS.enable_nested_virtualization`,
 												},
 												"machine_type": {
 													Type:        schema.TypeString,
@@ -445,7 +445,7 @@ See https://cloud.google.com/workstations/docs/reference/rest/v1beta/projects.lo
 										Optional: true,
 										Description: `Whether to enable nested virtualization on the Compute Engine VMs backing the Workstations.
 
-See https://cloud.google.com/workstations/docs/reference/rest/v1beta/projects.locations.workstationClusters.workstationConfigs#GceInstance.FIELDS.enable_nested_virtualization`,
+See https://cloud.google.com/workstations/docs/reference/rest/v1/projects.locations.workstationClusters.workstationConfigs#GceInstance.FIELDS.enable_nested_virtualization`,
 									},
 									"machine_type": {
 										Type:        schema.TypeString,
