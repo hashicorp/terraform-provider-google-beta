@@ -337,7 +337,7 @@ func TestAccComputeSubnetwork_subnetworkResolveSubnetMaskExample(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeSubnetworkDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -356,7 +356,6 @@ func TestAccComputeSubnetwork_subnetworkResolveSubnetMaskExample(t *testing.T) {
 func testAccComputeSubnetwork_subnetworkResolveSubnetMaskExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_subnetwork" "subnetwork-resolve-subnet-mask" {
-  provider         = google-beta
 
   name             = "tf-test-subnet-resolve-subnet-mask-test-subnetwork%{random_suffix}"
   region           = "us-west2"
@@ -367,7 +366,6 @@ resource "google_compute_subnetwork" "subnetwork-resolve-subnet-mask" {
 }
 
 resource "google_compute_network" "custom-test" {
-  provider                = google-beta
 
   name                    = "tf-test-subnet-resolve-subnet-mask-test-network%{random_suffix}"
   auto_create_subnetworks = false
