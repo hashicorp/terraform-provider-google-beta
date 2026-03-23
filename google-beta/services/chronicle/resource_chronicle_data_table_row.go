@@ -295,6 +295,8 @@ func resourceChronicleDataTableRowRead(d *schema.ResourceData, meta interface{})
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("ChronicleDataTableRow %q", d.Id()))
 	}
 
+	log.Printf("[DEBUG] Finished reading ChronicleDataTableRow %q: %#v", d.Id(), res)
+
 	if err := d.Set("project", project); err != nil {
 		return fmt.Errorf("Error reading DataTableRow: %s", err)
 	}

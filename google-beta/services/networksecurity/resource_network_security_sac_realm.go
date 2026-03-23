@@ -359,6 +359,8 @@ func resourceNetworkSecuritySacRealmRead(d *schema.ResourceData, meta interface{
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("NetworkSecuritySacRealm %q", d.Id()))
 	}
 
+	log.Printf("[DEBUG] Finished reading NetworkSecuritySacRealm %q: %#v", d.Id(), res)
+
 	if err := d.Set("project", project); err != nil {
 		return fmt.Errorf("Error reading SacRealm: %s", err)
 	}

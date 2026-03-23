@@ -21,6 +21,7 @@ fields:
     - api_field: replicationStatus.error.message
     - api_field: replicationStatus.lastErrorTime
     - api_field: replicationStatus.lastReplicationTime
+    - api_field: reservationGroup
     - api_field: scalingMode
     - api_field: secondaryLocation
     - api_field: slotCapacity

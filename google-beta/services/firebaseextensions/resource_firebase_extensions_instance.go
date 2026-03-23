@@ -463,6 +463,8 @@ func resourceFirebaseExtensionsInstanceRead(d *schema.ResourceData, meta interfa
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("FirebaseExtensionsInstance %q", d.Id()))
 	}
 
+	log.Printf("[DEBUG] Finished reading FirebaseExtensionsInstance %q: %#v", d.Id(), res)
+
 	if err := d.Set("project", project); err != nil {
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}

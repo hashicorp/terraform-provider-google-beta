@@ -418,6 +418,8 @@ func resourceIAMBetaWorkloadIdentityPoolManagedIdentityRead(d *schema.ResourceDa
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("IAMBetaWorkloadIdentityPoolManagedIdentity %q", d.Id()))
 	}
+
+	log.Printf("[DEBUG] Finished reading IAMBetaWorkloadIdentityPoolManagedIdentity %q: %#v", d.Id(), res)
 	// list attestation_rules
 	ruleUrl := url + ":listAttestationRules"
 

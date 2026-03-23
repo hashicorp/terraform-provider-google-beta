@@ -375,6 +375,8 @@ func resourceNetworkServicesServiceLbPoliciesRead(d *schema.ResourceData, meta i
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("NetworkServicesServiceLbPolicies %q", d.Id()))
 	}
 
+	log.Printf("[DEBUG] Finished reading NetworkServicesServiceLbPolicies %q: %#v", d.Id(), res)
+
 	if err := d.Set("project", project); err != nil {
 		return fmt.Errorf("Error reading ServiceLbPolicies: %s", err)
 	}

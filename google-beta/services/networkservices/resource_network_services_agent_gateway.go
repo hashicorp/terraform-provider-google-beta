@@ -451,6 +451,8 @@ func resourceNetworkServicesAgentGatewayRead(d *schema.ResourceData, meta interf
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("NetworkServicesAgentGateway %q", d.Id()))
 	}
 
+	log.Printf("[DEBUG] Finished reading NetworkServicesAgentGateway %q: %#v", d.Id(), res)
+
 	if err := d.Set("project", project); err != nil {
 		return fmt.Errorf("Error reading AgentGateway: %s", err)
 	}

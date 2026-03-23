@@ -338,6 +338,8 @@ func resourceCloudIdentityPolicyRead(d *schema.ResourceData, meta interface{}) e
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("CloudIdentityPolicy %q", d.Id()))
 	}
 
+	log.Printf("[DEBUG] Finished reading CloudIdentityPolicy %q: %#v", d.Id(), res)
+
 	if err := d.Set("name", flattenCloudIdentityPolicyName(res["name"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Policy: %s", err)
 	}

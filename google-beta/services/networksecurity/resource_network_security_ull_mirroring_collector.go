@@ -337,6 +337,8 @@ func resourceNetworkSecurityUllMirroringCollectorRead(d *schema.ResourceData, me
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("NetworkSecurityUllMirroringCollector %q", d.Id()))
 	}
 
+	log.Printf("[DEBUG] Finished reading NetworkSecurityUllMirroringCollector %q: %#v", d.Id(), res)
+
 	if err := d.Set("project", project); err != nil {
 		return fmt.Errorf("Error reading UllMirroringCollector: %s", err)
 	}

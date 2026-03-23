@@ -453,6 +453,8 @@ func resourceBigqueryAnalyticsHubDataExchangeSubscriptionRead(d *schema.Resource
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("BigqueryAnalyticsHubDataExchangeSubscription %q", d.Id()))
 	}
+
+	log.Printf("[DEBUG] Finished reading BigqueryAnalyticsHubDataExchangeSubscription %q: %#v", d.Id(), res)
 	var currentState string
 	if stateVal, ok := d.GetOk("state"); ok {
 		if s, isString := stateVal.(string); isString {
