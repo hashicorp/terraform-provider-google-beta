@@ -7,7 +7,7 @@ FEATURES:
 
 IMPROVEMENTS:
 * backupdr: added `disk_backup_plan_properties` field to `google_backup_dr_backup_plan` resource ([#11742](https://github.com/hashicorp/terraform-provider-google-beta/pull/11742))
-* backupdr: made backup rules optional in backup plans ([#11741](https://github.com/hashicorp/terraform-provider-google-beta/pull/11741))
+* backupdr: made `backup_rules` optional in `google_backup_dr_backup_plan` resource ([#11741](https://github.com/hashicorp/terraform-provider-google-beta/pull/11741))
 * blockchainnodeengine: added `ethereum_details.validator_config.beacon_fee_recipient` field to `google_blockchain_node_engine_blockchain_nodes` resource ([#11744](https://github.com/hashicorp/terraform-provider-google-beta/pull/11744))
 * ces: added `custom_headers` field to MCP toolset in CES `google_ces_toolset` resource ([#11727](https://github.com/hashicorp/terraform-provider-google-beta/pull/11727))
 * compute: added `forward_proxy` field to `google_compute_region_backend_service` resource ([#11723](https://github.com/hashicorp/terraform-provider-google-beta/pull/11723))
