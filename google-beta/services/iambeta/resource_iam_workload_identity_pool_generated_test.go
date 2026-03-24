@@ -93,10 +93,7 @@ func TestAccIAMBetaWorkloadIdentityPool_iamWorkloadIdentityPoolFullFederationOnl
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
-		ExternalProviders: map[string]resource.ExternalProvider{
-			"random": {},
-		},
-		CheckDestroy: testAccCheckIAMBetaWorkloadIdentityPoolDestroyProducer(t),
+		CheckDestroy:             testAccCheckIAMBetaWorkloadIdentityPoolDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccIAMBetaWorkloadIdentityPool_iamWorkloadIdentityPoolFullFederationOnlyModeExample(context),
@@ -165,6 +162,71 @@ resource "google_iam_workload_identity_pool" "example" {
       "us-central1" : "projects/project-bar/locations/us-central1/caPools/ca-pool-bar"
       "asia-east2" : "projects/project-foo/locations/asia-east2/caPools/ca-pool-foo"
     }
+    lifetime                   = "86400s"
+    rotation_window_percentage = 50
+    key_algorithm              = "ECDSA_P256"
+  }
+  inline_trust_config {
+    additional_trust_bundles {
+      trust_domain = "example.com"
+      trust_anchors {
+        pem_certificate = file("test-fixtures/trust_anchor_1.pem")
+      }
+      trust_anchors {
+        pem_certificate = file("test-fixtures/trust_anchor_2.pem")
+      }
+    }
+    additional_trust_bundles {
+      trust_domain = "example.net"
+      trust_anchors {
+        pem_certificate = file("test-fixtures/trust_anchor_3.pem")
+      }
+      trust_anchors {
+        pem_certificate = file("test-fixtures/trust_anchor_4.pem")
+      }
+    }
+  }
+}
+`, context)
+}
+
+func TestAccIAMBetaWorkloadIdentityPool_iamWorkloadIdentityPoolFullTrustDomainModeWithDefaultSharedCaExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckIAMBetaWorkloadIdentityPoolDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccIAMBetaWorkloadIdentityPool_iamWorkloadIdentityPoolFullTrustDomainModeWithDefaultSharedCaExample(context),
+			},
+			{
+				ResourceName:            "google_iam_workload_identity_pool.example",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"workload_identity_pool_id"},
+			},
+		},
+	})
+}
+
+func testAccIAMBetaWorkloadIdentityPool_iamWorkloadIdentityPoolFullTrustDomainModeWithDefaultSharedCaExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_iam_workload_identity_pool" "example" {
+  provider = google-beta
+
+  workload_identity_pool_id = "tf-test-example-pool%{random_suffix}"
+  display_name              = "Name of the pool"
+  description               = "Identity pool operates in TRUST_DOMAIN mode"
+  disabled                  = true
+  mode                      = "TRUST_DOMAIN"
+  inline_certificate_issuance_config {
+    use_default_shared_ca      = true
     lifetime                   = "86400s"
     rotation_window_percentage = 50
     key_algorithm              = "ECDSA_P256"

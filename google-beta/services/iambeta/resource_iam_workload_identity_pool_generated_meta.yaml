@@ -12,6 +12,7 @@ fields:
     - api_field: inlineCertificateIssuanceConfig.keyAlgorithm
     - api_field: inlineCertificateIssuanceConfig.lifetime
     - api_field: inlineCertificateIssuanceConfig.rotationWindowPercentage
+    - api_field: inlineCertificateIssuanceConfig.useDefaultSharedCa
     - api_field: inlineTrustConfig.additionalTrustBundles.key
       field: inline_trust_config.additional_trust_bundles.trust_domain
     - api_field: inlineTrustConfig.additionalTrustBundles.value.trustAnchors.pemCertificate

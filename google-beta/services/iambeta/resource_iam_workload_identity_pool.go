@@ -188,7 +188,7 @@ required for issuance and rotation of mTLS workload certificates.`,
 					Schema: map[string]*schema.Schema{
 						"ca_pools": {
 							Type:     schema.TypeMap,
-							Required: true,
+							Optional: true,
 							Description: `A required mapping of a cloud region to the CA pool resource located in that region used
 for certificate issuance, adhering to these constraints:
 
@@ -198,7 +198,8 @@ the corresponding map entry's value.
 'projects/{project}/locations/{location}/caPools/{ca_pool}'
 * **Region Matching:** Workloads are ONLY issued certificates from CA pools within the
 same region. Also the CA pool region (in value) must match the workload's region (key).`,
-							Elem: &schema.Schema{Type: schema.TypeString},
+							Elem:         &schema.Schema{Type: schema.TypeString},
+							ExactlyOneOf: []string{"inline_certificate_issuance_config.0.ca_pools", "inline_certificate_issuance_config.0.use_default_shared_ca"},
 						},
 						"key_algorithm": {
 							Type:         schema.TypeString,
@@ -230,6 +231,19 @@ and is preceded by the number of seconds. If unspecified, this will be defaulted
 							Description: `Rotation window percentage indicating when certificate rotation should be initiated based
 on remaining lifetime. Must be between '50' - '80'. If unspecified, this will be defaulted
 to '50'.`,
+						},
+						"use_default_shared_ca": {
+							Type:     schema.TypeBool,
+							Optional: true,
+							Description: `If set to true, the trust domain will utilize the GCP-provisioned default CA. A default
+CA in the same region as the workload will be selected to issue the certificate. Enabling
+this will clear any existing 'ca_pools' configuration to provision the certificates.
+
+
+~> **Note** This field is mutually exclusive with 'ca_pools'. If this flag is enabled,
+certificates will be automatically provisioned from the default shared CAs. This flag should
+not be set if you want to use your own CA pools to provision the certificates.`,
+							ExactlyOneOf: []string{"inline_certificate_issuance_config.0.ca_pools", "inline_certificate_issuance_config.0.use_default_shared_ca"},
 						},
 					},
 				},
@@ -770,6 +784,8 @@ func flattenIAMBetaWorkloadIdentityPoolInlineCertificateIssuanceConfig(v interfa
 	transformed := make(map[string]interface{})
 	transformed["ca_pools"] =
 		flattenIAMBetaWorkloadIdentityPoolInlineCertificateIssuanceConfigCaPools(original["caPools"], d, config)
+	transformed["use_default_shared_ca"] =
+		flattenIAMBetaWorkloadIdentityPoolInlineCertificateIssuanceConfigUseDefaultSharedCa(original["useDefaultSharedCa"], d, config)
 	transformed["lifetime"] =
 		flattenIAMBetaWorkloadIdentityPoolInlineCertificateIssuanceConfigLifetime(original["lifetime"], d, config)
 	transformed["rotation_window_percentage"] =
@@ -779,6 +795,10 @@ func flattenIAMBetaWorkloadIdentityPoolInlineCertificateIssuanceConfig(v interfa
 	return []interface{}{transformed}
 }
 func flattenIAMBetaWorkloadIdentityPoolInlineCertificateIssuanceConfigCaPools(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenIAMBetaWorkloadIdentityPoolInlineCertificateIssuanceConfigUseDefaultSharedCa(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -892,6 +912,13 @@ func expandIAMBetaWorkloadIdentityPoolInlineCertificateIssuanceConfig(v interfac
 		transformed["caPools"] = transformedCaPools
 	}
 
+	transformedUseDefaultSharedCa, err := expandIAMBetaWorkloadIdentityPoolInlineCertificateIssuanceConfigUseDefaultSharedCa(original["use_default_shared_ca"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedUseDefaultSharedCa); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["useDefaultSharedCa"] = transformedUseDefaultSharedCa
+	}
+
 	transformedLifetime, err := expandIAMBetaWorkloadIdentityPoolInlineCertificateIssuanceConfigLifetime(original["lifetime"], d, config)
 	if err != nil {
 		return nil, err
@@ -925,6 +952,10 @@ func expandIAMBetaWorkloadIdentityPoolInlineCertificateIssuanceConfigCaPools(v i
 		m[k] = val.(string)
 	}
 	return m, nil
+}
+
+func expandIAMBetaWorkloadIdentityPoolInlineCertificateIssuanceConfigUseDefaultSharedCa(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
 }
 
 func expandIAMBetaWorkloadIdentityPoolInlineCertificateIssuanceConfigLifetime(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
