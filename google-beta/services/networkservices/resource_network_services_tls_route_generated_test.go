@@ -320,6 +320,78 @@ resource "google_network_services_tls_route" "default" {
 `, context)
 }
 
+func TestAccNetworkServicesTlsRoute_networkServicesTlsRouteTargetTcpProxyBasicExample(t *testing.T) {
+	t.Parallel()
+
+	context := map[string]interface{}{
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckNetworkServicesTlsRouteDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccNetworkServicesTlsRoute_networkServicesTlsRouteTargetTcpProxyBasicExample(context),
+			},
+			{
+				ResourceName:            "google_network_services_tls_route.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"location", "name"},
+			},
+		},
+	})
+}
+
+func testAccNetworkServicesTlsRoute_networkServicesTlsRouteTargetTcpProxyBasicExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_compute_backend_service" "default" {
+  provider              = google-beta
+  name                  = "tf-test-my-backend-service%{random_suffix}"
+  load_balancing_scheme = "INTERNAL_MANAGED"
+  protocol              = "TCP"
+  health_checks         = [google_compute_health_check.default.id]
+}
+
+resource "google_compute_health_check" "default" {
+  provider = google-beta
+  name     = "tf-test-my-health-check%{random_suffix}"
+
+  https_health_check {
+    port = 443
+  }
+}
+
+resource "google_compute_target_tcp_proxy" "default" {
+  provider              = google-beta
+  name                  = "tf-test-my-target-tcp-proxy%{random_suffix}"
+  load_balancing_scheme = "INTERNAL_MANAGED"
+}
+
+resource "google_network_services_tls_route" "default" {
+  provider = google-beta
+  name     = "tf-test-my-tls-route%{random_suffix}"
+
+  target_proxies = [
+    google_compute_target_tcp_proxy.default.id
+  ]
+
+  rules {
+    matches {
+      sni_host = ["example.com"]
+    }
+    action {
+      destinations {
+        service_name = google_compute_backend_service.default.id
+      }
+    }
+  }
+}
+`, context)
+}
+
 func TestAccNetworkServicesTlsRoute_networkServicesTlsRouteRegionTargetTcpProxyBasicExample(t *testing.T) {
 	t.Parallel()
 
