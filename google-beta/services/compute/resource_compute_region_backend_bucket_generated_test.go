@@ -59,7 +59,7 @@ func TestAccComputeRegionBackendBucket_regionBackendBucketBasicExample(t *testin
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckComputeRegionBackendBucketDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -78,6 +78,8 @@ func TestAccComputeRegionBackendBucket_regionBackendBucketBasicExample(t *testin
 func testAccComputeRegionBackendBucket_regionBackendBucketBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_region_backend_bucket" "image_backend" {
+  provider = google-beta
+
   name                  = "tf-test-region-image-backend-bucket%{random_suffix}"
   region                = "us-central1"
   bucket_name           = google_storage_bucket.image_backend.name
@@ -86,6 +88,8 @@ resource "google_compute_region_backend_bucket" "image_backend" {
 }
 
 resource "google_storage_bucket" "image_backend" {
+  provider = google-beta
+
   name                        = "tf-test-region-image-store-bucket%{random_suffix}"
   location                    = "US-CENTRAL1"
   force_destroy               = true
@@ -103,7 +107,7 @@ func TestAccComputeRegionBackendBucket_regionBackendBucketInternalLbExample(t *t
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckComputeRegionBackendBucketDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -122,6 +126,8 @@ func TestAccComputeRegionBackendBucket_regionBackendBucketInternalLbExample(t *t
 func testAccComputeRegionBackendBucket_regionBackendBucketInternalLbExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_region_backend_bucket" "internal_backend" {
+  provider = google-beta
+
   name                  = "tf-test-regional-internal-backend%{random_suffix}"
   region                = "us-central1"
   bucket_name           = google_storage_bucket.internal_backend.name
@@ -130,6 +136,8 @@ resource "google_compute_region_backend_bucket" "internal_backend" {
 }
 
 resource "google_storage_bucket" "internal_backend" {
+  provider = google-beta
+
   name                        = "tf-test-regional-internal-bucket%{random_suffix}"
   location                    = "US-CENTRAL1"
   force_destroy               = true
@@ -142,6 +150,8 @@ resource "google_storage_bucket" "internal_backend" {
 }
 
 resource "google_storage_bucket_object" "index" {
+  provider = google-beta
+
   name    = "index.html"
   bucket  = google_storage_bucket.internal_backend.name
   content = "<html><body><h1>Regional Internal LB Backend Bucket</h1></body></html>"
@@ -158,7 +168,7 @@ func TestAccComputeRegionBackendBucket_regionBackendBucketExternalLbExample(t *t
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckComputeRegionBackendBucketDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -177,17 +187,18 @@ func TestAccComputeRegionBackendBucket_regionBackendBucketExternalLbExample(t *t
 func testAccComputeRegionBackendBucket_regionBackendBucketExternalLbExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_region_backend_bucket" "external_backend" {
+  provider = google-beta
+
   name                  = "tf-test-regional-external-backend%{random_suffix}"
   region                = "us-east1"
   bucket_name           = google_storage_bucket.external_backend.name
   load_balancing_scheme = "EXTERNAL_MANAGED"
   description           = "Regional external backend bucket for static content"
-  
-  # REMOVED: compression_mode (Not supported)
-  # REMOVED: custom_response_headers (Not supported)
 }
 
 resource "google_storage_bucket" "external_backend" {
+  provider = google-beta
+
   name                        = "tf-test-regional-external-bucket%{random_suffix}"
   location                    = "US-EAST1"
   force_destroy               = true
@@ -200,12 +211,16 @@ resource "google_storage_bucket" "external_backend" {
 }
 
 resource "google_storage_bucket_object" "index" {
+  provider = google-beta
+
   name    = "index.html"
   bucket  = google_storage_bucket.external_backend.name
   content = "<html><body><h1>Regional External LB Backend Bucket</h1></body></html>"
 }
 
 resource "google_storage_bucket_object" "static_asset" {
+  provider = google-beta
+
   name    = "assets/style.css"
   bucket  = google_storage_bucket.external_backend.name
   content = "body { font-family: Arial, sans-serif; }"
