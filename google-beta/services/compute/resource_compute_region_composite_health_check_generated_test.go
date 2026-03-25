@@ -60,7 +60,7 @@ func TestAccComputeRegionCompositeHealthCheck_computeRegionCompositeHealthCheckB
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeRegionCompositeHealthCheckDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -79,7 +79,6 @@ func TestAccComputeRegionCompositeHealthCheck_computeRegionCompositeHealthCheckB
 func testAccComputeRegionCompositeHealthCheck_computeRegionCompositeHealthCheckBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_region_composite_health_check" "example_test_composite_health_check" {
-  provider           = google-beta
   name               = "tf-test-test-composite-health-check%{random_suffix}"
   description        = "test regional composite health check resource"
   region             = "us-central1"
@@ -88,7 +87,6 @@ resource "google_compute_region_composite_health_check" "example_test_composite_
 }
 
 resource "google_compute_region_health_source" "default" {
-  provider                  = google-beta
   name                      = "tf-test-test-composite-health-check%{random_suffix}-hs"
   region                    = "us-central1"
   source_type               = "BACKEND_SERVICE"
@@ -97,14 +95,12 @@ resource "google_compute_region_health_source" "default" {
 }
 
 resource "google_compute_region_health_aggregation_policy" "hap" {
-  provider    = google-beta
   name        = "tf-test-test-composite-health-check%{random_suffix}-hap"
   description = "health aggregation policy for health source"
   region      = "us-central1"
 }
 
 resource "google_compute_health_check" "default" {
-  provider = google-beta
   name     = "tf-test-test-composite-health-check%{random_suffix}-hc"
   http_health_check {
     port = 80
@@ -112,7 +108,6 @@ resource "google_compute_health_check" "default" {
 }
 
 resource "google_compute_region_backend_service" "default" {
-  provider              = google-beta
   name                  = "tf-test-test-composite-health-check%{random_suffix}-bs"
   region                = "us-central1"
   health_checks         = [google_compute_health_check.default.id]
@@ -120,7 +115,6 @@ resource "google_compute_region_backend_service" "default" {
 }
 
 resource "google_compute_forwarding_rule" "default" {
-  provider              = google-beta
   name                  = "tf-test-test-composite-health-check%{random_suffix}-fr"
   region                = "us-central1"
   load_balancing_scheme = "INTERNAL"
@@ -132,13 +126,11 @@ resource "google_compute_forwarding_rule" "default" {
 }
 
 resource "google_compute_network" "default" {
-  provider                = google-beta
   name                    = "tf-test-test-composite-health-check%{random_suffix}-net"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "default" {
-  provider      = google-beta
   name          = "tf-test-test-composite-health-check%{random_suffix}-sub"
   ip_cidr_range = "10.2.0.0/16"
   region        = "us-central1"

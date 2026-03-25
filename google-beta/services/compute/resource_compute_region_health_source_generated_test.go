@@ -60,7 +60,7 @@ func TestAccComputeRegionHealthSource_computeRegionHealthSourceBasicExample(t *t
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeRegionHealthSourceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -79,14 +79,12 @@ func TestAccComputeRegionHealthSource_computeRegionHealthSourceBasicExample(t *t
 func testAccComputeRegionHealthSource_computeRegionHealthSourceBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_region_health_aggregation_policy" "hap" {
-  provider    = google-beta
   name        = "tf-test-test-health-source%{random_suffix}-hap"
   description = "health aggregation policy for health source"
   region      = "us-central1"
 }
 
 resource "google_compute_health_check" "default" {
-  provider = google-beta
   name     = "tf-test-test-health-source%{random_suffix}-hc"
   http_health_check {
     port = 80
@@ -94,7 +92,6 @@ resource "google_compute_health_check" "default" {
 }
 
 resource "google_compute_region_backend_service" "default" {
-  provider              = google-beta
   name                  = "tf-test-test-health-source%{random_suffix}-bs"
   region                = "us-central1"
   health_checks         = [google_compute_health_check.default.id]
@@ -102,7 +99,6 @@ resource "google_compute_region_backend_service" "default" {
 }
 
 resource "google_compute_region_health_source" "example_test_health_source" {
-  provider                  = google-beta
   name                      = "tf-test-test-health-source%{random_suffix}"
   description               = "Example health source basic%{random_suffix}"
   region                    = "us-central1"

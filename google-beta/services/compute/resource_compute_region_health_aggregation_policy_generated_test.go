@@ -60,7 +60,7 @@ func TestAccComputeRegionHealthAggregationPolicy_computeRegionHealthAggregationP
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeRegionHealthAggregationPolicyDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -79,11 +79,9 @@ func TestAccComputeRegionHealthAggregationPolicy_computeRegionHealthAggregationP
 func testAccComputeRegionHealthAggregationPolicy_computeRegionHealthAggregationPolicyBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 data "google_project" "project" {
-  provider = google-beta
 }
 
 resource "google_compute_region_health_aggregation_policy" "example_test_health_aggregation_policy" {
-  provider    = google-beta
   name        = "tf-test-test-health-aggregation-policy%{random_suffix}"
   description = "Example health aggregation policy basic%{random_suffix}"
   region      = "us-central1"
