@@ -53,8 +53,15 @@ var (
 func TestAccComputeTargetHttpsProxy_targetHttpsProxyBasicExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"backend_service_name":    "tf-test-backend-service" + randomSuffix,
+		"http_health_check_name":  "tf-test-http-health-check" + randomSuffix,
+		"ssl_certificate_name":    "tf-test-my-certificate" + randomSuffix,
+		"target_https_proxy_name": "tf-test-test-proxy" + randomSuffix,
+		"url_map_name":            "tf-test-url-map" + randomSuffix,
+		"random_suffix":           randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -78,19 +85,19 @@ func TestAccComputeTargetHttpsProxy_targetHttpsProxyBasicExample(t *testing.T) {
 func testAccComputeTargetHttpsProxy_targetHttpsProxyBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_target_https_proxy" "default" {
-  name             = "tf-test-test-proxy%{random_suffix}"
+  name             = "%{target_https_proxy_name}"
   url_map          = google_compute_url_map.default.id
   ssl_certificates = [google_compute_ssl_certificate.default.id]
 }
 
 resource "google_compute_ssl_certificate" "default" {
-  name        = "tf-test-my-certificate%{random_suffix}"
+  name        = "%{ssl_certificate_name}"
   private_key = file("test-fixtures/test.key")
   certificate = file("test-fixtures/test.crt")
 }
 
 resource "google_compute_url_map" "default" {
-  name        = "tf-test-url-map%{random_suffix}"
+  name        = "%{url_map_name}"
   description = "a description"
 
   default_service = google_compute_backend_service.default.id
@@ -112,7 +119,7 @@ resource "google_compute_url_map" "default" {
 }
 
 resource "google_compute_backend_service" "default" {
-  name        = "tf-test-backend-service%{random_suffix}"
+  name        = "%{backend_service_name}"
   port_name   = "http"
   protocol    = "HTTP"
   timeout_sec = 10
@@ -121,7 +128,7 @@ resource "google_compute_backend_service" "default" {
 }
 
 resource "google_compute_http_health_check" "default" {
-  name               = "tf-test-http-health-check%{random_suffix}"
+  name               = "%{http_health_check_name}"
   request_path       = "/"
   check_interval_sec = 1
   timeout_sec        = 1
@@ -132,8 +139,15 @@ resource "google_compute_http_health_check" "default" {
 func TestAccComputeTargetHttpsProxy_targetHttpsProxyHttpKeepAliveTimeoutExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"backend_service_name":    "tf-test-backend-service" + randomSuffix,
+		"http_health_check_name":  "tf-test-http-health-check" + randomSuffix,
+		"ssl_certificate_name":    "tf-test-my-certificate" + randomSuffix,
+		"target_https_proxy_name": "tf-test-test-http-keep-alive-timeout-proxy" + randomSuffix,
+		"url_map_name":            "tf-test-url-map" + randomSuffix,
+		"random_suffix":           randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -157,20 +171,20 @@ func TestAccComputeTargetHttpsProxy_targetHttpsProxyHttpKeepAliveTimeoutExample(
 func testAccComputeTargetHttpsProxy_targetHttpsProxyHttpKeepAliveTimeoutExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_target_https_proxy" "default" {
-  name                        = "tf-test-test-http-keep-alive-timeout-proxy%{random_suffix}"
+  name                        = "%{target_https_proxy_name}"
   http_keep_alive_timeout_sec = 610
   url_map                     = google_compute_url_map.default.id
   ssl_certificates            = [google_compute_ssl_certificate.default.id]
 }
 
 resource "google_compute_ssl_certificate" "default" {
-  name        = "tf-test-my-certificate%{random_suffix}"
+  name        = "%{ssl_certificate_name}"
   private_key = file("test-fixtures/test.key")
   certificate = file("test-fixtures/test.crt")
 }
 
 resource "google_compute_url_map" "default" {
-  name        = "tf-test-url-map%{random_suffix}"
+  name        = "%{url_map_name}"
   description = "a description"
 
   default_service = google_compute_backend_service.default.id
@@ -192,7 +206,7 @@ resource "google_compute_url_map" "default" {
 }
 
 resource "google_compute_backend_service" "default" {
-  name                  = "tf-test-backend-service%{random_suffix}"
+  name                  = "%{backend_service_name}"
   port_name             = "http"
   protocol              = "HTTP"
   timeout_sec           = 10
@@ -202,7 +216,7 @@ resource "google_compute_backend_service" "default" {
 }
 
 resource "google_compute_http_health_check" "default" {
-  name               = "tf-test-http-health-check%{random_suffix}"
+  name               = "%{http_health_check_name}"
   request_path       = "/"
   check_interval_sec = 1
   timeout_sec        = 1
@@ -213,8 +227,17 @@ resource "google_compute_http_health_check" "default" {
 func TestAccComputeTargetHttpsProxy_targetHttpsProxyMtlsExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"backend_service_name":    "tf-test-backend-service" + randomSuffix,
+		"http_health_check_name":  "tf-test-http-health-check" + randomSuffix,
+		"server_tls_policy_name":  "tf-test-my-tls-policy" + randomSuffix,
+		"ssl_certificate_name":    "tf-test-my-certificate" + randomSuffix,
+		"target_https_proxy_name": "tf-test-test-mtls-proxy" + randomSuffix,
+		"trust_config_name":       "tf-test-my-trust-config" + randomSuffix,
+		"url_map_name":            "tf-test-url-map" + randomSuffix,
+		"random_suffix":           randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -243,7 +266,7 @@ data "google_project" "project" {
 
 resource "google_compute_target_https_proxy" "default" {
   provider          = google-beta
-  name              = "tf-test-test-mtls-proxy%{random_suffix}"
+  name              = "%{target_https_proxy_name}"
   url_map           = google_compute_url_map.default.id
   ssl_certificates  = [google_compute_ssl_certificate.default.id]
   server_tls_policy = google_network_security_server_tls_policy.default.id
@@ -251,7 +274,7 @@ resource "google_compute_target_https_proxy" "default" {
 
 resource "google_certificate_manager_trust_config" "default" {
   provider    = google-beta
-  name        = "tf-test-my-trust-config%{random_suffix}"
+  name        = "%{trust_config_name}"
   description = "sample description for the trust config"
   location    = "global"
 
@@ -271,7 +294,7 @@ resource "google_certificate_manager_trust_config" "default" {
 
 resource "google_network_security_server_tls_policy" "default" {
   provider               = google-beta
-  name                   = "tf-test-my-tls-policy%{random_suffix}"
+  name                   = "%{server_tls_policy_name}"
   description            = "my description"
   location               = "global"
   allow_open             = "false"
@@ -283,14 +306,14 @@ resource "google_network_security_server_tls_policy" "default" {
 
 resource "google_compute_ssl_certificate" "default" {
   provider    = google-beta
-  name        = "tf-test-my-certificate%{random_suffix}"
+  name        = "%{ssl_certificate_name}"
   private_key = file("test-fixtures/test.key")
   certificate = file("test-fixtures/test.crt")
 }
 
 resource "google_compute_url_map" "default" {
   provider    = google-beta
-  name        = "tf-test-url-map%{random_suffix}"
+  name        = "%{url_map_name}"
   description = "a description"
 
   default_service = google_compute_backend_service.default.id
@@ -313,7 +336,7 @@ resource "google_compute_url_map" "default" {
 
 resource "google_compute_backend_service" "default" {
   provider    = google-beta
-  name        = "tf-test-backend-service%{random_suffix}"
+  name        = "%{backend_service_name}"
   port_name   = "http"
   protocol    = "HTTP"
   timeout_sec = 10
@@ -323,7 +346,7 @@ resource "google_compute_backend_service" "default" {
 
 resource "google_compute_http_health_check" "default" {
   provider           = google-beta
-  name               = "tf-test-http-health-check%{random_suffix}"
+  name               = "%{http_health_check_name}"
   request_path       = "/"
   check_interval_sec = 1
   timeout_sec        = 1
@@ -334,8 +357,14 @@ resource "google_compute_http_health_check" "default" {
 func TestAccComputeTargetHttpsProxy_targetHttpsProxyCertificateManagerCertificateExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"backend_service_name":                 "tf-test-backend-service" + randomSuffix,
+		"certificate_manager_certificate_name": "tf-test-my-certificate" + randomSuffix,
+		"target_https_proxy_name":              "tf-test-target-http-proxy" + randomSuffix,
+		"url_map_name":                         "tf-test-url-map" + randomSuffix,
+		"random_suffix":                        randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -360,13 +389,13 @@ func testAccComputeTargetHttpsProxy_targetHttpsProxyCertificateManagerCertificat
 	return acctest.Nprintf(`
 
 resource "google_compute_target_https_proxy" "default" {
-  name                             = "tf-test-target-http-proxy%{random_suffix}"
+  name                             = "%{target_https_proxy_name}"
   url_map                          = google_compute_url_map.default.id
   certificate_manager_certificates =  ["//certificatemanager.googleapis.com/${google_certificate_manager_certificate.default.id}"] # [google_certificate_manager_certificate.default.id] is also acceptable
 }
 
 resource "google_certificate_manager_certificate" "default" {
-  name              = "tf-test-my-certificate%{random_suffix}"
+  name              = "%{certificate_manager_certificate_name}"
   scope             = "ALL_REGIONS"
   self_managed {
     pem_certificate = file("test-fixtures/cert.pem")
@@ -375,7 +404,7 @@ resource "google_certificate_manager_certificate" "default" {
 }
 
 resource "google_compute_url_map" "default" {
-  name        = "tf-test-url-map%{random_suffix}"
+  name        = "%{url_map_name}"
   description = "a description"
 
   default_service = google_compute_backend_service.default.id
@@ -397,7 +426,7 @@ resource "google_compute_url_map" "default" {
 }
 
 resource "google_compute_backend_service" "default" {
-  name        = "tf-test-backend-service%{random_suffix}"
+  name        = "%{backend_service_name}"
   port_name   = "http"
   protocol    = "HTTP"
   timeout_sec = 10
@@ -409,8 +438,15 @@ resource "google_compute_backend_service" "default" {
 func TestAccComputeTargetHttpsProxy_targetHttpsProxyFingerprintExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"backend_service_name":    "tf-test-backend-service" + randomSuffix,
+		"http_health_check_name":  "tf-test-http-health-check" + randomSuffix,
+		"ssl_certificate_name":    "tf-test-my-certificate" + randomSuffix,
+		"target_https_proxy_name": "tf-test-test-fingerprint-proxy" + randomSuffix,
+		"url_map_name":            "tf-test-url-map" + randomSuffix,
+		"random_suffix":           randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -434,19 +470,19 @@ func TestAccComputeTargetHttpsProxy_targetHttpsProxyFingerprintExample(t *testin
 func testAccComputeTargetHttpsProxy_targetHttpsProxyFingerprintExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_target_https_proxy" "default" {
-  name             = "tf-test-test-fingerprint-proxy%{random_suffix}"
+  name             = "%{target_https_proxy_name}"
   url_map          = google_compute_url_map.default.id
   ssl_certificates = [google_compute_ssl_certificate.default.id]
 }
 
 resource "google_compute_ssl_certificate" "default" {
-  name        = "tf-test-my-certificate%{random_suffix}"
+  name        = "%{ssl_certificate_name}"
   private_key = file("test-fixtures/test.key")
   certificate = file("test-fixtures/test.crt")
 }
 
 resource "google_compute_url_map" "default" {
-  name        = "tf-test-url-map%{random_suffix}"
+  name        = "%{url_map_name}"
   description = "a description"
 
   default_service = google_compute_backend_service.default.id
@@ -468,7 +504,7 @@ resource "google_compute_url_map" "default" {
 }
 
 resource "google_compute_backend_service" "default" {
-  name        = "tf-test-backend-service%{random_suffix}"
+  name        = "%{backend_service_name}"
   port_name   = "http"
   protocol    = "HTTP"
   timeout_sec = 10
@@ -477,7 +513,7 @@ resource "google_compute_backend_service" "default" {
 }
 
 resource "google_compute_http_health_check" "default" {
-  name               = "tf-test-http-health-check%{random_suffix}"
+  name               = "%{http_health_check_name}"
   request_path       = "/"
   check_interval_sec = 1
   timeout_sec        = 1

@@ -53,11 +53,16 @@ var (
 func TestAccColabSchedule_colabScheduleBasicExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"location":        envvar.GetTestRegionFromEnv(),
-		"project_id":      envvar.GetTestProjectFromEnv(),
-		"service_account": envvar.GetTestServiceAccountFromEnv(t),
-		"random_suffix":   acctest.RandString(t, 10),
+		"location":              envvar.GetTestRegionFromEnv(),
+		"project_id":            envvar.GetTestProjectFromEnv(),
+		"service_account":       envvar.GetTestServiceAccountFromEnv(t),
+		"bucket":                "tf_test_my_bucket" + randomSuffix,
+		"display_name":          "tf-test-basic-schedule" + randomSuffix,
+		"runtime_template_name": "tf-test-runtime-template" + randomSuffix,
+		"random_suffix":         randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -81,7 +86,7 @@ func TestAccColabSchedule_colabScheduleBasicExample(t *testing.T) {
 func testAccColabSchedule_colabScheduleBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_colab_runtime_template" "my_runtime_template" {
-  name = "tf-test-runtime-template%{random_suffix}"
+  name = "%{runtime_template_name}"
   display_name = "Runtime template"
   location = "us-central1"
 
@@ -95,7 +100,7 @@ resource "google_colab_runtime_template" "my_runtime_template" {
 }
 
 resource "google_storage_bucket" "output_bucket" {
-  name          = "tf_test_my_bucket%{random_suffix}"
+  name          = "%{bucket}"
   location      = "US"
   force_destroy = true
   uniform_bucket_level_access = true
@@ -143,7 +148,7 @@ resource "google_storage_bucket_object" "notebook" {
 }
 
 resource "google_colab_schedule" "schedule" {
-  display_name = "tf-test-basic-schedule%{random_suffix}"
+  display_name = "%{display_name}"
   location = "%{location}"
   max_concurrent_run_count = 2
   cron = "TZ=America/Los_Angeles * * * * *"
@@ -173,11 +178,16 @@ resource "google_colab_schedule" "schedule" {
 func TestAccColabSchedule_colabSchedulePausedExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"location":        envvar.GetTestRegionFromEnv(),
-		"project_id":      envvar.GetTestProjectFromEnv(),
-		"service_account": envvar.GetTestServiceAccountFromEnv(t),
-		"random_suffix":   acctest.RandString(t, 10),
+		"location":              envvar.GetTestRegionFromEnv(),
+		"project_id":            envvar.GetTestProjectFromEnv(),
+		"service_account":       envvar.GetTestServiceAccountFromEnv(t),
+		"bucket":                "tf_test_my_bucket" + randomSuffix,
+		"display_name":          "tf-test-paused-schedule" + randomSuffix,
+		"runtime_template_name": "tf-test-runtime-template" + randomSuffix,
+		"random_suffix":         randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -201,7 +211,7 @@ func TestAccColabSchedule_colabSchedulePausedExample(t *testing.T) {
 func testAccColabSchedule_colabSchedulePausedExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_colab_runtime_template" "my_runtime_template" {
-  name = "tf-test-runtime-template%{random_suffix}"
+  name = "%{runtime_template_name}"
   display_name = "Runtime template"
   location = "us-central1"
 
@@ -215,7 +225,7 @@ resource "google_colab_runtime_template" "my_runtime_template" {
 }
 
 resource "google_storage_bucket" "output_bucket" {
-  name          = "tf_test_my_bucket%{random_suffix}"
+  name          = "%{bucket}"
   location      = "US"
   force_destroy = true
   uniform_bucket_level_access = true
@@ -263,7 +273,7 @@ resource "google_storage_bucket_object" "notebook" {
 }
 
 resource "google_colab_schedule" "schedule" {
-  display_name = "tf-test-paused-schedule%{random_suffix}"
+  display_name = "%{display_name}"
   location = "%{location}"
   max_concurrent_run_count = 2
   cron = "TZ=America/Los_Angeles * * * * *"
@@ -301,14 +311,22 @@ func TestAccColabSchedule_colabScheduleFullExample(t *testing.T) {
 		},
 	})
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"location":        envvar.GetTestRegionFromEnv(),
-		"project_id":      envvar.GetTestProjectFromEnv(),
-		"service_account": envvar.GetTestServiceAccountFromEnv(t),
-		"end_time":        time.Date(time.Now().Year(), 12, 31, 0, 0, 0, 0, time.Now().Location()).AddDate(0, 0, 10).Format(time.RFC3339),
-		"key_name":        acctest.BootstrapKMSKeyInLocation(t, "us-central1").CryptoKey.Name,
-		"start_time":      time.Date(time.Now().Year(), 12, 31, 0, 0, 0, 0, time.Now().Location()).AddDate(0, 0, 1).Format(time.RFC3339),
-		"random_suffix":   acctest.RandString(t, 10),
+		"location":              envvar.GetTestRegionFromEnv(),
+		"project_id":            envvar.GetTestProjectFromEnv(),
+		"service_account":       envvar.GetTestServiceAccountFromEnv(t),
+		"bucket":                "tf_test_my_bucket" + randomSuffix,
+		"dataform_repository":   "tf-test-dataform-repository" + randomSuffix,
+		"display_name":          "tf-test-full-schedule" + randomSuffix,
+		"end_time":              time.Date(time.Now().Year(), 12, 31, 0, 0, 0, 0, time.Now().Location()).AddDate(0, 0, 10).Format(time.RFC3339),
+		"key_name":              acctest.BootstrapKMSKeyInLocation(t, "us-central1").CryptoKey.Name,
+		"network_name":          "tf-test-colab-test-default" + randomSuffix,
+		"runtime_template_name": "tf-test-runtime-template" + randomSuffix,
+		"secret":                "secret" + randomSuffix,
+		"start_time":            time.Date(time.Now().Year(), 12, 31, 0, 0, 0, 0, time.Now().Location()).AddDate(0, 0, 1).Format(time.RFC3339),
+		"random_suffix":         randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -333,7 +351,7 @@ func testAccColabSchedule_colabScheduleFullExample(context map[string]interface{
 	return acctest.Nprintf(`
 resource "google_colab_runtime_template" "my_runtime_template" {
   provider = google-beta
-  name = "tf-test-runtime-template%{random_suffix}"
+  name = "%{runtime_template_name}"
   display_name = "Runtime template"
   location = "us-central1"
 
@@ -348,7 +366,7 @@ resource "google_colab_runtime_template" "my_runtime_template" {
 
 resource "google_storage_bucket" "output_bucket" {
   provider = google-beta
-  name          = "tf_test_my_bucket%{random_suffix}"
+  name          = "%{bucket}"
   location      = "US"
   force_destroy = true
   uniform_bucket_level_access = true
@@ -356,7 +374,7 @@ resource "google_storage_bucket" "output_bucket" {
 
 resource "google_secret_manager_secret" "secret" {
   provider = google-beta
-  secret_id = "secret%{random_suffix}"
+  secret_id = "%{secret}"
   replication {
     auto {}
   }
@@ -370,7 +388,7 @@ resource "google_secret_manager_secret_version" "secret_version" {
 
 resource "google_dataform_repository" "dataform_repository" {
   provider = google-beta
-  name = "tf-test-dataform-repository%{random_suffix}"
+  name = "%{dataform_repository}"
   display_name = "dataform_repository"
   npmrc_environment_variables_secret_version = google_secret_manager_secret_version.secret_version.id
   kms_key_name = "%{key_name}"
@@ -395,7 +413,7 @@ resource "google_dataform_repository" "dataform_repository" {
 
 resource "google_colab_schedule" "schedule" {
   provider = google-beta
-  display_name = "tf-test-full-schedule%{random_suffix}"
+  display_name = "%{display_name}"
   location = "%{location}"
   allow_queueing = true
   max_concurrent_run_count = 2

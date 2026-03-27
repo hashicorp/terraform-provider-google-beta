@@ -53,8 +53,12 @@ var (
 func TestAccComputeSubnetwork_subnetworkBasicExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"network_name":    "tf-test-test-network" + randomSuffix,
+		"subnetwork_name": "tf-test-test-subnetwork" + randomSuffix,
+		"random_suffix":   randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -78,7 +82,7 @@ func TestAccComputeSubnetwork_subnetworkBasicExample(t *testing.T) {
 func testAccComputeSubnetwork_subnetworkBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_subnetwork" "network-with-private-secondary-ip-ranges" {
-  name          = "tf-test-test-subnetwork%{random_suffix}"
+  name          = "%{subnetwork_name}"
   ip_cidr_range = "10.2.0.0/16"
   region        = "us-central1"
   network       = google_compute_network.custom-test.id
@@ -89,7 +93,7 @@ resource "google_compute_subnetwork" "network-with-private-secondary-ip-ranges" 
 }
 
 resource "google_compute_network" "custom-test" {
-  name                    = "tf-test-test-network%{random_suffix}"
+  name                    = "%{network_name}"
   auto_create_subnetworks = false
 }
 `, context)
@@ -98,8 +102,12 @@ resource "google_compute_network" "custom-test" {
 func TestAccComputeSubnetwork_subnetworkLoggingConfigExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"network_name":    "tf-test-log-test-network" + randomSuffix,
+		"subnetwork_name": "tf-test-log-test-subnetwork" + randomSuffix,
+		"random_suffix":   randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -123,7 +131,7 @@ func TestAccComputeSubnetwork_subnetworkLoggingConfigExample(t *testing.T) {
 func testAccComputeSubnetwork_subnetworkLoggingConfigExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_subnetwork" "subnet-with-logging" {
-  name          = "tf-test-log-test-subnetwork%{random_suffix}"
+  name          = "%{subnetwork_name}"
   ip_cidr_range = "10.2.0.0/16"
   region        = "us-central1"
   network       = google_compute_network.custom-test.id
@@ -136,7 +144,7 @@ resource "google_compute_subnetwork" "subnet-with-logging" {
 }
 
 resource "google_compute_network" "custom-test" {
-  name                    = "tf-test-log-test-network%{random_suffix}"
+  name                    = "%{network_name}"
   auto_create_subnetworks = false
 }
 `, context)
@@ -145,8 +153,12 @@ resource "google_compute_network" "custom-test" {
 func TestAccComputeSubnetwork_subnetworkInternalL7lbExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"network_name":    "tf-test-l7lb-test-network" + randomSuffix,
+		"subnetwork_name": "tf-test-l7lb-test-subnetwork" + randomSuffix,
+		"random_suffix":   randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -172,7 +184,7 @@ func testAccComputeSubnetwork_subnetworkInternalL7lbExample(context map[string]i
 resource "google_compute_subnetwork" "network-for-l7lb" {
   provider = google-beta
 
-  name          = "tf-test-l7lb-test-subnetwork%{random_suffix}"
+  name          = "%{subnetwork_name}"
   ip_cidr_range = "10.0.0.0/22"
   region        = "us-central1"
   purpose       = "REGIONAL_MANAGED_PROXY"
@@ -183,7 +195,7 @@ resource "google_compute_subnetwork" "network-for-l7lb" {
 resource "google_compute_network" "custom-test" {
   provider = google-beta
 
-  name                    = "tf-test-l7lb-test-network%{random_suffix}"
+  name                    = "%{network_name}"
   auto_create_subnetworks = false
 }
 `, context)
@@ -192,8 +204,12 @@ resource "google_compute_network" "custom-test" {
 func TestAccComputeSubnetwork_subnetworkIpv6Example(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"network_name":    "tf-test-ipv6-test-network" + randomSuffix,
+		"subnetwork_name": "tf-test-ipv6-test-subnetwork" + randomSuffix,
+		"random_suffix":   randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -217,7 +233,7 @@ func TestAccComputeSubnetwork_subnetworkIpv6Example(t *testing.T) {
 func testAccComputeSubnetwork_subnetworkIpv6Example(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_subnetwork" "subnetwork-ipv6" {
-  name          = "tf-test-ipv6-test-subnetwork%{random_suffix}"
+  name          = "%{subnetwork_name}"
   
   ip_cidr_range = "10.0.0.0/22"
   region        = "us-west2"
@@ -229,7 +245,7 @@ resource "google_compute_subnetwork" "subnetwork-ipv6" {
 }
 
 resource "google_compute_network" "custom-test" {
-  name                    = "tf-test-ipv6-test-network%{random_suffix}"
+  name                    = "%{network_name}"
   auto_create_subnetworks = false
 }
 `, context)
@@ -238,8 +254,12 @@ resource "google_compute_network" "custom-test" {
 func TestAccComputeSubnetwork_subnetworkInternalIpv6Example(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"network_name":    "tf-test-internal-ipv6-test-network" + randomSuffix,
+		"subnetwork_name": "tf-test-internal-ipv6-test-subnetwork" + randomSuffix,
+		"random_suffix":   randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -263,7 +283,7 @@ func TestAccComputeSubnetwork_subnetworkInternalIpv6Example(t *testing.T) {
 func testAccComputeSubnetwork_subnetworkInternalIpv6Example(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_subnetwork" "subnetwork-internal-ipv6" {
-  name          = "tf-test-internal-ipv6-test-subnetwork%{random_suffix}"
+  name          = "%{subnetwork_name}"
   
   ip_cidr_range = "10.0.0.0/22"
   region        = "us-west2"
@@ -275,7 +295,7 @@ resource "google_compute_subnetwork" "subnetwork-internal-ipv6" {
 }
 
 resource "google_compute_network" "custom-test" {
-  name                    = "tf-test-internal-ipv6-test-network%{random_suffix}"
+  name                    = "%{network_name}"
   auto_create_subnetworks = false
   enable_ula_internal_ipv6 = true
 }
@@ -285,8 +305,12 @@ resource "google_compute_network" "custom-test" {
 func TestAccComputeSubnetwork_subnetworkPurposePrivateNatExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"network_name":    "tf-test-subnet-purpose-test-network" + randomSuffix,
+		"subnetwork_name": "tf-test-subnet-purpose-test-subnetwork" + randomSuffix,
+		"random_suffix":   randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -312,7 +336,7 @@ func testAccComputeSubnetwork_subnetworkPurposePrivateNatExample(context map[str
 resource "google_compute_subnetwork" "subnetwork-purpose-private-nat" {
   provider         = google-beta
 
-  name             = "tf-test-subnet-purpose-test-subnetwork%{random_suffix}"
+  name             = "%{subnetwork_name}"
   region           = "us-west2"
   ip_cidr_range    = "192.168.1.0/24"
   purpose          = "PRIVATE_NAT"
@@ -322,7 +346,7 @@ resource "google_compute_subnetwork" "subnetwork-purpose-private-nat" {
 resource "google_compute_network" "custom-test" {
   provider                = google-beta
 
-  name                    = "tf-test-subnet-purpose-test-network%{random_suffix}"
+  name                    = "%{network_name}"
   auto_create_subnetworks = false
 }
 `, context)
@@ -331,8 +355,12 @@ resource "google_compute_network" "custom-test" {
 func TestAccComputeSubnetwork_subnetworkResolveSubnetMaskExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"network_name":    "tf-test-subnet-resolve-subnet-mask-test-network" + randomSuffix,
+		"subnetwork_name": "tf-test-subnet-resolve-subnet-mask-test-subnetwork" + randomSuffix,
+		"random_suffix":   randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -357,7 +385,7 @@ func testAccComputeSubnetwork_subnetworkResolveSubnetMaskExample(context map[str
 	return acctest.Nprintf(`
 resource "google_compute_subnetwork" "subnetwork-resolve-subnet-mask" {
 
-  name             = "tf-test-subnet-resolve-subnet-mask-test-subnetwork%{random_suffix}"
+  name             = "%{subnetwork_name}"
   region           = "us-west2"
   ip_cidr_range    = "10.10.0.0/24"
   purpose          = "PRIVATE"
@@ -367,7 +395,7 @@ resource "google_compute_subnetwork" "subnetwork-resolve-subnet-mask" {
 
 resource "google_compute_network" "custom-test" {
 
-  name                    = "tf-test-subnet-resolve-subnet-mask-test-network%{random_suffix}"
+  name                    = "%{network_name}"
   auto_create_subnetworks = false
 }
 `, context)
@@ -376,8 +404,12 @@ resource "google_compute_network" "custom-test" {
 func TestAccComputeSubnetwork_subnetworkCidrOverlapExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"network_name":    "tf-test-net-cidr-overlap" + randomSuffix,
+		"subnetwork_name": "tf-test-subnet-cidr-overlap" + randomSuffix,
+		"random_suffix":   randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -402,7 +434,7 @@ func testAccComputeSubnetwork_subnetworkCidrOverlapExample(context map[string]in
 	return acctest.Nprintf(`
 resource "google_compute_subnetwork" "subnetwork-cidr-overlap" {
 
-  name                             = "tf-test-subnet-cidr-overlap%{random_suffix}"
+  name                             = "%{subnetwork_name}"
   region                           = "us-west2"
   ip_cidr_range                    = "192.168.1.0/24"
   allow_subnet_cidr_routes_overlap = true
@@ -411,7 +443,7 @@ resource "google_compute_subnetwork" "subnetwork-cidr-overlap" {
 
 resource "google_compute_network" "net-cidr-overlap" {
 
-  name                    = "tf-test-net-cidr-overlap%{random_suffix}"
+  name                    = "%{network_name}"
   auto_create_subnetworks = false
 }
 `, context)
@@ -420,8 +452,12 @@ resource "google_compute_network" "net-cidr-overlap" {
 func TestAccComputeSubnetwork_subnetworkReservedInternalRangeExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"network_name":    "tf-test-network-reserved-internal-range" + randomSuffix,
+		"subnetwork_name": "tf-test-subnetwork-reserved-internal-range" + randomSuffix,
+		"random_suffix":   randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -446,7 +482,7 @@ func testAccComputeSubnetwork_subnetworkReservedInternalRangeExample(context map
 	return acctest.Nprintf(`
 resource "google_compute_subnetwork" "subnetwork-reserved-internal-range" {
   provider                = google-beta
-  name                    = "tf-test-subnetwork-reserved-internal-range%{random_suffix}"
+  name                    = "%{subnetwork_name}"
   region                  = "us-central1"
   network                 = google_compute_network.default.id
   reserved_internal_range = "networkconnectivity.googleapis.com/${google_network_connectivity_internal_range.reserved.id}"
@@ -454,7 +490,7 @@ resource "google_compute_subnetwork" "subnetwork-reserved-internal-range" {
 
 resource "google_compute_network" "default" {
   provider                = google-beta
-  name                    = "tf-test-network-reserved-internal-range%{random_suffix}"
+  name                    = "%{network_name}"
   auto_create_subnetworks = false
 }
 
@@ -475,8 +511,14 @@ resource "google_network_connectivity_internal_range" "reserved" {
 func TestAccComputeSubnetwork_subnetworkReservedSecondaryRangeExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"network_name":         "tf-test-network-reserved-secondary-range" + randomSuffix,
+		"primary_range_name":   "tf-test-reserved-primary" + randomSuffix,
+		"secondary_range_name": "tf-test-reserved-secondary" + randomSuffix,
+		"subnetwork_name":      "tf-test-subnetwork-reserved-secondary-range" + randomSuffix,
+		"random_suffix":        randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -501,7 +543,7 @@ func testAccComputeSubnetwork_subnetworkReservedSecondaryRangeExample(context ma
 	return acctest.Nprintf(`
 resource "google_compute_subnetwork" "subnetwork-reserved-secondary-range" {
   provider                = google-beta
-  name                    = "tf-test-subnetwork-reserved-secondary-range%{random_suffix}"
+  name                    = "%{subnetwork_name}"
   region                  = "us-central1"
   network                 = google_compute_network.default.id
   reserved_internal_range = "networkconnectivity.googleapis.com/${google_network_connectivity_internal_range.reserved.id}"
@@ -514,13 +556,13 @@ resource "google_compute_subnetwork" "subnetwork-reserved-secondary-range" {
 
 resource "google_compute_network" "default" {
   provider                = google-beta
-  name                    = "tf-test-network-reserved-secondary-range%{random_suffix}"
+  name                    = "%{network_name}"
   auto_create_subnetworks = false
 }
 
 resource "google_network_connectivity_internal_range" "reserved" {
   provider          = google-beta
-  name              = "tf-test-reserved-primary%{random_suffix}"
+  name              = "%{primary_range_name}"
   network           = google_compute_network.default.id
   usage             = "FOR_VPC"
   peering           = "FOR_SELF"
@@ -532,7 +574,7 @@ resource "google_network_connectivity_internal_range" "reserved" {
 
 resource "google_network_connectivity_internal_range" "reserved_secondary" {
   provider          = google-beta
-  name              = "tf-test-reserved-secondary%{random_suffix}"
+  name              = "%{secondary_range_name}"
   network           = google_compute_network.default.id
   usage             = "FOR_VPC"
   peering           = "FOR_SELF"
@@ -547,8 +589,12 @@ resource "google_network_connectivity_internal_range" "reserved_secondary" {
 func TestAccComputeSubnetwork_subnetworkIpv6OnlyInternalExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"network_name":    "tf-test-network-ipv6-only" + randomSuffix,
+		"subnetwork_name": "tf-test-subnet-ipv6-only" + randomSuffix,
+		"random_suffix":   randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -572,7 +618,7 @@ func TestAccComputeSubnetwork_subnetworkIpv6OnlyInternalExample(t *testing.T) {
 func testAccComputeSubnetwork_subnetworkIpv6OnlyInternalExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_subnetwork" "subnetwork-ipv6-only" {
-  name          = "tf-test-subnet-ipv6-only%{random_suffix}"
+  name          = "%{subnetwork_name}"
   region        = "us-central1"
   network       = google_compute_network.custom-test.id
   stack_type    = "IPV6_ONLY"
@@ -580,7 +626,7 @@ resource "google_compute_subnetwork" "subnetwork-ipv6-only" {
 }
 
 resource "google_compute_network" "custom-test" {
-  name                    = "tf-test-network-ipv6-only%{random_suffix}"
+  name                    = "%{network_name}"
   auto_create_subnetworks = false
   enable_ula_internal_ipv6 = true
 }
@@ -590,9 +636,13 @@ resource "google_compute_network" "custom-test" {
 func TestAccComputeSubnetwork_subnetworkWithSubnetModePdpExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"ip_collection_url": "projects/tf-static-byoip/regions/us-central1/publicDelegatedPrefixes/tf-test-subnet-mode-pdp",
-		"random_suffix":     acctest.RandString(t, 10),
+		"network_name":      "tf-test-network-byoipv6-external" + randomSuffix,
+		"subnetwork_name":   "tf-test-subnet-mode-pdp-subnet" + randomSuffix,
+		"random_suffix":     randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -616,7 +666,7 @@ func TestAccComputeSubnetwork_subnetworkWithSubnetModePdpExample(t *testing.T) {
 func testAccComputeSubnetwork_subnetworkWithSubnetModePdpExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_subnetwork" "subnetwork-with-subnet-mode-pdp" {
-  name             = "tf-test-subnet-mode-pdp-subnet%{random_suffix}"
+  name             = "%{subnetwork_name}"
   region           = "us-central1"
   network          = google_compute_network.custom-test-network.id
   stack_type       = "IPV6_ONLY"
@@ -625,7 +675,7 @@ resource "google_compute_subnetwork" "subnetwork-with-subnet-mode-pdp" {
 }
 
 resource "google_compute_network" "custom-test-network" {
-  name                    = "tf-test-network-byoipv6-external%{random_suffix}"
+  name                    = "%{network_name}"
   auto_create_subnetworks = false
 }
 `, context)
@@ -634,9 +684,13 @@ resource "google_compute_network" "custom-test-network" {
 func TestAccComputeSubnetwork_subnetworkWithInternalSubnetModePdpExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"ip_collection_url": "projects/tf-static-byoip/regions/us-central1/publicDelegatedPrefixes/internal-ipv6-subnet-mode-test-sub-pdp",
-		"random_suffix":     acctest.RandString(t, 10),
+		"network_name":      "tf-test-network-byoipv6-internal" + randomSuffix,
+		"subnetwork_name":   "tf-test-internal-subnet-mode-pdp-subnet" + randomSuffix,
+		"random_suffix":     randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -660,7 +714,7 @@ func TestAccComputeSubnetwork_subnetworkWithInternalSubnetModePdpExample(t *test
 func testAccComputeSubnetwork_subnetworkWithInternalSubnetModePdpExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_subnetwork" "subnetwork-with-internal-subnet-mode-pdp" {
-  name             = "tf-test-internal-subnet-mode-pdp-subnet%{random_suffix}"
+  name             = "%{subnetwork_name}"
   region           = "us-central1"
   network          = google_compute_network.custom-test-network.id
   stack_type       = "IPV6_ONLY"
@@ -669,7 +723,7 @@ resource "google_compute_subnetwork" "subnetwork-with-internal-subnet-mode-pdp" 
 }
 
 resource "google_compute_network" "custom-test-network" {
-  name                    = "tf-test-network-byoipv6-internal%{random_suffix}"
+  name                    = "%{network_name}"
   auto_create_subnetworks = false
 }
 `, context)
@@ -678,10 +732,14 @@ resource "google_compute_network" "custom-test-network" {
 func TestAccComputeSubnetwork_subnetworkWithInternalSubnetModePdpExplicitIpPrefixExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"internal_ipv6_prefix": fmt.Sprintf("2001:db8:1:%d::/64", acctest.RandIntRange(t, 0, 9999)),
 		"ip_collection_url":    "projects/tf-static-byoip/regions/us-central1/publicDelegatedPrefixes/internal-ipv6-subnet-mode-test-sub-pdp-explicit-prefix",
-		"random_suffix":        acctest.RandString(t, 10),
+		"network_name":         "tf-test-network-byoipv6-internal-prefix" + randomSuffix,
+		"subnetwork_name":      "tf-test-subnet-mode-pdp-subnet-internal-prefix" + randomSuffix,
+		"random_suffix":        randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -705,7 +763,7 @@ func TestAccComputeSubnetwork_subnetworkWithInternalSubnetModePdpExplicitIpPrefi
 func testAccComputeSubnetwork_subnetworkWithInternalSubnetModePdpExplicitIpPrefixExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_subnetwork" "subnetwork-with-internal-subnet-mode-pdp-explicit-ip-prefix" {
-  name             = "tf-test-subnet-mode-pdp-subnet-internal-prefix%{random_suffix}"
+  name             = "%{subnetwork_name}"
   region           = "us-central1"
   network          = google_compute_network.custom-test-network.id
   stack_type       = "IPV6_ONLY"
@@ -715,7 +773,7 @@ resource "google_compute_subnetwork" "subnetwork-with-internal-subnet-mode-pdp-e
 }
 
 resource "google_compute_network" "custom-test-network" {
-  name                    = "tf-test-network-byoipv6-internal-prefix%{random_suffix}"
+  name                    = "%{network_name}"
   auto_create_subnetworks = false
 }
 `, context)
@@ -724,8 +782,12 @@ resource "google_compute_network" "custom-test-network" {
 func TestAccComputeSubnetwork_subnetworkIpv6OnlyExternalExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"network_name":    "tf-test-network-ipv6-only" + randomSuffix,
+		"subnetwork_name": "tf-test-subnet-ipv6-only" + randomSuffix,
+		"random_suffix":   randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -749,7 +811,7 @@ func TestAccComputeSubnetwork_subnetworkIpv6OnlyExternalExample(t *testing.T) {
 func testAccComputeSubnetwork_subnetworkIpv6OnlyExternalExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_subnetwork" "subnetwork-ipv6-only" {
-  name          = "tf-test-subnet-ipv6-only%{random_suffix}"
+  name          = "%{subnetwork_name}"
   region        = "us-central1"
   network       = google_compute_network.custom-test.id
   stack_type    = "IPV6_ONLY"
@@ -757,7 +819,7 @@ resource "google_compute_subnetwork" "subnetwork-ipv6-only" {
 }
 
 resource "google_compute_network" "custom-test" {
-  name                    = "tf-test-network-ipv6-only%{random_suffix}"
+  name                    = "%{network_name}"
   auto_create_subnetworks = false
 }
 `, context)

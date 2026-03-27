@@ -42,13 +42,17 @@ var (
 func TestAccVertexAIFeaturestoreEntitytypeIamBindingGenerated(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix":   acctest.RandString(t, 10),
+		"random_suffix":   randomSuffix,
 		"role":            "roles/viewer",
 		"billing_account": envvar.GetTestBillingAccountFromEnv(t),
 		"org_id":          envvar.GetTestOrgFromEnv(t),
 
 		"kms_key_name": acctest.BootstrapKMSKeyInLocation(t, "us-central1").CryptoKey.Name,
+		"name":         "terraform" + randomSuffix,
+		"project":      "tf-test-vertex-ai" + randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -81,13 +85,17 @@ func TestAccVertexAIFeaturestoreEntitytypeIamBindingGenerated(t *testing.T) {
 func TestAccVertexAIFeaturestoreEntitytypeIamMemberGenerated(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix":   acctest.RandString(t, 10),
+		"random_suffix":   randomSuffix,
 		"role":            "roles/viewer",
 		"billing_account": envvar.GetTestBillingAccountFromEnv(t),
 		"org_id":          envvar.GetTestOrgFromEnv(t),
 
 		"kms_key_name": acctest.BootstrapKMSKeyInLocation(t, "us-central1").CryptoKey.Name,
+		"name":         "terraform" + randomSuffix,
+		"project":      "tf-test-vertex-ai" + randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -111,13 +119,17 @@ func TestAccVertexAIFeaturestoreEntitytypeIamMemberGenerated(t *testing.T) {
 func TestAccVertexAIFeaturestoreEntitytypeIamPolicyGenerated(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix":   acctest.RandString(t, 10),
+		"random_suffix":   randomSuffix,
 		"role":            "roles/viewer",
 		"billing_account": envvar.GetTestBillingAccountFromEnv(t),
 		"org_id":          envvar.GetTestOrgFromEnv(t),
 
 		"kms_key_name": acctest.BootstrapKMSKeyInLocation(t, "us-central1").CryptoKey.Name,
+		"name":         "terraform" + randomSuffix,
+		"project":      "tf-test-vertex-ai" + randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -150,7 +162,7 @@ func TestAccVertexAIFeaturestoreEntitytypeIamPolicyGenerated(t *testing.T) {
 func testAccVertexAIFeaturestoreEntitytypeIamMember_basicGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_vertex_ai_featurestore" "featurestore" {
-  name     = "terraform%{random_suffix}"
+  name     = "%{name}"
   labels = {
     foo = "bar"
   }
@@ -164,7 +176,7 @@ resource "google_vertex_ai_featurestore" "featurestore" {
 }
 
 resource "google_vertex_ai_featurestore_entitytype" "entity" {
-  name     = "terraform%{random_suffix}"
+  name     = "%{name}"
   labels = {
     foo = "bar"
   }
@@ -201,7 +213,7 @@ resource "google_vertex_ai_featurestore_entitytype_iam_member" "foo" {
 func testAccVertexAIFeaturestoreEntitytypeIamPolicy_basicGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_vertex_ai_featurestore" "featurestore" {
-  name     = "terraform%{random_suffix}"
+  name     = "%{name}"
   labels = {
     foo = "bar"
   }
@@ -215,7 +227,7 @@ resource "google_vertex_ai_featurestore" "featurestore" {
 }
 
 resource "google_vertex_ai_featurestore_entitytype" "entity" {
-  name     = "terraform%{random_suffix}"
+  name     = "%{name}"
   labels = {
     foo = "bar"
   }
@@ -266,7 +278,7 @@ data "google_vertex_ai_featurestore_entitytype_iam_policy" "foo" {
 func testAccVertexAIFeaturestoreEntitytypeIamPolicy_emptyBinding(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_vertex_ai_featurestore" "featurestore" {
-  name     = "terraform%{random_suffix}"
+  name     = "%{name}"
   labels = {
     foo = "bar"
   }
@@ -280,7 +292,7 @@ resource "google_vertex_ai_featurestore" "featurestore" {
 }
 
 resource "google_vertex_ai_featurestore_entitytype" "entity" {
-  name     = "terraform%{random_suffix}"
+  name     = "%{name}"
   labels = {
     foo = "bar"
   }
@@ -319,7 +331,7 @@ resource "google_vertex_ai_featurestore_entitytype_iam_policy" "foo" {
 func testAccVertexAIFeaturestoreEntitytypeIamBinding_basicGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_vertex_ai_featurestore" "featurestore" {
-  name     = "terraform%{random_suffix}"
+  name     = "%{name}"
   labels = {
     foo = "bar"
   }
@@ -333,7 +345,7 @@ resource "google_vertex_ai_featurestore" "featurestore" {
 }
 
 resource "google_vertex_ai_featurestore_entitytype" "entity" {
-  name     = "terraform%{random_suffix}"
+  name     = "%{name}"
   labels = {
     foo = "bar"
   }
@@ -370,7 +382,7 @@ resource "google_vertex_ai_featurestore_entitytype_iam_binding" "foo" {
 func testAccVertexAIFeaturestoreEntitytypeIamBinding_updateGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_vertex_ai_featurestore" "featurestore" {
-  name     = "terraform%{random_suffix}"
+  name     = "%{name}"
   labels = {
     foo = "bar"
   }
@@ -384,7 +396,7 @@ resource "google_vertex_ai_featurestore" "featurestore" {
 }
 
 resource "google_vertex_ai_featurestore_entitytype" "entity" {
-  name     = "terraform%{random_suffix}"
+  name     = "%{name}"
   labels = {
     foo = "bar"
   }

@@ -53,10 +53,13 @@ var (
 func TestAccFirebaseAILogicConfig_firebaseailogicConfigBasicExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"billing_account": envvar.GetTestBillingAccountFromEnv(t),
 		"org_id":          envvar.GetTestOrgFromEnv(t),
-		"random_suffix":   acctest.RandString(t, 10),
+		"project_id":      "basic" + randomSuffix,
+		"random_suffix":   randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -85,7 +88,7 @@ func testAccFirebaseAILogicConfig_firebaseailogicConfigBasicExample(context map[
 resource "google_project" "project" {
   provider = google-beta
 
-  project_id      = "basic%{random_suffix}"
+  project_id      = "%{project_id}"
   name            = "Firebase Project"
   org_id          = "%{org_id}"
   billing_account = "%{billing_account}"
@@ -136,10 +139,14 @@ resource "google_firebase_ai_logic_config" "default" {
 func TestAccFirebaseAILogicConfig_firebaseailogicConfigFullExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"billing_account": envvar.GetTestBillingAccountFromEnv(t),
 		"org_id":          envvar.GetTestOrgFromEnv(t),
-		"random_suffix":   acctest.RandString(t, 10),
+		"api_key_id":      "tf-test-gemini-api-key" + randomSuffix,
+		"project_id":      "full" + randomSuffix,
+		"random_suffix":   randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -168,7 +175,7 @@ func testAccFirebaseAILogicConfig_firebaseailogicConfigFullExample(context map[s
 resource "google_project" "project" {
   provider = google-beta
 
-  project_id      = "full%{random_suffix}"
+  project_id      = "%{project_id}"
   name            = "Firebase Project"
   org_id          = "%{org_id}"
   billing_account = "%{billing_account}"
@@ -199,7 +206,7 @@ resource "google_apikeys_key" "gemini" {
   provider  = google-beta
   project  = google_project.project.project_id
 
-  name         = "tf-test-gemini-api-key%{random_suffix}"
+  name         = "%{api_key_id}"
   display_name = "Gemini Developer API key"
 
   restrictions {

@@ -53,9 +53,13 @@ var (
 func TestAccChronicleNativeDashboard_chronicleNativedashboardBasicExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"chronicle_id":  envvar.GetTestChronicleInstanceIdFromEnv(t),
-		"random_suffix": acctest.RandString(t, 10),
+		"chronicle_id":          envvar.GetTestChronicleInstanceIdFromEnv(t),
+		"dashboard_description": "tf_test_dashboard_description" + randomSuffix,
+		"dashboard_name":        "dashboard" + randomSuffix,
+		"random_suffix":         randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -82,8 +86,8 @@ resource "google_chronicle_native_dashboard" "my_basic_dashboard" {
   provider     = google-beta
   location     = "us"
   instance     = "%{chronicle_id}"
-  display_name = "dashboard%{random_suffix}"
-  description  = "tf_test_dashboard_description%{random_suffix}"
+  display_name = "%{dashboard_name}"
+  description  = "%{dashboard_description}"
   access       = "DASHBOARD_PRIVATE"
   type         = "CUSTOM"
 

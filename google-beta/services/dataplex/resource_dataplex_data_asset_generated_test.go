@@ -53,9 +53,13 @@ var (
 func TestAccDataplexDataAsset_dataplexDataAssetBasicExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"project_name":  envvar.GetTestProjectFromEnv(),
-		"random_suffix": acctest.RandString(t, 10),
+		"project_name":    envvar.GetTestProjectFromEnv(),
+		"data_asset_id":   "tf-test-data-asset" + randomSuffix,
+		"data_product_id": "tf-test-data-product" + randomSuffix,
+		"random_suffix":   randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -108,7 +112,7 @@ resource "google_dataplex_data_asset" "example" {
   project         = "%{project_name}"
   location        = "us-central1"
   data_product_id = google_dataplex_data_product.example.data_product_id
-  data_asset_id   = "tf-test-data-asset%{random_suffix}"
+  data_asset_id   = "%{data_asset_id}"
   resource        = "//bigquery.googleapis.com/projects/${google_bigquery_dataset.example.project}/datasets/${google_bigquery_dataset.example.dataset_id}"
 
   provider = google-beta
@@ -119,9 +123,13 @@ resource "google_dataplex_data_asset" "example" {
 func TestAccDataplexDataAsset_dataplexDataAssetFullExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"project_name":  envvar.GetTestProjectFromEnv(),
-		"random_suffix": acctest.RandString(t, 10),
+		"project_name":    envvar.GetTestProjectFromEnv(),
+		"data_asset_id":   "tf-test-data-asset" + randomSuffix,
+		"data_product_id": "tf-test-data-product" + randomSuffix,
+		"random_suffix":   randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -183,7 +191,7 @@ resource "google_dataplex_data_asset" "example" {
   project         = "%{project_name}"
   location        = "us-central1"
   data_product_id = google_dataplex_data_product.example.data_product_id
-  data_asset_id   = "tf-test-data-asset%{random_suffix}"
+  data_asset_id   = "%{data_asset_id}"
   resource        = "//bigquery.googleapis.com/projects/${google_bigquery_dataset.example.project}/datasets/${google_bigquery_dataset.example.dataset_id}"
 
   labels = {

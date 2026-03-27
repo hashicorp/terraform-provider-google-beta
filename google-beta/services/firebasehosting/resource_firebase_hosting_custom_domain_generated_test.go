@@ -53,11 +53,13 @@ var (
 func TestAccFirebaseHostingCustomDomain_firebasehostingCustomdomainBasicExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"project_id":    envvar.GetTestProjectFromEnv(),
 		"custom_domain": "basic.custom.domain.com",
 		"site_id":       envvar.GetTestProjectFromEnv(),
-		"random_suffix": acctest.RandString(t, 10),
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -93,11 +95,14 @@ resource "google_firebase_hosting_custom_domain" "default" {
 func TestAccFirebaseHostingCustomDomain_firebasehostingCustomdomainFullExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"project_id":      envvar.GetTestProjectFromEnv(),
 		"custom_domain":   "full.source.domain.com",
 		"redirect_target": "destination.domain.com",
-		"random_suffix":   acctest.RandString(t, 10),
+		"site_id":         "tf-test-site-id-full" + randomSuffix,
+		"random_suffix":   randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -124,7 +129,7 @@ resource "google_firebase_hosting_site" "default" {
   provider = google-beta
   project  = "%{project_id}"
 
-  site_id = "tf-test-site-id-full%{random_suffix}"
+  site_id = "%{site_id}"
 }
 
 resource "google_firebase_hosting_custom_domain" "default" {
@@ -144,11 +149,15 @@ resource "google_firebase_hosting_custom_domain" "default" {
 func TestAccFirebaseHostingCustomDomain_firebasehostingCustomdomainCloudRunExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"project_id":          envvar.GetTestProjectFromEnv(),
-		"custom_domain":       "run.custom.domain.com",
-		"deletion_protection": false,
-		"random_suffix":       acctest.RandString(t, 10),
+		"project_id":           envvar.GetTestProjectFromEnv(),
+		"cloud_run_service_id": "tf-test-cloud-run-service-via-hosting" + randomSuffix,
+		"custom_domain":        "run.custom.domain.com",
+		"deletion_protection":  false,
+		"site_id":              "tf-test-site-id" + randomSuffix,
+		"random_suffix":        randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -174,13 +183,13 @@ func testAccFirebaseHostingCustomDomain_firebasehostingCustomdomainCloudRunExamp
 resource "google_firebase_hosting_site" "default" {
   provider = google-beta
   project  = "%{project_id}"
-  site_id  = "tf-test-site-id%{random_suffix}"
+  site_id  = "%{site_id}"
 }
 
 resource "google_cloud_run_v2_service" "default" {
   provider = google-beta
   project  = "%{project_id}"
-  name     = "tf-test-cloud-run-service-via-hosting%{random_suffix}"
+  name     = "%{cloud_run_service_id}"
   location = "us-central1"
 
   # Warning: allows all public traffic

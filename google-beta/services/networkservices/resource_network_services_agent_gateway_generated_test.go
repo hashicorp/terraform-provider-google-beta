@@ -54,9 +54,12 @@ func TestAccNetworkServicesAgentGateway_networkServicesAgentGatewayFullExample(t
 	t.Skip("true")
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"project":       envvar.GetTestProjectFromEnv(),
-		"random_suffix": acctest.RandString(t, 10),
+		"name":          "tf-test-my-full-agent-gateway" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -80,7 +83,7 @@ func TestAccNetworkServicesAgentGateway_networkServicesAgentGatewayFullExample(t
 func testAccNetworkServicesAgentGateway_networkServicesAgentGatewayFullExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_network_services_agent_gateway" "default" {
-  name     = "tf-test-my-full-agent-gateway%{random_suffix}"
+  name     = "%{name}"
   location = "us-central1"
   description = "A full configuration for Agent Gateway"
   labels = {
@@ -110,9 +113,12 @@ func TestAccNetworkServicesAgentGateway_networkServicesAgentGatewayClientToAgent
 	t.Skip("true")
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"project":       envvar.GetTestProjectFromEnv(),
-		"random_suffix": acctest.RandString(t, 10),
+		"name":          "tf-test-my-client-to-agent-gateway" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -136,7 +142,7 @@ func TestAccNetworkServicesAgentGateway_networkServicesAgentGatewayClientToAgent
 func testAccNetworkServicesAgentGateway_networkServicesAgentGatewayClientToAgentExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_network_services_agent_gateway" "default" {
-  name     = "tf-test-my-client-to-agent-gateway%{random_suffix}"
+  name     = "%{name}"
   location = "us-central1"
 
   protocols = ["MCP"]
@@ -156,9 +162,12 @@ func TestAccNetworkServicesAgentGateway_networkServicesAgentGatewaySelfManagedEx
 	t.Skip("true")
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"project":       envvar.GetTestProjectFromEnv(),
-		"random_suffix": acctest.RandString(t, 10),
+		"name":          "tf-test-my-self-managed-agent-gateway" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -182,7 +191,7 @@ func TestAccNetworkServicesAgentGateway_networkServicesAgentGatewaySelfManagedEx
 func testAccNetworkServicesAgentGateway_networkServicesAgentGatewaySelfManagedExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_network_services_agent_gateway" "default" {
-  name = "tf-test-my-self-managed-agent-gateway%{random_suffix}"
+  name = "%{name}"
   location = "us-central1"
 
   protocols = ["MCP"]

@@ -42,9 +42,14 @@ var (
 func TestAccComputeRegionBackendBucketIamBindingGenerated(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix":           acctest.RandString(t, 10),
+		"random_suffix":           randomSuffix,
 		"role":                    "roles/compute.admin",
+		"backend_bucket_name":     "tf-test-region-image-backend-bucket" + randomSuffix,
+		"bucket_name":             "tf-test-region-image-store-bucket" + randomSuffix,
+		"region":                  "tf-test-us-central1" + randomSuffix,
 		"condition_title":         "expires_after_2019_12_31",
 		"condition_expr":          `request.time < timestamp(\"2020-01-01T00:00:00Z\")`,
 		"condition_desc":          "Expiring at midnight of 2019-12-31",
@@ -82,9 +87,14 @@ func TestAccComputeRegionBackendBucketIamBindingGenerated(t *testing.T) {
 func TestAccComputeRegionBackendBucketIamMemberGenerated(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix":           acctest.RandString(t, 10),
+		"random_suffix":           randomSuffix,
 		"role":                    "roles/compute.admin",
+		"backend_bucket_name":     "tf-test-region-image-backend-bucket" + randomSuffix,
+		"bucket_name":             "tf-test-region-image-store-bucket" + randomSuffix,
+		"region":                  "tf-test-us-central1" + randomSuffix,
 		"condition_title":         "expires_after_2019_12_31",
 		"condition_expr":          `request.time < timestamp(\"2020-01-01T00:00:00Z\")`,
 		"condition_desc":          "Expiring at midnight of 2019-12-31",
@@ -113,9 +123,14 @@ func TestAccComputeRegionBackendBucketIamMemberGenerated(t *testing.T) {
 func TestAccComputeRegionBackendBucketIamPolicyGenerated(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix":           acctest.RandString(t, 10),
+		"random_suffix":           randomSuffix,
 		"role":                    "roles/compute.admin",
+		"backend_bucket_name":     "tf-test-region-image-backend-bucket" + randomSuffix,
+		"bucket_name":             "tf-test-region-image-store-bucket" + randomSuffix,
+		"region":                  "tf-test-us-central1" + randomSuffix,
 		"condition_title":         "expires_after_2019_12_31",
 		"condition_expr":          `request.time < timestamp(\"2020-01-01T00:00:00Z\")`,
 		"condition_desc":          "Expiring at midnight of 2019-12-31",
@@ -153,9 +168,14 @@ func TestAccComputeRegionBackendBucketIamPolicyGenerated(t *testing.T) {
 func TestAccComputeRegionBackendBucketIamBindingGenerated_withCondition(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix":           acctest.RandString(t, 10),
+		"random_suffix":           randomSuffix,
 		"role":                    "roles/compute.admin",
+		"backend_bucket_name":     "tf-test-region-image-backend-bucket" + randomSuffix,
+		"bucket_name":             "tf-test-region-image-store-bucket" + randomSuffix,
+		"region":                  "tf-test-us-central1" + randomSuffix,
 		"condition_title":         "expires_after_2019_12_31",
 		"condition_expr":          `request.time < timestamp(\"2020-01-01T00:00:00Z\")`,
 		"condition_desc":          "Expiring at midnight of 2019-12-31",
@@ -185,9 +205,14 @@ func TestAccComputeRegionBackendBucketIamBindingGenerated_withAndWithoutConditio
 	acctest.SkipIfVcr(t)
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix":           acctest.RandString(t, 10),
+		"random_suffix":           randomSuffix,
 		"role":                    "roles/compute.admin",
+		"backend_bucket_name":     "tf-test-region-image-backend-bucket" + randomSuffix,
+		"bucket_name":             "tf-test-region-image-store-bucket" + randomSuffix,
+		"region":                  "tf-test-us-central1" + randomSuffix,
 		"condition_title":         "expires_after_2019_12_31",
 		"condition_expr":          `request.time < timestamp(\"2020-01-01T00:00:00Z\")`,
 		"condition_desc":          "Expiring at midnight of 2019-12-31",
@@ -227,9 +252,14 @@ func TestAccComputeRegionBackendBucketIamBindingGenerated_withAndWithoutConditio
 func TestAccComputeRegionBackendBucketIamMemberGenerated_withCondition(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix":           acctest.RandString(t, 10),
+		"random_suffix":           randomSuffix,
 		"role":                    "roles/compute.admin",
+		"backend_bucket_name":     "tf-test-region-image-backend-bucket" + randomSuffix,
+		"bucket_name":             "tf-test-region-image-store-bucket" + randomSuffix,
+		"region":                  "tf-test-us-central1" + randomSuffix,
 		"condition_title":         "expires_after_2019_12_31",
 		"condition_expr":          `request.time < timestamp(\"2020-01-01T00:00:00Z\")`,
 		"condition_desc":          "Expiring at midnight of 2019-12-31",
@@ -259,9 +289,14 @@ func TestAccComputeRegionBackendBucketIamMemberGenerated_withAndWithoutCondition
 	acctest.SkipIfVcr(t)
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix":           acctest.RandString(t, 10),
+		"random_suffix":           randomSuffix,
 		"role":                    "roles/compute.admin",
+		"backend_bucket_name":     "tf-test-region-image-backend-bucket" + randomSuffix,
+		"bucket_name":             "tf-test-region-image-store-bucket" + randomSuffix,
+		"region":                  "tf-test-us-central1" + randomSuffix,
 		"condition_title":         "expires_after_2019_12_31",
 		"condition_expr":          `request.time < timestamp(\"2020-01-01T00:00:00Z\")`,
 		"condition_desc":          "Expiring at midnight of 2019-12-31",
@@ -301,9 +336,14 @@ func TestAccComputeRegionBackendBucketIamMemberGenerated_withAndWithoutCondition
 func TestAccComputeRegionBackendBucketIamPolicyGenerated_withCondition(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix":           acctest.RandString(t, 10),
+		"random_suffix":           randomSuffix,
 		"role":                    "roles/compute.admin",
+		"backend_bucket_name":     "tf-test-region-image-backend-bucket" + randomSuffix,
+		"bucket_name":             "tf-test-region-image-store-bucket" + randomSuffix,
+		"region":                  "tf-test-us-central1" + randomSuffix,
 		"condition_title":         "expires_after_2019_12_31",
 		"condition_expr":          `request.time < timestamp(\"2020-01-01T00:00:00Z\")`,
 		"condition_desc":          "Expiring at midnight of 2019-12-31",
@@ -343,7 +383,7 @@ func testAccComputeRegionBackendBucketIamMember_basicGenerated(context map[strin
 resource "google_compute_region_backend_bucket" "image_backend" {
   provider = google-beta
 
-  name                  = "tf-test-region-image-backend-bucket%{random_suffix}"
+  name                  = "%{backend_bucket_name}"
   region                = "us-central1"
   bucket_name           = google_storage_bucket.image_backend.name
   description           = "Regional backend bucket example"
@@ -353,7 +393,7 @@ resource "google_compute_region_backend_bucket" "image_backend" {
 resource "google_storage_bucket" "image_backend" {
   provider = google-beta
 
-  name                        = "tf-test-region-image-store-bucket%{random_suffix}"
+  name                        = "%{bucket_name}"
   location                    = "US-CENTRAL1"
   force_destroy               = true
   uniform_bucket_level_access = true
@@ -375,7 +415,7 @@ func testAccComputeRegionBackendBucketIamPolicy_basicGenerated(context map[strin
 resource "google_compute_region_backend_bucket" "image_backend" {
   provider = google-beta
 
-  name                  = "tf-test-region-image-backend-bucket%{random_suffix}"
+  name                  = "%{backend_bucket_name}"
   region                = "us-central1"
   bucket_name           = google_storage_bucket.image_backend.name
   description           = "Regional backend bucket example"
@@ -385,7 +425,7 @@ resource "google_compute_region_backend_bucket" "image_backend" {
 resource "google_storage_bucket" "image_backend" {
   provider = google-beta
 
-  name                        = "tf-test-region-image-store-bucket%{random_suffix}"
+  name                        = "%{bucket_name}"
   location                    = "US-CENTRAL1"
   force_destroy               = true
   uniform_bucket_level_access = true
@@ -424,7 +464,7 @@ func testAccComputeRegionBackendBucketIamPolicy_emptyBinding(context map[string]
 resource "google_compute_region_backend_bucket" "image_backend" {
   provider = google-beta
 
-  name                  = "tf-test-region-image-backend-bucket%{random_suffix}"
+  name                  = "%{backend_bucket_name}"
   region                = "us-central1"
   bucket_name           = google_storage_bucket.image_backend.name
   description           = "Regional backend bucket example"
@@ -434,7 +474,7 @@ resource "google_compute_region_backend_bucket" "image_backend" {
 resource "google_storage_bucket" "image_backend" {
   provider = google-beta
 
-  name                        = "tf-test-region-image-store-bucket%{random_suffix}"
+  name                        = "%{bucket_name}"
   location                    = "US-CENTRAL1"
   force_destroy               = true
   uniform_bucket_level_access = true
@@ -459,7 +499,7 @@ func testAccComputeRegionBackendBucketIamBinding_basicGenerated(context map[stri
 resource "google_compute_region_backend_bucket" "image_backend" {
   provider = google-beta
 
-  name                  = "tf-test-region-image-backend-bucket%{random_suffix}"
+  name                  = "%{backend_bucket_name}"
   region                = "us-central1"
   bucket_name           = google_storage_bucket.image_backend.name
   description           = "Regional backend bucket example"
@@ -469,7 +509,7 @@ resource "google_compute_region_backend_bucket" "image_backend" {
 resource "google_storage_bucket" "image_backend" {
   provider = google-beta
 
-  name                        = "tf-test-region-image-store-bucket%{random_suffix}"
+  name                        = "%{bucket_name}"
   location                    = "US-CENTRAL1"
   force_destroy               = true
   uniform_bucket_level_access = true
@@ -491,7 +531,7 @@ func testAccComputeRegionBackendBucketIamBinding_updateGenerated(context map[str
 resource "google_compute_region_backend_bucket" "image_backend" {
   provider = google-beta
 
-  name                  = "tf-test-region-image-backend-bucket%{random_suffix}"
+  name                  = "%{backend_bucket_name}"
   region                = "us-central1"
   bucket_name           = google_storage_bucket.image_backend.name
   description           = "Regional backend bucket example"
@@ -501,7 +541,7 @@ resource "google_compute_region_backend_bucket" "image_backend" {
 resource "google_storage_bucket" "image_backend" {
   provider = google-beta
 
-  name                        = "tf-test-region-image-store-bucket%{random_suffix}"
+  name                        = "%{bucket_name}"
   location                    = "US-CENTRAL1"
   force_destroy               = true
   uniform_bucket_level_access = true
@@ -523,7 +563,7 @@ func testAccComputeRegionBackendBucketIamBinding_withConditionGenerated(context 
 resource "google_compute_region_backend_bucket" "image_backend" {
   provider = google-beta
 
-  name                  = "tf-test-region-image-backend-bucket%{random_suffix}"
+  name                  = "%{backend_bucket_name}"
   region                = "us-central1"
   bucket_name           = google_storage_bucket.image_backend.name
   description           = "Regional backend bucket example"
@@ -533,7 +573,7 @@ resource "google_compute_region_backend_bucket" "image_backend" {
 resource "google_storage_bucket" "image_backend" {
   provider = google-beta
 
-  name                        = "tf-test-region-image-store-bucket%{random_suffix}"
+  name                        = "%{bucket_name}"
   location                    = "US-CENTRAL1"
   force_destroy               = true
   uniform_bucket_level_access = true
@@ -560,7 +600,7 @@ func testAccComputeRegionBackendBucketIamBinding_withAndWithoutConditionGenerate
 resource "google_compute_region_backend_bucket" "image_backend" {
   provider = google-beta
 
-  name                  = "tf-test-region-image-backend-bucket%{random_suffix}"
+  name                  = "%{backend_bucket_name}"
   region                = "us-central1"
   bucket_name           = google_storage_bucket.image_backend.name
   description           = "Regional backend bucket example"
@@ -570,7 +610,7 @@ resource "google_compute_region_backend_bucket" "image_backend" {
 resource "google_storage_bucket" "image_backend" {
   provider = google-beta
 
-  name                        = "tf-test-region-image-store-bucket%{random_suffix}"
+  name                        = "%{bucket_name}"
   location                    = "US-CENTRAL1"
   force_destroy               = true
   uniform_bucket_level_access = true
@@ -621,7 +661,7 @@ func testAccComputeRegionBackendBucketIamMember_withConditionGenerated(context m
 resource "google_compute_region_backend_bucket" "image_backend" {
   provider = google-beta
 
-  name                  = "tf-test-region-image-backend-bucket%{random_suffix}"
+  name                  = "%{backend_bucket_name}"
   region                = "us-central1"
   bucket_name           = google_storage_bucket.image_backend.name
   description           = "Regional backend bucket example"
@@ -631,7 +671,7 @@ resource "google_compute_region_backend_bucket" "image_backend" {
 resource "google_storage_bucket" "image_backend" {
   provider = google-beta
 
-  name                        = "tf-test-region-image-store-bucket%{random_suffix}"
+  name                        = "%{bucket_name}"
   location                    = "US-CENTRAL1"
   force_destroy               = true
   uniform_bucket_level_access = true
@@ -658,7 +698,7 @@ func testAccComputeRegionBackendBucketIamMember_withAndWithoutConditionGenerated
 resource "google_compute_region_backend_bucket" "image_backend" {
   provider = google-beta
 
-  name                  = "tf-test-region-image-backend-bucket%{random_suffix}"
+  name                  = "%{backend_bucket_name}"
   region                = "us-central1"
   bucket_name           = google_storage_bucket.image_backend.name
   description           = "Regional backend bucket example"
@@ -668,7 +708,7 @@ resource "google_compute_region_backend_bucket" "image_backend" {
 resource "google_storage_bucket" "image_backend" {
   provider = google-beta
 
-  name                        = "tf-test-region-image-store-bucket%{random_suffix}"
+  name                        = "%{bucket_name}"
   location                    = "US-CENTRAL1"
   force_destroy               = true
   uniform_bucket_level_access = true
@@ -719,7 +759,7 @@ func testAccComputeRegionBackendBucketIamPolicy_withConditionGenerated(context m
 resource "google_compute_region_backend_bucket" "image_backend" {
   provider = google-beta
 
-  name                  = "tf-test-region-image-backend-bucket%{random_suffix}"
+  name                  = "%{backend_bucket_name}"
   region                = "us-central1"
   bucket_name           = google_storage_bucket.image_backend.name
   description           = "Regional backend bucket example"
@@ -729,7 +769,7 @@ resource "google_compute_region_backend_bucket" "image_backend" {
 resource "google_storage_bucket" "image_backend" {
   provider = google-beta
 
-  name                        = "tf-test-region-image-store-bucket%{random_suffix}"
+  name                        = "%{bucket_name}"
   location                    = "US-CENTRAL1"
   force_destroy               = true
   uniform_bucket_level_access = true

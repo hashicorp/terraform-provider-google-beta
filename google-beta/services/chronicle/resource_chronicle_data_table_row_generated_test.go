@@ -53,9 +53,12 @@ var (
 func TestAccChronicleDataTableRow_chronicleDataTableRowBasicExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"instance_id":   envvar.GetTestChronicleInstanceIdFromEnv(t),
-		"random_suffix": acctest.RandString(t, 10),
+		"data_table_id": "tf_test_terraform_test" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -82,7 +85,7 @@ resource "google_chronicle_data_table" "example_dt" {
   provider       = google-beta
   location       = "us"
   instance = "%{instance_id}"
-  data_table_id  = "tf_test_terraform_test%{random_suffix}"
+  data_table_id  = "%{data_table_id}"
   description    = "Sample DataTable for DataTableRow test"
   column_info {
     column_index    = 0

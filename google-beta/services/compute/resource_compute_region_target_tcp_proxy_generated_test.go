@@ -53,8 +53,13 @@ var (
 func TestAccComputeRegionTargetTcpProxy_regionTargetTcpProxyBasicExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"health_check_name":            "tf-test-health-check" + randomSuffix,
+		"region_backend_service_name":  "tf-test-backend-service" + randomSuffix,
+		"region_target_tcp_proxy_name": "tf-test-test-proxy" + randomSuffix,
+		"random_suffix":                randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -78,13 +83,13 @@ func TestAccComputeRegionTargetTcpProxy_regionTargetTcpProxyBasicExample(t *test
 func testAccComputeRegionTargetTcpProxy_regionTargetTcpProxyBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_region_target_tcp_proxy" "default" {
-  name            = "tf-test-test-proxy%{random_suffix}"
+  name            = "%{region_target_tcp_proxy_name}"
   region          = "europe-west4"
   backend_service = google_compute_region_backend_service.default.id
 }
 
 resource "google_compute_region_backend_service" "default" {
-  name        = "tf-test-backend-service%{random_suffix}"
+  name        = "%{region_backend_service_name}"
   protocol    = "TCP"
   timeout_sec = 10
   region      = "europe-west4"
@@ -94,7 +99,7 @@ resource "google_compute_region_backend_service" "default" {
 }
 
 resource "google_compute_region_health_check" "default" {
-  name               = "tf-test-health-check%{random_suffix}"
+  name               = "%{health_check_name}"
   region             = "europe-west4"
   timeout_sec        = 1
   check_interval_sec = 1
@@ -108,8 +113,13 @@ resource "google_compute_region_health_check" "default" {
 func TestAccComputeRegionTargetTcpProxy_regionTargetTcpProxyBasicBetaExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"health_check_name":            "tf-test-health-check" + randomSuffix,
+		"region_backend_service_name":  "tf-test-backend-service" + randomSuffix,
+		"region_target_tcp_proxy_name": "tf-test-test-proxy" + randomSuffix,
+		"random_suffix":                randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -134,7 +144,7 @@ func testAccComputeRegionTargetTcpProxy_regionTargetTcpProxyBasicBetaExample(con
 	return acctest.Nprintf(`
 resource "google_compute_region_target_tcp_proxy" "default" {
   provider              = google-beta
-  name                  = "tf-test-test-proxy%{random_suffix}"
+  name                  = "%{region_target_tcp_proxy_name}"
   region                = "europe-west4"
   load_balancing_scheme = "EXTERNAL_MANAGED"
   backend_service       = google_compute_region_backend_service.default.id
@@ -142,7 +152,7 @@ resource "google_compute_region_target_tcp_proxy" "default" {
 
 resource "google_compute_region_backend_service" "default" {
   provider    = google-beta
-  name        = "tf-test-backend-service%{random_suffix}"
+  name        = "%{region_backend_service_name}"
   protocol    = "TCP"
   timeout_sec = 10
   region      = "europe-west4"
@@ -153,7 +163,7 @@ resource "google_compute_region_backend_service" "default" {
 
 resource "google_compute_region_health_check" "default" {
   provider           = google-beta
-  name               = "tf-test-health-check%{random_suffix}"
+  name               = "%{health_check_name}"
   region             = "europe-west4"
   timeout_sec        = 1
   check_interval_sec = 1
@@ -167,8 +177,11 @@ resource "google_compute_region_health_check" "default" {
 func TestAccComputeRegionTargetTcpProxy_regionTargetTcpProxyBackendlessExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"region_target_tcp_proxy_name": "tf-test-test-proxy" + randomSuffix,
+		"random_suffix":                randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -193,7 +206,7 @@ func testAccComputeRegionTargetTcpProxy_regionTargetTcpProxyBackendlessExample(c
 	return acctest.Nprintf(`
 resource "google_compute_region_target_tcp_proxy" "default" {
   provider              = google-beta
-  name                  = "tf-test-test-proxy%{random_suffix}"
+  name                  = "%{region_target_tcp_proxy_name}"
   region                = "europe-west4"
   load_balancing_scheme = "INTERNAL_MANAGED"
 }
@@ -203,8 +216,14 @@ resource "google_compute_region_target_tcp_proxy" "default" {
 func TestAccComputeRegionTargetTcpProxy_regionTargetTcpProxyTlsRouteExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"health_check_name":            "tf-test-health-check" + randomSuffix,
+		"region_backend_service_name":  "tf-test-backend-service" + randomSuffix,
+		"region_target_tcp_proxy_name": "tf-test-test-proxy" + randomSuffix,
+		"tls_route_name":               "tf-test-tls-route-check" + randomSuffix,
+		"random_suffix":                randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -229,14 +248,14 @@ func testAccComputeRegionTargetTcpProxy_regionTargetTcpProxyTlsRouteExample(cont
 	return acctest.Nprintf(`
 resource "google_compute_region_target_tcp_proxy" "default" {
   provider              = google-beta
-  name                  = "tf-test-test-proxy%{random_suffix}"
+  name                  = "%{region_target_tcp_proxy_name}"
   region                = "europe-west4"
   load_balancing_scheme = "EXTERNAL_MANAGED"
 }
 
 resource "google_compute_region_backend_service" "default" {
   provider    = google-beta
-  name        = "tf-test-backend-service%{random_suffix}"
+  name        = "%{region_backend_service_name}"
   protocol    = "TCP"
   timeout_sec = 10
   region      = "europe-west4"
@@ -247,7 +266,7 @@ resource "google_compute_region_backend_service" "default" {
 
 resource "google_compute_region_health_check" "default" {
   provider           = google-beta
-  name               = "tf-test-health-check%{random_suffix}"
+  name               = "%{health_check_name}"
   region             = "europe-west4"
   timeout_sec        = 1
   check_interval_sec = 1
@@ -258,7 +277,7 @@ resource "google_compute_region_health_check" "default" {
 
 resource "google_network_services_tls_route" "default" {
   provider = google-beta
-  name     = "tf-test-tls-route-check%{random_suffix}"
+  name     = "%{tls_route_name}"
   location = "europe-west4"
 
   target_proxies = [

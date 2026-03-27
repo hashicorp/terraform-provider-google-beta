@@ -53,8 +53,11 @@ var (
 func TestAccNetworkServicesServiceLbPolicies_networkServicesServiceLbPoliciesBasicExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"resource_name": "tf-test-my-lb-policy" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -80,7 +83,7 @@ func testAccNetworkServicesServiceLbPolicies_networkServicesServiceLbPoliciesBas
 resource "google_network_services_service_lb_policies" "default" {
   provider = google-beta
   
-  name        = "tf-test-my-lb-policy%{random_suffix}"
+  name        = "%{resource_name}"
   location    = "global"
 }
 `, context)
@@ -89,8 +92,12 @@ resource "google_network_services_service_lb_policies" "default" {
 func TestAccNetworkServicesServiceLbPolicies_networkServicesServiceLbPoliciesAdvancedExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"backend_name":  "tf-test-my-lb-backend" + randomSuffix,
+		"resource_name": "tf-test-my-lb-policy" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -116,7 +123,7 @@ func testAccNetworkServicesServiceLbPolicies_networkServicesServiceLbPoliciesAdv
 resource "google_network_services_service_lb_policies" "default" {
   provider = google-beta
 
-  name                     = "tf-test-my-lb-policy%{random_suffix}"
+  name                     = "%{resource_name}"
   location                 = "global"
   description              = "my description"
   load_balancing_algorithm = "SPRAY_TO_REGION"
@@ -137,7 +144,7 @@ resource "google_network_services_service_lb_policies" "default" {
 resource "google_compute_backend_service" "default" {
   provider = google-beta
   
-	name                  = "tf-test-my-lb-backend%{random_suffix}"
+	name                  = "%{backend_name}"
 	description           = "my description"
 	load_balancing_scheme = "INTERNAL_SELF_MANAGED"
 	protocol              = "HTTP"
@@ -149,8 +156,12 @@ resource "google_compute_backend_service" "default" {
 func TestAccNetworkServicesServiceLbPolicies_networkServicesServiceLbPoliciesBetaExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"backend_name":  "tf-test-my-lb-backend" + randomSuffix,
+		"resource_name": "tf-test-my-lb-policy" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -176,7 +187,7 @@ func testAccNetworkServicesServiceLbPolicies_networkServicesServiceLbPoliciesBet
 resource "google_network_services_service_lb_policies" "default" {
   provider = google-beta
 
-  name                     = "tf-test-my-lb-policy%{random_suffix}"
+  name                     = "%{resource_name}"
   location                 = "global"
   description              = "my description"
   load_balancing_algorithm = "SPRAY_TO_REGION"
@@ -202,7 +213,7 @@ resource "google_network_services_service_lb_policies" "default" {
 resource "google_compute_backend_service" "default" {
   provider = google-beta
 
-	name                  = "tf-test-my-lb-backend%{random_suffix}"
+	name                  = "%{backend_name}"
 	description           = "my description"
 	load_balancing_scheme = "INTERNAL_SELF_MANAGED"
 	protocol              = "HTTP"

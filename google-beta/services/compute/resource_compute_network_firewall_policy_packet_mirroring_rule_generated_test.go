@@ -53,10 +53,20 @@ var (
 func TestAccComputeNetworkFirewallPolicyPacketMirroringRule_computeNetworkFirewallPolicyPacketMirroringRuleExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"org_id":        envvar.GetTestOrgFromEnv(t),
-		"project_name":  envvar.GetTestProjectFromEnv(),
-		"random_suffix": acctest.RandString(t, 10),
+		"org_id":                      envvar.GetTestOrgFromEnv(t),
+		"project_name":                envvar.GetTestProjectFromEnv(),
+		"deployment_group_id":         "tf-test-deployment-group" + randomSuffix,
+		"endpoint_group_id":           "tf-test-endpoint-group" + randomSuffix,
+		"fw_policy":                   "tf-test-fw-policy" + randomSuffix,
+		"network_name":                "tf-test-fw-network" + randomSuffix,
+		"security_profile_group_name": "tf-test-sec-profile-group" + randomSuffix,
+		"security_profile_name":       "tf-test-sec-profile" + randomSuffix,
+		"tag_key":                     "tf-test-tag-key" + randomSuffix,
+		"tag_value":                   "tf-test-tag-value" + randomSuffix,
+		"random_suffix":               randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -85,13 +95,13 @@ data "google_project" "project" {
 
 resource "google_compute_network" "default" {
   provider                = google-beta
-  name                    = "tf-test-fw-network%{random_suffix}"
+  name                    = "%{network_name}"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_network_firewall_policy" "basic_network_firewall_policy" {
   provider    = google-beta
-  name        = "tf-test-fw-policy%{random_suffix}"
+  name        = "%{fw_policy}"
   description = "Sample global network firewall policy"
   project     = "%{project_name}"
 }
@@ -121,21 +131,21 @@ resource "google_compute_network_firewall_policy_packet_mirroring_rule" "primary
 
 resource "google_network_security_mirroring_deployment_group" "default" {
   provider                      = google-beta
-  mirroring_deployment_group_id = "tf-test-deployment-group%{random_suffix}"
+  mirroring_deployment_group_id = "%{deployment_group_id}"
   location                      = "global"
   network                       = google_compute_network.default.id
 }
 
 resource "google_network_security_mirroring_endpoint_group" "default" {
   provider                      = google-beta
-  mirroring_endpoint_group_id   = "tf-test-endpoint-group%{random_suffix}"
+  mirroring_endpoint_group_id   = "%{endpoint_group_id}"
   location                      = "global"
   mirroring_deployment_group    = google_network_security_mirroring_deployment_group.default.id
 }
 
 resource "google_network_security_security_profile" "default" {
   provider    = google-beta
-  name        = "tf-test-sec-profile%{random_suffix}"
+  name        = "%{security_profile_name}"
   parent      = "organizations/%{org_id}"
   description = "my description"
   type        = "CUSTOM_MIRRORING"
@@ -147,7 +157,7 @@ resource "google_network_security_security_profile" "default" {
 
 resource "google_network_security_security_profile_group" "security_profile_group_1" {
   provider                 = google-beta
-  name                     = "tf-test-sec-profile-group%{random_suffix}"
+  name                     = "%{security_profile_group_name}"
   parent                   = "organizations/%{org_id}"
   description              = "my description"
   custom_mirroring_profile = google_network_security_security_profile.default.id
@@ -158,7 +168,7 @@ resource "google_tags_tag_key" "secure_tag_key_1" {
   description = "Test tag key description"
   parent      = "organizations/%{org_id}"
   purpose     = "GCE_FIREWALL"
-  short_name  = "tf-test-tag-key%{random_suffix}"
+  short_name  = "%{tag_key}"
   purpose_data = {
     network = "%{project_name}/${google_compute_network.default.name}"
   }
@@ -168,7 +178,7 @@ resource "google_tags_tag_value" "secure_tag_value_1" {
   provider    = google-beta
   description = "Test tag value description."
   parent      = google_tags_tag_key.secure_tag_key_1.id
-  short_name  = "tf-test-tag-value%{random_suffix}"
+  short_name  = "%{tag_value}"
 }
 `, context)
 }

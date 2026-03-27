@@ -53,8 +53,12 @@ var (
 func TestAccComputeRoute_routeBasicExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"network_name":  "tf-test-compute-network" + randomSuffix,
+		"route_name":    "tf-test-network-route" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -78,7 +82,7 @@ func TestAccComputeRoute_routeBasicExample(t *testing.T) {
 func testAccComputeRoute_routeBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_route" "default" {
-  name        = "tf-test-network-route%{random_suffix}"
+  name        = "%{route_name}"
   dest_range  = "15.0.0.0/24"
   network     = google_compute_network.default.name
   next_hop_ip = "10.132.1.5"
@@ -86,7 +90,7 @@ resource "google_compute_route" "default" {
 }
 
 resource "google_compute_network" "default" {
-  name = "tf-test-compute-network%{random_suffix}"
+  name = "%{network_name}"
 }
 `, context)
 }
@@ -94,8 +98,16 @@ resource "google_compute_network" "default" {
 func TestAccComputeRoute_routeIlbExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"backend_name":         "tf-test-compute-backend" + randomSuffix,
+		"forwarding_rule_name": "tf-test-compute-forwarding-rule" + randomSuffix,
+		"health_check_name":    "tf-test-proxy-health-check" + randomSuffix,
+		"network_name":         "tf-test-compute-network" + randomSuffix,
+		"route_name":           "tf-test-route-ilb" + randomSuffix,
+		"subnet_name":          "tf-test-compute-subnet" + randomSuffix,
+		"random_suffix":        randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -119,19 +131,19 @@ func TestAccComputeRoute_routeIlbExample(t *testing.T) {
 func testAccComputeRoute_routeIlbExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_network" "default" {
-  name                    = "tf-test-compute-network%{random_suffix}"
+  name                    = "%{network_name}"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "default" {
-  name          = "tf-test-compute-subnet%{random_suffix}"
+  name          = "%{subnet_name}"
   ip_cidr_range = "10.0.1.0/24"
   region        = "us-central1"
   network       = google_compute_network.default.id
 }
 
 resource "google_compute_health_check" "hc" {
-  name               = "tf-test-proxy-health-check%{random_suffix}"
+  name               = "%{health_check_name}"
   check_interval_sec = 1
   timeout_sec        = 1
 
@@ -141,13 +153,13 @@ resource "google_compute_health_check" "hc" {
 }
 
 resource "google_compute_region_backend_service" "backend" {
-  name          = "tf-test-compute-backend%{random_suffix}"
+  name          = "%{backend_name}"
   region        = "us-central1"
   health_checks = [google_compute_health_check.hc.id]
 }
 
 resource "google_compute_forwarding_rule" "default" {
-  name     = "tf-test-compute-forwarding-rule%{random_suffix}"
+  name     = "%{forwarding_rule_name}"
   region   = "us-central1"
 
   load_balancing_scheme = "INTERNAL"
@@ -158,7 +170,7 @@ resource "google_compute_forwarding_rule" "default" {
 }
 
 resource "google_compute_route" "route-ilb" {
-  name         = "tf-test-route-ilb%{random_suffix}"
+  name         = "%{route_name}"
   dest_range   = "0.0.0.0/0"
   network      = google_compute_network.default.name
   next_hop_ilb = google_compute_forwarding_rule.default.id
@@ -170,8 +182,16 @@ resource "google_compute_route" "route-ilb" {
 func TestAccComputeRoute_routeIlbVipExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"backend_name":         "tf-test-compute-backend" + randomSuffix,
+		"consumer_name":        "consumer" + randomSuffix,
+		"forwarding_rule_name": "tf-test-compute-forwarding-rule" + randomSuffix,
+		"health_check_name":    "tf-test-proxy-health-check" + randomSuffix,
+		"producer_name":        "producer" + randomSuffix,
+		"route_name":           "tf-test-route-ilb" + randomSuffix,
+		"random_suffix":        randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -196,13 +216,13 @@ func testAccComputeRoute_routeIlbVipExample(context map[string]interface{}) stri
 	return acctest.Nprintf(`
 resource "google_compute_network" "producer" {
   provider                = google-beta
-  name                    = "producer%{random_suffix}-vpc"
+  name                    = "%{producer_name}-vpc"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "producer" {
   provider      = google-beta
-  name          = "producer%{random_suffix}-subnet"
+  name          = "%{producer_name}-subnet"
   ip_cidr_range = "10.0.1.0/24"
   region        = "us-central1"
   network       = google_compute_network.producer.id
@@ -210,13 +230,13 @@ resource "google_compute_subnetwork" "producer" {
 
 resource "google_compute_network" "consumer" {
   provider                = google-beta
-  name                    = "consumer%{random_suffix}-vpc"
+  name                    = "%{consumer_name}-vpc"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "consumer" {
   provider      = google-beta
-  name          = "consumer%{random_suffix}-subnet"
+  name          = "%{consumer_name}-subnet"
   ip_cidr_range = "10.0.2.0/24"
   region        = "us-central1"
   network       = google_compute_network.consumer.id
@@ -224,21 +244,21 @@ resource "google_compute_subnetwork" "consumer" {
 
 resource "google_compute_network_peering" "peering1" {
   provider     = google-beta
-  name         = "peering-producer%{random_suffix}-to-consumer%{random_suffix}"
+  name         = "peering-%{producer_name}-to-%{consumer_name}"
   network      = google_compute_network.consumer.id
   peer_network = google_compute_network.producer.id
 }
 
 resource "google_compute_network_peering" "peering2" {
   provider     = google-beta
-  name         = "peering-consumer%{random_suffix}-to-producer%{random_suffix}"
+  name         = "peering-%{consumer_name}-to-%{producer_name}"
   network      = google_compute_network.producer.id
   peer_network = google_compute_network.consumer.id
 }
 
 resource "google_compute_health_check" "hc" {
   provider           = google-beta
-  name               = "tf-test-proxy-health-check%{random_suffix}"
+  name               = "%{health_check_name}"
   check_interval_sec = 1
   timeout_sec        = 1
 
@@ -249,14 +269,14 @@ resource "google_compute_health_check" "hc" {
 
 resource "google_compute_region_backend_service" "backend" {
   provider      = google-beta
-  name          = "tf-test-compute-backend%{random_suffix}"
+  name          = "%{backend_name}"
   region        = "us-central1"
   health_checks = [google_compute_health_check.hc.id]
 }
 
 resource "google_compute_forwarding_rule" "default" {
   provider = google-beta
-  name     = "tf-test-compute-forwarding-rule%{random_suffix}"
+  name     = "%{forwarding_rule_name}"
   region   = "us-central1"
 
   load_balancing_scheme = "INTERNAL"
@@ -268,7 +288,7 @@ resource "google_compute_forwarding_rule" "default" {
 
 resource "google_compute_route" "route-ilb" {
   provider     = google-beta
-  name         = "tf-test-route-ilb%{random_suffix}"
+  name         = "%{route_name}"
   dest_range   = "0.0.0.0/0"
   network      = google_compute_network.consumer.name
   next_hop_ilb = google_compute_forwarding_rule.default.ip_address

@@ -53,8 +53,12 @@ var (
 func TestAccSecurityScannerScanConfig_scanConfigBasicExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"address_name":     "tf-test-scan-basic-static-ip" + randomSuffix,
+		"scan_config_name": "tf-test-terraform-scan-config" + randomSuffix,
+		"random_suffix":    randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -78,12 +82,12 @@ func testAccSecurityScannerScanConfig_scanConfigBasicExample(context map[string]
 	return acctest.Nprintf(`
 resource "google_compute_address" "scanner_static_ip" {
   provider = google-beta
-  name     = "tf-test-scan-basic-static-ip%{random_suffix}"
+  name     = "%{address_name}"
 }
 
 resource "google_security_scanner_scan_config" "scan-config" {
   provider         = google-beta
-  display_name     = "tf-test-terraform-scan-config%{random_suffix}"
+  display_name     = "%{scan_config_name}"
   starting_urls    = ["http://${google_compute_address.scanner_static_ip.address}"]
   target_platforms = ["COMPUTE"]
 }

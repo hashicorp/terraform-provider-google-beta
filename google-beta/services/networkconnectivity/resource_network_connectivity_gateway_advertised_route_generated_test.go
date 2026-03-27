@@ -53,8 +53,14 @@ var (
 func TestAccNetworkConnectivityGatewayAdvertisedRoute_networkConnectivityGatewayAdvertisedRouteBasicExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"hub_name":      "hub" + randomSuffix,
+		"network_name":  "tf-test-net-spoke" + randomSuffix,
+		"resource_name": "tf-test-gateway-advertised-route-name" + randomSuffix,
+		"spoke_name":    "tf-test-spoke-name" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -79,7 +85,7 @@ func testAccNetworkConnectivityGatewayAdvertisedRoute_networkConnectivityGateway
 	return acctest.Nprintf(`
 resource "google_compute_network" "network" {
   provider = google-beta
-  name        = "tf-test-net-spoke%{random_suffix}"
+  name        = "%{network_name}"
   auto_create_subnetworks = false
 }
 
@@ -93,7 +99,7 @@ resource "google_compute_subnetwork" "subnetwork" {
 
 resource "google_network_connectivity_hub" "basic_hub" {
   provider = google-beta
-  name        = "hub%{random_suffix}"
+  name        = "%{hub_name}"
   description = "A sample hub"
   labels = {
     label-two = "value-one"
@@ -103,7 +109,7 @@ resource "google_network_connectivity_hub" "basic_hub" {
 
 resource "google_network_connectivity_spoke" "primary" {
   provider = google-beta
-  name        = "tf-test-spoke-name%{random_suffix}"
+  name        = "%{spoke_name}"
   location = "us-central1"
   description = "A sample spoke of type Gateway"
   labels = {
@@ -123,7 +129,7 @@ resource "google_network_connectivity_gateway_advertised_route" "default" {
   provider      = google-beta
   spoke         = google_network_connectivity_spoke.primary.name
   location      = "us-central1"
-  name          = "tf-test-gateway-advertised-route-name%{random_suffix}"
+  name          = "%{resource_name}"
   labels = {
     label-one = "value-one"
   }

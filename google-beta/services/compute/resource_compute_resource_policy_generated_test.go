@@ -53,8 +53,11 @@ var (
 func TestAccComputeResourcePolicy_resourcePolicyBasicExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"name":          "tf-test-gce-policy" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -78,7 +81,7 @@ func TestAccComputeResourcePolicy_resourcePolicyBasicExample(t *testing.T) {
 func testAccComputeResourcePolicy_resourcePolicyBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_resource_policy" "foo" {
-  name   = "tf-test-gce-policy%{random_suffix}"
+  name   = "%{name}"
   region = "us-central1"
   snapshot_schedule_policy {
     schedule {
@@ -95,8 +98,11 @@ resource "google_compute_resource_policy" "foo" {
 func TestAccComputeResourcePolicy_resourcePolicyHourlyFormatExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"name":          "tf-test-gce-policy" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -120,7 +126,7 @@ func TestAccComputeResourcePolicy_resourcePolicyHourlyFormatExample(t *testing.T
 func testAccComputeResourcePolicy_resourcePolicyHourlyFormatExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_resource_policy" "foo" {
-  name   = "tf-test-gce-policy%{random_suffix}"
+  name   = "%{name}"
   region = "us-central1"
   snapshot_schedule_policy {
     schedule {
@@ -137,8 +143,11 @@ resource "google_compute_resource_policy" "foo" {
 func TestAccComputeResourcePolicy_resourcePolicyFullExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"name":          "tf-test-gce-policy" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -162,7 +171,7 @@ func TestAccComputeResourcePolicy_resourcePolicyFullExample(t *testing.T) {
 func testAccComputeResourcePolicy_resourcePolicyFullExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_resource_policy" "bar" {
-  name   = "tf-test-gce-policy%{random_suffix}"
+  name   = "%{name}"
   region = "us-central1"
   snapshot_schedule_policy {
     schedule {
@@ -190,8 +199,11 @@ resource "google_compute_resource_policy" "bar" {
 func TestAccComputeResourcePolicy_resourcePolicyPlacementPolicyExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"name":          "tf-test-gce-policy" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -215,7 +227,7 @@ func TestAccComputeResourcePolicy_resourcePolicyPlacementPolicyExample(t *testin
 func testAccComputeResourcePolicy_resourcePolicyPlacementPolicyExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_resource_policy" "baz" {
-  name   = "tf-test-gce-policy%{random_suffix}"
+  name   = "%{name}"
   region = "us-central1"
   group_placement_policy {
     vm_count = 2
@@ -228,8 +240,11 @@ resource "google_compute_resource_policy" "baz" {
 func TestAccComputeResourcePolicy_resourcePolicyPlacementPolicyMaxDistanceExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"name":          "tf-test-gce-policy" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -253,7 +268,7 @@ func TestAccComputeResourcePolicy_resourcePolicyPlacementPolicyMaxDistanceExampl
 func testAccComputeResourcePolicy_resourcePolicyPlacementPolicyMaxDistanceExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_resource_policy" "baz" {
-  name   = "tf-test-gce-policy%{random_suffix}"
+  name   = "%{name}"
   region = "us-central1"
   provider = google-beta
   group_placement_policy {
@@ -268,8 +283,11 @@ resource "google_compute_resource_policy" "baz" {
 func TestAccComputeResourcePolicy_resourcePolicyInstanceSchedulePolicyExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"name":          "tf-test-gce-policy" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -293,7 +311,7 @@ func TestAccComputeResourcePolicy_resourcePolicyInstanceSchedulePolicyExample(t 
 func testAccComputeResourcePolicy_resourcePolicyInstanceSchedulePolicyExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_resource_policy" "hourly" {
-  name   = "tf-test-gce-policy%{random_suffix}"
+  name   = "%{name}"
   region = "us-central1"
   description = "Start and stop instances"
   instance_schedule_policy {
@@ -312,8 +330,11 @@ resource "google_compute_resource_policy" "hourly" {
 func TestAccComputeResourcePolicy_resourcePolicySnapshotScheduleChainNameExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"name":          "tf-test-gce-policy" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -337,7 +358,7 @@ func TestAccComputeResourcePolicy_resourcePolicySnapshotScheduleChainNameExample
 func testAccComputeResourcePolicy_resourcePolicySnapshotScheduleChainNameExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_resource_policy" "hourly" {
-  name   = "tf-test-gce-policy%{random_suffix}"
+  name   = "%{name}"
   region = "us-central1"
   description = "chain name snapshot"
   snapshot_schedule_policy {
@@ -367,8 +388,11 @@ resource "google_compute_resource_policy" "hourly" {
 func TestAccComputeResourcePolicy_resourcePolicyConsistencyGroupExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"name":          "tf-test-gce-policy" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -392,7 +416,7 @@ func TestAccComputeResourcePolicy_resourcePolicyConsistencyGroupExample(t *testi
 func testAccComputeResourcePolicy_resourcePolicyConsistencyGroupExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_resource_policy" "cgroup" {
-  name   = "tf-test-gce-policy%{random_suffix}"
+  name   = "%{name}"
   region = "europe-west1"
   disk_consistency_group_policy {
     enabled = true
@@ -404,8 +428,11 @@ resource "google_compute_resource_policy" "cgroup" {
 func TestAccComputeResourcePolicy_resourcePolicyWorkloadPolicyExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"name":          "tf-test-gce-policy" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -429,7 +456,7 @@ func TestAccComputeResourcePolicy_resourcePolicyWorkloadPolicyExample(t *testing
 func testAccComputeResourcePolicy_resourcePolicyWorkloadPolicyExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_resource_policy" "bar" {
-  name   = "tf-test-gce-policy%{random_suffix}"
+  name   = "%{name}"
   region = "europe-west1"
   workload_policy {
     type = "HIGH_AVAILABILITY"
@@ -441,8 +468,11 @@ resource "google_compute_resource_policy" "bar" {
 func TestAccComputeResourcePolicy_resourcePolicyWorkloadPolicyAcceleratorTopologyExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"name":          "tf-test-gce-policy" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -466,7 +496,7 @@ func TestAccComputeResourcePolicy_resourcePolicyWorkloadPolicyAcceleratorTopolog
 func testAccComputeResourcePolicy_resourcePolicyWorkloadPolicyAcceleratorTopologyExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_resource_policy" "bar" {
-  name   = "tf-test-gce-policy%{random_suffix}"
+  name   = "%{name}"
   region = "europe-west1"
   workload_policy {
     type = "HIGH_THROUGHPUT"
@@ -479,8 +509,11 @@ resource "google_compute_resource_policy" "bar" {
 func TestAccComputeResourcePolicy_resourcePolicyWorkloadPolicyAcceleratorTopologyModeExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"name":          "tf-test-gce-policy" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -505,7 +538,7 @@ func testAccComputeResourcePolicy_resourcePolicyWorkloadPolicyAcceleratorTopolog
 	return acctest.Nprintf(`
 resource "google_compute_resource_policy" "bar" {
   provider = google-beta
-  name   = "tf-test-gce-policy%{random_suffix}"
+  name   = "%{name}"
   region = "europe-west1"
   workload_policy {
     type = "HIGH_THROUGHPUT"
@@ -519,8 +552,11 @@ resource "google_compute_resource_policy" "bar" {
 func TestAccComputeResourcePolicy_resourcePolicyWorkloadPolicyMaxTopologyDistanceExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"name":          "tf-test-gce-policy" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -544,7 +580,7 @@ func TestAccComputeResourcePolicy_resourcePolicyWorkloadPolicyMaxTopologyDistanc
 func testAccComputeResourcePolicy_resourcePolicyWorkloadPolicyMaxTopologyDistanceExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_resource_policy" "bar" {
-  name   = "tf-test-gce-policy%{random_suffix}"
+  name   = "%{name}"
   region = "europe-west1"
   workload_policy {
     type = "HIGH_THROUGHPUT"
@@ -557,8 +593,11 @@ resource "google_compute_resource_policy" "bar" {
 func TestAccComputeResourcePolicy_resourcePolicyPlacementPolicyGpuTopologyExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"name":          "tf-test-gce-policy" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -582,7 +621,7 @@ func TestAccComputeResourcePolicy_resourcePolicyPlacementPolicyGpuTopologyExampl
 func testAccComputeResourcePolicy_resourcePolicyPlacementPolicyGpuTopologyExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_resource_policy" "baz" {
-  name   = "tf-test-gce-policy%{random_suffix}"
+  name   = "%{name}"
   region = "europe-west9"
   group_placement_policy {
     collocation = "COLLOCATED"
@@ -595,8 +634,11 @@ resource "google_compute_resource_policy" "baz" {
 func TestAccComputeResourcePolicy_resourcePolicyPlacementPolicyTpuTopologyExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"name":          "tf-test-gce-policy" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -620,7 +662,7 @@ func TestAccComputeResourcePolicy_resourcePolicyPlacementPolicyTpuTopologyExampl
 func testAccComputeResourcePolicy_resourcePolicyPlacementPolicyTpuTopologyExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_resource_policy" "baz" {
-  name   = "tf-test-gce-policy%{random_suffix}"
+  name   = "%{name}"
   region = "us-central1"
   provider = google-beta
   group_placement_policy {

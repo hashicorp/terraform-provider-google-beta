@@ -53,9 +53,12 @@ var (
 func TestAccComputeNetworkEdgeSecurityService_computeNetworkEdgeSecurityServiceBasicExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"project_id":    envvar.GetTestProjectFromEnv(),
-		"random_suffix": acctest.RandString(t, 10),
+		"resource_name": "tf-test-my-edge-security-service" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -81,7 +84,7 @@ func testAccComputeNetworkEdgeSecurityService_computeNetworkEdgeSecurityServiceB
 resource "google_compute_network_edge_security_service" "default" {
   provider     = google-beta  
 
-  name         = "tf-test-my-edge-security-service%{random_suffix}"
+  name         = "%{resource_name}"
   region       = "us-east1"
   description  = "My basic resource"
 }

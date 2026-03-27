@@ -53,10 +53,13 @@ var (
 func TestAccKMSProjectAutokeyConfig_kmsAutokeyConfigProjectExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"billing_account": envvar.GetTestBillingAccountFromEnv(t),
-		"org_id":          envvar.GetTestOrgFromEnv(t),
-		"random_suffix":   acctest.RandString(t, 10),
+		"billing_account":       envvar.GetTestBillingAccountFromEnv(t),
+		"org_id":                envvar.GetTestOrgFromEnv(t),
+		"resource_project_name": "tf-test-my-project" + randomSuffix,
+		"random_suffix":         randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -85,8 +88,8 @@ func testAccKMSProjectAutokeyConfig_kmsAutokeyConfigProjectExample(context map[s
 # Create the resource project
 resource "google_project" "resource_project" {
   provider        = google-beta
-  project_id      = "tf-test-my-project%{random_suffix}"
-  name            = "tf-test-my-project%{random_suffix}"
+  project_id      = "%{resource_project_name}"
+  name            = "%{resource_project_name}"
   org_id          = "%{org_id}"
   billing_account = "%{billing_account}"
   deletion_policy = "DELETE"

@@ -53,9 +53,12 @@ var (
 func TestAccFirebaseHostingVersion_firebasehostingVersionRedirectExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"project_id":    envvar.GetTestProjectFromEnv(),
-		"random_suffix": acctest.RandString(t, 10),
+		"site_id":       "tf-test-site-id" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -80,7 +83,7 @@ func testAccFirebaseHostingVersion_firebasehostingVersionRedirectExample(context
 resource "google_firebase_hosting_site" "default" {
   provider = google-beta
   project  = "%{project_id}"
-  site_id  = "tf-test-site-id%{random_suffix}"
+  site_id  = "%{site_id}"
 }
 
 resource "google_firebase_hosting_version" "default" {
@@ -107,9 +110,12 @@ resource "google_firebase_hosting_release" "default" {
 func TestAccFirebaseHostingVersion_firebasehostingVersionHeadersExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"project_id":    envvar.GetTestProjectFromEnv(),
-		"random_suffix": acctest.RandString(t, 10),
+		"site_id":       "tf-test-site-id" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -134,7 +140,7 @@ func testAccFirebaseHostingVersion_firebasehostingVersionHeadersExample(context 
 resource "google_firebase_hosting_site" "default" {
   provider = google-beta
   project  = "%{project_id}"
-  site_id  = "tf-test-site-id%{random_suffix}"
+  site_id  = "%{site_id}"
 }
 
 resource "google_firebase_hosting_version" "default" {
@@ -163,9 +169,12 @@ resource "google_firebase_hosting_release" "default" {
 func TestAccFirebaseHostingVersion_firebasehostingVersionHeadersRegexExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"project_id":    envvar.GetTestProjectFromEnv(),
-		"random_suffix": acctest.RandString(t, 10),
+		"site_id":       "tf-test-site-id" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -190,7 +199,7 @@ func testAccFirebaseHostingVersion_firebasehostingVersionHeadersRegexExample(con
 resource "google_firebase_hosting_site" "default" {
   provider = google-beta
   project  = "%{project_id}"
-  site_id  = "tf-test-site-id%{random_suffix}"
+  site_id  = "%{site_id}"
 }
 
 resource "google_firebase_hosting_version" "default" {
@@ -219,9 +228,12 @@ resource "google_firebase_hosting_release" "default" {
 func TestAccFirebaseHostingVersion_firebasehostingVersionPathExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"project_id":    envvar.GetTestProjectFromEnv(),
-		"random_suffix": acctest.RandString(t, 10),
+		"site_id":       "tf-test-site-id" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -246,7 +258,7 @@ func testAccFirebaseHostingVersion_firebasehostingVersionPathExample(context map
 resource "google_firebase_hosting_site" "default" {
   provider = google-beta
   project  = "%{project_id}"
-  site_id  = "tf-test-site-id%{random_suffix}"
+  site_id  = "%{site_id}"
 }
 
 resource "google_firebase_hosting_version" "default" {
@@ -272,10 +284,14 @@ resource "google_firebase_hosting_release" "default" {
 func TestAccFirebaseHostingVersion_firebasehostingVersionCloudRunExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"project_id":          envvar.GetTestProjectFromEnv(),
-		"deletion_protection": false,
-		"random_suffix":       acctest.RandString(t, 10),
+		"project_id":           envvar.GetTestProjectFromEnv(),
+		"cloud_run_service_id": "tf-test-cloud-run-service-via-hosting" + randomSuffix,
+		"deletion_protection":  false,
+		"site_id":              "tf-test-site-id" + randomSuffix,
+		"random_suffix":        randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -300,13 +316,13 @@ func testAccFirebaseHostingVersion_firebasehostingVersionCloudRunExample(context
 resource "google_firebase_hosting_site" "default" {
   provider = google-beta
   project  = "%{project_id}"
-  site_id  = "tf-test-site-id%{random_suffix}"
+  site_id  = "%{site_id}"
 }
 
 resource "google_cloud_run_v2_service" "default" {
   provider = google-beta
   project  = "%{project_id}"
-  name     = "tf-test-cloud-run-service-via-hosting%{random_suffix}"
+  name     = "%{cloud_run_service_id}"
   location = "us-central1"
 
   # Warning: allows all public traffic
@@ -347,10 +363,14 @@ resource "google_firebase_hosting_release" "default" {
 func TestAccFirebaseHostingVersion_firebasehostingVersionCloudFunctionsExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"project_id":    envvar.GetTestProjectFromEnv(),
-		"zip_path":      "./test-fixtures/function-source.zip",
-		"random_suffix": acctest.RandString(t, 10),
+		"project_id":        envvar.GetTestProjectFromEnv(),
+		"cloud_function_id": "tf-test-cloud-function-via-hosting" + randomSuffix,
+		"site_id":           "tf-test-site-id" + randomSuffix,
+		"zip_path":          "./test-fixtures/function-source.zip",
+		"random_suffix":     randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -375,13 +395,13 @@ func testAccFirebaseHostingVersion_firebasehostingVersionCloudFunctionsExample(c
 resource "google_firebase_hosting_site" "default" {
   provider = google-beta
   project  = "%{project_id}"
-  site_id  = "tf-test-site-id%{random_suffix}"
+  site_id  = "%{site_id}"
 }
 
 resource "google_storage_bucket" "bucket" {
   provider = google-beta
   project  = "%{project_id}"
-  name     = "tf-test-site-id%{random_suffix}-function-source"  # Every bucket name must be globally unique
+  name     = "%{site_id}-function-source"  # Every bucket name must be globally unique
   location = "US"
   uniform_bucket_level_access = true
 }
@@ -397,7 +417,7 @@ resource "google_cloudfunctions2_function" "function" {
   provider = google-beta
   project  = "%{project_id}"
 
-  name        = "tf-test-cloud-function-via-hosting%{random_suffix}"
+  name        = "%{cloud_function_id}"
   location    = "us-central1"
   description = "A Cloud Function connected to Firebase Hosing"
 

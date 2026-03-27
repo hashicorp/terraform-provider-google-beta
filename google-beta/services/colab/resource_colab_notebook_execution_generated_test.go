@@ -53,10 +53,14 @@ var (
 func TestAccColabNotebookExecution_colabNotebookExecutionBasicExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"project_id":      envvar.GetTestProjectFromEnv(),
-		"service_account": envvar.GetTestServiceAccountFromEnv(t),
-		"random_suffix":   acctest.RandString(t, 10),
+		"project_id":            envvar.GetTestProjectFromEnv(),
+		"service_account":       envvar.GetTestServiceAccountFromEnv(t),
+		"bucket":                "tf_test_my_bucket" + randomSuffix,
+		"runtime_template_name": "tf-test-runtime-template-name" + randomSuffix,
+		"random_suffix":         randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -80,7 +84,7 @@ func TestAccColabNotebookExecution_colabNotebookExecutionBasicExample(t *testing
 func testAccColabNotebookExecution_colabNotebookExecutionBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_colab_runtime_template" "my_runtime_template" {
-  name = "tf-test-runtime-template-name%{random_suffix}"
+  name = "%{runtime_template_name}"
   display_name = "Runtime template"
   location = "us-central1"
 
@@ -94,7 +98,7 @@ resource "google_colab_runtime_template" "my_runtime_template" {
 }
 
 resource "google_storage_bucket" "output_bucket" {
-  name          = "tf_test_my_bucket%{random_suffix}"
+  name          = "%{bucket}"
   location      = "US"
   force_destroy = true
   uniform_bucket_level_access = true
@@ -162,10 +166,14 @@ resource "google_colab_notebook_execution" "notebook-execution" {
 func TestAccColabNotebookExecution_colabNotebookExecutionCustomEnvExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"project_id":      envvar.GetTestProjectFromEnv(),
 		"service_account": envvar.GetTestServiceAccountFromEnv(t),
-		"random_suffix":   acctest.RandString(t, 10),
+		"bucket":          "tf_test_my_bucket" + randomSuffix,
+		"network_name":    "tf-test-colab-test-default" + randomSuffix,
+		"random_suffix":   randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -189,19 +197,19 @@ func TestAccColabNotebookExecution_colabNotebookExecutionCustomEnvExample(t *tes
 func testAccColabNotebookExecution_colabNotebookExecutionCustomEnvExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_network" "my_network" {
-  name = "tf-test-colab-test-default%{random_suffix}"
+  name = "%{network_name}"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "my_subnetwork" {
-  name   = "tf-test-colab-test-default%{random_suffix}"
+  name   = "%{network_name}"
   network = google_compute_network.my_network.id
   region = "us-central1"
   ip_cidr_range = "10.0.1.0/24"
 }
 
 resource "google_storage_bucket" "output_bucket" {
-  name          = "tf_test_my_bucket%{random_suffix}"
+  name          = "%{bucket}"
   location      = "US"
   force_destroy = true
   uniform_bucket_level_access = true
@@ -285,10 +293,15 @@ resource "google_colab_notebook_execution" "notebook-execution" {
 func TestAccColabNotebookExecution_colabNotebookExecutionFullExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"project_id":      envvar.GetTestProjectFromEnv(),
-		"service_account": envvar.GetTestServiceAccountFromEnv(t),
-		"random_suffix":   acctest.RandString(t, 10),
+		"project_id":                envvar.GetTestProjectFromEnv(),
+		"service_account":           envvar.GetTestServiceAccountFromEnv(t),
+		"bucket":                    "tf_test_my_bucket" + randomSuffix,
+		"notebook_execution_job_id": "tf-test-colab-notebook-execution" + randomSuffix,
+		"runtime_template_name":     "tf-test-runtime-template-name" + randomSuffix,
+		"random_suffix":             randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -313,7 +326,7 @@ func testAccColabNotebookExecution_colabNotebookExecutionFullExample(context map
 	return acctest.Nprintf(`
 resource "google_colab_runtime_template" "my_runtime_template" {
   provider = google-beta
-  name = "tf-test-runtime-template-name%{random_suffix}"
+  name = "%{runtime_template_name}"
   display_name = "Runtime template"
   location = "us-central1"
 
@@ -328,7 +341,7 @@ resource "google_colab_runtime_template" "my_runtime_template" {
 
 resource "google_storage_bucket" "output_bucket" {
   provider = google-beta
-  name          = "tf_test_my_bucket%{random_suffix}"
+  name          = "%{bucket}"
   location      = "US"
   force_destroy = true
   uniform_bucket_level_access = true
@@ -378,7 +391,7 @@ resource "google_storage_bucket_object" "notebook" {
 
 resource "google_colab_notebook_execution" "notebook-execution" {
   provider = google-beta
-  notebook_execution_job_id = "tf-test-colab-notebook-execution%{random_suffix}"
+  notebook_execution_job_id = "%{notebook_execution_job_id}"
   display_name = "Notebook execution full"
   location = "us-central1"
 
@@ -412,11 +425,17 @@ func TestAccColabNotebookExecution_colabNotebookExecutionDataformExample(t *test
 		},
 	})
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"project_id":      envvar.GetTestProjectFromEnv(),
-		"service_account": envvar.GetTestServiceAccountFromEnv(t),
-		"key_name":        acctest.BootstrapKMSKeyInLocation(t, "us-central1").CryptoKey.Name,
-		"random_suffix":   acctest.RandString(t, 10),
+		"project_id":            envvar.GetTestProjectFromEnv(),
+		"service_account":       envvar.GetTestServiceAccountFromEnv(t),
+		"bucket":                "tf_test_my_bucket" + randomSuffix,
+		"dataform_repository":   "tf-test-dataform-repository" + randomSuffix,
+		"key_name":              acctest.BootstrapKMSKeyInLocation(t, "us-central1").CryptoKey.Name,
+		"runtime_template_name": "tf-test-runtime-template-name" + randomSuffix,
+		"secret":                "secret" + randomSuffix,
+		"random_suffix":         randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -441,7 +460,7 @@ func testAccColabNotebookExecution_colabNotebookExecutionDataformExample(context
 	return acctest.Nprintf(`
 resource "google_colab_runtime_template" "my_runtime_template" {
   provider = google-beta
-  name = "tf-test-runtime-template-name%{random_suffix}"
+  name = "%{runtime_template_name}"
   display_name = "Runtime template"
   location = "us-central1"
 
@@ -456,7 +475,7 @@ resource "google_colab_runtime_template" "my_runtime_template" {
 
 resource "google_storage_bucket" "output_bucket" {
   provider = google-beta
-  name          = "tf_test_my_bucket%{random_suffix}"
+  name          = "%{bucket}"
   location      = "US"
   force_destroy = true
   uniform_bucket_level_access = true
@@ -464,7 +483,7 @@ resource "google_storage_bucket" "output_bucket" {
 
 resource "google_secret_manager_secret" "secret" {
   provider = google-beta
-  secret_id = "secret%{random_suffix}"
+  secret_id = "%{secret}"
 
   replication {
     auto {}
@@ -480,7 +499,7 @@ resource "google_secret_manager_secret_version" "secret_version" {
 
 resource "google_dataform_repository" "dataform_repository" {
   provider = google-beta
-  name = "tf-test-dataform-repository%{random_suffix}"
+  name = "%{dataform_repository}"
   display_name = "dataform_repository"
   npmrc_environment_variables_secret_version = google_secret_manager_secret_version.secret_version.id
   kms_key_name = "%{key_name}"

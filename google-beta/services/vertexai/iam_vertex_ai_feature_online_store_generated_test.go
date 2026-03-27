@@ -42,9 +42,12 @@ var (
 func TestAccVertexAIFeatureOnlineStoreIamBindingGenerated(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"random_suffix": randomSuffix,
 		"role":          "roles/viewer",
+		"name":          "tf_test_example_feature_online_store" + randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -77,9 +80,12 @@ func TestAccVertexAIFeatureOnlineStoreIamBindingGenerated(t *testing.T) {
 func TestAccVertexAIFeatureOnlineStoreIamMemberGenerated(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"random_suffix": randomSuffix,
 		"role":          "roles/viewer",
+		"name":          "tf_test_example_feature_online_store" + randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -103,9 +109,12 @@ func TestAccVertexAIFeatureOnlineStoreIamMemberGenerated(t *testing.T) {
 func TestAccVertexAIFeatureOnlineStoreIamPolicyGenerated(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"random_suffix": randomSuffix,
 		"role":          "roles/viewer",
+		"name":          "tf_test_example_feature_online_store" + randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -138,7 +147,7 @@ func TestAccVertexAIFeatureOnlineStoreIamPolicyGenerated(t *testing.T) {
 func testAccVertexAIFeatureOnlineStoreIamMember_basicGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_vertex_ai_feature_online_store" "feature_online_store" {
-  name = "tf_test_example_feature_online_store%{random_suffix}"
+  name = "%{name}"
   labels = {
     foo = "bar"
   }
@@ -164,7 +173,7 @@ resource "google_vertex_ai_feature_online_store_iam_member" "foo" {
 func testAccVertexAIFeatureOnlineStoreIamPolicy_basicGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_vertex_ai_feature_online_store" "feature_online_store" {
-  name = "tf_test_example_feature_online_store%{random_suffix}"
+  name = "%{name}"
   labels = {
     foo = "bar"
   }
@@ -204,7 +213,7 @@ data "google_vertex_ai_feature_online_store_iam_policy" "foo" {
 func testAccVertexAIFeatureOnlineStoreIamPolicy_emptyBinding(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_vertex_ai_feature_online_store" "feature_online_store" {
-  name = "tf_test_example_feature_online_store%{random_suffix}"
+  name = "%{name}"
   labels = {
     foo = "bar"
   }
@@ -232,7 +241,7 @@ resource "google_vertex_ai_feature_online_store_iam_policy" "foo" {
 func testAccVertexAIFeatureOnlineStoreIamBinding_basicGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_vertex_ai_feature_online_store" "feature_online_store" {
-  name = "tf_test_example_feature_online_store%{random_suffix}"
+  name = "%{name}"
   labels = {
     foo = "bar"
   }
@@ -258,7 +267,7 @@ resource "google_vertex_ai_feature_online_store_iam_binding" "foo" {
 func testAccVertexAIFeatureOnlineStoreIamBinding_updateGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_vertex_ai_feature_online_store" "feature_online_store" {
-  name = "tf_test_example_feature_online_store%{random_suffix}"
+  name = "%{name}"
   labels = {
     foo = "bar"
   }

@@ -42,9 +42,12 @@ var (
 func TestAccVertexAIFeatureOnlineStoreFeatureviewIamBindingGenerated(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"random_suffix": randomSuffix,
 		"role":          "roles/viewer",
+		"name":          "tf_test_example_feature_view" + randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -77,9 +80,12 @@ func TestAccVertexAIFeatureOnlineStoreFeatureviewIamBindingGenerated(t *testing.
 func TestAccVertexAIFeatureOnlineStoreFeatureviewIamMemberGenerated(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"random_suffix": randomSuffix,
 		"role":          "roles/viewer",
+		"name":          "tf_test_example_feature_view" + randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -103,9 +109,12 @@ func TestAccVertexAIFeatureOnlineStoreFeatureviewIamMemberGenerated(t *testing.T
 func TestAccVertexAIFeatureOnlineStoreFeatureviewIamPolicyGenerated(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"random_suffix": randomSuffix,
 		"role":          "roles/viewer",
+		"name":          "tf_test_example_feature_view" + randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -138,7 +147,7 @@ func TestAccVertexAIFeatureOnlineStoreFeatureviewIamPolicyGenerated(t *testing.T
 func testAccVertexAIFeatureOnlineStoreFeatureviewIamMember_basicGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_vertex_ai_feature_online_store" "featureonlinestore" {
-  name = "tf_test_example_feature_view%{random_suffix}"
+  name = "%{name}"
   labels = {
     foo = "bar"
   }
@@ -154,7 +163,7 @@ resource "google_vertex_ai_feature_online_store" "featureonlinestore" {
 
 resource "google_bigquery_dataset" "tf-test-dataset" {
 
-  dataset_id    = "tf_test_example_feature_view%{random_suffix}"
+  dataset_id    = "%{name}"
   friendly_name = "test"
   description   = "This is a test description"
   location      = "US"
@@ -164,7 +173,7 @@ resource "google_bigquery_table" "tf-test-table" {
   deletion_protection = false
 
   dataset_id = google_bigquery_dataset.tf-test-dataset.dataset_id
-  table_id   = "tf_test_example_feature_view%{random_suffix}"
+  table_id   = "%{name}"
   schema     = <<EOF
   [
   {
@@ -190,7 +199,7 @@ EOF
 }
 
 resource "google_vertex_ai_feature_online_store_featureview" "featureview" {
-  name                 = "tf_test_example_feature_view%{random_suffix}"
+  name                 = "%{name}"
   region               = "us-central1"
   feature_online_store = google_vertex_ai_feature_online_store.featureonlinestore.name
   sync_config {
@@ -220,7 +229,7 @@ resource "google_vertex_ai_feature_online_store_featureview_iam_member" "foo" {
 func testAccVertexAIFeatureOnlineStoreFeatureviewIamPolicy_basicGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_vertex_ai_feature_online_store" "featureonlinestore" {
-  name = "tf_test_example_feature_view%{random_suffix}"
+  name = "%{name}"
   labels = {
     foo = "bar"
   }
@@ -236,7 +245,7 @@ resource "google_vertex_ai_feature_online_store" "featureonlinestore" {
 
 resource "google_bigquery_dataset" "tf-test-dataset" {
 
-  dataset_id    = "tf_test_example_feature_view%{random_suffix}"
+  dataset_id    = "%{name}"
   friendly_name = "test"
   description   = "This is a test description"
   location      = "US"
@@ -246,7 +255,7 @@ resource "google_bigquery_table" "tf-test-table" {
   deletion_protection = false
 
   dataset_id = google_bigquery_dataset.tf-test-dataset.dataset_id
-  table_id   = "tf_test_example_feature_view%{random_suffix}"
+  table_id   = "%{name}"
   schema     = <<EOF
   [
   {
@@ -272,7 +281,7 @@ EOF
 }
 
 resource "google_vertex_ai_feature_online_store_featureview" "featureview" {
-  name                 = "tf_test_example_feature_view%{random_suffix}"
+  name                 = "%{name}"
   region               = "us-central1"
   feature_online_store = google_vertex_ai_feature_online_store.featureonlinestore.name
   sync_config {
@@ -317,7 +326,7 @@ data "google_vertex_ai_feature_online_store_featureview_iam_policy" "foo" {
 func testAccVertexAIFeatureOnlineStoreFeatureviewIamPolicy_emptyBinding(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_vertex_ai_feature_online_store" "featureonlinestore" {
-  name = "tf_test_example_feature_view%{random_suffix}"
+  name = "%{name}"
   labels = {
     foo = "bar"
   }
@@ -333,7 +342,7 @@ resource "google_vertex_ai_feature_online_store" "featureonlinestore" {
 
 resource "google_bigquery_dataset" "tf-test-dataset" {
 
-  dataset_id    = "tf_test_example_feature_view%{random_suffix}"
+  dataset_id    = "%{name}"
   friendly_name = "test"
   description   = "This is a test description"
   location      = "US"
@@ -343,7 +352,7 @@ resource "google_bigquery_table" "tf-test-table" {
   deletion_protection = false
 
   dataset_id = google_bigquery_dataset.tf-test-dataset.dataset_id
-  table_id   = "tf_test_example_feature_view%{random_suffix}"
+  table_id   = "%{name}"
   schema     = <<EOF
   [
   {
@@ -369,7 +378,7 @@ EOF
 }
 
 resource "google_vertex_ai_feature_online_store_featureview" "featureview" {
-  name                 = "tf_test_example_feature_view%{random_suffix}"
+  name                 = "%{name}"
   region               = "us-central1"
   feature_online_store = google_vertex_ai_feature_online_store.featureonlinestore.name
   sync_config {
@@ -401,7 +410,7 @@ resource "google_vertex_ai_feature_online_store_featureview_iam_policy" "foo" {
 func testAccVertexAIFeatureOnlineStoreFeatureviewIamBinding_basicGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_vertex_ai_feature_online_store" "featureonlinestore" {
-  name = "tf_test_example_feature_view%{random_suffix}"
+  name = "%{name}"
   labels = {
     foo = "bar"
   }
@@ -417,7 +426,7 @@ resource "google_vertex_ai_feature_online_store" "featureonlinestore" {
 
 resource "google_bigquery_dataset" "tf-test-dataset" {
 
-  dataset_id    = "tf_test_example_feature_view%{random_suffix}"
+  dataset_id    = "%{name}"
   friendly_name = "test"
   description   = "This is a test description"
   location      = "US"
@@ -427,7 +436,7 @@ resource "google_bigquery_table" "tf-test-table" {
   deletion_protection = false
 
   dataset_id = google_bigquery_dataset.tf-test-dataset.dataset_id
-  table_id   = "tf_test_example_feature_view%{random_suffix}"
+  table_id   = "%{name}"
   schema     = <<EOF
   [
   {
@@ -453,7 +462,7 @@ EOF
 }
 
 resource "google_vertex_ai_feature_online_store_featureview" "featureview" {
-  name                 = "tf_test_example_feature_view%{random_suffix}"
+  name                 = "%{name}"
   region               = "us-central1"
   feature_online_store = google_vertex_ai_feature_online_store.featureonlinestore.name
   sync_config {
@@ -483,7 +492,7 @@ resource "google_vertex_ai_feature_online_store_featureview_iam_binding" "foo" {
 func testAccVertexAIFeatureOnlineStoreFeatureviewIamBinding_updateGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_vertex_ai_feature_online_store" "featureonlinestore" {
-  name = "tf_test_example_feature_view%{random_suffix}"
+  name = "%{name}"
   labels = {
     foo = "bar"
   }
@@ -499,7 +508,7 @@ resource "google_vertex_ai_feature_online_store" "featureonlinestore" {
 
 resource "google_bigquery_dataset" "tf-test-dataset" {
 
-  dataset_id    = "tf_test_example_feature_view%{random_suffix}"
+  dataset_id    = "%{name}"
   friendly_name = "test"
   description   = "This is a test description"
   location      = "US"
@@ -509,7 +518,7 @@ resource "google_bigquery_table" "tf-test-table" {
   deletion_protection = false
 
   dataset_id = google_bigquery_dataset.tf-test-dataset.dataset_id
-  table_id   = "tf_test_example_feature_view%{random_suffix}"
+  table_id   = "%{name}"
   schema     = <<EOF
   [
   {
@@ -535,7 +544,7 @@ EOF
 }
 
 resource "google_vertex_ai_feature_online_store_featureview" "featureview" {
-  name                 = "tf_test_example_feature_view%{random_suffix}"
+  name                 = "%{name}"
   region               = "us-central1"
   feature_online_store = google_vertex_ai_feature_online_store.featureonlinestore.name
   sync_config {

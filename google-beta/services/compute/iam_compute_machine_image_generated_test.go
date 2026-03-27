@@ -42,9 +42,13 @@ var (
 func TestAccComputeMachineImageIamBindingGenerated(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix":           acctest.RandString(t, 10),
+		"random_suffix":           randomSuffix,
 		"role":                    "roles/compute.admin",
+		"image_name":              "tf-test-my-image" + randomSuffix,
+		"vm_name":                 "tf-test-my-vm" + randomSuffix,
 		"condition_title":         "expires_after_2019_12_31",
 		"condition_expr":          `request.time < timestamp(\"2020-01-01T00:00:00Z\")`,
 		"condition_desc":          "Expiring at midnight of 2019-12-31",
@@ -82,9 +86,13 @@ func TestAccComputeMachineImageIamBindingGenerated(t *testing.T) {
 func TestAccComputeMachineImageIamMemberGenerated(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix":           acctest.RandString(t, 10),
+		"random_suffix":           randomSuffix,
 		"role":                    "roles/compute.admin",
+		"image_name":              "tf-test-my-image" + randomSuffix,
+		"vm_name":                 "tf-test-my-vm" + randomSuffix,
 		"condition_title":         "expires_after_2019_12_31",
 		"condition_expr":          `request.time < timestamp(\"2020-01-01T00:00:00Z\")`,
 		"condition_desc":          "Expiring at midnight of 2019-12-31",
@@ -113,9 +121,13 @@ func TestAccComputeMachineImageIamMemberGenerated(t *testing.T) {
 func TestAccComputeMachineImageIamPolicyGenerated(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix":           acctest.RandString(t, 10),
+		"random_suffix":           randomSuffix,
 		"role":                    "roles/compute.admin",
+		"image_name":              "tf-test-my-image" + randomSuffix,
+		"vm_name":                 "tf-test-my-vm" + randomSuffix,
 		"condition_title":         "expires_after_2019_12_31",
 		"condition_expr":          `request.time < timestamp(\"2020-01-01T00:00:00Z\")`,
 		"condition_desc":          "Expiring at midnight of 2019-12-31",
@@ -153,9 +165,13 @@ func TestAccComputeMachineImageIamPolicyGenerated(t *testing.T) {
 func TestAccComputeMachineImageIamBindingGenerated_withCondition(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix":           acctest.RandString(t, 10),
+		"random_suffix":           randomSuffix,
 		"role":                    "roles/compute.admin",
+		"image_name":              "tf-test-my-image" + randomSuffix,
+		"vm_name":                 "tf-test-my-vm" + randomSuffix,
 		"condition_title":         "expires_after_2019_12_31",
 		"condition_expr":          `request.time < timestamp(\"2020-01-01T00:00:00Z\")`,
 		"condition_desc":          "Expiring at midnight of 2019-12-31",
@@ -185,9 +201,13 @@ func TestAccComputeMachineImageIamBindingGenerated_withAndWithoutCondition(t *te
 	acctest.SkipIfVcr(t)
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix":           acctest.RandString(t, 10),
+		"random_suffix":           randomSuffix,
 		"role":                    "roles/compute.admin",
+		"image_name":              "tf-test-my-image" + randomSuffix,
+		"vm_name":                 "tf-test-my-vm" + randomSuffix,
 		"condition_title":         "expires_after_2019_12_31",
 		"condition_expr":          `request.time < timestamp(\"2020-01-01T00:00:00Z\")`,
 		"condition_desc":          "Expiring at midnight of 2019-12-31",
@@ -227,9 +247,13 @@ func TestAccComputeMachineImageIamBindingGenerated_withAndWithoutCondition(t *te
 func TestAccComputeMachineImageIamMemberGenerated_withCondition(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix":           acctest.RandString(t, 10),
+		"random_suffix":           randomSuffix,
 		"role":                    "roles/compute.admin",
+		"image_name":              "tf-test-my-image" + randomSuffix,
+		"vm_name":                 "tf-test-my-vm" + randomSuffix,
 		"condition_title":         "expires_after_2019_12_31",
 		"condition_expr":          `request.time < timestamp(\"2020-01-01T00:00:00Z\")`,
 		"condition_desc":          "Expiring at midnight of 2019-12-31",
@@ -259,9 +283,13 @@ func TestAccComputeMachineImageIamMemberGenerated_withAndWithoutCondition(t *tes
 	acctest.SkipIfVcr(t)
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix":           acctest.RandString(t, 10),
+		"random_suffix":           randomSuffix,
 		"role":                    "roles/compute.admin",
+		"image_name":              "tf-test-my-image" + randomSuffix,
+		"vm_name":                 "tf-test-my-vm" + randomSuffix,
 		"condition_title":         "expires_after_2019_12_31",
 		"condition_expr":          `request.time < timestamp(\"2020-01-01T00:00:00Z\")`,
 		"condition_desc":          "Expiring at midnight of 2019-12-31",
@@ -301,9 +329,13 @@ func TestAccComputeMachineImageIamMemberGenerated_withAndWithoutCondition(t *tes
 func TestAccComputeMachineImageIamPolicyGenerated_withCondition(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix":           acctest.RandString(t, 10),
+		"random_suffix":           randomSuffix,
 		"role":                    "roles/compute.admin",
+		"image_name":              "tf-test-my-image" + randomSuffix,
+		"vm_name":                 "tf-test-my-vm" + randomSuffix,
 		"condition_title":         "expires_after_2019_12_31",
 		"condition_expr":          `request.time < timestamp(\"2020-01-01T00:00:00Z\")`,
 		"condition_desc":          "Expiring at midnight of 2019-12-31",
@@ -342,7 +374,7 @@ func testAccComputeMachineImageIamMember_basicGenerated(context map[string]inter
 	return acctest.Nprintf(`
 resource "google_compute_instance" "vm" {
   provider     = google-beta
-  name         = "tf-test-my-vm%{random_suffix}"
+  name         = "%{vm_name}"
   machine_type = "e2-medium"
 
   boot_disk {
@@ -358,7 +390,7 @@ resource "google_compute_instance" "vm" {
 
 resource "google_compute_machine_image" "image" {
   provider        = google-beta
-  name            = "tf-test-my-image%{random_suffix}"
+  name            = "%{image_name}"
   source_instance = google_compute_instance.vm.self_link
 }
 
@@ -376,7 +408,7 @@ func testAccComputeMachineImageIamPolicy_basicGenerated(context map[string]inter
 	return acctest.Nprintf(`
 resource "google_compute_instance" "vm" {
   provider     = google-beta
-  name         = "tf-test-my-vm%{random_suffix}"
+  name         = "%{vm_name}"
   machine_type = "e2-medium"
 
   boot_disk {
@@ -392,7 +424,7 @@ resource "google_compute_instance" "vm" {
 
 resource "google_compute_machine_image" "image" {
   provider        = google-beta
-  name            = "tf-test-my-image%{random_suffix}"
+  name            = "%{image_name}"
   source_instance = google_compute_instance.vm.self_link
 }
 
@@ -426,7 +458,7 @@ func testAccComputeMachineImageIamPolicy_emptyBinding(context map[string]interfa
 	return acctest.Nprintf(`
 resource "google_compute_instance" "vm" {
   provider     = google-beta
-  name         = "tf-test-my-vm%{random_suffix}"
+  name         = "%{vm_name}"
   machine_type = "e2-medium"
 
   boot_disk {
@@ -442,7 +474,7 @@ resource "google_compute_instance" "vm" {
 
 resource "google_compute_machine_image" "image" {
   provider        = google-beta
-  name            = "tf-test-my-image%{random_suffix}"
+  name            = "%{image_name}"
   source_instance = google_compute_instance.vm.self_link
 }
 
@@ -463,7 +495,7 @@ func testAccComputeMachineImageIamBinding_basicGenerated(context map[string]inte
 	return acctest.Nprintf(`
 resource "google_compute_instance" "vm" {
   provider     = google-beta
-  name         = "tf-test-my-vm%{random_suffix}"
+  name         = "%{vm_name}"
   machine_type = "e2-medium"
 
   boot_disk {
@@ -479,7 +511,7 @@ resource "google_compute_instance" "vm" {
 
 resource "google_compute_machine_image" "image" {
   provider        = google-beta
-  name            = "tf-test-my-image%{random_suffix}"
+  name            = "%{image_name}"
   source_instance = google_compute_instance.vm.self_link
 }
 
@@ -497,7 +529,7 @@ func testAccComputeMachineImageIamBinding_updateGenerated(context map[string]int
 	return acctest.Nprintf(`
 resource "google_compute_instance" "vm" {
   provider     = google-beta
-  name         = "tf-test-my-vm%{random_suffix}"
+  name         = "%{vm_name}"
   machine_type = "e2-medium"
 
   boot_disk {
@@ -513,7 +545,7 @@ resource "google_compute_instance" "vm" {
 
 resource "google_compute_machine_image" "image" {
   provider        = google-beta
-  name            = "tf-test-my-image%{random_suffix}"
+  name            = "%{image_name}"
   source_instance = google_compute_instance.vm.self_link
 }
 
@@ -531,7 +563,7 @@ func testAccComputeMachineImageIamBinding_withConditionGenerated(context map[str
 	return acctest.Nprintf(`
 resource "google_compute_instance" "vm" {
   provider     = google-beta
-  name         = "tf-test-my-vm%{random_suffix}"
+  name         = "%{vm_name}"
   machine_type = "e2-medium"
 
   boot_disk {
@@ -547,7 +579,7 @@ resource "google_compute_instance" "vm" {
 
 resource "google_compute_machine_image" "image" {
   provider        = google-beta
-  name            = "tf-test-my-image%{random_suffix}"
+  name            = "%{image_name}"
   source_instance = google_compute_instance.vm.self_link
 }
 
@@ -570,7 +602,7 @@ func testAccComputeMachineImageIamBinding_withAndWithoutConditionGenerated(conte
 	return acctest.Nprintf(`
 resource "google_compute_instance" "vm" {
   provider     = google-beta
-  name         = "tf-test-my-vm%{random_suffix}"
+  name         = "%{vm_name}"
   machine_type = "e2-medium"
 
   boot_disk {
@@ -586,7 +618,7 @@ resource "google_compute_instance" "vm" {
 
 resource "google_compute_machine_image" "image" {
   provider        = google-beta
-  name            = "tf-test-my-image%{random_suffix}"
+  name            = "%{image_name}"
   source_instance = google_compute_instance.vm.self_link
 }
 
@@ -631,7 +663,7 @@ func testAccComputeMachineImageIamMember_withConditionGenerated(context map[stri
 	return acctest.Nprintf(`
 resource "google_compute_instance" "vm" {
   provider     = google-beta
-  name         = "tf-test-my-vm%{random_suffix}"
+  name         = "%{vm_name}"
   machine_type = "e2-medium"
 
   boot_disk {
@@ -647,7 +679,7 @@ resource "google_compute_instance" "vm" {
 
 resource "google_compute_machine_image" "image" {
   provider        = google-beta
-  name            = "tf-test-my-image%{random_suffix}"
+  name            = "%{image_name}"
   source_instance = google_compute_instance.vm.self_link
 }
 
@@ -670,7 +702,7 @@ func testAccComputeMachineImageIamMember_withAndWithoutConditionGenerated(contex
 	return acctest.Nprintf(`
 resource "google_compute_instance" "vm" {
   provider     = google-beta
-  name         = "tf-test-my-vm%{random_suffix}"
+  name         = "%{vm_name}"
   machine_type = "e2-medium"
 
   boot_disk {
@@ -686,7 +718,7 @@ resource "google_compute_instance" "vm" {
 
 resource "google_compute_machine_image" "image" {
   provider        = google-beta
-  name            = "tf-test-my-image%{random_suffix}"
+  name            = "%{image_name}"
   source_instance = google_compute_instance.vm.self_link
 }
 
@@ -731,7 +763,7 @@ func testAccComputeMachineImageIamPolicy_withConditionGenerated(context map[stri
 	return acctest.Nprintf(`
 resource "google_compute_instance" "vm" {
   provider     = google-beta
-  name         = "tf-test-my-vm%{random_suffix}"
+  name         = "%{vm_name}"
   machine_type = "e2-medium"
 
   boot_disk {
@@ -747,7 +779,7 @@ resource "google_compute_instance" "vm" {
 
 resource "google_compute_machine_image" "image" {
   provider        = google-beta
-  name            = "tf-test-my-image%{random_suffix}"
+  name            = "%{image_name}"
   source_instance = google_compute_instance.vm.self_link
 }
 

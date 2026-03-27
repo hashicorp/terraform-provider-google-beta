@@ -53,9 +53,12 @@ var (
 func TestAccFirebaseStorageBucket_firebasestorageBucketBasicExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"project_id":    envvar.GetTestProjectFromEnv(),
-		"random_suffix": acctest.RandString(t, 10),
+		"bucket_id":     "tf_test_test_bucket" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -80,7 +83,7 @@ func testAccFirebaseStorageBucket_firebasestorageBucketBasicExample(context map[
 	return acctest.Nprintf(`
 resource "google_storage_bucket" "default" {
   provider                    = google-beta
-  name                        = "tf_test_test_bucket%{random_suffix}"
+  name                        = "%{bucket_id}"
   location                    = "US"
   uniform_bucket_level_access = true
 }

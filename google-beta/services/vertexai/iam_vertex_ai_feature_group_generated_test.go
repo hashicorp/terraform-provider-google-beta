@@ -42,9 +42,13 @@ var (
 func TestAccVertexAIFeatureGroupIamBindingGenerated(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
-		"role":          "roles/viewer",
+		"random_suffix":      randomSuffix,
+		"role":               "roles/viewer",
+		"feature_group_name": "tf_test_example_feature_group" + randomSuffix,
+		"job_id":             "tf_test_job_load" + randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -77,9 +81,13 @@ func TestAccVertexAIFeatureGroupIamBindingGenerated(t *testing.T) {
 func TestAccVertexAIFeatureGroupIamMemberGenerated(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
-		"role":          "roles/viewer",
+		"random_suffix":      randomSuffix,
+		"role":               "roles/viewer",
+		"feature_group_name": "tf_test_example_feature_group" + randomSuffix,
+		"job_id":             "tf_test_job_load" + randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -103,9 +111,13 @@ func TestAccVertexAIFeatureGroupIamMemberGenerated(t *testing.T) {
 func TestAccVertexAIFeatureGroupIamPolicyGenerated(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
-		"role":          "roles/viewer",
+		"random_suffix":      randomSuffix,
+		"role":               "roles/viewer",
+		"feature_group_name": "tf_test_example_feature_group" + randomSuffix,
+		"job_id":             "tf_test_job_load" + randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -138,7 +150,7 @@ func TestAccVertexAIFeatureGroupIamPolicyGenerated(t *testing.T) {
 func testAccVertexAIFeatureGroupIamMember_basicGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
   resource "google_vertex_ai_feature_group" "feature_group" {
-  name = "tf_test_example_feature_group%{random_suffix}"
+  name = "%{feature_group_name}"
   description = "A sample feature group"
   region = "us-central1"
   labels = {
@@ -154,7 +166,7 @@ func testAccVertexAIFeatureGroupIamMember_basicGenerated(context map[string]inte
 }
 
 resource "google_bigquery_dataset" "sample_dataset" {
-  dataset_id                  = "tf_test_job_load%{random_suffix}_dataset"
+  dataset_id                  = "%{job_id}_dataset"
   friendly_name               = "test"
   description                 = "This is a test description"
   location                    = "US"
@@ -163,7 +175,7 @@ resource "google_bigquery_dataset" "sample_dataset" {
 resource "google_bigquery_table" "sample_table" {
   deletion_protection = false
   dataset_id = google_bigquery_dataset.sample_dataset.dataset_id
-  table_id   = "tf_test_job_load%{random_suffix}_table"
+  table_id   = "%{job_id}_table"
 
   schema = <<EOF
 [
@@ -193,7 +205,7 @@ resource "google_vertex_ai_feature_group_iam_member" "foo" {
 func testAccVertexAIFeatureGroupIamPolicy_basicGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
   resource "google_vertex_ai_feature_group" "feature_group" {
-  name = "tf_test_example_feature_group%{random_suffix}"
+  name = "%{feature_group_name}"
   description = "A sample feature group"
   region = "us-central1"
   labels = {
@@ -209,7 +221,7 @@ func testAccVertexAIFeatureGroupIamPolicy_basicGenerated(context map[string]inte
 }
 
 resource "google_bigquery_dataset" "sample_dataset" {
-  dataset_id                  = "tf_test_job_load%{random_suffix}_dataset"
+  dataset_id                  = "%{job_id}_dataset"
   friendly_name               = "test"
   description                 = "This is a test description"
   location                    = "US"
@@ -218,7 +230,7 @@ resource "google_bigquery_dataset" "sample_dataset" {
 resource "google_bigquery_table" "sample_table" {
   deletion_protection = false
   dataset_id = google_bigquery_dataset.sample_dataset.dataset_id
-  table_id   = "tf_test_job_load%{random_suffix}_table"
+  table_id   = "%{job_id}_table"
 
   schema = <<EOF
 [
@@ -262,7 +274,7 @@ data "google_vertex_ai_feature_group_iam_policy" "foo" {
 func testAccVertexAIFeatureGroupIamPolicy_emptyBinding(context map[string]interface{}) string {
 	return acctest.Nprintf(`
   resource "google_vertex_ai_feature_group" "feature_group" {
-  name = "tf_test_example_feature_group%{random_suffix}"
+  name = "%{feature_group_name}"
   description = "A sample feature group"
   region = "us-central1"
   labels = {
@@ -278,7 +290,7 @@ func testAccVertexAIFeatureGroupIamPolicy_emptyBinding(context map[string]interf
 }
 
 resource "google_bigquery_dataset" "sample_dataset" {
-  dataset_id                  = "tf_test_job_load%{random_suffix}_dataset"
+  dataset_id                  = "%{job_id}_dataset"
   friendly_name               = "test"
   description                 = "This is a test description"
   location                    = "US"
@@ -287,7 +299,7 @@ resource "google_bigquery_dataset" "sample_dataset" {
 resource "google_bigquery_table" "sample_table" {
   deletion_protection = false
   dataset_id = google_bigquery_dataset.sample_dataset.dataset_id
-  table_id   = "tf_test_job_load%{random_suffix}_table"
+  table_id   = "%{job_id}_table"
 
   schema = <<EOF
 [
@@ -319,7 +331,7 @@ resource "google_vertex_ai_feature_group_iam_policy" "foo" {
 func testAccVertexAIFeatureGroupIamBinding_basicGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
   resource "google_vertex_ai_feature_group" "feature_group" {
-  name = "tf_test_example_feature_group%{random_suffix}"
+  name = "%{feature_group_name}"
   description = "A sample feature group"
   region = "us-central1"
   labels = {
@@ -335,7 +347,7 @@ func testAccVertexAIFeatureGroupIamBinding_basicGenerated(context map[string]int
 }
 
 resource "google_bigquery_dataset" "sample_dataset" {
-  dataset_id                  = "tf_test_job_load%{random_suffix}_dataset"
+  dataset_id                  = "%{job_id}_dataset"
   friendly_name               = "test"
   description                 = "This is a test description"
   location                    = "US"
@@ -344,7 +356,7 @@ resource "google_bigquery_dataset" "sample_dataset" {
 resource "google_bigquery_table" "sample_table" {
   deletion_protection = false
   dataset_id = google_bigquery_dataset.sample_dataset.dataset_id
-  table_id   = "tf_test_job_load%{random_suffix}_table"
+  table_id   = "%{job_id}_table"
 
   schema = <<EOF
 [
@@ -374,7 +386,7 @@ resource "google_vertex_ai_feature_group_iam_binding" "foo" {
 func testAccVertexAIFeatureGroupIamBinding_updateGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
   resource "google_vertex_ai_feature_group" "feature_group" {
-  name = "tf_test_example_feature_group%{random_suffix}"
+  name = "%{feature_group_name}"
   description = "A sample feature group"
   region = "us-central1"
   labels = {
@@ -390,7 +402,7 @@ func testAccVertexAIFeatureGroupIamBinding_updateGenerated(context map[string]in
 }
 
 resource "google_bigquery_dataset" "sample_dataset" {
-  dataset_id                  = "tf_test_job_load%{random_suffix}_dataset"
+  dataset_id                  = "%{job_id}_dataset"
   friendly_name               = "test"
   description                 = "This is a test description"
   location                    = "US"
@@ -399,7 +411,7 @@ resource "google_bigquery_dataset" "sample_dataset" {
 resource "google_bigquery_table" "sample_table" {
   deletion_protection = false
   dataset_id = google_bigquery_dataset.sample_dataset.dataset_id
-  table_id   = "tf_test_job_load%{random_suffix}_table"
+  table_id   = "%{job_id}_table"
 
   schema = <<EOF
 [

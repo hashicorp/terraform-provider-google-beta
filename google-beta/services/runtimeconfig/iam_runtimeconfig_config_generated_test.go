@@ -42,9 +42,12 @@ var (
 func TestAccRuntimeConfigConfigIamBindingGenerated(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"random_suffix": randomSuffix,
 		"role":          "roles/viewer",
+		"config_name":   "tf-test-my-config" + randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -77,9 +80,12 @@ func TestAccRuntimeConfigConfigIamBindingGenerated(t *testing.T) {
 func TestAccRuntimeConfigConfigIamMemberGenerated(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"random_suffix": randomSuffix,
 		"role":          "roles/viewer",
+		"config_name":   "tf-test-my-config" + randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -103,9 +109,12 @@ func TestAccRuntimeConfigConfigIamMemberGenerated(t *testing.T) {
 func TestAccRuntimeConfigConfigIamPolicyGenerated(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"random_suffix": randomSuffix,
 		"role":          "roles/viewer",
+		"config_name":   "tf-test-my-config" + randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -139,7 +148,7 @@ func testAccRuntimeConfigConfigIamMember_basicGenerated(context map[string]inter
 	return acctest.Nprintf(`
 resource "google_runtimeconfig_config" "config" {
   provider    = google-beta
-  name        = "tf-test-my-config%{random_suffix}"
+  name        = "%{config_name}"
   description = "Runtime configuration values for my service"
 }
 
@@ -157,7 +166,7 @@ func testAccRuntimeConfigConfigIamPolicy_basicGenerated(context map[string]inter
 	return acctest.Nprintf(`
 resource "google_runtimeconfig_config" "config" {
   provider    = google-beta
-  name        = "tf-test-my-config%{random_suffix}"
+  name        = "%{config_name}"
   description = "Runtime configuration values for my service"
 }
 
@@ -191,7 +200,7 @@ func testAccRuntimeConfigConfigIamPolicy_emptyBinding(context map[string]interfa
 	return acctest.Nprintf(`
 resource "google_runtimeconfig_config" "config" {
   provider    = google-beta
-  name        = "tf-test-my-config%{random_suffix}"
+  name        = "%{config_name}"
   description = "Runtime configuration values for my service"
 }
 
@@ -212,7 +221,7 @@ func testAccRuntimeConfigConfigIamBinding_basicGenerated(context map[string]inte
 	return acctest.Nprintf(`
 resource "google_runtimeconfig_config" "config" {
   provider    = google-beta
-  name        = "tf-test-my-config%{random_suffix}"
+  name        = "%{config_name}"
   description = "Runtime configuration values for my service"
 }
 
@@ -230,7 +239,7 @@ func testAccRuntimeConfigConfigIamBinding_updateGenerated(context map[string]int
 	return acctest.Nprintf(`
 resource "google_runtimeconfig_config" "config" {
   provider    = google-beta
-  name        = "tf-test-my-config%{random_suffix}"
+  name        = "%{config_name}"
   description = "Runtime configuration values for my service"
 }
 

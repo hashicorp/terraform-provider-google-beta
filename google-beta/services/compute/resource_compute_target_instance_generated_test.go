@@ -53,8 +53,12 @@ var (
 func TestAccComputeTargetInstance_targetInstanceBasicExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"instance_name": "tf-test-target-vm" + randomSuffix,
+		"target_name":   "target" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -78,7 +82,7 @@ func TestAccComputeTargetInstance_targetInstanceBasicExample(t *testing.T) {
 func testAccComputeTargetInstance_targetInstanceBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_target_instance" "default" {
-  name     = "target%{random_suffix}"
+  name     = "%{target_name}"
   instance = google_compute_instance.target-vm.id
 }
 
@@ -88,7 +92,7 @@ data "google_compute_image" "vmimage" {
 }
 
 resource "google_compute_instance" "target-vm" {
-  name         = "tf-test-target-vm%{random_suffix}"
+  name         = "%{instance_name}"
   machine_type = "e2-medium"
   zone         = "us-central1-a"
 
@@ -108,8 +112,12 @@ resource "google_compute_instance" "target-vm" {
 func TestAccComputeTargetInstance_targetInstanceCustomNetworkExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"instance_name": "tf-test-custom-network-target-vm" + randomSuffix,
+		"target_name":   "tf-test-custom-network" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -134,7 +142,7 @@ func testAccComputeTargetInstance_targetInstanceCustomNetworkExample(context map
 	return acctest.Nprintf(`
 resource "google_compute_target_instance" "custom_network" {
   provider = google-beta
-  name     = "tf-test-custom-network%{random_suffix}"
+  name     = "%{target_name}"
   instance = google_compute_instance.target-vm.id
   network  = data.google_compute_network.target-vm.self_link
 }
@@ -152,7 +160,7 @@ data "google_compute_image" "vmimage" {
 
 resource "google_compute_instance" "target-vm" {
   provider = google-beta
-  name         = "tf-test-custom-network-target-vm%{random_suffix}"
+  name         = "%{instance_name}"
   machine_type = "e2-medium"
   zone         = "us-central1-a"
 
@@ -172,8 +180,15 @@ resource "google_compute_instance" "target-vm" {
 func TestAccComputeTargetInstance_targetInstanceWithSecurityPolicyExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"instance_name":     "tf-test-target-vm" + randomSuffix,
+		"network_name":      "tf-test-custom-default-network" + randomSuffix,
+		"region_sec_policy": "tf-test-region-secpolicy" + randomSuffix,
+		"subnetname_name":   "tf-test-custom-default-subnet" + randomSuffix,
+		"target_name":       "tf-test-target-instance" + randomSuffix,
+		"random_suffix":     randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -198,14 +213,14 @@ func testAccComputeTargetInstance_targetInstanceWithSecurityPolicyExample(contex
 	return acctest.Nprintf(`
 resource "google_compute_network" "default" {
   provider                = google-beta
-  name                    = "tf-test-custom-default-network%{random_suffix}"
+  name                    = "%{network_name}"
   auto_create_subnetworks = false
   routing_mode            = "REGIONAL"
 }
       
 resource "google_compute_subnetwork" "default" {
   provider                   = google-beta
-  name                       = "tf-test-custom-default-subnet%{random_suffix}"
+  name                       = "%{subnetname_name}"
   ip_cidr_range              = "10.1.2.0/24"
   network                    = google_compute_network.default.id
   private_ipv6_google_access = "DISABLE_GOOGLE_ACCESS"
@@ -222,7 +237,7 @@ data "google_compute_image" "vmimage" {
 
 resource "google_compute_instance" "target-vm" {
   provider     = google-beta
-  name         = "tf-test-target-vm%{random_suffix}"
+  name         = "%{instance_name}"
   machine_type = "e2-medium"
   zone         = "southamerica-west1-a"
 
@@ -260,7 +275,7 @@ resource "google_compute_network_edge_security_service" "edge_sec_service" {
 
 resource "google_compute_region_security_policy" "regionsecuritypolicy" {
   provider    = google-beta
-  name        = "tf-test-region-secpolicy%{random_suffix}"
+  name        = "%{region_sec_policy}"
   region      = "southamerica-west1"
   description = "basic security policy for target instance"
   type        = "CLOUD_ARMOR_NETWORK"
@@ -269,7 +284,7 @@ resource "google_compute_region_security_policy" "regionsecuritypolicy" {
 
 resource "google_compute_target_instance" "default" {
   provider        = google-beta
-  name            = "tf-test-target-instance%{random_suffix}"
+  name            = "%{target_name}"
   zone            = "southamerica-west1-a"
   instance        = google_compute_instance.target-vm.id
   security_policy = google_compute_region_security_policy.regionsecuritypolicy.self_link

@@ -59,8 +59,13 @@ func TestAccSaasRuntimeRolloutKind_saasRuntimeRolloutKindBasicExample(t *testing
 		},
 	})
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"rolloutkind_name": "tf-test-example-rolloutkind" + randomSuffix,
+		"saas_name":        "tf-test-example-saas" + randomSuffix,
+		"unitkind_name":    "tf-test-example-unitkind" + randomSuffix,
+		"random_suffix":    randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -85,7 +90,7 @@ func testAccSaasRuntimeRolloutKind_saasRuntimeRolloutKindBasicExample(context ma
 	return acctest.Nprintf(`
 resource "google_saas_runtime_saas" "example_saas" {
   provider = google-beta
-  saas_id  = "tf-test-example-saas%{random_suffix}"
+  saas_id  = "%{saas_name}"
   location = "global"
 
   locations {
@@ -96,14 +101,14 @@ resource "google_saas_runtime_saas" "example_saas" {
 resource "google_saas_runtime_unit_kind" "example_unitkind" {
   provider     = google-beta
   location     = "global"
-  unit_kind_id = "tf-test-example-unitkind%{random_suffix}"
+  unit_kind_id = "%{unitkind_name}"
   saas         = google_saas_runtime_saas.example_saas.id
 }
 
 resource "google_saas_runtime_rollout_kind" "example" {
   provider          = google-beta
   location          = "global"
-  rollout_kind_id   = "tf-test-example-rolloutkind%{random_suffix}"
+  rollout_kind_id   = "%{rolloutkind_name}"
   unit_kind         = google_saas_runtime_unit_kind.example_unitkind.id
 
   rollout_orchestration_strategy = "Google.Cloud.Simple.OneLocationAtATime"
