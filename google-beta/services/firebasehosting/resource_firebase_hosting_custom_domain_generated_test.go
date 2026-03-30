@@ -267,8 +267,10 @@ func testAccCheckFirebaseHostingCustomDomainDestroyProducer(t *testing.T) func(s
 				RawURL:    url,
 				UserAgent: config.UserAgent,
 			})
-			if err == nil && resp["deleteTime"].(string) == "" {
-				return fmt.Errorf("FirebaseHostingCustomDomain still exists at %s", url)
+			if err == nil && resp != nil {
+				if deleteTime, ok := resp["deleteTime"].(string); !ok || deleteTime == "" {
+					return fmt.Errorf("FirebaseHostingCustomDomain still exists at %s", url)
+				}
 			}
 		}
 
