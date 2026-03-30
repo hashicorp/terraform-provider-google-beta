@@ -1592,6 +1592,7 @@ func resourceSqlDatabaseInstanceCreate(d *schema.ResourceData, meta interface{})
 	}
 
 	cloneContext, cloneSourceInstance := expandCloneContext(d.Get("clone").([]interface{}))
+
 	cloneSourceProject := expandCloneSourceProject(d.Get("clone").([]interface{}))
 	if cloneSourceProject == "" {
 		cloneSourceProject = project
@@ -1908,6 +1909,7 @@ func expandCloneContext(configured []interface{}) (*sqladmin.CloneContext, strin
 		SourceInstanceDeletionTime: _cloneConfiguration["source_instance_deletion_time"].(string),
 	}, _cloneConfiguration["source_instance_name"].(string)
 }
+
 func expandCloneSourceProject(configured []interface{}) string {
 	if len(configured) == 0 || configured[0] == nil {
 		return ""
