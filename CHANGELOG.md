@@ -16,7 +16,7 @@ IMPROVEMENTS:
 * compute: added `hyperdisk-balanced` as an option for `disk_type` field in `google_container_cluster` resource ([#11789](https://github.com/hashicorp/terraform-provider-google-beta/pull/11789))
 * compute: added `priority` field to `google_compute_region_network_firewall_policy_association` resource ([#11770](https://github.com/hashicorp/terraform-provider-google-beta/pull/11770))
 * compute: added `load_balancing_scheme` field to `google_compute_target_tcp_proxy` resource ([#11759](https://github.com/hashicorp/terraform-provider-google-beta/pull/11759))
-* compute: make `backend_service` field optional for `google_compute_target_tcp_proxy` resource ([#11759](https://github.com/hashicorp/terraform-provider-google-beta/pull/11759))
+* compute: made `backend_service` field optional for `google_compute_target_tcp_proxy` resource ([#11759](https://github.com/hashicorp/terraform-provider-google-beta/pull/11759))
 * iambeta: added `SYSTEM_TRUST_DOMAIN` as an additional enum value to `mode` field of `google_iam_workload_identity_pool` resource ([#11779](https://github.com/hashicorp/terraform-provider-google-beta/pull/11779))
 * iambeta: added `use_default_shared_ca` field to `google_iam_workload_identity_pool` resource ([#11791](https://github.com/hashicorp/terraform-provider-google-beta/pull/11791))
 * spanner: added autoscaling config for instance partition and missing asymmetric autoscaling override fields to `google_spanner_instance` resource ([#11785](https://github.com/hashicorp/terraform-provider-google-beta/pull/11785))
