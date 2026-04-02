@@ -1878,6 +1878,7 @@ var handwrittenResources = map[string]*schema.Resource{
 	"google_folder":                                resourcemanager.ResourceGoogleFolder(),
 	"google_folder_organization_policy":            resourcemanager.ResourceGoogleFolderOrganizationPolicy(),
 	"google_folder_service_identity":               resourcemanager.ResourceFolderServiceIdentity(),
+	"google_organization_service_identity":         resourcemanager.ResourceOrganizationServiceIdentity(),
 	"google_logging_billing_account_sink":          logging.ResourceLoggingBillingAccountSink(),
 	"google_logging_billing_account_exclusion":     logging.ResourceLoggingExclusion(logging.BillingAccountLoggingExclusionSchema, logging.NewBillingAccountLoggingExclusionUpdater, logging.BillingAccountLoggingExclusionIdParseFunc),
 	"google_logging_billing_account_bucket_config": logging.ResourceLoggingBillingAccountBucketConfig(),
