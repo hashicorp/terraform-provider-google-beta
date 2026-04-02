@@ -64,7 +64,7 @@ func TestAccIAMBetaWorkloadIdentityPoolManagedIdentity_iamWorkloadIdentityPoolMa
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckIAMBetaWorkloadIdentityPoolManagedIdentityDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -83,22 +83,16 @@ func TestAccIAMBetaWorkloadIdentityPoolManagedIdentity_iamWorkloadIdentityPoolMa
 func testAccIAMBetaWorkloadIdentityPoolManagedIdentity_iamWorkloadIdentityPoolManagedIdentityBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_iam_workload_identity_pool" "pool" {
-  provider = google-beta
-
   workload_identity_pool_id = "%{workload_identity_pool_id}"
   mode                      = "TRUST_DOMAIN"
 }
 
 resource "google_iam_workload_identity_pool_namespace" "ns" {
-  provider = google-beta
-
   workload_identity_pool_id           = google_iam_workload_identity_pool.pool.workload_identity_pool_id
   workload_identity_pool_namespace_id = "%{workload_identity_pool_namespace_id}"
 }
 
 resource "google_iam_workload_identity_pool_managed_identity" "example" {
-  provider = google-beta
-
   workload_identity_pool_id                  = google_iam_workload_identity_pool.pool.workload_identity_pool_id
   workload_identity_pool_namespace_id        = google_iam_workload_identity_pool_namespace.ns.workload_identity_pool_namespace_id
   workload_identity_pool_managed_identity_id = "%{workload_identity_pool_managed_identity_id}"
@@ -121,7 +115,7 @@ func TestAccIAMBetaWorkloadIdentityPoolManagedIdentity_iamWorkloadIdentityPoolMa
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckIAMBetaWorkloadIdentityPoolManagedIdentityDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -140,22 +134,16 @@ func TestAccIAMBetaWorkloadIdentityPoolManagedIdentity_iamWorkloadIdentityPoolMa
 func testAccIAMBetaWorkloadIdentityPoolManagedIdentity_iamWorkloadIdentityPoolManagedIdentityFullExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_iam_workload_identity_pool" "pool" {
-  provider = google-beta
-
   workload_identity_pool_id = "%{workload_identity_pool_id}"
   mode                      = "TRUST_DOMAIN"
 }
 
 resource "google_iam_workload_identity_pool_namespace" "ns" {
-  provider = google-beta
-
   workload_identity_pool_id           = google_iam_workload_identity_pool.pool.workload_identity_pool_id
   workload_identity_pool_namespace_id = "%{workload_identity_pool_namespace_id}"
 }
 
 resource "google_iam_workload_identity_pool_managed_identity" "example" {
-  provider = google-beta
-
   workload_identity_pool_id                  = google_iam_workload_identity_pool.pool.workload_identity_pool_id
   workload_identity_pool_namespace_id        = google_iam_workload_identity_pool_namespace.ns.workload_identity_pool_namespace_id
   workload_identity_pool_managed_identity_id = "%{workload_identity_pool_managed_identity_id}"
