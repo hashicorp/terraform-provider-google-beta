@@ -225,11 +225,35 @@ Please refer to the field 'effective_labels' for all of the labels present on th
 								Type: schema.TypeString,
 							},
 						},
+						"exclude_export_ranges": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							Description: `Dynamic routes overlapped/encompassed by exclude export ranges are excluded during export to hub.`,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+						},
+						"exclude_import_ranges": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							Description: `Hub routes overlapped/encompassed by exclude import ranges are excluded during import from hub.`,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+						},
+						"include_export_ranges": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							Description: `Dynamic routes fully encompassed by include export ranges are included during export to hub.`,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+						},
 						"include_import_ranges": {
 							Type:     schema.TypeList,
 							Optional: true,
-							Description: `IP ranges allowed to be included during import from hub (does not control transit connectivity).
-The only allowed value for now is "ALL_IPV4_RANGES".`,
+							Description: `Hub routes fully encompassed by include import ranges are included during import from hub.
+"ALL_IPV4_RANGES" or IPv4 CIDR ranges are allowed.`,
 							Elem: &schema.Schema{
 								Type: schema.TypeString,
 							},
@@ -317,11 +341,35 @@ The only allowed value for now is "ALL_IPV4_RANGES".`,
 							ForceNew:    true,
 							Description: `A value that controls whether site-to-site data transfer is enabled for these resources. Note that data transfer is available only in supported locations.`,
 						},
+						"exclude_export_ranges": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							Description: `Dynamic routes overlapped/encompassed by exclude export ranges are excluded during export to hub.`,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+						},
+						"exclude_import_ranges": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							Description: `Hub routes overlapped/encompassed by exclude import ranges are excluded during import from hub.`,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+						},
+						"include_export_ranges": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							Description: `Dynamic routes fully encompassed by include export ranges are included during export to hub.`,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+						},
 						"include_import_ranges": {
 							Type:     schema.TypeList,
 							Optional: true,
-							Description: `IP ranges allowed to be included during import from hub (does not control transit connectivity).
-The only allowed value for now is "ALL_IPV4_RANGES".`,
+							Description: `Hub routes fully encompassed by include import ranges are included during import from hub.
+"ALL_IPV4_RANGES" or IPv4 CIDR ranges are allowed.`,
 							Elem: &schema.Schema{
 								Type: schema.TypeString,
 							},
@@ -386,11 +434,35 @@ The only allowed value for now is "ALL_IPV4_RANGES".`,
 								Type: schema.TypeString,
 							},
 						},
+						"exclude_export_ranges": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							Description: `Dynamic routes overlapped/encompassed by exclude export ranges are excluded during export to hub.`,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+						},
+						"exclude_import_ranges": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							Description: `Hub routes overlapped/encompassed by exclude import ranges are excluded during import from hub.`,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+						},
+						"include_export_ranges": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							Description: `Dynamic routes fully encompassed by include export ranges are included during export to hub.`,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+						},
 						"include_import_ranges": {
 							Type:     schema.TypeList,
 							Optional: true,
-							Description: `IP ranges allowed to be included during import from hub (does not control transit connectivity).
-The only allowed value for now is "ALL_IPV4_RANGES".`,
+							Description: `Hub routes fully encompassed by include import ranges are included during import from hub.
+"ALL_IPV4_RANGES" or IPv4 CIDR ranges are allowed.`,
 							Elem: &schema.Schema{
 								Type: schema.TypeString,
 							},
@@ -768,16 +840,25 @@ func resourceNetworkConnectivitySpokeUpdate(d *schema.ResourceData, meta interfa
 	}
 
 	if d.HasChange("linked_vpn_tunnels") {
-		updateMask = append(updateMask, "linkedVpnTunnels.includeImportRanges")
+		updateMask = append(updateMask, "linkedVpnTunnels.includeImportRanges",
+			"linkedVpnTunnels.excludeImportRanges",
+			"linkedVpnTunnels.includeExportRanges",
+			"linkedVpnTunnels.excludeExportRanges")
 	}
 
 	if d.HasChange("linked_interconnect_attachments") {
-		updateMask = append(updateMask, "linkedInterconnectAttachments.includeImportRanges")
+		updateMask = append(updateMask, "linkedInterconnectAttachments.includeImportRanges",
+			"linkedInterconnectAttachments.excludeImportRanges",
+			"linkedInterconnectAttachments.includeExportRanges",
+			"linkedInterconnectAttachments.excludeExportRanges")
 	}
 
 	if d.HasChange("linked_router_appliance_instances") {
 		updateMask = append(updateMask, "linkedRouterApplianceInstances.instances",
-			"linkedRouterApplianceInstances.includeImportRanges")
+			"linkedRouterApplianceInstances.includeImportRanges",
+			"linkedRouterApplianceInstances.excludeImportRanges",
+			"linkedRouterApplianceInstances.includeExportRanges",
+			"linkedRouterApplianceInstances.excludeExportRanges")
 	}
 
 	if d.HasChange("linked_vpc_network") {
@@ -965,6 +1046,12 @@ func flattenNetworkConnectivitySpokeLinkedVpnTunnels(v interface{}, d *schema.Re
 		flattenNetworkConnectivitySpokeLinkedVpnTunnelsSiteToSiteDataTransfer(original["siteToSiteDataTransfer"], d, config)
 	transformed["include_import_ranges"] =
 		flattenNetworkConnectivitySpokeLinkedVpnTunnelsIncludeImportRanges(original["includeImportRanges"], d, config)
+	transformed["exclude_import_ranges"] =
+		flattenNetworkConnectivitySpokeLinkedVpnTunnelsExcludeImportRanges(original["excludeImportRanges"], d, config)
+	transformed["include_export_ranges"] =
+		flattenNetworkConnectivitySpokeLinkedVpnTunnelsIncludeExportRanges(original["includeExportRanges"], d, config)
+	transformed["exclude_export_ranges"] =
+		flattenNetworkConnectivitySpokeLinkedVpnTunnelsExcludeExportRanges(original["excludeExportRanges"], d, config)
 	return []interface{}{transformed}
 }
 func flattenNetworkConnectivitySpokeLinkedVpnTunnelsUris(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -976,6 +1063,18 @@ func flattenNetworkConnectivitySpokeLinkedVpnTunnelsSiteToSiteDataTransfer(v int
 }
 
 func flattenNetworkConnectivitySpokeLinkedVpnTunnelsIncludeImportRanges(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenNetworkConnectivitySpokeLinkedVpnTunnelsExcludeImportRanges(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenNetworkConnectivitySpokeLinkedVpnTunnelsIncludeExportRanges(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenNetworkConnectivitySpokeLinkedVpnTunnelsExcludeExportRanges(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -994,6 +1093,12 @@ func flattenNetworkConnectivitySpokeLinkedInterconnectAttachments(v interface{},
 		flattenNetworkConnectivitySpokeLinkedInterconnectAttachmentsSiteToSiteDataTransfer(original["siteToSiteDataTransfer"], d, config)
 	transformed["include_import_ranges"] =
 		flattenNetworkConnectivitySpokeLinkedInterconnectAttachmentsIncludeImportRanges(original["includeImportRanges"], d, config)
+	transformed["exclude_import_ranges"] =
+		flattenNetworkConnectivitySpokeLinkedInterconnectAttachmentsExcludeImportRanges(original["excludeImportRanges"], d, config)
+	transformed["include_export_ranges"] =
+		flattenNetworkConnectivitySpokeLinkedInterconnectAttachmentsIncludeExportRanges(original["includeExportRanges"], d, config)
+	transformed["exclude_export_ranges"] =
+		flattenNetworkConnectivitySpokeLinkedInterconnectAttachmentsExcludeExportRanges(original["excludeExportRanges"], d, config)
 	return []interface{}{transformed}
 }
 func flattenNetworkConnectivitySpokeLinkedInterconnectAttachmentsUris(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -1005,6 +1110,18 @@ func flattenNetworkConnectivitySpokeLinkedInterconnectAttachmentsSiteToSiteDataT
 }
 
 func flattenNetworkConnectivitySpokeLinkedInterconnectAttachmentsIncludeImportRanges(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenNetworkConnectivitySpokeLinkedInterconnectAttachmentsExcludeImportRanges(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenNetworkConnectivitySpokeLinkedInterconnectAttachmentsIncludeExportRanges(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenNetworkConnectivitySpokeLinkedInterconnectAttachmentsExcludeExportRanges(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -1023,6 +1140,12 @@ func flattenNetworkConnectivitySpokeLinkedRouterApplianceInstances(v interface{}
 		flattenNetworkConnectivitySpokeLinkedRouterApplianceInstancesSiteToSiteDataTransfer(original["siteToSiteDataTransfer"], d, config)
 	transformed["include_import_ranges"] =
 		flattenNetworkConnectivitySpokeLinkedRouterApplianceInstancesIncludeImportRanges(original["includeImportRanges"], d, config)
+	transformed["exclude_import_ranges"] =
+		flattenNetworkConnectivitySpokeLinkedRouterApplianceInstancesExcludeImportRanges(original["excludeImportRanges"], d, config)
+	transformed["include_export_ranges"] =
+		flattenNetworkConnectivitySpokeLinkedRouterApplianceInstancesIncludeExportRanges(original["includeExportRanges"], d, config)
+	transformed["exclude_export_ranges"] =
+		flattenNetworkConnectivitySpokeLinkedRouterApplianceInstancesExcludeExportRanges(original["excludeExportRanges"], d, config)
 	return []interface{}{transformed}
 }
 func flattenNetworkConnectivitySpokeLinkedRouterApplianceInstancesInstances(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -1057,6 +1180,18 @@ func flattenNetworkConnectivitySpokeLinkedRouterApplianceInstancesSiteToSiteData
 }
 
 func flattenNetworkConnectivitySpokeLinkedRouterApplianceInstancesIncludeImportRanges(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenNetworkConnectivitySpokeLinkedRouterApplianceInstancesExcludeImportRanges(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenNetworkConnectivitySpokeLinkedRouterApplianceInstancesIncludeExportRanges(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenNetworkConnectivitySpokeLinkedRouterApplianceInstancesExcludeExportRanges(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -1285,6 +1420,27 @@ func expandNetworkConnectivitySpokeLinkedVpnTunnels(v interface{}, d tpgresource
 		transformed["includeImportRanges"] = transformedIncludeImportRanges
 	}
 
+	transformedExcludeImportRanges, err := expandNetworkConnectivitySpokeLinkedVpnTunnelsExcludeImportRanges(original["exclude_import_ranges"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedExcludeImportRanges); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["excludeImportRanges"] = transformedExcludeImportRanges
+	}
+
+	transformedIncludeExportRanges, err := expandNetworkConnectivitySpokeLinkedVpnTunnelsIncludeExportRanges(original["include_export_ranges"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedIncludeExportRanges); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["includeExportRanges"] = transformedIncludeExportRanges
+	}
+
+	transformedExcludeExportRanges, err := expandNetworkConnectivitySpokeLinkedVpnTunnelsExcludeExportRanges(original["exclude_export_ranges"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedExcludeExportRanges); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["excludeExportRanges"] = transformedExcludeExportRanges
+	}
+
 	return transformed, nil
 }
 
@@ -1297,6 +1453,18 @@ func expandNetworkConnectivitySpokeLinkedVpnTunnelsSiteToSiteDataTransfer(v inte
 }
 
 func expandNetworkConnectivitySpokeLinkedVpnTunnelsIncludeImportRanges(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandNetworkConnectivitySpokeLinkedVpnTunnelsExcludeImportRanges(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandNetworkConnectivitySpokeLinkedVpnTunnelsIncludeExportRanges(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandNetworkConnectivitySpokeLinkedVpnTunnelsExcludeExportRanges(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
@@ -1333,6 +1501,27 @@ func expandNetworkConnectivitySpokeLinkedInterconnectAttachments(v interface{}, 
 		transformed["includeImportRanges"] = transformedIncludeImportRanges
 	}
 
+	transformedExcludeImportRanges, err := expandNetworkConnectivitySpokeLinkedInterconnectAttachmentsExcludeImportRanges(original["exclude_import_ranges"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedExcludeImportRanges); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["excludeImportRanges"] = transformedExcludeImportRanges
+	}
+
+	transformedIncludeExportRanges, err := expandNetworkConnectivitySpokeLinkedInterconnectAttachmentsIncludeExportRanges(original["include_export_ranges"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedIncludeExportRanges); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["includeExportRanges"] = transformedIncludeExportRanges
+	}
+
+	transformedExcludeExportRanges, err := expandNetworkConnectivitySpokeLinkedInterconnectAttachmentsExcludeExportRanges(original["exclude_export_ranges"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedExcludeExportRanges); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["excludeExportRanges"] = transformedExcludeExportRanges
+	}
+
 	return transformed, nil
 }
 
@@ -1345,6 +1534,18 @@ func expandNetworkConnectivitySpokeLinkedInterconnectAttachmentsSiteToSiteDataTr
 }
 
 func expandNetworkConnectivitySpokeLinkedInterconnectAttachmentsIncludeImportRanges(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandNetworkConnectivitySpokeLinkedInterconnectAttachmentsExcludeImportRanges(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandNetworkConnectivitySpokeLinkedInterconnectAttachmentsIncludeExportRanges(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandNetworkConnectivitySpokeLinkedInterconnectAttachmentsExcludeExportRanges(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
@@ -1379,6 +1580,27 @@ func expandNetworkConnectivitySpokeLinkedRouterApplianceInstances(v interface{},
 		return nil, err
 	} else if val := reflect.ValueOf(transformedIncludeImportRanges); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["includeImportRanges"] = transformedIncludeImportRanges
+	}
+
+	transformedExcludeImportRanges, err := expandNetworkConnectivitySpokeLinkedRouterApplianceInstancesExcludeImportRanges(original["exclude_import_ranges"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedExcludeImportRanges); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["excludeImportRanges"] = transformedExcludeImportRanges
+	}
+
+	transformedIncludeExportRanges, err := expandNetworkConnectivitySpokeLinkedRouterApplianceInstancesIncludeExportRanges(original["include_export_ranges"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedIncludeExportRanges); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["includeExportRanges"] = transformedIncludeExportRanges
+	}
+
+	transformedExcludeExportRanges, err := expandNetworkConnectivitySpokeLinkedRouterApplianceInstancesExcludeExportRanges(original["exclude_export_ranges"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedExcludeExportRanges); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["excludeExportRanges"] = transformedExcludeExportRanges
 	}
 
 	return transformed, nil
@@ -1429,6 +1651,18 @@ func expandNetworkConnectivitySpokeLinkedRouterApplianceInstancesSiteToSiteDataT
 }
 
 func expandNetworkConnectivitySpokeLinkedRouterApplianceInstancesIncludeImportRanges(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandNetworkConnectivitySpokeLinkedRouterApplianceInstancesExcludeImportRanges(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandNetworkConnectivitySpokeLinkedRouterApplianceInstancesIncludeExportRanges(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandNetworkConnectivitySpokeLinkedRouterApplianceInstancesExcludeExportRanges(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
