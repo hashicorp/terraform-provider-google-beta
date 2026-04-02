@@ -79,6 +79,7 @@ func ResourceComputeInstanceTemplate() *schema.Resource {
 		},
 		SchemaVersion: 1,
 		CustomizeDiff: customdiff.All(
+			tpgresource.DefaultProviderDeletionPolicy("DELETE"),
 			tpgresource.DefaultProviderProject,
 			resourceComputeInstanceTemplateSourceImageCustomizeDiff,
 			resourceComputeInstanceTemplateScratchDiskCustomizeDiff,
