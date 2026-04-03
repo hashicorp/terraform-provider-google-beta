@@ -52,6 +52,7 @@ func ResourceComputeTargetPool() *schema.Resource {
 		},
 
 		CustomizeDiff: customdiff.All(
+			tpgresource.DefaultProviderDeletionPolicy("DELETE"),
 			tpgresource.DefaultProviderProject,
 			tpgresource.DefaultProviderRegion,
 		),
@@ -149,6 +150,9 @@ func ResourceComputeTargetPool() *schema.Resource {
 				Optional:    true,
 				Description: `The resource URL for the security policy associated with this target pool.`,
 			},
+			//UDP schema start
+			"deletion_policy": tpgresource.DeletionPolicySchemaEntry("DELETE"),
+			//UDP schema end
 		},
 		UseJSONNumber: true,
 	}
@@ -302,6 +306,11 @@ func resourceComputeTargetPoolCreate(d *schema.ResourceData, meta interface{}) e
 }
 
 func resourceComputeTargetPoolUpdate(d *schema.ResourceData, meta interface{}) error {
+	//UDP update shortcircuit start
+	if tpgresource.DeletionPolicyPreUpdate(d, ResourceComputeTargetPool) {
+		return ResourceComputeTargetPool().Read(d, meta)
+	}
+	//UDP update shortcircuit end
 	config := meta.(*transport_tpg.Config)
 	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
@@ -537,10 +546,22 @@ func resourceComputeTargetPoolRead(d *schema.ResourceData, meta interface{}) err
 	if err := d.Set("security_policy", tpool.SecurityPolicy); err != nil {
 		return fmt.Errorf("Error setting security_policy: %s", err)
 	}
+	//UDP default read start
+	if err := tpgresource.DeletionPolicyReadDefault(d, config, "DELETE"); err != nil {
+		return err
+	}
+	//UDP default read end
 	return nil
 }
 
 func resourceComputeTargetPoolDelete(d *schema.ResourceData, meta interface{}) error {
+	//UDP pre-delete start
+	if ok, err := tpgresource.DeletionPolicyPreDelete(d); err != nil {
+		return err
+	} else if ok {
+		return nil
+	}
+	//UDP pre-delete end
 	config := meta.(*transport_tpg.Config)
 	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
