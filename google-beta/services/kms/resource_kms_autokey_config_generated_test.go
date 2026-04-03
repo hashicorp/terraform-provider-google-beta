@@ -53,10 +53,14 @@ var (
 func TestAccKMSAutokeyConfig_kmsAutokeyConfigAllExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"billing_account": envvar.GetTestBillingAccountFromEnv(t),
-		"org_id":          envvar.GetTestOrgFromEnv(t),
-		"random_suffix":   acctest.RandString(t, 10),
+		"billing_account":  envvar.GetTestBillingAccountFromEnv(t),
+		"org_id":           envvar.GetTestOrgFromEnv(t),
+		"folder_name":      "tf-test-folder-cfg" + randomSuffix,
+		"key_project_name": "tf-test-key-proj" + randomSuffix,
+		"random_suffix":    randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -86,7 +90,7 @@ func testAccKMSAutokeyConfig_kmsAutokeyConfigAllExample(context map[string]inter
 # Create Folder in GCP Organization
 resource "google_folder" "autokms_folder" {
   provider     = google-beta
-  display_name = "tf-test-folder-cfg%{random_suffix}"
+  display_name = "%{folder_name}"
   parent       = "organizations/%{org_id}"
   deletion_protection = false
 }
@@ -94,8 +98,8 @@ resource "google_folder" "autokms_folder" {
 # Create the key project
 resource "google_project" "key_project" {
   provider        = google-beta
-  project_id      = "tf-test-key-proj%{random_suffix}"
-  name            = "tf-test-key-proj%{random_suffix}"
+  project_id      = "%{key_project_name}"
+  name            = "%{key_project_name}"
   folder_id       = google_folder.autokms_folder.folder_id
   billing_account = "%{billing_account}"
   depends_on      = [google_folder.autokms_folder]
@@ -150,6 +154,7 @@ resource "google_kms_autokey_config" "example-autokeyconfig" {
   provider    = google-beta
   folder      = google_folder.autokms_folder.id
   key_project = "projects/${google_project.key_project.project_id}"
+  key_project_resolution_mode = "DEDICATED_KEY_PROJECT"
   depends_on  = [time_sleep.wait_srv_acc_permissions]
 }
 
@@ -190,7 +195,11 @@ func testAccCheckKMSAutokeyConfigDestroyProducer(t *testing.T) func(s *terraform
 				return nil
 			}
 
-			if v := res["key_project"]; v != nil {
+			if v := res["keyProject"]; v != nil {
+				return fmt.Errorf("AutokeyConfig still exists at %s", url)
+			}
+
+			if v := res["keyProjectResolutionMode"]; v != nil {
 				return fmt.Errorf("AutokeyConfig still exists at %s", url)
 			}
 

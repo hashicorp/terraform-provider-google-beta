@@ -245,6 +245,8 @@ func resourceCloudQuotasQuotaAdjusterSettingsRead(d *schema.ResourceData, meta i
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("CloudQuotasQuotaAdjusterSettings %q", d.Id()))
 	}
 
+	log.Printf("[DEBUG] Finished reading CloudQuotasQuotaAdjusterSettings %q: %#v", d.Id(), res)
+
 	if err := d.Set("enablement", flattenCloudQuotasQuotaAdjusterSettingsEnablement(res["enablement"], d, config)); err != nil {
 		return fmt.Errorf("Error reading QuotaAdjusterSettings: %s", err)
 	}

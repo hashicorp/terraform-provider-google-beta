@@ -53,12 +53,16 @@ var (
 func TestAccFirebaseAppCheckDeviceCheckConfig_firebaseAppCheckDeviceCheckConfigFullExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"project_id":       envvar.GetTestProjectFromEnv(),
+		"bundle_id":        "bundle.id.devicecheck" + randomSuffix,
+		"key_id":           "Key ID" + randomSuffix,
 		"private_key_path": "test-fixtures/private-key-2.p8",
 		"team_id":          "9987654321",
 		"token_ttl":        "7200s",
-		"random_suffix":    acctest.RandString(t, 10),
+		"random_suffix":    randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -89,7 +93,7 @@ resource "google_firebase_apple_app" "default" {
 
   project      = "%{project_id}"
   display_name = "Apple app"
-  bundle_id    = "bundle.id.devicecheck%{random_suffix}"
+  bundle_id    = "%{bundle_id}"
   team_id      = "%{team_id}"
 }
 
@@ -106,7 +110,7 @@ resource "google_firebase_app_check_device_check_config" "default" {
   project     = "%{project_id}"
   app_id      = google_firebase_apple_app.default.app_id
   token_ttl   = "%{token_ttl}"
-  key_id      = "Key ID%{random_suffix}"
+  key_id      = "%{key_id}"
   private_key = file("%{private_key_path}")
 
   depends_on = [time_sleep.wait_30s]

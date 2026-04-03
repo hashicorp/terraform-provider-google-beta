@@ -53,14 +53,18 @@ var (
 func TestAccComputeRegionHealthAggregationPolicy_computeRegionHealthAggregationPolicyBasicExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"project":       envvar.GetTestProjectFromEnv(),
-		"random_suffix": acctest.RandString(t, 10),
+		"description":   "Example health aggregation policy basic" + randomSuffix,
+		"name":          "tf-test-test-health-aggregation-policy" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeRegionHealthAggregationPolicyDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -79,13 +83,11 @@ func TestAccComputeRegionHealthAggregationPolicy_computeRegionHealthAggregationP
 func testAccComputeRegionHealthAggregationPolicy_computeRegionHealthAggregationPolicyBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 data "google_project" "project" {
-  provider = google-beta
 }
 
 resource "google_compute_region_health_aggregation_policy" "example_test_health_aggregation_policy" {
-  provider    = google-beta
-  name        = "tf-test-test-health-aggregation-policy%{random_suffix}"
-  description = "Example health aggregation policy basic%{random_suffix}"
+  name        = "%{name}"
+  description = "%{description}"
   region      = "us-central1"
 }
 `, context)

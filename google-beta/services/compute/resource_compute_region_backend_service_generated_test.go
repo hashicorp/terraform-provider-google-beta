@@ -53,8 +53,12 @@ var (
 func TestAccComputeRegionBackendService_regionBackendServiceBasicExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"health_check_name":           "tf-test-rbs-health-check" + randomSuffix,
+		"region_backend_service_name": "tf-test-region-service" + randomSuffix,
+		"random_suffix":               randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -78,7 +82,7 @@ func TestAccComputeRegionBackendService_regionBackendServiceBasicExample(t *test
 func testAccComputeRegionBackendService_regionBackendServiceBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_region_backend_service" "default" {
-  name                            = "tf-test-region-service%{random_suffix}"
+  name                            = "%{region_backend_service_name}"
   region                          = "us-central1"
   health_checks                   = [google_compute_health_check.default.id]
   connection_draining_timeout_sec = 10
@@ -86,7 +90,7 @@ resource "google_compute_region_backend_service" "default" {
 }
 
 resource "google_compute_health_check" "default" {
-  name               = "tf-test-rbs-health-check%{random_suffix}"
+  name               = "%{health_check_name}"
   check_interval_sec = 1
   timeout_sec        = 1
 
@@ -100,8 +104,11 @@ resource "google_compute_health_check" "default" {
 func TestAccComputeRegionBackendService_regionBackendServiceExternalIapExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"region_backend_service_name": "tf-test-tf-test-region-service-external" + randomSuffix,
+		"random_suffix":               randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -125,7 +132,7 @@ func TestAccComputeRegionBackendService_regionBackendServiceExternalIapExample(t
 func testAccComputeRegionBackendService_regionBackendServiceExternalIapExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_region_backend_service" "default" {
-  name                  = "tf-test-tf-test-region-service-external%{random_suffix}"
+  name                  = "%{region_backend_service_name}"
   region                = "us-central1"
   protocol              = "HTTP"
   load_balancing_scheme = "EXTERNAL"
@@ -141,8 +148,12 @@ resource "google_compute_region_backend_service" "default" {
 func TestAccComputeRegionBackendService_regionBackendServiceCacheExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"health_check_name":           "tf-test-rbs-health-check" + randomSuffix,
+		"region_backend_service_name": "tf-test-region-service" + randomSuffix,
+		"random_suffix":               randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -168,7 +179,7 @@ func testAccComputeRegionBackendService_regionBackendServiceCacheExample(context
 resource "google_compute_region_backend_service" "default" {
   provider = google-beta
 
-  name                            = "tf-test-region-service%{random_suffix}"
+  name                            = "%{region_backend_service_name}"
   region                          = "us-central1"
   health_checks                   = [google_compute_region_health_check.default.id]
   enable_cdn  = true
@@ -189,7 +200,7 @@ resource "google_compute_region_backend_service" "default" {
 resource "google_compute_region_health_check" "default" {
   provider = google-beta
 
-  name               = "tf-test-rbs-health-check%{random_suffix}"
+  name               = "%{health_check_name}"
   region             = "us-central1"
 
   http_health_check {
@@ -202,8 +213,12 @@ resource "google_compute_region_health_check" "default" {
 func TestAccComputeRegionBackendService_regionBackendServiceIlbRoundRobinExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"health_check_name":           "tf-test-rbs-health-check" + randomSuffix,
+		"region_backend_service_name": "tf-test-region-service" + randomSuffix,
+		"random_suffix":               randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -228,7 +243,7 @@ func testAccComputeRegionBackendService_regionBackendServiceIlbRoundRobinExample
 	return acctest.Nprintf(`
 resource "google_compute_region_backend_service" "default" {
   region = "us-central1"
-  name = "tf-test-region-service%{random_suffix}"
+  name = "%{region_backend_service_name}"
   health_checks = [google_compute_health_check.health_check.id]
   protocol = "HTTP"
   load_balancing_scheme = "INTERNAL_MANAGED"
@@ -236,7 +251,7 @@ resource "google_compute_region_backend_service" "default" {
 }
 
 resource "google_compute_health_check" "health_check" {
-  name               = "tf-test-rbs-health-check%{random_suffix}"
+  name               = "%{health_check_name}"
   http_health_check {
     port = 80
   }
@@ -247,8 +262,12 @@ resource "google_compute_health_check" "health_check" {
 func TestAccComputeRegionBackendService_regionBackendServiceExternalExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"health_check_name":           "tf-test-rbs-health-check" + randomSuffix,
+		"region_backend_service_name": "tf-test-region-service" + randomSuffix,
+		"random_suffix":               randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -274,7 +293,7 @@ func testAccComputeRegionBackendService_regionBackendServiceExternalExample(cont
 resource "google_compute_region_backend_service" "default" {
   provider              = google-beta
   region                = "us-central1"
-  name                  = "tf-test-region-service%{random_suffix}"
+  name                  = "%{region_backend_service_name}"
   health_checks         = [google_compute_region_health_check.health_check.id]
   protocol              = "TCP"
   load_balancing_scheme = "EXTERNAL"
@@ -282,7 +301,7 @@ resource "google_compute_region_backend_service" "default" {
 
 resource "google_compute_region_health_check" "health_check" {
   provider           = google-beta
-  name               = "tf-test-rbs-health-check%{random_suffix}"
+  name               = "%{health_check_name}"
   region             = "us-central1"
 
   tcp_health_check {
@@ -295,8 +314,12 @@ resource "google_compute_region_health_check" "health_check" {
 func TestAccComputeRegionBackendService_regionBackendServiceExternalWeightedExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"health_check_name":           "tf-test-rbs-health-check" + randomSuffix,
+		"region_backend_service_name": "tf-test-region-service" + randomSuffix,
+		"random_suffix":               randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -321,7 +344,7 @@ func testAccComputeRegionBackendService_regionBackendServiceExternalWeightedExam
 	return acctest.Nprintf(`
 resource "google_compute_region_backend_service" "default" {
   region                = "us-central1"
-  name                  = "tf-test-region-service%{random_suffix}"
+  name                  = "%{region_backend_service_name}"
   health_checks         = [google_compute_region_health_check.health_check.id]
   protocol              = "TCP"
   load_balancing_scheme = "EXTERNAL"
@@ -329,7 +352,7 @@ resource "google_compute_region_backend_service" "default" {
 }
 
 resource "google_compute_region_health_check" "health_check" {
-  name               = "tf-test-rbs-health-check%{random_suffix}"
+  name               = "%{health_check_name}"
   region             = "us-central1"
 
   http_health_check {
@@ -342,8 +365,12 @@ resource "google_compute_region_health_check" "health_check" {
 func TestAccComputeRegionBackendService_regionBackendServiceIlbRingHashExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"health_check_name":           "tf-test-rbs-health-check" + randomSuffix,
+		"region_backend_service_name": "tf-test-region-service" + randomSuffix,
+		"random_suffix":               randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -368,7 +395,7 @@ func testAccComputeRegionBackendService_regionBackendServiceIlbRingHashExample(c
 	return acctest.Nprintf(`
 resource "google_compute_region_backend_service" "default" {
   region = "us-central1"
-  name = "tf-test-region-service%{random_suffix}"
+  name = "%{region_backend_service_name}"
   health_checks = [google_compute_health_check.health_check.id]
   load_balancing_scheme = "INTERNAL_MANAGED"
   locality_lb_policy = "RING_HASH"
@@ -392,7 +419,7 @@ resource "google_compute_region_backend_service" "default" {
 }
 
 resource "google_compute_health_check" "health_check" {
-  name               = "tf-test-rbs-health-check%{random_suffix}"
+  name               = "%{health_check_name}"
   http_health_check {
     port = 80
   }
@@ -403,8 +430,12 @@ resource "google_compute_health_check" "health_check" {
 func TestAccComputeRegionBackendService_regionBackendServiceIlbStatefulSessionAffinityExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"health_check_name":           "tf-test-rbs-health-check" + randomSuffix,
+		"region_backend_service_name": "tf-test-region-service" + randomSuffix,
+		"random_suffix":               randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -431,7 +462,7 @@ resource "google_compute_region_backend_service" "default" {
   provider = google-beta
 
   region = "us-central1"
-  name = "tf-test-region-service%{random_suffix}"
+  name = "%{region_backend_service_name}"
   health_checks = [google_compute_health_check.health_check.id]
   load_balancing_scheme = "INTERNAL_MANAGED"
   locality_lb_policy = "RING_HASH"
@@ -449,7 +480,7 @@ resource "google_compute_region_backend_service" "default" {
 
 resource "google_compute_health_check" "health_check" {
   provider = google-beta
-  name               = "tf-test-rbs-health-check%{random_suffix}"
+  name               = "%{health_check_name}"
   http_health_check {
     port = 80
   }
@@ -460,8 +491,14 @@ resource "google_compute_health_check" "health_check" {
 func TestAccComputeRegionBackendService_regionBackendServiceBalancingModeExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"network_name":                "tf-test-rbs-net" + randomSuffix,
+		"region_backend_service_name": "tf-test-region-service" + randomSuffix,
+		"region_health_check_name":    "tf-test-rbs-health-check" + randomSuffix,
+		"rigm_name":                   "tf-test-rbs-rigm" + randomSuffix,
+		"random_suffix":               randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -494,7 +531,7 @@ resource "google_compute_region_backend_service" "default" {
   }
 
   region      = "us-central1"
-  name        = "tf-test-region-service%{random_suffix}"
+  name        = "%{region_backend_service_name}"
   protocol    = "H2C"
   timeout_sec = 10
 
@@ -508,7 +545,7 @@ data "google_compute_image" "debian_image" {
 
 resource "google_compute_region_instance_group_manager" "rigm" {
   region   = "us-central1"
-  name     = "tf-test-rbs-rigm%{random_suffix}"
+  name     = "%{rigm_name}"
   version {
     instance_template = google_compute_instance_template.instance_template.id
     name              = "primary"
@@ -518,7 +555,7 @@ resource "google_compute_region_instance_group_manager" "rigm" {
 }
 
 resource "google_compute_instance_template" "instance_template" {
-  name         = "template-tf-test-region-service%{random_suffix}"
+  name         = "template-%{region_backend_service_name}"
   machine_type = "e2-medium"
 
   network_interface {
@@ -537,20 +574,20 @@ resource "google_compute_instance_template" "instance_template" {
 
 resource "google_compute_region_health_check" "default" {
   region = "us-central1"
-  name   = "tf-test-rbs-health-check%{random_suffix}"
+  name   = "%{region_health_check_name}"
   http_health_check {
     port_specification = "USE_SERVING_PORT"
   }
 }
 
 resource "google_compute_network" "default" {
-  name                    = "tf-test-rbs-net%{random_suffix}"
+  name                    = "%{network_name}"
   auto_create_subnetworks = false
   routing_mode            = "REGIONAL"
 }
 
 resource "google_compute_subnetwork" "default" {
-  name          = "tf-test-rbs-net%{random_suffix}-default"
+  name          = "%{network_name}-default"
   ip_cidr_range = "10.1.2.0/24"
   region        = "us-central1"
   network       = google_compute_network.default.id
@@ -561,8 +598,12 @@ resource "google_compute_subnetwork" "default" {
 func TestAccComputeRegionBackendService_regionBackendServiceConnectionTrackingExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"health_check_name":           "tf-test-rbs-health-check" + randomSuffix,
+		"region_backend_service_name": "tf-test-region-service" + randomSuffix,
+		"random_suffix":               randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -587,7 +628,7 @@ func testAccComputeRegionBackendService_regionBackendServiceConnectionTrackingEx
 	return acctest.Nprintf(`
 resource "google_compute_region_backend_service" "default" {
   provider                        = google-beta
-  name                            = "tf-test-region-service%{random_suffix}"
+  name                            = "%{region_backend_service_name}"
   region                          = "us-central1"
   health_checks                   = [google_compute_region_health_check.health_check.id]
   connection_draining_timeout_sec = 10
@@ -604,7 +645,7 @@ resource "google_compute_region_backend_service" "default" {
 
 resource "google_compute_region_health_check" "health_check" {
   provider           = google-beta
-  name               = "tf-test-rbs-health-check%{random_suffix}"
+  name               = "%{health_check_name}"
   region             = "us-central1"
 
   tcp_health_check {
@@ -617,8 +658,12 @@ resource "google_compute_region_health_check" "health_check" {
 func TestAccComputeRegionBackendService_regionBackendServiceIpAddressSelectionPolicyExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"health_check_name":           "tf-test-rbs-health-check" + randomSuffix,
+		"region_backend_service_name": "tf-test-region-service" + randomSuffix,
+		"random_suffix":               randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -642,7 +687,7 @@ func TestAccComputeRegionBackendService_regionBackendServiceIpAddressSelectionPo
 func testAccComputeRegionBackendService_regionBackendServiceIpAddressSelectionPolicyExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_region_backend_service" "default" {
-  name                            = "tf-test-region-service%{random_suffix}"
+  name                            = "%{region_backend_service_name}"
   region                          = "us-central1"
   health_checks                   = [google_compute_region_health_check.health_check.id]
 
@@ -652,7 +697,7 @@ resource "google_compute_region_backend_service" "default" {
 }
 
 resource "google_compute_region_health_check" "health_check" {
-  name               = "tf-test-rbs-health-check%{random_suffix}"
+  name               = "%{health_check_name}"
   region             = "us-central1"
 
   tcp_health_check {
@@ -665,8 +710,14 @@ resource "google_compute_region_health_check" "health_check" {
 func TestAccComputeRegionBackendService_regionBackendServiceIlbCustomMetricsExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"default_neg_name":            "tf-test-network-endpoint" + randomSuffix,
+		"health_check_name":           "tf-test-rbs-health-check" + randomSuffix,
+		"network_name":                "network" + randomSuffix,
+		"region_backend_service_name": "tf-test-region-service" + randomSuffix,
+		"random_suffix":               randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -690,12 +741,12 @@ func TestAccComputeRegionBackendService_regionBackendServiceIlbCustomMetricsExam
 func testAccComputeRegionBackendService_regionBackendServiceIlbCustomMetricsExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_network" "default" {
-  name                    = "network%{random_suffix}"
+  name                    = "%{network_name}"
 }
 
 // Zonal NEG with GCE_VM_IP_PORT
 resource "google_compute_network_endpoint_group" "default" {
-  name                  = "tf-test-network-endpoint%{random_suffix}"
+  name                  = "%{default_neg_name}"
   network               = google_compute_network.default.id
   default_port          = "90"
   zone                  = "us-central1-a"
@@ -704,7 +755,7 @@ resource "google_compute_network_endpoint_group" "default" {
 
 resource "google_compute_region_backend_service" "default" {
   region = "us-central1"
-  name = "tf-test-region-service%{random_suffix}"
+  name = "%{region_backend_service_name}"
   health_checks = [google_compute_health_check.health_check.id]
   load_balancing_scheme = "INTERNAL_MANAGED"
   locality_lb_policy    = "WEIGHTED_ROUND_ROBIN"
@@ -730,7 +781,7 @@ resource "google_compute_region_backend_service" "default" {
 }
 
 resource "google_compute_health_check" "health_check" {
-  name               = "tf-test-rbs-health-check%{random_suffix}"
+  name               = "%{health_check_name}"
   http_health_check {
     port = 80
   }
@@ -741,8 +792,11 @@ resource "google_compute_health_check" "health_check" {
 func TestAccComputeRegionBackendService_regionBackendServiceDynamicForwardingExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"region_backend_service_name": "tf-test-region-service" + randomSuffix,
+		"random_suffix":               randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -767,7 +821,7 @@ func testAccComputeRegionBackendService_regionBackendServiceDynamicForwardingExa
 	return acctest.Nprintf(`
 resource "google_compute_region_backend_service" "default" {
   provider                        = google-beta
-  name                            = "tf-test-region-service%{random_suffix}"
+  name                            = "%{region_backend_service_name}"
   region                          = "us-central1"
   load_balancing_scheme           = "EXTERNAL_MANAGED"
   dynamic_forwarding {
@@ -782,8 +836,11 @@ resource "google_compute_region_backend_service" "default" {
 func TestAccComputeRegionBackendService_regionBackendServiceDynamicForwardingForwardProxyCloudRunExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"region_backend_service_name": "tf-test-region-service" + randomSuffix,
+		"random_suffix":               randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -808,7 +865,7 @@ func testAccComputeRegionBackendService_regionBackendServiceDynamicForwardingFor
 	return acctest.Nprintf(`
 resource "google_compute_region_backend_service" "default" {
   provider              = google-beta
-  name                  = "tf-test-region-service%{random_suffix}"
+  name                  = "%{region_backend_service_name}"
   region                = "us-central1"
   load_balancing_scheme = "INTERNAL_SELF_MANAGED"
   protocol = "HTTP2"
@@ -825,8 +882,11 @@ resource "google_compute_region_backend_service" "default" {
 func TestAccComputeRegionBackendService_regionBackendServiceDynamicForwardingForwardProxyDirectForwardingExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"region_backend_service_name": "tf-test-region-service" + randomSuffix,
+		"random_suffix":               randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -851,7 +911,7 @@ func testAccComputeRegionBackendService_regionBackendServiceDynamicForwardingFor
 	return acctest.Nprintf(`
 resource "google_compute_region_backend_service" "default" {
   provider                        = google-beta
-  name                            = "tf-test-region-service%{random_suffix}"
+  name                            = "%{region_backend_service_name}"
   region                          = "us-central1"
   load_balancing_scheme           = "INTERNAL_SELF_MANAGED"
   protocol                        = "HTTP2"
@@ -868,8 +928,12 @@ resource "google_compute_region_backend_service" "default" {
 func TestAccComputeRegionBackendService_regionBackendServiceHaPolicyExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"network_name":                "tf-test-rbs-net" + randomSuffix,
+		"region_backend_service_name": "tf-test-region-service" + randomSuffix,
+		"random_suffix":               randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -893,12 +957,12 @@ func TestAccComputeRegionBackendService_regionBackendServiceHaPolicyExample(t *t
 func testAccComputeRegionBackendService_regionBackendServiceHaPolicyExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_network" "default" {
-  name = "tf-test-rbs-net%{random_suffix}"
+  name = "%{network_name}"
 }
 
 resource "google_compute_region_backend_service" "default" {
   region                          = "us-central1"
-  name                            = "tf-test-region-service%{random_suffix}"
+  name                            = "%{region_backend_service_name}"
   protocol                        = "UDP"
   load_balancing_scheme           = "EXTERNAL"
   network                         = google_compute_network.default.id
@@ -914,8 +978,15 @@ resource "google_compute_region_backend_service" "default" {
 func TestAccComputeRegionBackendService_regionBackendServiceHaPolicyManualLeaderExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"instance_name":               "tf-test-rbs-instance" + randomSuffix,
+		"neg_name":                    "tf-test-rbs-neg" + randomSuffix,
+		"network_name":                "tf-test-rbs-net" + randomSuffix,
+		"region_backend_service_name": "tf-test-region-service" + randomSuffix,
+		"subnetwork_name":             "tf-test-rbs-subnet" + randomSuffix,
+		"random_suffix":               randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -939,12 +1010,12 @@ func TestAccComputeRegionBackendService_regionBackendServiceHaPolicyManualLeader
 func testAccComputeRegionBackendService_regionBackendServiceHaPolicyManualLeaderExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_network" "default" {
-  name                    = "tf-test-rbs-net%{random_suffix}"
+  name                    = "%{network_name}"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "default" {
-  name          = "tf-test-rbs-subnet%{random_suffix}"
+  name          = "%{subnetwork_name}"
   ip_cidr_range = "10.1.2.0/24"
   region        = "us-central1"
   network       = google_compute_network.default.id
@@ -963,7 +1034,7 @@ data "google_compute_image" "my_image" {
 }
 
 resource "google_compute_instance" "endpoint-instance" {
-  name         = "tf-test-rbs-instance%{random_suffix}"
+  name         = "%{instance_name}"
   machine_type = "e2-medium"
 
   boot_disk {
@@ -980,7 +1051,7 @@ resource "google_compute_instance" "endpoint-instance" {
 }
 
 resource "google_compute_network_endpoint_group" "neg" {
-  name                  = "tf-test-rbs-neg%{random_suffix}"
+  name                  = "%{neg_name}"
   network_endpoint_type = "GCE_VM_IP"
   network               = google_compute_network.default.id
   subnetwork            = google_compute_subnetwork.default.id
@@ -989,7 +1060,7 @@ resource "google_compute_network_endpoint_group" "neg" {
 
 resource "google_compute_region_backend_service" "default" {
   region                          = "us-central1"
-  name                            = "tf-test-region-service%{random_suffix}"
+  name                            = "%{region_backend_service_name}"
   protocol                        = "UDP"
   load_balancing_scheme           = "EXTERNAL"
   network                         = google_compute_network.default.id
@@ -1015,8 +1086,13 @@ resource "google_compute_region_backend_service" "default" {
 func TestAccComputeRegionBackendService_regionBackendServiceTlsSettingsExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"authentication_name":         "authentication" + randomSuffix,
+		"health_check_name":           "tf-test-health-check" + randomSuffix,
+		"region_backend_service_name": "tf-test-region-service" + randomSuffix,
+		"random_suffix":               randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -1041,7 +1117,7 @@ func testAccComputeRegionBackendService_regionBackendServiceTlsSettingsExample(c
 	return acctest.Nprintf(`
 resource "google_compute_region_backend_service" "default" {
   region = "europe-north1"
-  name          = "tf-test-region-service%{random_suffix}"
+  name          = "%{region_backend_service_name}"
   health_checks = [google_compute_region_health_check.default.id]
   load_balancing_scheme = "EXTERNAL_MANAGED"
   protocol = "HTTPS"
@@ -1058,7 +1134,7 @@ resource "google_compute_region_backend_service" "default" {
 }
 
 resource "google_compute_region_health_check" "default" {
-  name = "tf-test-health-check%{random_suffix}"
+  name = "%{health_check_name}"
   region = "europe-north1"
   http_health_check {
     port = 80
@@ -1066,7 +1142,7 @@ resource "google_compute_region_health_check" "default" {
 }
 
 resource "google_network_security_backend_authentication_config" "default" {
-  name             = "authentication%{random_suffix}"
+  name             = "%{authentication_name}"
   location = "europe-north1"
   well_known_roots = "PUBLIC_ROOTS"
 }

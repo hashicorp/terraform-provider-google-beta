@@ -53,8 +53,11 @@ var (
 func TestAccFirebaseAILogicPromptTemplate_firebaseailogicPromptTemplateFileExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"template_id":   "tf-test-file-template" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -80,7 +83,7 @@ func testAccFirebaseAILogicPromptTemplate_firebaseailogicPromptTemplateFileExamp
 resource "google_firebase_ai_logic_prompt_template" "file" {
   provider = google-beta
   location = "global"
-  template_id = "tf-test-file-template%{random_suffix}"
+  template_id = "%{template_id}"
   template_string = file("test-fixtures/hello_world.prompt")
 }
 `, context)
@@ -89,8 +92,11 @@ resource "google_firebase_ai_logic_prompt_template" "file" {
 func TestAccFirebaseAILogicPromptTemplate_firebaseailogicPromptTemplateBasicExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"template_id":   "tf-test-basic-template" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -116,7 +122,7 @@ func testAccFirebaseAILogicPromptTemplate_firebaseailogicPromptTemplateBasicExam
 resource "google_firebase_ai_logic_prompt_template" "basic" {
   provider = google-beta
   location = "global"
-  template_id = "tf-test-basic-template%{random_suffix}"
+  template_id = "%{template_id}"
   template_string = <<EOF
 ---
 model: gemini-2.5-flash

@@ -53,8 +53,11 @@ var (
 func TestAccNetworkSecurityAuthorizationPolicy_networkSecurityAuthorizationPolicyBasicExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"resource_name": "tf-test-my-authorization-policy" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -79,7 +82,7 @@ func testAccNetworkSecurityAuthorizationPolicy_networkSecurityAuthorizationPolic
 	return acctest.Nprintf(`
 resource "google_network_security_authorization_policy" "default" {
   provider               = google-beta
-  name                   = "tf-test-my-authorization-policy%{random_suffix}"
+  name                   = "%{resource_name}"
   labels                 = {
     foo = "bar"
   }
@@ -98,8 +101,11 @@ resource "google_network_security_authorization_policy" "default" {
 func TestAccNetworkSecurityAuthorizationPolicy_networkSecurityAuthorizationPolicyDestinationsExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"resource_name": "tf-test-my-authorization-policy" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -124,7 +130,7 @@ func testAccNetworkSecurityAuthorizationPolicy_networkSecurityAuthorizationPolic
 	return acctest.Nprintf(`
 resource "google_network_security_authorization_policy" "default" {
   provider               = google-beta
-  name                   = "tf-test-my-authorization-policy%{random_suffix}"
+  name                   = "%{resource_name}"
   labels                 = {
     foo = "bar"
   }

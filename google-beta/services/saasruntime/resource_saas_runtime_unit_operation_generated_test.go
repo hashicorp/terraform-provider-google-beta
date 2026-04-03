@@ -59,12 +59,24 @@ func TestAccSaasRuntimeUnitOperation_saasRuntimeUnitOperationBasicExample(t *tes
 		},
 	})
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"billing_account": envvar.GetTestBillingAccountFromEnv(t),
-		"org_id":          envvar.GetTestOrgFromEnv(t),
-		"project":         envvar.GetTestProjectFromEnv(),
-		"project_number":  envvar.GetTestProjectNumberFromEnv(),
-		"random_suffix":   acctest.RandString(t, 10),
+		"billing_account":            envvar.GetTestBillingAccountFromEnv(t),
+		"org_id":                     envvar.GetTestOrgFromEnv(t),
+		"project":                    envvar.GetTestProjectFromEnv(),
+		"project_number":             envvar.GetTestProjectNumberFromEnv(),
+		"actuation_service_account":  "actuator" + randomSuffix,
+		"deprovision_operation_name": "tf-test-deprovision-unit-operation" + randomSuffix,
+		"provision_operation_name":   "tf-test-provision-unit-operation" + randomSuffix,
+		"release_name":               "tf-test-example-release" + randomSuffix,
+		"saas_name":                  "tf-test-example-saas" + randomSuffix,
+		"tenant_name":                "tf-test-example-tenant" + randomSuffix,
+		"tenant_project_name":        "tenant" + randomSuffix,
+		"unit_name":                  "tf-test-example-unit" + randomSuffix,
+		"unitkind_name":              "tf-test-vm-unitkind" + randomSuffix,
+		"upgrade_operation_name":     "tf-test-upgrade-unit-operation" + randomSuffix,
+		"random_suffix":              randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -89,12 +101,12 @@ func testAccSaasRuntimeUnitOperation_saasRuntimeUnitOperationBasicExample(contex
 	return acctest.Nprintf(`
 locals {
   location          = "us-east1"
-  tenant_project_id = "tenant%{random_suffix}"
+  tenant_project_id = "%{tenant_project_name}"
 }
 
 resource "google_saas_runtime_saas" "example_saas" {
   provider = google-beta
-  saas_id  = "tf-test-example-saas%{random_suffix}"
+  saas_id  = "%{saas_name}"
   location = local.location
 
   locations {
@@ -105,15 +117,15 @@ resource "google_saas_runtime_saas" "example_saas" {
 resource "google_saas_runtime_unit_kind" "cluster_unit_kind" {
   provider        = google-beta
   location        = local.location
-  unit_kind_id    = "tf-test-vm-unitkind%{random_suffix}"
+  unit_kind_id    = "%{unitkind_name}"
   saas            = google_saas_runtime_saas.example_saas.id
-  default_release = "projects/%{project}/locations/${local.location}/releases/tf-test-example-release%{random_suffix}"
+  default_release = "projects/%{project}/locations/${local.location}/releases/%{release_name}"
 }
 
 resource "google_saas_runtime_release" "example_release" {
   provider   = google-beta
   location   = local.location
-  release_id = "tf-test-example-release%{random_suffix}"
+  release_id = "%{release_name}"
   unit_kind  = google_saas_runtime_unit_kind.cluster_unit_kind.id
   blueprint {
     package = "us-central1-docker.pkg.dev/ci-test-project-188019/test-repo/tf-test-easysaas-alpha-image@sha256:7992fdbaeaf998ecd31a7f937bb26e38a781ecf49b24857a6176c1e9bfc299ee"
@@ -123,7 +135,7 @@ resource "google_saas_runtime_release" "example_release" {
 resource "google_saas_runtime_unit" "example_unit" {
   provider  = google-beta
   location  = local.location
-  unit_id   = "tf-test-example-unit%{random_suffix}"
+  unit_id   = "%{unit_name}"
   unit_kind = google_saas_runtime_unit_kind.cluster_unit_kind.id
 }
 
@@ -145,7 +157,7 @@ resource "google_project_service" "saas_services" {
 
 resource "google_service_account" "actuation_service_account" {
   provider     = google-beta
-  account_id   = "actuator%{random_suffix}"
+  account_id   = "%{actuation_service_account}"
   display_name = "SaaS Actuation Service Account"
 }
 
@@ -181,7 +193,7 @@ resource "google_saas_runtime_unit_operation" "provision_unit_operation" {
   provider          = google-beta
   depends_on        = [google_project_iam_member.tenant_config_admin, google_project_iam_member.tenant_storage_admin, google_project_iam_member.tenant_compute_admin, google_service_account_iam_member.actuation_token_creator, google_project_service.saas_services]
   location          = local.location
-  unit_operation_id = "tf-test-provision-unit-operation%{random_suffix}"
+  unit_operation_id = "%{provision_operation_name}"
   unit              = google_saas_runtime_unit.example_unit.id
   wait_for_completion = true
 
@@ -225,7 +237,7 @@ resource "google_saas_runtime_unit_operation" "noop_upgrade_unit_operation" {
   provider          = google-beta
   depends_on        = [google_saas_runtime_unit_operation.provision_unit_operation]
   location          = local.location
-  unit_operation_id = "tf-test-upgrade-unit-operation%{random_suffix}"
+  unit_operation_id = "%{upgrade_operation_name}"
   unit              = google_saas_runtime_unit.example_unit.id
   wait_for_completion = true
 
@@ -263,7 +275,7 @@ resource "google_saas_runtime_unit_operation" "deprovision_operation" {
   provider          = google-beta
   depends_on        = [google_saas_runtime_unit_operation.noop_upgrade_unit_operation]
   location          = local.location
-  unit_operation_id = "tf-test-deprovision-unit-operation%{random_suffix}"
+  unit_operation_id = "%{deprovision_operation_name}"
   unit              = google_saas_runtime_unit.example_unit.id
   wait_for_completion = true
   deprovision {}

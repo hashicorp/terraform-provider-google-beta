@@ -240,6 +240,8 @@ func resourceKMSOrganizationKajPolicyConfigRead(d *schema.ResourceData, meta int
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("KMSOrganizationKajPolicyConfig %q", d.Id()))
 	}
 
+	log.Printf("[DEBUG] Finished reading KMSOrganizationKajPolicyConfig %q: %#v", d.Id(), res)
+
 	if err := d.Set("default_key_access_justification_policy", flattenKMSOrganizationKajPolicyConfigDefaultKeyAccessJustificationPolicy(res["defaultKeyAccessJustificationPolicy"], d, config)); err != nil {
 		return fmt.Errorf("Error reading OrganizationKajPolicyConfig: %s", err)
 	}

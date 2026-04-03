@@ -59,9 +59,13 @@ func TestAccSaasRuntimeTenant_saasRuntimeTenantBasicExample(t *testing.T) {
 		},
 	})
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"project":       envvar.GetTestProjectFromEnv(),
-		"random_suffix": acctest.RandString(t, 10),
+		"saas_name":     "tf-test-example-saas" + randomSuffix,
+		"tenant_name":   "tf-test-example-tenant" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -86,7 +90,7 @@ func testAccSaasRuntimeTenant_saasRuntimeTenantBasicExample(context map[string]i
 	return acctest.Nprintf(`
 resource "google_saas_runtime_saas" "example_saas" {
   provider = google-beta
-  saas_id  = "tf-test-example-saas%{random_suffix}"
+  saas_id  = "%{saas_name}"
   location = "global"
 
   locations {
@@ -97,7 +101,7 @@ resource "google_saas_runtime_saas" "example_saas" {
 resource "google_saas_runtime_tenant" "example" {
   provider = google-beta
   location = "global"
-  tenant_id = "tf-test-example-tenant%{random_suffix}"
+  tenant_id = "%{tenant_name}"
   saas = google_saas_runtime_saas.example_saas.id
   consumer_resource = "//compute.googleapis.com/projects/example-project/zones/us-central1-a/instances/example-instance"
 }

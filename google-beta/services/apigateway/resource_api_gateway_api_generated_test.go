@@ -53,8 +53,11 @@ var (
 func TestAccApiGatewayApi_apigatewayApiBasicExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"api_id":        "tf-test-my-api" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -79,7 +82,7 @@ func testAccApiGatewayApi_apigatewayApiBasicExample(context map[string]interface
 	return acctest.Nprintf(`
 resource "google_api_gateway_api" "api" {
   provider = google-beta
-  api_id = "tf-test-my-api%{random_suffix}"
+  api_id = "%{api_id}"
 }
 `, context)
 }
@@ -87,8 +90,11 @@ resource "google_api_gateway_api" "api" {
 func TestAccApiGatewayApi_apigatewayApiFullExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"api_id":        "tf-test-my-api" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -113,7 +119,7 @@ func testAccApiGatewayApi_apigatewayApiFullExample(context map[string]interface{
 	return acctest.Nprintf(`
 resource "google_api_gateway_api" "api" {
   provider = google-beta
-  api_id = "tf-test-my-api%{random_suffix}"
+  api_id = "%{api_id}"
   display_name = "MM Dev API"
   labels = {
     environment = "dev"

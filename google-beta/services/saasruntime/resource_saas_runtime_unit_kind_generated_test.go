@@ -59,9 +59,15 @@ func TestAccSaasRuntimeUnitKind_saasRuntimeUnitKindBasicExample(t *testing.T) {
 		},
 	})
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"project":       envvar.GetTestProjectFromEnv(),
-		"random_suffix": acctest.RandString(t, 10),
+		"project":               envvar.GetTestProjectFromEnv(),
+		"app_unitkind_name":     "tf-test-app-unitkind" + randomSuffix,
+		"cluster_unitkind_name": "tf-test-cluster-unitkind" + randomSuffix,
+		"release_name":          "tf-test-example-release" + randomSuffix,
+		"saas_name":             "tf-test-example-saas" + randomSuffix,
+		"random_suffix":         randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -86,7 +92,7 @@ func testAccSaasRuntimeUnitKind_saasRuntimeUnitKindBasicExample(context map[stri
 	return acctest.Nprintf(`
 resource "google_saas_runtime_saas" "example_saas" {
   provider = google-beta
-  saas_id  = "tf-test-example-saas%{random_suffix}"
+  saas_id  = "%{saas_name}"
   location = "us-east1"
 
   locations {
@@ -97,15 +103,15 @@ resource "google_saas_runtime_saas" "example_saas" {
 resource "google_saas_runtime_unit_kind" "cluster_unit_kind" {
   provider = google-beta
   location = "us-east1"
-  unit_kind_id = "tf-test-cluster-unitkind%{random_suffix}"
+  unit_kind_id = "%{cluster_unitkind_name}"
   saas = google_saas_runtime_saas.example_saas.id
-  default_release = "projects/%{project}/locations/us-east1/releases/tf-test-example-release%{random_suffix}"
+  default_release = "projects/%{project}/locations/us-east1/releases/%{release_name}"
 }
 
 resource "google_saas_runtime_unit_kind" "example" {
   provider = google-beta
   location = "us-east1"
-  unit_kind_id = "tf-test-app-unitkind%{random_suffix}"
+  unit_kind_id = "%{app_unitkind_name}"
   saas = google_saas_runtime_saas.example_saas.id
 
   dependencies {
@@ -117,7 +123,7 @@ resource "google_saas_runtime_unit_kind" "example" {
 resource "google_saas_runtime_release" "example_release" {
   provider          = google-beta
   location          = "us-east1"
-  release_id        = "tf-test-example-release%{random_suffix}"
+  release_id        = "%{release_name}"
   unit_kind         = google_saas_runtime_unit_kind.cluster_unit_kind.id
   blueprint {
     package = "us-central1-docker.pkg.dev/ci-test-project-188019/test-repo/tf-test-easysaas-alpha-image@sha256:7992fdbaeaf998ecd31a7f937bb26e38a781ecf49b24857a6176c1e9bfc299ee"

@@ -53,10 +53,14 @@ var (
 func TestAccObservabilityFolderSettings_observabilityFolderSettingsBasicExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"org_id":        envvar.GetTestOrgFromEnv(t),
+		"folder_name":   "tf-test-tf-test-folder" + randomSuffix,
 		"kms_key_name":  acctest.BootstrapKMSKeyInLocation(t, "us").CryptoKey.Name,
-		"random_suffix": acctest.RandString(t, 10),
+		"location":      "us" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -128,9 +132,12 @@ resource "google_observability_folder_settings" "primary" {
 func TestAccObservabilityFolderSettings_observabilityFolderSettingsBasicGlobalExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"org_id":        envvar.GetTestOrgFromEnv(t),
-		"random_suffix": acctest.RandString(t, 10),
+		"location":      "global" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
