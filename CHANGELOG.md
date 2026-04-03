@@ -1,4 +1,39 @@
-## 7.26.0 (Unreleased)
+## 7.27.0 (Unreleased)
+
+## 7.26.0 (Mar 31, 2026)
+FEATURES:
+* **New Data Source:** `google_network_security_address_groups` ([#11773](https://github.com/hashicorp/terraform-provider-google-beta/pull/11773))
+* **New Resource:** `google_bigqueryreservation_reservation_group` ([#11771](https://github.com/hashicorp/terraform-provider-google-beta/pull/11771))
+* **New Resource:** `google_chronicle_datatable_row` ([#11769](https://github.com/hashicorp/terraform-provider-google-beta/pull/11769))
+* **New Resource:** `google_chronicle_native_dashboard` ([#11806](https://github.com/hashicorp/terraform-provider-google-beta/pull/11806))
+* **New Resource:** `google_contact_center_insights_assessment_rule` ([#11764](https://github.com/hashicorp/terraform-provider-google-beta/pull/11764))
+
+IMPROVEMENTS:
+* bigqueryreservation: added `reservation_group` field to `reservation` resource ([#11771](https://github.com/hashicorp/terraform-provider-google-beta/pull/11771))
+* ces: added `remote_dialogflow_agent.respect_response_interruption_settings` field to `google_ces_agent` resource ([#11786](https://github.com/hashicorp/terraform-provider-google-beta/pull/11786))
+* clusterdirector: made `boot_disk.size_gb` and `boot_disk.type` editable within nodesets and login nodes in `google_hypercomputecluster_cluster` ([#11808](https://github.com/hashicorp/terraform-provider-google-beta/pull/11808))
+* colab: added `colab_image` field to `google_colab_runtime_template` resource ([#11790](https://github.com/hashicorp/terraform-provider-google-beta/pull/11790))
+* colab: made `google_colab_runtime_template` resource updatable ([#11790](https://github.com/hashicorp/terraform-provider-google-beta/pull/11790))
+* compute: added `hyperdisk-balanced` as an option for `disk_type` field in `google_container_cluster` resource ([#11789](https://github.com/hashicorp/terraform-provider-google-beta/pull/11789))
+* compute: added `priority` field to `google_compute_region_network_firewall_policy_association` resource ([#11770](https://github.com/hashicorp/terraform-provider-google-beta/pull/11770))
+* compute: added `load_balancing_scheme` field to `google_compute_target_tcp_proxy` resource ([#11759](https://github.com/hashicorp/terraform-provider-google-beta/pull/11759))
+* compute: made `backend_service` field optional for `google_compute_target_tcp_proxy` resource ([#11759](https://github.com/hashicorp/terraform-provider-google-beta/pull/11759))
+* iambeta: added `SYSTEM_TRUST_DOMAIN` as an additional enum value to `mode` field of `google_iam_workload_identity_pool` resource ([#11779](https://github.com/hashicorp/terraform-provider-google-beta/pull/11779))
+* iambeta: added `use_default_shared_ca` field to `google_iam_workload_identity_pool` resource ([#11791](https://github.com/hashicorp/terraform-provider-google-beta/pull/11791))
+* spanner: added autoscaling config for instance partition and missing asymmetric autoscaling override fields to `google_spanner_instance` resource ([#11785](https://github.com/hashicorp/terraform-provider-google-beta/pull/11785))
+* sql: added `server_certificate_rotation_mode` field to `google_sql_database_instance` resource ([#11783](https://github.com/hashicorp/terraform-provider-google-beta/pull/11783))
+* storage: added `google_managed_encryption_enforcement_config`, `customer_managed_encryption_enforcement_config` and `customer_supplied_encryption_enforcement_config` to `google_storage_bucket` resource ([#11763](https://github.com/hashicorp/terraform-provider-google-beta/pull/11763))
+
+BUG FIXES:
+* alloydb: fixed an issue where `password_wo` and `password_wo_version` fields were not functioning properly during update requests in `google_alloydb_user` resource ([#11782](https://github.com/hashicorp/terraform-provider-google-beta/pull/11782))
+* biglake: fixed erroneous diff for the `properties` field in the `google_biglake_iceberg_table` and `google_biglake_iceberg_namespace` resources ([#11799](https://github.com/hashicorp/terraform-provider-google-beta/pull/11799))
+* cloudfunctionsv2: fixed validation to only allow one of `direct_vpc_network_interface` or `vpc_connector` on `google_cloudfunctions2_function` resource ([#11778](https://github.com/hashicorp/terraform-provider-google-beta/pull/11778))
+* cloudrunv2: fixed validation to only allow one of `network_interfaces` or `connector` on `google_cloud_run_v2_service` and `google_cloud_run_v2_job` resources ([#11778](https://github.com/hashicorp/terraform-provider-google-beta/pull/11778))
+* compute: fixed invalid update mask used for `rate_limit_options` field in `google_compute_region_security_policy_rule` resource ([#11761](https://github.com/hashicorp/terraform-provider-google-beta/pull/11761))
+* compute: fixed invalid update mask used for `rate_limit_options` field in `google_compute_security_policy` and `google_compute_security_policy_rule` resources ([#11760](https://github.com/hashicorp/terraform-provider-google-beta/pull/11760))
+* iambeta: fixed a perma-diff on `mode` field for `google_iam_workload_identity_pool` resource ([#11805](https://github.com/hashicorp/terraform-provider-google-beta/pull/11805))
+* provider: fixed an issue when custom endpoints use `http://` ([#11804](https://github.com/hashicorp/terraform-provider-google-beta/pull/11804))
+* vertexai: fixed operation calls in `google_vertex_ai_` resources not respecting `universe_domain` and `vertex_custom_endpoint` ([#11768](https://github.com/hashicorp/terraform-provider-google-beta/pull/11768))
 
 ## 7.25.0 (Mar 24, 2026)
 
