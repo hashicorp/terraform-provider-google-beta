@@ -17,3 +17,5 @@ fields:
   - api_field: 'securityPolicy'
   - api_field: 'selfLink'
   - api_field: 'sessionAffinity'
+  - field: 'deletion_policy'
+    provider_only: true
