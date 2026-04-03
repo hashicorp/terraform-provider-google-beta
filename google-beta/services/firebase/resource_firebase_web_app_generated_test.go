@@ -53,10 +53,13 @@ var (
 func TestAccFirebaseWebApp_firebaseWebAppBasicExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"project_id":    envvar.GetTestProjectFromEnv(),
+		"bucket_name":   "tf-test-fb-webapp-" + randomSuffix,
 		"display_name":  "tf-test Display Name Basic",
-		"random_suffix": acctest.RandString(t, 10),
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -92,7 +95,7 @@ data "google_firebase_web_app_config" "basic" {
 
 resource "google_storage_bucket" "default" {
     provider = google-beta
-    name     = "tf-test-fb-webapp-%{random_suffix}"
+    name     = "%{bucket_name}"
     location = "US"
 }
 
@@ -117,9 +120,13 @@ resource "google_storage_bucket_object" "default" {
 func TestAccFirebaseWebApp_firebaseWebAppCustomApiKeyExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"project_id":    envvar.GetTestProjectFromEnv(),
-		"random_suffix": acctest.RandString(t, 10),
+		"api_key_name":  "tf-test-api-key" + randomSuffix,
+		"display_name":  "Display Name" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -145,7 +152,7 @@ func testAccFirebaseWebApp_firebaseWebAppCustomApiKeyExample(context map[string]
 resource "google_firebase_web_app" "default" {
 	provider = google-beta
 	project = "%{project_id}"
-	display_name = "Display Name%{random_suffix}"
+	display_name = "%{display_name}"
 	api_key_id = google_apikeys_key.web.uid
 	deletion_policy = "DELETE"
 }
@@ -153,8 +160,8 @@ resource "google_firebase_web_app" "default" {
 resource "google_apikeys_key" "web" {
 	provider = google-beta
 	project  = "%{project_id}"
-	name         = "tf-test-api-key%{random_suffix}"
-	display_name = "Display Name%{random_suffix}"
+	name         = "%{api_key_name}"
+	display_name = "%{display_name}"
 
 	restrictions {
 	    browser_key_restrictions {

@@ -54,10 +54,13 @@ func TestAccKMSFolderKajPolicyConfig_kmsFolderKajPolicyConfigBasicExample(t *tes
 	acctest.SkipIfVcr(t)
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"billing_account": envvar.GetTestBillingAccountFromEnv(t),
 		"org_id":          envvar.GetTestOrgFromEnv(t),
-		"random_suffix":   acctest.RandString(t, 10),
+		"folder_name":     "tf-test-folder-kajc" + randomSuffix,
+		"random_suffix":   randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -86,7 +89,7 @@ func testAccKMSFolderKajPolicyConfig_kmsFolderKajPolicyConfigBasicExample(contex
 # Create Folder in GCP Organization.
 resource "google_folder" "kaj_folder" {
 	provider     = google-beta
-	display_name = "tf-test-folder-kajc%{random_suffix}"
+	display_name = "%{folder_name}"
 	parent       = "organizations/%{org_id}"
 	deletion_protection = false
 }

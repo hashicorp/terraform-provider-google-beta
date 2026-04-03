@@ -53,8 +53,13 @@ var (
 func TestAccParallelstoreInstance_parallelstoreInstanceBasicBetaExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"address_name":  "address" + randomSuffix,
+		"name":          "instance" + randomSuffix,
+		"network_name":  "network" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -79,7 +84,7 @@ func testAccParallelstoreInstance_parallelstoreInstanceBasicBetaExample(context 
 	return acctest.Nprintf(`
 resource "google_parallelstore_instance" "instance" {
   provider = google-beta
-  instance_id = "instance%{random_suffix}"
+  instance_id = "%{name}"
   location = "us-central1-a"
   description = "test instance"
   capacity_gib = 12000
@@ -95,7 +100,7 @@ resource "google_parallelstore_instance" "instance" {
 
 resource "google_compute_network" "network" {
   provider = google-beta
-  name                    = "network%{random_suffix}"
+  name                    = "%{network_name}"
   auto_create_subnetworks = true
   mtu = 8896
 }
@@ -103,7 +108,7 @@ resource "google_compute_network" "network" {
 # Create an IP address
 resource "google_compute_global_address" "private_ip_alloc" {
   provider = google-beta
-  name          = "address%{random_suffix}"
+  name          = "%{address_name}"
   purpose       = "VPC_PEERING"
   address_type  = "INTERNAL"
   prefix_length = 24
@@ -123,8 +128,13 @@ resource "google_service_networking_connection" "default" {
 func TestAccParallelstoreInstance_parallelstoreInstanceBasicExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"address_name":  "address" + randomSuffix,
+		"name":          "instance" + randomSuffix,
+		"network_name":  "network" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -148,7 +158,7 @@ func TestAccParallelstoreInstance_parallelstoreInstanceBasicExample(t *testing.T
 func testAccParallelstoreInstance_parallelstoreInstanceBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_parallelstore_instance" "instance" {
-  instance_id = "instance%{random_suffix}"
+  instance_id = "%{name}"
   location = "us-central1-a"
   description = "test instance"
   capacity_gib = 12000
@@ -163,14 +173,14 @@ deployment_type = "SCRATCH"
 }
 
 resource "google_compute_network" "network" {
-  name                    = "network%{random_suffix}"
+  name                    = "%{network_name}"
   auto_create_subnetworks = true
   mtu = 8896
 }
 
 # Create an IP address
 resource "google_compute_global_address" "private_ip_alloc" {
-  name          = "address%{random_suffix}"
+  name          = "%{address_name}"
   purpose       = "VPC_PEERING"
   address_type  = "INTERNAL"
   prefix_length = 24

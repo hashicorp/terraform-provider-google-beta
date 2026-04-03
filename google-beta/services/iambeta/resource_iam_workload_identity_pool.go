@@ -161,6 +161,15 @@ func ResourceIAMBetaWorkloadIdentityPool() *schema.Resource {
 value should be 4-32 characters, and may contain the characters [a-z0-9-]. The prefix
 'gcp-' is reserved for use by Google, and may not be specified.`,
 			},
+			"attestation_rules": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				Description: `Defines which workloads can receive an identity within a pool. When an AttestationRule is
+defined under a managed identity, matching workloads may receive that identity. A maximum of
+50 AttestationRules can be set.`,
+				Elem: iambetaWorkloadIdentityPoolAttestationRulesSchema(),
+				// Default schema.HashSchema is used.
+			},
 			"description": {
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -189,7 +198,7 @@ required for issuance and rotation of mTLS workload certificates.`,
 					Schema: map[string]*schema.Schema{
 						"ca_pools": {
 							Type:     schema.TypeMap,
-							Required: true,
+							Optional: true,
 							Description: `A required mapping of a cloud region to the CA pool resource located in that region used
 for certificate issuance, adhering to these constraints:
 
@@ -199,7 +208,8 @@ the corresponding map entry's value.
 'projects/{project}/locations/{location}/caPools/{ca_pool}'
 * **Region Matching:** Workloads are ONLY issued certificates from CA pools within the
 same region. Also the CA pool region (in value) must match the workload's region (key).`,
-							Elem: &schema.Schema{Type: schema.TypeString},
+							Elem:         &schema.Schema{Type: schema.TypeString},
+							ExactlyOneOf: []string{"inline_certificate_issuance_config.0.ca_pools", "inline_certificate_issuance_config.0.use_default_shared_ca"},
 						},
 						"key_algorithm": {
 							Type:         schema.TypeString,
@@ -231,6 +241,19 @@ and is preceded by the number of seconds. If unspecified, this will be defaulted
 							Description: `Rotation window percentage indicating when certificate rotation should be initiated based
 on remaining lifetime. Must be between '50' - '80'. If unspecified, this will be defaulted
 to '50'.`,
+						},
+						"use_default_shared_ca": {
+							Type:     schema.TypeBool,
+							Optional: true,
+							Description: `If set to true, the trust domain will utilize the GCP-provisioned default CA. A default
+CA in the same region as the workload will be selected to issue the certificate. Enabling
+this will clear any existing 'ca_pools' configuration to provision the certificates.
+
+
+~> **Note** This field is mutually exclusive with 'ca_pools'. If this flag is enabled,
+certificates will be automatically provisioned from the default shared CAs. This flag should
+not be set if you want to use your own CA pools to provision the certificates.`,
+							ExactlyOneOf: []string{"inline_certificate_issuance_config.0.ca_pools", "inline_certificate_issuance_config.0.use_default_shared_ca"},
 						},
 					},
 				},
@@ -288,8 +311,9 @@ certificate(either root or intermediate cert).`,
 			},
 			"mode": {
 				Type:         schema.TypeString,
+				Computed:     true,
 				Optional:     true,
-				ValidateFunc: verify.ValidateEnum([]string{"FEDERATION_ONLY", "TRUST_DOMAIN", ""}),
+				ValidateFunc: verify.ValidateEnum([]string{"FEDERATION_ONLY", "TRUST_DOMAIN", "SYSTEM_TRUST_DOMAIN", ""}),
 				Description: `The mode for the pool is operating in. Pools with an unspecified mode will operate as if they
 are in 'FEDERATION_ONLY' mode.
 
@@ -308,7 +332,14 @@ identities within a 'TRUST_DOMAIN' mode pool must consist of a single namespace 
 workload identifier. The subject identifier for all identities must conform to the following
 format: 'ns/<namespace>/sa/<workload_identifier>'.
 'google_iam_workload_identity_pool_provider's cannot be created within 'TRUST_DOMAIN'
-mode pools. Possible values: ["FEDERATION_ONLY", "TRUST_DOMAIN"]`,
+mode pools.
+* 'SYSTEM_TRUST_DOMAIN': Pools are managed by Google Cloud services. Neither
+'google_iam_workload_identity_pool_namespace's nor 'google_iam_workload_identity_pool_provider's
+can be created within 'SYSTEM_TRUST_DOMAIN' mode pools. All identities within a
+'SYSTEM_TRUST_DOMAIN' mode pool are in one of the following formats:
+
+    * 'spiffe://<trust-domain>/ns/<kubernetes-namespace>/sa/<kubernetes-service-account>'
+    * 'spiffe://<trust-domain>/resources/<resource-scope>/<resource-name>' Possible values: ["FEDERATION_ONLY", "TRUST_DOMAIN", "SYSTEM_TRUST_DOMAIN"]`,
 			},
 			"name": {
 				Type:     schema.TypeString,
@@ -349,6 +380,19 @@ When set to "DELETE", deleting the resource is allowed.
 			},
 		},
 		UseJSONNumber: true,
+	}
+}
+
+func iambetaWorkloadIdentityPoolAttestationRulesSchema() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"google_cloud_resource": {
+				Type:     schema.TypeString,
+				Required: true,
+				Description: `A single workload operating on Google Cloud. For example:
+'//run.googleapis.com/projects/123/type/Service/*'.`,
+			},
+		},
 	}
 }
 
@@ -396,6 +440,12 @@ func resourceIAMBetaWorkloadIdentityPoolCreate(d *schema.ResourceData, meta inte
 	} else if v, ok := d.GetOkExists("inline_trust_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(inlineTrustConfigProp)) && (ok || !reflect.DeepEqual(v, inlineTrustConfigProp)) {
 		obj["inlineTrustConfig"] = inlineTrustConfigProp
 	}
+	attestationRulesProp, err := expandIAMBetaWorkloadIdentityPoolAttestationRules(d.Get("attestation_rules"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("attestation_rules"); !tpgresource.IsEmptyValue(reflect.ValueOf(attestationRulesProp)) && (ok || !reflect.DeepEqual(v, attestationRulesProp)) {
+		obj["attestationRules"] = attestationRulesProp
+	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{IAMBetaBasePath}}projects/{{project}}/locations/global/workloadIdentityPools?workloadIdentityPoolId={{workload_identity_pool_id}}")
 	if err != nil {
@@ -417,6 +467,13 @@ func resourceIAMBetaWorkloadIdentityPoolCreate(d *schema.ResourceData, meta inte
 	}
 
 	headers := make(http.Header)
+	// see if we need to create attestation_rules
+	_, hasRule := d.GetOk("attestation_rules")
+	ruleObj := make(map[string]interface{})
+	if hasRule {
+		ruleObj["attestationRules"] = attestationRulesProp
+		delete(obj, "attestationRules")
+	}
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -446,6 +503,39 @@ func resourceIAMBetaWorkloadIdentityPoolCreate(d *schema.ResourceData, meta inte
 		// The resource didn't actually create
 		d.SetId("")
 		return fmt.Errorf("Error waiting to create WorkloadIdentityPool: %s", err)
+	}
+
+	// create attestation_rules
+	if hasRule {
+		qIdx := strings.Index(url, "?")
+		var basePath string
+		if qIdx != -1 {
+			basePath = url[:qIdx]
+		} else {
+			basePath = url
+		}
+		ruleUrl := basePath + "/" + d.Get("workload_identity_pool_id").(string) + ":setAttestationRules"
+
+		ruleRes, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
+			Config:    config,
+			Method:    "POST",
+			Project:   billingProject,
+			RawURL:    ruleUrl,
+			UserAgent: userAgent,
+			Body:      ruleObj,
+			Timeout:   d.Timeout(schema.TimeoutCreate),
+			Headers:   headers,
+		})
+		if err != nil {
+			return fmt.Errorf("Error creating WorkloadIdentityPool %q: %s", d.Id(), err)
+		}
+
+		err = IAMBetaOperationWaitTime(
+			config, ruleRes, project, "Creating WorkloadIdentityPool", userAgent,
+			d.Timeout(schema.TimeoutCreate))
+		if err != nil {
+			return fmt.Errorf("Error waiting to create WorkloadIdentityPool: %s", err)
+		}
 	}
 
 	log.Printf("[DEBUG] Finished creating WorkloadIdentityPool %q: %#v", d.Id(), res)
@@ -489,6 +579,26 @@ func resourceIAMBetaWorkloadIdentityPoolRead(d *schema.ResourceData, meta interf
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("IAMBetaWorkloadIdentityPool %q", d.Id()))
+	}
+
+	log.Printf("[DEBUG] Finished reading IAMBetaWorkloadIdentityPool %q: %#v", d.Id(), res)
+	// list attestation_rules
+	ruleUrl := url + ":listAttestationRules"
+
+	ruleRes, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
+		Config:    config,
+		Method:    "GET",
+		Project:   billingProject,
+		RawURL:    ruleUrl,
+		UserAgent: userAgent,
+		Headers:   headers,
+	})
+	if err != nil {
+		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("IAMBetaWorkloadIdentityPool %q", d.Id()))
+	}
+
+	for k, v := range ruleRes {
+		res[k] = v
 	}
 
 	res, err = resourceIAMBetaWorkloadIdentityPoolDecoder(d, meta, res)
@@ -542,6 +652,9 @@ func resourceIAMBetaWorkloadIdentityPoolRead(d *schema.ResourceData, meta interf
 		return fmt.Errorf("Error reading WorkloadIdentityPool: %s", err)
 	}
 	if err := d.Set("inline_trust_config", flattenIAMBetaWorkloadIdentityPoolInlineTrustConfig(res["inlineTrustConfig"], d, config)); err != nil {
+		return fmt.Errorf("Error reading WorkloadIdentityPool: %s", err)
+	}
+	if err := d.Set("attestation_rules", flattenIAMBetaWorkloadIdentityPoolAttestationRules(res["attestationRules"], d, config)); err != nil {
 		return fmt.Errorf("Error reading WorkloadIdentityPool: %s", err)
 	}
 
@@ -685,6 +798,55 @@ func resourceIAMBetaWorkloadIdentityPoolUpdate(d *schema.ResourceData, meta inte
 			return err
 		}
 	}
+	d.Partial(true)
+
+	if d.HasChange("attestation_rules") {
+		obj := make(map[string]interface{})
+
+		attestationRulesProp, err := expandIAMBetaWorkloadIdentityPoolAttestationRules(d.Get("attestation_rules"), d, config)
+		if err != nil {
+			return err
+		} else if v, ok := d.GetOkExists("attestation_rules"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, attestationRulesProp)) {
+			obj["attestationRules"] = attestationRulesProp
+		}
+
+		url, err := tpgresource.ReplaceVars(d, config, "{{IAMBetaBasePath}}projects/{{project}}/locations/global/workloadIdentityPools/{{workload_identity_pool_id}}:setAttestationRules")
+		if err != nil {
+			return err
+		}
+
+		headers := make(http.Header)
+
+		// err == nil indicates that the billing_project value was found
+		if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
+			billingProject = bp
+		}
+
+		res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
+			Config:    config,
+			Method:    "POST",
+			Project:   billingProject,
+			RawURL:    url,
+			UserAgent: userAgent,
+			Body:      obj,
+			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
+		})
+		if err != nil {
+			return fmt.Errorf("Error updating WorkloadIdentityPool %q: %s", d.Id(), err)
+		} else {
+			log.Printf("[DEBUG] Finished updating WorkloadIdentityPool %q: %#v", d.Id(), res)
+		}
+
+		err = IAMBetaOperationWaitTime(
+			config, res, project, "Updating WorkloadIdentityPool", userAgent,
+			d.Timeout(schema.TimeoutUpdate))
+		if err != nil {
+			return err
+		}
+	}
+
+	d.Partial(false)
 
 	return resourceIAMBetaWorkloadIdentityPoolRead(d, meta)
 }
@@ -807,6 +969,8 @@ func flattenIAMBetaWorkloadIdentityPoolInlineCertificateIssuanceConfig(v interfa
 	transformed := make(map[string]interface{})
 	transformed["ca_pools"] =
 		flattenIAMBetaWorkloadIdentityPoolInlineCertificateIssuanceConfigCaPools(original["caPools"], d, config)
+	transformed["use_default_shared_ca"] =
+		flattenIAMBetaWorkloadIdentityPoolInlineCertificateIssuanceConfigUseDefaultSharedCa(original["useDefaultSharedCa"], d, config)
 	transformed["lifetime"] =
 		flattenIAMBetaWorkloadIdentityPoolInlineCertificateIssuanceConfigLifetime(original["lifetime"], d, config)
 	transformed["rotation_window_percentage"] =
@@ -816,6 +980,10 @@ func flattenIAMBetaWorkloadIdentityPoolInlineCertificateIssuanceConfig(v interfa
 	return []interface{}{transformed}
 }
 func flattenIAMBetaWorkloadIdentityPoolInlineCertificateIssuanceConfigCaPools(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenIAMBetaWorkloadIdentityPoolInlineCertificateIssuanceConfigUseDefaultSharedCa(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -894,6 +1062,28 @@ func flattenIAMBetaWorkloadIdentityPoolInlineTrustConfigAdditionalTrustBundlesTr
 	return v
 }
 
+func flattenIAMBetaWorkloadIdentityPoolAttestationRules(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+	l := v.([]interface{})
+	transformed := schema.NewSet(schema.HashResource(iambetaWorkloadIdentityPoolAttestationRulesSchema()), []interface{}{})
+	for _, raw := range l {
+		original := raw.(map[string]interface{})
+		if len(original) < 1 {
+			// Do not include empty json objects coming back from the api
+			continue
+		}
+		transformed.Add(map[string]interface{}{
+			"google_cloud_resource": flattenIAMBetaWorkloadIdentityPoolAttestationRulesGoogleCloudResource(original["googleCloudResource"], d, config),
+		})
+	}
+	return transformed
+}
+func flattenIAMBetaWorkloadIdentityPoolAttestationRulesGoogleCloudResource(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func expandIAMBetaWorkloadIdentityPoolDisplayName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
@@ -929,6 +1119,13 @@ func expandIAMBetaWorkloadIdentityPoolInlineCertificateIssuanceConfig(v interfac
 		transformed["caPools"] = transformedCaPools
 	}
 
+	transformedUseDefaultSharedCa, err := expandIAMBetaWorkloadIdentityPoolInlineCertificateIssuanceConfigUseDefaultSharedCa(original["use_default_shared_ca"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedUseDefaultSharedCa); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["useDefaultSharedCa"] = transformedUseDefaultSharedCa
+	}
+
 	transformedLifetime, err := expandIAMBetaWorkloadIdentityPoolInlineCertificateIssuanceConfigLifetime(original["lifetime"], d, config)
 	if err != nil {
 		return nil, err
@@ -962,6 +1159,10 @@ func expandIAMBetaWorkloadIdentityPoolInlineCertificateIssuanceConfigCaPools(v i
 		m[k] = val.(string)
 	}
 	return m, nil
+}
+
+func expandIAMBetaWorkloadIdentityPoolInlineCertificateIssuanceConfigUseDefaultSharedCa(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
 }
 
 func expandIAMBetaWorkloadIdentityPoolInlineCertificateIssuanceConfigLifetime(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
@@ -1049,6 +1250,36 @@ func expandIAMBetaWorkloadIdentityPoolInlineTrustConfigAdditionalTrustBundlesTru
 }
 
 func expandIAMBetaWorkloadIdentityPoolInlineTrustConfigAdditionalTrustBundlesTrustAnchorsPemCertificate(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandIAMBetaWorkloadIdentityPoolAttestationRules(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	v = v.(*schema.Set).List()
+	if v == nil {
+		return nil, nil
+	}
+	l := v.([]interface{})
+	req := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		if raw == nil {
+			continue
+		}
+		original := raw.(map[string]interface{})
+		transformed := make(map[string]interface{})
+
+		transformedGoogleCloudResource, err := expandIAMBetaWorkloadIdentityPoolAttestationRulesGoogleCloudResource(original["google_cloud_resource"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedGoogleCloudResource); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["googleCloudResource"] = transformedGoogleCloudResource
+		}
+
+		req = append(req, transformed)
+	}
+	return req, nil
+}
+
+func expandIAMBetaWorkloadIdentityPoolAttestationRulesGoogleCloudResource(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

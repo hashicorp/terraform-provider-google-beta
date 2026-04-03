@@ -53,9 +53,12 @@ var (
 func TestAccChronicleDataTable_chronicleDataTableBasicExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"chronicle_id":  envvar.GetTestChronicleInstanceIdFromEnv(t),
-		"random_suffix": acctest.RandString(t, 10),
+		"data_table_id": "tf_test_terraform_test" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -82,7 +85,7 @@ resource "google_chronicle_data_table" "example" {
   provider       = google-beta
   location       = "us"
   instance = "%{chronicle_id}"
-  data_table_id  = "tf_test_terraform_test%{random_suffix}"
+  data_table_id  = "%{data_table_id}"
   description    = "sample desc"
   column_info {
     column_index    = 0
@@ -120,20 +123,19 @@ output "data_table_create_time" {
   description = "The creation time of the data table."
   value = google_chronicle_data_table.example.create_time
 }
-
-output "data_table_ttl" {
-  description = "The row time to live for the data table."
-  value = google_chronicle_data_table.example.row_time_to_live
-}
 `, context)
 }
 
 func TestAccChronicleDataTable_chronicleDataTableWithOptionalFieldsExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"chronicle_id":  envvar.GetTestChronicleInstanceIdFromEnv(t),
-		"random_suffix": acctest.RandString(t, 10),
+		"chronicle_id":         envvar.GetTestChronicleInstanceIdFromEnv(t),
+		"data_access_scope_id": "tf-test-tf-scope-opt" + randomSuffix,
+		"data_table_id":        "tf_test_tf_test_full" + randomSuffix,
+		"random_suffix":        randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -160,7 +162,7 @@ resource "google_chronicle_data_access_scope" "test_scope_allow_everyone" {
 provider             = google-beta
  location = "us"
  instance = "%{chronicle_id}"
- data_access_scope_id = "tf-test-tf-scope-opt%{random_suffix}"
+ data_access_scope_id = "%{data_access_scope_id}"
  description = "scope-description"
  allowed_data_access_labels {
    log_type = "GCP_CLOUDAUDIT"
@@ -171,7 +173,7 @@ resource "google_chronicle_data_table" "example_dt" {
   provider         = google-beta
   location         = "us"
   instance = "%{chronicle_id}"
-  data_table_id  = "tf_test_tf_test_full%{random_suffix}"
+  data_table_id  = "%{data_table_id}"
   description      = "Comprehensive test table with all teh fields"
   row_time_to_live = "48h"
 
@@ -194,26 +196,6 @@ resource "google_chronicle_data_table" "example_dt" {
     data_access_scopes = [google_chronicle_data_access_scope.test_scope_allow_everyone.name]
   }
   depends_on = [google_chronicle_data_access_scope.test_scope_allow_everyone]
-}
-
-output "data_table_name" {
-  description = "The resource name of the created data table."
-  value       = google_chronicle_data_table.example_dt.name
-}
-
-output "data_table_id" {
-  description = "The ID of the created data table."
-  value       = google_chronicle_data_table.example_dt.id
-}
-
-output "data_table_create_time" {
-  description = "The creation time of the data table."
-  value       = google_chronicle_data_table.example_dt.create_time
-}
-
-output "data_table_column_info" {
-  description = "The column info of the data table."
-  value       = google_chronicle_data_table.example_dt.column_info
 }
 `, context)
 }

@@ -53,11 +53,13 @@ var (
 func TestAccFirebaseAndroidApp_firebaseAndroidAppBasicExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"project_id":    envvar.GetTestProjectFromEnv(),
 		"display_name":  "tf-test Display Name Basic",
 		"package_name":  "android.package.app" + acctest.RandString(t, 4),
-		"random_suffix": acctest.RandString(t, 10),
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -94,11 +96,14 @@ resource "google_firebase_android_app" "basic" {
 func TestAccFirebaseAndroidApp_firebaseAndroidAppCustomApiKeyExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"project_id":    envvar.GetTestProjectFromEnv(),
+		"api_key_name":  "tf-test-api-key" + randomSuffix,
 		"display_name":  "tf-test Display Name",
 		"package_name":  "android.package.app" + acctest.RandString(t, 4),
-		"random_suffix": acctest.RandString(t, 10),
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -134,7 +139,7 @@ resource "google_firebase_android_app" "default" {
 resource "google_apikeys_key" "android" {
   provider = google-beta
 
-  name         = "tf-test-api-key%{random_suffix}"
+  name         = "%{api_key_name}"
   display_name = "%{display_name}"
   project = "%{project_id}"
   

@@ -412,6 +412,8 @@ func resourceDataformRepositoryRead(d *schema.ResourceData, meta interface{}) er
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("DataformRepository %q", d.Id()))
 	}
 
+	log.Printf("[DEBUG] Finished reading DataformRepository %q: %#v", d.Id(), res)
+
 	// Explicitly set virtual fields to default values if unset
 	if _, ok := d.GetOkExists("deletion_policy"); !ok {
 		if err := d.Set("deletion_policy", "DELETE"); err != nil {

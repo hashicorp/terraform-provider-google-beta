@@ -59,9 +59,14 @@ func TestAccSaasRuntimeUnit_saasRuntimeUnitBasicExample(t *testing.T) {
 		},
 	})
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"project":       envvar.GetTestProjectFromEnv(),
-		"random_suffix": acctest.RandString(t, 10),
+		"saas_name":     "tf-test-example-saas" + randomSuffix,
+		"unit_name":     "tf-test-example-unit" + randomSuffix,
+		"unitkind_name": "tf-test-example-unitkind" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -86,7 +91,7 @@ func testAccSaasRuntimeUnit_saasRuntimeUnitBasicExample(context map[string]inter
 	return acctest.Nprintf(`
 resource "google_saas_runtime_saas" "example_saas_regional" {
   provider = google-beta
-  saas_id  = "tf-test-example-saas%{random_suffix}"
+  saas_id  = "%{saas_name}"
   location = "us-central1"
 
   locations {
@@ -97,14 +102,14 @@ resource "google_saas_runtime_saas" "example_saas_regional" {
 resource "google_saas_runtime_unit_kind" "example_unit_kind" {
   provider = google-beta
   location = "us-central1"
-  unit_kind_id = "tf-test-example-unitkind%{random_suffix}"
+  unit_kind_id = "%{unitkind_name}"
   saas = google_saas_runtime_saas.example_saas_regional.id
 }
 
 resource "google_saas_runtime_unit" "example" {
   provider = google-beta
   location = "us-central1"
-  unit_id = "tf-test-example-unit%{random_suffix}"
+  unit_id = "%{unit_name}"
   unit_kind = google_saas_runtime_unit_kind.example_unit_kind.id
   management_mode = "MANAGEMENT_MODE_USER"
 }

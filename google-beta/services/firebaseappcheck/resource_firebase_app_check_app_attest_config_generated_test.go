@@ -53,10 +53,13 @@ var (
 func TestAccFirebaseAppCheckAppAttestConfig_firebaseAppCheckAppAttestConfigMinimalExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"project_id":    envvar.GetTestProjectFromEnv(),
+		"bundle_id":     "bundle.id.appattest" + randomSuffix,
 		"team_id":       "9987654321",
-		"random_suffix": acctest.RandString(t, 10),
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -87,7 +90,7 @@ resource "google_firebase_apple_app" "default" {
 
   project      = "%{project_id}"
   display_name = "Apple app"
-  bundle_id    = "bundle.id.appattest%{random_suffix}"
+  bundle_id    = "%{bundle_id}"
   team_id      = "%{team_id}"
 }
 
@@ -119,11 +122,14 @@ resource "google_firebase_app_check_app_attest_config" "default" {
 func TestAccFirebaseAppCheckAppAttestConfig_firebaseAppCheckAppAttestConfigFullExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"project_id":    envvar.GetTestProjectFromEnv(),
+		"bundle_id":     "bundle.id.appattest" + randomSuffix,
 		"team_id":       "9987654321",
 		"token_ttl":     "7200s",
-		"random_suffix": acctest.RandString(t, 10),
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -154,7 +160,7 @@ resource "google_firebase_apple_app" "default" {
 
   project      = "%{project_id}"
   display_name = "Apple app"
-  bundle_id    = "bundle.id.appattest%{random_suffix}"
+  bundle_id    = "%{bundle_id}"
   team_id      = "%{team_id}"
 }
 

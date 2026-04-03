@@ -495,6 +495,8 @@ func resourceWorkstationsWorkstationClusterRead(d *schema.ResourceData, meta int
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("WorkstationsWorkstationCluster %q", d.Id()))
 	}
 
+	log.Printf("[DEBUG] Finished reading WorkstationsWorkstationCluster %q: %#v", d.Id(), res)
+
 	// Explicitly set virtual fields to default values if unset
 	if _, ok := d.GetOkExists("deletion_policy"); !ok {
 		//prioritize config's value if present
@@ -651,7 +653,7 @@ func resourceWorkstationsWorkstationClusterUpdate(d *schema.ResourceData, meta i
 	}
 
 	if d.HasChange("private_cluster_config") {
-		updateMask = append(updateMask, "privateClusterConfig")
+		updateMask = append(updateMask, "privateClusterConfig.allowedProjects")
 	}
 
 	if d.HasChange("domain_config") {

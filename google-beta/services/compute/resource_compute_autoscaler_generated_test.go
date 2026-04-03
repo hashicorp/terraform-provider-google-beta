@@ -53,10 +53,16 @@ var (
 func TestAccComputeAutoscaler_autoscalerSingleInstanceExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"provider_alias": "alias  = \"us-central1\"",
-		"provider_name":  "google-beta.us-central1",
-		"random_suffix":  acctest.RandString(t, 10),
+		"autoscaler_name":        "tf-test-my-autoscaler" + randomSuffix,
+		"igm_name":               "tf-test-my-igm" + randomSuffix,
+		"instance_template_name": "tf-test-my-instance-template" + randomSuffix,
+		"provider_alias":         "alias  = \"us-central1\"",
+		"provider_name":          "google-beta.us-central1",
+		"target_pool_name":       "tf-test-my-target-pool" + randomSuffix,
+		"random_suffix":          randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -82,7 +88,7 @@ func testAccComputeAutoscaler_autoscalerSingleInstanceExample(context map[string
 resource "google_compute_autoscaler" "default" {
   provider = %{provider_name}
 
-  name   = "tf-test-my-autoscaler%{random_suffix}"
+  name   = "%{autoscaler_name}"
   zone   = "us-central1-f"
   target = google_compute_instance_group_manager.default.id
 
@@ -102,7 +108,7 @@ resource "google_compute_autoscaler" "default" {
 resource "google_compute_instance_template" "default" {
   provider = %{provider_name}
 
-  name           = "tf-test-my-instance-template%{random_suffix}"
+  name           = "%{instance_template_name}"
   machine_type   = "e2-medium"
   can_ip_forward = false
 
@@ -128,13 +134,13 @@ resource "google_compute_instance_template" "default" {
 resource "google_compute_target_pool" "default" {
   provider = %{provider_name}
 
-  name = "tf-test-my-target-pool%{random_suffix}"
+  name = "%{target_pool_name}"
 }
 
 resource "google_compute_instance_group_manager" "default" {
   provider = %{provider_name}
 
-  name = "tf-test-my-igm%{random_suffix}"
+  name = "%{igm_name}"
   zone = "us-central1-f"
 
   version {
@@ -164,8 +170,14 @@ provider "google-beta" {
 func TestAccComputeAutoscaler_autoscalerBasicExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"autoscaler_name":        "tf-test-my-autoscaler" + randomSuffix,
+		"igm_name":               "tf-test-my-igm" + randomSuffix,
+		"instance_template_name": "tf-test-my-instance-template" + randomSuffix,
+		"target_pool_name":       "tf-test-my-target-pool" + randomSuffix,
+		"random_suffix":          randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -189,7 +201,7 @@ func TestAccComputeAutoscaler_autoscalerBasicExample(t *testing.T) {
 func testAccComputeAutoscaler_autoscalerBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_autoscaler" "foobar" {
-  name   = "tf-test-my-autoscaler%{random_suffix}"
+  name   = "%{autoscaler_name}"
   zone   = "us-central1-f"
   target = google_compute_instance_group_manager.foobar.id
 
@@ -205,7 +217,7 @@ resource "google_compute_autoscaler" "foobar" {
 }
 
 resource "google_compute_instance_template" "foobar" {
-  name           = "tf-test-my-instance-template%{random_suffix}"
+  name           = "%{instance_template_name}"
   machine_type   = "e2-medium"
   can_ip_forward = false
 
@@ -229,11 +241,11 @@ resource "google_compute_instance_template" "foobar" {
 }
 
 resource "google_compute_target_pool" "foobar" {
-  name = "tf-test-my-target-pool%{random_suffix}"
+  name = "%{target_pool_name}"
 }
 
 resource "google_compute_instance_group_manager" "foobar" {
-  name = "tf-test-my-igm%{random_suffix}"
+  name = "%{igm_name}"
   zone = "us-central1-f"
 
   version {

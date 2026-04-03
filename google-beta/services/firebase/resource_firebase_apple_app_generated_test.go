@@ -53,10 +53,13 @@ var (
 func TestAccFirebaseAppleApp_firebaseAppleAppBasicExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"project_id":    envvar.GetTestProjectFromEnv(),
+		"bundle_id":     "apple.app.12345" + randomSuffix,
 		"display_name":  "tf-test Display Name Basic",
-		"random_suffix": acctest.RandString(t, 10),
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -82,7 +85,7 @@ resource "google_firebase_apple_app" "default" {
   provider = google-beta
   project = "%{project_id}"
   display_name = "%{display_name}"
-  bundle_id = "apple.app.12345%{random_suffix}"
+  bundle_id = "%{bundle_id}"
 }
 `, context)
 }
@@ -90,12 +93,16 @@ resource "google_firebase_apple_app" "default" {
 func TestAccFirebaseAppleApp_firebaseAppleAppFullExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"project_id":    envvar.GetTestProjectFromEnv(),
+		"api_key_name":  "tf-test-api-key" + randomSuffix,
 		"app_store_id":  12345,
+		"bundle_id":     "apple.app.12345" + randomSuffix,
 		"display_name":  "tf-test Display Name Full",
 		"team_id":       9987654321,
-		"random_suffix": acctest.RandString(t, 10),
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -122,7 +129,7 @@ resource "google_firebase_apple_app" "full" {
   provider = google-beta
   project = "%{project_id}"
   display_name = "%{display_name}"
-  bundle_id = "apple.app.12345%{random_suffix}"
+  bundle_id = "%{bundle_id}"
   app_store_id = "%{app_store_id}"
   team_id = "%{team_id}"
   api_key_id = google_apikeys_key.apple.uid
@@ -131,13 +138,13 @@ resource "google_firebase_apple_app" "full" {
 resource "google_apikeys_key" "apple" {
   provider = google-beta
 
-  name         = "tf-test-api-key%{random_suffix}"
+  name         = "%{api_key_name}"
   display_name = "%{display_name}"
   project = "%{project_id}"
   
   restrictions {
     ios_key_restrictions {
-      allowed_bundle_ids = ["apple.app.12345%{random_suffix}"]
+      allowed_bundle_ids = ["%{bundle_id}"]
     }
   }
 }

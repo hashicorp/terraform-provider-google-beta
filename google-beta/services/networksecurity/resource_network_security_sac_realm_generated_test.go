@@ -53,8 +53,11 @@ var (
 func TestAccNetworkSecuritySacRealm_sacRealmPrismaAccessExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"resource_name": "tf-test-sac-realm-name" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -79,7 +82,7 @@ func testAccNetworkSecuritySacRealm_sacRealmPrismaAccessExample(context map[stri
 	return acctest.Nprintf(`
 resource "google_network_security_sac_realm" "default" {
   provider      = google-beta
-  name          = "tf-test-sac-realm-name%{random_suffix}"
+  name          = "%{resource_name}"
   labels = {
     label-one = "value-one"
   }

@@ -269,6 +269,8 @@ func resourceObservabilityFolderSettingsRead(d *schema.ResourceData, meta interf
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("ObservabilityFolderSettings %q", d.Id()))
 	}
 
+	log.Printf("[DEBUG] Finished reading ObservabilityFolderSettings %q: %#v", d.Id(), res)
+
 	if err := d.Set("default_storage_location", flattenObservabilityFolderSettingsDefaultStorageLocation(res["defaultStorageLocation"], d, config)); err != nil {
 		return fmt.Errorf("Error reading FolderSettings: %s", err)
 	}

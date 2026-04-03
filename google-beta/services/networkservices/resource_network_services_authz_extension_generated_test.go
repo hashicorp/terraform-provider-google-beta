@@ -53,9 +53,13 @@ var (
 func TestAccNetworkServicesAuthzExtension_networkServicesAuthzExtensionBasicExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"project":       envvar.GetTestProjectFromEnv(),
-		"random_suffix": acctest.RandString(t, 10),
+		"backend_name":  "tf-test-authz-service" + randomSuffix,
+		"resource_name": "tf-test-my-authz-ext" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -79,7 +83,7 @@ func TestAccNetworkServicesAuthzExtension_networkServicesAuthzExtensionBasicExam
 func testAccNetworkServicesAuthzExtension_networkServicesAuthzExtensionBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_region_backend_service" "default" {
-  name                  = "tf-test-authz-service%{random_suffix}"
+  name                  = "%{backend_name}"
   project               = "%{project}"
   region                = "us-west1"
 
@@ -89,7 +93,7 @@ resource "google_compute_region_backend_service" "default" {
 }
 
 resource "google_network_services_authz_extension" "default" {
-  name     = "tf-test-my-authz-ext%{random_suffix}"
+  name     = "%{resource_name}"
   project  = "%{project}"
   location = "us-west1"
 
@@ -107,9 +111,13 @@ resource "google_network_services_authz_extension" "default" {
 func TestAccNetworkServicesAuthzExtension_networkServicesAuthzExtensionBasicWithAuthGrpcExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"project":       envvar.GetTestProjectFromEnv(),
-		"random_suffix": acctest.RandString(t, 10),
+		"backend_name":  "tf-test-authz-service-grpc" + randomSuffix,
+		"resource_name": "tf-test-my-authz-ext-with-grpc" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -134,7 +142,7 @@ func testAccNetworkServicesAuthzExtension_networkServicesAuthzExtensionBasicWith
 	return acctest.Nprintf(`
 resource "google_compute_region_backend_service" "default" {
   provider              = google-beta
-  name                  = "tf-test-authz-service-grpc%{random_suffix}"
+  name                  = "%{backend_name}"
   project               = "%{project}"
   region                = "us-west1"
 
@@ -145,7 +153,7 @@ resource "google_compute_region_backend_service" "default" {
 
 resource "google_network_services_authz_extension" "default" {
   provider = google-beta
-  name     = "tf-test-my-authz-ext-with-grpc%{random_suffix}"
+  name     = "%{resource_name}"
   project  = "%{project}"
   location = "us-west1"
 
@@ -165,8 +173,11 @@ func TestAccNetworkServicesAuthzExtension_networkServicesAuthzExtensionIapExampl
 	t.Skip("true")
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"resource_name": "tf-test-my-authz-ext" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -190,7 +201,7 @@ func TestAccNetworkServicesAuthzExtension_networkServicesAuthzExtensionIapExampl
 func testAccNetworkServicesAuthzExtension_networkServicesAuthzExtensionIapExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_network_services_authz_extension" "default" {
-  name     = "tf-test-my-authz-ext%{random_suffix}"
+  name     = "%{resource_name}"
   location = "us-west1"
 
   service               = "iap.googleapis.com"

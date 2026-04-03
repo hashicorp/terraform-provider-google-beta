@@ -53,10 +53,17 @@ var (
 func TestAccComputeFirewallPolicyRule_firewallPolicyRuleExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"org_id":        envvar.GetTestOrgFromEnv(t),
 		"service_acct":  envvar.GetTestServiceAccountFromEnv(t),
-		"random_suffix": acctest.RandString(t, 10),
+		"address_group": "tf-test-address-group" + randomSuffix,
+		"folder":        "folder" + randomSuffix,
+		"fw_policy":     "tf-test-fw-policy" + randomSuffix,
+		"tag_key":       "tf-test-tag-key" + randomSuffix,
+		"tag_value":     "tf-test-tag-value" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -80,7 +87,7 @@ func TestAccComputeFirewallPolicyRule_firewallPolicyRuleExample(t *testing.T) {
 func testAccComputeFirewallPolicyRule_firewallPolicyRuleExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_network_security_address_group" "basic_global_networksecurity_address_group" {
-  name        = "tf-test-address-group%{random_suffix}"
+  name        = "%{address_group}"
   parent      = "organizations/%{org_id}"
   description = "Sample global networksecurity_address_group"
   location    = "global"
@@ -90,14 +97,14 @@ resource "google_network_security_address_group" "basic_global_networksecurity_a
 }
 
 resource "google_folder" "folder" {
-  display_name        = "folder%{random_suffix}"
+  display_name        = "%{folder}"
   parent              = "organizations/%{org_id}"
   deletion_protection = false
 }
 
 resource "google_compute_firewall_policy" "default" {
   parent      = google_folder.folder.id
-  short_name  = "tf-test-fw-policy%{random_suffix}"
+  short_name  = "%{fw_policy}"
   description = "Resource created for Terraform acceptance testing"
 }
 
@@ -135,7 +142,7 @@ resource "google_tags_tag_key" "basic_key" {
   description = "For keyname resources."
   parent      = "organizations/%{org_id}"
   purpose     = "GCE_FIREWALL"
-  short_name  = "tf-test-tag-key%{random_suffix}"
+  short_name  = "%{tag_key}"
 
   purpose_data = {
     organization = "auto"
@@ -145,7 +152,7 @@ resource "google_tags_tag_key" "basic_key" {
 resource "google_tags_tag_value" "basic_value" {
   description = "For valuename resources."
   parent      = google_tags_tag_key.basic_key.id
-  short_name  = "tf-test-tag-value%{random_suffix}"
+  short_name  = "%{tag_value}"
 }
 `, context)
 }
@@ -153,9 +160,16 @@ resource "google_tags_tag_value" "basic_value" {
 func TestAccComputeFirewallPolicyRule_firewallPolicyRuleNetworkScopeExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"org_id":        envvar.GetTestOrgFromEnv(t),
-		"random_suffix": acctest.RandString(t, 10),
+		"folder":        "folder" + randomSuffix,
+		"fw_policy":     "tf-test-fw-policy" + randomSuffix,
+		"network":       "network" + randomSuffix,
+		"tag_key":       "tf-test-tag-key" + randomSuffix,
+		"tag_value":     "tf-test-tag-value" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -180,7 +194,7 @@ func testAccComputeFirewallPolicyRule_firewallPolicyRuleNetworkScopeExample(cont
 	return acctest.Nprintf(`
 resource "google_folder" "folder" {
   provider = google-beta
-  display_name        = "folder%{random_suffix}"
+  display_name        = "%{folder}"
   parent              = "organizations/%{org_id}"
   deletion_protection = false
 }
@@ -188,7 +202,7 @@ resource "google_folder" "folder" {
 resource "google_compute_firewall_policy" "default" {
   provider = google-beta
   parent      = google_folder.folder.id
-  short_name  = "tf-test-fw-policy%{random_suffix}"
+  short_name  = "%{fw_policy}"
   description = "Firewall policy"
 }
 
@@ -220,7 +234,7 @@ resource "google_compute_firewall_policy_rule" "primary" {
 
 resource "google_compute_network" "network" {
   provider = google-beta
-  name                    = "network%{random_suffix}"
+  name                    = "%{network}"
   auto_create_subnetworks = false
 }
 `, context)
@@ -229,9 +243,16 @@ resource "google_compute_network" "network" {
 func TestAccComputeFirewallPolicyRule_firewallPolicyRuleNetworkContextExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"org_id":        envvar.GetTestOrgFromEnv(t),
-		"random_suffix": acctest.RandString(t, 10),
+		"folder":        "folder" + randomSuffix,
+		"fw_policy":     "tf-test-fw-policy" + randomSuffix,
+		"network":       "network" + randomSuffix,
+		"tag_key":       "tf-test-tag-key" + randomSuffix,
+		"tag_value":     "tf-test-tag-value" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -255,14 +276,14 @@ func TestAccComputeFirewallPolicyRule_firewallPolicyRuleNetworkContextExample(t 
 func testAccComputeFirewallPolicyRule_firewallPolicyRuleNetworkContextExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_folder" "folder" {
-  display_name        = "folder%{random_suffix}"
+  display_name        = "%{folder}"
   parent              = "organizations/%{org_id}"
   deletion_protection = false
 }
 
 resource "google_compute_firewall_policy" "default" {
   parent      = google_folder.folder.id
-  short_name  = "tf-test-fw-policy%{random_suffix}"
+  short_name  = "%{fw_policy}"
   description = "Firewall policy"
 }
 
@@ -332,9 +353,15 @@ resource "google_compute_firewall_policy_rule" "unset-primary" {
 func TestAccComputeFirewallPolicyRule_firewallPolicyRuleSecureTagsExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"org_id":        envvar.GetTestOrgFromEnv(t),
-		"random_suffix": acctest.RandString(t, 10),
+		"folder":        "folder" + randomSuffix,
+		"fw_policy":     "tf-test-fw-policy" + randomSuffix,
+		"tag_key":       "tf-test-tag-key" + randomSuffix,
+		"tag_value":     "tf-test-tag-value" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -358,14 +385,14 @@ func TestAccComputeFirewallPolicyRule_firewallPolicyRuleSecureTagsExample(t *tes
 func testAccComputeFirewallPolicyRule_firewallPolicyRuleSecureTagsExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_folder" "folder" {
-  display_name        = "folder%{random_suffix}"
+  display_name        = "%{folder}"
   parent              = "organizations/%{org_id}"
   deletion_protection = false
 }
 
 resource "google_compute_firewall_policy" "default" {
   parent      = google_folder.folder.id
-  short_name  = "tf-test-fw-policy%{random_suffix}"
+  short_name  = "%{fw_policy}"
   description = "Resource created for Terraform acceptance testing"
 }
 
@@ -405,7 +432,7 @@ resource "google_tags_tag_key" "basic_key" {
   description = "For keyname resources."
   parent      = "organizations/%{org_id}"
   purpose     = "GCE_FIREWALL"
-  short_name  = "tf-test-tag-key%{random_suffix}"
+  short_name  = "%{tag_key}"
 
   purpose_data = {
     organization = "auto"
@@ -415,7 +442,7 @@ resource "google_tags_tag_key" "basic_key" {
 resource "google_tags_tag_value" "basic_value" {
   description = "For valuename resources."
   parent      = google_tags_tag_key.basic_key.id
-  short_name  = "tf-test-tag-value%{random_suffix}"
+  short_name  = "%{tag_value}"
 }
 `, context)
 }

@@ -53,10 +53,15 @@ var (
 func TestAccComputeRegionNetworkFirewallPolicyAssociation_regionNetworkFirewallPolicyAssociationExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"project_name":  envvar.GetTestProjectFromEnv(),
-		"region":        envvar.GetTestRegionFromEnv(),
-		"random_suffix": acctest.RandString(t, 10),
+		"project_name":     envvar.GetTestProjectFromEnv(),
+		"region":           envvar.GetTestRegionFromEnv(),
+		"association_name": "tf-test-my-association" + randomSuffix,
+		"network_name":     "tf-test-my-network" + randomSuffix,
+		"policy_name":      "tf-test-my-policy" + randomSuffix,
+		"random_suffix":    randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -80,23 +85,83 @@ func TestAccComputeRegionNetworkFirewallPolicyAssociation_regionNetworkFirewallP
 func testAccComputeRegionNetworkFirewallPolicyAssociation_regionNetworkFirewallPolicyAssociationExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_region_network_firewall_policy" "policy" {
-  name = "tf-test-my-policy%{random_suffix}"
+  name = "%{policy_name}"
   project = "%{project_name}"
   description = "Sample global network firewall policy"
   region = "%{region}"
 }
 
 resource "google_compute_network" "network" {
-  name = "tf-test-my-network%{random_suffix}"
+  name = "%{network_name}"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_region_network_firewall_policy_association" "default" {
-  name = "tf-test-my-association%{random_suffix}"
+  name = "%{association_name}"
   project = "%{project_name}"
   attachment_target = google_compute_network.network.id
   firewall_policy =  google_compute_region_network_firewall_policy.policy.id
   region = "%{region}"
+}
+`, context)
+}
+
+func TestAccComputeRegionNetworkFirewallPolicyAssociation_regionNetworkFirewallPolicyAssociationPriorityExample(t *testing.T) {
+	t.Parallel()
+
+	randomSuffix := acctest.RandString(t, 10)
+
+	context := map[string]interface{}{
+		"project_name":     envvar.GetTestProjectFromEnv(),
+		"region":           envvar.GetTestRegionFromEnv(),
+		"association_name": "tf-test-my-association" + randomSuffix,
+		"network_name":     "tf-test-my-network" + randomSuffix,
+		"policy_name":      "tf-test-my-policy" + randomSuffix,
+		"random_suffix":    randomSuffix,
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckComputeRegionNetworkFirewallPolicyAssociationDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeRegionNetworkFirewallPolicyAssociation_regionNetworkFirewallPolicyAssociationPriorityExample(context),
+			},
+			{
+				ResourceName:            "google_compute_region_network_firewall_policy_association.association",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"firewall_policy", "region"},
+			},
+		},
+	})
+}
+
+func testAccComputeRegionNetworkFirewallPolicyAssociation_regionNetworkFirewallPolicyAssociationPriorityExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_compute_region_network_firewall_policy" "policy" {
+  provider = google-beta
+  name = "%{policy_name}"
+  project = "%{project_name}"
+  description = "Sample global network firewall policy"
+  region = "%{region}"
+}
+
+resource "google_compute_network" "network" {
+  provider = google-beta
+  name = "%{network_name}"
+  auto_create_subnetworks = false
+}
+
+resource "google_compute_region_network_firewall_policy_association" "association" {
+  provider = google-beta
+  name = "%{association_name}"
+  project = "%{project_name}"
+  attachment_target = google_compute_network.network.id
+  firewall_policy =  google_compute_region_network_firewall_policy.policy.id
+  region = "%{region}"
+  priority = 1
 }
 `, context)
 }

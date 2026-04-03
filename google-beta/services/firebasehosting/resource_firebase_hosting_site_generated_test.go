@@ -53,9 +53,12 @@ var (
 func TestAccFirebaseHostingSite_firebasehostingSiteBasicExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"project_id":    envvar.GetTestProjectFromEnv(),
-		"random_suffix": acctest.RandString(t, 10),
+		"site_id":       "tf-test-site-no-app" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -81,7 +84,7 @@ func testAccFirebaseHostingSite_firebasehostingSiteBasicExample(context map[stri
 resource "google_firebase_hosting_site" "default" {
   provider = google-beta
   project  = "%{project_id}"
-  site_id = "tf-test-site-no-app%{random_suffix}"
+  site_id = "%{site_id}"
 }
 `, context)
 }
@@ -89,10 +92,13 @@ resource "google_firebase_hosting_site" "default" {
 func TestAccFirebaseHostingSite_firebasehostingSiteFullExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"project_id":    envvar.GetTestProjectFromEnv(),
 		"display_name":  "tf-test Test web app for Firebase Hosting",
-		"random_suffix": acctest.RandString(t, 10),
+		"site_id":       "tf-test-site-with-app" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -124,7 +130,7 @@ resource "google_firebase_web_app" "default" {
 resource "google_firebase_hosting_site" "full" {
   provider = google-beta
   project  = "%{project_id}"
-  site_id = "tf-test-site-with-app%{random_suffix}"
+  site_id = "%{site_id}"
   app_id = google_firebase_web_app.default.app_id
 }
 `, context)
@@ -133,9 +139,11 @@ resource "google_firebase_hosting_site" "full" {
 func TestAccFirebaseHostingSite_firebasehostingSiteDefaultExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"project_id":    envvar.GetTestProjectFromEnv(),
-		"random_suffix": acctest.RandString(t, 10),
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{

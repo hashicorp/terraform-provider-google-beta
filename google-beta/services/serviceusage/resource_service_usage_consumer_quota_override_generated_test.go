@@ -53,9 +53,12 @@ var (
 func TestAccServiceUsageConsumerQuotaOverride_consumerQuotaOverrideExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"org_id":        envvar.GetTestOrgFromEnv(t),
-		"random_suffix": acctest.RandString(t, 10),
+		"project_id":    "quota" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -81,7 +84,7 @@ func testAccServiceUsageConsumerQuotaOverride_consumerQuotaOverrideExample(conte
 resource "google_project" "my_project" {
   provider   = google-beta
   name       = "tf-test-project"
-  project_id = "quota%{random_suffix}"
+  project_id = "%{project_id}"
   org_id     = "%{org_id}"
   deletion_policy = "DELETE"
 }
@@ -101,9 +104,12 @@ resource "google_service_usage_consumer_quota_override" "override" {
 func TestAccServiceUsageConsumerQuotaOverride_consumerQuotaOverrideZeroValueExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"org_id":        envvar.GetTestOrgFromEnv(t),
-		"random_suffix": acctest.RandString(t, 10),
+		"project_id":    "quota" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -129,7 +135,7 @@ func testAccServiceUsageConsumerQuotaOverride_consumerQuotaOverrideZeroValueExam
 resource "google_project" "my_project" {
   provider   = google-beta
   name       = "tf-test-project"
-  project_id = "quota%{random_suffix}"
+  project_id = "%{project_id}"
   org_id     = "%{org_id}"
   deletion_policy = "DELETE"
 }
@@ -149,9 +155,12 @@ resource "google_service_usage_consumer_quota_override" "override" {
 func TestAccServiceUsageConsumerQuotaOverride_regionConsumerQuotaOverrideExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"org_id":        envvar.GetTestOrgFromEnv(t),
-		"random_suffix": acctest.RandString(t, 10),
+		"project_id":    "quota" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -177,7 +186,7 @@ func testAccServiceUsageConsumerQuotaOverride_regionConsumerQuotaOverrideExample
 resource "google_project" "my_project" {
   provider   = google-beta
   name       = "tf-test-project"
-  project_id = "quota%{random_suffix}"
+  project_id = "%{project_id}"
   org_id     = "%{org_id}"
   deletion_policy = "DELETE"
 }
@@ -200,9 +209,12 @@ resource "google_service_usage_consumer_quota_override" "override" {
 func TestAccServiceUsageConsumerQuotaOverride_consumerQuotaOverrideCustomDimensionExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"org_id":        envvar.GetTestOrgFromEnv(t),
-		"random_suffix": acctest.RandString(t, 10),
+		"project_id":    "quota" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -228,7 +240,7 @@ func testAccServiceUsageConsumerQuotaOverride_consumerQuotaOverrideCustomDimensi
 resource "google_project" "my_project" {
   provider   = google-beta
   name       = "tf-test-project"
-  project_id = "quota%{random_suffix}"
+  project_id = "%{project_id}"
   org_id     = "%{org_id}"
   deletion_policy = "DELETE"
 }

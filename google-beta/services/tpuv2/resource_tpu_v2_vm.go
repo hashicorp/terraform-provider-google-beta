@@ -781,6 +781,8 @@ func resourceTpuV2VmRead(d *schema.ResourceData, meta interface{}) error {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("TpuV2Vm %q", d.Id()))
 	}
 
+	log.Printf("[DEBUG] Finished reading TpuV2Vm %q: %#v", d.Id(), res)
+
 	// Explicitly set virtual fields to default values if unset
 	if _, ok := d.GetOkExists("deletion_policy"); !ok {
 		//prioritize config's value if present

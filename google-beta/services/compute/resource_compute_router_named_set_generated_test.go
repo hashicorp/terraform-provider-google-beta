@@ -53,8 +53,14 @@ var (
 func TestAccComputeRouterNamedSet_routerNamedSetRoutePolicyExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"named_set_name":    "tf-test-prefix-set-name" + randomSuffix,
+		"network_name":      "tf-test-my-network" + randomSuffix,
+		"route_policy_name": "tf-test-policy-name" + randomSuffix,
+		"router_name":       "tf-test-my-router" + randomSuffix,
+		"random_suffix":     randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -79,13 +85,13 @@ func testAccComputeRouterNamedSet_routerNamedSetRoutePolicyExample(context map[s
 	return acctest.Nprintf(`
 resource "google_compute_network" "my_network" {
   provider = google-beta
-  name                    = "tf-test-my-network%{random_suffix}"
+  name                    = "%{network_name}"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_router" "my_router" {
   provider = google-beta
-  name    = "tf-test-my-router%{random_suffix}"
+  name    = "%{router_name}"
   network = google_compute_network.my_network.name
   region  = "us-central1"
   bgp {
@@ -95,7 +101,7 @@ resource "google_compute_router" "my_router" {
 
 resource "google_compute_router_named_set" "my_prefix_set" {
   provider = google-beta
-  name        = "tf-test-prefix-set-name%{random_suffix}"
+  name        = "%{named_set_name}"
   router      = google_compute_router.my_router.name
   region      = google_compute_router.my_router.region
   description = "My example prefix named set"
@@ -118,7 +124,7 @@ resource "google_compute_router_named_set" "my_prefix_set" {
 
 resource "google_compute_router_route_policy" "my_route_policy" {
   provider = google-beta
-  name   = "tf-test-policy-name%{random_suffix}"
+  name   = "%{route_policy_name}"
   router = google_compute_router.my_router.name
   region = google_compute_router.my_router.region
   type   = "ROUTE_POLICY_TYPE_EXPORT"
@@ -141,8 +147,13 @@ resource "google_compute_router_route_policy" "my_route_policy" {
 func TestAccComputeRouterNamedSet_routerNamedSetPrefixExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"named_set_name": "tf-test-my-prefix-set" + randomSuffix,
+		"network_name":   "tf-test-my-network" + randomSuffix,
+		"router_name":    "tf-test-my-router" + randomSuffix,
+		"random_suffix":  randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -167,20 +178,20 @@ func testAccComputeRouterNamedSet_routerNamedSetPrefixExample(context map[string
 	return acctest.Nprintf(`
 resource "google_compute_network" "net" {
   provider = google-beta
-  name                    = "tf-test-my-network%{random_suffix}"
+  name                    = "%{network_name}"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_router" "router" {
   provider = google-beta
-  name    = "tf-test-my-router%{random_suffix}"
+  name    = "%{router_name}"
   network = google_compute_network.net.name
   region  = "us-central1"
 }
 
 resource "google_compute_router_named_set" "prefix_set" {
   provider = google-beta
-  name        = "tf-test-my-prefix-set%{random_suffix}"
+  name        = "%{named_set_name}"
   router      = google_compute_router.router.name
   region      = "us-central1"
   description = "A sample prefix named set"
@@ -203,8 +214,13 @@ resource "google_compute_router_named_set" "prefix_set" {
 func TestAccComputeRouterNamedSet_routerNamedSetCommunityExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"named_set_name": "tf-test-my-community-set" + randomSuffix,
+		"network_name":   "tf-test-my-network" + randomSuffix,
+		"router_name":    "tf-test-my-router" + randomSuffix,
+		"random_suffix":  randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -229,20 +245,20 @@ func testAccComputeRouterNamedSet_routerNamedSetCommunityExample(context map[str
 	return acctest.Nprintf(`
 resource "google_compute_network" "net" {
   provider = google-beta
-  name                    = "tf-test-my-network%{random_suffix}"
+  name                    = "%{network_name}"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_router" "router" {
   provider = google-beta
-  name    = "tf-test-my-router%{random_suffix}"
+  name    = "%{router_name}"
   network = google_compute_network.net.name
   region  = "us-central1"
 }
 
 resource "google_compute_router_named_set" "community_set" {
   provider = google-beta
-  name        = "tf-test-my-community-set%{random_suffix}"
+  name        = "%{named_set_name}"
   router      = google_compute_router.router.name
   region      = "us-central1"
   description = "A sample community named set"

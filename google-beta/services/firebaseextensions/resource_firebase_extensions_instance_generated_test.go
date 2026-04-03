@@ -53,10 +53,15 @@ var (
 func TestAccFirebaseExtensionsInstance_firebaseExtensionsInstanceResizeImageExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"project_id":    envvar.GetTestProjectFromEnv(),
-		"location":      "us-central1",
-		"random_suffix": acctest.RandString(t, 10),
+		"project_id":         envvar.GetTestProjectFromEnv(),
+		"bucket_id":          "tf-test-bucket-id" + randomSuffix,
+		"instance-id":        "tf-test-storage-resize-images" + randomSuffix,
+		"location":           "us-central1",
+		"service-account-id": "tf-test-s-a" + randomSuffix,
+		"random_suffix":      randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -82,7 +87,7 @@ func testAccFirebaseExtensionsInstance_firebaseExtensionsInstanceResizeImageExam
 resource "google_storage_bucket" "images" {
   provider                    = google-beta
   project                     = "%{project_id}"
-  name                        = "tf-test-bucket-id%{random_suffix}"
+  name                        = "%{bucket_id}"
   location                    = "US"
   uniform_bucket_level_access = true
 
@@ -93,7 +98,7 @@ resource "google_storage_bucket" "images" {
 resource "google_firebase_extensions_instance" "resize_image" {
   provider = google-beta
   project  = "%{project_id}"
-  instance_id = "tf-test-storage-resize-images%{random_suffix}"
+  instance_id = "%{instance-id}"
   config {
     extension_ref = "firebase/storage-resize-images"
     extension_version = "0.2.10"
