@@ -9,7 +9,7 @@ FEATURES:
 * **New Resource:** `google_chronicle_dashboard_chart` ([#11841](https://github.com/hashicorp/terraform-provider-google-beta/pull/11841))
 * **New Resource:** `google_chronicle_feed` ([#11856](https://github.com/hashicorp/terraform-provider-google-beta/pull/11856))
 * **New Resource:** `google_network_connectivity_transport` ([#11810](https://github.com/hashicorp/terraform-provider-google-beta/pull/11810))
-* **New Resource:** `google_organization_service_identity` (beta) ([#11844](https://github.com/hashicorp/terraform-provider-google-beta/pull/11844))
+* **New Resource:** `google_organization_service_identity` ([#11844](https://github.com/hashicorp/terraform-provider-google-beta/pull/11844))
 
 IMPROVEMENTS:
 * cloudrunv2: added docs for the Emptydir `DISK` field of the `google_cloud_run_v2_service` resource ([#11848](https://github.com/hashicorp/terraform-provider-google-beta/pull/11848))
