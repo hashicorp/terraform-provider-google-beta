@@ -626,6 +626,7 @@ var generatedIAMDatasources = map[string]*schema.Resource{
 	"google_vertex_ai_feature_online_store_featureview_iam_policy": registry.DataSource("google_vertex_ai_feature_online_store_featureview_iam_policy"),
 	"google_vertex_ai_featurestore_iam_policy":                     registry.DataSource("google_vertex_ai_featurestore_iam_policy"),
 	"google_vertex_ai_featurestore_entitytype_iam_policy":          registry.DataSource("google_vertex_ai_featurestore_entitytype_iam_policy"),
+	"google_vertex_ai_reasoning_engine_iam_policy":                 registry.DataSource("google_vertex_ai_reasoning_engine_iam_policy"),
 	"google_workbench_instance_iam_policy":                         registry.DataSource("google_workbench_instance_iam_policy"),
 	"google_workstations_workstation_iam_policy":                   registry.DataSource("google_workstations_workstation_iam_policy"),
 	"google_workstations_workstation_config_iam_policy":            registry.DataSource("google_workstations_workstation_config_iam_policy"),
@@ -661,8 +662,8 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 
 // Resources
 // Generated resources: 810
-// Generated IAM resources: 360
-// Total generated resources: 1170
+// Generated IAM resources: 363
+// Total generated resources: 1173
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     registry.Resource("google_folder_access_approval_settings"),
 	"google_organization_access_approval_settings":                               registry.Resource("google_organization_access_approval_settings"),
@@ -1808,6 +1809,9 @@ var generatedResources = map[string]*schema.Resource{
 	"google_vertex_ai_metadata_store":                                            registry.Resource("google_vertex_ai_metadata_store"),
 	"google_vertex_ai_rag_engine_config":                                         registry.Resource("google_vertex_ai_rag_engine_config"),
 	"google_vertex_ai_reasoning_engine":                                          registry.Resource("google_vertex_ai_reasoning_engine"),
+	"google_vertex_ai_reasoning_engine_iam_binding":                              registry.Resource("google_vertex_ai_reasoning_engine_iam_binding"),
+	"google_vertex_ai_reasoning_engine_iam_member":                               registry.Resource("google_vertex_ai_reasoning_engine_iam_member"),
+	"google_vertex_ai_reasoning_engine_iam_policy":                               registry.Resource("google_vertex_ai_reasoning_engine_iam_policy"),
 	"google_vertex_ai_tensorboard":                                               registry.Resource("google_vertex_ai_tensorboard"),
 	"google_vmwareengine_cluster":                                                registry.Resource("google_vmwareengine_cluster"),
 	"google_vmwareengine_datastore":                                              registry.Resource("google_vmwareengine_datastore"),
