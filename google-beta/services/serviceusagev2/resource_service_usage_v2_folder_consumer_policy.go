@@ -161,7 +161,7 @@ error is returned.`,
 			"create_time": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: `Output only. The time the policy was created.`,
+				Description: `The time the policy was created.`,
 			},
 			"etag": {
 				Type:        schema.TypeString,
@@ -171,13 +171,13 @@ error is returned.`,
 			"name": {
 				Type:     schema.TypeString,
 				Computed: true,
-				Description: `Output only. The resource name of the policy.
+				Description: `The resource name of the policy.
 Format: 'folders/{folder}/consumerPolicies/default'`,
 			},
 			"update_time": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: `Output only. The time the policy was last updated.`,
+				Description: `The time the policy was last updated.`,
 			},
 		},
 		UseJSONNumber: true,
