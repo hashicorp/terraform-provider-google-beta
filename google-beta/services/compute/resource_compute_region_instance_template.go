@@ -1,4 +1,4 @@
-// Copyright (c) HashiCorp, Inc.
+// Copyright IBM Corp. 2014, 2026
 // SPDX-License-Identifier: MPL-2.0
 // ----------------------------------------------------------------------------
 //
@@ -374,6 +374,13 @@ Google Cloud KMS. Only one of kms_key_self_link, rsa_encrypted_key and raw_key m
 								Type:             schema.TypeString,
 								DiffSuppressFunc: tpgresource.CompareResourceNames,
 							},
+						},
+						"storage_pool": {
+							Type:             schema.TypeString,
+							Optional:         true,
+							ForceNew:         true,
+							DiffSuppressFunc: tpgresource.CompareResourceNames,
+							Description:      `The self_link or ID of the Storage Pool to create this disk in.`,
 						},
 					},
 				},
@@ -937,6 +944,27 @@ be from 0 to 999,999,999 inclusive.`,
 							Optional:    true,
 							Default:     false,
 							Description: `Default is false and there will be 120 seconds between GCE ACPI G2 Soft Off and ACPI G3 Mechanical Off for Standard VMs and 30 seconds for Spot VMs.`,
+						},
+						"preemption_notice_duration": {
+							Type:         schema.TypeList,
+							Optional:     true,
+							MaxItems:     1,
+							AtLeastOneOf: schedulingInstTemplateKeys,
+							Description:  `The duration of the notice that the instance will receive before it is preempted.`,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"seconds": {
+										Type:        schema.TypeInt,
+										Required:    true,
+										Description: `Span of time at a resolution of a second. Must be from 0 to 315,576,000,000 inclusive.`,
+									},
+									"nanos": {
+										Type:        schema.TypeInt,
+										Optional:    true,
+										Description: `Span of time that's a fraction of a second at nanosecond resolution. Durations less than one second are represented with a 0 seconds field and a positive nanos field. Must be from 0 to 999,999,999 inclusive.`,
+									},
+								},
+							},
 						},
 					},
 				},
