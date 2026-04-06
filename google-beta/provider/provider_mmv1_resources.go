@@ -168,6 +168,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/servicemanagement"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/servicenetworking"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/serviceusage"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/serviceusagev2"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/siteverification"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/sourcerepo"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/spanner"
@@ -659,9 +660,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 809
+// Generated resources: 810
 // Generated IAM resources: 360
-// Total generated resources: 1169
+// Total generated resources: 1170
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     registry.Resource("google_folder_access_approval_settings"),
 	"google_organization_access_approval_settings":                               registry.Resource("google_organization_access_approval_settings"),
@@ -1730,6 +1731,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_endpoints_service_consumers_iam_policy":                              registry.Resource("google_endpoints_service_consumers_iam_policy"),
 	"google_service_networking_vpc_service_controls":                             registry.Resource("google_service_networking_vpc_service_controls"),
 	"google_service_usage_consumer_quota_override":                               registry.Resource("google_service_usage_consumer_quota_override"),
+	"google_service_usage_v2_folder_consumer_policy":                             registry.Resource("google_service_usage_v2_folder_consumer_policy"),
 	"google_site_verification_web_resource":                                      registry.Resource("google_site_verification_web_resource"),
 	"google_sourcerepo_repository":                                               registry.Resource("google_sourcerepo_repository"),
 	"google_sourcerepo_repository_iam_binding":                                   registry.Resource("google_sourcerepo_repository_iam_binding"),
@@ -2159,6 +2161,7 @@ func UseGeneratedProducts() {
 	var _ = servicemanagement.ProductName
 	var _ = servicenetworking.ProductName
 	var _ = serviceusage.ProductName
+	var _ = serviceusagev2.ProductName
 	var _ = siteverification.ProductName
 	var _ = sourcerepo.ProductName
 	var _ = spanner.ProductName
