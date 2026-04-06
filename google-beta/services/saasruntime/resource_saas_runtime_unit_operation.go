@@ -614,6 +614,8 @@ func resourceSaasRuntimeUnitOperationRead(d *schema.ResourceData, meta interface
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("SaasRuntimeUnitOperation %q", d.Id()))
 	}
 
+	log.Printf("[DEBUG] Finished reading SaasRuntimeUnitOperation %q: %#v", d.Id(), res)
+
 	// Explicitly set virtual fields to default values if unset
 	if _, ok := d.GetOkExists("wait_for_completion"); !ok {
 		if err := d.Set("wait_for_completion", true); err != nil {

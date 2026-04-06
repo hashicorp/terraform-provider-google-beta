@@ -313,6 +313,8 @@ func resourceServiceUsageConsumerQuotaOverrideRead(d *schema.ResourceData, meta 
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("ServiceUsageConsumerQuotaOverride %q", d.Id()))
 	}
 
+	log.Printf("[DEBUG] Finished reading ServiceUsageConsumerQuotaOverride %q: %#v", d.Id(), res)
+
 	res, err = flattenNestedServiceUsageConsumerQuotaOverride(d, meta, res)
 	if err != nil {
 		return err

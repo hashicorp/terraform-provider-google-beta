@@ -290,6 +290,8 @@ func resourceFirebaseHostingSiteRead(d *schema.ResourceData, meta interface{}) e
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("FirebaseHostingSite %q", d.Id()))
 	}
 
+	log.Printf("[DEBUG] Finished reading FirebaseHostingSite %q: %#v", d.Id(), res)
+
 	if err := d.Set("project", project); err != nil {
 		return fmt.Errorf("Error reading Site: %s", err)
 	}

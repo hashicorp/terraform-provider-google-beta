@@ -54,9 +54,13 @@ func TestAccTpuV2QueuedResource_tpuV2QueuedResourceBasicExample(t *testing.T) {
 	acctest.SkipIfVcr(t)
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"project":       envvar.GetTestProjectFromEnv(),
-		"random_suffix": acctest.RandString(t, 10),
+		"qr_name":       "tf-test-test-qr" + randomSuffix,
+		"tpu_name":      "tf-test-test-tpu" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -82,14 +86,14 @@ func testAccTpuV2QueuedResource_tpuV2QueuedResourceBasicExample(context map[stri
 resource "google_tpu_v2_queued_resource" "qr" {
   provider = google-beta
 
-  name    = "tf-test-test-qr%{random_suffix}"
+  name    = "%{qr_name}"
   zone    = "us-central1-c"
   project = "%{project}"
 
   tpu {
     node_spec {
       parent  = "projects/%{project}/locations/us-central1-c"
-      node_id = "tf-test-test-tpu%{random_suffix}"
+      node_id = "%{tpu_name}"
       node {
         runtime_version  = "tpu-vm-tf-2.13.0"
         accelerator_type = "v2-8"
@@ -105,9 +109,15 @@ func TestAccTpuV2QueuedResource_tpuV2QueuedResourceFullExample(t *testing.T) {
 	acctest.SkipIfVcr(t)
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"project":       envvar.GetTestProjectFromEnv(),
-		"random_suffix": acctest.RandString(t, 10),
+		"network_name":  "tf-test-tpu-net" + randomSuffix,
+		"qr_name":       "tf-test-test-qr" + randomSuffix,
+		"subnet_name":   "tf-test-tpu-subnet" + randomSuffix,
+		"tpu_name":      "tf-test-test-tpu" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -133,14 +143,14 @@ func testAccTpuV2QueuedResource_tpuV2QueuedResourceFullExample(context map[strin
 resource "google_tpu_v2_queued_resource" "qr" {
   provider = google-beta
 
-  name    = "tf-test-test-qr%{random_suffix}"
+  name    = "%{qr_name}"
   zone    = "us-central1-c"
   project = "%{project}"
 
   tpu {
     node_spec {
       parent  = "projects/%{project}/locations/us-central1-c"
-      node_id = "tf-test-test-tpu%{random_suffix}"
+      node_id = "%{tpu_name}"
       node {
         runtime_version  = "tpu-vm-tf-2.13.0"
         accelerator_type = "v2-8"
@@ -161,7 +171,7 @@ resource "google_tpu_v2_queued_resource" "qr" {
 resource "google_compute_subnetwork" "subnet" {
   provider = google-beta
 
-  name          = "tf-test-tpu-subnet%{random_suffix}"
+  name          = "%{subnet_name}"
   ip_cidr_range = "10.0.0.0/16"
   region        = "us-central1"
   network       = google_compute_network.network.id
@@ -170,7 +180,7 @@ resource "google_compute_subnetwork" "subnet" {
 resource "google_compute_network" "network" {
   provider = google-beta
 
-  name                    = "tf-test-tpu-net%{random_suffix}"
+  name                    = "%{network_name}"
   auto_create_subnetworks = false
 }
 `, context)

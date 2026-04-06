@@ -53,8 +53,11 @@ var (
 func TestAccPrivatecaCaPool_privatecaCapoolBasicExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"name":          "tf-test-my-pool" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -78,7 +81,7 @@ func TestAccPrivatecaCaPool_privatecaCapoolBasicExample(t *testing.T) {
 func testAccPrivatecaCaPool_privatecaCapoolBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_privateca_ca_pool" "default" {
-  name = "tf-test-my-pool%{random_suffix}"
+  name = "%{name}"
   location = "us-central1"
   tier = "ENTERPRISE"
   publishing_options {
@@ -95,9 +98,12 @@ resource "google_privateca_ca_pool" "default" {
 func TestAccPrivatecaCaPool_privatecaCapoolAllFieldsExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"cloud_kms_key": acctest.BootstrapKMSKeyWithPurposeInLocation(t, "ENCRYPT_DECRYPT", "us-central1").CryptoKey.Name,
-		"random_suffix": acctest.RandString(t, 10),
+		"name":          "tf-test-my-pool" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -134,7 +140,7 @@ resource "google_kms_crypto_key_iam_member" "privateca_sa_keyuser_encrypterdecry
 
 resource "google_privateca_ca_pool" "default" {
   provider = google-beta
-  name = "tf-test-my-pool%{random_suffix}"
+  name = "%{name}"
   location = "us-central1"
   tier = "ENTERPRISE"
   publishing_options {

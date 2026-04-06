@@ -53,9 +53,12 @@ var (
 func TestAccFirebaseHostingRelease_firebasehostingReleaseInSiteExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"project_id":    envvar.GetTestProjectFromEnv(),
-		"random_suffix": acctest.RandString(t, 10),
+		"site_id":       "tf-test-site-id" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -80,7 +83,7 @@ func testAccFirebaseHostingRelease_firebasehostingReleaseInSiteExample(context m
 resource "google_firebase_hosting_site" "default" {
   provider = google-beta
   project  = "%{project_id}"
-  site_id  = "tf-test-site-id%{random_suffix}"
+  site_id  = "%{site_id}"
 }
 
 resource "google_firebase_hosting_version" "default" {
@@ -107,9 +110,13 @@ resource "google_firebase_hosting_release" "default" {
 func TestAccFirebaseHostingRelease_firebasehostingReleaseInChannelExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"project_id":    envvar.GetTestProjectFromEnv(),
-		"random_suffix": acctest.RandString(t, 10),
+		"channel_id":    "tf-test-channel-id" + randomSuffix,
+		"site_id":       "tf-test-site-with-channel" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -134,7 +141,7 @@ func testAccFirebaseHostingRelease_firebasehostingReleaseInChannelExample(contex
 resource "google_firebase_hosting_site" "default" {
   provider = google-beta
   project  = "%{project_id}"
-  site_id  = "tf-test-site-with-channel%{random_suffix}"
+  site_id  = "%{site_id}"
 }
 
 resource "google_firebase_hosting_version" "default" {
@@ -152,7 +159,7 @@ resource "google_firebase_hosting_version" "default" {
 resource "google_firebase_hosting_channel" "default" {
   provider   = google-beta
   site_id    = google_firebase_hosting_site.default.site_id
-  channel_id = "tf-test-channel-id%{random_suffix}"
+  channel_id = "%{channel_id}"
 }
 
 resource "google_firebase_hosting_release" "default" {
@@ -168,9 +175,12 @@ resource "google_firebase_hosting_release" "default" {
 func TestAccFirebaseHostingRelease_firebasehostingReleaseDisableExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"project_id":    envvar.GetTestProjectFromEnv(),
-		"random_suffix": acctest.RandString(t, 10),
+		"site_id":       "tf-test-site-id" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -195,7 +205,7 @@ func testAccFirebaseHostingRelease_firebasehostingReleaseDisableExample(context 
 resource "google_firebase_hosting_site" "default" {
   provider = google-beta
   project  = "%{project_id}"
-  site_id  = "tf-test-site-id%{random_suffix}"
+  site_id  = "%{site_id}"
 }
 
 resource "google_firebase_hosting_release" "default" {

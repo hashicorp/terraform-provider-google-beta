@@ -53,10 +53,12 @@ var (
 func TestAccDataplexDataProduct_dataplexDataProductBasicExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"project_name":    envvar.GetTestProjectFromEnv(),
 		"data_product_id": fmt.Sprintf("tf-test-dp%s", acctest.RandString(t, 10)),
-		"random_suffix":   acctest.RandString(t, 10),
+		"random_suffix":   randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -104,10 +106,12 @@ resource "google_dataplex_data_product" "example" {
 func TestAccDataplexDataProduct_dataplexDataProductFullExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"project_name":    envvar.GetTestProjectFromEnv(),
 		"data_product_id": fmt.Sprintf("tf-test-dp%s", acctest.RandString(t, 10)),
-		"random_suffix":   acctest.RandString(t, 10),
+		"random_suffix":   randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{

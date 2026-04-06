@@ -53,10 +53,13 @@ var (
 func TestAccFirebaseAppCheckDebugToken_firebaseAppCheckDebugTokenBasicExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"project_id":    envvar.GetTestProjectFromEnv(),
+		"display_name":  "Debug Token" + randomSuffix,
 		"token":         "5E728315-E121-467F-BCA1-1FE71130BB98",
-		"random_suffix": acctest.RandString(t, 10),
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -102,7 +105,7 @@ resource "google_firebase_app_check_debug_token" "default" {
 
   project      = "%{project_id}"
   app_id       = google_firebase_web_app.default.app_id
-  display_name = "Debug Token%{random_suffix}"
+  display_name = "%{display_name}"
   token        = "%{token}"
 
   depends_on = [time_sleep.wait_30s]

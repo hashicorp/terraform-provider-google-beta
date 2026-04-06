@@ -53,8 +53,12 @@ var (
 func TestAccApiGatewayApiConfig_apigatewayApiConfigBasicExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"api_id":        "tf-test-my-api" + randomSuffix,
+		"config_id":     "tf-test-my-config" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -79,13 +83,13 @@ func testAccApiGatewayApiConfig_apigatewayApiConfigBasicExample(context map[stri
 	return acctest.Nprintf(`
 resource "google_api_gateway_api" "api_cfg" {
   provider = google-beta
-  api_id = "tf-test-my-api%{random_suffix}"
+  api_id = "%{api_id}"
 }
 
 resource "google_api_gateway_api_config" "api_cfg" {
   provider = google-beta
   api = google_api_gateway_api.api_cfg.api_id
-  api_config_id = "tf-test-my-config%{random_suffix}"
+  api_config_id = "%{config_id}"
 
   openapi_documents {
     document {
@@ -103,8 +107,12 @@ resource "google_api_gateway_api_config" "api_cfg" {
 func TestAccApiGatewayApiConfig_apigatewayApiConfigFullExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"api_id":        "tf-test-my-api" + randomSuffix,
+		"config_id":     "tf-test-my-config" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -129,13 +137,13 @@ func testAccApiGatewayApiConfig_apigatewayApiConfigFullExample(context map[strin
 	return acctest.Nprintf(`
 resource "google_api_gateway_api" "api_cfg" {
   provider = google-beta
-  api_id = "tf-test-my-api%{random_suffix}"
+  api_id = "%{api_id}"
 }
 
 resource "google_api_gateway_api_config" "api_cfg" {
   provider = google-beta
   api = google_api_gateway_api.api_cfg.api_id
-  api_config_id = "tf-test-my-config%{random_suffix}"
+  api_config_id = "%{config_id}"
   display_name = "MM Dev API Config"
   labels = {
     environment = "dev"
@@ -154,8 +162,12 @@ resource "google_api_gateway_api_config" "api_cfg" {
 func TestAccApiGatewayApiConfig_apigatewayApiConfigGrpcExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"api_id":        "tf-test-my-api" + randomSuffix,
+		"config_id":     "tf-test-my-config" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -180,13 +192,13 @@ func testAccApiGatewayApiConfig_apigatewayApiConfigGrpcExample(context map[strin
 	return acctest.Nprintf(`
 resource "google_api_gateway_api" "api_cfg" {
   provider = google-beta
-  api_id = "tf-test-my-api%{random_suffix}"
+  api_id = "%{api_id}"
 }
 
 resource "google_api_gateway_api_config" "api_cfg" {
   provider = google-beta
   api = google_api_gateway_api.api_cfg.api_id
-  api_config_id = "tf-test-my-config%{random_suffix}"
+  api_config_id = "%{config_id}"
 
   grpc_services {
     file_descriptor_set {
@@ -226,8 +238,12 @@ resource "google_api_gateway_api_config" "api_cfg" {
 func TestAccApiGatewayApiConfig_apigatewayApiConfigGrpcFullExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"api_id":        "tf-test-my-api" + randomSuffix,
+		"config_id":     "tf-test-my-config" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -252,13 +268,13 @@ func testAccApiGatewayApiConfig_apigatewayApiConfigGrpcFullExample(context map[s
 	return acctest.Nprintf(`
 resource "google_api_gateway_api" "api_cfg" {
   provider = google-beta
-  api_id = "tf-test-my-api%{random_suffix}"
+  api_id = "%{api_id}"
 }
 
 resource "google_api_gateway_api_config" "api_cfg" {
   provider = google-beta
   api = google_api_gateway_api.api_cfg.api_id
-  api_config_id = "tf-test-my-config%{random_suffix}"
+  api_config_id = "%{config_id}"
 
   grpc_services {
     file_descriptor_set {

@@ -364,6 +364,8 @@ func resourcePrivilegedAccessManagerSettingsRead(d *schema.ResourceData, meta in
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("PrivilegedAccessManagerSettings %q", d.Id()))
 	}
 
+	log.Printf("[DEBUG] Finished reading PrivilegedAccessManagerSettings %q: %#v", d.Id(), res)
+
 	if err := d.Set("name", flattenPrivilegedAccessManagerSettingsName(res["name"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Settings: %s", err)
 	}

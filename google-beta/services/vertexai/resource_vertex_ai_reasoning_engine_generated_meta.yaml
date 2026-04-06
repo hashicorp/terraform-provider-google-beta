@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2014, 2026
+# SPDX-License-Identifier: MPL-2.0
 resource: google_vertex_ai_reasoning_engine
 generation_type: mmv1
 source_file: products/vertexai/ReasoningEngine.yaml
@@ -5,7 +7,17 @@ api_service_name: aiplatform.googleapis.com
 api_version: v1beta1
 api_resource_type_kind: ReasoningEngine
 fields:
+    - api_field: contextSpec.memoryBankConfig.disableMemoryRevisions
+    - api_field: contextSpec.memoryBankConfig.generationConfig.model
+    - api_field: contextSpec.memoryBankConfig.similaritySearchConfig.embeddingModel
+    - api_field: contextSpec.memoryBankConfig.ttlConfig.defaultTtl
+    - api_field: contextSpec.memoryBankConfig.ttlConfig.granularTtlConfig.createTtl
+    - api_field: contextSpec.memoryBankConfig.ttlConfig.granularTtlConfig.generateCreatedTtl
+    - api_field: contextSpec.memoryBankConfig.ttlConfig.granularTtlConfig.generateUpdatedTtl
+    - api_field: contextSpec.memoryBankConfig.ttlConfig.memoryRevisionDefaultTtl
     - api_field: createTime
+    - field: deletion_policy
+      provider_only: true
     - api_field: description
     - api_field: displayName
     - api_field: encryptionSpec.kmsKeyName
@@ -28,6 +40,8 @@ fields:
     - api_field: spec.deploymentSpec.secretEnv.name
     - api_field: spec.deploymentSpec.secretEnv.secretRef.secret
     - api_field: spec.deploymentSpec.secretEnv.secretRef.version
+    - api_field: spec.effectiveIdentity
+    - api_field: spec.identityType
     - api_field: spec.packageSpec.dependencyFilesGcsUri
     - api_field: spec.packageSpec.pickleObjectGcsUri
     - api_field: spec.packageSpec.pythonVersion

@@ -64,6 +64,7 @@ import (
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/composer"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/compute"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/contactcenterinsights"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/container"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/containeranalysis"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/containerattached"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/corebilling"

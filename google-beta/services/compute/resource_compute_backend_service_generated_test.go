@@ -53,8 +53,12 @@ var (
 func TestAccComputeBackendService_backendServiceBasicExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"backend_service_name":   "tf-test-backend-service" + randomSuffix,
+		"http_health_check_name": "tf-test-health-check" + randomSuffix,
+		"random_suffix":          randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -78,12 +82,12 @@ func TestAccComputeBackendService_backendServiceBasicExample(t *testing.T) {
 func testAccComputeBackendService_backendServiceBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_backend_service" "default" {
-  name          = "tf-test-backend-service%{random_suffix}"
+  name          = "%{backend_service_name}"
   health_checks = [google_compute_http_health_check.default.id]
 }
 
 resource "google_compute_http_health_check" "default" {
-  name               = "tf-test-health-check%{random_suffix}"
+  name               = "%{http_health_check_name}"
   request_path       = "/"
   check_interval_sec = 1
   timeout_sec        = 1
@@ -94,8 +98,11 @@ resource "google_compute_http_health_check" "default" {
 func TestAccComputeBackendService_backendServiceExternalIapExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"backend_service_name": "tf-test-tf-test-backend-service-external" + randomSuffix,
+		"random_suffix":        randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -119,7 +126,7 @@ func TestAccComputeBackendService_backendServiceExternalIapExample(t *testing.T)
 func testAccComputeBackendService_backendServiceExternalIapExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_backend_service" "default" {
-  name                  = "tf-test-tf-test-backend-service-external%{random_suffix}"
+  name                  = "%{backend_service_name}"
   protocol              = "HTTP"
   load_balancing_scheme = "EXTERNAL"
   iap {
@@ -134,8 +141,12 @@ resource "google_compute_backend_service" "default" {
 func TestAccComputeBackendService_backendServiceCacheSimpleExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"backend_service_name":   "tf-test-backend-service" + randomSuffix,
+		"http_health_check_name": "tf-test-health-check" + randomSuffix,
+		"random_suffix":          randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -159,7 +170,7 @@ func TestAccComputeBackendService_backendServiceCacheSimpleExample(t *testing.T)
 func testAccComputeBackendService_backendServiceCacheSimpleExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_backend_service" "default" {
-  name          = "tf-test-backend-service%{random_suffix}"
+  name          = "%{backend_service_name}"
   health_checks = [google_compute_http_health_check.default.id]
   enable_cdn  = true
   cdn_policy {
@@ -168,7 +179,7 @@ resource "google_compute_backend_service" "default" {
 }
 
 resource "google_compute_http_health_check" "default" {
-  name               = "tf-test-health-check%{random_suffix}"
+  name               = "%{http_health_check_name}"
   request_path       = "/"
   check_interval_sec = 1
   timeout_sec        = 1
@@ -179,8 +190,11 @@ resource "google_compute_http_health_check" "default" {
 func TestAccComputeBackendService_backendServiceCacheIncludeHttpHeadersExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"backend_service_name": "tf-test-backend-service" + randomSuffix,
+		"random_suffix":        randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -204,7 +218,7 @@ func TestAccComputeBackendService_backendServiceCacheIncludeHttpHeadersExample(t
 func testAccComputeBackendService_backendServiceCacheIncludeHttpHeadersExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_backend_service" "default" {
-  name          = "tf-test-backend-service%{random_suffix}"
+  name          = "%{backend_service_name}"
   enable_cdn  = true
   cdn_policy {
     cache_mode = "USE_ORIGIN_HEADERS"
@@ -222,8 +236,11 @@ resource "google_compute_backend_service" "default" {
 func TestAccComputeBackendService_backendServiceCacheIncludeNamedCookiesExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"backend_service_name": "tf-test-backend-service" + randomSuffix,
+		"random_suffix":        randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -247,7 +264,7 @@ func TestAccComputeBackendService_backendServiceCacheIncludeNamedCookiesExample(
 func testAccComputeBackendService_backendServiceCacheIncludeNamedCookiesExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_backend_service" "default" {
-  name          = "tf-test-backend-service%{random_suffix}"
+  name          = "%{backend_service_name}"
   enable_cdn  = true
   cdn_policy {
     cache_mode = "CACHE_ALL_STATIC"
@@ -268,8 +285,12 @@ resource "google_compute_backend_service" "default" {
 func TestAccComputeBackendService_backendServiceCacheExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"backend_service_name":   "tf-test-backend-service" + randomSuffix,
+		"http_health_check_name": "tf-test-health-check" + randomSuffix,
+		"random_suffix":          randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -293,7 +314,7 @@ func TestAccComputeBackendService_backendServiceCacheExample(t *testing.T) {
 func testAccComputeBackendService_backendServiceCacheExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_backend_service" "default" {
-  name          = "tf-test-backend-service%{random_suffix}"
+  name          = "%{backend_service_name}"
   health_checks = [google_compute_http_health_check.default.id]
   enable_cdn  = true
   cdn_policy {
@@ -307,7 +328,7 @@ resource "google_compute_backend_service" "default" {
 }
 
 resource "google_compute_http_health_check" "default" {
-  name               = "tf-test-health-check%{random_suffix}"
+  name               = "%{http_health_check_name}"
   request_path       = "/"
   check_interval_sec = 1
   timeout_sec        = 1
@@ -318,8 +339,12 @@ resource "google_compute_http_health_check" "default" {
 func TestAccComputeBackendService_backendServiceCacheBypassCacheOnRequestHeadersExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"backend_service_name":   "tf-test-backend-service" + randomSuffix,
+		"http_health_check_name": "tf-test-health-check" + randomSuffix,
+		"random_suffix":          randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -343,7 +368,7 @@ func TestAccComputeBackendService_backendServiceCacheBypassCacheOnRequestHeaders
 func testAccComputeBackendService_backendServiceCacheBypassCacheOnRequestHeadersExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_backend_service" "default" {
-  name          = "tf-test-backend-service%{random_suffix}"
+  name          = "%{backend_service_name}"
   health_checks = [google_compute_http_health_check.default.id]
   enable_cdn  = true
   cdn_policy {
@@ -365,7 +390,7 @@ resource "google_compute_backend_service" "default" {
 }
 
 resource "google_compute_http_health_check" "default" {
-  name               = "tf-test-health-check%{random_suffix}"
+  name               = "%{http_health_check_name}"
   request_path       = "/"
   check_interval_sec = 1
   timeout_sec        = 1
@@ -376,8 +401,12 @@ resource "google_compute_http_health_check" "default" {
 func TestAccComputeBackendService_backendServiceTrafficDirectorRoundRobinExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"backend_service_name": "tf-test-backend-service" + randomSuffix,
+		"health_check_name":    "tf-test-health-check" + randomSuffix,
+		"random_suffix":        randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -403,7 +432,7 @@ func testAccComputeBackendService_backendServiceTrafficDirectorRoundRobinExample
 resource "google_compute_backend_service" "default" {
   provider = google-beta
 
-  name                  = "tf-test-backend-service%{random_suffix}"
+  name                  = "%{backend_service_name}"
   health_checks         = [google_compute_health_check.health_check.id]
   load_balancing_scheme = "INTERNAL_SELF_MANAGED"
   locality_lb_policy    = "ROUND_ROBIN"
@@ -412,7 +441,7 @@ resource "google_compute_backend_service" "default" {
 resource "google_compute_health_check" "health_check" {
   provider = google-beta
 
-  name = "tf-test-health-check%{random_suffix}"
+  name = "%{health_check_name}"
   http_health_check {
     port = 80
   }
@@ -423,8 +452,12 @@ resource "google_compute_health_check" "health_check" {
 func TestAccComputeBackendService_backendServiceTrafficDirectorRingHashExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"backend_service_name": "tf-test-backend-service" + randomSuffix,
+		"health_check_name":    "tf-test-health-check" + randomSuffix,
+		"random_suffix":        randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -450,7 +483,7 @@ func testAccComputeBackendService_backendServiceTrafficDirectorRingHashExample(c
 resource "google_compute_backend_service" "default" {
   provider = google-beta
 
-  name                  = "tf-test-backend-service%{random_suffix}"
+  name                  = "%{backend_service_name}"
   health_checks         = [google_compute_health_check.health_check.id]
   load_balancing_scheme = "INTERNAL_SELF_MANAGED"
   locality_lb_policy    = "RING_HASH"
@@ -483,7 +516,7 @@ resource "google_compute_backend_service" "default" {
 resource "google_compute_health_check" "health_check" {
   provider = google-beta
 
-  name = "tf-test-health-check%{random_suffix}"
+  name = "%{health_check_name}"
   http_health_check {
     port = 80
   }
@@ -494,8 +527,12 @@ resource "google_compute_health_check" "health_check" {
 func TestAccComputeBackendService_backendServiceStatefulSessionAffinityExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"backend_service_name": "tf-test-backend-service" + randomSuffix,
+		"health_check_name":    "tf-test-health-check" + randomSuffix,
+		"random_suffix":        randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -521,7 +558,7 @@ func testAccComputeBackendService_backendServiceStatefulSessionAffinityExample(c
 resource "google_compute_backend_service" "default" {
   provider = google-beta
 
-  name                  = "tf-test-backend-service%{random_suffix}"
+  name                  = "%{backend_service_name}"
   health_checks         = [google_compute_health_check.health_check.id]
   load_balancing_scheme = "EXTERNAL_MANAGED"
   locality_lb_policy    = "RING_HASH"
@@ -539,7 +576,7 @@ resource "google_compute_backend_service" "default" {
 resource "google_compute_health_check" "health_check" {
   provider = google-beta
 
-  name = "tf-test-health-check%{random_suffix}"
+  name = "%{health_check_name}"
   http_health_check {
     port = 80
   }
@@ -550,8 +587,12 @@ resource "google_compute_health_check" "health_check" {
 func TestAccComputeBackendService_backendServiceNetworkEndpointExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"backend_service_name": "tf-test-backend-service" + randomSuffix,
+		"neg_name":             "tf-test-network-endpoint" + randomSuffix,
+		"random_suffix":        randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -576,7 +617,7 @@ func testAccComputeBackendService_backendServiceNetworkEndpointExample(context m
 	return acctest.Nprintf(`
 resource "google_compute_global_network_endpoint_group" "external_proxy" {
   provider = google-beta
-  name                  = "tf-test-network-endpoint%{random_suffix}"
+  name                  = "%{neg_name}"
   network_endpoint_type = "INTERNET_FQDN_PORT"
   default_port          = "443"
 }
@@ -590,7 +631,7 @@ resource "google_compute_global_network_endpoint" "proxy" {
 
 resource "google_compute_backend_service" "default" {
   provider = google-beta
-  name                            = "tf-test-backend-service%{random_suffix}"
+  name                            = "%{backend_service_name}"
   enable_cdn                      = true
   timeout_sec                     = 10
   connection_draining_timeout_sec = 10
@@ -608,8 +649,12 @@ resource "google_compute_backend_service" "default" {
 func TestAccComputeBackendService_backendServiceInFlightExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"backend_service_name": "tf-test-backend-service" + randomSuffix,
+		"health_check_name":    "tf-test-health-check" + randomSuffix,
+		"random_suffix":        randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -688,7 +733,7 @@ resource "google_compute_region_instance_group_manager" "foobar" {
 
 resource "google_compute_backend_service" "default" {
   provider              = google-beta
-  name                  = "tf-test-backend-service%{random_suffix}"
+  name                  = "%{backend_service_name}"
   description           = "Hello World 1234"
   port_name             = "http"
   protocol              = "TCP"
@@ -706,7 +751,7 @@ resource "google_compute_backend_service" "default" {
 
 resource "google_compute_health_check" "default" {
   provider              = google-beta
-  name = "tf-test-health-check%{random_suffix}"
+  name = "%{health_check_name}"
 
   http_health_check {
     port = 80
@@ -718,8 +763,12 @@ resource "google_compute_health_check" "default" {
 func TestAccComputeBackendService_backendServiceExternalManagedExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"backend_service_name": "tf-test-backend-service" + randomSuffix,
+		"health_check_name":    "tf-test-health-check" + randomSuffix,
+		"random_suffix":        randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -743,14 +792,14 @@ func TestAccComputeBackendService_backendServiceExternalManagedExample(t *testin
 func testAccComputeBackendService_backendServiceExternalManagedExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_backend_service" "default" {
-  name          = "tf-test-backend-service%{random_suffix}"
+  name          = "%{backend_service_name}"
   health_checks = [google_compute_health_check.default.id]
   load_balancing_scheme = "EXTERNAL_MANAGED"
   protocol              = "H2C"
 }
 
 resource "google_compute_health_check" "default" {
-  name = "tf-test-health-check%{random_suffix}"
+  name = "%{health_check_name}"
   http_health_check {
     port = 80
   }
@@ -761,8 +810,11 @@ resource "google_compute_health_check" "default" {
 func TestAccComputeBackendService_backendServiceIpAddressSelectionPolicyExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"backend_service_name": "tf-test-backend-service" + randomSuffix,
+		"random_suffix":        randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -786,7 +838,7 @@ func TestAccComputeBackendService_backendServiceIpAddressSelectionPolicyExample(
 func testAccComputeBackendService_backendServiceIpAddressSelectionPolicyExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_backend_service" "default" {
-  name = "tf-test-backend-service%{random_suffix}"
+  name = "%{backend_service_name}"
   load_balancing_scheme = "EXTERNAL_MANAGED"
   ip_address_selection_policy = "IPV6_ONLY"
 }
@@ -796,8 +848,14 @@ resource "google_compute_backend_service" "default" {
 func TestAccComputeBackendService_backendServiceCustomMetricsExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"backend_service_name": "tf-test-backend-service" + randomSuffix,
+		"default_neg_name":     "tf-test-network-endpoint" + randomSuffix,
+		"health_check_name":    "tf-test-health-check" + randomSuffix,
+		"network_name":         "network" + randomSuffix,
+		"random_suffix":        randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -821,12 +879,12 @@ func TestAccComputeBackendService_backendServiceCustomMetricsExample(t *testing.
 func testAccComputeBackendService_backendServiceCustomMetricsExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_network" "default" {
-  name                    = "network%{random_suffix}"
+  name                    = "%{network_name}"
 }
 
 // Zonal NEG with GCE_VM_IP_PORT
 resource "google_compute_network_endpoint_group" "default" {
-  name                  = "tf-test-network-endpoint%{random_suffix}"
+  name                  = "%{default_neg_name}"
   network               = google_compute_network.default.id
   default_port          = "90"
   zone                  = "us-central1-a"
@@ -834,7 +892,7 @@ resource "google_compute_network_endpoint_group" "default" {
 }
 
 resource "google_compute_backend_service" "default" {
-  name                  = "tf-test-backend-service%{random_suffix}"
+  name                  = "%{backend_service_name}"
   health_checks = [google_compute_health_check.default.id]
 
   # WEIGHTED_ROUND_ROBIN and CUSTOM_METRICS require EXTERNAL_MANAGED.
@@ -867,7 +925,7 @@ resource "google_compute_backend_service" "default" {
 }
 
 resource "google_compute_health_check" "default" {
-  name               = "tf-test-health-check%{random_suffix}"
+  name               = "%{health_check_name}"
   timeout_sec        = 1
   check_interval_sec = 1
 
@@ -881,8 +939,13 @@ resource "google_compute_health_check" "default" {
 func TestAccComputeBackendService_backendServiceTlsSettingsExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"authentication_name":  "authentication" + randomSuffix,
+		"backend_service_name": "tf-test-backend-service" + randomSuffix,
+		"health_check_name":    "tf-test-health-check" + randomSuffix,
+		"random_suffix":        randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -906,7 +969,7 @@ func TestAccComputeBackendService_backendServiceTlsSettingsExample(t *testing.T)
 func testAccComputeBackendService_backendServiceTlsSettingsExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_backend_service" "default" {
-  name          = "tf-test-backend-service%{random_suffix}"
+  name          = "%{backend_service_name}"
   health_checks = [google_compute_health_check.default.id]
   load_balancing_scheme = "EXTERNAL_MANAGED"
   protocol = "HTTPS"
@@ -923,14 +986,14 @@ resource "google_compute_backend_service" "default" {
 }
 
 resource "google_compute_health_check" "default" {
-  name = "tf-test-health-check%{random_suffix}"
+  name = "%{health_check_name}"
   http_health_check {
     port = 80
   }
 }
 
 resource "google_network_security_backend_authentication_config" "default" {
-  name             = "authentication%{random_suffix}"
+  name             = "%{authentication_name}"
   well_known_roots = "PUBLIC_ROOTS"
 }
 `, context)
@@ -939,8 +1002,11 @@ resource "google_network_security_backend_authentication_config" "default" {
 func TestAccComputeBackendService_backendServiceDynamicForwardingExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"backend_service_name": "tf-test-backend-service" + randomSuffix,
+		"random_suffix":        randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -965,7 +1031,7 @@ func testAccComputeBackendService_backendServiceDynamicForwardingExample(context
 	return acctest.Nprintf(`
 resource "google_compute_backend_service" "default" {
   provider              = google-beta
-  name                  = "tf-test-backend-service%{random_suffix}"
+  name                  = "%{backend_service_name}"
   load_balancing_scheme = "INTERNAL_MANAGED"
   dynamic_forwarding {
     ip_port_selection {

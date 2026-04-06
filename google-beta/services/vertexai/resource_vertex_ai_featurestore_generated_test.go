@@ -53,11 +53,15 @@ var (
 func TestAccVertexAIFeaturestore_vertexAiFeaturestoreExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"billing_account": envvar.GetTestBillingAccountFromEnv(t),
 		"org_id":          envvar.GetTestOrgFromEnv(t),
 		"kms_key_name":    acctest.BootstrapKMSKeyInLocation(t, "us-central1").CryptoKey.Name,
-		"random_suffix":   acctest.RandString(t, 10),
+		"name":            "terraform" + randomSuffix,
+		"project":         "tf-test-appeng-flex" + randomSuffix,
+		"random_suffix":   randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -81,7 +85,7 @@ func TestAccVertexAIFeaturestore_vertexAiFeaturestoreExample(t *testing.T) {
 func testAccVertexAIFeaturestore_vertexAiFeaturestoreExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_vertex_ai_featurestore" "featurestore" {
-  name     = "terraform%{random_suffix}"
+  name     = "%{name}"
   labels = {
     foo = "bar"
   }
@@ -100,11 +104,15 @@ resource "google_vertex_ai_featurestore" "featurestore" {
 func TestAccVertexAIFeaturestore_vertexAiFeaturestoreWithBetaFieldsExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"billing_account": envvar.GetTestBillingAccountFromEnv(t),
 		"org_id":          envvar.GetTestOrgFromEnv(t),
 		"kms_key_name":    acctest.BootstrapKMSKeyInLocation(t, "us-central1").CryptoKey.Name,
-		"random_suffix":   acctest.RandString(t, 10),
+		"name":            "terraform2" + randomSuffix,
+		"project":         "tf-test-appeng-flex" + randomSuffix,
+		"random_suffix":   randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -129,7 +137,7 @@ func testAccVertexAIFeaturestore_vertexAiFeaturestoreWithBetaFieldsExample(conte
 	return acctest.Nprintf(`
 resource "google_vertex_ai_featurestore" "featurestore" {
   provider = google-beta
-  name     = "terraform2%{random_suffix}"
+  name     = "%{name}"
   labels = {
     foo = "bar"
   }
@@ -149,11 +157,15 @@ resource "google_vertex_ai_featurestore" "featurestore" {
 func TestAccVertexAIFeaturestore_vertexAiFeaturestoreScalingExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"billing_account": envvar.GetTestBillingAccountFromEnv(t),
 		"org_id":          envvar.GetTestOrgFromEnv(t),
 		"kms_key_name":    acctest.BootstrapKMSKeyInLocation(t, "us-central1").CryptoKey.Name,
-		"random_suffix":   acctest.RandString(t, 10),
+		"name":            "terraform3" + randomSuffix,
+		"project":         "tf-test-appeng-flex" + randomSuffix,
+		"random_suffix":   randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -177,7 +189,7 @@ func TestAccVertexAIFeaturestore_vertexAiFeaturestoreScalingExample(t *testing.T
 func testAccVertexAIFeaturestore_vertexAiFeaturestoreScalingExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_vertex_ai_featurestore" "featurestore" {
-  name     = "terraform3%{random_suffix}"
+  name     = "%{name}"
   labels = {
     foo = "bar"
   }

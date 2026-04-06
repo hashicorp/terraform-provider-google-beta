@@ -53,9 +53,13 @@ var (
 func TestAccFirebaseHostingChannel_firebasehostingChannelBasicExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"project_id":    envvar.GetTestProjectFromEnv(),
-		"random_suffix": acctest.RandString(t, 10),
+		"channel_id":    "tf-test-channel-basic" + randomSuffix,
+		"site_id":       "tf-test-site-with-channel" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -81,13 +85,13 @@ func testAccFirebaseHostingChannel_firebasehostingChannelBasicExample(context ma
 resource "google_firebase_hosting_site" "default" {
   provider = google-beta
   project  = "%{project_id}"
-  site_id = "tf-test-site-with-channel%{random_suffix}"
+  site_id = "%{site_id}"
 }
 
 resource "google_firebase_hosting_channel" "default" {
   provider = google-beta
   site_id = google_firebase_hosting_site.default.site_id
-  channel_id = "tf-test-channel-basic%{random_suffix}"
+  channel_id = "%{channel_id}"
 }
 `, context)
 }
@@ -95,9 +99,13 @@ resource "google_firebase_hosting_channel" "default" {
 func TestAccFirebaseHostingChannel_firebasehostingChannelFullExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"project_id":    envvar.GetTestProjectFromEnv(),
-		"random_suffix": acctest.RandString(t, 10),
+		"channel_id":    "tf-test-channel-full" + randomSuffix,
+		"site_id":       "tf-test-site-with-channel" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -123,13 +131,13 @@ func testAccFirebaseHostingChannel_firebasehostingChannelFullExample(context map
 resource "google_firebase_hosting_site" "default" {
   provider = google-beta
   project  = "%{project_id}"
-  site_id = "tf-test-site-with-channel%{random_suffix}"
+  site_id = "%{site_id}"
 }
 
 resource "google_firebase_hosting_channel" "full" {
   provider = google-beta
   site_id = google_firebase_hosting_site.default.site_id
-  channel_id = "tf-test-channel-full%{random_suffix}"
+  channel_id = "%{channel_id}"
   ttl = "86400s"
   retained_release_count = 20
   labels = {

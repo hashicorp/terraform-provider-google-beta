@@ -355,6 +355,8 @@ func resourceIAMBetaWorkloadIdentityPoolNamespaceRead(d *schema.ResourceData, me
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("IAMBetaWorkloadIdentityPoolNamespace %q", d.Id()))
 	}
 
+	log.Printf("[DEBUG] Finished reading IAMBetaWorkloadIdentityPoolNamespace %q: %#v", d.Id(), res)
+
 	res, err = resourceIAMBetaWorkloadIdentityPoolNamespaceDecoder(d, meta, res)
 	if err != nil {
 		return err

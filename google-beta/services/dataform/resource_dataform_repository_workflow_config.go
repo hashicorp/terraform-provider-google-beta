@@ -385,6 +385,8 @@ func resourceDataformRepositoryWorkflowConfigRead(d *schema.ResourceData, meta i
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("DataformRepositoryWorkflowConfig %q", d.Id()))
 	}
 
+	log.Printf("[DEBUG] Finished reading DataformRepositoryWorkflowConfig %q: %#v", d.Id(), res)
+
 	if err := d.Set("project", project); err != nil {
 		return fmt.Errorf("Error reading RepositoryWorkflowConfig: %s", err)
 	}

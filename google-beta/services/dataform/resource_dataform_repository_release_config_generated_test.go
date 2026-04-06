@@ -53,8 +53,15 @@ var (
 func TestAccDataformRepositoryReleaseConfig_dataformRepositoryReleaseConfigExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"data":                     "tf-test-secret-data" + randomSuffix,
+		"dataform_repository_name": "tf_test_dataform_repository" + randomSuffix,
+		"git_repository_name":      "my/repository" + randomSuffix,
+		"release_name":             "tf_test_my_release" + randomSuffix,
+		"secret_name":              "tf_test_my_secret" + randomSuffix,
+		"random_suffix":            randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -79,12 +86,12 @@ func testAccDataformRepositoryReleaseConfig_dataformRepositoryReleaseConfigExamp
 	return acctest.Nprintf(`
 resource "google_sourcerepo_repository" "git_repository" {
   provider = google-beta
-  name     = "my/repository%{random_suffix}"
+  name     = "%{git_repository_name}"
 }
 
 resource "google_secret_manager_secret" "secret" {
   provider  = google-beta
-  secret_id = "tf_test_my_secret%{random_suffix}"
+  secret_id = "%{secret_name}"
 
   replication {
     auto {}
@@ -95,12 +102,12 @@ resource "google_secret_manager_secret_version" "secret_version" {
   provider = google-beta
   secret   = google_secret_manager_secret.secret.id
 
-  secret_data = "tf-test-secret-data%{random_suffix}"
+  secret_data = "%{data}"
 }
 
 resource "google_dataform_repository" "repository" {
   provider = google-beta
-  name     = "tf_test_dataform_repository%{random_suffix}"
+  name     = "%{dataform_repository_name}"
   region   = "us-central1"
 
   git_remote_settings {
@@ -123,7 +130,7 @@ resource "google_dataform_repository_release_config" "release" {
   region     = google_dataform_repository.repository.region
   repository = google_dataform_repository.repository.name
 
-  name          = "tf_test_my_release%{random_suffix}"
+  name          = "%{release_name}"
   git_commitish = "main"
   cron_schedule = "0 7 * * *"
   time_zone     = "America/New_York"

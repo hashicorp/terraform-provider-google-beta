@@ -326,6 +326,8 @@ func resourceGKEHub2MembershipRBACRoleBindingRead(d *schema.ResourceData, meta i
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("GKEHub2MembershipRBACRoleBinding %q", d.Id()))
 	}
 
+	log.Printf("[DEBUG] Finished reading GKEHub2MembershipRBACRoleBinding %q: %#v", d.Id(), res)
+
 	if err := d.Set("project", project); err != nil {
 		return fmt.Errorf("Error reading MembershipRBACRoleBinding: %s", err)
 	}
