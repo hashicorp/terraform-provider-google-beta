@@ -75,6 +75,12 @@ func TestAccComputeRouter_routerBasicExample(t *testing.T) {
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"advertisedIpRanges", "md5_authentication_keys", "ncc_gateway", "network", "params", "region"},
 			},
+			{
+				ResourceName:       "google_compute_router.foobar",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -129,6 +135,12 @@ func TestAccComputeRouter_computeRouterEncryptedInterconnectExample(t *testing.T
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"advertisedIpRanges", "md5_authentication_keys", "ncc_gateway", "network", "params", "region"},
 			},
+			{
+				ResourceName:       "google_compute_router.encrypted-interconnect-router",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -175,6 +187,12 @@ func TestAccComputeRouter_computeRouterMd5encryptedExample(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"advertisedIpRanges", "md5_authentication_keys", "ncc_gateway", "network", "params", "region"},
+			},
+			{
+				ResourceName:       "google_compute_router.foobar",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})
@@ -235,6 +253,12 @@ func TestAccComputeRouter_routerNccGwExample(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"md5_authentication_keys", "ncc_gateway", "network", "params", "region"},
+			},
+			{
+				ResourceName:       "google_compute_router.foobar",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})

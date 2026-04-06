@@ -75,6 +75,12 @@ func TestAccComputeSnapshot_snapshotBasicExample(t *testing.T) {
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"guest_flush", "labels", "snapshot_encryption_key.0.raw_key", "snapshot_encryption_key.0.rsa_encrypted_key", "source_disk", "source_disk_encryption_key", "source_instant_snapshot", "terraform_labels", "zone"},
 			},
+			{
+				ResourceName:       "google_compute_snapshot.snapshot",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -130,6 +136,12 @@ func TestAccComputeSnapshot_snapshotBasic2Example(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"guest_flush", "labels", "snapshot_encryption_key.0.raw_key", "snapshot_encryption_key.0.rsa_encrypted_key", "source_disk", "source_disk_encryption_key", "source_instant_snapshot", "terraform_labels", "zone"},
+			},
+			{
+				ResourceName:       "google_compute_snapshot.snapshot",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})
@@ -191,6 +203,12 @@ func TestAccComputeSnapshot_snapshotBasicSourceInstantSnapshotExample(t *testing
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"guest_flush", "labels", "snapshot_encryption_key.0.raw_key", "snapshot_encryption_key.0.rsa_encrypted_key", "source_disk", "source_disk_encryption_key", "source_instant_snapshot", "terraform_labels", "zone"},
+			},
+			{
+				ResourceName:       "google_compute_snapshot.snapshot",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})
@@ -255,6 +273,12 @@ func TestAccComputeSnapshot_snapshotChainnameExample(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"guest_flush", "labels", "snapshot_encryption_key.0.raw_key", "snapshot_encryption_key.0.rsa_encrypted_key", "source_disk", "source_disk_encryption_key", "source_instant_snapshot", "terraform_labels", "zone"},
+			},
+			{
+				ResourceName:       "google_compute_snapshot.snapshot",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})

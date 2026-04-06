@@ -118,6 +118,22 @@ func ResourceGKEHub2RolloutSequence() *schema.Resource {
 			tpgresource.DefaultProviderProject,
 		),
 
+		Identity: &schema.ResourceIdentity{
+			Version: 1,
+			SchemaFunc: func() map[string]*schema.Schema {
+				return map[string]*schema.Schema{
+					"rollout_sequence_id": {
+						Type:              schema.TypeString,
+						RequiredForImport: true,
+					},
+					"project": {
+						Type:              schema.TypeString,
+						OptionalForImport: true,
+					},
+				}
+			},
+		},
+
 		Schema: map[string]*schema.Schema{
 			"rollout_sequence_id": {
 				Type:        schema.TypeString,
@@ -302,6 +318,22 @@ func resourceGKEHub2RolloutSequenceCreate(d *schema.ResourceData, meta interface
 	}
 	d.SetId(id)
 
+	identity, err := d.Identity()
+	if err == nil && identity != nil {
+		if rolloutSequenceIdValue, ok := d.GetOk("rollout_sequence_id"); ok && rolloutSequenceIdValue.(string) != "" {
+			if err = identity.Set("rollout_sequence_id", rolloutSequenceIdValue.(string)); err != nil {
+				return fmt.Errorf("Error setting rollout_sequence_id: %s", err)
+			}
+		}
+		if projectValue, ok := d.GetOk("project"); ok && projectValue.(string) != "" {
+			if err = identity.Set("project", projectValue.(string)); err != nil {
+				return fmt.Errorf("Error setting project: %s", err)
+			}
+		}
+	} else {
+		log.Printf("[DEBUG] (Create) identity not set: %s", err)
+	}
+
 	err = GKEHub2OperationWaitTime(
 		config, res, project, "Creating RolloutSequence", userAgent,
 		d.Timeout(schema.TimeoutCreate))
@@ -395,6 +427,24 @@ func resourceGKEHub2RolloutSequenceRead(d *schema.ResourceData, meta interface{}
 		return fmt.Errorf("Error reading RolloutSequence: %s", err)
 	}
 
+	identity, err := d.Identity()
+	if err == nil && identity != nil {
+		if v, ok := identity.GetOk("rollout_sequence_id"); !ok && v == "" {
+			err = identity.Set("rollout_sequence_id", d.Get("rollout_sequence_id").(string))
+			if err != nil {
+				return fmt.Errorf("Error setting rollout_sequence_id: %s", err)
+			}
+		}
+		if v, ok := identity.GetOk("project"); !ok && v == "" {
+			err = identity.Set("project", d.Get("project").(string))
+			if err != nil {
+				return fmt.Errorf("Error setting project: %s", err)
+			}
+		}
+	} else {
+		log.Printf("[DEBUG] (Read) identity not set: %s", err)
+	}
+
 	return nil
 }
 
@@ -403,6 +453,21 @@ func resourceGKEHub2RolloutSequenceUpdate(d *schema.ResourceData, meta interface
 	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
+	}
+	identity, err := d.Identity()
+	if err == nil && identity != nil {
+		if rolloutSequenceIdValue, ok := d.GetOk("rollout_sequence_id"); ok && rolloutSequenceIdValue.(string) != "" {
+			if err = identity.Set("rollout_sequence_id", rolloutSequenceIdValue.(string)); err != nil {
+				return fmt.Errorf("Error setting rollout_sequence_id: %s", err)
+			}
+		}
+		if projectValue, ok := d.GetOk("project"); ok && projectValue.(string) != "" {
+			if err = identity.Set("project", projectValue.(string)); err != nil {
+				return fmt.Errorf("Error setting project: %s", err)
+			}
+		}
+	} else {
+		log.Printf("[DEBUG] (Update) identity not set: %s", err)
 	}
 
 	billingProject := ""

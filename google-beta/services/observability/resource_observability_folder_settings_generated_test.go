@@ -79,6 +79,12 @@ func TestAccObservabilityFolderSettings_observabilityFolderSettingsBasicExample(
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"folder", "location"},
 			},
+			{
+				ResourceName:       "google_observability_folder_settings.primary",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -155,6 +161,12 @@ func TestAccObservabilityFolderSettings_observabilityFolderSettingsBasicGlobalEx
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"folder", "location"},
+			},
+			{
+				ResourceName:       "google_observability_folder_settings.primary_global",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})

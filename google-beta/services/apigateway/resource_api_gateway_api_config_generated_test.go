@@ -75,6 +75,12 @@ func TestAccApiGatewayApiConfig_apigatewayApiConfigBasicExample(t *testing.T) {
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"api", "api_config_id", "gateway_config", "grpc_services", "labels", "terraform_labels"},
 			},
+			{
+				ResourceName:       "google_api_gateway_api_config.api_cfg",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -128,6 +134,12 @@ func TestAccApiGatewayApiConfig_apigatewayApiConfigFullExample(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"api", "api_config_id", "gateway_config", "grpc_services", "labels", "terraform_labels"},
+			},
+			{
+				ResourceName:       "google_api_gateway_api_config.api_cfg",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})
@@ -183,6 +195,12 @@ func TestAccApiGatewayApiConfig_apigatewayApiConfigGrpcExample(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"api", "api_config_id", "gateway_config", "grpc_services", "grpc_services.0.file_descriptor_set", "labels", "terraform_labels"},
+			},
+			{
+				ResourceName:       "google_api_gateway_api_config.api_cfg",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})
@@ -259,6 +277,12 @@ func TestAccApiGatewayApiConfig_apigatewayApiConfigGrpcFullExample(t *testing.T)
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"api", "api_config_id", "gateway_config", "grpc_services", "labels", "terraform_labels"},
+			},
+			{
+				ResourceName:       "google_api_gateway_api_config.api_cfg",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})

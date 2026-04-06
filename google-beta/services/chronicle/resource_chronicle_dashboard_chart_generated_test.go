@@ -75,6 +75,12 @@ func TestAccChronicleDashboardChart_chronicleDashboardchartBasicExample(t *testi
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"chart_layout", "dashboardUserData.0.lastViewedTime", "dashboard_query", "instance", "location", "native_dashboard"},
 			},
+			{
+				ResourceName:       "google_chronicle_dashboard_chart.my_chart",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -194,6 +200,12 @@ func TestAccChronicleDashboardChart_chronicleDashboardchartFullExample(t *testin
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"chart_layout", "dashboardUserData.0.lastViewedTime", "dashboard_query", "instance", "location", "native_dashboard"},
+			},
+			{
+				ResourceName:       "google_chronicle_dashboard_chart.my_chart",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})

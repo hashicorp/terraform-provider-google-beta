@@ -75,6 +75,12 @@ func TestAccChronicleDataTableRow_chronicleDataTableRowBasicExample(t *testing.T
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"data_table_id", "instance", "location"},
 			},
+			{
+				ResourceName:       "google_chronicle_data_table_row.example_row",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }

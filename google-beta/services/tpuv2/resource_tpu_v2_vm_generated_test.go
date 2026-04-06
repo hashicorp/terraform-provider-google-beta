@@ -75,6 +75,12 @@ func TestAccTpuV2Vm_tpuV2VmBasicExample(t *testing.T) {
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"labels", "terraform_labels", "zone"},
 			},
+			{
+				ResourceName:       "google_tpu_v2_vm.tpu",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -128,6 +134,12 @@ func TestAccTpuV2Vm_tpuV2VmFullExample(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"labels", "terraform_labels", "zone"},
+			},
+			{
+				ResourceName:       "google_tpu_v2_vm.tpu",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})

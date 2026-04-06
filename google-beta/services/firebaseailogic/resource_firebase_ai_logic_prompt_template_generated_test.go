@@ -74,6 +74,12 @@ func TestAccFirebaseAILogicPromptTemplate_firebaseailogicPromptTemplateFileExamp
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"location"},
 			},
+			{
+				ResourceName:       "google_firebase_ai_logic_prompt_template.file",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -112,6 +118,12 @@ func TestAccFirebaseAILogicPromptTemplate_firebaseailogicPromptTemplateBasicExam
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"location"},
+			},
+			{
+				ResourceName:       "google_firebase_ai_logic_prompt_template.basic",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})
