@@ -428,6 +428,7 @@ type Config struct {
 	VPCAccessBasePath                string
 	WorkbenchBasePath                string
 	WorkflowsBasePath                string
+	WorkloadIdentityBasePath         string
 	WorkstationsBasePath             string
 
 	CloudBillingBasePath      string
@@ -620,6 +621,7 @@ const VmwareengineBasePathKey = "Vmwareengine"
 const VPCAccessBasePathKey = "VPCAccess"
 const WorkbenchBasePathKey = "Workbench"
 const WorkflowsBasePathKey = "Workflows"
+const WorkloadIdentityBasePathKey = "WorkloadIdentity"
 const WorkstationsBasePathKey = "Workstations"
 const CloudBillingBasePathKey = "CloudBilling"
 const DataflowBasePathKey = "Dataflow"
@@ -801,6 +803,7 @@ var DefaultBasePaths = map[string]string{
 	VPCAccessBasePathKey:                "https://vpcaccess.googleapis.com/v1beta1/",
 	WorkbenchBasePathKey:                "https://notebooks.googleapis.com/v2/",
 	WorkflowsBasePathKey:                "https://workflows.googleapis.com/v1/",
+	WorkloadIdentityBasePathKey:         "https://workloadidentity.googleapis.com/v1/",
 	WorkstationsBasePathKey:             "https://workstations.googleapis.com/v1beta/",
 	CloudBillingBasePathKey:             "https://cloudbilling.googleapis.com/v1/",
 	DataflowBasePathKey:                 "https://dataflow.googleapis.com/v1b3/",
@@ -1730,6 +1733,11 @@ func SetEndpointDefaults(d *schema.ResourceData) error {
 		d.Set("workflows_custom_endpoint", MultiEnvDefault([]string{
 			"GOOGLE_WORKFLOWS_CUSTOM_ENDPOINT",
 		}, DefaultBasePaths[WorkflowsBasePathKey]))
+	}
+	if d.Get("workload_identity_custom_endpoint") == "" {
+		d.Set("workload_identity_custom_endpoint", MultiEnvDefault([]string{
+			"GOOGLE_WORKLOAD_IDENTITY_CUSTOM_ENDPOINT",
+		}, DefaultBasePaths[WorkloadIdentityBasePathKey]))
 	}
 	if d.Get("workstations_custom_endpoint") == "" {
 		d.Set("workstations_custom_endpoint", MultiEnvDefault([]string{
@@ -3015,6 +3023,7 @@ func ConfigureBasePaths(c *Config) {
 	c.VPCAccessBasePath = DefaultBasePaths[VPCAccessBasePathKey]
 	c.WorkbenchBasePath = DefaultBasePaths[WorkbenchBasePathKey]
 	c.WorkflowsBasePath = DefaultBasePaths[WorkflowsBasePathKey]
+	c.WorkloadIdentityBasePath = DefaultBasePaths[WorkloadIdentityBasePathKey]
 	c.WorkstationsBasePath = DefaultBasePaths[WorkstationsBasePathKey]
 
 	// Handwritten Products / Versioned / Atypical Entries

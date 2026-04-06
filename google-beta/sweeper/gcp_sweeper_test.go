@@ -185,6 +185,7 @@ import (
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/vpcaccess"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/workbench"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/workflows"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/workloadidentity"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/workstations"
 	"testing"
 
