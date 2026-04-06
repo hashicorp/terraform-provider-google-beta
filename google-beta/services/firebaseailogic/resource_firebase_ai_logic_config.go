@@ -200,6 +200,22 @@ the specified value if the system is overloaded. Default is 1.0.`,
 					},
 				},
 			},
+			"traffic_filter": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: `Configuration for traffic filtering.`,
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"template_only": {
+							Type:     schema.TypeBool,
+							Optional: true,
+							Description: `Only allows users to use AI Logic via prompt templates for this project.
+If true, only calls using server templates are permitted.`,
+						},
+					},
+				},
+			},
 			"name": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -236,6 +252,12 @@ func resourceFirebaseAILogicConfigCreate(d *schema.ResourceData, meta interface{
 		return err
 	} else if v, ok := d.GetOkExists("telemetry_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(telemetryConfigProp)) && (ok || !reflect.DeepEqual(v, telemetryConfigProp)) {
 		obj["telemetryConfig"] = telemetryConfigProp
+	}
+	trafficFilterProp, err := expandFirebaseAILogicConfigTrafficFilter(d.Get("traffic_filter"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("traffic_filter"); !tpgresource.IsEmptyValue(reflect.ValueOf(trafficFilterProp)) && (ok || !reflect.DeepEqual(v, trafficFilterProp)) {
+		obj["trafficFilter"] = trafficFilterProp
 	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseAILogicBasePath}}projects/{{project}}/locations/{{location}}/config?update_mask=*")
@@ -322,6 +344,8 @@ func resourceFirebaseAILogicConfigRead(d *schema.ResourceData, meta interface{})
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("FirebaseAILogicConfig %q", d.Id()))
 	}
 
+	log.Printf("[DEBUG] Finished reading FirebaseAILogicConfig %q: %#v", d.Id(), res)
+
 	if err := d.Set("project", project); err != nil {
 		return fmt.Errorf("Error reading Config: %s", err)
 	}
@@ -333,6 +357,9 @@ func resourceFirebaseAILogicConfigRead(d *schema.ResourceData, meta interface{})
 		return fmt.Errorf("Error reading Config: %s", err)
 	}
 	if err := d.Set("telemetry_config", flattenFirebaseAILogicConfigTelemetryConfig(res["telemetryConfig"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Config: %s", err)
+	}
+	if err := d.Set("traffic_filter", flattenFirebaseAILogicConfigTrafficFilter(res["trafficFilter"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Config: %s", err)
 	}
 
@@ -367,6 +394,12 @@ func resourceFirebaseAILogicConfigUpdate(d *schema.ResourceData, meta interface{
 	} else if v, ok := d.GetOkExists("telemetry_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, telemetryConfigProp)) {
 		obj["telemetryConfig"] = telemetryConfigProp
 	}
+	trafficFilterProp, err := expandFirebaseAILogicConfigTrafficFilter(d.Get("traffic_filter"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("traffic_filter"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, trafficFilterProp)) {
+		obj["trafficFilter"] = trafficFilterProp
+	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseAILogicBasePath}}projects/{{project}}/locations/{{location}}/config")
 	if err != nil {
@@ -383,6 +416,10 @@ func resourceFirebaseAILogicConfigUpdate(d *schema.ResourceData, meta interface{
 
 	if d.HasChange("telemetry_config") {
 		updateMask = append(updateMask, "telemetryConfig")
+	}
+
+	if d.HasChange("traffic_filter") {
+		updateMask = append(updateMask, "trafficFilter")
 	}
 	// updateMask is a URL parameter but not present in the schema, so ReplaceVars
 	// won't set it
@@ -538,6 +575,38 @@ func flattenFirebaseAILogicConfigTelemetryConfigSamplingRate(v interface{}, d *s
 	return v
 }
 
+func flattenFirebaseAILogicConfigTrafficFilter(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) interface{} {
+	userState := d.Get("traffic_filter").([]interface{})
+
+	var apiState []interface{}
+	apiEnabled := false
+	if original, ok := v.(map[string]interface{}); ok {
+		block := make(map[string]interface{})
+		if templateOnly, ok := original["templateOnly"].(bool); ok && templateOnly {
+			block["template_only"] = true
+			apiEnabled = true
+		} else {
+			block["template_only"] = false
+		}
+		apiState = []interface{}{block}
+	}
+
+	userEnabled := false
+	if len(userState) > 0 && userState[0] != nil {
+		if tfMap, ok := userState[0].(map[string]interface{}); ok {
+			userEnabled, _ = tfMap["template_only"].(bool)
+		}
+	}
+
+	if apiEnabled || userEnabled {
+		return apiState
+	}
+
+	// Both API and user agree the feature is disabled.
+	// Return the userState to prevent perpetual diffs.
+	return userState
+}
+
 func expandFirebaseAILogicConfigGenerativeLanguageConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	if v == nil {
 		return nil, nil
@@ -613,5 +682,31 @@ func expandFirebaseAILogicConfigTelemetryConfigMode(v interface{}, d tpgresource
 }
 
 func expandFirebaseAILogicConfigTelemetryConfigSamplingRate(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandFirebaseAILogicConfigTrafficFilter(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedTemplateOnly, err := expandFirebaseAILogicConfigTrafficFilterTemplateOnly(original["template_only"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedTemplateOnly); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["templateOnly"] = transformedTemplateOnly
+	}
+
+	return transformed, nil
+}
+
+func expandFirebaseAILogicConfigTrafficFilterTemplateOnly(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }

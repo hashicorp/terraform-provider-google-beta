@@ -53,9 +53,12 @@ var (
 func TestAccFirebaseDatabaseInstance_firebaseDatabaseInstanceBasicExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"project_id":    envvar.GetTestProjectFromEnv(),
-		"random_suffix": acctest.RandString(t, 10),
+		"instance_id":   "tf-test-active-db" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -82,7 +85,7 @@ resource "google_firebase_database_instance" "basic" {
   provider = google-beta
   project  = "%{project_id}"
   region   = "us-central1"
-  instance_id = "tf-test-active-db%{random_suffix}"
+  instance_id = "%{instance_id}"
 }
 `, context)
 }
@@ -90,9 +93,12 @@ resource "google_firebase_database_instance" "basic" {
 func TestAccFirebaseDatabaseInstance_firebaseDatabaseInstanceFullExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"project_id":    envvar.GetTestProjectFromEnv(),
-		"random_suffix": acctest.RandString(t, 10),
+		"instance_id":   "tf-test-disabled-db" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -119,7 +125,7 @@ resource "google_firebase_database_instance" "full" {
   provider = google-beta
   project  = "%{project_id}"
   region   = "europe-west1"
-  instance_id = "tf-test-disabled-db%{random_suffix}"
+  instance_id = "%{instance_id}"
   type     = "USER_DATABASE"
   desired_state   = "DISABLED"
 }
@@ -129,9 +135,12 @@ resource "google_firebase_database_instance" "full" {
 func TestAccFirebaseDatabaseInstance_firebaseDatabaseInstanceDefaultDatabaseExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"org_id":        envvar.GetTestOrgFromEnv(t),
-		"random_suffix": acctest.RandString(t, 10),
+		"project_id":    "tf-test-rtdb-project" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -159,8 +168,8 @@ func testAccFirebaseDatabaseInstance_firebaseDatabaseInstanceDefaultDatabaseExam
 	return acctest.Nprintf(`
 resource "google_project" "default" {
   provider = google-beta
-  project_id = "tf-test-rtdb-project%{random_suffix}"
-  name       = "tf-test-rtdb-project%{random_suffix}"
+  project_id = "%{project_id}"
+  name       = "%{project_id}"
   org_id     = "%{org_id}"
   deletion_policy = "DELETE"
   labels     = {
@@ -196,7 +205,7 @@ resource "google_firebase_database_instance" "default" {
   provider = google-beta
   project  = google_firebase_project.default.project
   region   = "us-central1"
-  instance_id = "tf-test-rtdb-project%{random_suffix}-default-rtdb"
+  instance_id = "%{project_id}-default-rtdb"
   type     = "DEFAULT_DATABASE"
   depends_on = [time_sleep.wait_60_seconds]
 }

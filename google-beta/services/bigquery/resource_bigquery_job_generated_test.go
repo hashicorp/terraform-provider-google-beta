@@ -53,8 +53,12 @@ var (
 func TestAccBigQueryJob_bigqueryJobQueryExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"account_name":  "bqowner" + randomSuffix,
+		"job_id":        "tf_test_job_query" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -79,18 +83,18 @@ func testAccBigQueryJob_bigqueryJobQueryExample(context map[string]interface{}) 
 resource "google_bigquery_table" "foo" {
   deletion_protection = false
   dataset_id = google_bigquery_dataset.bar.dataset_id
-  table_id   = "tf_test_job_query%{random_suffix}_table"
+  table_id   = "%{job_id}_table"
 }
 
 resource "google_bigquery_dataset" "bar" {
-  dataset_id                  = "tf_test_job_query%{random_suffix}_dataset"
+  dataset_id                  = "%{job_id}_dataset"
   friendly_name               = "test"
   description                 = "This is a test description"
   location                    = "US"
 }
 
 resource "google_bigquery_job" "job" {
-  job_id     = "tf_test_job_query%{random_suffix}"
+  job_id     = "%{job_id}"
 
   labels = {
     "example-label" ="example-value"
@@ -119,8 +123,11 @@ resource "google_bigquery_job" "job" {
 func TestAccBigQueryJob_bigqueryJobQueryContinuousExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"job_id":        "tf_test_job_query_continuous" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -145,7 +152,7 @@ func testAccBigQueryJob_bigqueryJobQueryContinuousExample(context map[string]int
 resource "google_bigquery_job" "job" {
   provider = google-beta
 
-  job_id     = "tf_test_job_query_continuous%{random_suffix}"
+  job_id     = "%{job_id}"
 
   query {
     query = "SELECT state FROM [lookerdata:cdc.project_tycho_reports]"
@@ -163,8 +170,12 @@ resource "google_bigquery_job" "job" {
 func TestAccBigQueryJob_bigqueryJobQueryTableReferenceExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"account_name":  "bqowner" + randomSuffix,
+		"job_id":        "tf_test_job_query" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -189,18 +200,18 @@ func testAccBigQueryJob_bigqueryJobQueryTableReferenceExample(context map[string
 resource "google_bigquery_table" "foo" {
   deletion_protection = false
   dataset_id = google_bigquery_dataset.bar.dataset_id
-  table_id   = "tf_test_job_query%{random_suffix}_table"
+  table_id   = "%{job_id}_table"
 }
 
 resource "google_bigquery_dataset" "bar" {
-  dataset_id                  = "tf_test_job_query%{random_suffix}_dataset"
+  dataset_id                  = "%{job_id}_dataset"
   friendly_name               = "test"
   description                 = "This is a test description"
   location                    = "US"
 }
 
 resource "google_bigquery_job" "job" {
-  job_id     = "tf_test_job_query%{random_suffix}"
+  job_id     = "%{job_id}"
 
   labels = {
     "example-label" ="example-value"
@@ -231,8 +242,11 @@ resource "google_bigquery_job" "job" {
 func TestAccBigQueryJob_bigqueryJobLoadExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"job_id":        "tf_test_job_load" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -257,18 +271,18 @@ func testAccBigQueryJob_bigqueryJobLoadExample(context map[string]interface{}) s
 resource "google_bigquery_table" "foo" {
   deletion_protection = false
   dataset_id = google_bigquery_dataset.bar.dataset_id
-  table_id   = "tf_test_job_load%{random_suffix}_table"
+  table_id   = "%{job_id}_table"
 }
 
 resource "google_bigquery_dataset" "bar" {
-  dataset_id                  = "tf_test_job_load%{random_suffix}_dataset"
+  dataset_id                  = "%{job_id}_dataset"
   friendly_name               = "test"
   description                 = "This is a test description"
   location                    = "US"
 }
 
 resource "google_bigquery_job" "job" {
-  job_id     = "tf_test_job_load%{random_suffix}"
+  job_id     = "%{job_id}"
 
   labels = {
     "my_job" ="load"
@@ -298,9 +312,13 @@ resource "google_bigquery_job" "job" {
 func TestAccBigQueryJob_bigqueryJobLoadGeojsonExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"project":       envvar.GetTestProjectFromEnv(),
-		"random_suffix": acctest.RandString(t, 10),
+		"bucket_name":   "tf-test-bq-geojson" + randomSuffix,
+		"job_id":        "tf_test_job_load" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -327,7 +345,7 @@ locals {
 }
 
 resource "google_storage_bucket" "bucket" {
-  name     = "${local.project}-tf-test-bq-geojson%{random_suffix}"  # Every bucket name must be globally unique
+  name     = "${local.project}-%{bucket_name}"  # Every bucket name must be globally unique
   location = "US"
   uniform_bucket_level_access = true
 }
@@ -344,18 +362,18 @@ EOF
 resource "google_bigquery_table" "foo" {
   deletion_protection = false
   dataset_id = google_bigquery_dataset.bar.dataset_id
-  table_id   = "tf_test_job_load%{random_suffix}_table"
+  table_id   = "%{job_id}_table"
 }
 
 resource "google_bigquery_dataset" "bar" {
-  dataset_id                  = "tf_test_job_load%{random_suffix}_dataset"
+  dataset_id                  = "%{job_id}_dataset"
   friendly_name               = "test"
   description                 = "This is a test description"
   location                    = "US"
 }
 
 resource "google_bigquery_job" "job" {
-  job_id     = "tf_test_job_load%{random_suffix}"
+  job_id     = "%{job_id}"
 
   labels = {
     "my_job" = "load"
@@ -386,8 +404,11 @@ resource "google_bigquery_job" "job" {
 func TestAccBigQueryJob_bigqueryJobLoadParquetExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"job_id":        "tf_test_job_load" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -410,19 +431,19 @@ func TestAccBigQueryJob_bigqueryJobLoadParquetExample(t *testing.T) {
 func testAccBigQueryJob_bigqueryJobLoadParquetExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_storage_bucket" "test" {
-  name                        = "tf_test_job_load%{random_suffix}_bucket"
+  name                        = "%{job_id}_bucket"
   location                    = "US"
   uniform_bucket_level_access = true
 }
 
 resource "google_storage_bucket_object" "test" {
-  name   =  "tf_test_job_load%{random_suffix}_bucket_object"
+  name   =  "%{job_id}_bucket_object"
   source = "./test-fixtures/test.parquet.gzip"
   bucket = google_storage_bucket.test.name
 }
 
 resource "google_bigquery_dataset" "test" {
-  dataset_id                  = "tf_test_job_load%{random_suffix}_dataset"
+  dataset_id                  = "%{job_id}_dataset"
   friendly_name               = "test"
   description                 = "This is a test description"
   location                    = "US"
@@ -430,12 +451,12 @@ resource "google_bigquery_dataset" "test" {
 
 resource "google_bigquery_table" "test" {
   deletion_protection = false
-  table_id            = "tf_test_job_load%{random_suffix}_table"
+  table_id            = "%{job_id}_table"
   dataset_id          = google_bigquery_dataset.test.dataset_id
 }
 
 resource "google_bigquery_job" "job" {
-  job_id = "tf_test_job_load%{random_suffix}"
+  job_id = "%{job_id}"
 
   labels = {
     "my_job" ="load"
@@ -469,8 +490,11 @@ resource "google_bigquery_job" "job" {
 func TestAccBigQueryJob_bigqueryJobLoadTableReferenceExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"job_id":        "tf_test_job_load" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -495,18 +519,18 @@ func testAccBigQueryJob_bigqueryJobLoadTableReferenceExample(context map[string]
 resource "google_bigquery_table" "foo" {
   deletion_protection = false
   dataset_id = google_bigquery_dataset.bar.dataset_id
-  table_id   = "tf_test_job_load%{random_suffix}_table"
+  table_id   = "%{job_id}_table"
 }
 
 resource "google_bigquery_dataset" "bar" {
-  dataset_id                  = "tf_test_job_load%{random_suffix}_dataset"
+  dataset_id                  = "%{job_id}_dataset"
   friendly_name               = "test"
   description                 = "This is a test description"
   location                    = "US"
 }
 
 resource "google_bigquery_job" "job" {
-  job_id     = "tf_test_job_load%{random_suffix}"
+  job_id     = "%{job_id}"
 
   labels = {
     "my_job" ="load"
@@ -534,10 +558,14 @@ resource "google_bigquery_job" "job" {
 func TestAccBigQueryJob_bigqueryJobCopyExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"project":       envvar.GetTestProjectFromEnv(),
+		"account_name":  "bqowner" + randomSuffix,
+		"job_id":        "tf_test_job_copy" + randomSuffix,
 		"kms_key_name":  acctest.BootstrapKMSKeyWithPurposeInLocationAndName(t, "ENCRYPT_DECRYPT", "global", "tf-bootstrap-bigquery-job-key1").CryptoKey.Name,
-		"random_suffix": acctest.RandString(t, 10),
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -567,7 +595,7 @@ resource "google_bigquery_table" "source" {
   count = local.count
 
   dataset_id = google_bigquery_dataset.source[count.index].dataset_id
-  table_id   = "tf_test_job_copy%{random_suffix}_${count.index}_table"
+  table_id   = "%{job_id}_${count.index}_table"
 
   deletion_protection = false
 
@@ -595,7 +623,7 @@ EOF
 resource "google_bigquery_dataset" "source" {
   count = local.count
 
-  dataset_id                  = "tf_test_job_copy%{random_suffix}_${count.index}_dataset"
+  dataset_id                  = "%{job_id}_${count.index}_dataset"
   friendly_name               = "test"
   description                 = "This is a test description"
   location                    = "US"
@@ -604,7 +632,7 @@ resource "google_bigquery_dataset" "source" {
 resource "google_bigquery_table" "dest" {
   deletion_protection = false
   dataset_id = google_bigquery_dataset.dest.dataset_id
-  table_id   = "tf_test_job_copy%{random_suffix}_dest_table"
+  table_id   = "%{job_id}_dest_table"
 
   schema = <<EOF
 [
@@ -634,7 +662,7 @@ EOF
 }
 
 resource "google_bigquery_dataset" "dest" {
-  dataset_id    = "tf_test_job_copy%{random_suffix}_dest_dataset"
+  dataset_id    = "%{job_id}_dest_dataset"
   friendly_name = "test"
   description   = "This is a test description"
   location      = "US"
@@ -651,7 +679,7 @@ resource "google_kms_crypto_key_iam_member" "encrypt_role" {
 }
 
 resource "google_bigquery_job" "job" {
-  job_id     = "tf_test_job_copy%{random_suffix}"
+  job_id     = "%{job_id}"
 
   copy {
     source_tables {
@@ -685,10 +713,14 @@ resource "google_bigquery_job" "job" {
 func TestAccBigQueryJob_bigqueryJobCopyTableReferenceExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"project":       envvar.GetTestProjectFromEnv(),
+		"account_name":  "bqowner" + randomSuffix,
+		"job_id":        "tf_test_job_copy" + randomSuffix,
 		"kms_key_name":  acctest.BootstrapKMSKeyWithPurposeInLocationAndName(t, "ENCRYPT_DECRYPT", "global", "tf-bootstrap-bigquery-job-key2").CryptoKey.Name,
-		"random_suffix": acctest.RandString(t, 10),
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -719,7 +751,7 @@ resource "google_bigquery_table" "source" {
   count = local.count
 
   dataset_id = google_bigquery_dataset.source[count.index].dataset_id
-  table_id   = "tf_test_job_copy%{random_suffix}_${count.index}_table"
+  table_id   = "%{job_id}_${count.index}_table"
 
   schema = <<EOF
 [
@@ -747,7 +779,7 @@ EOF
 resource "google_bigquery_dataset" "source" {
   count = local.count
 
-  dataset_id                  = "tf_test_job_copy%{random_suffix}_${count.index}_dataset"
+  dataset_id                  = "%{job_id}_${count.index}_dataset"
   friendly_name               = "test"
   description                 = "This is a test description"
   location                    = "US"
@@ -756,7 +788,7 @@ resource "google_bigquery_dataset" "source" {
 resource "google_bigquery_table" "dest" {
   deletion_protection = false
   dataset_id = google_bigquery_dataset.dest.dataset_id
-  table_id   = "tf_test_job_copy%{random_suffix}_dest_table"
+  table_id   = "%{job_id}_dest_table"
 
   schema = <<EOF
 [
@@ -786,7 +818,7 @@ EOF
 }
 
 resource "google_bigquery_dataset" "dest" {
-  dataset_id    = "tf_test_job_copy%{random_suffix}_dest_dataset"
+  dataset_id    = "%{job_id}_dest_dataset"
   friendly_name = "test"
   description   = "This is a test description"
   location      = "US"
@@ -803,7 +835,7 @@ resource "google_kms_crypto_key_iam_member" "encrypt_role" {
 }
 
 resource "google_bigquery_job" "job" {
-  job_id     = "tf_test_job_copy%{random_suffix}"
+  job_id     = "%{job_id}"
 
   copy {
     source_tables {
@@ -831,8 +863,12 @@ resource "google_bigquery_job" "job" {
 func TestAccBigQueryJob_bigqueryJobExtractExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"account_name":  "bqowner" + randomSuffix,
+		"job_id":        "tf_test_job_extract" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -857,7 +893,7 @@ func testAccBigQueryJob_bigqueryJobExtractExample(context map[string]interface{}
 resource "google_bigquery_table" "source-one" {
   deletion_protection = false
   dataset_id = google_bigquery_dataset.source-one.dataset_id
-  table_id   = "tf_test_job_extract%{random_suffix}_table"
+  table_id   = "%{job_id}_table"
 
   schema = <<EOF
 [
@@ -881,20 +917,20 @@ EOF
 }
 
 resource "google_bigquery_dataset" "source-one" {
-  dataset_id    = "tf_test_job_extract%{random_suffix}_dataset"
+  dataset_id    = "%{job_id}_dataset"
   friendly_name = "test"
   description   = "This is a test description"
   location      = "US"
 }
 
 resource "google_storage_bucket" "dest" {
-  name          = "tf_test_job_extract%{random_suffix}_bucket"
+  name          = "%{job_id}_bucket"
   location      = "US"
   force_destroy = true
 }
 
 resource "google_bigquery_job" "job" {
-  job_id     = "tf_test_job_extract%{random_suffix}"
+  job_id     = "%{job_id}"
 
   extract {
     destination_uris = ["${google_storage_bucket.dest.url}/extract"]
@@ -915,8 +951,12 @@ resource "google_bigquery_job" "job" {
 func TestAccBigQueryJob_bigqueryJobExtractTableReferenceExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"account_name":  "bqowner" + randomSuffix,
+		"job_id":        "tf_test_job_extract" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -941,7 +981,7 @@ func testAccBigQueryJob_bigqueryJobExtractTableReferenceExample(context map[stri
 resource "google_bigquery_table" "source-one" {
   deletion_protection = false
   dataset_id = google_bigquery_dataset.source-one.dataset_id
-  table_id   = "tf_test_job_extract%{random_suffix}_table"
+  table_id   = "%{job_id}_table"
 
   schema = <<EOF
 [
@@ -965,20 +1005,20 @@ EOF
 }
 
 resource "google_bigquery_dataset" "source-one" {
-  dataset_id    = "tf_test_job_extract%{random_suffix}_dataset"
+  dataset_id    = "%{job_id}_dataset"
   friendly_name = "test"
   description   = "This is a test description"
   location      = "US"
 }
 
 resource "google_storage_bucket" "dest" {
-  name          = "tf_test_job_extract%{random_suffix}_bucket"
+  name          = "%{job_id}_bucket"
   location      = "US"
   force_destroy = true
 }
 
 resource "google_bigquery_job" "job" {
-  job_id     = "tf_test_job_extract%{random_suffix}"
+  job_id     = "%{job_id}"
 
   extract {
     destination_uris = ["${google_storage_bucket.dest.url}/extract"]
@@ -997,9 +1037,13 @@ resource "google_bigquery_job" "job" {
 func TestAccBigQueryJob_bigqueryJobQueryReservationExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"project":       envvar.GetTestProjectFromEnv(),
-		"random_suffix": acctest.RandString(t, 10),
+		"project":          envvar.GetTestProjectFromEnv(),
+		"job_id":           "tf_test_job_query_reservation" + randomSuffix,
+		"reservation_name": "tf-test-my-reservation" + randomSuffix,
+		"random_suffix":    randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -1024,14 +1068,14 @@ func testAccBigQueryJob_bigqueryJobQueryReservationExample(context map[string]in
 resource "google_bigquery_job" "job" {
   provider = google-beta
 
-  job_id     = "tf_test_job_query_reservation%{random_suffix}"
+  job_id     = "%{job_id}"
 
   query {
     query = "SELECT state FROM [lookerdata:cdc.project_tycho_reports]"
 
   }
 
-  reservation = "projects/%{project}/locations/US/reservations/tf-test-my-reservation%{random_suffix}"
+  reservation = "projects/%{project}/locations/US/reservations/%{reservation_name}"
 }
 `, context)
 }

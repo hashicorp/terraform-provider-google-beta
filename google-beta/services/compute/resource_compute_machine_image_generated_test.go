@@ -53,8 +53,12 @@ var (
 func TestAccComputeMachineImage_machineImageBasicExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"image_name":    "tf-test-my-image" + randomSuffix,
+		"vm_name":       "tf-test-my-vm" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -79,7 +83,7 @@ func testAccComputeMachineImage_machineImageBasicExample(context map[string]inte
 	return acctest.Nprintf(`
 resource "google_compute_instance" "vm" {
   provider     = google-beta
-  name         = "tf-test-my-vm%{random_suffix}"
+  name         = "%{vm_name}"
   machine_type = "e2-medium"
 
   boot_disk {
@@ -95,7 +99,7 @@ resource "google_compute_instance" "vm" {
 
 resource "google_compute_machine_image" "image" {
   provider        = google-beta
-  name            = "tf-test-my-image%{random_suffix}"
+  name            = "%{image_name}"
   source_instance = google_compute_instance.vm.self_link
 }
 `, context)
@@ -110,8 +114,14 @@ func TestAccComputeMachineImage_computeMachineImageKmsExample(t *testing.T) {
 		},
 	})
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"image_name":    "tf-test-my-image" + randomSuffix,
+		"key_name":      "key" + randomSuffix,
+		"keyring_name":  "keyring" + randomSuffix,
+		"vm_name":       "tf-test-my-vm" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -136,7 +146,7 @@ func testAccComputeMachineImage_computeMachineImageKmsExample(context map[string
 	return acctest.Nprintf(`
 resource "google_compute_instance" "vm" {
   provider     = google-beta
-  name         = "tf-test-my-vm%{random_suffix}"
+  name         = "%{vm_name}"
   machine_type = "e2-medium"
 
   boot_disk {
@@ -152,7 +162,7 @@ resource "google_compute_instance" "vm" {
 
 resource "google_compute_machine_image" "image" {
   provider        = google-beta
-  name            = "tf-test-my-image%{random_suffix}"
+  name            = "%{image_name}"
   source_instance = google_compute_instance.vm.self_link
   machine_image_encryption_key {
     kms_key_name = google_kms_crypto_key.crypto_key.id
@@ -161,13 +171,13 @@ resource "google_compute_machine_image" "image" {
 
 resource "google_kms_crypto_key" "crypto_key" {
   provider = google-beta
-  name     = "key%{random_suffix}"
+  name     = "%{key_name}"
   key_ring = google_kms_key_ring.key_ring.id
 }
 
 resource "google_kms_key_ring" "key_ring" {
   provider = google-beta
-  name     = "keyring%{random_suffix}"
+  name     = "%{keyring_name}"
   location = "us"
 }
 `, context)

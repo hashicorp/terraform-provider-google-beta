@@ -330,6 +330,8 @@ func resourceComputeRouterNamedSetRead(d *schema.ResourceData, meta interface{})
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("ComputeRouterNamedSet %q", d.Id()))
 	}
 
+	log.Printf("[DEBUG] Finished reading ComputeRouterNamedSet %q: %#v", d.Id(), res)
+
 	res, err = flattenNestedComputeRouterNamedSet(d, meta, res)
 	if err != nil {
 		return err

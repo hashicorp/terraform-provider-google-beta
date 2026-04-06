@@ -269,6 +269,8 @@ func resourceObservabilityOrganizationSettingsRead(d *schema.ResourceData, meta 
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("ObservabilityOrganizationSettings %q", d.Id()))
 	}
 
+	log.Printf("[DEBUG] Finished reading ObservabilityOrganizationSettings %q: %#v", d.Id(), res)
+
 	if err := d.Set("default_storage_location", flattenObservabilityOrganizationSettingsDefaultStorageLocation(res["defaultStorageLocation"], d, config)); err != nil {
 		return fmt.Errorf("Error reading OrganizationSettings: %s", err)
 	}

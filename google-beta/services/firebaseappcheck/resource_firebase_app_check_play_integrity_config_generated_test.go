@@ -53,9 +53,12 @@ var (
 func TestAccFirebaseAppCheckPlayIntegrityConfig_firebaseAppCheckPlayIntegrityConfigMinimalExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"project_id":    envvar.GetTestProjectFromEnv(),
-		"random_suffix": acctest.RandString(t, 10),
+		"package_name":  "package.name.playintegrity" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -94,7 +97,7 @@ resource "google_firebase_android_app" "default" {
 
   project       = "%{project_id}"
   display_name  = "Play Integrity app"
-  package_name  = "package.name.playintegrity%{random_suffix}"
+  package_name  = "%{package_name}"
   sha1_hashes   = ["2145bdf698b8715039bd0e83f2069bed435ac21c"]
   sha256_hashes = ["2145bdf698b8715039bd0e83f2069bed435ac21ca1b2c3d4e5f6123456789abc"]
 }
@@ -127,10 +130,13 @@ resource "google_firebase_app_check_play_integrity_config" "default" {
 func TestAccFirebaseAppCheckPlayIntegrityConfig_firebaseAppCheckPlayIntegrityConfigFullExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"project_id":    envvar.GetTestProjectFromEnv(),
+		"package_name":  "package.name.playintegrity" + randomSuffix,
 		"token_ttl":     "7200s",
-		"random_suffix": acctest.RandString(t, 10),
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -171,7 +177,7 @@ resource "google_firebase_android_app" "default" {
 
   project       = "%{project_id}"
   display_name  = "Play Integrity app"
-  package_name  = "package.name.playintegrity%{random_suffix}"
+  package_name  = "%{package_name}"
   sha1_hashes   = ["2145bdf698b8715039bd0e83f2069bed435ac21c"]
   sha256_hashes = ["2145bdf698b8715039bd0e83f2069bed435ac21ca1b2c3d4e5f6123456789abc"]
 }

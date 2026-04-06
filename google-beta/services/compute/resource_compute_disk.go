@@ -1312,6 +1312,8 @@ func resourceComputeDiskRead(d *schema.ResourceData, meta interface{}) error {
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("ComputeDisk %q", d.Id()))
 	}
+
+	log.Printf("[DEBUG] Finished reading ComputeDisk %q: %#v", d.Id(), res)
 	if _, ok := d.GetOkExists("erase_windows_vss_signature"); !ok {
 		if err := d.Set("erase_windows_vss_signature", false); err != nil {
 			return fmt.Errorf("Error setting erase_windows_vss_signature: %s", err)

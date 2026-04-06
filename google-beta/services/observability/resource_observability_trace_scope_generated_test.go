@@ -53,14 +53,17 @@ var (
 func TestAccObservabilityTraceScope_observabilityTraceScopeBasicExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"org_id":        envvar.GetTestOrgFromEnv(t),
-		"random_suffix": acctest.RandString(t, 10),
+		"org_id":         envvar.GetTestOrgFromEnv(t),
+		"trace_scope_id": "tf-test-test-scope" + randomSuffix,
+		"random_suffix":  randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckObservabilityTraceScopeDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -80,8 +83,7 @@ func testAccObservabilityTraceScope_observabilityTraceScopeBasicExample(context 
 	return acctest.Nprintf(`
 resource "google_observability_trace_scope" "observability_trace_scope" {
     depends_on       = [google_project.project-2]
-    provider         = google-beta
-    trace_scope_id   = "tf-test-test-scope%{random_suffix}"
+    trace_scope_id   = "%{trace_scope_id}"
     location         = "global"
     resource_names   = [
         "projects/${data.google_project.project.project_id}",
@@ -91,11 +93,9 @@ resource "google_observability_trace_scope" "observability_trace_scope" {
 }
 
 data "google_project" "project" {
-    provider         = google-beta
 }
 
 resource "google_project" "project-2" {
-    provider         = google-beta
     project_id       = "tf-test%{random_suffix}"
     name             = "tf-test%{random_suffix}"
     org_id           = "%{org_id}"

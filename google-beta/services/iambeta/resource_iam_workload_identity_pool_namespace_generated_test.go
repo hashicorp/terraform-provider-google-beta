@@ -53,13 +53,17 @@ var (
 func TestAccIAMBetaWorkloadIdentityPoolNamespace_iamWorkloadIdentityPoolNamespaceBasicExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"workload_identity_pool_id":           "tf-test-example-pool" + randomSuffix,
+		"workload_identity_pool_namespace_id": "tf-test-example-namespace" + randomSuffix,
+		"random_suffix":                       randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckIAMBetaWorkloadIdentityPoolNamespaceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -78,17 +82,13 @@ func TestAccIAMBetaWorkloadIdentityPoolNamespace_iamWorkloadIdentityPoolNamespac
 func testAccIAMBetaWorkloadIdentityPoolNamespace_iamWorkloadIdentityPoolNamespaceBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_iam_workload_identity_pool" "pool" {
-  provider = google-beta
-
-  workload_identity_pool_id = "tf-test-example-pool%{random_suffix}"
+  workload_identity_pool_id = "%{workload_identity_pool_id}"
   mode                      = "TRUST_DOMAIN"
 }
 
 resource "google_iam_workload_identity_pool_namespace" "example" {
-  provider = google-beta
-
   workload_identity_pool_id           = google_iam_workload_identity_pool.pool.workload_identity_pool_id
-  workload_identity_pool_namespace_id = "tf-test-example-namespace%{random_suffix}"
+  workload_identity_pool_namespace_id = "%{workload_identity_pool_namespace_id}"
 }
 `, context)
 }
@@ -96,13 +96,17 @@ resource "google_iam_workload_identity_pool_namespace" "example" {
 func TestAccIAMBetaWorkloadIdentityPoolNamespace_iamWorkloadIdentityPoolNamespaceFullExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"workload_identity_pool_id":           "tf-test-example-pool" + randomSuffix,
+		"workload_identity_pool_namespace_id": "tf-test-example-namespace" + randomSuffix,
+		"random_suffix":                       randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckIAMBetaWorkloadIdentityPoolNamespaceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -121,17 +125,13 @@ func TestAccIAMBetaWorkloadIdentityPoolNamespace_iamWorkloadIdentityPoolNamespac
 func testAccIAMBetaWorkloadIdentityPoolNamespace_iamWorkloadIdentityPoolNamespaceFullExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_iam_workload_identity_pool" "pool" {
-  provider = google-beta
-
-  workload_identity_pool_id = "tf-test-example-pool%{random_suffix}"
+  workload_identity_pool_id = "%{workload_identity_pool_id}"
   mode                      = "TRUST_DOMAIN"
 }
 
 resource "google_iam_workload_identity_pool_namespace" "example" {
-  provider = google-beta
-
   workload_identity_pool_id           = google_iam_workload_identity_pool.pool.workload_identity_pool_id
-  workload_identity_pool_namespace_id = "tf-test-example-namespace%{random_suffix}"
+  workload_identity_pool_namespace_id = "%{workload_identity_pool_namespace_id}"
   description                         = "Example Namespace in a Workload Identity Pool"
   disabled                            = true
 }

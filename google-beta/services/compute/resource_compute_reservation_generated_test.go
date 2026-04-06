@@ -53,8 +53,11 @@ var (
 func TestAccComputeReservation_reservationBasicExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"reservation_name": "tf-test-gce-reservation" + randomSuffix,
+		"random_suffix":    randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -78,7 +81,7 @@ func TestAccComputeReservation_reservationBasicExample(t *testing.T) {
 func testAccComputeReservation_reservationBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_reservation" "gce_reservation" {
-  name = "tf-test-gce-reservation%{random_suffix}"
+  name = "%{reservation_name}"
   zone = "us-central1-a"
 
   specific_reservation {
@@ -95,8 +98,11 @@ resource "google_compute_reservation" "gce_reservation" {
 func TestAccComputeReservation_reservationBasicBetaExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"reservation_name": "tf-test-gce-reservation" + randomSuffix,
+		"random_suffix":    randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -121,7 +127,7 @@ func testAccComputeReservation_reservationBasicBetaExample(context map[string]in
 	return acctest.Nprintf(`
 resource "google_compute_reservation" "gce_reservation" {
   provider = google-beta
-  name     = "tf-test-gce-reservation%{random_suffix}"
+  name     = "%{reservation_name}"
   zone     = "us-central1-a"
 
   specific_reservation {
@@ -141,8 +147,12 @@ resource "google_compute_reservation" "gce_reservation" {
 func TestAccComputeReservation_reservationSourceInstanceTemplateExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"instance-template": "tf-test-instance-template" + randomSuffix,
+		"reservation_name":  "tf-test-gce-reservation-source-instance-template" + randomSuffix,
+		"random_suffix":     randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -171,7 +181,7 @@ data "google_compute_image" "my_image" {
 }
 
 resource "google_compute_instance_template" "foobar" {
-  name           = "tf-test-instance-template%{random_suffix}"
+  name           = "%{instance-template}"
   machine_type   = "n2-standard-2"
   can_ip_forward = false
   tags           = ["foo", "bar"]
@@ -205,7 +215,7 @@ resource "google_compute_instance_template" "foobar" {
 }
 
 resource "google_compute_reservation" "gce_reservation_source_instance_template" {
-  name = "tf-test-gce-reservation-source-instance-template%{random_suffix}"
+  name = "%{reservation_name}"
   zone = "us-central1-a"
 
   specific_reservation {
@@ -219,8 +229,12 @@ resource "google_compute_reservation" "gce_reservation_source_instance_template"
 func TestAccComputeReservation_reservationSharingPolicyExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"instance-template": "tf-test-instance-template" + randomSuffix,
+		"reservation_name":  "tf-test-gce-reservation-sharing-policy" + randomSuffix,
+		"random_suffix":     randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -249,7 +263,7 @@ data "google_compute_image" "my_image" {
 }
 
 resource "google_compute_instance_template" "foobar" {
-  name = "tf-test-instance-template%{random_suffix}"
+  name = "%{instance-template}"
   machine_type = "g2-standard-4"
   can_ip_forward = false
   tags = ["foo", "bar"]
@@ -281,7 +295,7 @@ resource "google_compute_instance_template" "foobar" {
 }
 
 resource "google_compute_reservation" "gce_reservation_sharing_policy" {
-  name = "tf-test-gce-reservation-sharing-policy%{random_suffix}"
+  name = "%{reservation_name}"
   zone = "us-central1-b"
 
   specific_reservation {
@@ -299,11 +313,14 @@ resource "google_compute_reservation" "gce_reservation_sharing_policy" {
 func TestAccComputeReservation_sharedReservationBasicExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"billing_account": envvar.GetTestBillingAccountFromEnv(t),
-		"org_id":          envvar.GetTestOrgFromEnv(t),
-		"project":         envvar.GetTestProjectFromEnv(),
-		"random_suffix":   acctest.RandString(t, 10),
+		"billing_account":  envvar.GetTestBillingAccountFromEnv(t),
+		"org_id":           envvar.GetTestOrgFromEnv(t),
+		"project":          envvar.GetTestProjectFromEnv(),
+		"reservation_name": "tf-test-gce-shared-reservation" + randomSuffix,
+		"random_suffix":    randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -368,7 +385,7 @@ resource "time_sleep" "wait_orgpolicy" {
 
 resource "google_compute_reservation" "gce_reservation" {
   project = google_project.owner_project.project_id
-  name = "tf-test-gce-shared-reservation%{random_suffix}"
+  name = "%{reservation_name}"
   zone = "us-central1-a"
 
   specific_reservation {
@@ -393,11 +410,14 @@ resource "google_compute_reservation" "gce_reservation" {
 func TestAccComputeReservation_sharedReservationBetaExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"billing_account": envvar.GetTestBillingAccountFromEnv(t),
-		"org_id":          envvar.GetTestOrgFromEnv(t),
-		"project":         envvar.GetTestProjectFromEnv(),
-		"random_suffix":   acctest.RandString(t, 10),
+		"billing_account":  envvar.GetTestBillingAccountFromEnv(t),
+		"org_id":           envvar.GetTestOrgFromEnv(t),
+		"project":          envvar.GetTestProjectFromEnv(),
+		"reservation_name": "tf-test-gce-shared-reservation-beta" + randomSuffix,
+		"random_suffix":    randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -467,7 +487,7 @@ resource "time_sleep" "wait_orgpolicy" {
 resource "google_compute_reservation" "gce_reservation" {
   provider = google-beta
   project  = google_project.owner_project.project_id
-  name = "tf-test-gce-shared-reservation-beta%{random_suffix}"
+  name = "%{reservation_name}"
   zone = "us-central1-a"
 
   specific_reservation {

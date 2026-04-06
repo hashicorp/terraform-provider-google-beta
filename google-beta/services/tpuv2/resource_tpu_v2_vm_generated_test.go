@@ -54,8 +54,11 @@ func TestAccTpuV2Vm_tpuV2VmBasicExample(t *testing.T) {
 	acctest.SkipIfVcr(t)
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"vm_name":       "tf-test-test-tpu" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -85,7 +88,7 @@ data "google_tpu_v2_runtime_versions" "available" {
 resource "google_tpu_v2_vm" "tpu" {
   provider = google-beta
 
-  name = "tf-test-test-tpu%{random_suffix}"
+  name = "%{vm_name}"
   zone = "us-central1-c"
 
   runtime_version = "tpu-vm-tf-2.13.0"
@@ -97,8 +100,15 @@ func TestAccTpuV2Vm_tpuV2VmFullExample(t *testing.T) {
 	acctest.SkipIfVcr(t)
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"disk_name":     "tf-test-tpu-disk" + randomSuffix,
+		"network_name":  "tf-test-tpu-net" + randomSuffix,
+		"sa_id":         "tf-test-tpu-sa" + randomSuffix,
+		"subnet_name":   "tf-test-tpu-subnet" + randomSuffix,
+		"vm_name":       "tf-test-test-tpu" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -136,7 +146,7 @@ data "google_tpu_v2_accelerator_types" "available" {
 resource "google_tpu_v2_vm" "tpu" {
   provider = google-beta
 
-  name = "tf-test-test-tpu%{random_suffix}"
+  name = "%{vm_name}"
   zone = "us-central1-c"
   description = "Text description of the TPU."
 
@@ -194,7 +204,7 @@ resource "google_tpu_v2_vm" "tpu" {
 resource "google_compute_subnetwork" "subnet" {
   provider = google-beta
 
-  name          = "tf-test-tpu-subnet%{random_suffix}"
+  name          = "%{subnet_name}"
   ip_cidr_range = "10.0.0.0/16"
   region        = "us-central1"
   network       = google_compute_network.network.id
@@ -203,21 +213,21 @@ resource "google_compute_subnetwork" "subnet" {
 resource "google_compute_network" "network" {
   provider = google-beta
 
-  name                    = "tf-test-tpu-net%{random_suffix}"
+  name                    = "%{network_name}"
   auto_create_subnetworks = false
 }
 
 resource "google_service_account" "sa" {
   provider = google-beta
 
-  account_id   = "tf-test-tpu-sa%{random_suffix}"
+  account_id   = "%{sa_id}"
   display_name = "Test TPU VM"
 }
 
 resource "google_compute_disk" "disk" {
   provider = google-beta
 
-  name  = "tf-test-tpu-disk%{random_suffix}"
+  name  = "%{disk_name}"
   image = "debian-cloud/debian-11"
   size  = 10
   type  = "pd-ssd"

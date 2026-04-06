@@ -53,8 +53,11 @@ var (
 func TestAccComputeGlobalAddress_globalAddressBasicExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"global_address_name": "tf-test-global-appserver-ip" + randomSuffix,
+		"random_suffix":       randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -78,7 +81,7 @@ func TestAccComputeGlobalAddress_globalAddressBasicExample(t *testing.T) {
 func testAccComputeGlobalAddress_globalAddressBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_global_address" "default" {
-  name = "tf-test-global-appserver-ip%{random_suffix}"
+  name = "%{global_address_name}"
 }
 `, context)
 }
@@ -86,8 +89,12 @@ resource "google_compute_global_address" "default" {
 func TestAccComputeGlobalAddress_globalAddressPrivateServicesConnectExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"global_address_name": "tf-test-global-psconnect-ip" + randomSuffix,
+		"network_name":        "tf-test-my-network-name" + randomSuffix,
+		"random_suffix":       randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -112,7 +119,7 @@ func testAccComputeGlobalAddress_globalAddressPrivateServicesConnectExample(cont
 	return acctest.Nprintf(`
 resource "google_compute_global_address" "default" {
   provider      = google-beta
-  name          = "tf-test-global-psconnect-ip%{random_suffix}"
+  name          = "%{global_address_name}"
   address_type  = "INTERNAL"
   purpose       = "PRIVATE_SERVICE_CONNECT"
   network       = google_compute_network.network.id
@@ -121,7 +128,7 @@ resource "google_compute_global_address" "default" {
 
 resource "google_compute_network" "network" {
   provider      = google-beta
-  name          = "tf-test-my-network-name%{random_suffix}"
+  name          = "%{network_name}"
   auto_create_subnetworks = false
 }
 `, context)

@@ -59,8 +59,11 @@ func TestAccSaasRuntimeSaas_saasRuntimeSaasBasicExample(t *testing.T) {
 		},
 	})
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"saas_name":     "tf-test-test-saas" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -85,7 +88,7 @@ func testAccSaasRuntimeSaas_saasRuntimeSaasBasicExample(context map[string]inter
 	return acctest.Nprintf(`
 resource "google_saas_runtime_saas" "example" {
   provider = google-beta
-  saas_id  = "tf-test-test-saas%{random_suffix}"
+  saas_id  = "%{saas_name}"
   location = "global"
 
   locations {

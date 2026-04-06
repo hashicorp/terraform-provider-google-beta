@@ -53,8 +53,11 @@ var (
 func TestAccComputeRegionResizeRequest_computeRmigResizeRequestExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"resize_request_name": "tf-test-a3-dws" + randomSuffix,
+		"random_suffix":       randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -79,7 +82,7 @@ func testAccComputeRegionResizeRequest_computeRmigResizeRequestExample(context m
 	return acctest.Nprintf(`
 resource "google_compute_region_instance_template" "a3_dws" {
   provider = google-beta
-  name                 = "tf-test-a3-dws%{random_suffix}"
+  name                 = "%{resize_request_name}"
   region               = "us-central1"
   description          = "This template is used to create a mig instance that is compatible with DWS resize requests."
   instance_description = "A3 GPU"
@@ -121,7 +124,7 @@ resource "google_compute_region_instance_template" "a3_dws" {
 
 resource "google_compute_region_instance_group_manager" "a3_dws" {
   provider = google-beta
-  name               = "tf-test-a3-dws%{random_suffix}"
+  name               = "%{resize_request_name}"
   base_instance_name = "a3-dws"
   region               = "us-central1"
   version {
@@ -144,7 +147,7 @@ resource "google_compute_region_instance_group_manager" "a3_dws" {
 
 resource "google_compute_region_resize_request" "a3_resize_request" {
   provider = google-beta
-  name                   = "tf-test-a3-dws%{random_suffix}"
+  name                   = "%{resize_request_name}"
   instance_group_manager = google_compute_region_instance_group_manager.a3_dws.name
   region                 = "us-central1"
   description            = "Test resize request resource"

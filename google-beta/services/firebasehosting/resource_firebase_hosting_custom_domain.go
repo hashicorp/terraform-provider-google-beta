@@ -734,6 +734,8 @@ func resourceFirebaseHostingCustomDomainRead(d *schema.ResourceData, meta interf
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("FirebaseHostingCustomDomain %q", d.Id()))
 	}
 
+	log.Printf("[DEBUG] Finished reading FirebaseHostingCustomDomain %q: %#v", d.Id(), res)
+
 	// Explicitly set virtual fields to default values if unset
 	if _, ok := d.GetOkExists("wait_dns_verification"); !ok {
 		if err := d.Set("wait_dns_verification", false); err != nil {

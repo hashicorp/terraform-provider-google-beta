@@ -357,6 +357,8 @@ func resourceNetworkConnectivityGatewayAdvertisedRouteRead(d *schema.ResourceDat
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("NetworkConnectivityGatewayAdvertisedRoute %q", d.Id()))
 	}
 
+	log.Printf("[DEBUG] Finished reading NetworkConnectivityGatewayAdvertisedRoute %q: %#v", d.Id(), res)
+
 	if err := d.Set("project", project); err != nil {
 		return fmt.Errorf("Error reading GatewayAdvertisedRoute: %s", err)
 	}

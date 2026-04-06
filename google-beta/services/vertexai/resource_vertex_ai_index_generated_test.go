@@ -53,10 +53,14 @@ var (
 func TestAccVertexAIIndex_vertexAiIndexExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"project":       envvar.GetTestProjectFromEnv(),
+		"bucket_name":   "tf-test-vertex-ai-index-test" + randomSuffix,
+		"display_name":  "tf-test-test-index" + randomSuffix,
 		"kms_key_name":  acctest.BootstrapKMSKeyInLocation(t, "us-central1").CryptoKey.Name,
-		"random_suffix": acctest.RandString(t, 10),
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -86,7 +90,7 @@ resource "google_project_service_identity" "vertexai_sa" {
 
 resource "google_storage_bucket" "bucket" {
   provider = google-beta
-  name     = "tf-test-vertex-ai-index-test%{random_suffix}"
+  name     = "%{bucket_name}"
   location = "us-central1"
   uniform_bucket_level_access = true
 }
@@ -116,7 +120,7 @@ resource "google_vertex_ai_index" "index" {
     foo = "bar"
   }
   region   = "us-central1"
-  display_name = "tf-test-test-index%{random_suffix}"
+  display_name = "%{display_name}"
   description = "index for test"
   metadata {
     contents_delta_uri = "gs://${google_storage_bucket.bucket.name}/contents"
@@ -148,10 +152,14 @@ resource "google_vertex_ai_index" "index" {
 func TestAccVertexAIIndex_vertexAiIndexStreamingExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"project":       envvar.GetTestProjectFromEnv(),
+		"bucket_name":   "tf-test-vertex-ai-index-test" + randomSuffix,
+		"display_name":  "tf-test-test-index" + randomSuffix,
 		"kms_key_name":  acctest.BootstrapKMSKeyInLocation(t, "us-central1").CryptoKey.Name,
-		"random_suffix": acctest.RandString(t, 10),
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -175,7 +183,7 @@ func TestAccVertexAIIndex_vertexAiIndexStreamingExample(t *testing.T) {
 func testAccVertexAIIndex_vertexAiIndexStreamingExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_storage_bucket" "bucket" {
-  name     = "tf-test-vertex-ai-index-test%{random_suffix}"
+  name     = "%{bucket_name}"
   location = "us-central1"
   uniform_bucket_level_access = true
 }
@@ -196,7 +204,7 @@ resource "google_vertex_ai_index" "index" {
     foo = "bar"
   }
   region   = "us-central1"
-  display_name = "tf-test-test-index%{random_suffix}"
+  display_name = "%{display_name}"
   description = "index for test"
   metadata {
     contents_delta_uri = "gs://${google_storage_bucket.bucket.name}/contents"

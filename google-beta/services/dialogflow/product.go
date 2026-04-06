@@ -27,6 +27,6 @@ const ProductName = "dialogflow"
 func init() {
 	registry.Product{
 		Name:    "dialogflow",
-		BaseUrl: "https://dialogflow.googleapis.com/v2/",
+		BaseUrl: "https://dialogflow.googleapis.com/v2beta1/",
 	}.Register()
 }

@@ -242,6 +242,8 @@ func resourceFirebaseAILogicPromptTemplateLockRead(d *schema.ResourceData, meta 
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("FirebaseAILogicPromptTemplateLock %q", d.Id()))
 	}
+
+	log.Printf("[DEBUG] Finished reading FirebaseAILogicPromptTemplateLock %q: %#v", d.Id(), res)
 	// The standard Read has already fetched the PromptTemplate and stored it in the 'res' map.
 	// We just need to check the 'locked' field to see if our virtual "Lock Resource" still exists.
 	locked, ok := res["locked"].(bool)

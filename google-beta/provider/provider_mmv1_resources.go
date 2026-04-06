@@ -65,6 +65,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/composer"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/compute"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/contactcenterinsights"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/container"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/containeranalysis"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/containerattached"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/corebilling"
@@ -188,7 +189,6 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/workstations"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
-	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/container"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/containeraws"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/containerazure"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/dataflow"
@@ -303,6 +303,7 @@ var handwrittenDatasources = map[string]*schema.Resource{
 	"google_compute_networks":                                    compute.DataSourceGoogleComputeNetworks(),
 	"google_compute_network_attachment":                          compute.DataSourceGoogleComputeNetworkAttachment(),
 	"google_compute_network_endpoint_group":                      compute.DataSourceGoogleComputeNetworkEndpointGroup(),
+	"google_compute_network_endpoint_groups":                     compute.DataSourceGoogleComputeNetworkEndpointGroups(),
 	"google_compute_network_peering":                             compute.DataSourceComputeNetworkPeering(),
 	"google_compute_node_types":                                  compute.DataSourceGoogleComputeNodeTypes(),
 	"google_compute_regions":                                     compute.DataSourceGoogleComputeRegions(),
@@ -343,10 +344,13 @@ var handwrittenDatasources = map[string]*schema.Resource{
 	"google_dataplex_data_quality_rules":                         dataplex.DataSourceDataplexDataQualityRules(),
 	"google_dataproc_metastore_service":                          dataprocmetastore.DataSourceDataprocMetastoreService(),
 	"google_datastream_static_ips":                               datastream.DataSourceGoogleDatastreamStaticIps(),
+	"google_discovery_engine_data_store":                         discoveryengine.DataSourceGoogleDiscoveryEngineDataStore(),
+	"google_discovery_engine_data_stores":                        discoveryengine.DataSourceGoogleDiscoveryEngineDataStores(),
 	"google_dns_keys":                                            dns.DataSourceDNSKeys(),
 	"google_dns_managed_zone":                                    dns.DataSourceDnsManagedZone(),
 	"google_dns_managed_zones":                                   dns.DataSourceDnsManagedZones(),
 	"google_dns_record_set":                                      dns.DataSourceDnsRecordSet(),
+	"google_dns_record_sets":                                     dns.DataSourceDnsRecordSets(),
 	"google_gke_hub_membership":                                  gkehub.DataSourceGoogleGkeHubMembership(),
 	"google_gke_hub_membership_binding":                          gkehub2.DataSourceGoogleGkeHubMembershipBinding(),
 	"google_gke_hub_feature":                                     gkehub2.DataSourceGoogleGkeHubFeature(),
@@ -497,6 +501,7 @@ var handwrittenDatasources = map[string]*schema.Resource{
 	"google_compute_region_backend_service":                      compute.DataSourceGoogleComputeRegionBackendService(),
 	"google_network_management_connectivity_test_run":            networkmanagement.DataSourceGoogleNetworkManagementTestRun(),
 	"google_network_management_connectivity_tests":               networkmanagement.DataSourceGoogleNetworkManagementConnectivityTests(),
+	"google_network_security_address_groups":                     networksecurity.DataSourceNetworkSecurityAddressGroups(),
 	// ####### END handwritten datasources ###########
 }
 
@@ -652,9 +657,9 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 }
 
 // Resources
-// Generated resources: 797
+// Generated resources: 808
 // Generated IAM resources: 360
-// Total generated resources: 1157
+// Total generated resources: 1168
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     registry.Resource("google_folder_access_approval_settings"),
 	"google_organization_access_approval_settings":                               registry.Resource("google_organization_access_approval_settings"),
@@ -818,6 +823,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_bigquery_capacity_commitment":                                        registry.Resource("google_bigquery_capacity_commitment"),
 	"google_bigquery_reservation":                                                registry.Resource("google_bigquery_reservation"),
 	"google_bigquery_reservation_assignment":                                     registry.Resource("google_bigquery_reservation_assignment"),
+	"google_bigquery_reservation_group":                                          registry.Resource("google_bigquery_reservation_group"),
 	"google_bigtable_app_profile":                                                registry.Resource("google_bigtable_app_profile"),
 	"google_bigtable_logical_view":                                               registry.Resource("google_bigtable_logical_view"),
 	"google_bigtable_materialized_view":                                          registry.Resource("google_bigtable_materialized_view"),
@@ -843,8 +849,13 @@ var generatedResources = map[string]*schema.Resource{
 	"google_ces_guardrail":                                                       registry.Resource("google_ces_guardrail"),
 	"google_ces_tool":                                                            registry.Resource("google_ces_tool"),
 	"google_ces_toolset":                                                         registry.Resource("google_ces_toolset"),
+	"google_chronicle_dashboard_chart":                                           registry.Resource("google_chronicle_dashboard_chart"),
 	"google_chronicle_data_access_label":                                         registry.Resource("google_chronicle_data_access_label"),
 	"google_chronicle_data_access_scope":                                         registry.Resource("google_chronicle_data_access_scope"),
+	"google_chronicle_data_table":                                                registry.Resource("google_chronicle_data_table"),
+	"google_chronicle_data_table_row":                                            registry.Resource("google_chronicle_data_table_row"),
+	"google_chronicle_feed":                                                      registry.Resource("google_chronicle_feed"),
+	"google_chronicle_native_dashboard":                                          registry.Resource("google_chronicle_native_dashboard"),
 	"google_chronicle_reference_list":                                            registry.Resource("google_chronicle_reference_list"),
 	"google_chronicle_retrohunt":                                                 registry.Resource("google_chronicle_retrohunt"),
 	"google_chronicle_rule":                                                      registry.Resource("google_chronicle_rule"),
@@ -1076,6 +1087,8 @@ var generatedResources = map[string]*schema.Resource{
 	"google_compute_vpn_tunnel":                                                  registry.Resource("google_compute_vpn_tunnel"),
 	"google_compute_wire_group":                                                  registry.Resource("google_compute_wire_group"),
 	"google_contact_center_insights_analysis_rule":                               registry.Resource("google_contact_center_insights_analysis_rule"),
+	"google_contact_center_insights_assessment_rule":                             registry.Resource("google_contact_center_insights_assessment_rule"),
+	"google_contact_center_insights_auto_labeling_rule":                          registry.Resource("google_contact_center_insights_auto_labeling_rule"),
 	"google_contact_center_insights_view":                                        registry.Resource("google_contact_center_insights_view"),
 	"google_container_analysis_note":                                             registry.Resource("google_container_analysis_note"),
 	"google_container_analysis_note_iam_binding":                                 registry.Resource("google_container_analysis_note_iam_binding"),
@@ -1199,6 +1212,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_dialogflow_conversation_profile":                                     registry.Resource("google_dialogflow_conversation_profile"),
 	"google_dialogflow_encryption_spec":                                          registry.Resource("google_dialogflow_encryption_spec"),
 	"google_dialogflow_entity_type":                                              registry.Resource("google_dialogflow_entity_type"),
+	"google_dialogflow_environment":                                              registry.Resource("google_dialogflow_environment"),
 	"google_dialogflow_fulfillment":                                              registry.Resource("google_dialogflow_fulfillment"),
 	"google_dialogflow_generator":                                                registry.Resource("google_dialogflow_generator"),
 	"google_dialogflow_intent":                                                   registry.Resource("google_dialogflow_intent"),
@@ -1447,6 +1461,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_kms_key_ring":                                                        registry.Resource("google_kms_key_ring"),
 	"google_kms_key_ring_import_job":                                             registry.Resource("google_kms_key_ring_import_job"),
 	"google_kms_organization_kaj_policy_config":                                  registry.Resource("google_kms_organization_kaj_policy_config"),
+	"google_kms_project_autokey_config":                                          registry.Resource("google_kms_project_autokey_config"),
 	"google_kms_project_kaj_policy_config":                                       registry.Resource("google_kms_project_kaj_policy_config"),
 	"google_kms_secret_ciphertext":                                               registry.Resource("google_kms_secret_ciphertext"),
 	"google_logging_folder_settings":                                             registry.Resource("google_logging_folder_settings"),
@@ -1502,6 +1517,7 @@ var generatedResources = map[string]*schema.Resource{
 	"google_network_connectivity_policy_based_route":                             registry.Resource("google_network_connectivity_policy_based_route"),
 	"google_network_connectivity_regional_endpoint":                              registry.Resource("google_network_connectivity_regional_endpoint"),
 	"google_network_connectivity_spoke":                                          registry.Resource("google_network_connectivity_spoke"),
+	"google_network_connectivity_transport":                                      registry.Resource("google_network_connectivity_transport"),
 	"google_network_connectivity_internal_range":                                 registry.Resource("google_network_connectivity_internal_range"),
 	"google_network_connectivity_service_connection_policy":                      registry.Resource("google_network_connectivity_service_connection_policy"),
 	"google_network_management_connectivity_test":                                registry.Resource("google_network_management_connectivity_test"),
@@ -1864,6 +1880,7 @@ var handwrittenResources = map[string]*schema.Resource{
 	"google_folder":                                resourcemanager.ResourceGoogleFolder(),
 	"google_folder_organization_policy":            resourcemanager.ResourceGoogleFolderOrganizationPolicy(),
 	"google_folder_service_identity":               resourcemanager.ResourceFolderServiceIdentity(),
+	"google_organization_service_identity":         resourcemanager.ResourceOrganizationServiceIdentity(),
 	"google_logging_billing_account_sink":          logging.ResourceLoggingBillingAccountSink(),
 	"google_logging_billing_account_exclusion":     logging.ResourceLoggingExclusion(logging.BillingAccountLoggingExclusionSchema, logging.NewBillingAccountLoggingExclusionUpdater, logging.BillingAccountLoggingExclusionIdParseFunc),
 	"google_logging_billing_account_bucket_config": logging.ResourceLoggingBillingAccountBucketConfig(),
@@ -1881,6 +1898,7 @@ var handwrittenResources = map[string]*schema.Resource{
 	"google_project_service_identity":              resourcemanager.ResourceProjectServiceIdentity(),
 	"google_service_networking_connection":         servicenetworking.ResourceServiceNetworkingConnection(),
 	"google_sql_database_instance":                 sql.ResourceSqlDatabaseInstance(),
+	"google_sql_provision_script":                  sql.ResourceSqlProvisionScript(),
 	"google_sql_ssl_cert":                          sql.ResourceSqlSslCert(),
 	"google_sql_user":                              sql.ResourceSqlUser(),
 	"google_organization_iam_custom_role":          resourcemanager.ResourceGoogleOrganizationIamCustomRole(),
@@ -2032,6 +2050,7 @@ func UseGeneratedProducts() {
 	var _ = composer.ProductName
 	var _ = compute.ProductName
 	var _ = contactcenterinsights.ProductName
+	var _ = container.ProductName
 	var _ = containeranalysis.ProductName
 	var _ = containerattached.ProductName
 	var _ = corebilling.ProductName

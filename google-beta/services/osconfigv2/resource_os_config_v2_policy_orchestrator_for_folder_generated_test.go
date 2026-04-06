@@ -53,10 +53,16 @@ var (
 func TestAccOSConfigV2PolicyOrchestratorForFolder_osconfigv2PolicyOrchestratorForFolderBasicExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"org_id":        envvar.GetTestOrgFromEnv(t),
-		"zone":          envvar.GetTestZoneFromEnv(),
-		"random_suffix": acctest.RandString(t, 10),
+		"org_id":                   envvar.GetTestOrgFromEnv(t),
+		"zone":                     envvar.GetTestZoneFromEnv(),
+		"folder":                   "tf-test-po-folder" + randomSuffix,
+		"orchestrated_resource_id": "tf-test-test-orchestrated-resource-folder" + randomSuffix,
+		"os_policy_id":             "tf-test-test-os-policy-folder" + randomSuffix,
+		"policy_orchestrator_id":   "tf-test-po-folder" + randomSuffix,
+		"random_suffix":            randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -84,7 +90,7 @@ func testAccOSConfigV2PolicyOrchestratorForFolder_osconfigv2PolicyOrchestratorFo
 	return acctest.Nprintf(`
 resource "google_folder" "my_folder" {
     provider = google-beta
-    display_name        = "tf-test-po-folder%{random_suffix}"
+    display_name        = "%{folder}"
     parent              = "organizations/%{org_id}"
     deletion_protection = false
 }
@@ -142,17 +148,17 @@ resource "google_os_config_v2_policy_orchestrator_for_folder" "policy_orchestrat
     provider = google-beta
     depends_on = [time_sleep.wait_3_min]
 
-    policy_orchestrator_id = "tf-test-po-folder%{random_suffix}"
+    policy_orchestrator_id = "%{policy_orchestrator_id}"
     folder_id = google_folder.my_folder.folder_id
     
     state = "ACTIVE"
     action = "UPSERT"
     
     orchestrated_resource {
-        id = "tf-test-test-orchestrated-resource-folder%{random_suffix}"
+        id = "%{orchestrated_resource_id}"
         os_policy_assignment_v1_payload {
             os_policies {
-                id = "tf-test-test-os-policy-folder%{random_suffix}"
+                id = "%{os_policy_id}"
                 mode = "VALIDATION"
                 resource_groups {
                     resources {

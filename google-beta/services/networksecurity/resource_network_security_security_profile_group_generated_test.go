@@ -53,9 +53,13 @@ var (
 func TestAccNetworkSecuritySecurityProfileGroup_networkSecuritySecurityProfileGroupBasicExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"org_id":        envvar.GetTestOrgFromEnv(t),
-		"random_suffix": acctest.RandString(t, 10),
+		"org_id":                      envvar.GetTestOrgFromEnv(t),
+		"security_profile_group_name": "tf-test-sec-profile-group" + randomSuffix,
+		"security_profile_name":       "tf-test-sec-profile" + randomSuffix,
+		"random_suffix":               randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -79,7 +83,7 @@ func TestAccNetworkSecuritySecurityProfileGroup_networkSecuritySecurityProfileGr
 func testAccNetworkSecuritySecurityProfileGroup_networkSecuritySecurityProfileGroupBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_network_security_security_profile_group" "default" {
-  name                      = "tf-test-sec-profile-group%{random_suffix}"
+  name                      = "%{security_profile_group_name}"
   parent                    = "organizations/%{org_id}"
   description               = "my description"
   threat_prevention_profile = google_network_security_security_profile.security_profile.id
@@ -90,7 +94,7 @@ resource "google_network_security_security_profile_group" "default" {
 }
 
 resource "google_network_security_security_profile" "security_profile" {
-    name        = "tf-test-sec-profile%{random_suffix}"
+    name        = "%{security_profile_name}"
     type        = "THREAT_PREVENTION"
     parent      = "organizations/%{org_id}"
     location    = "global"
@@ -101,9 +105,16 @@ resource "google_network_security_security_profile" "security_profile" {
 func TestAccNetworkSecuritySecurityProfileGroup_networkSecuritySecurityProfileGroupMirroringExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"org_id":        envvar.GetTestOrgFromEnv(t),
-		"random_suffix": acctest.RandString(t, 10),
+		"org_id":                      envvar.GetTestOrgFromEnv(t),
+		"deployment_group_id":         "tf-test-deployment-group" + randomSuffix,
+		"endpoint_group_id":           "tf-test-endpoint-group" + randomSuffix,
+		"network_name":                "network" + randomSuffix,
+		"security_profile_group_name": "tf-test-sec-profile-group" + randomSuffix,
+		"security_profile_name":       "tf-test-sec-profile" + randomSuffix,
+		"random_suffix":               randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -128,27 +139,27 @@ func testAccNetworkSecuritySecurityProfileGroup_networkSecuritySecurityProfileGr
 	return acctest.Nprintf(`
 resource "google_compute_network" "default" {
   provider                = google-beta
-  name                    = "network%{random_suffix}"
+  name                    = "%{network_name}"
   auto_create_subnetworks = false
 }
 
 resource "google_network_security_mirroring_deployment_group" "default" {
   provider                      = google-beta
-  mirroring_deployment_group_id = "tf-test-deployment-group%{random_suffix}"
+  mirroring_deployment_group_id = "%{deployment_group_id}"
   location                      = "global"
   network                       = google_compute_network.default.id
 }
 
 resource "google_network_security_mirroring_endpoint_group" "default" {
   provider                      = google-beta
-  mirroring_endpoint_group_id   = "tf-test-endpoint-group%{random_suffix}"
+  mirroring_endpoint_group_id   = "%{endpoint_group_id}"
   location                      = "global"
   mirroring_deployment_group    = google_network_security_mirroring_deployment_group.default.id
 }
 
 resource "google_network_security_security_profile" "default" {
   provider    = google-beta
-  name        = "tf-test-sec-profile%{random_suffix}"
+  name        = "%{security_profile_name}"
   parent      = "organizations/%{org_id}"
   description = "my description"
   type        = "CUSTOM_MIRRORING"
@@ -160,7 +171,7 @@ resource "google_network_security_security_profile" "default" {
 
 resource "google_network_security_security_profile_group" "default" {
   provider                 = google-beta
-  name                     = "tf-test-sec-profile-group%{random_suffix}"
+  name                     = "%{security_profile_group_name}"
   parent                   = "organizations/%{org_id}"
   description              = "my description"
   custom_mirroring_profile = google_network_security_security_profile.default.id
@@ -171,9 +182,16 @@ resource "google_network_security_security_profile_group" "default" {
 func TestAccNetworkSecuritySecurityProfileGroup_networkSecuritySecurityProfileGroupInterceptExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"org_id":        envvar.GetTestOrgFromEnv(t),
-		"random_suffix": acctest.RandString(t, 10),
+		"org_id":                      envvar.GetTestOrgFromEnv(t),
+		"deployment_group_id":         "tf-test-deployment-group" + randomSuffix,
+		"endpoint_group_id":           "tf-test-endpoint-group" + randomSuffix,
+		"network_name":                "network" + randomSuffix,
+		"security_profile_group_name": "tf-test-sec-profile-group" + randomSuffix,
+		"security_profile_name":       "tf-test-sec-profile" + randomSuffix,
+		"random_suffix":               randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -198,27 +216,27 @@ func testAccNetworkSecuritySecurityProfileGroup_networkSecuritySecurityProfileGr
 	return acctest.Nprintf(`
 resource "google_compute_network" "default" {
   provider                = google-beta
-  name                    = "network%{random_suffix}"
+  name                    = "%{network_name}"
   auto_create_subnetworks = false
 }
 
 resource "google_network_security_intercept_deployment_group" "default" {
   provider                      = google-beta
-  intercept_deployment_group_id = "tf-test-deployment-group%{random_suffix}"
+  intercept_deployment_group_id = "%{deployment_group_id}"
   location                      = "global"
   network                       = google_compute_network.default.id
 }
 
 resource "google_network_security_intercept_endpoint_group" "default" {
   provider                      = google-beta
-  intercept_endpoint_group_id   = "tf-test-endpoint-group%{random_suffix}"
+  intercept_endpoint_group_id   = "%{endpoint_group_id}"
   location                      = "global"
   intercept_deployment_group    = google_network_security_intercept_deployment_group.default.id
 }
 
 resource "google_network_security_security_profile" "default" {
   provider    = google-beta
-  name        = "tf-test-sec-profile%{random_suffix}"
+  name        = "%{security_profile_name}"
   parent      = "organizations/%{org_id}"
   description = "my description"
   type        = "CUSTOM_INTERCEPT"
@@ -230,7 +248,7 @@ resource "google_network_security_security_profile" "default" {
 
 resource "google_network_security_security_profile_group" "default" {
   provider                 = google-beta
-  name                     = "tf-test-sec-profile-group%{random_suffix}"
+  name                     = "%{security_profile_group_name}"
   parent                   = "organizations/%{org_id}"
   description              = "my description"
   custom_intercept_profile = google_network_security_security_profile.default.id
@@ -241,9 +259,13 @@ resource "google_network_security_security_profile_group" "default" {
 func TestAccNetworkSecuritySecurityProfileGroup_networkSecuritySecurityProfileGroupUrlFilteringExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"org_id":        envvar.GetTestOrgFromEnv(t),
-		"random_suffix": acctest.RandString(t, 10),
+		"org_id":                      envvar.GetTestOrgFromEnv(t),
+		"security_profile_group_name": "tf-test-sec-profile-group" + randomSuffix,
+		"security_profile_name":       "tf-test-sec-profile" + randomSuffix,
+		"random_suffix":               randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -267,7 +289,7 @@ func TestAccNetworkSecuritySecurityProfileGroup_networkSecuritySecurityProfileGr
 func testAccNetworkSecuritySecurityProfileGroup_networkSecuritySecurityProfileGroupUrlFilteringExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_network_security_security_profile_group" "default" {
-  name                      = "tf-test-sec-profile-group%{random_suffix}"
+  name                      = "%{security_profile_group_name}"
   parent                    = "organizations/%{org_id}"
   description               = "my description"
   url_filtering_profile     = google_network_security_security_profile.security_profile.id
@@ -278,7 +300,7 @@ resource "google_network_security_security_profile_group" "default" {
 }
 
 resource "google_network_security_security_profile" "security_profile" {
-  name        = "tf-test-sec-profile%{random_suffix}"
+  name        = "%{security_profile_name}"
   location    = "global"
   type        = "URL_FILTERING"
 

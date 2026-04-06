@@ -53,12 +53,15 @@ var (
 func TestAccGKEHub2MembershipRBACRoleBinding_gkehubMembershipRbacRoleBindingBasicExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
 		"project":             envvar.GetTestProjectFromEnv(),
+		"cluster_name":        "tf-test-basic-cluster" + randomSuffix,
 		"deletion_protection": false,
 		"network_name":        acctest.BootstrapSharedTestNetwork(t, "gke-cluster"),
 		"subnetwork_name":     acctest.BootstrapSubnet(t, "gke-cluster", acctest.BootstrapSharedTestNetwork(t, "gke-cluster")),
-		"random_suffix":       acctest.RandString(t, 10),
+		"random_suffix":       randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -83,7 +86,7 @@ func testAccGKEHub2MembershipRBACRoleBinding_gkehubMembershipRbacRoleBindingBasi
 	return acctest.Nprintf(`
 resource "google_container_cluster" "primary" {
   provider = google-beta
-  name               = "tf-test-basic-cluster%{random_suffix}"
+  name               = "%{cluster_name}"
   location           = "us-central1-a"
   initial_node_count = 1
   deletion_protection  = %{deletion_protection}

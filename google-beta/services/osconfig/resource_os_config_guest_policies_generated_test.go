@@ -53,8 +53,12 @@ var (
 func TestAccOSConfigGuestPolicies_osConfigGuestPoliciesBasicExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"guest_policy_id": "tf-test-guest-policy" + randomSuffix,
+		"instance_name":   "tf-test-guest-policy-inst" + randomSuffix,
+		"random_suffix":   randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -85,7 +89,7 @@ data "google_compute_image" "my_image" {
 
 resource "google_compute_instance" "foobar" {
   provider = google-beta
-  name           = "tf-test-guest-policy-inst%{random_suffix}"
+  name           = "%{instance_name}"
   machine_type   = "e2-medium"
   zone           = "us-central1-a"
   can_ip_forward = false
@@ -108,7 +112,7 @@ resource "google_compute_instance" "foobar" {
 
 resource "google_os_config_guest_policies" "guest_policies" {
   provider = google-beta
-  guest_policy_id = "tf-test-guest-policy%{random_suffix}"
+  guest_policy_id = "%{guest_policy_id}"
 
   assignment {
     instances = [google_compute_instance.foobar.id]
@@ -125,8 +129,11 @@ resource "google_os_config_guest_policies" "guest_policies" {
 func TestAccOSConfigGuestPolicies_osConfigGuestPoliciesPackagesExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"guest_policy_id": "tf-test-guest-policy" + randomSuffix,
+		"random_suffix":   randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -151,7 +158,7 @@ func testAccOSConfigGuestPolicies_osConfigGuestPoliciesPackagesExample(context m
 	return acctest.Nprintf(`
 resource "google_os_config_guest_policies" "guest_policies" {
   provider = google-beta
-  guest_policy_id = "tf-test-guest-policy%{random_suffix}"
+  guest_policy_id = "%{guest_policy_id}"
 
   assignment {
     group_labels {
@@ -209,8 +216,11 @@ resource "google_os_config_guest_policies" "guest_policies" {
 func TestAccOSConfigGuestPolicies_osConfigGuestPoliciesRecipesExample(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"guest_policy_id": "tf-test-guest-policy" + randomSuffix,
+		"random_suffix":   randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -235,18 +245,18 @@ func testAccOSConfigGuestPolicies_osConfigGuestPoliciesRecipesExample(context ma
 	return acctest.Nprintf(`
 resource "google_os_config_guest_policies" "guest_policies" {
   provider = google-beta
-  guest_policy_id = "tf-test-guest-policy%{random_suffix}"
+  guest_policy_id = "%{guest_policy_id}"
 
   assignment {
     zones = ["us-east1-b", "us-east1-d"]
   }
 
   recipes {
-    name          = "tf-test-guest-policy%{random_suffix}-recipe"
+    name          = "%{guest_policy_id}-recipe"
     desired_state = "INSTALLED"
 
     artifacts {
-      id = "tf-test-guest-policy%{random_suffix}-artifact-id"
+      id = "%{guest_policy_id}-artifact-id"
 
       gcs {
         bucket     = "my-bucket"
@@ -257,7 +267,7 @@ resource "google_os_config_guest_policies" "guest_policies" {
 
     install_steps {
       msi_installation {
-        artifact_id = "tf-test-guest-policy%{random_suffix}-artifact-id"
+        artifact_id = "%{guest_policy_id}-artifact-id"
       }
     }
   }

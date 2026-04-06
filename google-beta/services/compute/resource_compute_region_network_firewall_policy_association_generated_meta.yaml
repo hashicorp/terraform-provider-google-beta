@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2014, 2026
+# SPDX-License-Identifier: MPL-2.0
 resource: google_compute_region_network_firewall_policy_association
 generation_type: mmv1
 source_file: products/compute/RegionNetworkFirewallPolicyAssociation.yaml
@@ -11,6 +13,8 @@ fields:
       provider_only: true
     - api_field: associations.name
       field: name
+    - api_field: associations.priority
+      field: priority
     - field: region
       provider_only: true
     - api_field: associations.shortName
