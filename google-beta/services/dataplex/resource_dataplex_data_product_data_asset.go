@@ -118,6 +118,30 @@ func ResourceDataplexDataProductDataAsset() *schema.Resource {
 			tpgresource.DefaultProviderProject,
 		),
 
+		Identity: &schema.ResourceIdentity{
+			Version: 1,
+			SchemaFunc: func() map[string]*schema.Schema {
+				return map[string]*schema.Schema{
+					"location": {
+						Type:              schema.TypeString,
+						RequiredForImport: true,
+					},
+					"data_product_id": {
+						Type:              schema.TypeString,
+						RequiredForImport: true,
+					},
+					"data_asset_id": {
+						Type:              schema.TypeString,
+						RequiredForImport: true,
+					},
+					"project": {
+						Type:              schema.TypeString,
+						OptionalForImport: true,
+					},
+				}
+			},
+		},
+
 		Schema: map[string]*schema.Schema{
 			"data_asset_id": {
 				Type:        schema.TypeString,
@@ -270,6 +294,32 @@ func resourceDataplexDataProductDataAssetCreate(d *schema.ResourceData, meta int
 	}
 	d.SetId(id)
 
+	identity, err := d.Identity()
+	if err == nil && identity != nil {
+		if locationValue, ok := d.GetOk("location"); ok && locationValue.(string) != "" {
+			if err = identity.Set("location", locationValue.(string)); err != nil {
+				return fmt.Errorf("Error setting location: %s", err)
+			}
+		}
+		if dataProductIdValue, ok := d.GetOk("data_product_id"); ok && dataProductIdValue.(string) != "" {
+			if err = identity.Set("data_product_id", dataProductIdValue.(string)); err != nil {
+				return fmt.Errorf("Error setting data_product_id: %s", err)
+			}
+		}
+		if dataAssetIdValue, ok := d.GetOk("data_asset_id"); ok && dataAssetIdValue.(string) != "" {
+			if err = identity.Set("data_asset_id", dataAssetIdValue.(string)); err != nil {
+				return fmt.Errorf("Error setting data_asset_id: %s", err)
+			}
+		}
+		if projectValue, ok := d.GetOk("project"); ok && projectValue.(string) != "" {
+			if err = identity.Set("project", projectValue.(string)); err != nil {
+				return fmt.Errorf("Error setting project: %s", err)
+			}
+		}
+	} else {
+		log.Printf("[DEBUG] (Create) identity not set: %s", err)
+	}
+
 	err = DataplexOperationWaitTime(
 		config, res, project, "Creating DataProductDataAsset", userAgent,
 		d.Timeout(schema.TimeoutCreate))
@@ -348,6 +398,36 @@ func resourceDataplexDataProductDataAssetRead(d *schema.ResourceData, meta inter
 		return fmt.Errorf("Error reading DataProductDataAsset: %s", err)
 	}
 
+	identity, err := d.Identity()
+	if err == nil && identity != nil {
+		if v, ok := identity.GetOk("location"); !ok && v == "" {
+			err = identity.Set("location", d.Get("location").(string))
+			if err != nil {
+				return fmt.Errorf("Error setting location: %s", err)
+			}
+		}
+		if v, ok := identity.GetOk("data_product_id"); !ok && v == "" {
+			err = identity.Set("data_product_id", d.Get("data_product_id").(string))
+			if err != nil {
+				return fmt.Errorf("Error setting data_product_id: %s", err)
+			}
+		}
+		if v, ok := identity.GetOk("data_asset_id"); !ok && v == "" {
+			err = identity.Set("data_asset_id", d.Get("data_asset_id").(string))
+			if err != nil {
+				return fmt.Errorf("Error setting data_asset_id: %s", err)
+			}
+		}
+		if v, ok := identity.GetOk("project"); !ok && v == "" {
+			err = identity.Set("project", d.Get("project").(string))
+			if err != nil {
+				return fmt.Errorf("Error setting project: %s", err)
+			}
+		}
+	} else {
+		log.Printf("[DEBUG] (Read) identity not set: %s", err)
+	}
+
 	return nil
 }
 
@@ -356,6 +436,31 @@ func resourceDataplexDataProductDataAssetUpdate(d *schema.ResourceData, meta int
 	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
+	}
+	identity, err := d.Identity()
+	if err == nil && identity != nil {
+		if locationValue, ok := d.GetOk("location"); ok && locationValue.(string) != "" {
+			if err = identity.Set("location", locationValue.(string)); err != nil {
+				return fmt.Errorf("Error setting location: %s", err)
+			}
+		}
+		if dataProductIdValue, ok := d.GetOk("data_product_id"); ok && dataProductIdValue.(string) != "" {
+			if err = identity.Set("data_product_id", dataProductIdValue.(string)); err != nil {
+				return fmt.Errorf("Error setting data_product_id: %s", err)
+			}
+		}
+		if dataAssetIdValue, ok := d.GetOk("data_asset_id"); ok && dataAssetIdValue.(string) != "" {
+			if err = identity.Set("data_asset_id", dataAssetIdValue.(string)); err != nil {
+				return fmt.Errorf("Error setting data_asset_id: %s", err)
+			}
+		}
+		if projectValue, ok := d.GetOk("project"); ok && projectValue.(string) != "" {
+			if err = identity.Set("project", projectValue.(string)); err != nil {
+				return fmt.Errorf("Error setting project: %s", err)
+			}
+		}
+	} else {
+		log.Printf("[DEBUG] (Update) identity not set: %s", err)
 	}
 
 	billingProject := ""

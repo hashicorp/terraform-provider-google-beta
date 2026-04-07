@@ -75,6 +75,12 @@ func TestAccVertexAIIndexEndpoint_vertexAiIndexEndpointTestExample(t *testing.T)
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"etag", "labels", "public_endpoint_enabled", "region", "terraform_labels"},
 			},
+			{
+				ResourceName:       "google_vertex_ai_index_endpoint.index_endpoint",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -145,6 +151,12 @@ func TestAccVertexAIIndexEndpoint_vertexAiIndexEndpointWithPscExample(t *testing
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"etag", "labels", "public_endpoint_enabled", "region", "terraform_labels"},
+			},
+			{
+				ResourceName:       "google_vertex_ai_index_endpoint.index_endpoint",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})
@@ -233,6 +245,12 @@ func TestAccVertexAIIndexEndpoint_vertexAiIndexEndpointWithPublicEndpointExample
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"etag", "labels", "public_endpoint_enabled", "region", "terraform_labels"},
+			},
+			{
+				ResourceName:       "google_vertex_ai_index_endpoint.index_endpoint",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})

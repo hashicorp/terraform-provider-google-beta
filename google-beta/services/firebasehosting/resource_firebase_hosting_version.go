@@ -111,6 +111,22 @@ func ResourceFirebaseHostingVersion() *schema.Resource {
 			Delete: schema.DefaultTimeout(20 * time.Minute),
 		},
 
+		Identity: &schema.ResourceIdentity{
+			Version: 1,
+			SchemaFunc: func() map[string]*schema.Schema {
+				return map[string]*schema.Schema{
+					"version_id": {
+						Type:              schema.TypeString,
+						RequiredForImport: true,
+					},
+					"site_id": {
+						Type:              schema.TypeString,
+						RequiredForImport: true,
+					},
+				}
+			},
+		},
+
 		Schema: map[string]*schema.Schema{
 			"site_id": {
 				Type:        schema.TypeString,
@@ -334,6 +350,22 @@ func resourceFirebaseHostingVersionCreate(d *schema.ResourceData, meta interface
 	}
 	d.SetId(id)
 
+	identity, err := d.Identity()
+	if err == nil && identity != nil {
+		if versionIdValue, ok := d.GetOk("version_id"); ok && versionIdValue.(string) != "" {
+			if err = identity.Set("version_id", versionIdValue.(string)); err != nil {
+				return fmt.Errorf("Error setting version_id: %s", err)
+			}
+		}
+		if siteIdValue, ok := d.GetOk("site_id"); ok && siteIdValue.(string) != "" {
+			if err = identity.Set("site_id", siteIdValue.(string)); err != nil {
+				return fmt.Errorf("Error setting site_id: %s", err)
+			}
+		}
+	} else {
+		log.Printf("[DEBUG] (Create) identity not set: %s", err)
+	}
+
 	obj = make(map[string]interface{})
 	obj["status"] = "FINALIZED"
 
@@ -414,6 +446,24 @@ func resourceFirebaseHostingVersionRead(d *schema.ResourceData, meta interface{}
 	}
 	if err := d.Set("config", flattenFirebaseHostingVersionConfig(res["config"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Version: %s", err)
+	}
+
+	identity, err := d.Identity()
+	if err == nil && identity != nil {
+		if v, ok := identity.GetOk("version_id"); !ok && v == "" {
+			err = identity.Set("version_id", d.Get("version_id").(string))
+			if err != nil {
+				return fmt.Errorf("Error setting version_id: %s", err)
+			}
+		}
+		if v, ok := identity.GetOk("site_id"); !ok && v == "" {
+			err = identity.Set("site_id", d.Get("site_id").(string))
+			if err != nil {
+				return fmt.Errorf("Error setting site_id: %s", err)
+			}
+		}
+	} else {
+		log.Printf("[DEBUG] (Read) identity not set: %s", err)
 	}
 
 	return nil

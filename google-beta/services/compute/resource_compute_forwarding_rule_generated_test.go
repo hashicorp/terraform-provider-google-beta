@@ -86,6 +86,12 @@ func TestAccComputeForwardingRule_internalHttpLbWithMigBackendExample(t *testing
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"backend_service", "labels", "network", "no_automate_dns_zone", "port_range", "region", "subnetwork", "target", "terraform_labels"},
 			},
+			{
+				ResourceName:       "google_compute_forwarding_rule.google_compute_forwarding_rule",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -318,6 +324,12 @@ func TestAccComputeForwardingRule_internalTcpUdpLbWithMigBackendExample(t *testi
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"backend_service", "labels", "network", "no_automate_dns_zone", "region", "subnetwork", "terraform_labels"},
 			},
+			{
+				ResourceName:       "google_compute_forwarding_rule.google_compute_forwarding_rule",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -531,6 +543,12 @@ func TestAccComputeForwardingRule_forwardingRuleExternallbExample(t *testing.T) 
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"backend_service", "labels", "network", "no_automate_dns_zone", "port_range", "region", "subnetwork", "terraform_labels"},
 			},
+			{
+				ResourceName:       "google_compute_forwarding_rule.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -593,6 +611,12 @@ func TestAccComputeForwardingRule_forwardingRuleExternallbByoipv6Example(t *test
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"backend_service", "labels", "network", "no_automate_dns_zone", "port_range", "region", "subnetwork", "terraform_labels"},
+			},
+			{
+				ResourceName:       "google_compute_forwarding_rule.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})
@@ -660,6 +684,12 @@ func TestAccComputeForwardingRule_forwardingRuleGlobalInternallbExample(t *testi
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"backend_service", "labels", "network", "no_automate_dns_zone", "region", "subnetwork", "terraform_labels"},
+			},
+			{
+				ResourceName:       "google_compute_forwarding_rule.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})
@@ -729,6 +759,12 @@ func TestAccComputeForwardingRule_forwardingRuleBasicExample(t *testing.T) {
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"backend_service", "labels", "network", "no_automate_dns_zone", "port_range", "region", "subnetwork", "target", "terraform_labels"},
 			},
+			{
+				ResourceName:       "google_compute_forwarding_rule.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -772,6 +808,12 @@ func TestAccComputeForwardingRule_forwardingRuleL3DefaultExample(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"backend_service", "labels", "network", "no_automate_dns_zone", "region", "subnetwork", "terraform_labels"},
+			},
+			{
+				ResourceName:       "google_compute_forwarding_rule.fwd_rule",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})
@@ -833,6 +875,12 @@ func TestAccComputeForwardingRule_forwardingRuleInternallbExample(t *testing.T) 
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"backend_service", "labels", "network", "no_automate_dns_zone", "port_range", "region", "subnetwork", "target", "terraform_labels"},
+			},
+			{
+				ResourceName:       "google_compute_forwarding_rule.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})
@@ -913,6 +961,12 @@ func TestAccComputeForwardingRule_forwardingRuleHttpLbExample(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"backend_service", "labels", "network", "no_automate_dns_zone", "port_range", "region", "subnetwork", "target", "terraform_labels"},
+			},
+			{
+				ResourceName:       "google_compute_forwarding_rule.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})
@@ -1143,6 +1197,12 @@ func TestAccComputeForwardingRule_forwardingRuleRegionalHttpXlbExample(t *testin
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"backend_service", "ip_address", "labels", "network", "no_automate_dns_zone", "port_range", "region", "subnetwork", "target", "terraform_labels"},
+			},
+			{
+				ResourceName:       "google_compute_forwarding_rule.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})
@@ -1381,6 +1441,12 @@ func TestAccComputeForwardingRule_forwardingRuleVpcPscExample(t *testing.T) {
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"backend_service", "ip_address", "labels", "network", "no_automate_dns_zone", "port_range", "region", "subnetwork", "target", "terraform_labels"},
 			},
+			{
+				ResourceName:       "google_compute_forwarding_rule.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -1516,6 +1582,12 @@ func TestAccComputeForwardingRule_forwardingRuleVpcPscNoAutomateDnsExample(t *te
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"backend_service", "ip_address", "labels", "network", "no_automate_dns_zone", "port_range", "region", "subnetwork", "target", "terraform_labels"},
 			},
+			{
+				ResourceName:       "google_compute_forwarding_rule.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -1642,6 +1714,12 @@ func TestAccComputeForwardingRule_forwardingRuleRegionalSteeringExample(t *testi
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"backend_service", "labels", "network", "no_automate_dns_zone", "region", "subnetwork", "terraform_labels"},
 			},
+			{
+				ResourceName:       "google_compute_forwarding_rule.steering",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -1705,6 +1783,12 @@ func TestAccComputeForwardingRule_forwardingRuleInternallbIpv6Example(t *testing
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"backend_service", "labels", "network", "no_automate_dns_zone", "port_range", "region", "subnetwork", "target", "terraform_labels"},
+			},
+			{
+				ResourceName:       "google_compute_forwarding_rule.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})

@@ -79,6 +79,12 @@ func TestAccObservabilityProjectSettings_observabilityProjectSettingsBasicExampl
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"location"},
 			},
+			{
+				ResourceName:       "google_observability_project_settings.primary",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -170,6 +176,12 @@ func TestAccObservabilityProjectSettings_observabilityProjectSettingsBasicGlobal
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"location"},
+			},
+			{
+				ResourceName:       "google_observability_project_settings.primary_global",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})

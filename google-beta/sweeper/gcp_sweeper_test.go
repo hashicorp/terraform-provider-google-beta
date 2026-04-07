@@ -167,6 +167,7 @@ import (
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/servicemanagement"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/servicenetworking"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/serviceusage"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/serviceusagev2"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/siteverification"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/sourcerepo"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/spanner"
@@ -185,6 +186,7 @@ import (
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/vpcaccess"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/workbench"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/workflows"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/workloadidentity"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/workstations"
 	"testing"
 

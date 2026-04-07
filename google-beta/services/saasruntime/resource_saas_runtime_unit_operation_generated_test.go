@@ -93,6 +93,12 @@ func TestAccSaasRuntimeUnitOperation_saasRuntimeUnitOperationBasicExample(t *tes
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"annotations", "conditions", "error_category", "etag", "labels", "location", "state", "terraform_labels", "unit_operation_id", "update_time"},
 			},
+			{
+				ResourceName:       "google_saas_runtime_unit_operation.provision_unit_operation",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }

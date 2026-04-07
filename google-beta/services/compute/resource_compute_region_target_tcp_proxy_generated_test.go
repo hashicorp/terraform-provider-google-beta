@@ -76,6 +76,12 @@ func TestAccComputeRegionTargetTcpProxy_regionTargetTcpProxyBasicExample(t *test
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"backend_service", "region"},
 			},
+			{
+				ResourceName:       "google_compute_region_target_tcp_proxy.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -135,6 +141,12 @@ func TestAccComputeRegionTargetTcpProxy_regionTargetTcpProxyBasicBetaExample(t *
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"backend_service", "region"},
+			},
+			{
+				ResourceName:       "google_compute_region_target_tcp_proxy.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})
@@ -198,6 +210,12 @@ func TestAccComputeRegionTargetTcpProxy_regionTargetTcpProxyBackendlessExample(t
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"backend_service", "region"},
 			},
+			{
+				ResourceName:       "google_compute_region_target_tcp_proxy.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -239,6 +257,12 @@ func TestAccComputeRegionTargetTcpProxy_regionTargetTcpProxyTlsRouteExample(t *t
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"backend_service", "region"},
+			},
+			{
+				ResourceName:       "google_compute_region_target_tcp_proxy.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})

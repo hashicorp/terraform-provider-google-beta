@@ -75,6 +75,12 @@ func TestAccNetworkConnectivityTransport_networkConnectivityTransportBasicExampl
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"hub", "labels", "network", "region", "terraform_labels"},
 			},
+			{
+				ResourceName:       "google_network_connectivity_transport.primary",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
