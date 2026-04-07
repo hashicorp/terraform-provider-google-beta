@@ -77,6 +77,12 @@ func TestAccNetworkConnectivityGatewayAdvertisedRoute_networkConnectivityGateway
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"labels", "location", "spoke", "terraform_labels"},
 			},
+			{
+				ResourceName:       "google_network_connectivity_gateway_advertised_route.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }

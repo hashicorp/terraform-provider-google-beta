@@ -74,6 +74,12 @@ func TestAccNetworkSecuritySacRealm_sacRealmPrismaAccessExample(t *testing.T) {
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"labels", "terraform_labels"},
 			},
+			{
+				ResourceName:       "google_network_security_sac_realm.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }

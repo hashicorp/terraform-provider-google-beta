@@ -117,6 +117,26 @@ func ResourceDataformTeamFolder() *schema.Resource {
 			tpgresource.DefaultProviderProject,
 		),
 
+		Identity: &schema.ResourceIdentity{
+			Version: 1,
+			SchemaFunc: func() map[string]*schema.Schema {
+				return map[string]*schema.Schema{
+					"teamfolder_id": {
+						Type:              schema.TypeString,
+						RequiredForImport: true,
+					},
+					"region": {
+						Type:              schema.TypeString,
+						RequiredForImport: true,
+					},
+					"project": {
+						Type:              schema.TypeString,
+						OptionalForImport: true,
+					},
+				}
+			},
+		},
+
 		Schema: map[string]*schema.Schema{
 			"display_name": {
 				Type:        schema.TypeString,
@@ -212,6 +232,27 @@ func resourceDataformTeamFolderCreate(d *schema.ResourceData, meta interface{}) 
 	}
 	d.SetId(id)
 
+	identity, err := d.Identity()
+	if err == nil && identity != nil {
+		if teamfolderIdValue, ok := d.GetOk("teamfolder_id"); ok && teamfolderIdValue.(string) != "" {
+			if err = identity.Set("teamfolder_id", teamfolderIdValue.(string)); err != nil {
+				return fmt.Errorf("Error setting teamfolder_id: %s", err)
+			}
+		}
+		if regionValue, ok := d.GetOk("region"); ok && regionValue.(string) != "" {
+			if err = identity.Set("region", regionValue.(string)); err != nil {
+				return fmt.Errorf("Error setting region: %s", err)
+			}
+		}
+		if projectValue, ok := d.GetOk("project"); ok && projectValue.(string) != "" {
+			if err = identity.Set("project", projectValue.(string)); err != nil {
+				return fmt.Errorf("Error setting project: %s", err)
+			}
+		}
+	} else {
+		log.Printf("[DEBUG] (Create) identity not set: %s", err)
+	}
+
 	// Store the name as ID
 	d.SetId(res["name"].(string))
 
@@ -274,6 +315,30 @@ func resourceDataformTeamFolderRead(d *schema.ResourceData, meta interface{}) er
 		return fmt.Errorf("Error reading TeamFolder: %s", err)
 	}
 
+	identity, err := d.Identity()
+	if err == nil && identity != nil {
+		if v, ok := identity.GetOk("teamfolder_id"); !ok && v == "" {
+			err = identity.Set("teamfolder_id", d.Get("teamfolder_id").(string))
+			if err != nil {
+				return fmt.Errorf("Error setting teamfolder_id: %s", err)
+			}
+		}
+		if v, ok := identity.GetOk("region"); !ok && v == "" {
+			err = identity.Set("region", d.Get("region").(string))
+			if err != nil {
+				return fmt.Errorf("Error setting region: %s", err)
+			}
+		}
+		if v, ok := identity.GetOk("project"); !ok && v == "" {
+			err = identity.Set("project", d.Get("project").(string))
+			if err != nil {
+				return fmt.Errorf("Error setting project: %s", err)
+			}
+		}
+	} else {
+		log.Printf("[DEBUG] (Read) identity not set: %s", err)
+	}
+
 	return nil
 }
 
@@ -282,6 +347,26 @@ func resourceDataformTeamFolderUpdate(d *schema.ResourceData, meta interface{}) 
 	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
+	}
+	identity, err := d.Identity()
+	if err == nil && identity != nil {
+		if teamfolderIdValue, ok := d.GetOk("teamfolder_id"); ok && teamfolderIdValue.(string) != "" {
+			if err = identity.Set("teamfolder_id", teamfolderIdValue.(string)); err != nil {
+				return fmt.Errorf("Error setting teamfolder_id: %s", err)
+			}
+		}
+		if regionValue, ok := d.GetOk("region"); ok && regionValue.(string) != "" {
+			if err = identity.Set("region", regionValue.(string)); err != nil {
+				return fmt.Errorf("Error setting region: %s", err)
+			}
+		}
+		if projectValue, ok := d.GetOk("project"); ok && projectValue.(string) != "" {
+			if err = identity.Set("project", projectValue.(string)); err != nil {
+				return fmt.Errorf("Error setting project: %s", err)
+			}
+		}
+	} else {
+		log.Printf("[DEBUG] (Update) identity not set: %s", err)
 	}
 
 	billingProject := ""

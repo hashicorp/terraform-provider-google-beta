@@ -203,6 +203,7 @@ type ProviderModel struct {
 	ServiceManagementCustomEndpoint        types.String `tfsdk:"service_management_custom_endpoint"`
 	ServiceNetworkingCustomEndpoint        types.String `tfsdk:"service_networking_custom_endpoint"`
 	ServiceUsageCustomEndpoint             types.String `tfsdk:"service_usage_custom_endpoint"`
+	ServiceUsageV2CustomEndpoint           types.String `tfsdk:"service_usage_v2_custom_endpoint"`
 	SiteVerificationCustomEndpoint         types.String `tfsdk:"site_verification_custom_endpoint"`
 	SourceRepoCustomEndpoint               types.String `tfsdk:"source_repo_custom_endpoint"`
 	SpannerCustomEndpoint                  types.String `tfsdk:"spanner_custom_endpoint"`
@@ -221,6 +222,7 @@ type ProviderModel struct {
 	VPCAccessCustomEndpoint                types.String `tfsdk:"vpc_access_custom_endpoint"`
 	WorkbenchCustomEndpoint                types.String `tfsdk:"workbench_custom_endpoint"`
 	WorkflowsCustomEndpoint                types.String `tfsdk:"workflows_custom_endpoint"`
+	WorkloadIdentityCustomEndpoint         types.String `tfsdk:"workload_identity_custom_endpoint"`
 	WorkstationsCustomEndpoint             types.String `tfsdk:"workstations_custom_endpoint"`
 
 	// Handwritten Products / Versioned / Atypical Entries

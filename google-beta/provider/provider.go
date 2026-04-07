@@ -943,6 +943,11 @@ func Provider() *schema.Provider {
 				Optional:     true,
 				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
 			},
+			"service_usage_v2_custom_endpoint": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
+			},
 			"site_verification_custom_endpoint": {
 				Type:         schema.TypeString,
 				Optional:     true,
@@ -1029,6 +1034,11 @@ func Provider() *schema.Provider {
 				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
 			},
 			"workflows_custom_endpoint": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
+			},
+			"workload_identity_custom_endpoint": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: transport_tpg.ValidateCustomEndpoint,
@@ -1394,6 +1404,7 @@ func ProviderConfigure(ctx context.Context, d *schema.ResourceData, p *schema.Pr
 	config.ServiceManagementBasePath = d.Get("service_management_custom_endpoint").(string)
 	config.ServiceNetworkingBasePath = d.Get("service_networking_custom_endpoint").(string)
 	config.ServiceUsageBasePath = d.Get("service_usage_custom_endpoint").(string)
+	config.ServiceUsageV2BasePath = d.Get("service_usage_v2_custom_endpoint").(string)
 	config.SiteVerificationBasePath = d.Get("site_verification_custom_endpoint").(string)
 	config.SourceRepoBasePath = d.Get("source_repo_custom_endpoint").(string)
 	config.SpannerBasePath = d.Get("spanner_custom_endpoint").(string)
@@ -1412,6 +1423,7 @@ func ProviderConfigure(ctx context.Context, d *schema.ResourceData, p *schema.Pr
 	config.VPCAccessBasePath = d.Get("vpc_access_custom_endpoint").(string)
 	config.WorkbenchBasePath = d.Get("workbench_custom_endpoint").(string)
 	config.WorkflowsBasePath = d.Get("workflows_custom_endpoint").(string)
+	config.WorkloadIdentityBasePath = d.Get("workload_identity_custom_endpoint").(string)
 	config.WorkstationsBasePath = d.Get("workstations_custom_endpoint").(string)
 
 	// Handwritten Products / Versioned / Atypical Entries

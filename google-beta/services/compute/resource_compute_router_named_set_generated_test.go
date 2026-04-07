@@ -77,6 +77,12 @@ func TestAccComputeRouterNamedSet_routerNamedSetRoutePolicyExample(t *testing.T)
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"region", "router"},
 			},
+			{
+				ResourceName:       "google_compute_router_named_set.my_prefix_set",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -170,6 +176,12 @@ func TestAccComputeRouterNamedSet_routerNamedSetPrefixExample(t *testing.T) {
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"region", "router"},
 			},
+			{
+				ResourceName:       "google_compute_router_named_set.prefix_set",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -236,6 +248,12 @@ func TestAccComputeRouterNamedSet_routerNamedSetCommunityExample(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"region", "router"},
+			},
+			{
+				ResourceName:       "google_compute_router_named_set.community_set",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})

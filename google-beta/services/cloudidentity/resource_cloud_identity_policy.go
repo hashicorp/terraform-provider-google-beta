@@ -142,6 +142,18 @@ func ResourceCloudIdentityPolicy() *schema.Resource {
 			Delete: schema.DefaultTimeout(20 * time.Minute),
 		},
 
+		Identity: &schema.ResourceIdentity{
+			Version: 1,
+			SchemaFunc: func() map[string]*schema.Schema {
+				return map[string]*schema.Schema{
+					"name": {
+						Type:              schema.TypeString,
+						RequiredForImport: true,
+					},
+				}
+			},
+		},
+
 		Schema: map[string]*schema.Schema{
 			"customer": {
 				Type:        schema.TypeString,
@@ -277,6 +289,17 @@ func resourceCloudIdentityPolicyCreate(d *schema.ResourceData, meta interface{})
 	}
 	d.SetId(id)
 
+	identity, err := d.Identity()
+	if err == nil && identity != nil {
+		if nameValue, ok := d.GetOk("name"); ok && nameValue.(string) != "" {
+			if err = identity.Set("name", nameValue.(string)); err != nil {
+				return fmt.Errorf("Error setting name: %s", err)
+			}
+		}
+	} else {
+		log.Printf("[DEBUG] (Create) identity not set: %s", err)
+	}
+
 	// Use the resource in the operation response to populate
 	// identity fields and d.Id() before read
 	var opRes map[string]interface{}
@@ -353,6 +376,18 @@ func resourceCloudIdentityPolicyRead(d *schema.ResourceData, meta interface{}) e
 		return fmt.Errorf("Error reading Policy: %s", err)
 	}
 
+	identity, err := d.Identity()
+	if err == nil && identity != nil {
+		if v, ok := identity.GetOk("name"); !ok && v == "" {
+			err = identity.Set("name", d.Get("name").(string))
+			if err != nil {
+				return fmt.Errorf("Error setting name: %s", err)
+			}
+		}
+	} else {
+		log.Printf("[DEBUG] (Read) identity not set: %s", err)
+	}
+
 	return nil
 }
 
@@ -361,6 +396,16 @@ func resourceCloudIdentityPolicyUpdate(d *schema.ResourceData, meta interface{})
 	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
+	}
+	identity, err := d.Identity()
+	if err == nil && identity != nil {
+		if nameValue, ok := d.GetOk("name"); ok && nameValue.(string) != "" {
+			if err = identity.Set("name", nameValue.(string)); err != nil {
+				return fmt.Errorf("Error setting name: %s", err)
+			}
+		}
+	} else {
+		log.Printf("[DEBUG] (Update) identity not set: %s", err)
 	}
 
 	billingProject := ""

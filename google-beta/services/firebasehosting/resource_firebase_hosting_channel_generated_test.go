@@ -76,6 +76,12 @@ func TestAccFirebaseHostingChannel_firebasehostingChannelBasicExample(t *testing
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"channel_id", "labels", "site_id", "terraform_labels", "ttl"},
 			},
+			{
+				ResourceName:       "google_firebase_hosting_channel.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -121,6 +127,12 @@ func TestAccFirebaseHostingChannel_firebasehostingChannelFullExample(t *testing.
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"channel_id", "labels", "site_id", "terraform_labels", "ttl"},
+			},
+			{
+				ResourceName:       "google_firebase_hosting_channel.full",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})

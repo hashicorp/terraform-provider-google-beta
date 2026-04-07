@@ -75,6 +75,12 @@ func TestAccFirebaseAILogicPromptTemplateLock_firebaseailogicPromptTemplateLockB
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"location", "template_id"},
 			},
+			{
+				ResourceName:       "google_firebase_ai_logic_prompt_template_lock.basic_lock",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }

@@ -74,6 +74,12 @@ func TestAccDialogflowCXTool_dialogflowcxToolOpenApiExample(t *testing.T) {
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"open_api_spec.0.authentication.0.api_key_config.0.api_key", "open_api_spec.0.authentication.0.bearer_token_config.0.token", "open_api_spec.0.authentication.0.oauth_config.0.client_secret", "parent"},
 			},
+			{
+				ResourceName:       "google_dialogflow_cx_tool.open_api_tool",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -186,6 +192,12 @@ func TestAccDialogflowCXTool_dialogflowcxToolDataStoreExample(t *testing.T) {
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"open_api_spec.0.authentication.0.api_key_config.0.api_key", "open_api_spec.0.authentication.0.bearer_token_config.0.token", "open_api_spec.0.authentication.0.oauth_config.0.client_secret", "parent"},
 			},
+			{
+				ResourceName:       "google_dialogflow_cx_tool.data_store_tool",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -260,6 +272,12 @@ func TestAccDialogflowCXTool_dialogflowcxToolFunctionExample(t *testing.T) {
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"open_api_spec.0.authentication.0.api_key_config.0.api_key", "open_api_spec.0.authentication.0.bearer_token_config.0.token", "open_api_spec.0.authentication.0.oauth_config.0.client_secret", "parent"},
 			},
+			{
+				ResourceName:       "google_dialogflow_cx_tool.function_tool",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -332,6 +350,12 @@ func TestAccDialogflowCXTool_dialogflowcxToolConnectorExample(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"open_api_spec.0.authentication.0.api_key_config.0.api_key", "open_api_spec.0.authentication.0.bearer_token_config.0.token", "open_api_spec.0.authentication.0.oauth_config.0.client_secret", "parent"},
+			},
+			{
+				ResourceName:       "google_dialogflow_cx_tool.connector_tool",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})

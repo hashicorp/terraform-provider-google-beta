@@ -78,6 +78,12 @@ func TestAccObservabilityOrganizationSettings_observabilityOrganizationSettingsB
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"location", "organization"},
 			},
+			{
+				ResourceName:       "google_observability_organization_settings.primary",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -140,6 +146,12 @@ func TestAccObservabilityOrganizationSettings_observabilityOrganizationSettingsB
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"location", "organization"},
+			},
+			{
+				ResourceName:       "google_observability_organization_settings.primary_global",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})
