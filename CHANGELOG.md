@@ -1,4 +1,45 @@
-## 7.27.0 (Unreleased)
+## 7.28.0 (Unreleased)
+
+## 7.27.0 (Apr 07, 2026)
+
+BREAKING CHANGES:
+* lustre: marked `maintenance_policy.weekly_maintenance_windows` field required in `google_lustre_instance` resource. Configuring `maintenance_policy` without `weekly_maintenance_windows` will cause an API error. ([#11855](https://github.com/hashicorp/terraform-provider-google-beta/pull/11855))
+
+FEATURES:
+* **New Data Source:** `google_discovery_engine_data_store` ([#11821](https://github.com/hashicorp/terraform-provider-google-beta/pull/11821))
+* **New Data Source:** `google_discovery_engine_data_stores` ([#11821](https://github.com/hashicorp/terraform-provider-google-beta/pull/11821))
+* **New Data Source:** `google_dns_record_sets` ([#11850](https://github.com/hashicorp/terraform-provider-google-beta/pull/11850))
+* **New Resource:** `google_chronicle_dashboard_chart` ([#11841](https://github.com/hashicorp/terraform-provider-google-beta/pull/11841))
+* **New Resource:** `google_chronicle_feed` ([#11856](https://github.com/hashicorp/terraform-provider-google-beta/pull/11856))
+* **New Resource:** `google_network_connectivity_transport` ([#11810](https://github.com/hashicorp/terraform-provider-google-beta/pull/11810))
+* **New Resource:** `google_organization_service_identity` ([#11844](https://github.com/hashicorp/terraform-provider-google-beta/pull/11844))
+
+IMPROVEMENTS:
+* compute: added `SEV_LIVE_MIGRATABLE_V2` to `guest_os_features` enum for `google_compute_region_disk` resource ([#11849](https://github.com/hashicorp/terraform-provider-google-beta/pull/11849))
+* compute: added `SNP_SVSM_CAPABLE` to `guest_os_features` enum for `google_compute_image` and `google_compute_region_disk` resources ([#11849](https://github.com/hashicorp/terraform-provider-google-beta/pull/11849))
+* compute: added `cache_policy` field to `google_compute_url_map` (beta) ([#11842](https://github.com/hashicorp/terraform-provider-google-beta/pull/11842))
+* compute: added `excluded_folders` and `excluded_projects` fields  to `google_compute_organization_security_policy_association` resource ([#11835](https://github.com/hashicorp/terraform-provider-google-beta/pull/11835))
+* compute: supported in-place update for `secondary_ip_range` field in `google_compute_subnetwork` resource ([#11830](https://github.com/hashicorp/terraform-provider-google-beta/pull/11830))
+* container: added `autopilot_privileged_admission` field to `google_container_cluster` for Customer-Driven Allowlisting ([#11826](https://github.com/hashicorp/terraform-provider-google-beta/pull/11826))
+* dataplex: added `aspects` field to `google_dataplex_entry_link` resource ([#11824](https://github.com/hashicorp/terraform-provider-google-beta/pull/11824))
+* dataplex: supported in-place update for `aspects` field in `google_dataplex_entry_link` resource ([#11837](https://github.com/hashicorp/terraform-provider-google-beta/pull/11837))
+* dataproc: added `boot_disk_provisioned_iops` and `boot_disk_provisioned_throughput` fields  to `cluster_config.worker_config.disk_config` in `google_dataproc_cluster` resource  ([#11832](https://github.com/hashicorp/terraform-provider-google-beta/pull/11832))
+* dataproc: added value `AUTO` to `runtime_config.autotuning_config.scenarios` field in `google_dataproc_batch` resource ([#11818](https://github.com/hashicorp/terraform-provider-google-beta/pull/11818))
+* iambeta: added `attestation_rules` field to `google_iam_workload_identity_pool` resource ([#11840](https://github.com/hashicorp/terraform-provider-google-beta/pull/11840))
+* lustre: added `dynamic_tier_options` field to `google_lustre_instance` resource ([#11855](https://github.com/hashicorp/terraform-provider-google-beta/pull/11855))
+* migrationcenter: added `virtual_machine_preferences.compute_engine_preferences.persistent_disk_type` field to `google_migration_center_preference_set` resource ([#11834](https://github.com/hashicorp/terraform-provider-google-beta/pull/11834))
+* networkconnectivity: added `exclude_import_ranges`, `include_export_ranges`, `exclude_export_ranges` fields to `google_network_connectivity_spoke` resource ([#11845](https://github.com/hashicorp/terraform-provider-google-beta/pull/11845))
+* pubsub: added `ai_inference` field to `google_pubsub_topic` and `google_pubsub_subscription` resources ([#11852](https://github.com/hashicorp/terraform-provider-google-beta/pull/11852))
+* vertexai: added `context_spec` field to `google_vertex_ai_reasoning_engine` resource ([#11827](https://github.com/hashicorp/terraform-provider-google-beta/pull/11827))
+
+BUG FIXES:
+* compute: fixed a permadiff on the `adaptive_protection_config` field in `google_compute_security_policy` resource ([#11833](https://github.com/hashicorp/terraform-provider-google-beta/pull/11833))
+* compute: fixed panic when setting `google_compute_project_metadata` on a project with no existing metadata ([#11812](https://github.com/hashicorp/terraform-provider-google-beta/pull/11812))
+* biglakeiceberg: changed the `primary-location` parameter to `primary_location` in the create URL of `google_biglake_iceberg_catalog` resource ([#11836](https://github.com/hashicorp/terraform-provider-google-beta/pull/11836))
+* securityposture: always sent value of `enforce` in `policies.constraint.org_policy_constraint.policy_rules` to the api  in `google_securityposture_posture` resource ([#11817](https://github.com/hashicorp/terraform-provider-google-beta/pull/11817))
+* vertexai: fixed missing Private Service Connect service attachment for `service_attachment` field in `google_vertex_ai_endpoint_with_model_garden_deployment` resource ([#11831](https://github.com/hashicorp/terraform-provider-google-beta/pull/11831))
+* workstations: fixed update of `private_cluster_config.allowed_projects` in `google_workstations_workstation_cluster` ([#11839](https://github.com/hashicorp/terraform-provider-google-beta/pull/11839))
+1839))
 
 ## 7.26.0 (Mar 31, 2026)
 FEATURES:
