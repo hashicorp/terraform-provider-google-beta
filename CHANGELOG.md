@@ -28,13 +28,13 @@ IMPROVEMENTS:
 * networkconnectivity: added `exclude_import_ranges`, `include_export_ranges`, `exclude_export_ranges` fields to `google_network_connectivity_spoke` resource ([#11845](https://github.com/hashicorp/terraform-provider-google-beta/pull/11845))
 * pubsub: added `ai_inference` field to `google_pubsub_topic` and `google_pubsub_subscription` resources ([#11852](https://github.com/hashicorp/terraform-provider-google-beta/pull/11852))
 * vertexai: added `context_spec` field to `google_vertex_ai_reasoning_engine` resource ([#11827](https://github.com/hashicorp/terraform-provider-google-beta/pull/11827))
-* vertexai: fixed missing Private Service Connect service attachment for `service_attachment` field in `google_vertex_ai_endpoint_with_model_garden_deployment` resource ([#11831](https://github.com/hashicorp/terraform-provider-google-beta/pull/11831))
 
 BUG FIXES:
 * compute: fixed a permadiff on the `adaptive_protection_config` field in `google_compute_security_policy` resource ([#11833](https://github.com/hashicorp/terraform-provider-google-beta/pull/11833))
 * compute: fixed panic when setting `google_compute_project_metadata` on a project with no existing metadata ([#11812](https://github.com/hashicorp/terraform-provider-google-beta/pull/11812))
 * biglakeiceberg: changed the `primary-location` parameter to `primary_location` in the create URL of `google_biglake_iceberg_catalog` resource ([#11836](https://github.com/hashicorp/terraform-provider-google-beta/pull/11836))
 * securityposture: always sent value of `enforce` in `policies.constraint.org_policy_constraint.policy_rules` to the api  in `google_securityposture_posture` resource ([#11817](https://github.com/hashicorp/terraform-provider-google-beta/pull/11817))
+* vertexai: fixed missing Private Service Connect service attachment for `service_attachment` field in `google_vertex_ai_endpoint_with_model_garden_deployment` resource ([#11831](https://github.com/hashicorp/terraform-provider-google-beta/pull/11831))
 * workstations: fixed update of `private_cluster_config.allowed_projects` in `google_workstations_workstation_cluster` ([#11839](https://github.com/hashicorp/terraform-provider-google-beta/pull/11839))
 1839))
 
