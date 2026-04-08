@@ -583,6 +583,13 @@ func resourceNetworkServicesServiceLbPoliciesUpdate(d *schema.ResourceData, meta
 }
 
 func resourceNetworkServicesServiceLbPoliciesDelete(d *schema.ResourceData, meta interface{}) error {
+	if d.Get("deletion_policy").(string) == "PREVENT" {
+		return fmt.Errorf("cannot destroy NetworkServicesServiceLbPolicies without setting deletion_policy=\"DELETE\" and running `terraform apply`")
+	}
+	if d.Get("deletion_policy").(string) == "ABANDON" {
+		log.Printf("[DEBUG] deletion_policy set to \"ABANDON\", removing ServiceLbPolicies %q from Terraform state without deletion", d.Id())
+		return nil
+	}
 	config := meta.(*transport_tpg.Config)
 	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
@@ -610,13 +617,6 @@ func resourceNetworkServicesServiceLbPoliciesDelete(d *schema.ResourceData, meta
 	}
 
 	headers := make(http.Header)
-	if d.Get("deletion_policy").(string) == "PREVENT" {
-		return fmt.Errorf("cannot destroy NetworkServicesServiceLbPolicies without setting deletion_policy=\"DELETE\" and running `terraform apply`")
-	}
-	if d.Get("deletion_policy").(string) == "ABANDON" {
-		log.Printf("[DEBUG] deletion_policy set to \"ABANDON\", removing ServiceLbPolicies %q from Terraform state without deletion", d.Id())
-		return nil
-	}
 
 	log.Printf("[DEBUG] Deleting ServiceLbPolicies %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
