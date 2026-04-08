@@ -1731,6 +1731,13 @@ func resourceChronicleDashboardChartUpdate(d *schema.ResourceData, meta interfac
 }
 
 func resourceChronicleDashboardChartDelete(d *schema.ResourceData, meta interface{}) error {
+	if d.Get("deletion_policy").(string) == "PREVENT" {
+		return fmt.Errorf("cannot destroy ChronicleDashboardChart without setting deletion_policy=\"DELETE\" and running `terraform apply`")
+	}
+	if d.Get("deletion_policy").(string) == "ABANDON" {
+		log.Printf("[DEBUG] deletion_policy set to \"ABANDON\", removing DashboardChart %q from Terraform state without deletion", d.Id())
+		return nil
+	}
 	config := meta.(*transport_tpg.Config)
 	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
@@ -1764,13 +1771,6 @@ func resourceChronicleDashboardChartDelete(d *schema.ResourceData, meta interfac
 		return fmt.Errorf("cannot delete Chronicle Dashboard Chart: resource ID is empty")
 	}
 	obj["dashboardChart"] = chartName // Assign the chart name to the request body
-	if d.Get("deletion_policy").(string) == "PREVENT" {
-		return fmt.Errorf("cannot destroy ChronicleDashboardChart without setting deletion_policy=\"DELETE\" and running `terraform apply`")
-	}
-	if d.Get("deletion_policy").(string) == "ABANDON" {
-		log.Printf("[DEBUG] deletion_policy set to \"ABANDON\", removing DashboardChart %q from Terraform state without deletion", d.Id())
-		return nil
-	}
 
 	log.Printf("[DEBUG] Deleting DashboardChart %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
