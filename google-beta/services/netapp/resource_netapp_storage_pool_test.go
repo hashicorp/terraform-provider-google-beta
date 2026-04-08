@@ -907,7 +907,8 @@ resource "google_netapp_storage_pool" "test_pool" {
 }
 `, context)
 }
-func TestAccNetappStoragePool_ScaleTierEnterprise(t *testing.T) {
+
+func TestAccNetappStoragePool_ScaleType(t *testing.T) {
 	context := map[string]interface{}{
 		"network_name":  acctest.BootstrapSharedServiceNetworkingConnection(t, "gcnv-network-config-3", acctest.ServiceNetworkWithParentService("netapp.servicenetworking.goog")),
 		"random_suffix": acctest.RandString(t, 10),
@@ -922,7 +923,7 @@ func TestAccNetappStoragePool_ScaleTierEnterprise(t *testing.T) {
 		},
 		Steps: []resource.TestStep{
 			{
-				Config: testAccNetappStoragePool_ScaleTierEnterprise(context),
+				Config: testAccNetappStoragePool_ScaleType(context),
 			},
 			{
 				ResourceName:            "google_netapp_storage_pool.test_pool",
@@ -931,7 +932,7 @@ func TestAccNetappStoragePool_ScaleTierEnterprise(t *testing.T) {
 				ImportStateVerifyIgnore: []string{"location", "name", "labels", "terraform_labels"},
 			},
 			{
-				Config: testAccNetappStoragePool_ScaleTierEnterprise_update(context),
+				Config: testAccNetappStoragePool_ScaleType_update(context),
 			},
 			{
 				ResourceName:            "google_netapp_storage_pool.test_pool",
@@ -943,7 +944,92 @@ func TestAccNetappStoragePool_ScaleTierEnterprise(t *testing.T) {
 	})
 }
 
-func testAccNetappStoragePool_ScaleTierEnterprise(context map[string]interface{}) string {
+func testAccNetappStoragePool_ScaleType(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_netapp_storage_pool" "test_pool" {
+	provider = google-beta
+    name = "tf-test-pool%{random_suffix}"
+    location = "us-central1-c"
+    service_level = "FLEX"
+    type = "UNIFIED"
+    capacity_gib = "12288"
+    network = data.google_compute_network.default.id
+    description           = "this is a test description"
+    labels                = {
+        key = "test"
+        value = "pool"
+    }
+	scale_type = "SCALE_TYPE_SCALEOUT"
+}
+
+data "google_compute_network" "default" {
+	provider = google-beta
+    name = "%{network_name}"
+}
+`, context)
+}
+
+func testAccNetappStoragePool_ScaleType_update(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_netapp_storage_pool" "test_pool" {
+	provider = google-beta
+    name = "tf-test-pool%{random_suffix}"
+    location = "us-central1-c"
+    service_level = "FLEX"
+    type = "UNIFIED"
+    capacity_gib = "13312"
+    network = data.google_compute_network.default.id
+    description           = "this is a test description"
+    labels                = {
+        key = "test"
+        value = "pool"
+    }
+	scale_type = "SCALE_TYPE_SCALEOUT"
+}
+
+data "google_compute_network" "default" {
+	provider = google-beta
+    name = "%{network_name}"
+}
+`, context)
+}
+func TestAccNetappStoragePool_ScaleTier(t *testing.T) {
+	context := map[string]interface{}{
+		"network_name":  acctest.BootstrapSharedServiceNetworkingConnection(t, "gcnv-network-config-3", acctest.ServiceNetworkWithParentService("netapp.servicenetworking.goog")),
+		"random_suffix": acctest.RandString(t, 10),
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckNetappVolumeDestroyProducer(t),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		Steps: []resource.TestStep{
+			{
+				Config: testAccNetappStoragePool_ScaleTier(context),
+			},
+			{
+				ResourceName:            "google_netapp_storage_pool.test_pool",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"location", "name", "labels", "terraform_labels"},
+			},
+			{
+				Config: testAccNetappStoragePool_ScaleTier_update(context),
+			},
+			{
+				ResourceName:            "google_netapp_storage_pool.test_pool",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"location", "name", "labels", "terraform_labels"},
+			},
+		},
+	})
+}
+
+func testAccNetappStoragePool_ScaleTier(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_netapp_storage_pool" "test_pool" {
 	provider = google-beta
@@ -968,7 +1054,7 @@ data "google_compute_network" "default" {
 `, context)
 }
 
-func testAccNetappStoragePool_ScaleTierEnterprise_update(context map[string]interface{}) string {
+func testAccNetappStoragePool_ScaleTier_update(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_netapp_storage_pool" "test_pool" {
 	provider = google-beta
