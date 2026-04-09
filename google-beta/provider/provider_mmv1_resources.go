@@ -585,8 +585,10 @@ var generatedIAMDatasources = map[string]*schema.Resource{
 	"google_healthcare_consent_store_iam_policy":                   registry.DataSource("google_healthcare_consent_store_iam_policy"),
 	"google_iam_workload_identity_pool_iam_policy":                 registry.DataSource("google_iam_workload_identity_pool_iam_policy"),
 	"google_iam_workforce_pool_iam_policy":                         registry.DataSource("google_iam_workforce_pool_iam_policy"),
+	"google_iap_agent_registry_iam_policy":                         registry.DataSource("google_iap_agent_registry_iam_policy"),
 	"google_iap_app_engine_service_iam_policy":                     registry.DataSource("google_iap_app_engine_service_iam_policy"),
 	"google_iap_app_engine_version_iam_policy":                     registry.DataSource("google_iap_app_engine_version_iam_policy"),
+	"google_iap_location_web_iam_policy":                           registry.DataSource("google_iap_location_web_iam_policy"),
 	"google_iap_tunnel_iam_policy":                                 registry.DataSource("google_iap_tunnel_iam_policy"),
 	"google_iap_tunnel_dest_group_iam_policy":                      registry.DataSource("google_iap_tunnel_dest_group_iam_policy"),
 	"google_iap_tunnel_instance_iam_policy":                        registry.DataSource("google_iap_tunnel_instance_iam_policy"),
@@ -662,8 +664,8 @@ var handwrittenIAMDatasources = map[string]*schema.Resource{
 
 // Resources
 // Generated resources: 809
-// Generated IAM resources: 363
-// Total generated resources: 1172
+// Generated IAM resources: 369
+// Total generated resources: 1178
 var generatedResources = map[string]*schema.Resource{
 	"google_folder_access_approval_settings":                                     registry.Resource("google_folder_access_approval_settings"),
 	"google_organization_access_approval_settings":                               registry.Resource("google_organization_access_approval_settings"),
@@ -1397,6 +1399,9 @@ var generatedResources = map[string]*schema.Resource{
 	"google_iam_workforce_pool_provider_key":                                     registry.Resource("google_iam_workforce_pool_provider_key"),
 	"google_iam_workforce_pool_provider_scim_tenant":                             registry.Resource("google_iam_workforce_pool_provider_scim_tenant"),
 	"google_iam_workforce_pool_provider_scim_token":                              registry.Resource("google_iam_workforce_pool_provider_scim_token"),
+	"google_iap_agent_registry_iam_binding":                                      registry.Resource("google_iap_agent_registry_iam_binding"),
+	"google_iap_agent_registry_iam_member":                                       registry.Resource("google_iap_agent_registry_iam_member"),
+	"google_iap_agent_registry_iam_policy":                                       registry.Resource("google_iap_agent_registry_iam_policy"),
 	"google_iap_app_engine_service_iam_binding":                                  registry.Resource("google_iap_app_engine_service_iam_binding"),
 	"google_iap_app_engine_service_iam_member":                                   registry.Resource("google_iap_app_engine_service_iam_member"),
 	"google_iap_app_engine_service_iam_policy":                                   registry.Resource("google_iap_app_engine_service_iam_policy"),
@@ -1405,6 +1410,9 @@ var generatedResources = map[string]*schema.Resource{
 	"google_iap_app_engine_version_iam_policy":                                   registry.Resource("google_iap_app_engine_version_iam_policy"),
 	"google_iap_brand":                                                           registry.Resource("google_iap_brand"),
 	"google_iap_client":                                                          registry.Resource("google_iap_client"),
+	"google_iap_location_web_iam_binding":                                        registry.Resource("google_iap_location_web_iam_binding"),
+	"google_iap_location_web_iam_member":                                         registry.Resource("google_iap_location_web_iam_member"),
+	"google_iap_location_web_iam_policy":                                         registry.Resource("google_iap_location_web_iam_policy"),
 	"google_iap_settings":                                                        registry.Resource("google_iap_settings"),
 	"google_iap_tunnel_iam_binding":                                              registry.Resource("google_iap_tunnel_iam_binding"),
 	"google_iap_tunnel_iam_member":                                               registry.Resource("google_iap_tunnel_iam_member"),
