@@ -23,6 +23,7 @@ import (
 	"regexp"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
@@ -218,4 +219,13 @@ func flattenKMSKeysList(d *schema.ResourceData, config *transport_tpg.Config, ke
 	}
 
 	return keys, nil
+}
+
+func init() {
+	registry.Schema{
+		Name:        "google_kms_crypto_keys",
+		ProductName: "kms",
+		Type:        registry.SchemaTypeDataSource,
+		Schema:      DataSourceGoogleKmsCryptoKeys(),
+	}.Register()
 }

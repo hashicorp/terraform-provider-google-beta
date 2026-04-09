@@ -19,6 +19,7 @@ package apphub
 import (
 	"fmt"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
@@ -58,4 +59,13 @@ func dataSourceGoogleApphubApplicationRead(d *schema.ResourceData, meta interfac
 		return fmt.Errorf("%s not found", id)
 	}
 	return nil
+}
+
+func init() {
+	registry.Schema{
+		Name:        "google_apphub_application",
+		ProductName: "apphub",
+		Type:        registry.SchemaTypeDataSource,
+		Schema:      DataSourceGoogleApphubApplication(),
+	}.Register()
 }

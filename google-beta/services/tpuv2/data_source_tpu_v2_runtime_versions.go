@@ -22,6 +22,7 @@ import (
 	"sort"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
@@ -106,4 +107,13 @@ func flattenTpuV2RuntimeVersions(resp map[string]interface{}) []interface{} {
 		versions[i] = verObj["version"]
 	}
 	return versions
+}
+
+func init() {
+	registry.Schema{
+		Name:        "google_tpu_v2_runtime_versions",
+		ProductName: "tpuv2",
+		Type:        registry.SchemaTypeDataSource,
+		Schema:      DataSourceTpuV2RuntimeVersions(),
+	}.Register()
 }

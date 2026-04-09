@@ -26,6 +26,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/retry"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"google.golang.org/api/googleapi"
@@ -876,4 +877,13 @@ func dataflowFlexJobTypeParameterOverride(ename, pname string, d *schema.Resourc
 		}
 	}
 	return nil
+}
+
+func init() {
+	registry.Schema{
+		Name:        "google_dataflow_flex_template_job",
+		ProductName: "dataflow",
+		Type:        registry.SchemaTypeResource,
+		Schema:      ResourceDataflowFlexTemplateJob(),
+	}.Register()
 }

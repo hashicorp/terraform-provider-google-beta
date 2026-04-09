@@ -20,6 +20,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
@@ -62,4 +63,13 @@ func dataSourceGoogleComposerUserWorkloadsConfigMapRead(d *schema.ResourceData, 
 	}
 
 	return nil
+}
+
+func init() {
+	registry.Schema{
+		Name:        "google_composer_user_workloads_config_map",
+		ProductName: "composer",
+		Type:        registry.SchemaTypeDataSource,
+		Schema:      DataSourceGoogleComposerUserWorkloadsConfigMap(),
+	}.Register()
 }

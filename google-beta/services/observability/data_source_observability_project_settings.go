@@ -20,6 +20,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 )
 
@@ -50,4 +51,13 @@ func dataSourceObservabilityProjectSettingsRead(d *schema.ResourceData, meta int
 		return fmt.Errorf("%s not found", id)
 	}
 	return nil
+}
+
+func init() {
+	registry.Schema{
+		Name:        "google_observability_project_settings",
+		ProductName: "observability",
+		Type:        registry.SchemaTypeDataSource,
+		Schema:      DataSourceObservabilityProjectSettings(),
+	}.Register()
 }

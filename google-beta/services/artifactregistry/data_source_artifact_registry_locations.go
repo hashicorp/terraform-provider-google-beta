@@ -22,6 +22,7 @@ import (
 	"sort"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
@@ -102,4 +103,13 @@ func flattenArtifactRegistryLocations(resp map[string]interface{}) []interface{}
 		regions[i] = regionObj["locationId"]
 	}
 	return regions
+}
+
+func init() {
+	registry.Schema{
+		Name:        "google_artifact_registry_locations",
+		ProductName: "artifactregistry",
+		Type:        registry.SchemaTypeDataSource,
+		Schema:      DataSourceGoogleArtifactRegistryLocations(),
+	}.Register()
 }

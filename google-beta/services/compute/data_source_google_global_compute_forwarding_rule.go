@@ -20,6 +20,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
@@ -66,4 +67,13 @@ func dataSourceGoogleComputeGlobalForwardingRuleRead(d *schema.ResourceData, met
 	}
 
 	return nil
+}
+
+func init() {
+	registry.Schema{
+		Name:        "google_compute_global_forwarding_rule",
+		ProductName: "compute",
+		Type:        registry.SchemaTypeDataSource,
+		Schema:      DataSourceGoogleComputeGlobalForwardingRule(),
+	}.Register()
 }

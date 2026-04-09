@@ -21,6 +21,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
@@ -105,4 +106,13 @@ func dataSourceGoogleContainerAttachedInstallManifestRead(d *schema.ResourceData
 
 	d.SetId(time.Now().UTC().String())
 	return nil
+}
+
+func init() {
+	registry.Schema{
+		Name:        "google_container_attached_install_manifest",
+		ProductName: "containerattached",
+		Type:        registry.SchemaTypeDataSource,
+		Schema:      DataSourceGoogleContainerAttachedInstallManifest(),
+	}.Register()
 }

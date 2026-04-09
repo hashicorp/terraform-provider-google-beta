@@ -23,6 +23,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
@@ -1360,4 +1361,13 @@ func flattenOnDeployUpdatePolicy(policy *cloudfunctions.OnDeployUpdatePolicy) []
 	log.Printf("flatten on_deploy_update_policy to: %s", result)
 
 	return result
+}
+
+func init() {
+	registry.Schema{
+		Name:        "google_cloudfunctions_function",
+		ProductName: "cloudfunctions",
+		Type:        registry.SchemaTypeResource,
+		Schema:      ResourceCloudFunctionsFunction(),
+	}.Register()
 }

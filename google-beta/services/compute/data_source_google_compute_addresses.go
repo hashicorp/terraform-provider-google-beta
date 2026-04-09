@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
@@ -217,4 +218,13 @@ func regionFromUrl(url string) string {
 		return parts[count-1]
 	}
 	return ""
+}
+
+func init() {
+	registry.Schema{
+		Name:        "google_compute_addresses",
+		ProductName: "compute",
+		Type:        registry.SchemaTypeDataSource,
+		Schema:      DataSourceGoogleComputeAddresses(),
+	}.Register()
 }

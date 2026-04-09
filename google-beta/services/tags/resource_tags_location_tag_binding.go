@@ -24,6 +24,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/errwrap"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"google.golang.org/api/googleapi"
@@ -477,4 +478,13 @@ func transformTagsLocationTagBindingReadError(err error) error {
 	}
 
 	return err
+}
+
+func init() {
+	registry.Schema{
+		Name:        "google_tags_location_tag_binding",
+		ProductName: "tags",
+		Type:        registry.SchemaTypeResource,
+		Schema:      ResourceTagsLocationTagBinding(),
+	}.Register()
 }

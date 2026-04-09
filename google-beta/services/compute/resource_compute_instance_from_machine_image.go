@@ -22,7 +22,7 @@ import (
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
@@ -381,4 +381,13 @@ func flattenSourceMachineImageEncryptionKey(key *compute.CustomerEncryptionKey) 
 	}
 
 	return []map[string]interface{}{m}
+}
+
+func init() {
+	registry.Schema{
+		Name:        "google_compute_instance_from_machine_image",
+		ProductName: "compute",
+		Type:        registry.SchemaTypeResource,
+		Schema:      ResourceComputeInstanceFromMachineImage(),
+	}.Register()
 }

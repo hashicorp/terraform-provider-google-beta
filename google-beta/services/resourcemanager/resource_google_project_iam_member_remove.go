@@ -21,6 +21,7 @@ import (
 	"log"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgiamresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	cloudresourcemanager "google.golang.org/api/cloudresourcemanager/v1"
@@ -146,4 +147,13 @@ func resourceGoogleProjectIamMemberRemoveDelete(d *schema.ResourceData, meta int
 	d.SetId("")
 
 	return nil
+}
+
+func init() {
+	registry.Schema{
+		Name:        "google_project_iam_member_remove",
+		ProductName: "resourcemanager",
+		Type:        registry.SchemaTypeResource,
+		Schema:      ResourceGoogleProjectIamMemberRemove(),
+	}.Register()
 }

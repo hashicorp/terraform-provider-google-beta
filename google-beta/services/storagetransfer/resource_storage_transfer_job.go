@@ -24,6 +24,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
@@ -2064,4 +2065,13 @@ func flattenTransferJobLoggingConfig(loggingConfig *storagetransfer.LoggingConfi
 	}
 
 	return []map[string]interface{}{data}
+}
+
+func init() {
+	registry.Schema{
+		Name:        "google_storage_transfer_job",
+		ProductName: "storagetransfer",
+		Type:        registry.SchemaTypeResource,
+		Schema:      ResourceStorageTransferJob(),
+	}.Register()
 }

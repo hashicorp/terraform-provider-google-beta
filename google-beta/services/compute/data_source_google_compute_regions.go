@@ -21,6 +21,7 @@ import (
 	"log"
 	"sort"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
@@ -96,4 +97,13 @@ func flattenRegions(regions []*compute.Region) []string {
 	}
 	sort.Strings(result)
 	return result
+}
+
+func init() {
+	registry.Schema{
+		Name:        "google_compute_regions",
+		ProductName: "compute",
+		Type:        registry.SchemaTypeDataSource,
+		Schema:      DataSourceGoogleComputeRegions(),
+	}.Register()
 }

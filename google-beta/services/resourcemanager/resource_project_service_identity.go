@@ -21,6 +21,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/serviceusage"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
@@ -148,4 +149,13 @@ func resourceProjectServiceIdentityRead(d *schema.ResourceData, meta interface{}
 // There is no delete endpoint for this API.
 func resourceProjectServiceIdentityDelete(d *schema.ResourceData, meta interface{}) error {
 	return nil
+}
+
+func init() {
+	registry.Schema{
+		Name:        "google_project_service_identity",
+		ProductName: "resourcemanager",
+		Type:        registry.SchemaTypeResource,
+		Schema:      ResourceProjectServiceIdentity(),
+	}.Register()
 }

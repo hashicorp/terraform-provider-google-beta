@@ -33,6 +33,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
@@ -8952,4 +8953,13 @@ func clusterAcceleratorNetworkProfileCustomizeDiff(_ context.Context, diff *sche
 	}
 
 	return nil
+}
+
+func init() {
+	registry.Schema{
+		Name:        "google_container_cluster",
+		ProductName: "container",
+		Type:        registry.SchemaTypeResource,
+		Schema:      ResourceContainerCluster(),
+	}.Register()
 }

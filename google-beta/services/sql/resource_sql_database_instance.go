@@ -33,6 +33,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/servicenetworking"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
@@ -3678,4 +3679,13 @@ func normalizeDRReplicaName(drReplicaName, project string) string {
 		return drReplicaName
 	}
 	return fmt.Sprintf("%s:%s", project, drReplicaName)
+}
+
+func init() {
+	registry.Schema{
+		Name:        "google_sql_database_instance",
+		ProductName: "sql",
+		Type:        registry.SchemaTypeResource,
+		Schema:      ResourceSqlDatabaseInstance(),
+	}.Register()
 }

@@ -22,6 +22,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	compute "google.golang.org/api/compute/v0.beta"
@@ -254,4 +255,13 @@ func flattenDatasourceGoogleComputeMachineTypesList(ctx context.Context, v []*co
 	}
 
 	return machineTypes
+}
+
+func init() {
+	registry.Schema{
+		Name:        "google_compute_machine_types",
+		ProductName: "compute",
+		Type:        registry.SchemaTypeDataSource,
+		Schema:      DataSourceGoogleComputeMachineTypes(),
+	}.Register()
 }

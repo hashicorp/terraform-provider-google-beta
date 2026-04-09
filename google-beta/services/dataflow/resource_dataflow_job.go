@@ -24,6 +24,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
@@ -765,4 +766,13 @@ func waitForDataflowJobToBeUpdated(d *schema.ResourceData, config *transport_tpg
 			return nil
 		}
 	})
+}
+
+func init() {
+	registry.Schema{
+		Name:        "google_dataflow_job",
+		ProductName: "dataflow",
+		Type:        registry.SchemaTypeResource,
+		Schema:      ResourceDataflowJob(),
+	}.Register()
 }

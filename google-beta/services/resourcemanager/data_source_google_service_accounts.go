@@ -23,6 +23,7 @@ import (
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
@@ -158,4 +159,13 @@ func datasourceGoogleServiceAccountsRead(d *schema.ResourceData, meta interface{
 	d.SetId(strings.Join(idParts, "/"))
 
 	return nil
+}
+
+func init() {
+	registry.Schema{
+		Name:        "google_service_accounts",
+		ProductName: "resourcemanager",
+		Type:        registry.SchemaTypeDataSource,
+		Schema:      DataSourceGoogleServiceAccounts(),
+	}.Register()
 }

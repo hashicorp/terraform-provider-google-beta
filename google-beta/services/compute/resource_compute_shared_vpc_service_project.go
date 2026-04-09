@@ -22,6 +22,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
@@ -203,4 +204,13 @@ func resourceComputeSharedVpcServiceProjectUpdate(d *schema.ResourceData, meta i
 	// This update method is no-op because the only updatable fields
 	// are state/config-only, i.e. they aren't sent in requests to the API.
 	return nil
+}
+
+func init() {
+	registry.Schema{
+		Name:        "google_compute_shared_vpc_service_project",
+		ProductName: "compute",
+		Type:        registry.SchemaTypeResource,
+		Schema:      ResourceComputeSharedVpcServiceProject(),
+	}.Register()
 }

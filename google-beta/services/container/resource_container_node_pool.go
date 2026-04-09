@@ -32,6 +32,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
@@ -2118,4 +2119,13 @@ func nodePoolAcceleratorNetworkProfileCustomizeDiff(_ context.Context, diff *sch
 	}
 
 	return nil
+}
+
+func init() {
+	registry.Schema{
+		Name:        "google_container_node_pool",
+		ProductName: "container",
+		Type:        registry.SchemaTypeResource,
+		Schema:      ResourceContainerNodePool(),
+	}.Register()
 }

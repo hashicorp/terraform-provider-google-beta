@@ -21,6 +21,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
@@ -234,4 +235,13 @@ func resourceGoogleServiceAccountKeyDelete(d *schema.ResourceData, meta interfac
 
 	d.SetId("")
 	return nil
+}
+
+func init() {
+	registry.Schema{
+		Name:        "google_service_account_key",
+		ProductName: "resourcemanager",
+		Type:        registry.SchemaTypeResource,
+		Schema:      ResourceGoogleServiceAccountKey(),
+	}.Register()
 }
