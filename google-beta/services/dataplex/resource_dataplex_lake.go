@@ -27,6 +27,7 @@ import (
 
 	dcl "github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgdclresource"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgdclresource"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
@@ -568,4 +569,13 @@ func flattenDataplexLakeTerraformLabels(v map[string]string, d *schema.ResourceD
 	}
 
 	return transformed
+}
+
+func init() {
+	registry.Schema{
+		Name:        "google_dataplex_lake",
+		ProductName: "dataplex",
+		Type:        registry.SchemaTypeResource,
+		Schema:      ResourceDataplexLake(),
+	}.Register()
 }

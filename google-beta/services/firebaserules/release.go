@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	dcl "github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgdclresource"
 	"google.golang.org/api/googleapi"
 )
@@ -369,4 +370,13 @@ func applyReleaseDiff(c *Client, ctx context.Context, desired *Release, rawDesir
 	}
 	c.Config.Logger.InfoWithContext(ctx, "Done Apply.")
 	return newState, nil
+}
+
+func init() {
+	registry.Schema{
+		Name:        "google_firebaserules_release",
+		ProductName: "firebaserules",
+		Type:        registry.SchemaTypeResource,
+		Schema:      ResourceFirebaserulesRelease(),
+	}.Register()
 }

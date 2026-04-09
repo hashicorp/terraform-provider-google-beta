@@ -24,6 +24,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	dcl "github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgdclresource"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
@@ -1364,4 +1365,13 @@ func flattenContainerAwsNodePoolAnnotations(v map[string]string, d *schema.Resou
 	}
 
 	return transformed
+}
+
+func init() {
+	registry.Schema{
+		Name:        "google_container_aws_node_pool",
+		ProductName: "containeraws",
+		Type:        registry.SchemaTypeResource,
+		Schema:      ResourceContainerAwsNodePool(),
+	}.Register()
 }
