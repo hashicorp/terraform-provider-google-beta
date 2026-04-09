@@ -17142,7 +17142,7 @@ resource "google_container_cluster" "primary" {
       max_node_count = 1
     }
     node_config {
-      machine_type = "a3-highgpu-8g"
+      machine_type = "a3-edgegpu-8g"
       guest_accelerator {
         type  = "nvidia-h100-80gb"
         count = 8
@@ -17186,7 +17186,7 @@ func TestAccContainerCluster_nodePool_acceleratorNetworkProfile(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", clusterName),
 					resource.TestCheckResourceAttr(resourceName, "node_pool.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "node_pool.0.name", "anp-pool"),
-					resource.TestCheckResourceAttr(resourceName, "node_pool.0.node_config.0.machine_type", "a3-highgpu-8g"),
+					resource.TestCheckResourceAttr(resourceName, "node_pool.0.node_config.0.machine_type", "a3-edgegpu-8g"),
 					resource.TestCheckResourceAttr(resourceName, "node_pool.0.network_config.0.accelerator_network_profile", "auto"),
 					resource.TestCheckResourceAttrSet(resourceName, "node_pool.0.network_config.0.additional_node_network_configs.0.network"),
 					resource.TestCheckResourceAttrSet(resourceName, "node_pool.0.network_config.0.additional_node_network_configs.0.subnetwork"),
@@ -17260,7 +17260,7 @@ resource "google_container_cluster" "primary" {
     }
     
 	node_config {
-		machine_type = "a3-highgpu-8g"
+		machine_type = "a3-edgegpu-8g"
 		oauth_scopes = [ "https://www.googleapis.com/auth/cloud-platform" ]
 		guest_accelerator {
 			type = "nvidia-h100-80gb"
@@ -17333,7 +17333,7 @@ resource "google_container_cluster" "primary" {
     }
     
 	node_config {
-		machine_type = "a3-highgpu-8g"
+		machine_type = "a3-edgegpu-8g"
 		oauth_scopes = [ "https://www.googleapis.com/auth/cloud-platform" ]
 		guest_accelerator {
 			type = "nvidia-h100-80gb"
@@ -17399,7 +17399,7 @@ resource "google_container_cluster" "primary" {
     }
     
 	node_config {
-		machine_type = "a3-highgpu-8g"
+		machine_type = "a3-edgegpu-8g"
 		oauth_scopes = [ "https://www.googleapis.com/auth/cloud-platform" ]
 		guest_accelerator {
 			type = "nvidia-h100-80gb"
