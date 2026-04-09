@@ -157,6 +157,101 @@ resource "google_dataform_repository_release_config" "release" {
 `, context)
 }
 
+func TestAccDataformRepositoryReleaseConfig_dataformRepositoryReleaseConfigDisabledExample(t *testing.T) {
+	t.Parallel()
+
+	randomSuffix := acctest.RandString(t, 10)
+
+	context := map[string]interface{}{
+		"data":                     "tf-test-secret-data" + randomSuffix,
+		"dataform_repository_name": "tf_test_dataform_repository" + randomSuffix,
+		"git_repository_name":      "my/repository" + randomSuffix,
+		"release_name":             "tf_test_my_release" + randomSuffix,
+		"secret_name":              "tf_test_my_secret" + randomSuffix,
+		"random_suffix":            randomSuffix,
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckDataformRepositoryReleaseConfigDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccDataformRepositoryReleaseConfig_dataformRepositoryReleaseConfigDisabledExample(context),
+			},
+			{
+				ResourceName:            "google_dataform_repository_release_config.release",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"region", "repository"},
+			},
+			{
+				ResourceName:       "google_dataform_repository_release_config.release",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
+		},
+	})
+}
+
+func testAccDataformRepositoryReleaseConfig_dataformRepositoryReleaseConfigDisabledExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_sourcerepo_repository" "git_repository" {
+  provider = google-beta
+  name     = "%{git_repository_name}"
+}
+
+resource "google_secret_manager_secret" "secret" {
+  provider  = google-beta
+  secret_id = "%{secret_name}"
+
+  replication {
+    auto {}
+  }
+}
+
+resource "google_secret_manager_secret_version" "secret_version" {
+  provider = google-beta
+  secret   = google_secret_manager_secret.secret.id
+
+  secret_data = "%{data}"
+}
+
+resource "google_dataform_repository" "repository" {
+  provider = google-beta
+  name     = "%{dataform_repository_name}"
+  region   = "us-central1"
+
+  git_remote_settings {
+      url = google_sourcerepo_repository.git_repository.url
+      default_branch = "main"
+      authentication_token_secret_version = google_secret_manager_secret_version.secret_version.id
+  }
+
+  workspace_compilation_overrides {
+    default_database = "database"
+    schema_suffix = "_suffix"
+    table_prefix = "prefix_"
+  }
+}
+
+resource "google_dataform_repository_release_config" "release" {
+  provider = google-beta
+
+  project    = google_dataform_repository.repository.project
+  region     = google_dataform_repository.repository.region
+  repository = google_dataform_repository.repository.name
+
+  name          = "%{release_name}"
+  git_commitish = "main"
+  cron_schedule = "0 7 * * *"
+  time_zone     = "America/New_York"
+  disabled      = true
+}
+`, context)
+}
+
 func testAccCheckDataformRepositoryReleaseConfigDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		for name, rs := range s.RootModule().Resources {

@@ -16,6 +16,7 @@ fields:
     - api_field: codeCompilationConfig.tablePrefix
     - api_field: codeCompilationConfig.vars
     - api_field: cronSchedule
+    - api_field: disabled
     - api_field: gitCommitish
     - api_field: name
     - api_field: recentScheduledReleaseRecords.compilationResult
