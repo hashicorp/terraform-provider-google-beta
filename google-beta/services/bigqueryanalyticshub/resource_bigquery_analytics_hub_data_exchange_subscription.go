@@ -136,6 +136,9 @@ func ResourceBigqueryAnalyticsHubDataExchangeSubscription() *schema.Resource {
 				}
 			},
 		},
+		ResourceBehavior: schema.ResourceBehavior{
+			MutableIdentity: true,
+		},
 
 		Schema: map[string]*schema.Schema{
 			"data_exchange_id": {

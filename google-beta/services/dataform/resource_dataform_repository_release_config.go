@@ -140,6 +140,9 @@ func ResourceDataformRepositoryReleaseConfig() *schema.Resource {
 				}
 			},
 		},
+		ResourceBehavior: schema.ResourceBehavior{
+			MutableIdentity: true,
+		},
 
 		Schema: map[string]*schema.Schema{
 			"git_commitish": {

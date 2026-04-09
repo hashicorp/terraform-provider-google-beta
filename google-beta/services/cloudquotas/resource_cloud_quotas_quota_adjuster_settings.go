@@ -124,6 +124,9 @@ func ResourceCloudQuotasQuotaAdjusterSettings() *schema.Resource {
 				}
 			},
 		},
+		ResourceBehavior: schema.ResourceBehavior{
+			MutableIdentity: true,
+		},
 
 		Schema: map[string]*schema.Schema{
 			"enablement": {

@@ -129,6 +129,9 @@ func ResourceActiveDirectoryPeering() *schema.Resource {
 				}
 			},
 		},
+		ResourceBehavior: schema.ResourceBehavior{
+			MutableIdentity: true,
+		},
 
 		Schema: map[string]*schema.Schema{
 			"authorized_network": {

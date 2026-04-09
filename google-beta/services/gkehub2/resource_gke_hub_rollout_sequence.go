@@ -133,6 +133,9 @@ func ResourceGKEHub2RolloutSequence() *schema.Resource {
 				}
 			},
 		},
+		ResourceBehavior: schema.ResourceBehavior{
+			MutableIdentity: true,
+		},
 
 		Schema: map[string]*schema.Schema{
 			"rollout_sequence_id": {
