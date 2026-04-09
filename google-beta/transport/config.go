@@ -59,7 +59,6 @@ import (
 	"google.golang.org/api/cloudbuild/v1"
 	"google.golang.org/api/cloudfunctions/v1"
 	cloudidentity "google.golang.org/api/cloudidentity/v1beta1"
-	"google.golang.org/api/cloudiot/v1"
 	"google.golang.org/api/cloudkms/v1"
 	"google.golang.org/api/cloudresourcemanager/v1"
 	resourceManagerV3 "google.golang.org/api/cloudresourcemanager/v3"
@@ -436,8 +435,6 @@ type Config struct {
 	IamCredentialsBasePath    string
 	ResourceManagerV3BasePath string
 	IAMBasePath               string
-	CloudIoTBasePath          string
-	BigtableAdminBasePath     string
 	TagsLocationBasePath      string
 
 	// DCL
@@ -628,7 +625,6 @@ const DataflowBasePathKey = "Dataflow"
 const IAMBasePathKey = "IAM"
 const IamCredentialsBasePathKey = "IamCredentials"
 const ResourceManagerV3BasePathKey = "ResourceManagerV3"
-const BigtableAdminBasePathKey = "BigtableAdmin"
 const ContainerAwsBasePathKey = "ContainerAws"
 const ContainerAzureBasePathKey = "ContainerAzure"
 const TagsLocationBasePathKey = "TagsLocation"
@@ -810,7 +806,6 @@ var DefaultBasePaths = map[string]string{
 	IAMBasePathKey:                      "https://iam.googleapis.com/v1/",
 	IamCredentialsBasePathKey:           "https://iamcredentials.googleapis.com/v1/",
 	ResourceManagerV3BasePathKey:        "https://cloudresourcemanager.googleapis.com/v3/",
-	BigtableAdminBasePathKey:            "https://bigtableadmin.googleapis.com/v2/",
 	TagsLocationBasePathKey:             "https://{{location}}-cloudresourcemanager.googleapis.com/v3/",
 	// DCL
 	ContainerAwsBasePathKey:              "https://{{location}}-gkemulticloud.googleapis.com/v1/",
@@ -1751,18 +1746,6 @@ func SetEndpointDefaults(d *schema.ResourceData) error {
 		}, DefaultBasePaths[CloudBillingBasePathKey]))
 	}
 
-	if d.Get(ComposerCustomEndpointEntryKey) == "" {
-		d.Set(ComposerCustomEndpointEntryKey, MultiEnvDefault([]string{
-			"GOOGLE_COMPOSER_CUSTOM_ENDPOINT",
-		}, DefaultBasePaths[ComposerBasePathKey]))
-	}
-
-	if d.Get(ContainerCustomEndpointEntryKey) == "" {
-		d.Set(ContainerCustomEndpointEntryKey, MultiEnvDefault([]string{
-			"GOOGLE_CONTAINER_CUSTOM_ENDPOINT",
-		}, DefaultBasePaths[ContainerBasePathKey]))
-	}
-
 	if d.Get(DataflowCustomEndpointEntryKey) == "" {
 		d.Set(DataflowCustomEndpointEntryKey, MultiEnvDefault([]string{
 			"GOOGLE_DATAFLOW_CUSTOM_ENDPOINT",
@@ -1781,22 +1764,10 @@ func SetEndpointDefaults(d *schema.ResourceData) error {
 		}, DefaultBasePaths[ResourceManagerV3BasePathKey]))
 	}
 
-	if d.Get(RuntimeConfigCustomEndpointEntryKey) == "" {
-		d.Set(RuntimeConfigCustomEndpointEntryKey, MultiEnvDefault([]string{
-			"GOOGLE_RUNTIMECONFIG_CUSTOM_ENDPOINT",
-		}, DefaultBasePaths[RuntimeConfigBasePathKey]))
-	}
-
 	if d.Get(IAMCustomEndpointEntryKey) == "" {
 		d.Set(IAMCustomEndpointEntryKey, MultiEnvDefault([]string{
 			"GOOGLE_IAM_CUSTOM_ENDPOINT",
 		}, DefaultBasePaths[IAMBasePathKey]))
-	}
-
-	if d.Get(ServiceNetworkingCustomEndpointEntryKey) == "" {
-		d.Set(ServiceNetworkingCustomEndpointEntryKey, MultiEnvDefault([]string{
-			"GOOGLE_SERVICE_NETWORKING_CUSTOM_ENDPOINT",
-		}, DefaultBasePaths[ServiceNetworkingBasePathKey]))
 	}
 
 	if d.Get(TagsLocationCustomEndpointEntryKey) == "" {
@@ -2470,20 +2441,6 @@ func (c *Config) NewDataprocClient(userAgent string) *dataproc.Service {
 	return clientDataproc
 }
 
-func (c *Config) NewCloudIoTClient(userAgent string) *cloudiot.Service {
-	cloudIoTClientBasePath := RemoveBasePathVersion(c.CloudIoTBasePath)
-	log.Printf("[INFO] Instantiating Google Cloud IoT Core client for path %s", cloudIoTClientBasePath)
-	clientCloudIoT, err := cloudiot.NewService(c.Context, option.WithHTTPClient(c.Client))
-	if err != nil {
-		log.Printf("[WARN] Error creating client cloud iot: %s", err)
-		return nil
-	}
-	clientCloudIoT.UserAgent = userAgent
-	clientCloudIoT.BasePath = cloudIoTClientBasePath
-
-	return clientCloudIoT
-}
-
 func (c *Config) NewAppEngineClient(userAgent string) *appengine.APIService {
 	appEngineClientBasePath := RemoveBasePathVersion(c.AppEngineBasePath)
 	log.Printf("[INFO] Instantiating App Engine client for path %s", appEngineClientBasePath)
@@ -2586,7 +2543,7 @@ func (c *Config) BigTableClientFactory(userAgent string) *BigtableClientFactory 
 // we expose those directly instead of providing the `Service` object
 // as a factory.
 func (c *Config) NewBigTableProjectsInstancesClient(userAgent string) *bigtableadmin.ProjectsInstancesService {
-	bigtableAdminBasePath := RemoveBasePathVersion(c.BigtableAdminBasePath)
+	bigtableAdminBasePath := RemoveBasePathVersion(c.BigtableBasePath)
 	log.Printf("[INFO] Instantiating Google Cloud BigtableAdmin for path %s", bigtableAdminBasePath)
 	clientBigtable, err := bigtableadmin.NewService(c.Context, option.WithHTTPClient(c.Client))
 	if err != nil {
@@ -2601,7 +2558,7 @@ func (c *Config) NewBigTableProjectsInstancesClient(userAgent string) *bigtablea
 }
 
 func (c *Config) NewBigTableProjectsInstancesTablesClient(userAgent string) *bigtableadmin.ProjectsInstancesTablesService {
-	bigtableAdminBasePath := RemoveBasePathVersion(c.BigtableAdminBasePath)
+	bigtableAdminBasePath := RemoveBasePathVersion(c.BigtableBasePath)
 	log.Printf("[INFO] Instantiating Google Cloud BigtableAdmin for path %s", bigtableAdminBasePath)
 	clientBigtable, err := bigtableadmin.NewService(c.Context, option.WithHTTPClient(c.Client))
 	if err != nil {
@@ -3028,15 +2985,10 @@ func ConfigureBasePaths(c *Config) {
 
 	// Handwritten Products / Versioned / Atypical Entries
 	c.CloudBillingBasePath = DefaultBasePaths[CloudBillingBasePathKey]
-	c.ComposerBasePath = DefaultBasePaths[ComposerBasePathKey]
-	c.ContainerBasePath = DefaultBasePaths[ContainerBasePathKey]
-	c.DataprocBasePath = DefaultBasePaths[DataprocBasePathKey]
 	c.DataflowBasePath = DefaultBasePaths[DataflowBasePathKey]
 	c.IamCredentialsBasePath = DefaultBasePaths[IamCredentialsBasePathKey]
 	c.ResourceManagerV3BasePath = DefaultBasePaths[ResourceManagerV3BasePathKey]
 	c.IAMBasePath = DefaultBasePaths[IAMBasePathKey]
-	c.BigQueryBasePath = DefaultBasePaths[BigQueryBasePathKey]
-	c.BigtableAdminBasePath = DefaultBasePaths[BigtableAdminBasePathKey]
 	c.TagsLocationBasePath = DefaultBasePaths[TagsLocationBasePathKey]
 
 	// DCL
