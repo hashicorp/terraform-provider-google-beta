@@ -353,22 +353,6 @@ func resourceFirebaseHostingVersionCreate(d *schema.ResourceData, meta interface
 	}
 	d.SetId(id)
 
-	identity, err := d.Identity()
-	if err == nil && identity != nil {
-		if versionIdValue, ok := d.GetOk("version_id"); ok && versionIdValue.(string) != "" {
-			if err = identity.Set("version_id", versionIdValue.(string)); err != nil {
-				return fmt.Errorf("Error setting version_id: %s", err)
-			}
-		}
-		if siteIdValue, ok := d.GetOk("site_id"); ok && siteIdValue.(string) != "" {
-			if err = identity.Set("site_id", siteIdValue.(string)); err != nil {
-				return fmt.Errorf("Error setting site_id: %s", err)
-			}
-		}
-	} else {
-		log.Printf("[DEBUG] (Create) identity not set: %s", err)
-	}
-
 	obj = make(map[string]interface{})
 	obj["status"] = "FINALIZED"
 
@@ -403,6 +387,22 @@ func resourceFirebaseHostingVersionCreate(d *schema.ResourceData, meta interface
 	}
 
 	log.Printf("[DEBUG] Finished creating Version %q: %#v", d.Id(), res)
+
+	identity, err := d.Identity()
+	if err == nil && identity != nil {
+		if versionIdValue, ok := d.GetOk("version_id"); ok && versionIdValue.(string) != "" {
+			if err = identity.Set("version_id", versionIdValue.(string)); err != nil {
+				return fmt.Errorf("Error setting version_id: %s", err)
+			}
+		}
+		if siteIdValue, ok := d.GetOk("site_id"); ok && siteIdValue.(string) != "" {
+			if err = identity.Set("site_id", siteIdValue.(string)); err != nil {
+				return fmt.Errorf("Error setting site_id: %s", err)
+			}
+		}
+	} else {
+		log.Printf("[DEBUG] (Create) identity not set: %s", err)
+	}
 
 	return resourceFirebaseHostingVersionRead(d, meta)
 }

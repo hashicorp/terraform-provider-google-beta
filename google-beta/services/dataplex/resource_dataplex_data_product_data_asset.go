@@ -297,6 +297,18 @@ func resourceDataplexDataProductDataAssetCreate(d *schema.ResourceData, meta int
 	}
 	d.SetId(id)
 
+	err = DataplexOperationWaitTime(
+		config, res, project, "Creating DataProductDataAsset", userAgent,
+		d.Timeout(schema.TimeoutCreate))
+
+	if err != nil {
+		// The resource didn't actually create
+		d.SetId("")
+		return fmt.Errorf("Error waiting to create DataProductDataAsset: %s", err)
+	}
+
+	log.Printf("[DEBUG] Finished creating DataProductDataAsset %q: %#v", d.Id(), res)
+
 	identity, err := d.Identity()
 	if err == nil && identity != nil {
 		if locationValue, ok := d.GetOk("location"); ok && locationValue.(string) != "" {
@@ -322,18 +334,6 @@ func resourceDataplexDataProductDataAssetCreate(d *schema.ResourceData, meta int
 	} else {
 		log.Printf("[DEBUG] (Create) identity not set: %s", err)
 	}
-
-	err = DataplexOperationWaitTime(
-		config, res, project, "Creating DataProductDataAsset", userAgent,
-		d.Timeout(schema.TimeoutCreate))
-
-	if err != nil {
-		// The resource didn't actually create
-		d.SetId("")
-		return fmt.Errorf("Error waiting to create DataProductDataAsset: %s", err)
-	}
-
-	log.Printf("[DEBUG] Finished creating DataProductDataAsset %q: %#v", d.Id(), res)
 
 	return resourceDataplexDataProductDataAssetRead(d, meta)
 }

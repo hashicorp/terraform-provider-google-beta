@@ -636,6 +636,18 @@ func resourceComputeResourcePolicyCreate(d *schema.ResourceData, meta interface{
 	}
 	d.SetId(id)
 
+	err = ComputeOperationWaitTime(
+		config, res, project, "Creating ResourcePolicy", userAgent,
+		d.Timeout(schema.TimeoutCreate))
+
+	if err != nil {
+		// The resource didn't actually create
+		d.SetId("")
+		return fmt.Errorf("Error waiting to create ResourcePolicy: %s", err)
+	}
+
+	log.Printf("[DEBUG] Finished creating ResourcePolicy %q: %#v", d.Id(), res)
+
 	identity, err := d.Identity()
 	if err == nil && identity != nil {
 		if nameValue, ok := d.GetOk("name"); ok && nameValue.(string) != "" {
@@ -656,18 +668,6 @@ func resourceComputeResourcePolicyCreate(d *schema.ResourceData, meta interface{
 	} else {
 		log.Printf("[DEBUG] (Create) identity not set: %s", err)
 	}
-
-	err = ComputeOperationWaitTime(
-		config, res, project, "Creating ResourcePolicy", userAgent,
-		d.Timeout(schema.TimeoutCreate))
-
-	if err != nil {
-		// The resource didn't actually create
-		d.SetId("")
-		return fmt.Errorf("Error waiting to create ResourcePolicy: %s", err)
-	}
-
-	log.Printf("[DEBUG] Finished creating ResourcePolicy %q: %#v", d.Id(), res)
 
 	return resourceComputeResourcePolicyRead(d, meta)
 }

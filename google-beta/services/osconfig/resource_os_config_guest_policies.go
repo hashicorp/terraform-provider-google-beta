@@ -1055,6 +1055,8 @@ func resourceOSConfigGuestPoliciesCreate(d *schema.ResourceData, meta interface{
 	}
 	d.SetId(id)
 
+	log.Printf("[DEBUG] Finished creating GuestPolicies %q: %#v", d.Id(), res)
+
 	identity, err := d.Identity()
 	if err == nil && identity != nil {
 		if guestPolicyIdValue, ok := d.GetOk("guest_policy_id"); ok && guestPolicyIdValue.(string) != "" {
@@ -1070,8 +1072,6 @@ func resourceOSConfigGuestPoliciesCreate(d *schema.ResourceData, meta interface{
 	} else {
 		log.Printf("[DEBUG] (Create) identity not set: %s", err)
 	}
-
-	log.Printf("[DEBUG] Finished creating GuestPolicies %q: %#v", d.Id(), res)
 
 	return resourceOSConfigGuestPoliciesRead(d, meta)
 }

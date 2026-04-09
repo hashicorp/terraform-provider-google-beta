@@ -343,6 +343,18 @@ func resourceNetworkSecuritySacAttachmentCreate(d *schema.ResourceData, meta int
 	}
 	d.SetId(id)
 
+	err = NetworkSecurityOperationWaitTime(
+		config, res, project, "Creating SacAttachment", userAgent,
+		d.Timeout(schema.TimeoutCreate))
+
+	if err != nil {
+		// The resource didn't actually create
+		d.SetId("")
+		return fmt.Errorf("Error waiting to create SacAttachment: %s", err)
+	}
+
+	log.Printf("[DEBUG] Finished creating SacAttachment %q: %#v", d.Id(), res)
+
 	identity, err := d.Identity()
 	if err == nil && identity != nil {
 		if nameValue, ok := d.GetOk("name"); ok && nameValue.(string) != "" {
@@ -363,18 +375,6 @@ func resourceNetworkSecuritySacAttachmentCreate(d *schema.ResourceData, meta int
 	} else {
 		log.Printf("[DEBUG] (Create) identity not set: %s", err)
 	}
-
-	err = NetworkSecurityOperationWaitTime(
-		config, res, project, "Creating SacAttachment", userAgent,
-		d.Timeout(schema.TimeoutCreate))
-
-	if err != nil {
-		// The resource didn't actually create
-		d.SetId("")
-		return fmt.Errorf("Error waiting to create SacAttachment: %s", err)
-	}
-
-	log.Printf("[DEBUG] Finished creating SacAttachment %q: %#v", d.Id(), res)
 
 	return resourceNetworkSecuritySacAttachmentRead(d, meta)
 }

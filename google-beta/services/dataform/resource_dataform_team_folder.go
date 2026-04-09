@@ -235,6 +235,11 @@ func resourceDataformTeamFolderCreate(d *schema.ResourceData, meta interface{}) 
 	}
 	d.SetId(id)
 
+	// Store the name as ID
+	d.SetId(res["name"].(string))
+
+	log.Printf("[DEBUG] Finished creating TeamFolder %q: %#v", d.Id(), res)
+
 	identity, err := d.Identity()
 	if err == nil && identity != nil {
 		if teamfolderIdValue, ok := d.GetOk("teamfolder_id"); ok && teamfolderIdValue.(string) != "" {
@@ -255,11 +260,6 @@ func resourceDataformTeamFolderCreate(d *schema.ResourceData, meta interface{}) 
 	} else {
 		log.Printf("[DEBUG] (Create) identity not set: %s", err)
 	}
-
-	// Store the name as ID
-	d.SetId(res["name"].(string))
-
-	log.Printf("[DEBUG] Finished creating TeamFolder %q: %#v", d.Id(), res)
 
 	return resourceDataformTeamFolderRead(d, meta)
 }

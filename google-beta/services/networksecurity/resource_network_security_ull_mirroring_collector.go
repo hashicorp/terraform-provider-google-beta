@@ -307,6 +307,18 @@ func resourceNetworkSecurityUllMirroringCollectorCreate(d *schema.ResourceData, 
 	}
 	d.SetId(id)
 
+	err = NetworkSecurityOperationWaitTime(
+		config, res, project, "Creating UllMirroringCollector", userAgent,
+		d.Timeout(schema.TimeoutCreate))
+
+	if err != nil {
+		// The resource didn't actually create
+		d.SetId("")
+		return fmt.Errorf("Error waiting to create UllMirroringCollector: %s", err)
+	}
+
+	log.Printf("[DEBUG] Finished creating UllMirroringCollector %q: %#v", d.Id(), res)
+
 	identity, err := d.Identity()
 	if err == nil && identity != nil {
 		if locationValue, ok := d.GetOk("location"); ok && locationValue.(string) != "" {
@@ -327,18 +339,6 @@ func resourceNetworkSecurityUllMirroringCollectorCreate(d *schema.ResourceData, 
 	} else {
 		log.Printf("[DEBUG] (Create) identity not set: %s", err)
 	}
-
-	err = NetworkSecurityOperationWaitTime(
-		config, res, project, "Creating UllMirroringCollector", userAgent,
-		d.Timeout(schema.TimeoutCreate))
-
-	if err != nil {
-		// The resource didn't actually create
-		d.SetId("")
-		return fmt.Errorf("Error waiting to create UllMirroringCollector: %s", err)
-	}
-
-	log.Printf("[DEBUG] Finished creating UllMirroringCollector %q: %#v", d.Id(), res)
 
 	return resourceNetworkSecurityUllMirroringCollectorRead(d, meta)
 }

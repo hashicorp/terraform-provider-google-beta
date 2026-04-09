@@ -241,6 +241,18 @@ func resourceObservabilityFolderSettingsCreate(d *schema.ResourceData, meta inte
 	}
 	d.SetId(id)
 
+	err = ObservabilityOperationWaitTime(
+		config, res, project, "Creating FolderSettings", userAgent,
+		d.Timeout(schema.TimeoutCreate))
+
+	if err != nil {
+		// The resource didn't actually create
+		d.SetId("")
+		return fmt.Errorf("Error waiting to create FolderSettings: %s", err)
+	}
+
+	log.Printf("[DEBUG] Finished creating FolderSettings %q: %#v", d.Id(), res)
+
 	identity, err := d.Identity()
 	if err == nil && identity != nil {
 		if locationValue, ok := d.GetOk("location"); ok && locationValue.(string) != "" {
@@ -256,18 +268,6 @@ func resourceObservabilityFolderSettingsCreate(d *schema.ResourceData, meta inte
 	} else {
 		log.Printf("[DEBUG] (Create) identity not set: %s", err)
 	}
-
-	err = ObservabilityOperationWaitTime(
-		config, res, project, "Creating FolderSettings", userAgent,
-		d.Timeout(schema.TimeoutCreate))
-
-	if err != nil {
-		// The resource didn't actually create
-		d.SetId("")
-		return fmt.Errorf("Error waiting to create FolderSettings: %s", err)
-	}
-
-	log.Printf("[DEBUG] Finished creating FolderSettings %q: %#v", d.Id(), res)
 
 	return resourceObservabilityFolderSettingsRead(d, meta)
 }

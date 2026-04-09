@@ -1526,6 +1526,8 @@ func resourceChronicleDashboardChartCreate(d *schema.ResourceData, meta interfac
 	}
 	d.SetId(id)
 
+	log.Printf("[DEBUG] Finished creating DashboardChart %q: %#v", d.Id(), res)
+
 	identity, err := d.Identity()
 	if err == nil && identity != nil {
 		if chartIdValue, ok := d.GetOk("chart_id"); ok && chartIdValue.(string) != "" {
@@ -1551,8 +1553,6 @@ func resourceChronicleDashboardChartCreate(d *schema.ResourceData, meta interfac
 	} else {
 		log.Printf("[DEBUG] (Create) identity not set: %s", err)
 	}
-
-	log.Printf("[DEBUG] Finished creating DashboardChart %q: %#v", d.Id(), res)
 
 	return resourceChronicleDashboardChartRead(d, meta)
 }

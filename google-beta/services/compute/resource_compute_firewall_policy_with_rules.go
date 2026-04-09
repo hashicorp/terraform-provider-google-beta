@@ -899,17 +899,6 @@ func resourceComputeFirewallPolicyWithRulesCreate(d *schema.ResourceData, meta i
 	}
 	d.SetId(id)
 
-	identity, err := d.Identity()
-	if err == nil && identity != nil {
-		if policyIdValue, ok := d.GetOk("policy_id"); ok && policyIdValue.(string) != "" {
-			if err = identity.Set("policy_id", policyIdValue.(string)); err != nil {
-				return fmt.Errorf("Error setting policy_id: %s", err)
-			}
-		}
-	} else {
-		log.Printf("[DEBUG] (Create) identity not set: %s", err)
-	}
-
 	parent := d.Get("parent").(string)
 	var opRes map[string]interface{}
 	err = ComputeOrgOperationWaitTimeWithResponse(
@@ -968,6 +957,17 @@ func resourceComputeFirewallPolicyWithRulesCreate(d *schema.ResourceData, meta i
 	return resourceComputeFirewallPolicyWithRulesUpdate(d, meta)
 
 	log.Printf("[DEBUG] Finished creating FirewallPolicyWithRules %q: %#v", d.Id(), res)
+
+	identity, err := d.Identity()
+	if err == nil && identity != nil {
+		if policyIdValue, ok := d.GetOk("policy_id"); ok && policyIdValue.(string) != "" {
+			if err = identity.Set("policy_id", policyIdValue.(string)); err != nil {
+				return fmt.Errorf("Error setting policy_id: %s", err)
+			}
+		}
+	} else {
+		log.Printf("[DEBUG] (Create) identity not set: %s", err)
+	}
 
 	return resourceComputeFirewallPolicyWithRulesRead(d, meta)
 }

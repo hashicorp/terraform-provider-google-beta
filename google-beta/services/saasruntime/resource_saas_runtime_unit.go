@@ -568,6 +568,8 @@ func resourceSaasRuntimeUnitCreate(d *schema.ResourceData, meta interface{}) err
 	}
 	d.SetId(id)
 
+	log.Printf("[DEBUG] Finished creating Unit %q: %#v", d.Id(), res)
+
 	identity, err := d.Identity()
 	if err == nil && identity != nil {
 		if locationValue, ok := d.GetOk("location"); ok && locationValue.(string) != "" {
@@ -588,8 +590,6 @@ func resourceSaasRuntimeUnitCreate(d *schema.ResourceData, meta interface{}) err
 	} else {
 		log.Printf("[DEBUG] (Create) identity not set: %s", err)
 	}
-
-	log.Printf("[DEBUG] Finished creating Unit %q: %#v", d.Id(), res)
 
 	return resourceSaasRuntimeUnitRead(d, meta)
 }

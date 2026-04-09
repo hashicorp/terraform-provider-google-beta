@@ -534,27 +534,6 @@ func resourceSaasRuntimeUnitOperationCreate(d *schema.ResourceData, meta interfa
 	}
 	d.SetId(id)
 
-	identity, err := d.Identity()
-	if err == nil && identity != nil {
-		if locationValue, ok := d.GetOk("location"); ok && locationValue.(string) != "" {
-			if err = identity.Set("location", locationValue.(string)); err != nil {
-				return fmt.Errorf("Error setting location: %s", err)
-			}
-		}
-		if unitOperationIdValue, ok := d.GetOk("unit_operation_id"); ok && unitOperationIdValue.(string) != "" {
-			if err = identity.Set("unit_operation_id", unitOperationIdValue.(string)); err != nil {
-				return fmt.Errorf("Error setting unit_operation_id: %s", err)
-			}
-		}
-		if projectValue, ok := d.GetOk("project"); ok && projectValue.(string) != "" {
-			if err = identity.Set("project", projectValue.(string)); err != nil {
-				return fmt.Errorf("Error setting project: %s", err)
-			}
-		}
-	} else {
-		log.Printf("[DEBUG] (Create) identity not set: %s", err)
-	}
-
 	if d.Get("wait_for_completion").(bool) {
 		log.Printf("[DEBUG] Waiting for UnitOperation %q to reach terminal state", d.Id())
 		err := transport_tpg.Retry(transport_tpg.RetryOptions{
@@ -616,6 +595,27 @@ func resourceSaasRuntimeUnitOperationCreate(d *schema.ResourceData, meta interfa
 	}
 
 	log.Printf("[DEBUG] Finished creating UnitOperation %q: %#v", d.Id(), res)
+
+	identity, err := d.Identity()
+	if err == nil && identity != nil {
+		if locationValue, ok := d.GetOk("location"); ok && locationValue.(string) != "" {
+			if err = identity.Set("location", locationValue.(string)); err != nil {
+				return fmt.Errorf("Error setting location: %s", err)
+			}
+		}
+		if unitOperationIdValue, ok := d.GetOk("unit_operation_id"); ok && unitOperationIdValue.(string) != "" {
+			if err = identity.Set("unit_operation_id", unitOperationIdValue.(string)); err != nil {
+				return fmt.Errorf("Error setting unit_operation_id: %s", err)
+			}
+		}
+		if projectValue, ok := d.GetOk("project"); ok && projectValue.(string) != "" {
+			if err = identity.Set("project", projectValue.(string)); err != nil {
+				return fmt.Errorf("Error setting project: %s", err)
+			}
+		}
+	} else {
+		log.Printf("[DEBUG] (Create) identity not set: %s", err)
+	}
 
 	return resourceSaasRuntimeUnitOperationRead(d, meta)
 }

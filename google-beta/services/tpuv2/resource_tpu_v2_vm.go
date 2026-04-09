@@ -738,6 +738,18 @@ func resourceTpuV2VmCreate(d *schema.ResourceData, meta interface{}) error {
 	}
 	d.SetId(id)
 
+	err = TpuV2OperationWaitTime(
+		config, res, project, "Creating Vm", userAgent,
+		d.Timeout(schema.TimeoutCreate))
+
+	if err != nil {
+		// The resource didn't actually create
+		d.SetId("")
+		return fmt.Errorf("Error waiting to create Vm: %s", err)
+	}
+
+	log.Printf("[DEBUG] Finished creating Vm %q: %#v", d.Id(), res)
+
 	identity, err := d.Identity()
 	if err == nil && identity != nil {
 		if nameValue, ok := d.GetOk("name"); ok && nameValue.(string) != "" {
@@ -758,18 +770,6 @@ func resourceTpuV2VmCreate(d *schema.ResourceData, meta interface{}) error {
 	} else {
 		log.Printf("[DEBUG] (Create) identity not set: %s", err)
 	}
-
-	err = TpuV2OperationWaitTime(
-		config, res, project, "Creating Vm", userAgent,
-		d.Timeout(schema.TimeoutCreate))
-
-	if err != nil {
-		// The resource didn't actually create
-		d.SetId("")
-		return fmt.Errorf("Error waiting to create Vm: %s", err)
-	}
-
-	log.Printf("[DEBUG] Finished creating Vm %q: %#v", d.Id(), res)
 
 	return resourceTpuV2VmRead(d, meta)
 }

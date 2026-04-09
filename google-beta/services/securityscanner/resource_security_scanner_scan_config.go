@@ -403,6 +403,8 @@ func resourceSecurityScannerScanConfigCreate(d *schema.ResourceData, meta interf
 	}
 	d.SetId(id)
 
+	log.Printf("[DEBUG] Finished creating ScanConfig %q: %#v", d.Id(), res)
+
 	identity, err := d.Identity()
 	if err == nil && identity != nil {
 		if nameValue, ok := d.GetOk("name"); ok && nameValue.(string) != "" {
@@ -418,8 +420,6 @@ func resourceSecurityScannerScanConfigCreate(d *schema.ResourceData, meta interf
 	} else {
 		log.Printf("[DEBUG] (Create) identity not set: %s", err)
 	}
-
-	log.Printf("[DEBUG] Finished creating ScanConfig %q: %#v", d.Id(), res)
 
 	return resourceSecurityScannerScanConfigRead(d, meta)
 }

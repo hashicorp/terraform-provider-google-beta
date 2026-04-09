@@ -376,6 +376,18 @@ func resourceNetworkSecurityAuthorizationPolicyCreate(d *schema.ResourceData, me
 	}
 	d.SetId(id)
 
+	err = NetworkSecurityOperationWaitTime(
+		config, res, project, "Creating AuthorizationPolicy", userAgent,
+		d.Timeout(schema.TimeoutCreate))
+
+	if err != nil {
+		// The resource didn't actually create
+		d.SetId("")
+		return fmt.Errorf("Error waiting to create AuthorizationPolicy: %s", err)
+	}
+
+	log.Printf("[DEBUG] Finished creating AuthorizationPolicy %q: %#v", d.Id(), res)
+
 	identity, err := d.Identity()
 	if err == nil && identity != nil {
 		if nameValue, ok := d.GetOk("name"); ok && nameValue.(string) != "" {
@@ -396,18 +408,6 @@ func resourceNetworkSecurityAuthorizationPolicyCreate(d *schema.ResourceData, me
 	} else {
 		log.Printf("[DEBUG] (Create) identity not set: %s", err)
 	}
-
-	err = NetworkSecurityOperationWaitTime(
-		config, res, project, "Creating AuthorizationPolicy", userAgent,
-		d.Timeout(schema.TimeoutCreate))
-
-	if err != nil {
-		// The resource didn't actually create
-		d.SetId("")
-		return fmt.Errorf("Error waiting to create AuthorizationPolicy: %s", err)
-	}
-
-	log.Printf("[DEBUG] Finished creating AuthorizationPolicy %q: %#v", d.Id(), res)
 
 	return resourceNetworkSecurityAuthorizationPolicyRead(d, meta)
 }

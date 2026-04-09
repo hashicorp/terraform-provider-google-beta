@@ -280,6 +280,18 @@ func resourceComputeRegionBackendBucketCreate(d *schema.ResourceData, meta inter
 	}
 	d.SetId(id)
 
+	err = ComputeOperationWaitTime(
+		config, res, project, "Creating RegionBackendBucket", userAgent,
+		d.Timeout(schema.TimeoutCreate))
+
+	if err != nil {
+		// The resource didn't actually create
+		d.SetId("")
+		return fmt.Errorf("Error waiting to create RegionBackendBucket: %s", err)
+	}
+
+	log.Printf("[DEBUG] Finished creating RegionBackendBucket %q: %#v", d.Id(), res)
+
 	identity, err := d.Identity()
 	if err == nil && identity != nil {
 		if nameValue, ok := d.GetOk("name"); ok && nameValue.(string) != "" {
@@ -300,18 +312,6 @@ func resourceComputeRegionBackendBucketCreate(d *schema.ResourceData, meta inter
 	} else {
 		log.Printf("[DEBUG] (Create) identity not set: %s", err)
 	}
-
-	err = ComputeOperationWaitTime(
-		config, res, project, "Creating RegionBackendBucket", userAgent,
-		d.Timeout(schema.TimeoutCreate))
-
-	if err != nil {
-		// The resource didn't actually create
-		d.SetId("")
-		return fmt.Errorf("Error waiting to create RegionBackendBucket: %s", err)
-	}
-
-	log.Printf("[DEBUG] Finished creating RegionBackendBucket %q: %#v", d.Id(), res)
 
 	return resourceComputeRegionBackendBucketRead(d, meta)
 }

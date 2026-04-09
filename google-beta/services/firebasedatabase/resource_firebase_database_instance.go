@@ -300,6 +300,16 @@ func resourceFirebaseDatabaseInstanceCreate(d *schema.ResourceData, meta interfa
 	}
 	d.SetId(id)
 
+	// start of customized code
+	if p, ok := d.GetOk("desired_state"); ok && p.(string) == "DISABLED" {
+		if err := disableRTDB(config, d, project, billingProject, userAgent); err != nil {
+			return err
+		}
+	}
+	// end of customized code
+
+	log.Printf("[DEBUG] Finished creating Instance %q: %#v", d.Id(), res)
+
 	identity, err := d.Identity()
 	if err == nil && identity != nil {
 		if regionValue, ok := d.GetOk("region"); ok && regionValue.(string) != "" {
@@ -320,16 +330,6 @@ func resourceFirebaseDatabaseInstanceCreate(d *schema.ResourceData, meta interfa
 	} else {
 		log.Printf("[DEBUG] (Create) identity not set: %s", err)
 	}
-
-	// start of customized code
-	if p, ok := d.GetOk("desired_state"); ok && p.(string) == "DISABLED" {
-		if err := disableRTDB(config, d, project, billingProject, userAgent); err != nil {
-			return err
-		}
-	}
-	// end of customized code
-
-	log.Printf("[DEBUG] Finished creating Instance %q: %#v", d.Id(), res)
 
 	return resourceFirebaseDatabaseInstanceRead(d, meta)
 }

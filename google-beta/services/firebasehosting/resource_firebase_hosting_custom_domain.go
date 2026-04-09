@@ -699,6 +699,23 @@ func resourceFirebaseHostingCustomDomainCreate(d *schema.ResourceData, meta inte
 	}
 	d.SetId(id)
 
+	if d.Get("wait_dns_verification") == true {
+		// Wait for the creation operation to complete before treating the resource
+		// as created
+		var opRes map[string]interface{}
+		err = FirebaseHostingOperationWaitTimeWithResponse(
+			config, res, &opRes, project, "Creating CustomDomain", userAgent,
+			d.Timeout(schema.TimeoutCreate))
+		if err != nil {
+			// The resource didn't actually create
+			d.SetId("")
+
+			return fmt.Errorf("Error waiting to create CustomDomain: %s", err)
+		}
+	}
+
+	log.Printf("[DEBUG] Finished creating CustomDomain %q: %#v", d.Id(), res)
+
 	identity, err := d.Identity()
 	if err == nil && identity != nil {
 		if siteIdValue, ok := d.GetOk("site_id"); ok && siteIdValue.(string) != "" {
@@ -719,23 +736,6 @@ func resourceFirebaseHostingCustomDomainCreate(d *schema.ResourceData, meta inte
 	} else {
 		log.Printf("[DEBUG] (Create) identity not set: %s", err)
 	}
-
-	if d.Get("wait_dns_verification") == true {
-		// Wait for the creation operation to complete before treating the resource
-		// as created
-		var opRes map[string]interface{}
-		err = FirebaseHostingOperationWaitTimeWithResponse(
-			config, res, &opRes, project, "Creating CustomDomain", userAgent,
-			d.Timeout(schema.TimeoutCreate))
-		if err != nil {
-			// The resource didn't actually create
-			d.SetId("")
-
-			return fmt.Errorf("Error waiting to create CustomDomain: %s", err)
-		}
-	}
-
-	log.Printf("[DEBUG] Finished creating CustomDomain %q: %#v", d.Id(), res)
 
 	return resourceFirebaseHostingCustomDomainRead(d, meta)
 }

@@ -300,6 +300,18 @@ func resourceGKEHub2MembershipRBACRoleBindingCreate(d *schema.ResourceData, meta
 	}
 	d.SetId(id)
 
+	err = GKEHub2OperationWaitTime(
+		config, res, project, "Creating MembershipRBACRoleBinding", userAgent,
+		d.Timeout(schema.TimeoutCreate))
+
+	if err != nil {
+		// The resource didn't actually create
+		d.SetId("")
+		return fmt.Errorf("Error waiting to create MembershipRBACRoleBinding: %s", err)
+	}
+
+	log.Printf("[DEBUG] Finished creating MembershipRBACRoleBinding %q: %#v", d.Id(), res)
+
 	identity, err := d.Identity()
 	if err == nil && identity != nil {
 		if membershipRbacRoleBindingIdValue, ok := d.GetOk("membership_rbac_role_binding_id"); ok && membershipRbacRoleBindingIdValue.(string) != "" {
@@ -325,18 +337,6 @@ func resourceGKEHub2MembershipRBACRoleBindingCreate(d *schema.ResourceData, meta
 	} else {
 		log.Printf("[DEBUG] (Create) identity not set: %s", err)
 	}
-
-	err = GKEHub2OperationWaitTime(
-		config, res, project, "Creating MembershipRBACRoleBinding", userAgent,
-		d.Timeout(schema.TimeoutCreate))
-
-	if err != nil {
-		// The resource didn't actually create
-		d.SetId("")
-		return fmt.Errorf("Error waiting to create MembershipRBACRoleBinding: %s", err)
-	}
-
-	log.Printf("[DEBUG] Finished creating MembershipRBACRoleBinding %q: %#v", d.Id(), res)
 
 	return resourceGKEHub2MembershipRBACRoleBindingRead(d, meta)
 }

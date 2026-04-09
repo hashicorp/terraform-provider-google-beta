@@ -270,6 +270,18 @@ func resourceApiGatewayApiCreate(d *schema.ResourceData, meta interface{}) error
 	}
 	d.SetId(id)
 
+	err = ApiGatewayOperationWaitTime(
+		config, res, project, "Creating Api", userAgent,
+		d.Timeout(schema.TimeoutCreate))
+
+	if err != nil {
+		// The resource didn't actually create
+		d.SetId("")
+		return fmt.Errorf("Error waiting to create Api: %s", err)
+	}
+
+	log.Printf("[DEBUG] Finished creating Api %q: %#v", d.Id(), res)
+
 	identity, err := d.Identity()
 	if err == nil && identity != nil {
 		if apiIdValue, ok := d.GetOk("api_id"); ok && apiIdValue.(string) != "" {
@@ -285,18 +297,6 @@ func resourceApiGatewayApiCreate(d *schema.ResourceData, meta interface{}) error
 	} else {
 		log.Printf("[DEBUG] (Create) identity not set: %s", err)
 	}
-
-	err = ApiGatewayOperationWaitTime(
-		config, res, project, "Creating Api", userAgent,
-		d.Timeout(schema.TimeoutCreate))
-
-	if err != nil {
-		// The resource didn't actually create
-		d.SetId("")
-		return fmt.Errorf("Error waiting to create Api: %s", err)
-	}
-
-	log.Printf("[DEBUG] Finished creating Api %q: %#v", d.Id(), res)
 
 	return resourceApiGatewayApiRead(d, meta)
 }

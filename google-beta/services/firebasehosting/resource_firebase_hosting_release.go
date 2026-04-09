@@ -256,6 +256,15 @@ func resourceFirebaseHostingReleaseCreate(d *schema.ResourceData, meta interface
 	}
 	d.SetId(id)
 
+	// Store the name as ID
+	d.SetId(res["name"].(string))
+
+	if err = d.Set("release_id", tpgresource.GetResourceNameFromSelfLink(res["name"].(string))); err != nil {
+		return fmt.Errorf("Error setting release_id: %s", err)
+	}
+
+	log.Printf("[DEBUG] Finished creating Release %q: %#v", d.Id(), res)
+
 	identity, err := d.Identity()
 	if err == nil && identity != nil {
 		if releaseIdValue, ok := d.GetOk("release_id"); ok && releaseIdValue.(string) != "" {
@@ -276,15 +285,6 @@ func resourceFirebaseHostingReleaseCreate(d *schema.ResourceData, meta interface
 	} else {
 		log.Printf("[DEBUG] (Create) identity not set: %s", err)
 	}
-
-	// Store the name as ID
-	d.SetId(res["name"].(string))
-
-	if err = d.Set("release_id", tpgresource.GetResourceNameFromSelfLink(res["name"].(string))); err != nil {
-		return fmt.Errorf("Error setting release_id: %s", err)
-	}
-
-	log.Printf("[DEBUG] Finished creating Release %q: %#v", d.Id(), res)
 
 	return resourceFirebaseHostingReleaseRead(d, meta)
 }

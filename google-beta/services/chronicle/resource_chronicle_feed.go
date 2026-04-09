@@ -4459,32 +4459,6 @@ func resourceChronicleFeedCreate(d *schema.ResourceData, meta interface{}) error
 	}
 	d.SetId(id)
 
-	identity, err := d.Identity()
-	if err == nil && identity != nil {
-		if locationValue, ok := d.GetOk("location"); ok && locationValue.(string) != "" {
-			if err = identity.Set("location", locationValue.(string)); err != nil {
-				return fmt.Errorf("Error setting location: %s", err)
-			}
-		}
-		if instanceValue, ok := d.GetOk("instance"); ok && instanceValue.(string) != "" {
-			if err = identity.Set("instance", instanceValue.(string)); err != nil {
-				return fmt.Errorf("Error setting instance: %s", err)
-			}
-		}
-		if feedValue, ok := d.GetOk("feed"); ok && feedValue.(string) != "" {
-			if err = identity.Set("feed", feedValue.(string)); err != nil {
-				return fmt.Errorf("Error setting feed: %s", err)
-			}
-		}
-		if projectValue, ok := d.GetOk("project"); ok && projectValue.(string) != "" {
-			if err = identity.Set("project", projectValue.(string)); err != nil {
-				return fmt.Errorf("Error setting project: %s", err)
-			}
-		}
-	} else {
-		log.Printf("[DEBUG] (Create) identity not set: %s", err)
-	}
-
 	// Generate secret for HTTPS_PUSH_AMAZON_KINESIS_FIREHOSE feed post-creation
 	if v, ok := d.GetOk("details.0.feed_source_type"); ok && v.(string) == "HTTPS_PUSH_AMAZON_KINESIS_FIREHOSE" {
 		log.Printf("[DEBUG] Generating secret for HTTPS_PUSH_AMAZON_KINESIS_FIREHOSE feed %q", d.Id())
@@ -4517,6 +4491,32 @@ func resourceChronicleFeedCreate(d *schema.ResourceData, meta interface{}) error
 	}
 
 	log.Printf("[DEBUG] Finished creating Feed %q: %#v", d.Id(), res)
+
+	identity, err := d.Identity()
+	if err == nil && identity != nil {
+		if locationValue, ok := d.GetOk("location"); ok && locationValue.(string) != "" {
+			if err = identity.Set("location", locationValue.(string)); err != nil {
+				return fmt.Errorf("Error setting location: %s", err)
+			}
+		}
+		if instanceValue, ok := d.GetOk("instance"); ok && instanceValue.(string) != "" {
+			if err = identity.Set("instance", instanceValue.(string)); err != nil {
+				return fmt.Errorf("Error setting instance: %s", err)
+			}
+		}
+		if feedValue, ok := d.GetOk("feed"); ok && feedValue.(string) != "" {
+			if err = identity.Set("feed", feedValue.(string)); err != nil {
+				return fmt.Errorf("Error setting feed: %s", err)
+			}
+		}
+		if projectValue, ok := d.GetOk("project"); ok && projectValue.(string) != "" {
+			if err = identity.Set("project", projectValue.(string)); err != nil {
+				return fmt.Errorf("Error setting project: %s", err)
+			}
+		}
+	} else {
+		log.Printf("[DEBUG] (Create) identity not set: %s", err)
+	}
 
 	return resourceChronicleFeedRead(d, meta)
 }

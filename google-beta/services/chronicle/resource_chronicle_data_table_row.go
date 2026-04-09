@@ -283,6 +283,8 @@ func resourceChronicleDataTableRowCreate(d *schema.ResourceData, meta interface{
 	}
 	d.SetId(id)
 
+	log.Printf("[DEBUG] Finished creating DataTableRow %q: %#v", d.Id(), res)
+
 	identity, err := d.Identity()
 	if err == nil && identity != nil {
 		if locationValue, ok := d.GetOk("location"); ok && locationValue.(string) != "" {
@@ -313,8 +315,6 @@ func resourceChronicleDataTableRowCreate(d *schema.ResourceData, meta interface{
 	} else {
 		log.Printf("[DEBUG] (Create) identity not set: %s", err)
 	}
-
-	log.Printf("[DEBUG] Finished creating DataTableRow %q: %#v", d.Id(), res)
 
 	return resourceChronicleDataTableRowRead(d, meta)
 }
