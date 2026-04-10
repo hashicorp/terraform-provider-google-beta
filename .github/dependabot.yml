@@ -1,3 +1,4 @@
+# Reference: https://docs.github.com/en/free-pro-team@latest/github/administering-a-repository/configuration-options-for-dependency-updates
 version: 2
 updates:
   - package-ecosystem: "gomod"
@@ -8,3 +9,19 @@ updates:
         # Ignore version updates
       - dependency-name: "*"
         update-types: ["version-update:semver-major","version-update:semver-minor","version-update:semver-patch"]
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    groups:
+      "github-actions":
+        patterns:
+          - "*"
+        group-by: "dependency-name"
+    ignore:
+      - dependency-name: "hashicorp/ghaction-terraform-provider-release/.github/workflows/hashicorp.yml"
+        update-types: ["version-update:semver-major"]
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Etc/UTC"
