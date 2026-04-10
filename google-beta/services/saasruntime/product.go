@@ -15,7 +15,7 @@
 //
 // ----------------------------------------------------------------------------
 
-// Package saasruntime contains resources, datasources, etc. for the saas runtime service.
+// Package saasruntime contains resources, datasources, etc. for the app lifecycle manager (saas runtime) service.
 package saasruntime
 
 import (
