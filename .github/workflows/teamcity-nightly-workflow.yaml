@@ -5,7 +5,8 @@ name: "TeamCity: Create empty branch off tip of main to aid nightly-testing"
 on:
     workflow_dispatch:
     schedule:
-        - cron: '0 2 * * *' # 2AM UTC (-7)-> 7PM PST # teamcity builds are triggered @ 4AM UTC
+        - cron: '0 19 * * *' # 7PM PST
+          timezone: 'America/Los_Angeles'
 
 jobs:
     # uses the same teamcity nightly workflow used in terraform-provider-google
