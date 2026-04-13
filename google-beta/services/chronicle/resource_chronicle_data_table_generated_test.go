@@ -63,7 +63,7 @@ func TestAccChronicleDataTable_chronicleDataTableBasicExample(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckChronicleDataTableDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -88,7 +88,6 @@ func TestAccChronicleDataTable_chronicleDataTableBasicExample(t *testing.T) {
 func testAccChronicleDataTable_chronicleDataTableBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_chronicle_data_table" "example" {
-  provider       = google-beta
   location       = "us"
   instance = "%{chronicle_id}"
   data_table_id  = "%{data_table_id}"
@@ -146,7 +145,7 @@ func TestAccChronicleDataTable_chronicleDataTableWithOptionalFieldsExample(t *te
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckChronicleDataTableDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -171,7 +170,6 @@ func TestAccChronicleDataTable_chronicleDataTableWithOptionalFieldsExample(t *te
 func testAccChronicleDataTable_chronicleDataTableWithOptionalFieldsExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_chronicle_data_access_scope" "test_scope_allow_everyone" {
-provider             = google-beta
  location = "us"
  instance = "%{chronicle_id}"
  data_access_scope_id = "%{data_access_scope_id}"
@@ -182,7 +180,6 @@ provider             = google-beta
 }
 
 resource "google_chronicle_data_table" "example_dt" {
-  provider         = google-beta
   location         = "us"
   instance = "%{chronicle_id}"
   data_table_id  = "%{data_table_id}"
