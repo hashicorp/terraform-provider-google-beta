@@ -21,7 +21,6 @@ FEATURES:
 * **New Resource:** `google_workload_identity_service_agent` ([#11871](https://github.com/hashicorp/terraform-provider-google-beta/pull/11871))
 
 IMPROVEMENTS:
-* apigee: added `consumer_key` and `consumer_secret` fields to `google_apigee_developer_app` resource ([#11899](https://github.com/hashicorp/terraform-provider-google-beta/pull/11899))
 * composer: increased `google_composer_environment` default delete timeout to 120m from 30m ([#11917](https://github.com/hashicorp/terraform-provider-google-beta/pull/11917))
 * compute: added `target_size_policy` field to `google_compute_instance_group_manager` and `google_compute_region_instance_group_manager` resources ([#11915](https://github.com/hashicorp/terraform-provider-google-beta/pull/11915))
 * compute: increased `google_compute_security_policy` default timeout to 60m from 30m ([#11916](https://github.com/hashicorp/terraform-provider-google-beta/pull/11916))
