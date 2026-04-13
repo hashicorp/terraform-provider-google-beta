@@ -1372,6 +1372,7 @@ func (p *FrameworkProvider) DataSources(_ context.Context) []func() datasource.D
 	return []func() datasource.DataSource{
 		resourcemanager.NewGoogleClientConfigDataSource,
 		resourcemanager.NewGoogleClientOpenIDUserinfoDataSource,
+		firebase.NewGoogleFirebaseAdminSdkConfigDataSource,
 		firebase.NewGoogleFirebaseAndroidAppConfigDataSource,
 		firebase.NewGoogleFirebaseAppleAppConfigDataSource,
 		firebase.NewGoogleFirebaseWebAppConfigDataSource,
