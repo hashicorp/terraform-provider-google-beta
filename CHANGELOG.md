@@ -1,4 +1,51 @@
-## 7.28.0 (Unreleased)
+## 7.29.0 (Unreleased)
+
+## 7.28.0 (Apr 14, 2026)
+
+NOTES:
+* compute: migrated `data_source_google_compute_instance_template` datasource to use direct HTTP rather then a client library ([#11901](https://github.com/hashicorp/terraform-provider-google-beta/pull/11901))
+* compute: migrated `google_compute_instance_guest_attributes` datasource to use direct HTTP rather then a client library ([#11897](https://github.com/hashicorp/terraform-provider-google-beta/pull/11897))
+* provider: added provider-wide `Identity()` schema support, allowing imports with MMv1 resources to occur using the identity block instead of id field ([#11874](https://github.com/hashicorp/terraform-provider-google-beta/pull/11874))
+
+FEATURES:
+* **New Data Source:** `google_vertex_ai_reasoning_engine_query` ([#11878](https://github.com/hashicorp/terraform-provider-google-beta/pull/11878))
+* **New Resource:** `google_apigee_space` ([#11922](https://github.com/hashicorp/terraform-provider-google-beta/pull/11922))
+* **New Resource:** `google_chronicle_feed` ([#11856](https://github.com/hashicorp/terraform-provider-google-beta/pull/11856))
+* **New Resource:** `google_iap_agent_registry_iam_binding` ([#11905](https://github.com/hashicorp/terraform-provider-google-beta/pull/11905))
+* **New Resource:** `google_iap_agent_registry_iam_member` ([#11905](https://github.com/hashicorp/terraform-provider-google-beta/pull/11905))
+* **New Resource:** `google_iap_agent_registry_iam_policy` ([#11905](https://github.com/hashicorp/terraform-provider-google-beta/pull/11905))
+* **New Resource:** `google_iap_location_web_iam_binding` ([#11905](https://github.com/hashicorp/terraform-provider-google-beta/pull/11905))
+* **New Resource:** `google_iap_location_web_iam_member` ([#11905](https://github.com/hashicorp/terraform-provider-google-beta/pull/11905))
+* **New Resource:** `google_iap_location_web_iam_policy` ([#11905](https://github.com/hashicorp/terraform-provider-google-beta/pull/11905))
+* **New Resource:** `google_vertex_ai_reasoning_engine_iam_binding` ([#11876](https://github.com/hashicorp/terraform-provider-google-beta/pull/11876))
+* **New Resource:** `google_vertex_ai_reasoning_engine_iam_member` ([#11876](https://github.com/hashicorp/terraform-provider-google-beta/pull/11876))
+* **New Resource:** `google_vertex_ai_reasoning_engine_iam_policy` ([#11876](https://github.com/hashicorp/terraform-provider-google-beta/pull/11876))
+* **New Resource:** `google_workload_identity_service_agent` ([#11871](https://github.com/hashicorp/terraform-provider-google-beta/pull/11871))
+
+IMPROVEMENTS:
+* composer: increased `google_composer_environment` default delete timeout to 120m from 30m ([#11917](https://github.com/hashicorp/terraform-provider-google-beta/pull/11917))
+* compute: added `target_size_policy` field to `google_compute_instance_group_manager` and `google_compute_region_instance_group_manager` resources ([#11915](https://github.com/hashicorp/terraform-provider-google-beta/pull/11915))
+* compute: increased `google_compute_security_policy` default timeout to 60m from 30m ([#11916](https://github.com/hashicorp/terraform-provider-google-beta/pull/11916))
+* compute: supported simultaneous updates for Hyperdisk IOPS and throughput in `google_compute_disk` and `google_compute_region_disk` resources ([#11889](https://github.com/hashicorp/terraform-provider-google-beta/pull/11889))
+* container: added `autopilot_cluster_policy_config` field to `google_container_cluster` resource ([#11893](https://github.com/hashicorp/terraform-provider-google-beta/pull/11893))
+* container: added `disable_multi_nic` field to `lustre_csi_driver_config` in `google_container_cluster` resource ([#11864](https://github.com/hashicorp/terraform-provider-google-beta/pull/11864))
+* container: added `managed_machine_learning_diagnostics_config` field to `google_container_cluster` resource ([#11927](https://github.com/hashicorp/terraform-provider-google-beta/pull/11927))
+* dataform: added `disabled` field to `google_dataform_repository_release_config` resource ([#11921](https://github.com/hashicorp/terraform-provider-google-beta/pull/11921))
+* developerconnect: added `custom_oauth_config`, `etag`, and `proxy_config` fields to `google_developer_connect_account_connector` resource ([#11858](https://github.com/hashicorp/terraform-provider-google-beta/pull/11858))
+* netapp: added `scale_type` field to `google_netapp_storage_pool` resource ([#11892](https://github.com/hashicorp/terraform-provider-google-beta/pull/11892))
+* networkservices: added `all_ports` field to `google_network_services_gateway` resource ([#11884](https://github.com/hashicorp/terraform-provider-google-beta/pull/11884))
+* sql: added `SQLSERVER_2025` value to `database_version` field in `database_instance` resource ([#11911](https://github.com/hashicorp/terraform-provider-google-beta/pull/11911))
+* vertexai: add `labels` field to `google_vertex_ai_reasoning_engine` resource ([#11896](https://github.com/hashicorp/terraform-provider-google-beta/pull/11896))
+* vertexai: added `spec.source_code_spec.image_spec` field to `google_vertex_ai_reasoning_engine` resource ([#11881](https://github.com/hashicorp/terraform-provider-google-beta/pull/11881))
+* vertexai: added `container_spec` field to `google_vertex_ai_reasoning_engine` resource ([#11888](https://github.com/hashicorp/terraform-provider-google-beta/pull/11888))
+
+BUG FIXES:
+* apigee: fixed a crash in `google_apigee_environment_addons_config` resource when analytics are not configured ([#11886](https://github.com/hashicorp/terraform-provider-google-beta/pull/11886))
+* apigee: fixed overly restrictive validation of `name` field in `google_apigee_api_product` that rejected uppercase letters, aligning provider behavior with the Apigee API ([#11863](https://github.com/hashicorp/terraform-provider-google-beta/pull/11863))
+* bigquery: fixed crash when `hive_partitioning_options` is defined with all null values in `google_bigquery_table` resource ([#11912](https://github.com/hashicorp/terraform-provider-google-beta/pull/11912))
+* firebaseailogic: fixed permadiff on `traffic_filter` field in `google_firebase_ai_logic_config` resource ([#11857](https://github.com/hashicorp/terraform-provider-google-beta/pull/11857))
+* networksecurity: fixed permadiff on `policy_profile` field in `google_network_security_authz_policy` resource ([#11929](https://github.com/hashicorp/terraform-provider-google-beta/pull/11929))
+* vertexai: added 10-second wait before reading the updated resource in `google_vertex_ai_reasoning_engine`, preventing stale values getting written to state ([#11918](https://github.com/hashicorp/terraform-provider-google-beta/pull/11918))
 
 ## 7.27.0 (Apr 07, 2026)
 
