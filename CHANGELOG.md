@@ -38,7 +38,7 @@ IMPROVEMENTS:
 * vertexai: added `container_spec` field to `google_vertex_ai_reasoning_engine` resource ([#11888](https://github.com/hashicorp/terraform-provider-google-beta/pull/11888))
 
 BUG FIXES:
-* apigee: fixed panic when `analyticsConfig` is absent from API response in `google_apigee_environment_addons_config` resource ([#11886](https://github.com/hashicorp/terraform-provider-google-beta/pull/11886))
+* apigee: fixed a crash in `google_apigee_environment_addons_config` resource when analytics are not configured ([#11886](https://github.com/hashicorp/terraform-provider-google-beta/pull/11886))
 * apigee: fixed overly restrictive validation of `name` field in `google_apigee_api_product` that rejected uppercase letters, aligning provider behavior with the Apigee API ([#11863](https://github.com/hashicorp/terraform-provider-google-beta/pull/11863))
 * bigquery: fixed crash when `hive_partitioning_options` is defined with all null values in `google_bigquery_table` resource ([#11912](https://github.com/hashicorp/terraform-provider-google-beta/pull/11912))
 * firebaseailogic: fixed permadiff on `traffic_filter` field in `google_firebase_ai_logic_config` resource ([#11857](https://github.com/hashicorp/terraform-provider-google-beta/pull/11857))
