@@ -22,11 +22,13 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 )
 
-const ProductName = "modelarmor"
+var Product = registry.Product{
+	Name:                 "modelarmor",
+	BaseUrl:              "https://modelarmor.{{location}}.rep.googleapis.com/v1beta/",
+	CustomEndpointField:  "model_armor_custom_endpoint",
+	CustomEndpointEnvVar: "GOOGLE_MODEL_ARMOR_CUSTOM_ENDPOINT",
+}
 
 func init() {
-	registry.Product{
-		Name:    "modelarmor",
-		BaseUrl: "https://modelarmor.{{location}}.rep.googleapis.com/v1beta/",
-	}.Register()
+	Product.Register()
 }

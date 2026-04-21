@@ -22,11 +22,13 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 )
 
-const ProductName = "saasruntime"
+var Product = registry.Product{
+	Name:                 "saasruntime",
+	BaseUrl:              "https://saasservicemgmt.googleapis.com/v1beta1/",
+	CustomEndpointField:  "saas_runtime_custom_endpoint",
+	CustomEndpointEnvVar: "GOOGLE_SAAS_RUNTIME_CUSTOM_ENDPOINT",
+}
 
 func init() {
-	registry.Product{
-		Name:    "saasruntime",
-		BaseUrl: "https://saasservicemgmt.googleapis.com/v1beta1/",
-	}.Register()
+	Product.Register()
 }

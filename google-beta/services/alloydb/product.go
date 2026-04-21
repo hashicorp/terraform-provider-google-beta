@@ -22,11 +22,13 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 )
 
-const ProductName = "alloydb"
+var Product = registry.Product{
+	Name:                 "alloydb",
+	BaseUrl:              "https://alloydb.googleapis.com/v1beta/",
+	CustomEndpointField:  "alloydb_custom_endpoint",
+	CustomEndpointEnvVar: "GOOGLE_ALLOYDB_CUSTOM_ENDPOINT",
+}
 
 func init() {
-	registry.Product{
-		Name:    "alloydb",
-		BaseUrl: "https://alloydb.googleapis.com/v1beta/",
-	}.Register()
+	Product.Register()
 }
