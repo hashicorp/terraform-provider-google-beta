@@ -10,7 +10,6 @@ NOTES:
 FEATURES:
 * **New Data Source:** `google_vertex_ai_reasoning_engine_query` ([#11878](https://github.com/hashicorp/terraform-provider-google-beta/pull/11878))
 * **New Resource:** `google_apigee_space` ([#11922](https://github.com/hashicorp/terraform-provider-google-beta/pull/11922))
-* **New Resource:** `google_chronicle_feed` ([#11856](https://github.com/hashicorp/terraform-provider-google-beta/pull/11856))
 * **New Resource:** `google_iap_agent_registry_iam_binding` ([#11905](https://github.com/hashicorp/terraform-provider-google-beta/pull/11905))
 * **New Resource:** `google_iap_agent_registry_iam_member` ([#11905](https://github.com/hashicorp/terraform-provider-google-beta/pull/11905))
 * **New Resource:** `google_iap_agent_registry_iam_policy` ([#11905](https://github.com/hashicorp/terraform-provider-google-beta/pull/11905))
