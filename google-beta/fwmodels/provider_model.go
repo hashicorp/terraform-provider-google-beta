@@ -138,6 +138,7 @@ type ProviderModel struct {
 	FirebaseDataConnectCustomEndpoint      types.String `tfsdk:"firebase_data_connect_custom_endpoint"`
 	FirebaseExtensionsCustomEndpoint       types.String `tfsdk:"firebase_extensions_custom_endpoint"`
 	FirebaseHostingCustomEndpoint          types.String `tfsdk:"firebase_hosting_custom_endpoint"`
+	FirebaseRemoteConfigCustomEndpoint     types.String `tfsdk:"firebase_remote_config_custom_endpoint"`
 	FirebaseStorageCustomEndpoint          types.String `tfsdk:"firebase_storage_custom_endpoint"`
 	FirestoreCustomEndpoint                types.String `tfsdk:"firestore_custom_endpoint"`
 	GeminiCustomEndpoint                   types.String `tfsdk:"gemini_custom_endpoint"`
