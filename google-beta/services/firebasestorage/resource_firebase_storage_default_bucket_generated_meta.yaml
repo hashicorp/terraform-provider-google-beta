@@ -1,0 +1,12 @@
+# Copyright IBM Corp. 2014, 2026
+# SPDX-License-Identifier: MPL-2.0
+resource: google_firebase_storage_default_bucket
+generation_type: mmv1
+source_file: products/firebasestorage/DefaultBucket.yaml
+api_service_name: firebasestorage.googleapis.com
+api_version: v1beta
+api_resource_type_kind: DefaultBucket
+fields:
+    - api_field: bucket.name
+    - api_field: location
+    - api_field: name

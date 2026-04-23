@@ -22,11 +22,13 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 )
 
-const ProductName = "securityscanner"
+var Product = registry.Product{
+	Name:                 "securityscanner",
+	BaseUrl:              "https://websecurityscanner.googleapis.com/v1beta/",
+	CustomEndpointField:  "security_scanner_custom_endpoint",
+	CustomEndpointEnvVar: "GOOGLE_SECURITY_SCANNER_CUSTOM_ENDPOINT",
+}
 
 func init() {
-	registry.Product{
-		Name:    "securityscanner",
-		BaseUrl: "https://websecurityscanner.googleapis.com/v1beta/",
-	}.Register()
+	Product.Register()
 }

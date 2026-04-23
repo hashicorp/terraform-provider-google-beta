@@ -22,11 +22,13 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 )
 
-const ProductName = "osconfig"
+var Product = registry.Product{
+	Name:                 "osconfig",
+	BaseUrl:              "https://osconfig.googleapis.com/v1beta/",
+	CustomEndpointField:  "os_config_custom_endpoint",
+	CustomEndpointEnvVar: "GOOGLE_OS_CONFIG_CUSTOM_ENDPOINT",
+}
 
 func init() {
-	registry.Product{
-		Name:    "osconfig",
-		BaseUrl: "https://osconfig.googleapis.com/v1beta/",
-	}.Register()
+	Product.Register()
 }

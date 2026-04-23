@@ -44,6 +44,7 @@ fields:
     - api_field: observabilityConfig.queryPlansPerMinute
     - api_field: observabilityConfig.recordApplicationTags
     - api_field: observabilityConfig.trackActiveQueries
+    - api_field: observabilityConfig.trackClientAddress
     - api_field: observabilityConfig.trackWaitEventTypes
     - api_field: observabilityConfig.trackWaitEvents
     - api_field: outboundPublicIpAddresses
