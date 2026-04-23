@@ -22,13 +22,11 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 )
 
-var Product = registry.Product{
-	Name:                 "firebaseailogic",
-	BaseUrl:              "https://firebasevertexai.googleapis.com/v1beta/",
-	CustomEndpointField:  "firebase_ai_logic_custom_endpoint",
-	CustomEndpointEnvVar: "GOOGLE_FIREBASE_AI_LOGIC_CUSTOM_ENDPOINT",
-}
+const ProductName = "firebaseailogic"
 
 func init() {
-	Product.Register()
+	registry.Product{
+		Name:    "firebaseailogic",
+		BaseUrl: "https://firebasevertexai.googleapis.com/v1beta/",
+	}.Register()
 }

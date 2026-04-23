@@ -22,13 +22,11 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 )
 
-var Product = registry.Product{
-	Name:                 "container",
-	BaseUrl:              "https://container.googleapis.com/v1beta1/",
-	CustomEndpointField:  "container_custom_endpoint",
-	CustomEndpointEnvVar: "GOOGLE_CONTAINER_CUSTOM_ENDPOINT",
-}
+const ProductName = "container"
 
 func init() {
-	Product.Register()
+	registry.Product{
+		Name:    "container",
+		BaseUrl: "https://container.googleapis.com/v1beta1/",
+	}.Register()
 }

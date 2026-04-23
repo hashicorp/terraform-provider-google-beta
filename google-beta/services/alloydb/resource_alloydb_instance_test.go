@@ -1609,7 +1609,6 @@ func TestAccAlloydbInstance_ObservabilityConfig_Update(t *testing.T) {
 		"record_application_tags":       true,
 		"query_plans_per_minute":        10,
 		"track_active_queries":          true,
-		"track_client_address":          true,
 		"assistive_experiences_enabled": false,
 	}
 
@@ -1629,7 +1628,6 @@ func TestAccAlloydbInstance_ObservabilityConfig_Update(t *testing.T) {
 		"record_application_tags":       false,
 		"query_plans_per_minute":        5,
 		"track_active_queries":          false,
-		"track_client_address":          false,
 		"assistive_experiences_enabled": false,
 	}
 
@@ -1714,7 +1712,6 @@ resource "google_alloydb_instance" "default" {
     record_application_tags        = %{record_application_tags}
     query_plans_per_minute         = %{query_plans_per_minute}
     track_active_queries           = %{track_active_queries}
-    track_client_address           = %{track_client_address}
     assistive_experiences_enabled  = %{assistive_experiences_enabled}
   }
 }

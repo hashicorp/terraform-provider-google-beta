@@ -22,13 +22,11 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 )
 
-var Product = registry.Product{
-	Name:                 "runtimeconfig",
-	BaseUrl:              "https://runtimeconfig.googleapis.com/v1beta1/",
-	CustomEndpointField:  "runtime_config_custom_endpoint",
-	CustomEndpointEnvVar: "GOOGLE_RUNTIME_CONFIG_CUSTOM_ENDPOINT",
-}
+const ProductName = "runtimeconfig"
 
 func init() {
-	Product.Register()
+	registry.Product{
+		Name:    "runtimeconfig",
+		BaseUrl: "https://runtimeconfig.googleapis.com/v1beta1/",
+	}.Register()
 }

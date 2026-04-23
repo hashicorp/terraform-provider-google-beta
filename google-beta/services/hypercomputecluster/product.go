@@ -22,13 +22,11 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 )
 
-var Product = registry.Product{
-	Name:                 "hypercomputecluster",
-	BaseUrl:              "https://hypercomputecluster.googleapis.com/v1beta/",
-	CustomEndpointField:  "hypercomputecluster_custom_endpoint",
-	CustomEndpointEnvVar: "GOOGLE_HYPERCOMPUTECLUSTER_CUSTOM_ENDPOINT",
-}
+const ProductName = "hypercomputecluster"
 
 func init() {
-	Product.Register()
+	registry.Product{
+		Name:    "hypercomputecluster",
+		BaseUrl: "https://hypercomputecluster.googleapis.com/v1beta/",
+	}.Register()
 }

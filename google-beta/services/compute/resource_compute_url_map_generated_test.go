@@ -1087,7 +1087,7 @@ func TestAccComputeUrlMap_urlMapCachePolicyBasicExample(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckComputeUrlMapDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -1112,6 +1112,7 @@ func TestAccComputeUrlMap_urlMapCachePolicyBasicExample(t *testing.T) {
 func testAccComputeUrlMap_urlMapCachePolicyBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_url_map" "urlmap" {
+  provider = google-beta
   name     = "%{url_map_name}"
   
   default_service = google_compute_backend_service.default.id
@@ -1139,6 +1140,7 @@ resource "google_compute_url_map" "urlmap" {
 }
 
 resource "google_compute_backend_service" "default" {
+  provider = google-beta
   name     = "%{backend_service_name}"
   
   protocol              = "HTTP"
@@ -1148,6 +1150,7 @@ resource "google_compute_backend_service" "default" {
 }
 
 resource "google_compute_health_check" "default" {
+  provider = google-beta
   name     = "%{health_check_name}"
   http_health_check {
     port = 80
@@ -1170,7 +1173,7 @@ func TestAccComputeUrlMap_urlMapCachePolicyMultiLevelExample(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckComputeUrlMapDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -1195,6 +1198,7 @@ func TestAccComputeUrlMap_urlMapCachePolicyMultiLevelExample(t *testing.T) {
 func testAccComputeUrlMap_urlMapCachePolicyMultiLevelExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_url_map" "urlmap" {
+  provider = google-beta
   name     = "%{url_map_name}"
   
   default_service = google_compute_backend_service.default.id
@@ -1325,6 +1329,7 @@ resource "google_compute_url_map" "urlmap" {
 }
 
 resource "google_compute_backend_service" "default" {
+  provider = google-beta
   name     = "%{backend_service_name}"
   
   protocol              = "HTTP"
@@ -1334,6 +1339,7 @@ resource "google_compute_backend_service" "default" {
 }
 
 resource "google_compute_health_check" "default" {
+  provider = google-beta
   name     = "%{health_check_name}"
   http_health_check {
     port = 80

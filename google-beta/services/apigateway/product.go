@@ -22,13 +22,11 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 )
 
-var Product = registry.Product{
-	Name:                 "apigateway",
-	BaseUrl:              "https://apigateway.googleapis.com/v1beta/",
-	CustomEndpointField:  "api_gateway_custom_endpoint",
-	CustomEndpointEnvVar: "GOOGLE_API_GATEWAY_CUSTOM_ENDPOINT",
-}
+const ProductName = "apigateway"
 
 func init() {
-	Product.Register()
+	registry.Product{
+		Name:    "apigateway",
+		BaseUrl: "https://apigateway.googleapis.com/v1beta/",
+	}.Register()
 }

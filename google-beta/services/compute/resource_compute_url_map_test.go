@@ -449,7 +449,7 @@ func TestAccComputeUrlMap_cachePolicyMultiLevelUpdate(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckComputeUrlMapDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -2158,6 +2158,7 @@ resource "google_compute_url_map" "url_map" {
 func testAccComputeUrlMap_cachePolicyMultiLevel(suffix string) string {
 	return fmt.Sprintf(`
 resource "google_compute_url_map" "urlmap" {
+  provider = google-beta
   name     = "urlmap-test-%s"
   
   default_service = google_compute_backend_service.default.id
@@ -2366,6 +2367,7 @@ resource "google_compute_url_map" "urlmap" {
 }
 
 resource "google_compute_backend_service" "default" {
+  provider = google-beta
   name     = "backend-test-%s"
   
   protocol              = "HTTP"
@@ -2375,6 +2377,7 @@ resource "google_compute_backend_service" "default" {
 }
 
 resource "google_compute_health_check" "default" {
+  provider = google-beta
   name     = "hc-test-%s"
   http_health_check {
     port = 80
@@ -2386,6 +2389,7 @@ resource "google_compute_health_check" "default" {
 func testAccComputeUrlMap_cachePolicyMultiLevelUpdate(suffix string) string {
 	return fmt.Sprintf(`
 resource "google_compute_url_map" "urlmap" {
+  provider = google-beta
   name     = "urlmap-test-%s"
   
   default_service = google_compute_backend_service.default.id
@@ -2509,6 +2513,7 @@ resource "google_compute_url_map" "urlmap" {
 }
 
 resource "google_compute_backend_service" "default" {
+  provider = google-beta
   name     = "backend-test-%s"
   
   protocol              = "HTTP"
@@ -2518,6 +2523,7 @@ resource "google_compute_backend_service" "default" {
 }
 
 resource "google_compute_health_check" "default" {
+  provider = google-beta
   name     = "hc-test-%s"
   http_health_check {
     port = 80

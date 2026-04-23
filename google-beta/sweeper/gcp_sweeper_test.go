@@ -100,7 +100,6 @@ import (
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebasedataconnect"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebaseextensions"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebasehosting"
-	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebaseremoteconfig"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebasestorage"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firestore"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/gemini"
