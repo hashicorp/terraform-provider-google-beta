@@ -96,7 +96,7 @@ func resourceRuntimeconfigConfigCreate(d *schema.ResourceData, meta interface{})
 		runtimeConfig.Description = val.(string)
 	}
 
-	_, err = config.NewRuntimeconfigClient(userAgent).Projects.Configs.Create("projects/"+project, &runtimeConfig).Do()
+	_, err = NewClient(config, userAgent).Projects.Configs.Create("projects/"+project, &runtimeConfig).Do()
 
 	if err != nil {
 		return err
@@ -114,7 +114,7 @@ func resourceRuntimeconfigConfigRead(d *schema.ResourceData, meta interface{}) e
 	}
 
 	fullName := d.Id()
-	runConfig, err := config.NewRuntimeconfigClient(userAgent).Projects.Configs.Get(fullName).Do()
+	runConfig, err := NewClient(config, userAgent).Projects.Configs.Get(fullName).Do()
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("RuntimeConfig %q", d.Id()))
 	}
@@ -165,7 +165,7 @@ func resourceRuntimeconfigConfigUpdate(d *schema.ResourceData, meta interface{})
 		runtimeConfig.Description = v.(string)
 	}
 
-	_, err = config.NewRuntimeconfigClient(userAgent).Projects.Configs.Update(fullName, &runtimeConfig).Do()
+	_, err = NewClient(config, userAgent).Projects.Configs.Update(fullName, &runtimeConfig).Do()
 	if err != nil {
 		return err
 	}
@@ -181,7 +181,7 @@ func resourceRuntimeconfigConfigDelete(d *schema.ResourceData, meta interface{})
 
 	fullName := d.Id()
 
-	_, err = config.NewRuntimeconfigClient(userAgent).Projects.Configs.Delete(fullName).Do()
+	_, err = NewClient(config, userAgent).Projects.Configs.Delete(fullName).Do()
 	if err != nil {
 		return err
 	}

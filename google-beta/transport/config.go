@@ -54,9 +54,7 @@ import (
 	backupdr "google.golang.org/api/backupdr/v1"
 	"google.golang.org/api/bigquery/v2"
 	"google.golang.org/api/bigtableadmin/v2"
-	"google.golang.org/api/certificatemanager/v1"
 	"google.golang.org/api/cloudbilling/v1"
-	"google.golang.org/api/cloudbuild/v1"
 	"google.golang.org/api/cloudfunctions/v1"
 	cloudidentity "google.golang.org/api/cloudidentity/v1beta1"
 	"google.golang.org/api/cloudkms/v1"
@@ -68,15 +66,11 @@ import (
 	dataflow "google.golang.org/api/dataflow/v1b3"
 	"google.golang.org/api/dataproc/v1"
 	"google.golang.org/api/dns/v1"
-	firebase "google.golang.org/api/firebase/v1beta1"
 	healthcare "google.golang.org/api/healthcare/v1"
 	"google.golang.org/api/iam/v1"
 	iamcredentials "google.golang.org/api/iamcredentials/v1"
 	cloudlogging "google.golang.org/api/logging/v2"
-	"google.golang.org/api/pubsub/v1"
 	runadminv2 "google.golang.org/api/run/v2"
-	runtimeconfig "google.golang.org/api/runtimeconfig/v1beta1"
-	"google.golang.org/api/servicemanagement/v1"
 	"google.golang.org/api/servicenetworking/v1"
 	"google.golang.org/api/serviceusage/v1"
 	"google.golang.org/api/sourcerepo/v1"
@@ -1374,20 +1368,6 @@ func (c *Config) getTokenSource(ctx context.Context, clientScopes []string, init
 // while most only want the host URL, some older ones also want the version and some
 // of those "projects" as well. You can find out if this is required by looking at
 // the basePath value in the client library file.
-func (c *Config) NewCertificateManagerClient(userAgent string) *certificatemanager.Service {
-	certificateManagerClientBasePath := RemoveBasePathVersion(c.CertificateManagerBasePath)
-	log.Printf("[INFO] Instantiating Certificate Manager client for path %s", certificateManagerClientBasePath)
-	clientCertificateManager, err := certificatemanager.NewService(c.Context, option.WithHTTPClient(c.Client))
-	if err != nil {
-		log.Printf("[WARN] Error creating client certificate manager: %s", err)
-		return nil
-	}
-	clientCertificateManager.UserAgent = userAgent
-	clientCertificateManager.BasePath = certificateManagerClientBasePath
-
-	return clientCertificateManager
-}
-
 func (c *Config) NewComputeClient(userAgent string) *compute.Service {
 	log.Printf("[INFO] Instantiating GCE client for path %s", c.ComputeBasePath)
 	clientCompute, err := compute.NewService(c.Context, option.WithHTTPClient(c.Client))
@@ -1428,20 +1408,6 @@ func (c *Config) NewDnsClient(userAgent string) *dns.Service {
 	clientDns.BasePath = dnsClientBasePath
 
 	return clientDns
-}
-func (c *Config) NewFirebaseClient(ctx context.Context, userAgent string) *firebase.Service {
-	firebaseClientBasePath := RemoveBasePathVersion(c.FirebaseBasePath)
-	firebaseClientBasePath = strings.ReplaceAll(firebaseClientBasePath, "/firebase/", "")
-	log.Printf("[INFO] Instantiating Google Cloud firebase client for path %s", firebaseClientBasePath)
-	clientFirebase, err := firebase.NewService(c.Context, option.WithHTTPClient(c.Client))
-	if err != nil {
-		log.Printf("[WARN] Error creating client firebase: %s", err)
-		return nil
-	}
-	clientFirebase.UserAgent = userAgent
-	clientFirebase.BasePath = firebaseClientBasePath
-
-	return clientFirebase
 }
 
 func (c *Config) NewKmsClientWithCtx(ctx context.Context, userAgent string) *cloudkms.Service {
@@ -1542,21 +1508,6 @@ func (c *Config) NewBackupDRClient(userAgent string) *backupdr.Service {
 	return clientBackupdrAdmin
 }
 
-func (c *Config) NewPubsubClient(userAgent string) *pubsub.Service {
-	pubsubClientBasePath := RemoveBasePathVersion(c.PubsubBasePath)
-	log.Printf("[INFO] Instantiating Google Pubsub client for path %s", pubsubClientBasePath)
-	wrappedPubsubClient := ClientWithAdditionalRetries(c.Client, PubsubTopicProjectNotReady)
-	clientPubsub, err := pubsub.NewService(c.Context, option.WithHTTPClient(wrappedPubsubClient))
-	if err != nil {
-		log.Printf("[WARN] Error creating client pubsub: %s", err)
-		return nil
-	}
-	clientPubsub.UserAgent = userAgent
-	clientPubsub.BasePath = pubsubClientBasePath
-
-	return clientPubsub
-}
-
 func (c *Config) NewDataflowClient(userAgent string) *dataflow.Service {
 	dataflowClientBasePath := RemoveBasePathVersion(c.DataflowBasePath)
 	log.Printf("[INFO] Instantiating Google Dataflow client for path %s", dataflowClientBasePath)
@@ -1599,20 +1550,6 @@ func (c *Config) NewResourceManagerV3Client(userAgent string) *resourceManagerV3
 	return clientResourceManagerV3
 }
 
-func (c *Config) NewRuntimeconfigClient(userAgent string) *runtimeconfig.Service {
-	runtimeConfigClientBasePath := RemoveBasePathVersion(c.RuntimeConfigBasePath)
-	log.Printf("[INFO] Instantiating Google Cloud Runtimeconfig client for path %s", runtimeConfigClientBasePath)
-	clientRuntimeconfig, err := runtimeconfig.NewService(c.Context, option.WithHTTPClient(c.Client))
-	if err != nil {
-		log.Printf("[WARN] Error creating client runtime config: %s", err)
-		return nil
-	}
-	clientRuntimeconfig.UserAgent = userAgent
-	clientRuntimeconfig.BasePath = runtimeConfigClientBasePath
-
-	return clientRuntimeconfig
-}
-
 func (c *Config) NewIamClient(userAgent string) *iam.Service {
 	iamClientBasePath := RemoveBasePathVersion(c.IAMBasePath)
 	log.Printf("[INFO] Instantiating Google Cloud IAM client for path %s", iamClientBasePath)
@@ -1641,20 +1578,6 @@ func (c *Config) NewIamCredentialsClient(userAgent string) *iamcredentials.Servi
 	return clientIamCredentials
 }
 
-func (c *Config) NewServiceManClient(userAgent string) *servicemanagement.APIService {
-	serviceManagementClientBasePath := RemoveBasePathVersion(c.ServiceManagementBasePath)
-	log.Printf("[INFO] Instantiating Google Cloud Service Management client for path %s", serviceManagementClientBasePath)
-	clientServiceMan, err := servicemanagement.NewService(c.Context, option.WithHTTPClient(c.Client))
-	if err != nil {
-		log.Printf("[WARN] Error creating client service management: %s", err)
-		return nil
-	}
-	clientServiceMan.UserAgent = userAgent
-	clientServiceMan.BasePath = serviceManagementClientBasePath
-
-	return clientServiceMan
-}
-
 func (c *Config) NewServiceUsageClient(userAgent string) *serviceusage.Service {
 	serviceUsageClientBasePath := RemoveBasePathVersion(c.ServiceUsageBasePath)
 	log.Printf("[INFO] Instantiating Google Cloud Service Usage client for path %s", serviceUsageClientBasePath)
@@ -1681,20 +1604,6 @@ func (c *Config) NewBillingClient(userAgent string) *cloudbilling.APIService {
 	clientBilling.BasePath = cloudBillingClientBasePath
 
 	return clientBilling
-}
-
-func (c *Config) NewBuildClient(userAgent string) *cloudbuild.Service {
-	cloudBuildClientBasePath := RemoveBasePathVersion(c.CloudBuildBasePath)
-	log.Printf("[INFO] Instantiating Google Cloud Build client for path %s", cloudBuildClientBasePath)
-	clientBuild, err := cloudbuild.NewService(c.Context, option.WithHTTPClient(c.Client))
-	if err != nil {
-		log.Printf("[WARN] Error creating client build: %s", err)
-		return nil
-	}
-	clientBuild.UserAgent = userAgent
-	clientBuild.BasePath = cloudBuildClientBasePath
-
-	return clientBuild
 }
 
 func (c *Config) NewCloudFunctionsClient(userAgent string) *cloudfunctions.Service {

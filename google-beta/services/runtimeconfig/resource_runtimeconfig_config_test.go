@@ -21,6 +21,7 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
+	runtimeconfig_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/runtimeconfig"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
@@ -142,7 +143,7 @@ func testAccCheckRuntimeConfigExists(t *testing.T, resourceName string, runtimeC
 
 		config := acctest.GoogleProviderConfig(t)
 
-		found, err := config.NewRuntimeconfigClient(config.UserAgent).Projects.Configs.Get(rs.Primary.ID).Do()
+		found, err := runtimeconfig_tpg.NewClient(config, config.UserAgent).Projects.Configs.Get(rs.Primary.ID).Do()
 		if err != nil {
 			return err
 		}
@@ -162,7 +163,7 @@ func testAccCheckRuntimeconfigConfigDestroyProducer(t *testing.T) func(s *terraf
 				continue
 			}
 
-			_, err := config.NewRuntimeconfigClient(config.UserAgent).Projects.Configs.Get(rs.Primary.ID).Do()
+			_, err := runtimeconfig_tpg.NewClient(config, config.UserAgent).Projects.Configs.Get(rs.Primary.ID).Do()
 
 			if err == nil {
 				return fmt.Errorf("Runtimeconfig still exists")
