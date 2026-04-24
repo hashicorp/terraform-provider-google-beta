@@ -15,18 +15,18 @@
 //
 // ----------------------------------------------------------------------------
 
-// Package resourcemanager3 contains resources, datasources, etc. for the resource manager service.
-package resourcemanager3
+// Package tagslocation contains resources, datasources, etc. for the tags service.
+package tagslocation
 
 import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 )
 
 var Product = registry.Product{
-	Name:                 "resourcemanager3",
-	BaseUrl:              "https://cloudresourcemanager.googleapis.com/v3/",
-	CustomEndpointField:  "resource_manager3_custom_endpoint",
-	CustomEndpointEnvVar: "GOOGLE_RESOURCE_MANAGER3_CUSTOM_ENDPOINT",
+	Name:                 "tagslocation",
+	BaseUrl:              "https://{{location}}-cloudresourcemanager.googleapis.com/v3/",
+	CustomEndpointField:  "tags_location_custom_endpoint",
+	CustomEndpointEnvVar: "GOOGLE_TAGS_LOCATION_CUSTOM_ENDPOINT",
 }
 
 func init() {
