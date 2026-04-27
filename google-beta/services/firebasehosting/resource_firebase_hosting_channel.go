@@ -118,6 +118,25 @@ func ResourceFirebaseHostingChannel() *schema.Resource {
 			tpgresource.DefaultProviderDeletionPolicy("DELETE"),
 		),
 
+		Identity: &schema.ResourceIdentity{
+			Version: 1,
+			SchemaFunc: func() map[string]*schema.Schema {
+				return map[string]*schema.Schema{
+					"site_id": {
+						Type:              schema.TypeString,
+						RequiredForImport: true,
+					},
+					"channel_id": {
+						Type:              schema.TypeString,
+						RequiredForImport: true,
+					},
+				}
+			},
+		},
+		ResourceBehavior: schema.ResourceBehavior{
+			MutableIdentity: true,
+		},
+
 		Schema: map[string]*schema.Schema{
 			"channel_id": {
 				Type:        schema.TypeString,
@@ -272,6 +291,22 @@ func resourceFirebaseHostingChannelCreate(d *schema.ResourceData, meta interface
 
 	log.Printf("[DEBUG] Finished creating Channel %q: %#v", d.Id(), res)
 
+	identity, err := d.Identity()
+	if err == nil && identity != nil {
+		if siteIdValue, ok := d.GetOk("site_id"); ok && siteIdValue.(string) != "" {
+			if err = identity.Set("site_id", siteIdValue.(string)); err != nil {
+				return fmt.Errorf("Error setting site_id: %s", err)
+			}
+		}
+		if channelIdValue, ok := d.GetOk("channel_id"); ok && channelIdValue.(string) != "" {
+			if err = identity.Set("channel_id", channelIdValue.(string)); err != nil {
+				return fmt.Errorf("Error setting channel_id: %s", err)
+			}
+		}
+	} else {
+		log.Printf("[DEBUG] (Create) identity not set: %s", err)
+	}
+
 	return resourceFirebaseHostingChannelRead(d, meta)
 }
 
@@ -342,6 +377,24 @@ func resourceFirebaseHostingChannelRead(d *schema.ResourceData, meta interface{}
 		return fmt.Errorf("Error reading Channel: %s", err)
 	}
 
+	identity, err := d.Identity()
+	if err == nil && identity != nil {
+		if v, ok := identity.GetOk("site_id"); !ok && v == "" {
+			err = identity.Set("site_id", d.Get("site_id").(string))
+			if err != nil {
+				return fmt.Errorf("Error setting site_id: %s", err)
+			}
+		}
+		if v, ok := identity.GetOk("channel_id"); !ok && v == "" {
+			err = identity.Set("channel_id", d.Get("channel_id").(string))
+			if err != nil {
+				return fmt.Errorf("Error setting channel_id: %s", err)
+			}
+		}
+	} else {
+		log.Printf("[DEBUG] (Read) identity not set: %s", err)
+	}
+
 	return nil
 }
 
@@ -363,6 +416,21 @@ func resourceFirebaseHostingChannelUpdate(d *schema.ResourceData, meta interface
 	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
+	}
+	identity, err := d.Identity()
+	if err == nil && identity != nil {
+		if siteIdValue, ok := d.GetOk("site_id"); ok && siteIdValue.(string) != "" {
+			if err = identity.Set("site_id", siteIdValue.(string)); err != nil {
+				return fmt.Errorf("Error setting site_id: %s", err)
+			}
+		}
+		if channelIdValue, ok := d.GetOk("channel_id"); ok && channelIdValue.(string) != "" {
+			if err = identity.Set("channel_id", channelIdValue.(string)); err != nil {
+				return fmt.Errorf("Error setting channel_id: %s", err)
+			}
+		}
+	} else {
+		log.Printf("[DEBUG] (Update) identity not set: %s", err)
 	}
 
 	billingProject := ""

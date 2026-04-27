@@ -21,6 +21,7 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
@@ -109,4 +110,13 @@ func flattenDatabases(fetchedDatabases []*sqladmin.Database) []map[string]interf
 		databases = append(databases, database)
 	}
 	return databases
+}
+
+func init() {
+	registry.Schema{
+		Name:        "google_sql_databases",
+		ProductName: "sql",
+		Type:        registry.SchemaTypeDataSource,
+		Schema:      DataSourceSqlDatabases(),
+	}.Register()
 }

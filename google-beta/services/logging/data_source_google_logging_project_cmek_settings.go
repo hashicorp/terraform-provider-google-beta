@@ -20,6 +20,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
@@ -124,4 +125,13 @@ func dataSourceGoogleLoggingProjectCmekSettingsRead(d *schema.ResourceData, meta
 	}
 
 	return nil
+}
+
+func init() {
+	registry.Schema{
+		Name:        "google_logging_project_cmek_settings",
+		ProductName: "logging",
+		Type:        registry.SchemaTypeDataSource,
+		Schema:      DataSourceGoogleLoggingProjectCmekSettings(),
+	}.Register()
 }

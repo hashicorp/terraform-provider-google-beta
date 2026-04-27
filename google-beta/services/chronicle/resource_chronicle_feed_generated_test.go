@@ -76,6 +76,12 @@ func TestAccChronicleFeed_chronicleFeedBasicExample(t *testing.T) {
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"instance", "location"},
 			},
+			{
+				ResourceName:       "google_chronicle_feed.example_feed",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -128,6 +134,12 @@ func TestAccChronicleFeed_chronicleFeedGcsExample(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"feed_service_account", "instance", "location"},
+			},
+			{
+				ResourceName:       "google_chronicle_feed.example_feed",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})

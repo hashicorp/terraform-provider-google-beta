@@ -20,6 +20,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
@@ -59,4 +60,13 @@ func dataSourceGoogleComputeRegionSecurityPolicyRead(d *schema.ResourceData, met
 		return fmt.Errorf("%s not found", id)
 	}
 	return nil
+}
+
+func init() {
+	registry.Schema{
+		Name:        "google_compute_region_security_policy",
+		ProductName: "compute",
+		Type:        registry.SchemaTypeDataSource,
+		Schema:      DataSourceGoogleComputeRegionSecurityPolicy(),
+	}.Register()
 }

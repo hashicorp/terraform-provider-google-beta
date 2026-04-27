@@ -79,6 +79,12 @@ func TestAccFirebaseAILogicConfig_firebaseailogicConfigBasicExample(t *testing.T
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"generative_language_config.0.api_key", "generative_language_config.0.api_key_wo", "generative_language_config.0.api_key_wo_version", "location"},
 			},
+			{
+				ResourceName:       "google_firebase_ai_logic_config.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -165,6 +171,12 @@ func TestAccFirebaseAILogicConfig_firebaseailogicConfigFullExample(t *testing.T)
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"generative_language_config.0.api_key", "generative_language_config.0.api_key_wo", "generative_language_config.0.api_key_wo_version", "location"},
+			},
+			{
+				ResourceName:       "google_firebase_ai_logic_config.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})

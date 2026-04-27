@@ -119,6 +119,29 @@ func ResourceApiGatewayApiConfig() *schema.Resource {
 			tpgresource.DefaultProviderDeletionPolicy("DELETE"),
 		),
 
+		Identity: &schema.ResourceIdentity{
+			Version: 1,
+			SchemaFunc: func() map[string]*schema.Schema {
+				return map[string]*schema.Schema{
+					"api": {
+						Type:              schema.TypeString,
+						RequiredForImport: true,
+					},
+					"api_config_id": {
+						Type:              schema.TypeString,
+						OptionalForImport: true,
+					},
+					"project": {
+						Type:              schema.TypeString,
+						OptionalForImport: true,
+					},
+				}
+			},
+		},
+		ResourceBehavior: schema.ResourceBehavior{
+			MutableIdentity: true,
+		},
+
 		Schema: map[string]*schema.Schema{
 			"api": {
 				Type:        schema.TypeString,
@@ -451,6 +474,27 @@ func resourceApiGatewayApiConfigCreate(d *schema.ResourceData, meta interface{})
 
 	log.Printf("[DEBUG] Finished creating ApiConfig %q: %#v", d.Id(), res)
 
+	identity, err := d.Identity()
+	if err == nil && identity != nil {
+		if apiValue, ok := d.GetOk("api"); ok && apiValue.(string) != "" {
+			if err = identity.Set("api", apiValue.(string)); err != nil {
+				return fmt.Errorf("Error setting api: %s", err)
+			}
+		}
+		if apiConfigIdValue, ok := d.GetOk("api_config_id"); ok && apiConfigIdValue.(string) != "" {
+			if err = identity.Set("api_config_id", apiConfigIdValue.(string)); err != nil {
+				return fmt.Errorf("Error setting api_config_id: %s", err)
+			}
+		}
+		if projectValue, ok := d.GetOk("project"); ok && projectValue.(string) != "" {
+			if err = identity.Set("project", projectValue.(string)); err != nil {
+				return fmt.Errorf("Error setting project: %s", err)
+			}
+		}
+	} else {
+		log.Printf("[DEBUG] (Create) identity not set: %s", err)
+	}
+
 	return resourceApiGatewayApiConfigRead(d, meta)
 }
 
@@ -536,6 +580,30 @@ func resourceApiGatewayApiConfigRead(d *schema.ResourceData, meta interface{}) e
 		return fmt.Errorf("Error reading ApiConfig: %s", err)
 	}
 
+	identity, err := d.Identity()
+	if err == nil && identity != nil {
+		if v, ok := identity.GetOk("api"); !ok && v == "" {
+			err = identity.Set("api", d.Get("api").(string))
+			if err != nil {
+				return fmt.Errorf("Error setting api: %s", err)
+			}
+		}
+		if v, ok := identity.GetOk("api_config_id"); !ok && v == "" {
+			err = identity.Set("api_config_id", d.Get("api_config_id").(string))
+			if err != nil {
+				return fmt.Errorf("Error setting api_config_id: %s", err)
+			}
+		}
+		if v, ok := identity.GetOk("project"); !ok && v == "" {
+			err = identity.Set("project", d.Get("project").(string))
+			if err != nil {
+				return fmt.Errorf("Error setting project: %s", err)
+			}
+		}
+	} else {
+		log.Printf("[DEBUG] (Read) identity not set: %s", err)
+	}
+
 	return nil
 }
 
@@ -557,6 +625,26 @@ func resourceApiGatewayApiConfigUpdate(d *schema.ResourceData, meta interface{})
 	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
+	}
+	identity, err := d.Identity()
+	if err == nil && identity != nil {
+		if apiValue, ok := d.GetOk("api"); ok && apiValue.(string) != "" {
+			if err = identity.Set("api", apiValue.(string)); err != nil {
+				return fmt.Errorf("Error setting api: %s", err)
+			}
+		}
+		if apiConfigIdValue, ok := d.GetOk("api_config_id"); ok && apiConfigIdValue.(string) != "" {
+			if err = identity.Set("api_config_id", apiConfigIdValue.(string)); err != nil {
+				return fmt.Errorf("Error setting api_config_id: %s", err)
+			}
+		}
+		if projectValue, ok := d.GetOk("project"); ok && projectValue.(string) != "" {
+			if err = identity.Set("project", projectValue.(string)); err != nil {
+				return fmt.Errorf("Error setting project: %s", err)
+			}
+		}
+	} else {
+		log.Printf("[DEBUG] (Update) identity not set: %s", err)
 	}
 
 	billingProject := ""

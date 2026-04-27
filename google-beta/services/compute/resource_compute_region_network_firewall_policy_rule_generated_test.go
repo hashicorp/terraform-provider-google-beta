@@ -82,6 +82,12 @@ func TestAccComputeRegionNetworkFirewallPolicyRule_regionNetworkFirewallPolicyRu
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"firewall_policy", "region"},
 			},
+			{
+				ResourceName:       "google_compute_region_network_firewall_policy_rule.primary",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -184,6 +190,12 @@ func TestAccComputeRegionNetworkFirewallPolicyRule_regionNetworkFirewallPolicyRu
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"firewall_policy", "region"},
 			},
+			{
+				ResourceName:       "google_compute_region_network_firewall_policy_rule.primary",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -249,6 +261,12 @@ func TestAccComputeRegionNetworkFirewallPolicyRule_regionNetworkFirewallPolicyRu
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"firewall_policy", "region"},
+			},
+			{
+				ResourceName:       "google_compute_region_network_firewall_policy_rule.primary",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})
@@ -321,6 +339,12 @@ func TestAccComputeRegionNetworkFirewallPolicyRule_regionNetworkFirewallPolicyRu
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"firewall_policy", "region"},
 			},
+			{
+				ResourceName:       "google_compute_region_network_firewall_policy_rule.primary",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -385,6 +409,12 @@ func TestAccComputeRegionNetworkFirewallPolicyRule_regionNetworkFirewallPolicyRu
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"firewall_policy", "region"},
 			},
+			{
+				ResourceName:       "google_compute_region_network_firewall_policy_rule.primary",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -446,6 +476,12 @@ func TestAccComputeRegionNetworkFirewallPolicyRule_firewallPolicyRuleTargetTypeI
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"firewall_policy", "region"},
+			},
+			{
+				ResourceName:       "google_compute_region_network_firewall_policy_rule.internal_managed_lb_rule",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})

@@ -78,6 +78,12 @@ func TestAccFirebaseExtensionsInstance_firebaseExtensionsInstanceResizeImageExam
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"instance_id"},
 			},
+			{
+				ResourceName:       "google_firebase_extensions_instance.resize_image",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }

@@ -24,6 +24,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgdclresource"
 	dcl "github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgdclresource"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -733,4 +734,13 @@ func flattenApikeysKeyRestrictionsServerKeyRestrictions(obj *KeyRestrictionsServ
 
 	return []interface{}{transformed}
 
+}
+
+func init() {
+	registry.Schema{
+		Name:        "google_apikeys_key",
+		ProductName: "apikeys",
+		Type:        registry.SchemaTypeResource,
+		Schema:      ResourceApikeysKey(),
+	}.Register()
 }

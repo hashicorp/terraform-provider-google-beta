@@ -22,6 +22,7 @@ import (
 	"net/http"
 	"regexp"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
@@ -186,4 +187,13 @@ func dataSourceParameterManagerRegionalRegionalParameterVersionRenderRead(d *sch
 	}
 	d.SetId(nameValue.(string))
 	return nil
+}
+
+func init() {
+	registry.Schema{
+		Name:        "google_parameter_manager_regional_parameter_version_render",
+		ProductName: "parametermanagerregional",
+		Type:        registry.SchemaTypeDataSource,
+		Schema:      DataSourceParameterManagerRegionalRegionalParameterVersionRender(),
+	}.Register()
 }

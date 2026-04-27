@@ -108,8 +108,8 @@ func ResourceNetappStoragePool() *schema.Resource {
 		},
 
 		Timeouts: &schema.ResourceTimeout{
-			Create: schema.DefaultTimeout(45 * time.Minute),
-			Update: schema.DefaultTimeout(60 * time.Minute),
+			Create: schema.DefaultTimeout(120 * time.Minute),
+			Update: schema.DefaultTimeout(120 * time.Minute),
 			Delete: schema.DefaultTimeout(45 * time.Minute),
 		},
 
@@ -118,6 +118,29 @@ func ResourceNetappStoragePool() *schema.Resource {
 			tpgresource.DefaultProviderProject,
 			tpgresource.DefaultProviderDeletionPolicy("DELETE"),
 		),
+
+		Identity: &schema.ResourceIdentity{
+			Version: 1,
+			SchemaFunc: func() map[string]*schema.Schema {
+				return map[string]*schema.Schema{
+					"location": {
+						Type:              schema.TypeString,
+						RequiredForImport: true,
+					},
+					"name": {
+						Type:              schema.TypeString,
+						RequiredForImport: true,
+					},
+					"project": {
+						Type:              schema.TypeString,
+						OptionalForImport: true,
+					},
+				}
+			},
+		},
+		ResourceBehavior: schema.ResourceBehavior{
+			MutableIdentity: true,
+		},
 
 		Schema: map[string]*schema.Schema{
 			"capacity_gib": {
@@ -240,10 +263,19 @@ Possible values are: AUTO, MANUAL. Possible values: ["QOS_TYPE_UNSPECIFIED", "AU
 				Type:         schema.TypeString,
 				Computed:     true,
 				Optional:     true,
+				Deprecated:   "`scaleTier` is deprecated and will be removed in a future major release. Use `scaleType` instead.",
 				ForceNew:     true,
 				ValidateFunc: verify.ValidateEnum([]string{"SCALE_TIER_UNSPECIFIED", "SCALE_TIER_STANDARD", "SCALE_TIER_ENTERPRISE", ""}),
 				Description: `The effective scale tier of the storage pool. If 'scale_tier' is not
 specified during creation, this defaults to 'SCALE_TIER_STANDARD'. Possible values: ["SCALE_TIER_UNSPECIFIED", "SCALE_TIER_STANDARD", "SCALE_TIER_ENTERPRISE"]`,
+			},
+			"scale_type": {
+				Type:         schema.TypeString,
+				Computed:     true,
+				Optional:     true,
+				ForceNew:     true,
+				ValidateFunc: verify.ValidateEnum([]string{"SCALE_TYPE_UNSPECIFIED", "SCALE_TYPE_DEFAULT", "SCALE_TYPE_SCALEOUT", ""}),
+				Description:  `The scale type of the storage pool. Defaults to 'SCALE_TYPE_DEFAULT' if not specified. Possible values: ["SCALE_TYPE_UNSPECIFIED", "SCALE_TYPE_DEFAULT", "SCALE_TYPE_SCALEOUT"]`,
 			},
 			"total_iops": {
 				Type:        schema.TypeString,
@@ -457,6 +489,12 @@ func resourceNetappStoragePoolCreate(d *schema.ResourceData, meta interface{}) e
 	} else if v, ok := d.GetOkExists("scale_tier"); !tpgresource.IsEmptyValue(reflect.ValueOf(scaleTierProp)) && (ok || !reflect.DeepEqual(v, scaleTierProp)) {
 		obj["scaleTier"] = scaleTierProp
 	}
+	scaleTypeProp, err := expandNetappStoragePoolScaleType(d.Get("scale_type"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("scale_type"); !tpgresource.IsEmptyValue(reflect.ValueOf(scaleTypeProp)) && (ok || !reflect.DeepEqual(v, scaleTypeProp)) {
+		obj["scaleType"] = scaleTypeProp
+	}
 	modeProp, err := expandNetappStoragePoolMode(d.Get("mode"), d, config)
 	if err != nil {
 		return err
@@ -522,6 +560,27 @@ func resourceNetappStoragePoolCreate(d *schema.ResourceData, meta interface{}) e
 	}
 
 	log.Printf("[DEBUG] Finished creating StoragePool %q: %#v", d.Id(), res)
+
+	identity, err := d.Identity()
+	if err == nil && identity != nil {
+		if locationValue, ok := d.GetOk("location"); ok && locationValue.(string) != "" {
+			if err = identity.Set("location", locationValue.(string)); err != nil {
+				return fmt.Errorf("Error setting location: %s", err)
+			}
+		}
+		if nameValue, ok := d.GetOk("name"); ok && nameValue.(string) != "" {
+			if err = identity.Set("name", nameValue.(string)); err != nil {
+				return fmt.Errorf("Error setting name: %s", err)
+			}
+		}
+		if projectValue, ok := d.GetOk("project"); ok && projectValue.(string) != "" {
+			if err = identity.Set("project", projectValue.(string)); err != nil {
+				return fmt.Errorf("Error setting project: %s", err)
+			}
+		}
+	} else {
+		log.Printf("[DEBUG] (Create) identity not set: %s", err)
+	}
 
 	return resourceNetappStoragePoolRead(d, meta)
 }
@@ -655,6 +714,9 @@ func resourceNetappStoragePoolRead(d *schema.ResourceData, meta interface{}) err
 	if err := d.Set("scale_tier", flattenNetappStoragePoolScaleTier(res["scaleTier"], d, config)); err != nil {
 		return fmt.Errorf("Error reading StoragePool: %s", err)
 	}
+	if err := d.Set("scale_type", flattenNetappStoragePoolScaleType(res["scaleType"], d, config)); err != nil {
+		return fmt.Errorf("Error reading StoragePool: %s", err)
+	}
 	if err := d.Set("mode", flattenNetappStoragePoolMode(res["mode"], d, config)); err != nil {
 		return fmt.Errorf("Error reading StoragePool: %s", err)
 	}
@@ -663,6 +725,30 @@ func resourceNetappStoragePoolRead(d *schema.ResourceData, meta interface{}) err
 	}
 	if err := d.Set("effective_labels", flattenNetappStoragePoolEffectiveLabels(res["labels"], d, config)); err != nil {
 		return fmt.Errorf("Error reading StoragePool: %s", err)
+	}
+
+	identity, err := d.Identity()
+	if err == nil && identity != nil {
+		if v, ok := identity.GetOk("location"); !ok && v == "" {
+			err = identity.Set("location", d.Get("location").(string))
+			if err != nil {
+				return fmt.Errorf("Error setting location: %s", err)
+			}
+		}
+		if v, ok := identity.GetOk("name"); !ok && v == "" {
+			err = identity.Set("name", d.Get("name").(string))
+			if err != nil {
+				return fmt.Errorf("Error setting name: %s", err)
+			}
+		}
+		if v, ok := identity.GetOk("project"); !ok && v == "" {
+			err = identity.Set("project", d.Get("project").(string))
+			if err != nil {
+				return fmt.Errorf("Error setting project: %s", err)
+			}
+		}
+	} else {
+		log.Printf("[DEBUG] (Read) identity not set: %s", err)
 	}
 
 	return nil
@@ -686,6 +772,26 @@ func resourceNetappStoragePoolUpdate(d *schema.ResourceData, meta interface{}) e
 	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
+	}
+	identity, err := d.Identity()
+	if err == nil && identity != nil {
+		if locationValue, ok := d.GetOk("location"); ok && locationValue.(string) != "" {
+			if err = identity.Set("location", locationValue.(string)); err != nil {
+				return fmt.Errorf("Error setting location: %s", err)
+			}
+		}
+		if nameValue, ok := d.GetOk("name"); ok && nameValue.(string) != "" {
+			if err = identity.Set("name", nameValue.(string)); err != nil {
+				return fmt.Errorf("Error setting name: %s", err)
+			}
+		}
+		if projectValue, ok := d.GetOk("project"); ok && projectValue.(string) != "" {
+			if err = identity.Set("project", projectValue.(string)); err != nil {
+				return fmt.Errorf("Error setting project: %s", err)
+			}
+		}
+	} else {
+		log.Printf("[DEBUG] (Update) identity not set: %s", err)
 	}
 
 	billingProject := ""
@@ -1137,6 +1243,10 @@ func flattenNetappStoragePoolScaleTier(v interface{}, d *schema.ResourceData, co
 	return v
 }
 
+func flattenNetappStoragePoolScaleType(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenNetappStoragePoolMode(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
@@ -1229,6 +1339,10 @@ func expandNetappStoragePoolType(v interface{}, d tpgresource.TerraformResourceD
 }
 
 func expandNetappStoragePoolScaleTier(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandNetappStoragePoolScaleType(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

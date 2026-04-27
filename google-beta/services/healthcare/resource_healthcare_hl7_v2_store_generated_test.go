@@ -76,6 +76,12 @@ func TestAccHealthcareHl7V2Store_healthcareHl7V2StoreBasicExample(t *testing.T) 
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"dataset", "labels", "self_link", "terraform_labels"},
 			},
+			{
+				ResourceName:       "google_healthcare_hl7_v2_store.store",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -131,6 +137,12 @@ func TestAccHealthcareHl7V2Store_healthcareHl7V2StoreParserConfigExample(t *test
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"dataset", "labels", "self_link", "terraform_labels"},
+			},
+			{
+				ResourceName:       "google_healthcare_hl7_v2_store.store",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})
@@ -261,6 +273,12 @@ func TestAccHealthcareHl7V2Store_healthcareHl7V2StoreUnschematizedExample(t *tes
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"dataset", "labels", "self_link", "terraform_labels"},
+			},
+			{
+				ResourceName:       "google_healthcare_hl7_v2_store.store",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})

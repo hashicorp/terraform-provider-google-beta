@@ -22,6 +22,7 @@ import (
 	"log"
 	"regexp"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
@@ -243,4 +244,13 @@ func dataSourceSecretManagerRegionalRegionalSecretVersionRead(d *schema.Resource
 
 	d.SetId(nameValue.(string))
 	return nil
+}
+
+func init() {
+	registry.Schema{
+		Name:        "google_secret_manager_regional_secret_version",
+		ProductName: "secretmanagerregional",
+		Type:        registry.SchemaTypeDataSource,
+		Schema:      DataSourceSecretManagerRegionalRegionalSecretVersion(),
+	}.Register()
 }

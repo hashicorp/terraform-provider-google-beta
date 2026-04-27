@@ -76,6 +76,12 @@ func TestAccNetworkServicesAgentGateway_networkServicesAgentGatewayFullExample(t
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"labels", "location", "name", "terraform_labels"},
 			},
+			{
+				ResourceName:       "google_network_services_agent_gateway.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -135,6 +141,12 @@ func TestAccNetworkServicesAgentGateway_networkServicesAgentGatewayClientToAgent
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"labels", "location", "name", "terraform_labels"},
 			},
+			{
+				ResourceName:       "google_network_services_agent_gateway.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -183,6 +195,12 @@ func TestAccNetworkServicesAgentGateway_networkServicesAgentGatewaySelfManagedEx
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"labels", "location", "name", "terraform_labels"},
+			},
+			{
+				ResourceName:       "google_network_services_agent_gateway.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})

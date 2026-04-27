@@ -30,6 +30,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"google.golang.org/api/servicemanagement/v1"
@@ -475,4 +476,13 @@ func flattenServiceManagementEndpoints(endpoints []*servicemanagement.Endpoint) 
 		}
 	}
 	return flattened
+}
+
+func init() {
+	registry.Schema{
+		Name:        "google_endpoints_service",
+		ProductName: "servicemanagement",
+		Type:        registry.SchemaTypeResource,
+		Schema:      ResourceEndpointsService(),
+	}.Register()
 }

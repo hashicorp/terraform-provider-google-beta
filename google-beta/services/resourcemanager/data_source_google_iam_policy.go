@@ -25,6 +25,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgiamresource"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	"google.golang.org/api/cloudresourcemanager/v1"
@@ -275,4 +276,13 @@ func iamPolicyBindingsLessFunction(policy cloudresourcemanager.Policy) func(i, j
 		// Comparing conditions' descriptions is the last available way to sort
 		return policy.Bindings[i].Condition.Description < policy.Bindings[j].Condition.Description
 	}
+}
+
+func init() {
+	registry.Schema{
+		Name:        "google_iam_policy",
+		ProductName: "resourcemanager",
+		Type:        registry.SchemaTypeDataSource,
+		Schema:      DataSourceGoogleIamPolicy(),
+	}.Register()
 }

@@ -63,7 +63,7 @@ func TestAccChronicleDataTableRow_chronicleDataTableRowBasicExample(t *testing.T
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckChronicleDataTableRowDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -75,6 +75,12 @@ func TestAccChronicleDataTableRow_chronicleDataTableRowBasicExample(t *testing.T
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"data_table_id", "instance", "location"},
 			},
+			{
+				ResourceName:       "google_chronicle_data_table_row.example_row",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -82,7 +88,6 @@ func TestAccChronicleDataTableRow_chronicleDataTableRowBasicExample(t *testing.T
 func testAccChronicleDataTableRow_chronicleDataTableRowBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_chronicle_data_table" "example_dt" {
-  provider       = google-beta
   location       = "us"
   instance = "%{instance_id}"
   data_table_id  = "%{data_table_id}"
@@ -100,7 +105,6 @@ resource "google_chronicle_data_table" "example_dt" {
 }
 
 resource "google_chronicle_data_table_row" "example_row" {
-  provider       = google-beta
   location       = "us"
   instance       = "%{instance_id}"
   data_table_id  = google_chronicle_data_table.example_dt.data_table_id

@@ -79,6 +79,12 @@ func TestAccComputeFutureReservation_futureReservationBasicExample(t *testing.T)
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"auto_created_reservations_delete_time", "auto_delete_auto_created_reservations"},
 			},
+			{
+				ResourceName:       "google_compute_future_reservation.gce_future_reservation",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -136,6 +142,12 @@ func TestAccComputeFutureReservation_futureReservationAggregateReservationExampl
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"auto_created_reservations_delete_time", "auto_delete_auto_created_reservations"},
+			},
+			{
+				ResourceName:       "google_compute_future_reservation.gce_future_reservation",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})
@@ -203,6 +215,12 @@ func TestAccComputeFutureReservation_sharedFutureReservationExample(t *testing.T
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"auto_created_reservations_delete_time", "auto_delete_auto_created_reservations"},
+			},
+			{
+				ResourceName:       "google_compute_future_reservation.gce_future_reservation",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})

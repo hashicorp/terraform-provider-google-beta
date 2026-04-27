@@ -22,11 +22,13 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 )
 
-const ProductName = "netapp"
+var Product = registry.Product{
+	Name:                 "netapp",
+	BaseUrl:              "https://netapp.googleapis.com/v1beta1/",
+	CustomEndpointField:  "netapp_custom_endpoint",
+	CustomEndpointEnvVar: "GOOGLE_NETAPP_CUSTOM_ENDPOINT",
+}
 
 func init() {
-	registry.Product{
-		Name:    "netapp",
-		BaseUrl: "https://netapp.googleapis.com/v1beta1/",
-	}.Register()
+	Product.Register()
 }

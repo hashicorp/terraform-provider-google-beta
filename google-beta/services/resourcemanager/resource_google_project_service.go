@@ -26,6 +26,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	tpgserviceusage "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/serviceusage"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
@@ -111,6 +112,22 @@ func ResourceGoogleProjectService() *schema.Resource {
 			tpgresource.DefaultProviderProject,
 		),
 
+		Identity: &schema.ResourceIdentity{
+			Version: 1,
+			SchemaFunc: func() map[string]*schema.Schema {
+				return map[string]*schema.Schema{
+					"project": {
+						Type:              schema.TypeString,
+						OptionalForImport: true,
+					},
+					"service": {
+						Type:              schema.TypeString,
+						RequiredForImport: true,
+					},
+				}
+			},
+		},
+
 		Schema: map[string]*schema.Schema{
 			"service": {
 				Type:         schema.TypeString,
@@ -148,6 +165,35 @@ func ResourceGoogleProjectService() *schema.Resource {
 }
 
 func resourceGoogleProjectServiceImport(d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
+	if d.Id() == "" {
+		identity, err := d.Identity()
+		if err != nil {
+			return nil, fmt.Errorf("google_project_service import: %w", err)
+		}
+		serviceV, ok := identity.GetOk("service")
+		if !ok {
+			return nil, fmt.Errorf("import via identity requires identity attribute %q", "service")
+		}
+		serviceStr, ok := serviceV.(string)
+		if !ok || serviceStr == "" {
+			return nil, fmt.Errorf("import via identity requires identity attribute %q to be a non-empty string", "service")
+		}
+		var projectStr string
+		if projectV, ok := identity.GetOk("project"); ok && projectV != nil {
+			if s, ok := projectV.(string); ok {
+				projectStr = s
+			}
+		}
+		if projectStr == "" {
+			config, ok := m.(*transport_tpg.Config)
+			if !ok || config.Project == "" {
+				return nil, fmt.Errorf("import via identity requires identity attribute %q or a default project in the provider configuration", "project")
+			}
+		}
+		projectStr = tpgresource.GetResourceNameFromSelfLink(projectStr)
+		d.SetId(fmt.Sprintf("%s/%s", projectStr, serviceStr))
+	}
+
 	parts := strings.Split(d.Id(), "/")
 	if len(parts) != 2 {
 		return nil, fmt.Errorf("Invalid google_project_service id format for import, expecting `{project}/{service}`, found %s", d.Id())
@@ -157,6 +203,12 @@ func resourceGoogleProjectServiceImport(d *schema.ResourceData, m interface{}) (
 	}
 	if err := d.Set("service", parts[1]); err != nil {
 		return nil, fmt.Errorf("Error setting service: %s", err)
+	}
+	if err := tpgresource.SetResourceIdentityAttributes(d, map[string]interface{}{
+		"project": parts[0],
+		"service": parts[1],
+	}); err != nil {
+		return nil, err
 	}
 	return []*schema.ResourceData{d}, nil
 }
@@ -187,6 +239,12 @@ func resourceGoogleProjectServiceCreate(d *schema.ResourceData, meta interface{}
 		}
 		if err := d.Set("service", srv); err != nil {
 			return fmt.Errorf("Error setting service: %s", err)
+		}
+		if err := tpgresource.SetResourceIdentityAttributes(d, map[string]interface{}{
+			"project": project,
+			"service": srv,
+		}); err != nil {
+			return err
 		}
 		return nil
 	}
@@ -249,6 +307,12 @@ func resourceGoogleProjectServiceRead(d *schema.ResourceData, meta interface{}) 
 		}
 		if err := d.Set("service", srv); err != nil {
 			return fmt.Errorf("Error setting service: %s", err)
+		}
+		if err := tpgresource.SetResourceIdentityAttributes(d, map[string]interface{}{
+			"project": project,
+			"service": srv,
+		}); err != nil {
+			return err
 		}
 		return nil
 	}
@@ -349,4 +413,13 @@ func disableServiceUsageProjectService(service, project string, d *schema.Resour
 		return fmt.Errorf("Error disabling service %q for project %q: %v", service, project, err)
 	}
 	return nil
+}
+
+func init() {
+	registry.Schema{
+		Name:        "google_project_service",
+		ProductName: "resourcemanager",
+		Type:        registry.SchemaTypeResource,
+		Schema:      ResourceGoogleProjectService(),
+	}.Register()
 }

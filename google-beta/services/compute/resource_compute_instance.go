@@ -33,11 +33,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/retry"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
-	"github.com/mitchellh/hashstructure"
-
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
+	"github.com/mitchellh/hashstructure"
 
 	compute "google.golang.org/api/compute/v0.beta"
 )
@@ -1666,6 +1666,13 @@ be from 0 to 999,999,999 inclusive.`,
 					},
 				},
 			},
+			"erase_windows_vss_signature": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				ForceNew:    true,
+				Default:     false,
+				Description: `Specifies whether the disks restored from source snapshots or source machine image should erase Windows specific VSS signature.`,
+			},
 			//UDP schema start
 			"deletion_policy": tpgresource.DeletionPolicySchemaEntry("DELETE"),
 			//UDP schema end
@@ -1841,6 +1848,7 @@ func expandComputeInstance(project string, d *schema.ResourceData, config *trans
 		ReservationAffinity:        reservationAffinity,
 		KeyRevocationActionType:    d.Get("key_revocation_action_type").(string),
 		InstanceEncryptionKey:      expandComputeInstanceEncryptionKey(d),
+		EraseWindowsVssSignature:   d.Get("erase_windows_vss_signature").(bool),
 	}, nil
 }
 
@@ -2298,6 +2306,13 @@ func resourceComputeInstanceRead(d *schema.ResourceData, meta interface{}) error
 	}
 	if err := d.Set("instance_encryption_key", flattenComputeInstanceEncryptionKey(instance.InstanceEncryptionKey)); err != nil {
 		return fmt.Errorf("Error setting instance_encryption_key: %s", err)
+	}
+	// If not forced to false, upgrading to a new provider version and subsequently changing a vm property
+	// will trigger replacement when erase_windows_vss_signature = null in state is changed to false as part of a refresh
+	if _, ok := d.GetOkExists("erase_windows_vss_signature"); !ok {
+		if err := d.Set("erase_windows_vss_signature", false); err != nil {
+			return fmt.Errorf("Error setting erase_windows_vss_signature: %s", err)
+		}
 	}
 
 	d.SetId(fmt.Sprintf("projects/%s/zones/%s/instances/%s", project, zone, instance.Name))
@@ -3558,6 +3573,12 @@ func resourceComputeInstanceImportState(d *schema.ResourceData, meta interface{}
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}
+	// erase_windows_vss_signature is not a property of a vm so force to false on import.
+	// If not set, value is null in state and will cause replacement if a vm property is subsequently updated (eg. machine_type).
+	if err := d.Set("erase_windows_vss_signature", false); err != nil {
+		return nil, fmt.Errorf("Error setting erase_windows_vss_signature: %s", err)
+	}
+
 	d.SetId(id)
 
 	return []*schema.ResourceData{d}, nil
@@ -3975,4 +3996,13 @@ func updateDisk(d *schema.ResourceData, config *transport_tpg.Config, userAgent,
 		return err
 	}
 	return nil
+}
+
+func init() {
+	registry.Schema{
+		Name:        "google_compute_instance",
+		ProductName: "compute",
+		Type:        registry.SchemaTypeResource,
+		Schema:      ResourceComputeInstance(),
+	}.Register()
 }

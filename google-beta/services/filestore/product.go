@@ -22,11 +22,13 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 )
 
-const ProductName = "filestore"
+var Product = registry.Product{
+	Name:                 "filestore",
+	BaseUrl:              "https://file.googleapis.com/v1beta1/",
+	CustomEndpointField:  "filestore_custom_endpoint",
+	CustomEndpointEnvVar: "GOOGLE_FILESTORE_CUSTOM_ENDPOINT",
+}
 
 func init() {
-	registry.Product{
-		Name:    "filestore",
-		BaseUrl: "https://file.googleapis.com/v1beta1/",
-	}.Register()
+	Product.Register()
 }

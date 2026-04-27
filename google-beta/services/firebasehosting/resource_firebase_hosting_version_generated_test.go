@@ -74,6 +74,12 @@ func TestAccFirebaseHostingVersion_firebasehostingVersionRedirectExample(t *test
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"site_id"},
 			},
+			{
+				ResourceName:       "google_firebase_hosting_version.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -130,6 +136,12 @@ func TestAccFirebaseHostingVersion_firebasehostingVersionHeadersExample(t *testi
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"site_id"},
+			},
+			{
+				ResourceName:       "google_firebase_hosting_version.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})
@@ -190,6 +202,12 @@ func TestAccFirebaseHostingVersion_firebasehostingVersionHeadersRegexExample(t *
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"site_id"},
 			},
+			{
+				ResourceName:       "google_firebase_hosting_version.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -249,6 +267,12 @@ func TestAccFirebaseHostingVersion_firebasehostingVersionPathExample(t *testing.
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"site_id"},
 			},
+			{
+				ResourceName:       "google_firebase_hosting_version.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -306,6 +330,12 @@ func TestAccFirebaseHostingVersion_firebasehostingVersionCloudRunExample(t *test
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"deletion_protection", "site_id"},
+			},
+			{
+				ResourceName:       "google_firebase_hosting_version.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})
@@ -385,6 +415,12 @@ func TestAccFirebaseHostingVersion_firebasehostingVersionCloudFunctionsExample(t
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"site_id"},
+			},
+			{
+				ResourceName:       "google_firebase_hosting_version.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})

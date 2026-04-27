@@ -120,6 +120,29 @@ func ResourceSaasRuntimeTenant() *schema.Resource {
 			tpgresource.DefaultProviderDeletionPolicy("DELETE"),
 		),
 
+		Identity: &schema.ResourceIdentity{
+			Version: 1,
+			SchemaFunc: func() map[string]*schema.Schema {
+				return map[string]*schema.Schema{
+					"location": {
+						Type:              schema.TypeString,
+						RequiredForImport: true,
+					},
+					"tenant_id": {
+						Type:              schema.TypeString,
+						RequiredForImport: true,
+					},
+					"project": {
+						Type:              schema.TypeString,
+						OptionalForImport: true,
+					},
+				}
+			},
+		},
+		ResourceBehavior: schema.ResourceBehavior{
+			MutableIdentity: true,
+		},
+
 		Schema: map[string]*schema.Schema{
 			"location": {
 				Type:        schema.TypeString,
@@ -132,8 +155,8 @@ func ResourceSaasRuntimeTenant() *schema.Resource {
 				Required: true,
 				ForceNew: true,
 				Description: `A reference to the Saas that defines the product (managed service) that
-the producer wants to manage with SaaS Runtime. Part of the
-SaaS Runtime common data model.`,
+the producer wants to manage with App Lifecycle Manager. Part of the
+App Lifecycle Manager common data model.`,
 			},
 			"tenant_id": {
 				Type:        schema.TypeString,
@@ -160,7 +183,7 @@ Please refer to the field 'effective_annotations' for all of the annotations pre
 				ForceNew: true,
 				Description: `A reference to the consumer resource this SaaS Tenant is representing.
 
-The relationship with a consumer resource can be used by SaaS Runtime for
+The relationship with a consumer resource can be used by App Lifecycle Manager for
 retrieving consumer-defined settings and policies such as maintenance
 policies (using Unified Maintenance Policy API).`,
 			},
@@ -321,6 +344,27 @@ func resourceSaasRuntimeTenantCreate(d *schema.ResourceData, meta interface{}) e
 
 	log.Printf("[DEBUG] Finished creating Tenant %q: %#v", d.Id(), res)
 
+	identity, err := d.Identity()
+	if err == nil && identity != nil {
+		if locationValue, ok := d.GetOk("location"); ok && locationValue.(string) != "" {
+			if err = identity.Set("location", locationValue.(string)); err != nil {
+				return fmt.Errorf("Error setting location: %s", err)
+			}
+		}
+		if tenantIdValue, ok := d.GetOk("tenant_id"); ok && tenantIdValue.(string) != "" {
+			if err = identity.Set("tenant_id", tenantIdValue.(string)); err != nil {
+				return fmt.Errorf("Error setting tenant_id: %s", err)
+			}
+		}
+		if projectValue, ok := d.GetOk("project"); ok && projectValue.(string) != "" {
+			if err = identity.Set("project", projectValue.(string)); err != nil {
+				return fmt.Errorf("Error setting project: %s", err)
+			}
+		}
+	} else {
+		log.Printf("[DEBUG] (Create) identity not set: %s", err)
+	}
+
 	return resourceSaasRuntimeTenantRead(d, meta)
 }
 
@@ -415,6 +459,30 @@ func resourceSaasRuntimeTenantRead(d *schema.ResourceData, meta interface{}) err
 		return fmt.Errorf("Error reading Tenant: %s", err)
 	}
 
+	identity, err := d.Identity()
+	if err == nil && identity != nil {
+		if v, ok := identity.GetOk("location"); !ok && v == "" {
+			err = identity.Set("location", d.Get("location").(string))
+			if err != nil {
+				return fmt.Errorf("Error setting location: %s", err)
+			}
+		}
+		if v, ok := identity.GetOk("tenant_id"); !ok && v == "" {
+			err = identity.Set("tenant_id", d.Get("tenant_id").(string))
+			if err != nil {
+				return fmt.Errorf("Error setting tenant_id: %s", err)
+			}
+		}
+		if v, ok := identity.GetOk("project"); !ok && v == "" {
+			err = identity.Set("project", d.Get("project").(string))
+			if err != nil {
+				return fmt.Errorf("Error setting project: %s", err)
+			}
+		}
+	} else {
+		log.Printf("[DEBUG] (Read) identity not set: %s", err)
+	}
+
 	return nil
 }
 
@@ -436,6 +504,26 @@ func resourceSaasRuntimeTenantUpdate(d *schema.ResourceData, meta interface{}) e
 	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
+	}
+	identity, err := d.Identity()
+	if err == nil && identity != nil {
+		if locationValue, ok := d.GetOk("location"); ok && locationValue.(string) != "" {
+			if err = identity.Set("location", locationValue.(string)); err != nil {
+				return fmt.Errorf("Error setting location: %s", err)
+			}
+		}
+		if tenantIdValue, ok := d.GetOk("tenant_id"); ok && tenantIdValue.(string) != "" {
+			if err = identity.Set("tenant_id", tenantIdValue.(string)); err != nil {
+				return fmt.Errorf("Error setting tenant_id: %s", err)
+			}
+		}
+		if projectValue, ok := d.GetOk("project"); ok && projectValue.(string) != "" {
+			if err = identity.Set("project", projectValue.(string)); err != nil {
+				return fmt.Errorf("Error setting project: %s", err)
+			}
+		}
+	} else {
+		log.Printf("[DEBUG] (Update) identity not set: %s", err)
 	}
 
 	billingProject := ""

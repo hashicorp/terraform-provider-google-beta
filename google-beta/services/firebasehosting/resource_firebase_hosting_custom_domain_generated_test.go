@@ -76,6 +76,12 @@ func TestAccFirebaseHostingCustomDomain_firebasehostingCustomdomainBasicExample(
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"custom_domain", "site_id"},
 			},
+			{
+				ResourceName:       "google_firebase_hosting_custom_domain.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -118,6 +124,12 @@ func TestAccFirebaseHostingCustomDomain_firebasehostingCustomdomainFullExample(t
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"custom_domain", "site_id"},
+			},
+			{
+				ResourceName:       "google_firebase_hosting_custom_domain.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})
@@ -173,6 +185,12 @@ func TestAccFirebaseHostingCustomDomain_firebasehostingCustomdomainCloudRunExamp
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"custom_domain", "deletion_protection", "site_id"},
+			},
+			{
+				ResourceName:       "google_firebase_hosting_custom_domain.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})

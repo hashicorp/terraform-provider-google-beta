@@ -76,6 +76,12 @@ func TestAccDataplexDataAsset_dataplexDataAssetBasicExample(t *testing.T) {
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"data_asset_id", "data_product_id", "labels", "location", "terraform_labels"},
 			},
+			{
+				ResourceName:       "google_dataplex_data_asset.example",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -145,6 +151,12 @@ func TestAccDataplexDataAsset_dataplexDataAssetFullExample(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"data_asset_id", "data_product_id", "labels", "location", "terraform_labels"},
+			},
+			{
+				ResourceName:       "google_dataplex_data_asset.example",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})

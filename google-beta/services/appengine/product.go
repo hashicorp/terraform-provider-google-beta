@@ -22,11 +22,13 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 )
 
-const ProductName = "appengine"
+var Product = registry.Product{
+	Name:                 "appengine",
+	BaseUrl:              "https://appengine.googleapis.com/v1beta/",
+	CustomEndpointField:  "app_engine_custom_endpoint",
+	CustomEndpointEnvVar: "GOOGLE_APP_ENGINE_CUSTOM_ENDPOINT",
+}
 
 func init() {
-	registry.Product{
-		Name:    "appengine",
-		BaseUrl: "https://appengine.googleapis.com/v1beta/",
-	}.Register()
+	Product.Register()
 }

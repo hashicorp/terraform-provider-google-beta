@@ -22,11 +22,13 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 )
 
-const ProductName = "privilegedaccessmanager"
+var Product = registry.Product{
+	Name:                 "privilegedaccessmanager",
+	BaseUrl:              "https://privilegedaccessmanager.googleapis.com/v1beta/",
+	CustomEndpointField:  "privileged_access_manager_custom_endpoint",
+	CustomEndpointEnvVar: "GOOGLE_PRIVILEGED_ACCESS_MANAGER_CUSTOM_ENDPOINT",
+}
 
 func init() {
-	registry.Product{
-		Name:    "privilegedaccessmanager",
-		BaseUrl: "https://privilegedaccessmanager.googleapis.com/v1beta/",
-	}.Register()
+	Product.Register()
 }

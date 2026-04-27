@@ -76,6 +76,12 @@ func TestAccComputeRegionBackendBucket_regionBackendBucketBasicExample(t *testin
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"region"},
 			},
+			{
+				ResourceName:       "google_compute_region_backend_bucket.image_backend",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -128,6 +134,12 @@ func TestAccComputeRegionBackendBucket_regionBackendBucketInternalLbExample(t *t
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"region"},
+			},
+			{
+				ResourceName:       "google_compute_region_backend_bucket.internal_backend",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})
@@ -194,6 +206,12 @@ func TestAccComputeRegionBackendBucket_regionBackendBucketExternalLbExample(t *t
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"region"},
+			},
+			{
+				ResourceName:       "google_compute_region_backend_bucket.external_backend",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 		},
 	})
