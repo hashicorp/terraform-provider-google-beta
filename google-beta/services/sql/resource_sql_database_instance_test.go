@@ -139,6 +139,100 @@ func TestAccSqlDatabaseInstance_basicMSSQL(t *testing.T) {
 	})
 }
 
+func TestAccSqlDatabaseInstance_sqlServer2025(t *testing.T) {
+	t.Parallel()
+
+	databaseName := "tf-test-" + acctest.RandString(t, 10)
+	rootPassword := acctest.RandString(t, 15)
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccSqlDatabaseInstanceDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: fmt.Sprintf(
+					testGoogleSqlDatabaseInstance_sqlServer2025, databaseName, rootPassword),
+			},
+			{
+				ResourceName:            "google_sql_database_instance.instance",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"root_password", "deletion_protection"},
+			},
+		},
+	})
+}
+
+func TestAccSqlDatabaseInstance_sqlServer2025Enterprise(t *testing.T) {
+	t.Parallel()
+
+	databaseName := "tf-test-" + acctest.RandString(t, 10)
+	rootPassword := acctest.RandString(t, 15)
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccSqlDatabaseInstanceDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: fmt.Sprintf(
+					testGoogleSqlDatabaseInstance_sqlServer2025Enterprise, databaseName, rootPassword),
+			},
+			{
+				ResourceName:            "google_sql_database_instance.instance",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"root_password", "deletion_protection"},
+			},
+		},
+	})
+}
+
+func TestAccSqlDatabaseInstance_basicMSSQL_withEntraid(t *testing.T) {
+	t.Parallel()
+
+	databaseName := "tf-test-" + acctest.RandString(t, 10)
+	rootPassword := "sqlserver@123"
+	appId1 := "0de4a942-1697-4c1c-92be-90ded91b73a1"
+	tenantId1 := "177130ab-8a53-4be7-a2fd-c9b49cad95d1"
+	appId2 := "0de4a942-1697-4c1c-92be-90ded91b73a2"
+	tenantId2 := "177130ab-8a53-4be7-a2fd-c9b49cad95d2"
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccSqlDatabaseInstanceDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: fmt.Sprintf(
+					testGoogleSqlDatabaseInstance_basic_mssql_with_entraid, databaseName, rootPassword, appId1, tenantId1),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("google_sql_database_instance.instance", "settings.0.entraid_config.0.application_id", appId1),
+					resource.TestCheckResourceAttr("google_sql_database_instance.instance", "settings.0.entraid_config.0.tenant_id", tenantId1),
+				),
+			},
+			{
+				Config: fmt.Sprintf(
+					testGoogleSqlDatabaseInstance_basic_mssql_with_entraid, databaseName, rootPassword, appId2, tenantId2),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("google_sql_database_instance.instance", "settings.0.entraid_config.0.application_id", appId2),
+					resource.TestCheckResourceAttr("google_sql_database_instance.instance", "settings.0.entraid_config.0.tenant_id", tenantId2),
+				),
+			},
+			{
+				Config: fmt.Sprintf(
+					testGoogleSqlDatabaseInstance_basic_mssql_with_entraid, databaseName, rootPassword, "", ""),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckNoResourceAttr("google_sql_database_instance.instance", "settings.0.entraid_config.0.application_id"),
+					resource.TestCheckNoResourceAttr("google_sql_database_instance.instance", "settings.0.entraid_config.0.tenant_id"),
+					resource.TestCheckResourceAttr("google_sql_database_instance.instance", "settings.0.entraid_config.#", "0"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccSqlDatabaseInstance_basicMSSQL_passwordWo(t *testing.T) {
 	t.Parallel()
 
@@ -2108,7 +2202,7 @@ func TestAccSqlDatabaseInstance_PointInTimeRecoveryEnabledForSqlServer(t *testin
 		CheckDestroy:             testAccSqlDatabaseInstanceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testGoogleSqlDatabaseInstance_PointInTimeRecoveryEnabled(masterID, true, "SQLSERVER_2017_STANDARD"),
+				Config: testGoogleSqlDatabaseInstance_PointInTimeRecoveryEnabled(masterID, true, "SQLSERVER_2022_STANDARD"),
 			},
 			{
 				ResourceName:            "google_sql_database_instance.instance",
@@ -2117,7 +2211,7 @@ func TestAccSqlDatabaseInstance_PointInTimeRecoveryEnabledForSqlServer(t *testin
 				ImportStateVerifyIgnore: []string{"deletion_protection", "root_password"},
 			},
 			{
-				Config: testGoogleSqlDatabaseInstance_PointInTimeRecoveryEnabled(masterID, false, "SQLSERVER_2017_STANDARD"),
+				Config: testGoogleSqlDatabaseInstance_PointInTimeRecoveryEnabled(masterID, false, "SQLSERVER_2022_STANDARD"),
 			},
 			{
 				ResourceName:            "google_sql_database_instance.instance",
@@ -2915,7 +3009,7 @@ func TestAccSqlDatabaseInstance_rootPasswordShouldBeUpdatable(t *testing.T) {
 	databaseName := "tf-test-" + acctest.RandString(t, 10)
 	rootPwd := "rootPassword-1-" + acctest.RandString(t, 10)
 	newRootPwd := "rootPassword-2-" + acctest.RandString(t, 10)
-	databaseVersion := "SQLSERVER_2017_STANDARD"
+	databaseVersion := "SQLSERVER_2022_STANDARD"
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -5076,7 +5170,7 @@ resource "google_sql_database_instance" "instance" {
 var testGoogleSqlDatabaseInstance_basic_mssql = `
 resource "google_sql_database_instance" "instance" {
   name                = "%s"
-  database_version    = "SQLSERVER_2019_STANDARD"
+  database_version    = "SQLSERVER_2022_STANDARD"
   root_password       = "%s"
   deletion_protection = false
   settings {
@@ -5086,10 +5180,34 @@ resource "google_sql_database_instance" "instance" {
 }
 `
 
+var testGoogleSqlDatabaseInstance_sqlServer2025 = `
+resource "google_sql_database_instance" "instance" {
+  name                = "%s"
+  database_version    = "SQLSERVER_2025_STANDARD"
+  root_password       = "%s"
+  deletion_protection = false
+  settings {
+    tier = "db-custom-1-3840"
+  }
+}
+`
+
+var testGoogleSqlDatabaseInstance_sqlServer2025Enterprise = `
+resource "google_sql_database_instance" "instance" {
+  name                = "%s"
+  database_version    = "SQLSERVER_2025_ENTERPRISE"
+  root_password       = "%s"
+  deletion_protection = false
+  settings {
+    tier = "db-custom-2-7680"
+  }
+}
+`
+
 var testGoogleSqlDatabaseInstance_basic_mssql_wo_password = `
 resource "google_sql_database_instance" "instance" {
   name                     = "%s"
-  database_version         = "SQLSERVER_2019_STANDARD"
+  database_version         = "SQLSERVER_2022_STANDARD"
   root_password_wo         = "%s"
   root_password_wo_version = "1"
   deletion_protection      = false
@@ -5103,7 +5221,7 @@ resource "google_sql_database_instance" "instance" {
 var testGoogleSqlDatabaseInstance_basic_mssql_wo_password_update = `
 resource "google_sql_database_instance" "instance" {
   name                     = "%s"
-  database_version         = "SQLSERVER_2019_STANDARD"
+  database_version         = "SQLSERVER_2022_STANDARD"
   root_password_wo         = "%s"
   root_password_wo_version = "2"
   deletion_protection      = false
@@ -5114,10 +5232,27 @@ resource "google_sql_database_instance" "instance" {
 }
 `
 
+var testGoogleSqlDatabaseInstance_basic_mssql_with_entraid = `
+resource "google_sql_database_instance" "instance" {
+  name             = "%s"
+  region           = "us-west2"
+  database_version = "SQLSERVER_2022_STANDARD"
+  root_password    = "%s"
+  settings {
+    tier = "db-custom-2-8192"
+    entraid_config {
+      application_id = "%s"
+      tenant_id      = "%s"
+    }
+  }
+  deletion_protection = false
+}
+`
+
 var testGoogleSqlDatabaseInstance_update_mssql = `
 resource "google_sql_database_instance" "instance" {
   name                = "%s"
-  database_version    = "SQLSERVER_2019_STANDARD"
+  database_version    = "SQLSERVER_2022_STANDARD"
   root_password       = "%s"
   deletion_protection = false
   settings {
@@ -5140,7 +5275,7 @@ data "google_compute_network" "servicenet" {
 resource "google_sql_database_instance" "instance-with-ad" {
   name             = "%s"
   region           = "us-central1"
-  database_version = "SQLSERVER_2017_STANDARD"
+  database_version = "SQLSERVER_2022_STANDARD"
   root_password    = "%s"
   deletion_protection = false
   settings {
@@ -5276,7 +5411,7 @@ func testGoogleSqlDatabaseInstance_SqlServerTimezone(instance, rootPassword, tim
 resource "google_sql_database_instance" "instance" {
   name             = "%s"
   region           = "us-central1"
-  database_version = "SQLSERVER_2017_STANDARD"
+  database_version = "SQLSERVER_2022_STANDARD"
   root_password    = "%s"
   deletion_protection = false
   settings {
@@ -5301,7 +5436,7 @@ resource "google_storage_bucket" "gs-bucket" {
 resource "google_sql_database_instance" "instance" {
   name             = "%s"
   region           = "us-central1"
-  database_version = "SQLSERVER_2017_STANDARD"
+  database_version = "SQLSERVER_2022_STANDARD"
   root_password    = "%s"
   deletion_protection = false
   settings {
@@ -5324,7 +5459,7 @@ func testGoogleSqlDatabaseInstance_SqlServerAuditOptionalBucket(databaseName, ro
 resource "google_sql_database_instance" "instance" {
   name             = "%s"
   region           = "us-central1"
-  database_version = "SQLSERVER_2017_STANDARD"
+  database_version = "SQLSERVER_2022_STANDARD"
   root_password    = "%s"
   deletion_protection = false
   settings {
@@ -5343,7 +5478,7 @@ func testGoogleSqlDatabaseInstance_NullSmt(databaseName, rootPassword string) st
 resource "google_sql_database_instance" "instance" {
   name             = "%s"
   region           = "us-central1"
-  database_version = "SQLSERVER_2017_STANDARD"
+  database_version = "SQLSERVER_2022_STANDARD"
   root_password    = "%s"
   deletion_protection = false
   settings {
@@ -5363,7 +5498,7 @@ func testGoogleSqlDatabaseInstance_Smt(databaseName, rootPassword string, thread
 resource "google_sql_database_instance" "instance" {
   name             = "%s"
   region           = "us-central1"
-  database_version = "SQLSERVER_2017_STANDARD"
+  database_version = "SQLSERVER_2022_STANDARD"
   root_password    = "%s"
   deletion_protection = false
   settings {
@@ -5384,7 +5519,7 @@ func testGoogleSqlDatabaseInstance_Timezone(databaseName, rootPassword, timezone
 resource "google_sql_database_instance" "instance" {
   name             = "%s"
   region           = "us-central1"
-  database_version = "SQLSERVER_2017_STANDARD"
+  database_version = "SQLSERVER_2022_STANDARD"
   root_password    = "%s"
   deletion_protection = false
   settings {
@@ -5635,7 +5770,7 @@ func testGoogleSqlDatabaseInstanceConfig_SqlServerwithCascadableReplica(primaryN
 resource "google_sql_database_instance" "original-primary" {
   name                = "%s"
   region              = "us-east1"
-  database_version    = "SQLSERVER_2019_ENTERPRISE"
+  database_version    = "SQLSERVER_2022_ENTERPRISE"
   deletion_protection = false
 
   root_password = "sqlserver1"
@@ -5648,7 +5783,7 @@ resource "google_sql_database_instance" "original-primary" {
 resource "google_sql_database_instance" "original-replica" {
   name                 = "%s"
   region               = "us-west2"
-  database_version     = "SQLSERVER_2019_ENTERPRISE"
+  database_version     = "SQLSERVER_2022_ENTERPRISE"
   master_instance_name = google_sql_database_instance.original-primary.name
   deletion_protection  = false
   root_password = "sqlserver1"
@@ -5669,7 +5804,7 @@ func googleSqlDatabaseInstance_switchoverOnReplica(primaryName string, replicaNa
 resource "google_sql_database_instance" "original-primary" {
   name                = "%s"
   region              = "us-east1"
-  database_version    = "SQLSERVER_2019_ENTERPRISE"
+  database_version    = "SQLSERVER_2022_ENTERPRISE"
   deletion_protection = false
 
   root_password = "sqlserver1"
@@ -5682,7 +5817,7 @@ resource "google_sql_database_instance" "original-primary" {
 resource "google_sql_database_instance" "original-replica" {
   name                 = "%s"
   region               = "us-west2"
-  database_version     = "SQLSERVER_2019_ENTERPRISE"
+  database_version     = "SQLSERVER_2022_ENTERPRISE"
   deletion_protection  = false
   root_password = "sqlserver1"
   instance_type = "CLOUD_SQL_INSTANCE"
@@ -5700,7 +5835,7 @@ func googleSqlDatabaseInstance_updatePrimaryAfterSwitchover(primaryName string, 
 resource "google_sql_database_instance" "original-primary" {
   name                = "%s"
   region              = "us-east1"
-  database_version    = "SQLSERVER_2019_ENTERPRISE"
+  database_version    = "SQLSERVER_2022_ENTERPRISE"
   deletion_protection = false
   root_password = "sqlserver1"
   instance_type = "READ_REPLICA_INSTANCE"
@@ -5718,7 +5853,7 @@ resource "google_sql_database_instance" "original-primary" {
   resource "google_sql_database_instance" "original-replica" {
   name                 = "%s"
   region               = "us-west2"
-  database_version     = "SQLSERVER_2019_ENTERPRISE"
+  database_version     = "SQLSERVER_2022_ENTERPRISE"
   deletion_protection  = false
   root_password = "sqlserver1"
   instance_type = "CLOUD_SQL_INSTANCE"
@@ -5737,7 +5872,7 @@ func googleSqlDatabaseInstance_deleteReplicasAfterSwitchover(primaryName, replic
 resource "google_sql_database_instance" "original-replica" {
   name                 = "%s"
   region               = "us-west2"
-  database_version     = "SQLSERVER_2019_ENTERPRISE"
+  database_version     = "SQLSERVER_2022_ENTERPRISE"
   deletion_protection  = false
   root_password = "sqlserver1"
   instance_type = "CLOUD_SQL_INSTANCE"
@@ -5757,7 +5892,7 @@ func googleSqlDatabaseInstance_removeReplicaFromPrimaryAfterSwitchover(replicaNa
 resource "google_sql_database_instance" "original-replica" {
   name                 = "%s"
   region               = "us-west2"
-  database_version     = "SQLSERVER_2019_ENTERPRISE"
+  database_version     = "SQLSERVER_2022_ENTERPRISE"
   deletion_protection  = false
   root_password = "sqlserver1"
   instance_type = "CLOUD_SQL_INSTANCE"

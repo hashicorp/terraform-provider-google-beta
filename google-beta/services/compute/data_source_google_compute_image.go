@@ -23,6 +23,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
@@ -262,4 +263,13 @@ func dataSourceGoogleComputeImageRead(d *schema.ResourceData, meta interface{}) 
 	d.SetId(id)
 
 	return nil
+}
+
+func init() {
+	registry.Schema{
+		Name:        "google_compute_image",
+		ProductName: "compute",
+		Type:        registry.SchemaTypeDataSource,
+		Schema:      DataSourceGoogleComputeImage(),
+	}.Register()
 }

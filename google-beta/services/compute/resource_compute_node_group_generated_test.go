@@ -75,6 +75,12 @@ func TestAccComputeNodeGroup_nodeGroupBasicExample(t *testing.T) {
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"initial_size", "node_template", "zone"},
 			},
+			{
+				ResourceName:       "google_compute_node_group.nodes",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -84,12 +90,12 @@ func testAccComputeNodeGroup_nodeGroupBasicExample(context map[string]interface{
 resource "google_compute_node_template" "soletenant-tmpl" {
   name      = "%{template_name}"
   region    = "us-central1"
-  node_type = "n1-node-96-624"
+  node_type = "c2-node-60-240"
 }
 
 resource "google_compute_node_group" "nodes" {
   name        = "%{group_name}"
-  zone        = "us-central1-f"
+  zone        = "us-central1-c"
   description = "example google_compute_node_group for Terraform Google Provider"
 
   initial_size          = 1
@@ -123,6 +129,12 @@ func TestAccComputeNodeGroup_nodeGroupMaintenanceIntervalExample(t *testing.T) {
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"initial_size", "node_template", "zone"},
 			},
+			{
+				ResourceName:       "google_compute_node_group.nodes",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -139,7 +151,7 @@ resource "google_compute_node_template" "soletenant-tmpl" {
 resource "google_compute_node_group" "nodes" {
   provider    = google-beta
   name        = "%{group_name}"
-  zone        = "us-central1-a"
+  zone        = "us-central1-f"
   description = "example google_compute_node_group for Terraform Google Provider"
 
   initial_size          = 1
@@ -175,6 +187,12 @@ func TestAccComputeNodeGroup_nodeGroupAutoscalingPolicyExample(t *testing.T) {
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"initial_size", "node_template", "zone"},
 			},
+			{
+				ResourceName:       "google_compute_node_group.nodes",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -184,7 +202,7 @@ func testAccComputeNodeGroup_nodeGroupAutoscalingPolicyExample(context map[strin
 resource "google_compute_node_template" "soletenant-tmpl" {
   name      = "%{template_name}"
   region    = "us-central1"
-  node_type = "n1-node-96-624"
+  node_type = "c2-node-60-240"
 }
 
 resource "google_compute_node_group" "nodes" {
@@ -234,6 +252,12 @@ func TestAccComputeNodeGroup_nodeGroupShareSettingsExample(t *testing.T) {
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"initial_size", "node_template", "zone"},
 			},
+			{
+				ResourceName:       "google_compute_node_group.nodes",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -250,7 +274,7 @@ resource "google_project" "guest_project" {
 resource "google_compute_node_template" "soletenant-tmpl" {
   name      = "%{template_name}"
   region    = "us-central1"
-  node_type = "n1-node-96-624"
+  node_type = "c2-node-60-240"
 }
 
 resource "google_compute_node_group" "nodes" {

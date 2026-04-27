@@ -21,6 +21,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
@@ -294,4 +295,13 @@ func updateComputeCommonInstanceMetadata(config *transport_tpg.Config, projectID
 	}
 
 	return transport_tpg.MetadataRetryWrapper(updateMD)
+}
+
+func init() {
+	registry.Schema{
+		Name:        "google_compute_project_metadata_item",
+		ProductName: "compute",
+		Type:        registry.SchemaTypeResource,
+		Schema:      ResourceComputeProjectMetadataItem(),
+	}.Register()
 }

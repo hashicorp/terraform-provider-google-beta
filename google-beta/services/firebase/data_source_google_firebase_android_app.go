@@ -20,6 +20,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
@@ -61,4 +62,13 @@ func dataSourceGoogleFirebaseAndroidAppRead(d *schema.ResourceData, meta interfa
 		return fmt.Errorf("%s not found", name)
 	}
 	return nil
+}
+
+func init() {
+	registry.Schema{
+		Name:        "google_firebase_android_app",
+		ProductName: "firebase",
+		Type:        registry.SchemaTypeDataSource,
+		Schema:      DataSourceGoogleFirebaseAndroidApp(),
+	}.Register()
 }

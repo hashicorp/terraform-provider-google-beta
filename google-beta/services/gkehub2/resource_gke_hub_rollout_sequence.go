@@ -119,6 +119,25 @@ func ResourceGKEHub2RolloutSequence() *schema.Resource {
 			tpgresource.DefaultProviderDeletionPolicy("DELETE"),
 		),
 
+		Identity: &schema.ResourceIdentity{
+			Version: 1,
+			SchemaFunc: func() map[string]*schema.Schema {
+				return map[string]*schema.Schema{
+					"rollout_sequence_id": {
+						Type:              schema.TypeString,
+						RequiredForImport: true,
+					},
+					"project": {
+						Type:              schema.TypeString,
+						OptionalForImport: true,
+					},
+				}
+			},
+		},
+		ResourceBehavior: schema.ResourceBehavior{
+			MutableIdentity: true,
+		},
+
 		Schema: map[string]*schema.Schema{
 			"rollout_sequence_id": {
 				Type:        schema.TypeString,
@@ -170,6 +189,22 @@ evaluates resource.labels.`,
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: `Human readable display name of the Rollout Sequence.`,
+			},
+			"ignored_clusters_selector": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: `Selector for clusters to exclude from the Rollout Sequence.`,
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"label_selector": {
+							Type:     schema.TypeString,
+							Required: true,
+							Description: `The label selector must be a valid CEL (Common Expression Language) expression which
+evaluates resource.labels.`,
+						},
+					},
+				},
 			},
 			"labels": {
 				Type:     schema.TypeMap,
@@ -261,6 +296,12 @@ func resourceGKEHub2RolloutSequenceCreate(d *schema.ResourceData, meta interface
 	} else if v, ok := d.GetOkExists("display_name"); !tpgresource.IsEmptyValue(reflect.ValueOf(displayNameProp)) && (ok || !reflect.DeepEqual(v, displayNameProp)) {
 		obj["displayName"] = displayNameProp
 	}
+	ignoredClustersSelectorProp, err := expandGKEHub2RolloutSequenceIgnoredClustersSelector(d.Get("ignored_clusters_selector"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("ignored_clusters_selector"); !tpgresource.IsEmptyValue(reflect.ValueOf(ignoredClustersSelectorProp)) && (ok || !reflect.DeepEqual(v, ignoredClustersSelectorProp)) {
+		obj["ignoredClustersSelector"] = ignoredClustersSelectorProp
+	}
 	stagesProp, err := expandGKEHub2RolloutSequenceStages(d.Get("stages"), d, config)
 	if err != nil {
 		return err
@@ -326,6 +367,22 @@ func resourceGKEHub2RolloutSequenceCreate(d *schema.ResourceData, meta interface
 	}
 
 	log.Printf("[DEBUG] Finished creating RolloutSequence %q: %#v", d.Id(), res)
+
+	identity, err := d.Identity()
+	if err == nil && identity != nil {
+		if rolloutSequenceIdValue, ok := d.GetOk("rollout_sequence_id"); ok && rolloutSequenceIdValue.(string) != "" {
+			if err = identity.Set("rollout_sequence_id", rolloutSequenceIdValue.(string)); err != nil {
+				return fmt.Errorf("Error setting rollout_sequence_id: %s", err)
+			}
+		}
+		if projectValue, ok := d.GetOk("project"); ok && projectValue.(string) != "" {
+			if err = identity.Set("project", projectValue.(string)); err != nil {
+				return fmt.Errorf("Error setting project: %s", err)
+			}
+		}
+	} else {
+		log.Printf("[DEBUG] (Create) identity not set: %s", err)
+	}
 
 	return resourceGKEHub2RolloutSequenceRead(d, meta)
 }
@@ -411,6 +468,9 @@ func resourceGKEHub2RolloutSequenceRead(d *schema.ResourceData, meta interface{}
 	if err := d.Set("labels", flattenGKEHub2RolloutSequenceLabels(res["labels"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RolloutSequence: %s", err)
 	}
+	if err := d.Set("ignored_clusters_selector", flattenGKEHub2RolloutSequenceIgnoredClustersSelector(res["ignoredClustersSelector"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RolloutSequence: %s", err)
+	}
 	if err := d.Set("stages", flattenGKEHub2RolloutSequenceStages(res["stages"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RolloutSequence: %s", err)
 	}
@@ -419,6 +479,24 @@ func resourceGKEHub2RolloutSequenceRead(d *schema.ResourceData, meta interface{}
 	}
 	if err := d.Set("effective_labels", flattenGKEHub2RolloutSequenceEffectiveLabels(res["labels"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RolloutSequence: %s", err)
+	}
+
+	identity, err := d.Identity()
+	if err == nil && identity != nil {
+		if v, ok := identity.GetOk("rollout_sequence_id"); !ok && v == "" {
+			err = identity.Set("rollout_sequence_id", d.Get("rollout_sequence_id").(string))
+			if err != nil {
+				return fmt.Errorf("Error setting rollout_sequence_id: %s", err)
+			}
+		}
+		if v, ok := identity.GetOk("project"); !ok && v == "" {
+			err = identity.Set("project", d.Get("project").(string))
+			if err != nil {
+				return fmt.Errorf("Error setting project: %s", err)
+			}
+		}
+	} else {
+		log.Printf("[DEBUG] (Read) identity not set: %s", err)
 	}
 
 	return nil
@@ -443,6 +521,21 @@ func resourceGKEHub2RolloutSequenceUpdate(d *schema.ResourceData, meta interface
 	if err != nil {
 		return err
 	}
+	identity, err := d.Identity()
+	if err == nil && identity != nil {
+		if rolloutSequenceIdValue, ok := d.GetOk("rollout_sequence_id"); ok && rolloutSequenceIdValue.(string) != "" {
+			if err = identity.Set("rollout_sequence_id", rolloutSequenceIdValue.(string)); err != nil {
+				return fmt.Errorf("Error setting rollout_sequence_id: %s", err)
+			}
+		}
+		if projectValue, ok := d.GetOk("project"); ok && projectValue.(string) != "" {
+			if err = identity.Set("project", projectValue.(string)); err != nil {
+				return fmt.Errorf("Error setting project: %s", err)
+			}
+		}
+	} else {
+		log.Printf("[DEBUG] (Update) identity not set: %s", err)
+	}
 
 	billingProject := ""
 
@@ -458,6 +551,12 @@ func resourceGKEHub2RolloutSequenceUpdate(d *schema.ResourceData, meta interface
 		return err
 	} else if v, ok := d.GetOkExists("display_name"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, displayNameProp)) {
 		obj["displayName"] = displayNameProp
+	}
+	ignoredClustersSelectorProp, err := expandGKEHub2RolloutSequenceIgnoredClustersSelector(d.Get("ignored_clusters_selector"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("ignored_clusters_selector"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, ignoredClustersSelectorProp)) {
+		obj["ignoredClustersSelector"] = ignoredClustersSelectorProp
 	}
 	stagesProp, err := expandGKEHub2RolloutSequenceStages(d.Get("stages"), d, config)
 	if err != nil {
@@ -483,6 +582,10 @@ func resourceGKEHub2RolloutSequenceUpdate(d *schema.ResourceData, meta interface
 
 	if d.HasChange("display_name") {
 		updateMask = append(updateMask, "displayName")
+	}
+
+	if d.HasChange("ignored_clusters_selector") {
+		updateMask = append(updateMask, "ignoredClustersSelector")
 	}
 
 	if d.HasChange("stages") {
@@ -661,6 +764,23 @@ func flattenGKEHub2RolloutSequenceLabels(v interface{}, d *schema.ResourceData, 
 	return transformed
 }
 
+func flattenGKEHub2RolloutSequenceIgnoredClustersSelector(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["label_selector"] =
+		flattenGKEHub2RolloutSequenceIgnoredClustersSelectorLabelSelector(original["labelSelector"], d, config)
+	return []interface{}{transformed}
+}
+func flattenGKEHub2RolloutSequenceIgnoredClustersSelectorLabelSelector(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenGKEHub2RolloutSequenceStages(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
@@ -726,6 +846,32 @@ func flattenGKEHub2RolloutSequenceEffectiveLabels(v interface{}, d *schema.Resou
 }
 
 func expandGKEHub2RolloutSequenceDisplayName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandGKEHub2RolloutSequenceIgnoredClustersSelector(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedLabelSelector, err := expandGKEHub2RolloutSequenceIgnoredClustersSelectorLabelSelector(original["label_selector"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedLabelSelector); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["labelSelector"] = transformedLabelSelector
+	}
+
+	return transformed, nil
+}
+
+func expandGKEHub2RolloutSequenceIgnoredClustersSelectorLabelSelector(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

@@ -76,6 +76,12 @@ func TestAccChronicleNativeDashboard_chronicleNativedashboardBasicExample(t *tes
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"instance", "last_viewed_time", "location"},
 			},
+			{
+				ResourceName:       "google_chronicle_native_dashboard.my_basic_dashboard",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }

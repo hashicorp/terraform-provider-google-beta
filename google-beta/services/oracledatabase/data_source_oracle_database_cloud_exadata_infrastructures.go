@@ -20,6 +20,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
@@ -122,4 +123,13 @@ func flattenOracleDatabaseCloudExadataInfrastructures(v interface{}, d *schema.R
 		})
 	}
 	return transformed
+}
+
+func init() {
+	registry.Schema{
+		Name:        "google_oracle_database_cloud_exadata_infrastructures",
+		ProductName: "oracledatabase",
+		Type:        registry.SchemaTypeDataSource,
+		Schema:      DataSourceOracleDatabaseCloudExadataInfrastructures(),
+	}.Register()
 }

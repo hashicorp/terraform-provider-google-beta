@@ -23,6 +23,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
@@ -283,22 +284,31 @@ func resourceComputeTargetPoolCreate(d *schema.ResourceData, meta interface{}) e
 			return fmt.Errorf("Error parsing TargetPool security policy: %s", err)
 		}
 
-		region, err := tpgresource.GetRegion(d, config)
+		sBody := emptySecurityPolicyReference()
+		if link := pol.RelativeLink(); link != "" {
+			sBody["securityPolicy"] = link
+		}
+
+		spUrl, err := tpgresource.ReplaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/targetPools/{{name}}/setSecurityPolicy")
 		if err != nil {
 			return err
 		}
 
-		spr := emptySecurityPolicyReference()
-		spr.SecurityPolicy = pol.RelativeLink()
-
-		op, err := config.NewComputeClient(userAgent).TargetPools.SetSecurityPolicy(project, region, d.Get("name").(string), spr).Do()
+		res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
+			Config:    config,
+			Method:    "POST",
+			Project:   project,
+			RawURL:    spUrl,
+			UserAgent: userAgent,
+			Body:      sBody,
+		})
 		if err != nil {
-			return fmt.Errorf("Error setting TargetPool security policy:: %s", err)
+			return fmt.Errorf("Error setting TargetPool security policy: %s", err)
 		}
 
-		waitErr := ComputeOperationWaitTime(config, op, project, "Setting TargetPool Security Policy", userAgent, d.Timeout(schema.TimeoutCreate))
-		if waitErr != nil {
-			return waitErr
+		err = ComputeOperationWaitTime(config, res, project, "Setting TargetPool Security Policy", userAgent, d.Timeout(schema.TimeoutCreate))
+		if err != nil {
+			return err
 		}
 	}
 
@@ -450,20 +460,29 @@ func resourceComputeTargetPoolUpdate(d *schema.ResourceData, meta interface{}) e
 			return fmt.Errorf("Error parsing TargetPool security policy: %s", err)
 		}
 
-		region, err := tpgresource.GetRegion(d, config)
+		sBody := emptySecurityPolicyReference()
+		if link := pol.RelativeLink(); link != "" {
+			sBody["securityPolicy"] = link
+		}
+
+		spUrl, err := tpgresource.ReplaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/targetPools/{{name}}/setSecurityPolicy")
 		if err != nil {
 			return err
 		}
 
-		spr := emptySecurityPolicyReference()
-		spr.SecurityPolicy = pol.RelativeLink()
-
-		op, err := config.NewComputeClient(userAgent).TargetPools.SetSecurityPolicy(project, region, d.Get("name").(string), spr).Do()
+		res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
+			Config:    config,
+			Method:    "POST",
+			Project:   project,
+			RawURL:    spUrl,
+			UserAgent: userAgent,
+			Body:      sBody,
+		})
 		if err != nil {
-			return fmt.Errorf("Error updating TargetPool security policy:: %s", err)
+			return fmt.Errorf("Error updating TargetPool security policy: %s", err)
 		}
 
-		waitErr := ComputeOperationWaitTime(config, op, project, "Updating TargetPool Security Policy", userAgent, d.Timeout(schema.TimeoutCreate))
+		waitErr := ComputeOperationWaitTime(config, res, project, "Updating TargetPool Security Policy", userAgent, d.Timeout(schema.TimeoutCreate))
 		if waitErr != nil {
 			return waitErr
 		}
@@ -612,4 +631,13 @@ func resourceTargetPoolStateImporter(d *schema.ResourceData, meta interface{}) (
 	d.SetId(id)
 
 	return []*schema.ResourceData{d}, nil
+}
+
+func init() {
+	registry.Schema{
+		Name:        "google_compute_target_pool",
+		ProductName: "compute",
+		Type:        registry.SchemaTypeResource,
+		Schema:      ResourceComputeTargetPool(),
+	}.Register()
 }

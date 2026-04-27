@@ -117,6 +117,25 @@ func ResourceFirebaseStorageBucket() *schema.Resource {
 			tpgresource.DefaultProviderDeletionPolicy("DELETE"),
 		),
 
+		Identity: &schema.ResourceIdentity{
+			Version: 1,
+			SchemaFunc: func() map[string]*schema.Schema {
+				return map[string]*schema.Schema{
+					"bucket_id": {
+						Type:              schema.TypeString,
+						OptionalForImport: true,
+					},
+					"project": {
+						Type:              schema.TypeString,
+						OptionalForImport: true,
+					},
+				}
+			},
+		},
+		ResourceBehavior: schema.ResourceBehavior{
+			MutableIdentity: true,
+		},
+
 		Schema: map[string]*schema.Schema{
 			"bucket_id": {
 				Type:        schema.TypeString,
@@ -204,6 +223,22 @@ func resourceFirebaseStorageBucketCreate(d *schema.ResourceData, meta interface{
 
 	log.Printf("[DEBUG] Finished creating Bucket %q: %#v", d.Id(), res)
 
+	identity, err := d.Identity()
+	if err == nil && identity != nil {
+		if bucketIdValue, ok := d.GetOk("bucket_id"); ok && bucketIdValue.(string) != "" {
+			if err = identity.Set("bucket_id", bucketIdValue.(string)); err != nil {
+				return fmt.Errorf("Error setting bucket_id: %s", err)
+			}
+		}
+		if projectValue, ok := d.GetOk("project"); ok && projectValue.(string) != "" {
+			if err = identity.Set("project", projectValue.(string)); err != nil {
+				return fmt.Errorf("Error setting project: %s", err)
+			}
+		}
+	} else {
+		log.Printf("[DEBUG] (Create) identity not set: %s", err)
+	}
+
 	return resourceFirebaseStorageBucketRead(d, meta)
 }
 
@@ -266,6 +301,24 @@ func resourceFirebaseStorageBucketRead(d *schema.ResourceData, meta interface{})
 
 	if err := d.Set("name", flattenFirebaseStorageBucketName(res["name"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Bucket: %s", err)
+	}
+
+	identity, err := d.Identity()
+	if err == nil && identity != nil {
+		if v, ok := identity.GetOk("bucket_id"); !ok && v == "" {
+			err = identity.Set("bucket_id", d.Get("bucket_id").(string))
+			if err != nil {
+				return fmt.Errorf("Error setting bucket_id: %s", err)
+			}
+		}
+		if v, ok := identity.GetOk("project"); !ok && v == "" {
+			err = identity.Set("project", d.Get("project").(string))
+			if err != nil {
+				return fmt.Errorf("Error setting project: %s", err)
+			}
+		}
+	} else {
+		log.Printf("[DEBUG] (Read) identity not set: %s", err)
 	}
 
 	return nil

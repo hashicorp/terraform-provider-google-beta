@@ -22,11 +22,13 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 )
 
-const ProductName = "networkconnectivity"
+var Product = registry.Product{
+	Name:                 "networkconnectivity",
+	BaseUrl:              "https://networkconnectivity.googleapis.com/v1beta/",
+	CustomEndpointField:  "network_connectivity_custom_endpoint",
+	CustomEndpointEnvVar: "GOOGLE_NETWORK_CONNECTIVITY_CUSTOM_ENDPOINT",
+}
 
 func init() {
-	registry.Product{
-		Name:    "networkconnectivity",
-		BaseUrl: "https://networkconnectivity.googleapis.com/v1beta/",
-	}.Register()
+	Product.Register()
 }

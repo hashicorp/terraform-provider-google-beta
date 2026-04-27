@@ -22,11 +22,13 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 )
 
-const ProductName = "memorystore"
+var Product = registry.Product{
+	Name:                 "memorystore",
+	BaseUrl:              "https://memorystore.googleapis.com/v1beta/",
+	CustomEndpointField:  "memorystore_custom_endpoint",
+	CustomEndpointEnvVar: "GOOGLE_MEMORYSTORE_CUSTOM_ENDPOINT",
+}
 
 func init() {
-	registry.Product{
-		Name:    "memorystore",
-		BaseUrl: "https://memorystore.googleapis.com/v1beta/",
-	}.Register()
+	Product.Register()
 }

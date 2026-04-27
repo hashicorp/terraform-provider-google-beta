@@ -21,6 +21,7 @@ import (
 	"log"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
@@ -114,4 +115,13 @@ func flattenGoogleComposerImageVersions(resp map[string]interface{}) []interface
 		}
 	}
 	return versions
+}
+
+func init() {
+	registry.Schema{
+		Name:        "google_composer_image_versions",
+		ProductName: "composer",
+		Type:        registry.SchemaTypeDataSource,
+		Schema:      DataSourceGoogleComposerImageVersions(),
+	}.Register()
 }

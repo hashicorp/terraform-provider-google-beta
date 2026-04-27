@@ -74,6 +74,12 @@ func TestAccDialogflowConversationProfile_dialogflowConversationProfileBasicExam
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"location", "logging_config"},
 			},
+			{
+				ResourceName:       "google_dialogflow_conversation_profile.basic_profile",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -126,6 +132,12 @@ func TestAccDialogflowConversationProfile_dialogflowConversationProfileRecogniti
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"location", "logging_config"},
 			},
+			{
+				ResourceName:       "google_dialogflow_conversation_profile.recognition_result_notification_profile",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -160,7 +172,7 @@ func TestAccDialogflowConversationProfile_dialogflowConversationProfileBetaBidiE
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckDialogflowConversationProfileDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -172,6 +184,12 @@ func TestAccDialogflowConversationProfile_dialogflowConversationProfileBetaBidiE
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"location", "logging_config"},
 			},
+			{
+				ResourceName:       "google_dialogflow_conversation_profile.bidi_profile",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -179,6 +197,7 @@ func TestAccDialogflowConversationProfile_dialogflowConversationProfileBetaBidiE
 func testAccDialogflowConversationProfile_dialogflowConversationProfileBetaBidiExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_dialogflow_conversation_profile" "bidi_profile" {
+  provider = google-beta
   display_name = "%{profile_name}"
   location     = "global"
   language_code = "en-US"
@@ -189,6 +208,7 @@ resource "google_dialogflow_conversation_profile" "bidi_profile" {
 }
 
 resource "google_ces_app" "ces_app_for_agent" {
+  provider = google-beta
   app_id = "%{app_id}"
   location = "us"
   display_name = "my-app"

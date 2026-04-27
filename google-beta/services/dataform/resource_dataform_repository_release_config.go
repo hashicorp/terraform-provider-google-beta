@@ -118,6 +118,33 @@ func ResourceDataformRepositoryReleaseConfig() *schema.Resource {
 			tpgresource.DefaultProviderDeletionPolicy("DELETE"),
 		),
 
+		Identity: &schema.ResourceIdentity{
+			Version: 1,
+			SchemaFunc: func() map[string]*schema.Schema {
+				return map[string]*schema.Schema{
+					"name": {
+						Type:              schema.TypeString,
+						RequiredForImport: true,
+					},
+					"region": {
+						Type:              schema.TypeString,
+						OptionalForImport: true,
+					},
+					"repository": {
+						Type:              schema.TypeString,
+						OptionalForImport: true,
+					},
+					"project": {
+						Type:              schema.TypeString,
+						OptionalForImport: true,
+					},
+				}
+			},
+		},
+		ResourceBehavior: schema.ResourceBehavior{
+			MutableIdentity: true,
+		},
+
 		Schema: map[string]*schema.Schema{
 			"git_commitish": {
 				Type:        schema.TypeString,
@@ -188,6 +215,11 @@ Example: { "name": "wrench", "mass": "1.3kg", "count": "3" }.`,
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: `Optional. Optional schedule (in cron format) for automatic creation of compilation results.`,
+			},
+			"disabled": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: `Disables automatic creation of compilation results.`,
 			},
 			"region": {
 				Type:        schema.TypeString,
@@ -305,6 +337,12 @@ func resourceDataformRepositoryReleaseConfigCreate(d *schema.ResourceData, meta 
 	} else if v, ok := d.GetOkExists("code_compilation_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(codeCompilationConfigProp)) && (ok || !reflect.DeepEqual(v, codeCompilationConfigProp)) {
 		obj["codeCompilationConfig"] = codeCompilationConfigProp
 	}
+	disabledProp, err := expandDataformRepositoryReleaseConfigDisabled(d.Get("disabled"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("disabled"); !tpgresource.IsEmptyValue(reflect.ValueOf(disabledProp)) && (ok || !reflect.DeepEqual(v, disabledProp)) {
+		obj["disabled"] = disabledProp
+	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{DataformBasePath}}projects/{{project}}/locations/{{region}}/repositories/{{repository}}/releaseConfigs?releaseConfigId={{name}}")
 	if err != nil {
@@ -348,6 +386,32 @@ func resourceDataformRepositoryReleaseConfigCreate(d *schema.ResourceData, meta 
 	d.SetId(id)
 
 	log.Printf("[DEBUG] Finished creating RepositoryReleaseConfig %q: %#v", d.Id(), res)
+
+	identity, err := d.Identity()
+	if err == nil && identity != nil {
+		if nameValue, ok := d.GetOk("name"); ok && nameValue.(string) != "" {
+			if err = identity.Set("name", nameValue.(string)); err != nil {
+				return fmt.Errorf("Error setting name: %s", err)
+			}
+		}
+		if regionValue, ok := d.GetOk("region"); ok && regionValue.(string) != "" {
+			if err = identity.Set("region", regionValue.(string)); err != nil {
+				return fmt.Errorf("Error setting region: %s", err)
+			}
+		}
+		if repositoryValue, ok := d.GetOk("repository"); ok && repositoryValue.(string) != "" {
+			if err = identity.Set("repository", repositoryValue.(string)); err != nil {
+				return fmt.Errorf("Error setting repository: %s", err)
+			}
+		}
+		if projectValue, ok := d.GetOk("project"); ok && projectValue.(string) != "" {
+			if err = identity.Set("project", projectValue.(string)); err != nil {
+				return fmt.Errorf("Error setting project: %s", err)
+			}
+		}
+	} else {
+		log.Printf("[DEBUG] (Create) identity not set: %s", err)
+	}
 
 	return resourceDataformRepositoryReleaseConfigRead(d, meta)
 }
@@ -427,6 +491,39 @@ func resourceDataformRepositoryReleaseConfigRead(d *schema.ResourceData, meta in
 	if err := d.Set("recent_scheduled_release_records", flattenDataformRepositoryReleaseConfigRecentScheduledReleaseRecords(res["recentScheduledReleaseRecords"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RepositoryReleaseConfig: %s", err)
 	}
+	if err := d.Set("disabled", flattenDataformRepositoryReleaseConfigDisabled(res["disabled"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RepositoryReleaseConfig: %s", err)
+	}
+
+	identity, err := d.Identity()
+	if err == nil && identity != nil {
+		if v, ok := identity.GetOk("name"); !ok && v == "" {
+			err = identity.Set("name", d.Get("name").(string))
+			if err != nil {
+				return fmt.Errorf("Error setting name: %s", err)
+			}
+		}
+		if v, ok := identity.GetOk("region"); !ok && v == "" {
+			err = identity.Set("region", d.Get("region").(string))
+			if err != nil {
+				return fmt.Errorf("Error setting region: %s", err)
+			}
+		}
+		if v, ok := identity.GetOk("repository"); !ok && v == "" {
+			err = identity.Set("repository", d.Get("repository").(string))
+			if err != nil {
+				return fmt.Errorf("Error setting repository: %s", err)
+			}
+		}
+		if v, ok := identity.GetOk("project"); !ok && v == "" {
+			err = identity.Set("project", d.Get("project").(string))
+			if err != nil {
+				return fmt.Errorf("Error setting project: %s", err)
+			}
+		}
+	} else {
+		log.Printf("[DEBUG] (Read) identity not set: %s", err)
+	}
 
 	return nil
 }
@@ -449,6 +546,31 @@ func resourceDataformRepositoryReleaseConfigUpdate(d *schema.ResourceData, meta 
 	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return err
+	}
+	identity, err := d.Identity()
+	if err == nil && identity != nil {
+		if nameValue, ok := d.GetOk("name"); ok && nameValue.(string) != "" {
+			if err = identity.Set("name", nameValue.(string)); err != nil {
+				return fmt.Errorf("Error setting name: %s", err)
+			}
+		}
+		if regionValue, ok := d.GetOk("region"); ok && regionValue.(string) != "" {
+			if err = identity.Set("region", regionValue.(string)); err != nil {
+				return fmt.Errorf("Error setting region: %s", err)
+			}
+		}
+		if repositoryValue, ok := d.GetOk("repository"); ok && repositoryValue.(string) != "" {
+			if err = identity.Set("repository", repositoryValue.(string)); err != nil {
+				return fmt.Errorf("Error setting repository: %s", err)
+			}
+		}
+		if projectValue, ok := d.GetOk("project"); ok && projectValue.(string) != "" {
+			if err = identity.Set("project", projectValue.(string)); err != nil {
+				return fmt.Errorf("Error setting project: %s", err)
+			}
+		}
+	} else {
+		log.Printf("[DEBUG] (Update) identity not set: %s", err)
 	}
 
 	billingProject := ""
@@ -483,6 +605,12 @@ func resourceDataformRepositoryReleaseConfigUpdate(d *schema.ResourceData, meta 
 		return err
 	} else if v, ok := d.GetOkExists("code_compilation_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, codeCompilationConfigProp)) {
 		obj["codeCompilationConfig"] = codeCompilationConfigProp
+	}
+	disabledProp, err := expandDataformRepositoryReleaseConfigDisabled(d.Get("disabled"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("disabled"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, disabledProp)) {
+		obj["disabled"] = disabledProp
 	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{DataformBasePath}}projects/{{project}}/locations/{{region}}/repositories/{{repository}}/releaseConfigs/{{name}}")
@@ -736,6 +864,10 @@ func flattenDataformRepositoryReleaseConfigRecentScheduledReleaseRecordsErrorSta
 	return v
 }
 
+func flattenDataformRepositoryReleaseConfigDisabled(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func expandDataformRepositoryReleaseConfigName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
@@ -859,5 +991,9 @@ func expandDataformRepositoryReleaseConfigCodeCompilationConfigSchemaSuffix(v in
 }
 
 func expandDataformRepositoryReleaseConfigCodeCompilationConfigTablePrefix(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandDataformRepositoryReleaseConfigDisabled(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }

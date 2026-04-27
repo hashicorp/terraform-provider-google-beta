@@ -22,11 +22,13 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 )
 
-const ProductName = "parallelstore"
+var Product = registry.Product{
+	Name:                 "parallelstore",
+	BaseUrl:              "https://parallelstore.googleapis.com/v1beta/",
+	CustomEndpointField:  "parallelstore_custom_endpoint",
+	CustomEndpointEnvVar: "GOOGLE_PARALLELSTORE_CUSTOM_ENDPOINT",
+}
 
 func init() {
-	registry.Product{
-		Name:    "parallelstore",
-		BaseUrl: "https://parallelstore.googleapis.com/v1beta/",
-	}.Register()
+	Product.Register()
 }

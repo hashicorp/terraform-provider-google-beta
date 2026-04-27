@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
@@ -168,4 +169,13 @@ func resourceSqlProvisionScriptUpdate(d *schema.ResourceData, meta interface{}) 
 
 func resourceSqlProvisionScriptDelete(d *schema.ResourceData, meta interface{}) error {
 	return nil
+}
+
+func init() {
+	registry.Schema{
+		Name:        "google_sql_provision_script",
+		ProductName: "sql",
+		Type:        registry.SchemaTypeResource,
+		Schema:      ResourceSqlProvisionScript(),
+	}.Register()
 }

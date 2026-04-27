@@ -20,6 +20,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
@@ -77,4 +78,13 @@ func dataSourceAlloydbDatabaseClusterRead(d *schema.ResourceData, meta interface
 	}
 
 	return nil
+}
+
+func init() {
+	registry.Schema{
+		Name:        "google_alloydb_cluster",
+		ProductName: "alloydb",
+		Type:        registry.SchemaTypeDataSource,
+		Schema:      DataSourceAlloydbDatabaseCluster(),
+	}.Register()
 }

@@ -20,6 +20,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
@@ -73,4 +74,13 @@ func dataSourceGoogleComposerUserWorkloadsSecretRead(d *schema.ResourceData, met
 	}
 
 	return nil
+}
+
+func init() {
+	registry.Schema{
+		Name:        "google_composer_user_workloads_secret",
+		ProductName: "composer",
+		Type:        registry.SchemaTypeDataSource,
+		Schema:      DataSourceGoogleComposerUserWorkloadsSecret(),
+	}.Register()
 }

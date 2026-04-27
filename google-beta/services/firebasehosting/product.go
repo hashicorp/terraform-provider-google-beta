@@ -22,11 +22,13 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 )
 
-const ProductName = "firebasehosting"
+var Product = registry.Product{
+	Name:                 "firebasehosting",
+	BaseUrl:              "https://firebasehosting.googleapis.com/v1beta1/",
+	CustomEndpointField:  "firebase_hosting_custom_endpoint",
+	CustomEndpointEnvVar: "GOOGLE_FIREBASE_HOSTING_CUSTOM_ENDPOINT",
+}
 
 func init() {
-	registry.Product{
-		Name:    "firebasehosting",
-		BaseUrl: "https://firebasehosting.googleapis.com/v1beta1/",
-	}.Register()
+	Product.Register()
 }

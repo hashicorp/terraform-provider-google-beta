@@ -22,6 +22,7 @@ import (
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
@@ -334,4 +335,13 @@ func convertResponseToStruct(res map[string]interface{}) DockerImage {
 	}
 
 	return dockerImage
+}
+
+func init() {
+	registry.Schema{
+		Name:        "google_artifact_registry_docker_image",
+		ProductName: "artifactregistry",
+		Type:        registry.SchemaTypeDataSource,
+		Schema:      DataSourceArtifactRegistryDockerImage(),
+	}.Register()
 }

@@ -22,11 +22,13 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 )
 
-const ProductName = "dns"
+var Product = registry.Product{
+	Name:                 "dns",
+	BaseUrl:              "https://dns.googleapis.com/dns/v1beta2/",
+	CustomEndpointField:  "dns_custom_endpoint",
+	CustomEndpointEnvVar: "GOOGLE_DNS_CUSTOM_ENDPOINT",
+}
 
 func init() {
-	registry.Product{
-		Name:    "dns",
-		BaseUrl: "https://dns.googleapis.com/dns/v1beta2/",
-	}.Register()
+	Product.Register()
 }

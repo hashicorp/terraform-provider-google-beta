@@ -20,6 +20,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
@@ -55,4 +56,13 @@ func dataSourceOracleDatabaseOdbNetworkRead(d *schema.ResourceData, meta interfa
 	}
 
 	return nil
+}
+
+func init() {
+	registry.Schema{
+		Name:        "google_oracle_database_odb_network",
+		ProductName: "oracledatabase",
+		Type:        registry.SchemaTypeDataSource,
+		Schema:      DataSourceOracleDatabaseOdbNetwork(),
+	}.Register()
 }

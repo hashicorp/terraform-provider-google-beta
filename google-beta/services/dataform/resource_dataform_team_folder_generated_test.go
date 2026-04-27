@@ -61,7 +61,7 @@ func TestAccDataformTeamFolder_dataformTeamFolderBasicExample(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckDataformTeamFolderDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -73,6 +73,12 @@ func TestAccDataformTeamFolder_dataformTeamFolderBasicExample(t *testing.T) {
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"region"},
 			},
+			{
+				ResourceName:       "google_dataform_team_folder.dataform_team_folder_basic",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -80,7 +86,6 @@ func TestAccDataformTeamFolder_dataformTeamFolderBasicExample(t *testing.T) {
 func testAccDataformTeamFolder_dataformTeamFolderBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_dataform_team_folder" "dataform_team_folder_basic" {
-  provider = google-beta
   region = "us-central1"
   display_name = "Basic TeamFolder-%{random_suffix}"
 }

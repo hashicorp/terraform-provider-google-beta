@@ -24,6 +24,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
@@ -462,4 +463,13 @@ func formatParentService(service string) string {
 	} else {
 		return service
 	}
+}
+
+func init() {
+	registry.Schema{
+		Name:        "google_service_networking_connection",
+		ProductName: "servicenetworking",
+		Type:        registry.SchemaTypeResource,
+		Schema:      ResourceServiceNetworkingConnection(),
+	}.Register()
 }
