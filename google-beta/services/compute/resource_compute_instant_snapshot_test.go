@@ -24,6 +24,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
+	compute_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/compute"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 
 	compute "google.golang.org/api/compute/v0.beta"
@@ -110,7 +111,7 @@ func testAccCheckComputeInstantSnapshotExists(t *testing.T, n, p string, is *com
 
 		zone := tpgresource.GetResourceNameFromSelfLink(rs.Primary.Attributes["zone"])
 
-		found, err := config.NewComputeClient(config.UserAgent).InstantSnapshots.Get(
+		found, err := compute_tpg.NewClient(config, config.UserAgent).InstantSnapshots.Get(
 			p, zone, rs.Primary.Attributes["name"]).Do()
 		if err != nil {
 			return err

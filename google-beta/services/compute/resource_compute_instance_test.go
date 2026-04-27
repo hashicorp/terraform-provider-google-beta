@@ -5115,7 +5115,7 @@ func testAccCheckComputeInstanceUpdateMachineType(t *testing.T, n string) resour
 
 		config := acctest.GoogleProviderConfig(t)
 
-		op, err := config.NewComputeClient(config.UserAgent).Instances.Stop(config.Project, rs.Primary.Attributes["zone"], rs.Primary.Attributes["name"]).Do()
+		op, err := tpgcompute.NewClient(config, config.UserAgent).Instances.Stop(config.Project, rs.Primary.Attributes["zone"], rs.Primary.Attributes["name"]).Do()
 		if err != nil {
 			return fmt.Errorf("Could not stop instance: %s", err)
 		}
@@ -5128,7 +5128,7 @@ func testAccCheckComputeInstanceUpdateMachineType(t *testing.T, n string) resour
 			MachineType: "zones/us-central1-a/machineTypes/f1-micro",
 		}
 
-		op, err = config.NewComputeClient(config.UserAgent).Instances.SetMachineType(
+		op, err = tpgcompute.NewClient(config, config.UserAgent).Instances.SetMachineType(
 			config.Project, rs.Primary.Attributes["zone"], rs.Primary.Attributes["name"], &machineType).Do()
 		if err != nil {
 			return fmt.Errorf("Could not change machine type: %s", err)
@@ -5494,7 +5494,7 @@ func testAccCheckComputeInstanceDestroyProducer(t *testing.T) func(s *terraform.
 				continue
 			}
 
-			_, err := config.NewComputeClient(config.UserAgent).Instances.Get(
+			_, err := tpgcompute.NewClient(config, config.UserAgent).Instances.Get(
 				config.Project, rs.Primary.Attributes["zone"], rs.Primary.Attributes["name"]).Do()
 			if err == nil {
 				return fmt.Errorf("Instance still exists")
@@ -5525,7 +5525,7 @@ func testAccCheckComputeInstanceExistsInProject(t *testing.T, n, p string, insta
 		}
 
 		config := acctest.GoogleProviderConfig(t)
-		found, err := config.NewComputeClient(config.UserAgent).Instances.Get(
+		found, err := tpgcompute.NewClient(config, config.UserAgent).Instances.Get(
 			p, rs.Primary.Attributes["zone"], rs.Primary.Attributes["name"]).View("FULL").Do()
 		if err != nil {
 			return err
@@ -5800,7 +5800,7 @@ func testAccCheckComputeInstanceBootDiskType(t *testing.T, instanceName string, 
 		config := acctest.GoogleProviderConfig(t)
 
 		// boot disk is named the same as the Instance
-		disk, err := config.NewComputeClient(config.UserAgent).Disks.Get(config.Project, "us-central1-a", instanceName).Do()
+		disk, err := tpgcompute.NewClient(config, config.UserAgent).Disks.Get(config.Project, "us-central1-a", instanceName).Do()
 		if err != nil {
 			return err
 		}

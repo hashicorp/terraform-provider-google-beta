@@ -28,6 +28,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 
+	compute_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/compute"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 
 	compute "google.golang.org/api/compute/v0.beta"
@@ -835,7 +836,7 @@ func testAccDataflowFlexTemplateGetGeneratedInstanceTemplate(t *testing.T, s *te
 	var instanceTemplate *compute.InstanceTemplate
 
 	err := resource.Retry(1*time.Minute, func() *resource.RetryError {
-		instanceTemplates, rerr := config.NewComputeClient(config.UserAgent).RegionInstanceTemplates.
+		instanceTemplates, rerr := compute_tpg.NewClient(config, config.UserAgent).RegionInstanceTemplates.
 			List(config.Project, config.Region).
 			Filter(filter).
 			MaxResults(2).
