@@ -360,23 +360,9 @@ func resourceComputeRegionBackendBucketRead(d *schema.ResourceData, meta interfa
 		return fmt.Errorf("Error reading RegionBackendBucket: %s", err)
 	}
 
-	if err := d.Set("bucket_name", flattenComputeRegionBackendBucketBucketName(res["bucketName"], d, config)); err != nil {
-		return fmt.Errorf("Error reading RegionBackendBucket: %s", err)
-	}
-	if err := d.Set("creation_timestamp", flattenComputeRegionBackendBucketCreationTimestamp(res["creationTimestamp"], d, config)); err != nil {
-		return fmt.Errorf("Error reading RegionBackendBucket: %s", err)
-	}
-	if err := d.Set("description", flattenComputeRegionBackendBucketDescription(res["description"], d, config)); err != nil {
-		return fmt.Errorf("Error reading RegionBackendBucket: %s", err)
-	}
-	if err := d.Set("name", flattenComputeRegionBackendBucketName(res["name"], d, config)); err != nil {
-		return fmt.Errorf("Error reading RegionBackendBucket: %s", err)
-	}
-	if err := d.Set("load_balancing_scheme", flattenComputeRegionBackendBucketLoadBalancingScheme(res["loadBalancingScheme"], d, config)); err != nil {
-		return fmt.Errorf("Error reading RegionBackendBucket: %s", err)
-	}
-	if err := d.Set("self_link", tpgresource.ConvertSelfLinkToV1(res["selfLink"].(string))); err != nil {
-		return fmt.Errorf("Error reading RegionBackendBucket: %s", err)
+	err = ResourceComputeRegionBackendBucketFlatten(d, meta, res, config, project, userAgent, billingProject, url, headers)
+	if err != nil {
+		return err
 	}
 
 	identity, err := d.Identity()
@@ -619,4 +605,28 @@ func expandComputeRegionBackendBucketName(v interface{}, d tpgresource.Terraform
 
 func expandComputeRegionBackendBucketLoadBalancingScheme(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func ResourceComputeRegionBackendBucketFlatten(d *schema.ResourceData, meta interface{}, res map[string]interface{}, config *transport_tpg.Config, project string, userAgent string, billingProject string, url string, headers http.Header) error {
+	var err error
+
+	if err = d.Set("bucket_name", flattenComputeRegionBackendBucketBucketName(res["bucketName"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RegionBackendBucket: %s", err)
+	}
+	if err = d.Set("creation_timestamp", flattenComputeRegionBackendBucketCreationTimestamp(res["creationTimestamp"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RegionBackendBucket: %s", err)
+	}
+	if err = d.Set("description", flattenComputeRegionBackendBucketDescription(res["description"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RegionBackendBucket: %s", err)
+	}
+	if err = d.Set("name", flattenComputeRegionBackendBucketName(res["name"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RegionBackendBucket: %s", err)
+	}
+	if err = d.Set("load_balancing_scheme", flattenComputeRegionBackendBucketLoadBalancingScheme(res["loadBalancingScheme"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RegionBackendBucket: %s", err)
+	}
+	if err = d.Set("self_link", tpgresource.ConvertSelfLinkToV1(res["selfLink"].(string))); err != nil {
+		return fmt.Errorf("Error reading RegionBackendBucket: %s", err)
+	}
+	return nil
 }

@@ -400,35 +400,9 @@ func resourceNetworkSecuritySacRealmRead(d *schema.ResourceData, meta interface{
 		return fmt.Errorf("Error reading SacRealm: %s", err)
 	}
 
-	if err := d.Set("name", flattenNetworkSecuritySacRealmName(res["name"], d, config)); err != nil {
-		return fmt.Errorf("Error reading SacRealm: %s", err)
-	}
-	if err := d.Set("create_time", flattenNetworkSecuritySacRealmCreateTime(res["createTime"], d, config)); err != nil {
-		return fmt.Errorf("Error reading SacRealm: %s", err)
-	}
-	if err := d.Set("update_time", flattenNetworkSecuritySacRealmUpdateTime(res["updateTime"], d, config)); err != nil {
-		return fmt.Errorf("Error reading SacRealm: %s", err)
-	}
-	if err := d.Set("labels", flattenNetworkSecuritySacRealmLabels(res["labels"], d, config)); err != nil {
-		return fmt.Errorf("Error reading SacRealm: %s", err)
-	}
-	if err := d.Set("pairing_key", flattenNetworkSecuritySacRealmPairingKey(res["pairingKey"], d, config)); err != nil {
-		return fmt.Errorf("Error reading SacRealm: %s", err)
-	}
-	if err := d.Set("security_service", flattenNetworkSecuritySacRealmSecurityService(res["securityService"], d, config)); err != nil {
-		return fmt.Errorf("Error reading SacRealm: %s", err)
-	}
-	if err := d.Set("state", flattenNetworkSecuritySacRealmState(res["state"], d, config)); err != nil {
-		return fmt.Errorf("Error reading SacRealm: %s", err)
-	}
-	if err := d.Set("symantec_options", flattenNetworkSecuritySacRealmSymantecOptions(res["symantecOptions"], d, config)); err != nil {
-		return fmt.Errorf("Error reading SacRealm: %s", err)
-	}
-	if err := d.Set("terraform_labels", flattenNetworkSecuritySacRealmTerraformLabels(res["labels"], d, config)); err != nil {
-		return fmt.Errorf("Error reading SacRealm: %s", err)
-	}
-	if err := d.Set("effective_labels", flattenNetworkSecuritySacRealmEffectiveLabels(res["labels"], d, config)); err != nil {
-		return fmt.Errorf("Error reading SacRealm: %s", err)
+	err = ResourceNetworkSecuritySacRealmFlatten(d, meta, res, config, project, userAgent, billingProject, url, headers)
+	if err != nil {
+		return err
 	}
 
 	identity, err := d.Identity()
@@ -705,4 +679,41 @@ func expandNetworkSecuritySacRealmEffectiveLabels(v interface{}, d tpgresource.T
 		m[k] = val.(string)
 	}
 	return m, nil
+}
+
+func ResourceNetworkSecuritySacRealmFlatten(d *schema.ResourceData, meta interface{}, res map[string]interface{}, config *transport_tpg.Config, project string, userAgent string, billingProject string, url string, headers http.Header) error {
+	var err error
+
+	if err = d.Set("name", flattenNetworkSecuritySacRealmName(res["name"], d, config)); err != nil {
+		return fmt.Errorf("Error reading SacRealm: %s", err)
+	}
+	if err = d.Set("create_time", flattenNetworkSecuritySacRealmCreateTime(res["createTime"], d, config)); err != nil {
+		return fmt.Errorf("Error reading SacRealm: %s", err)
+	}
+	if err = d.Set("update_time", flattenNetworkSecuritySacRealmUpdateTime(res["updateTime"], d, config)); err != nil {
+		return fmt.Errorf("Error reading SacRealm: %s", err)
+	}
+	if err = d.Set("labels", flattenNetworkSecuritySacRealmLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading SacRealm: %s", err)
+	}
+	if err = d.Set("pairing_key", flattenNetworkSecuritySacRealmPairingKey(res["pairingKey"], d, config)); err != nil {
+		return fmt.Errorf("Error reading SacRealm: %s", err)
+	}
+	if err = d.Set("security_service", flattenNetworkSecuritySacRealmSecurityService(res["securityService"], d, config)); err != nil {
+		return fmt.Errorf("Error reading SacRealm: %s", err)
+	}
+	if err = d.Set("state", flattenNetworkSecuritySacRealmState(res["state"], d, config)); err != nil {
+		return fmt.Errorf("Error reading SacRealm: %s", err)
+	}
+	if err = d.Set("symantec_options", flattenNetworkSecuritySacRealmSymantecOptions(res["symantecOptions"], d, config)); err != nil {
+		return fmt.Errorf("Error reading SacRealm: %s", err)
+	}
+	if err = d.Set("terraform_labels", flattenNetworkSecuritySacRealmTerraformLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading SacRealm: %s", err)
+	}
+	if err = d.Set("effective_labels", flattenNetworkSecuritySacRealmEffectiveLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading SacRealm: %s", err)
+	}
+
+	return nil
 }

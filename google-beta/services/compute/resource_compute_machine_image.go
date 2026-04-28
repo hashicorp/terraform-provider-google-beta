@@ -407,26 +407,9 @@ func resourceComputeMachineImageRead(d *schema.ResourceData, meta interface{}) e
 		return fmt.Errorf("Error reading MachineImage: %s", err)
 	}
 
-	if err := d.Set("name", flattenComputeMachineImageName(res["name"], d, config)); err != nil {
-		return fmt.Errorf("Error reading MachineImage: %s", err)
-	}
-	if err := d.Set("description", flattenComputeMachineImageDescription(res["description"], d, config)); err != nil {
-		return fmt.Errorf("Error reading MachineImage: %s", err)
-	}
-	if err := d.Set("source_instance", flattenComputeMachineImageSourceInstance(res["sourceInstance"], d, config)); err != nil {
-		return fmt.Errorf("Error reading MachineImage: %s", err)
-	}
-	if err := d.Set("storage_locations", flattenComputeMachineImageStorageLocations(res["storageLocations"], d, config)); err != nil {
-		return fmt.Errorf("Error reading MachineImage: %s", err)
-	}
-	if err := d.Set("guest_flush", flattenComputeMachineImageGuestFlush(res["guestFlush"], d, config)); err != nil {
-		return fmt.Errorf("Error reading MachineImage: %s", err)
-	}
-	if err := d.Set("machine_image_encryption_key", flattenComputeMachineImageMachineImageEncryptionKey(res["machineImageEncryptionKey"], d, config)); err != nil {
-		return fmt.Errorf("Error reading MachineImage: %s", err)
-	}
-	if err := d.Set("self_link", tpgresource.ConvertSelfLinkToV1(res["selfLink"].(string))); err != nil {
-		return fmt.Errorf("Error reading MachineImage: %s", err)
+	err = ResourceComputeMachineImageFlatten(d, meta, res, config, project, userAgent, billingProject, url, headers)
+	if err != nil {
+		return err
 	}
 
 	identity, err := d.Identity()
@@ -694,4 +677,31 @@ func expandComputeMachineImageParamsResourceManagerTags(v interface{}, d tpgreso
 		m[k] = val.(string)
 	}
 	return m, nil
+}
+
+func ResourceComputeMachineImageFlatten(d *schema.ResourceData, meta interface{}, res map[string]interface{}, config *transport_tpg.Config, project string, userAgent string, billingProject string, url string, headers http.Header) error {
+	var err error
+
+	if err = d.Set("name", flattenComputeMachineImageName(res["name"], d, config)); err != nil {
+		return fmt.Errorf("Error reading MachineImage: %s", err)
+	}
+	if err = d.Set("description", flattenComputeMachineImageDescription(res["description"], d, config)); err != nil {
+		return fmt.Errorf("Error reading MachineImage: %s", err)
+	}
+	if err = d.Set("source_instance", flattenComputeMachineImageSourceInstance(res["sourceInstance"], d, config)); err != nil {
+		return fmt.Errorf("Error reading MachineImage: %s", err)
+	}
+	if err = d.Set("storage_locations", flattenComputeMachineImageStorageLocations(res["storageLocations"], d, config)); err != nil {
+		return fmt.Errorf("Error reading MachineImage: %s", err)
+	}
+	if err = d.Set("guest_flush", flattenComputeMachineImageGuestFlush(res["guestFlush"], d, config)); err != nil {
+		return fmt.Errorf("Error reading MachineImage: %s", err)
+	}
+	if err = d.Set("machine_image_encryption_key", flattenComputeMachineImageMachineImageEncryptionKey(res["machineImageEncryptionKey"], d, config)); err != nil {
+		return fmt.Errorf("Error reading MachineImage: %s", err)
+	}
+	if err = d.Set("self_link", tpgresource.ConvertSelfLinkToV1(res["selfLink"].(string))); err != nil {
+		return fmt.Errorf("Error reading MachineImage: %s", err)
+	}
+	return nil
 }

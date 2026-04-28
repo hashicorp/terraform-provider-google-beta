@@ -1120,32 +1120,9 @@ func resourceOSConfigGuestPoliciesRead(d *schema.ResourceData, meta interface{})
 		return fmt.Errorf("Error reading GuestPolicies: %s", err)
 	}
 
-	if err := d.Set("name", flattenOSConfigGuestPoliciesName(res["name"], d, config)); err != nil {
-		return fmt.Errorf("Error reading GuestPolicies: %s", err)
-	}
-	if err := d.Set("description", flattenOSConfigGuestPoliciesDescription(res["description"], d, config)); err != nil {
-		return fmt.Errorf("Error reading GuestPolicies: %s", err)
-	}
-	if err := d.Set("assignment", flattenOSConfigGuestPoliciesAssignment(res["assignment"], d, config)); err != nil {
-		return fmt.Errorf("Error reading GuestPolicies: %s", err)
-	}
-	if err := d.Set("packages", flattenOSConfigGuestPoliciesPackages(res["packages"], d, config)); err != nil {
-		return fmt.Errorf("Error reading GuestPolicies: %s", err)
-	}
-	if err := d.Set("package_repositories", flattenOSConfigGuestPoliciesPackageRepositories(res["packageRepositories"], d, config)); err != nil {
-		return fmt.Errorf("Error reading GuestPolicies: %s", err)
-	}
-	if err := d.Set("recipes", flattenOSConfigGuestPoliciesRecipes(res["recipes"], d, config)); err != nil {
-		return fmt.Errorf("Error reading GuestPolicies: %s", err)
-	}
-	if err := d.Set("create_time", flattenOSConfigGuestPoliciesCreateTime(res["createTime"], d, config)); err != nil {
-		return fmt.Errorf("Error reading GuestPolicies: %s", err)
-	}
-	if err := d.Set("update_time", flattenOSConfigGuestPoliciesUpdateTime(res["updateTime"], d, config)); err != nil {
-		return fmt.Errorf("Error reading GuestPolicies: %s", err)
-	}
-	if err := d.Set("etag", flattenOSConfigGuestPoliciesEtag(res["etag"], d, config)); err != nil {
-		return fmt.Errorf("Error reading GuestPolicies: %s", err)
+	err = ResourceOSConfigGuestPoliciesFlatten(d, meta, res, config, project, userAgent, billingProject, url, headers)
+	if err != nil {
+		return err
 	}
 
 	identity, err := d.Identity()
@@ -3641,4 +3618,38 @@ func expandOSConfigGuestPoliciesRecipesDesiredState(v interface{}, d tpgresource
 
 func expandOSConfigGuestPoliciesEtag(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func ResourceOSConfigGuestPoliciesFlatten(d *schema.ResourceData, meta interface{}, res map[string]interface{}, config *transport_tpg.Config, project string, userAgent string, billingProject string, url string, headers http.Header) error {
+	var err error
+
+	if err = d.Set("name", flattenOSConfigGuestPoliciesName(res["name"], d, config)); err != nil {
+		return fmt.Errorf("Error reading GuestPolicies: %s", err)
+	}
+	if err = d.Set("description", flattenOSConfigGuestPoliciesDescription(res["description"], d, config)); err != nil {
+		return fmt.Errorf("Error reading GuestPolicies: %s", err)
+	}
+	if err = d.Set("assignment", flattenOSConfigGuestPoliciesAssignment(res["assignment"], d, config)); err != nil {
+		return fmt.Errorf("Error reading GuestPolicies: %s", err)
+	}
+	if err = d.Set("packages", flattenOSConfigGuestPoliciesPackages(res["packages"], d, config)); err != nil {
+		return fmt.Errorf("Error reading GuestPolicies: %s", err)
+	}
+	if err = d.Set("package_repositories", flattenOSConfigGuestPoliciesPackageRepositories(res["packageRepositories"], d, config)); err != nil {
+		return fmt.Errorf("Error reading GuestPolicies: %s", err)
+	}
+	if err = d.Set("recipes", flattenOSConfigGuestPoliciesRecipes(res["recipes"], d, config)); err != nil {
+		return fmt.Errorf("Error reading GuestPolicies: %s", err)
+	}
+	if err = d.Set("create_time", flattenOSConfigGuestPoliciesCreateTime(res["createTime"], d, config)); err != nil {
+		return fmt.Errorf("Error reading GuestPolicies: %s", err)
+	}
+	if err = d.Set("update_time", flattenOSConfigGuestPoliciesUpdateTime(res["updateTime"], d, config)); err != nil {
+		return fmt.Errorf("Error reading GuestPolicies: %s", err)
+	}
+	if err = d.Set("etag", flattenOSConfigGuestPoliciesEtag(res["etag"], d, config)); err != nil {
+		return fmt.Errorf("Error reading GuestPolicies: %s", err)
+	}
+
+	return nil
 }

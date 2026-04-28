@@ -372,26 +372,9 @@ func resourceFirebaseAppleAppRead(d *schema.ResourceData, meta interface{}) erro
 		return fmt.Errorf("Error reading AppleApp: %s", err)
 	}
 
-	if err := d.Set("name", flattenFirebaseAppleAppName(res["name"], d, config)); err != nil {
-		return fmt.Errorf("Error reading AppleApp: %s", err)
-	}
-	if err := d.Set("display_name", flattenFirebaseAppleAppDisplayName(res["displayName"], d, config)); err != nil {
-		return fmt.Errorf("Error reading AppleApp: %s", err)
-	}
-	if err := d.Set("app_id", flattenFirebaseAppleAppAppId(res["appId"], d, config)); err != nil {
-		return fmt.Errorf("Error reading AppleApp: %s", err)
-	}
-	if err := d.Set("bundle_id", flattenFirebaseAppleAppBundleId(res["bundleId"], d, config)); err != nil {
-		return fmt.Errorf("Error reading AppleApp: %s", err)
-	}
-	if err := d.Set("app_store_id", flattenFirebaseAppleAppAppStoreId(res["appStoreId"], d, config)); err != nil {
-		return fmt.Errorf("Error reading AppleApp: %s", err)
-	}
-	if err := d.Set("team_id", flattenFirebaseAppleAppTeamId(res["teamId"], d, config)); err != nil {
-		return fmt.Errorf("Error reading AppleApp: %s", err)
-	}
-	if err := d.Set("api_key_id", flattenFirebaseAppleAppApiKeyId(res["apiKeyId"], d, config)); err != nil {
-		return fmt.Errorf("Error reading AppleApp: %s", err)
+	err = ResourceFirebaseAppleAppFlatten(d, meta, res, config, project, userAgent, billingProject, url, headers)
+	if err != nil {
+		return err
 	}
 
 	identity, err := d.Identity()
@@ -670,4 +653,32 @@ func expandFirebaseAppleAppTeamId(v interface{}, d tpgresource.TerraformResource
 
 func expandFirebaseAppleAppApiKeyId(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func ResourceFirebaseAppleAppFlatten(d *schema.ResourceData, meta interface{}, res map[string]interface{}, config *transport_tpg.Config, project string, userAgent string, billingProject string, url string, headers http.Header) error {
+	var err error
+
+	if err = d.Set("name", flattenFirebaseAppleAppName(res["name"], d, config)); err != nil {
+		return fmt.Errorf("Error reading AppleApp: %s", err)
+	}
+	if err = d.Set("display_name", flattenFirebaseAppleAppDisplayName(res["displayName"], d, config)); err != nil {
+		return fmt.Errorf("Error reading AppleApp: %s", err)
+	}
+	if err = d.Set("app_id", flattenFirebaseAppleAppAppId(res["appId"], d, config)); err != nil {
+		return fmt.Errorf("Error reading AppleApp: %s", err)
+	}
+	if err = d.Set("bundle_id", flattenFirebaseAppleAppBundleId(res["bundleId"], d, config)); err != nil {
+		return fmt.Errorf("Error reading AppleApp: %s", err)
+	}
+	if err = d.Set("app_store_id", flattenFirebaseAppleAppAppStoreId(res["appStoreId"], d, config)); err != nil {
+		return fmt.Errorf("Error reading AppleApp: %s", err)
+	}
+	if err = d.Set("team_id", flattenFirebaseAppleAppTeamId(res["teamId"], d, config)); err != nil {
+		return fmt.Errorf("Error reading AppleApp: %s", err)
+	}
+	if err = d.Set("api_key_id", flattenFirebaseAppleAppApiKeyId(res["apiKeyId"], d, config)); err != nil {
+		return fmt.Errorf("Error reading AppleApp: %s", err)
+	}
+
+	return nil
 }

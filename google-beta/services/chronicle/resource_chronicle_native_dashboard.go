@@ -547,68 +547,9 @@ func resourceChronicleNativeDashboardRead(d *schema.ResourceData, meta interface
 		return fmt.Errorf("Error reading NativeDashboard: %s", err)
 	}
 
-	if err := d.Set("name", flattenChronicleNativeDashboardName(res["name"], d, config)); err != nil {
-		return fmt.Errorf("Error reading NativeDashboard: %s", err)
-	}
-	if err := d.Set("dashboard_id", flattenChronicleNativeDashboardDashboardId(res["dashboardId"], d, config)); err != nil {
-		return fmt.Errorf("Error reading NativeDashboard: %s", err)
-	}
-	if err := d.Set("access", flattenChronicleNativeDashboardAccess(res["access"], d, config)); err != nil {
-		return fmt.Errorf("Error reading NativeDashboard: %s", err)
-	}
-	if err := d.Set("create_time", flattenChronicleNativeDashboardCreateTime(res["createTime"], d, config)); err != nil {
-		return fmt.Errorf("Error reading NativeDashboard: %s", err)
-	}
-	if err := d.Set("create_user_id", flattenChronicleNativeDashboardCreateUserId(res["createUserId"], d, config)); err != nil {
-		return fmt.Errorf("Error reading NativeDashboard: %s", err)
-	}
-	// Terraform must set the top level schema field, but since this object contains collapsed properties
-	// it's difficult to know what the top level should be. Instead we just loop over the map returned from flatten.
-	if flattenedProp := flattenChronicleNativeDashboardDashboardUserData(res["dashboardUserData"], d, config); flattenedProp != nil {
-		if gerr, ok := flattenedProp.(*googleapi.Error); ok {
-			return fmt.Errorf("Error reading NativeDashboard: %s", gerr)
-		}
-		casted := flattenedProp.([]interface{})[0]
-		if casted != nil {
-			for k, v := range casted.(map[string]interface{}) {
-				if err := d.Set(k, v); err != nil {
-					return fmt.Errorf("Error setting %s: %s", k, err)
-				}
-			}
-		}
-	}
-	// Terraform must set the top level schema field, but since this object contains collapsed properties
-	// it's difficult to know what the top level should be. Instead we just loop over the map returned from flatten.
-	if flattenedProp := flattenChronicleNativeDashboardDefinition(res["definition"], d, config); flattenedProp != nil {
-		if gerr, ok := flattenedProp.(*googleapi.Error); ok {
-			return fmt.Errorf("Error reading NativeDashboard: %s", gerr)
-		}
-		casted := flattenedProp.([]interface{})[0]
-		if casted != nil {
-			for k, v := range casted.(map[string]interface{}) {
-				if err := d.Set(k, v); err != nil {
-					return fmt.Errorf("Error setting %s: %s", k, err)
-				}
-			}
-		}
-	}
-	if err := d.Set("description", flattenChronicleNativeDashboardDescription(res["description"], d, config)); err != nil {
-		return fmt.Errorf("Error reading NativeDashboard: %s", err)
-	}
-	if err := d.Set("display_name", flattenChronicleNativeDashboardDisplayName(res["displayName"], d, config)); err != nil {
-		return fmt.Errorf("Error reading NativeDashboard: %s", err)
-	}
-	if err := d.Set("etag", flattenChronicleNativeDashboardEtag(res["etag"], d, config)); err != nil {
-		return fmt.Errorf("Error reading NativeDashboard: %s", err)
-	}
-	if err := d.Set("type", flattenChronicleNativeDashboardType(res["type"], d, config)); err != nil {
-		return fmt.Errorf("Error reading NativeDashboard: %s", err)
-	}
-	if err := d.Set("update_time", flattenChronicleNativeDashboardUpdateTime(res["updateTime"], d, config)); err != nil {
-		return fmt.Errorf("Error reading NativeDashboard: %s", err)
-	}
-	if err := d.Set("update_user_id", flattenChronicleNativeDashboardUpdateUserId(res["updateUserId"], d, config)); err != nil {
-		return fmt.Errorf("Error reading NativeDashboard: %s", err)
+	err = ResourceChronicleNativeDashboardFlatten(d, meta, res, config, project, userAgent, billingProject, url, headers)
+	if err != nil {
+		return err
 	}
 
 	identity, err := d.Identity()
@@ -1500,5 +1441,75 @@ func resourceChronicleNativeDashboardPostCreateSetComputedFields(d *schema.Resou
 	if err := d.Set("dashboard_id", flattenChronicleNativeDashboardDashboardId(res["dashboardId"], d, config)); err != nil {
 		return fmt.Errorf(`Error setting computed identity field "dashboard_id": %s`, err)
 	}
+	return nil
+}
+
+func ResourceChronicleNativeDashboardFlatten(d *schema.ResourceData, meta interface{}, res map[string]interface{}, config *transport_tpg.Config, project string, userAgent string, billingProject string, url string, headers http.Header) error {
+	var err error
+
+	if err = d.Set("name", flattenChronicleNativeDashboardName(res["name"], d, config)); err != nil {
+		return fmt.Errorf("Error reading NativeDashboard: %s", err)
+	}
+	if err = d.Set("dashboard_id", flattenChronicleNativeDashboardDashboardId(res["dashboardId"], d, config)); err != nil {
+		return fmt.Errorf("Error reading NativeDashboard: %s", err)
+	}
+	if err = d.Set("access", flattenChronicleNativeDashboardAccess(res["access"], d, config)); err != nil {
+		return fmt.Errorf("Error reading NativeDashboard: %s", err)
+	}
+	if err = d.Set("create_time", flattenChronicleNativeDashboardCreateTime(res["createTime"], d, config)); err != nil {
+		return fmt.Errorf("Error reading NativeDashboard: %s", err)
+	}
+	if err = d.Set("create_user_id", flattenChronicleNativeDashboardCreateUserId(res["createUserId"], d, config)); err != nil {
+		return fmt.Errorf("Error reading NativeDashboard: %s", err)
+	}
+	// Terraform must set the top level schema field, but since this object contains collapsed properties
+	// it's difficult to know what the top level should be. Instead we just loop over the map returned from flatten.
+	if flattenedProp := flattenChronicleNativeDashboardDashboardUserData(res["dashboardUserData"], d, config); flattenedProp != nil {
+		if gerr, ok := flattenedProp.(*googleapi.Error); ok {
+			return fmt.Errorf("Error reading NativeDashboard: %s", gerr)
+		}
+		casted := flattenedProp.([]interface{})[0]
+		if casted != nil {
+			for k, v := range casted.(map[string]interface{}) {
+				if err := d.Set(k, v); err != nil {
+					return fmt.Errorf("Error setting %s: %s", k, err)
+				}
+			}
+		}
+	}
+	// Terraform must set the top level schema field, but since this object contains collapsed properties
+	// it's difficult to know what the top level should be. Instead we just loop over the map returned from flatten.
+	if flattenedProp := flattenChronicleNativeDashboardDefinition(res["definition"], d, config); flattenedProp != nil {
+		if gerr, ok := flattenedProp.(*googleapi.Error); ok {
+			return fmt.Errorf("Error reading NativeDashboard: %s", gerr)
+		}
+		casted := flattenedProp.([]interface{})[0]
+		if casted != nil {
+			for k, v := range casted.(map[string]interface{}) {
+				if err := d.Set(k, v); err != nil {
+					return fmt.Errorf("Error setting %s: %s", k, err)
+				}
+			}
+		}
+	}
+	if err = d.Set("description", flattenChronicleNativeDashboardDescription(res["description"], d, config)); err != nil {
+		return fmt.Errorf("Error reading NativeDashboard: %s", err)
+	}
+	if err = d.Set("display_name", flattenChronicleNativeDashboardDisplayName(res["displayName"], d, config)); err != nil {
+		return fmt.Errorf("Error reading NativeDashboard: %s", err)
+	}
+	if err = d.Set("etag", flattenChronicleNativeDashboardEtag(res["etag"], d, config)); err != nil {
+		return fmt.Errorf("Error reading NativeDashboard: %s", err)
+	}
+	if err = d.Set("type", flattenChronicleNativeDashboardType(res["type"], d, config)); err != nil {
+		return fmt.Errorf("Error reading NativeDashboard: %s", err)
+	}
+	if err = d.Set("update_time", flattenChronicleNativeDashboardUpdateTime(res["updateTime"], d, config)); err != nil {
+		return fmt.Errorf("Error reading NativeDashboard: %s", err)
+	}
+	if err = d.Set("update_user_id", flattenChronicleNativeDashboardUpdateUserId(res["updateUserId"], d, config)); err != nil {
+		return fmt.Errorf("Error reading NativeDashboard: %s", err)
+	}
+
 	return nil
 }

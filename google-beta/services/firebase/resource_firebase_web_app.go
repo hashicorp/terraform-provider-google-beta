@@ -346,20 +346,9 @@ func resourceFirebaseWebAppRead(d *schema.ResourceData, meta interface{}) error 
 		return fmt.Errorf("Error reading WebApp: %s", err)
 	}
 
-	if err := d.Set("name", flattenFirebaseWebAppName(res["name"], d, config)); err != nil {
-		return fmt.Errorf("Error reading WebApp: %s", err)
-	}
-	if err := d.Set("display_name", flattenFirebaseWebAppDisplayName(res["displayName"], d, config)); err != nil {
-		return fmt.Errorf("Error reading WebApp: %s", err)
-	}
-	if err := d.Set("app_id", flattenFirebaseWebAppAppId(res["appId"], d, config)); err != nil {
-		return fmt.Errorf("Error reading WebApp: %s", err)
-	}
-	if err := d.Set("app_urls", flattenFirebaseWebAppAppUrls(res["appUrls"], d, config)); err != nil {
-		return fmt.Errorf("Error reading WebApp: %s", err)
-	}
-	if err := d.Set("api_key_id", flattenFirebaseWebAppApiKeyId(res["apiKeyId"], d, config)); err != nil {
-		return fmt.Errorf("Error reading WebApp: %s", err)
+	err = ResourceFirebaseWebAppFlatten(d, meta, res, config, project, userAgent, billingProject, url, headers)
+	if err != nil {
+		return err
 	}
 
 	identity, err := d.Identity()
@@ -598,4 +587,26 @@ func expandFirebaseWebAppDisplayName(v interface{}, d tpgresource.TerraformResou
 
 func expandFirebaseWebAppApiKeyId(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func ResourceFirebaseWebAppFlatten(d *schema.ResourceData, meta interface{}, res map[string]interface{}, config *transport_tpg.Config, project string, userAgent string, billingProject string, url string, headers http.Header) error {
+	var err error
+
+	if err = d.Set("name", flattenFirebaseWebAppName(res["name"], d, config)); err != nil {
+		return fmt.Errorf("Error reading WebApp: %s", err)
+	}
+	if err = d.Set("display_name", flattenFirebaseWebAppDisplayName(res["displayName"], d, config)); err != nil {
+		return fmt.Errorf("Error reading WebApp: %s", err)
+	}
+	if err = d.Set("app_id", flattenFirebaseWebAppAppId(res["appId"], d, config)); err != nil {
+		return fmt.Errorf("Error reading WebApp: %s", err)
+	}
+	if err = d.Set("app_urls", flattenFirebaseWebAppAppUrls(res["appUrls"], d, config)); err != nil {
+		return fmt.Errorf("Error reading WebApp: %s", err)
+	}
+	if err = d.Set("api_key_id", flattenFirebaseWebAppApiKeyId(res["apiKeyId"], d, config)); err != nil {
+		return fmt.Errorf("Error reading WebApp: %s", err)
+	}
+
+	return nil
 }

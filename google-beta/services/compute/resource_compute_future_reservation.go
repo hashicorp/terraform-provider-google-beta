@@ -1046,65 +1046,9 @@ func resourceComputeFutureReservationRead(d *schema.ResourceData, meta interface
 		return fmt.Errorf("Error reading FutureReservation: %s", err)
 	}
 
-	if err := d.Set("zone", flattenComputeFutureReservationZone(res["zone"], d, config)); err != nil {
-		return fmt.Errorf("Error reading FutureReservation: %s", err)
-	}
-	if err := d.Set("creation_timestamp", flattenComputeFutureReservationCreationTimestamp(res["creationTimestamp"], d, config)); err != nil {
-		return fmt.Errorf("Error reading FutureReservation: %s", err)
-	}
-	if err := d.Set("self_link_with_id", flattenComputeFutureReservationSelfLinkWithId(res["selfLinkWithId"], d, config)); err != nil {
-		return fmt.Errorf("Error reading FutureReservation: %s", err)
-	}
-	if err := d.Set("description", flattenComputeFutureReservationDescription(res["description"], d, config)); err != nil {
-		return fmt.Errorf("Error reading FutureReservation: %s", err)
-	}
-	if err := d.Set("time_window", flattenComputeFutureReservationTimeWindow(res["timeWindow"], d, config)); err != nil {
-		return fmt.Errorf("Error reading FutureReservation: %s", err)
-	}
-	if err := d.Set("share_settings", flattenComputeFutureReservationShareSettings(res["shareSettings"], d, config)); err != nil {
-		return fmt.Errorf("Error reading FutureReservation: %s", err)
-	}
-	if err := d.Set("name_prefix", flattenComputeFutureReservationNamePrefix(res["namePrefix"], d, config)); err != nil {
-		return fmt.Errorf("Error reading FutureReservation: %s", err)
-	}
-	if err := d.Set("status", flattenComputeFutureReservationStatus(res["status"], d, config)); err != nil {
-		return fmt.Errorf("Error reading FutureReservation: %s", err)
-	}
-	if err := d.Set("planning_status", flattenComputeFutureReservationPlanningStatus(res["planningStatus"], d, config)); err != nil {
-		return fmt.Errorf("Error reading FutureReservation: %s", err)
-	}
-	if err := d.Set("specific_reservation_required", flattenComputeFutureReservationSpecificReservationRequired(res["specificReservationRequired"], d, config)); err != nil {
-		return fmt.Errorf("Error reading FutureReservation: %s", err)
-	}
-	if err := d.Set("reservation_name", flattenComputeFutureReservationReservationName(res["reservationName"], d, config)); err != nil {
-		return fmt.Errorf("Error reading FutureReservation: %s", err)
-	}
-	if err := d.Set("deployment_type", flattenComputeFutureReservationDeploymentType(res["deploymentType"], d, config)); err != nil {
-		return fmt.Errorf("Error reading FutureReservation: %s", err)
-	}
-	if err := d.Set("reservation_mode", flattenComputeFutureReservationReservationMode(res["reservationMode"], d, config)); err != nil {
-		return fmt.Errorf("Error reading FutureReservation: %s", err)
-	}
-	if err := d.Set("commitment_info", flattenComputeFutureReservationCommitmentInfo(res["commitmentInfo"], d, config)); err != nil {
-		return fmt.Errorf("Error reading FutureReservation: %s", err)
-	}
-	if err := d.Set("scheduling_type", flattenComputeFutureReservationSchedulingType(res["schedulingType"], d, config)); err != nil {
-		return fmt.Errorf("Error reading FutureReservation: %s", err)
-	}
-	if err := d.Set("specific_sku_properties", flattenComputeFutureReservationSpecificSkuProperties(res["specificSkuProperties"], d, config)); err != nil {
-		return fmt.Errorf("Error reading FutureReservation: %s", err)
-	}
-	if err := d.Set("auto_created_reservations_duration", flattenComputeFutureReservationAutoCreatedReservationsDuration(res["autoCreatedReservationsDuration"], d, config)); err != nil {
-		return fmt.Errorf("Error reading FutureReservation: %s", err)
-	}
-	if err := d.Set("aggregate_reservation", flattenComputeFutureReservationAggregateReservation(res["aggregateReservation"], d, config)); err != nil {
-		return fmt.Errorf("Error reading FutureReservation: %s", err)
-	}
-	if err := d.Set("name", flattenComputeFutureReservationName(res["name"], d, config)); err != nil {
-		return fmt.Errorf("Error reading FutureReservation: %s", err)
-	}
-	if err := d.Set("self_link", tpgresource.ConvertSelfLinkToV1(res["selfLink"].(string))); err != nil {
-		return fmt.Errorf("Error reading FutureReservation: %s", err)
+	err = ResourceComputeFutureReservationFlatten(d, meta, res, config, project, userAgent, billingProject, url, headers)
+	if err != nil {
+		return err
 	}
 
 	identity, err := d.Identity()
@@ -2900,4 +2844,70 @@ func resourceComputeFutureReservationUpdateEncoder(d *schema.ResourceData, meta 
 		obj["name"] = nameProp
 	}
 	return obj, nil
+}
+
+func ResourceComputeFutureReservationFlatten(d *schema.ResourceData, meta interface{}, res map[string]interface{}, config *transport_tpg.Config, project string, userAgent string, billingProject string, url string, headers http.Header) error {
+	var err error
+
+	if err = d.Set("zone", flattenComputeFutureReservationZone(res["zone"], d, config)); err != nil {
+		return fmt.Errorf("Error reading FutureReservation: %s", err)
+	}
+	if err = d.Set("creation_timestamp", flattenComputeFutureReservationCreationTimestamp(res["creationTimestamp"], d, config)); err != nil {
+		return fmt.Errorf("Error reading FutureReservation: %s", err)
+	}
+	if err = d.Set("self_link_with_id", flattenComputeFutureReservationSelfLinkWithId(res["selfLinkWithId"], d, config)); err != nil {
+		return fmt.Errorf("Error reading FutureReservation: %s", err)
+	}
+	if err = d.Set("description", flattenComputeFutureReservationDescription(res["description"], d, config)); err != nil {
+		return fmt.Errorf("Error reading FutureReservation: %s", err)
+	}
+	if err = d.Set("time_window", flattenComputeFutureReservationTimeWindow(res["timeWindow"], d, config)); err != nil {
+		return fmt.Errorf("Error reading FutureReservation: %s", err)
+	}
+	if err = d.Set("share_settings", flattenComputeFutureReservationShareSettings(res["shareSettings"], d, config)); err != nil {
+		return fmt.Errorf("Error reading FutureReservation: %s", err)
+	}
+	if err = d.Set("name_prefix", flattenComputeFutureReservationNamePrefix(res["namePrefix"], d, config)); err != nil {
+		return fmt.Errorf("Error reading FutureReservation: %s", err)
+	}
+	if err = d.Set("status", flattenComputeFutureReservationStatus(res["status"], d, config)); err != nil {
+		return fmt.Errorf("Error reading FutureReservation: %s", err)
+	}
+	if err = d.Set("planning_status", flattenComputeFutureReservationPlanningStatus(res["planningStatus"], d, config)); err != nil {
+		return fmt.Errorf("Error reading FutureReservation: %s", err)
+	}
+	if err = d.Set("specific_reservation_required", flattenComputeFutureReservationSpecificReservationRequired(res["specificReservationRequired"], d, config)); err != nil {
+		return fmt.Errorf("Error reading FutureReservation: %s", err)
+	}
+	if err = d.Set("reservation_name", flattenComputeFutureReservationReservationName(res["reservationName"], d, config)); err != nil {
+		return fmt.Errorf("Error reading FutureReservation: %s", err)
+	}
+	if err = d.Set("deployment_type", flattenComputeFutureReservationDeploymentType(res["deploymentType"], d, config)); err != nil {
+		return fmt.Errorf("Error reading FutureReservation: %s", err)
+	}
+	if err = d.Set("reservation_mode", flattenComputeFutureReservationReservationMode(res["reservationMode"], d, config)); err != nil {
+		return fmt.Errorf("Error reading FutureReservation: %s", err)
+	}
+	if err = d.Set("commitment_info", flattenComputeFutureReservationCommitmentInfo(res["commitmentInfo"], d, config)); err != nil {
+		return fmt.Errorf("Error reading FutureReservation: %s", err)
+	}
+	if err = d.Set("scheduling_type", flattenComputeFutureReservationSchedulingType(res["schedulingType"], d, config)); err != nil {
+		return fmt.Errorf("Error reading FutureReservation: %s", err)
+	}
+	if err = d.Set("specific_sku_properties", flattenComputeFutureReservationSpecificSkuProperties(res["specificSkuProperties"], d, config)); err != nil {
+		return fmt.Errorf("Error reading FutureReservation: %s", err)
+	}
+	if err = d.Set("auto_created_reservations_duration", flattenComputeFutureReservationAutoCreatedReservationsDuration(res["autoCreatedReservationsDuration"], d, config)); err != nil {
+		return fmt.Errorf("Error reading FutureReservation: %s", err)
+	}
+	if err = d.Set("aggregate_reservation", flattenComputeFutureReservationAggregateReservation(res["aggregateReservation"], d, config)); err != nil {
+		return fmt.Errorf("Error reading FutureReservation: %s", err)
+	}
+	if err = d.Set("name", flattenComputeFutureReservationName(res["name"], d, config)); err != nil {
+		return fmt.Errorf("Error reading FutureReservation: %s", err)
+	}
+	if err = d.Set("self_link", tpgresource.ConvertSelfLinkToV1(res["selfLink"].(string))); err != nil {
+		return fmt.Errorf("Error reading FutureReservation: %s", err)
+	}
+	return nil
 }

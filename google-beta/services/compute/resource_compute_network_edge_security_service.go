@@ -355,29 +355,9 @@ func resourceComputeNetworkEdgeSecurityServiceRead(d *schema.ResourceData, meta 
 		return fmt.Errorf("Error reading NetworkEdgeSecurityService: %s", err)
 	}
 
-	if err := d.Set("name", flattenComputeNetworkEdgeSecurityServiceName(res["name"], d, config)); err != nil {
-		return fmt.Errorf("Error reading NetworkEdgeSecurityService: %s", err)
-	}
-	if err := d.Set("description", flattenComputeNetworkEdgeSecurityServiceDescription(res["description"], d, config)); err != nil {
-		return fmt.Errorf("Error reading NetworkEdgeSecurityService: %s", err)
-	}
-	if err := d.Set("service_id", flattenComputeNetworkEdgeSecurityServiceServiceId(res["id"], d, config)); err != nil {
-		return fmt.Errorf("Error reading NetworkEdgeSecurityService: %s", err)
-	}
-	if err := d.Set("creation_timestamp", flattenComputeNetworkEdgeSecurityServiceCreationTimestamp(res["creationTimestamp"], d, config)); err != nil {
-		return fmt.Errorf("Error reading NetworkEdgeSecurityService: %s", err)
-	}
-	if err := d.Set("self_link", flattenComputeNetworkEdgeSecurityServiceSelfLink(res["selfLink"], d, config)); err != nil {
-		return fmt.Errorf("Error reading NetworkEdgeSecurityService: %s", err)
-	}
-	if err := d.Set("self_link_with_service_id", flattenComputeNetworkEdgeSecurityServiceSelfLinkWithServiceId(res["selfLinkWithId"], d, config)); err != nil {
-		return fmt.Errorf("Error reading NetworkEdgeSecurityService: %s", err)
-	}
-	if err := d.Set("fingerprint", flattenComputeNetworkEdgeSecurityServiceFingerprint(res["fingerprint"], d, config)); err != nil {
-		return fmt.Errorf("Error reading NetworkEdgeSecurityService: %s", err)
-	}
-	if err := d.Set("security_policy", flattenComputeNetworkEdgeSecurityServiceSecurityPolicy(res["securityPolicy"], d, config)); err != nil {
-		return fmt.Errorf("Error reading NetworkEdgeSecurityService: %s", err)
+	err = ResourceComputeNetworkEdgeSecurityServiceFlatten(d, meta, res, config, project, userAgent, billingProject, url, headers)
+	if err != nil {
+		return err
 	}
 
 	identity, err := d.Identity()
@@ -648,4 +628,35 @@ func expandComputeNetworkEdgeSecurityServiceFingerprint(v interface{}, d tpgreso
 
 func expandComputeNetworkEdgeSecurityServiceSecurityPolicy(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func ResourceComputeNetworkEdgeSecurityServiceFlatten(d *schema.ResourceData, meta interface{}, res map[string]interface{}, config *transport_tpg.Config, project string, userAgent string, billingProject string, url string, headers http.Header) error {
+	var err error
+
+	if err = d.Set("name", flattenComputeNetworkEdgeSecurityServiceName(res["name"], d, config)); err != nil {
+		return fmt.Errorf("Error reading NetworkEdgeSecurityService: %s", err)
+	}
+	if err = d.Set("description", flattenComputeNetworkEdgeSecurityServiceDescription(res["description"], d, config)); err != nil {
+		return fmt.Errorf("Error reading NetworkEdgeSecurityService: %s", err)
+	}
+	if err = d.Set("service_id", flattenComputeNetworkEdgeSecurityServiceServiceId(res["id"], d, config)); err != nil {
+		return fmt.Errorf("Error reading NetworkEdgeSecurityService: %s", err)
+	}
+	if err = d.Set("creation_timestamp", flattenComputeNetworkEdgeSecurityServiceCreationTimestamp(res["creationTimestamp"], d, config)); err != nil {
+		return fmt.Errorf("Error reading NetworkEdgeSecurityService: %s", err)
+	}
+	if err = d.Set("self_link", flattenComputeNetworkEdgeSecurityServiceSelfLink(res["selfLink"], d, config)); err != nil {
+		return fmt.Errorf("Error reading NetworkEdgeSecurityService: %s", err)
+	}
+	if err = d.Set("self_link_with_service_id", flattenComputeNetworkEdgeSecurityServiceSelfLinkWithServiceId(res["selfLinkWithId"], d, config)); err != nil {
+		return fmt.Errorf("Error reading NetworkEdgeSecurityService: %s", err)
+	}
+	if err = d.Set("fingerprint", flattenComputeNetworkEdgeSecurityServiceFingerprint(res["fingerprint"], d, config)); err != nil {
+		return fmt.Errorf("Error reading NetworkEdgeSecurityService: %s", err)
+	}
+	if err = d.Set("security_policy", flattenComputeNetworkEdgeSecurityServiceSecurityPolicy(res["securityPolicy"], d, config)); err != nil {
+		return fmt.Errorf("Error reading NetworkEdgeSecurityService: %s", err)
+	}
+
+	return nil
 }

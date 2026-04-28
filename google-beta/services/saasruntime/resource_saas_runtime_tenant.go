@@ -399,38 +399,9 @@ func resourceSaasRuntimeTenantRead(d *schema.ResourceData, meta interface{}) err
 		return fmt.Errorf("Error reading Tenant: %s", err)
 	}
 
-	if err := d.Set("annotations", flattenSaasRuntimeTenantAnnotations(res["annotations"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Tenant: %s", err)
-	}
-	if err := d.Set("consumer_resource", flattenSaasRuntimeTenantConsumerResource(res["consumerResource"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Tenant: %s", err)
-	}
-	if err := d.Set("create_time", flattenSaasRuntimeTenantCreateTime(res["createTime"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Tenant: %s", err)
-	}
-	if err := d.Set("labels", flattenSaasRuntimeTenantLabels(res["labels"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Tenant: %s", err)
-	}
-	if err := d.Set("name", flattenSaasRuntimeTenantName(res["name"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Tenant: %s", err)
-	}
-	if err := d.Set("saas", flattenSaasRuntimeTenantSaas(res["saas"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Tenant: %s", err)
-	}
-	if err := d.Set("uid", flattenSaasRuntimeTenantUid(res["uid"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Tenant: %s", err)
-	}
-	if err := d.Set("update_time", flattenSaasRuntimeTenantUpdateTime(res["updateTime"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Tenant: %s", err)
-	}
-	if err := d.Set("effective_annotations", flattenSaasRuntimeTenantEffectiveAnnotations(res["annotations"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Tenant: %s", err)
-	}
-	if err := d.Set("terraform_labels", flattenSaasRuntimeTenantTerraformLabels(res["labels"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Tenant: %s", err)
-	}
-	if err := d.Set("effective_labels", flattenSaasRuntimeTenantEffectiveLabels(res["labels"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Tenant: %s", err)
+	err = ResourceSaasRuntimeTenantFlatten(d, meta, res, config, project, userAgent, billingProject, url, headers)
+	if err != nil {
+		return err
 	}
 
 	identity, err := d.Identity()
@@ -734,4 +705,44 @@ func expandSaasRuntimeTenantEffectiveLabels(v interface{}, d tpgresource.Terrafo
 		m[k] = val.(string)
 	}
 	return m, nil
+}
+
+func ResourceSaasRuntimeTenantFlatten(d *schema.ResourceData, meta interface{}, res map[string]interface{}, config *transport_tpg.Config, project string, userAgent string, billingProject string, url string, headers http.Header) error {
+	var err error
+
+	if err = d.Set("annotations", flattenSaasRuntimeTenantAnnotations(res["annotations"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Tenant: %s", err)
+	}
+	if err = d.Set("consumer_resource", flattenSaasRuntimeTenantConsumerResource(res["consumerResource"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Tenant: %s", err)
+	}
+	if err = d.Set("create_time", flattenSaasRuntimeTenantCreateTime(res["createTime"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Tenant: %s", err)
+	}
+	if err = d.Set("labels", flattenSaasRuntimeTenantLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Tenant: %s", err)
+	}
+	if err = d.Set("name", flattenSaasRuntimeTenantName(res["name"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Tenant: %s", err)
+	}
+	if err = d.Set("saas", flattenSaasRuntimeTenantSaas(res["saas"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Tenant: %s", err)
+	}
+	if err = d.Set("uid", flattenSaasRuntimeTenantUid(res["uid"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Tenant: %s", err)
+	}
+	if err = d.Set("update_time", flattenSaasRuntimeTenantUpdateTime(res["updateTime"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Tenant: %s", err)
+	}
+	if err = d.Set("effective_annotations", flattenSaasRuntimeTenantEffectiveAnnotations(res["annotations"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Tenant: %s", err)
+	}
+	if err = d.Set("terraform_labels", flattenSaasRuntimeTenantTerraformLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Tenant: %s", err)
+	}
+	if err = d.Set("effective_labels", flattenSaasRuntimeTenantEffectiveLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Tenant: %s", err)
+	}
+
+	return nil
 }

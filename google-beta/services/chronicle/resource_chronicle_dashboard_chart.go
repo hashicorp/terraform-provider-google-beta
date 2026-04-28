@@ -1613,14 +1613,9 @@ func resourceChronicleDashboardChartRead(d *schema.ResourceData, meta interface{
 		return fmt.Errorf("Error reading DashboardChart: %s", err)
 	}
 
-	if err := d.Set("name", flattenChronicleDashboardChartName(res["name"], d, config)); err != nil {
-		return fmt.Errorf("Error reading DashboardChart: %s", err)
-	}
-	if err := d.Set("chart_id", flattenChronicleDashboardChartChartId(res["chartId"], d, config)); err != nil {
-		return fmt.Errorf("Error reading DashboardChart: %s", err)
-	}
-	if err := d.Set("dashboard_chart", flattenChronicleDashboardChartDashboardChart(res["dashboardChart"], d, config)); err != nil {
-		return fmt.Errorf("Error reading DashboardChart: %s", err)
+	err = ResourceChronicleDashboardChartFlatten(d, meta, res, config, project, userAgent, billingProject, url, headers)
+	if err != nil {
+		return err
 	}
 
 	identity, err := d.Identity()
@@ -6360,5 +6355,21 @@ func resourceChronicleDashboardChartPostCreateSetComputedFields(d *schema.Resour
 	if err := d.Set("chart_id", flattenChronicleDashboardChartChartId(res["chartId"], d, config)); err != nil {
 		return fmt.Errorf(`Error setting computed identity field "chart_id": %s`, err)
 	}
+	return nil
+}
+
+func ResourceChronicleDashboardChartFlatten(d *schema.ResourceData, meta interface{}, res map[string]interface{}, config *transport_tpg.Config, project string, userAgent string, billingProject string, url string, headers http.Header) error {
+	var err error
+
+	if err = d.Set("name", flattenChronicleDashboardChartName(res["name"], d, config)); err != nil {
+		return fmt.Errorf("Error reading DashboardChart: %s", err)
+	}
+	if err = d.Set("chart_id", flattenChronicleDashboardChartChartId(res["chartId"], d, config)); err != nil {
+		return fmt.Errorf("Error reading DashboardChart: %s", err)
+	}
+	if err = d.Set("dashboard_chart", flattenChronicleDashboardChartDashboardChart(res["dashboardChart"], d, config)); err != nil {
+		return fmt.Errorf("Error reading DashboardChart: %s", err)
+	}
+
 	return nil
 }

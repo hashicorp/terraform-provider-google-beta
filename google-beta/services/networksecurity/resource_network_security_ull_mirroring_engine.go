@@ -350,26 +350,9 @@ func resourceNetworkSecurityUllMirroringEngineRead(d *schema.ResourceData, meta 
 		return fmt.Errorf("Error reading UllMirroringEngine: %s", err)
 	}
 
-	if err := d.Set("name", flattenNetworkSecurityUllMirroringEngineName(res["name"], d, config)); err != nil {
-		return fmt.Errorf("Error reading UllMirroringEngine: %s", err)
-	}
-	if err := d.Set("create_time", flattenNetworkSecurityUllMirroringEngineCreateTime(res["createTime"], d, config)); err != nil {
-		return fmt.Errorf("Error reading UllMirroringEngine: %s", err)
-	}
-	if err := d.Set("update_time", flattenNetworkSecurityUllMirroringEngineUpdateTime(res["updateTime"], d, config)); err != nil {
-		return fmt.Errorf("Error reading UllMirroringEngine: %s", err)
-	}
-	if err := d.Set("labels", flattenNetworkSecurityUllMirroringEngineLabels(res["labels"], d, config)); err != nil {
-		return fmt.Errorf("Error reading UllMirroringEngine: %s", err)
-	}
-	if err := d.Set("reconciling", flattenNetworkSecurityUllMirroringEngineReconciling(res["reconciling"], d, config)); err != nil {
-		return fmt.Errorf("Error reading UllMirroringEngine: %s", err)
-	}
-	if err := d.Set("terraform_labels", flattenNetworkSecurityUllMirroringEngineTerraformLabels(res["labels"], d, config)); err != nil {
-		return fmt.Errorf("Error reading UllMirroringEngine: %s", err)
-	}
-	if err := d.Set("effective_labels", flattenNetworkSecurityUllMirroringEngineEffectiveLabels(res["labels"], d, config)); err != nil {
-		return fmt.Errorf("Error reading UllMirroringEngine: %s", err)
+	err = ResourceNetworkSecurityUllMirroringEngineFlatten(d, meta, res, config, project, userAgent, billingProject, url, headers)
+	if err != nil {
+		return err
 	}
 
 	identity, err := d.Identity()
@@ -632,4 +615,32 @@ func expandNetworkSecurityUllMirroringEngineEffectiveLabels(v interface{}, d tpg
 		m[k] = val.(string)
 	}
 	return m, nil
+}
+
+func ResourceNetworkSecurityUllMirroringEngineFlatten(d *schema.ResourceData, meta interface{}, res map[string]interface{}, config *transport_tpg.Config, project string, userAgent string, billingProject string, url string, headers http.Header) error {
+	var err error
+
+	if err = d.Set("name", flattenNetworkSecurityUllMirroringEngineName(res["name"], d, config)); err != nil {
+		return fmt.Errorf("Error reading UllMirroringEngine: %s", err)
+	}
+	if err = d.Set("create_time", flattenNetworkSecurityUllMirroringEngineCreateTime(res["createTime"], d, config)); err != nil {
+		return fmt.Errorf("Error reading UllMirroringEngine: %s", err)
+	}
+	if err = d.Set("update_time", flattenNetworkSecurityUllMirroringEngineUpdateTime(res["updateTime"], d, config)); err != nil {
+		return fmt.Errorf("Error reading UllMirroringEngine: %s", err)
+	}
+	if err = d.Set("labels", flattenNetworkSecurityUllMirroringEngineLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading UllMirroringEngine: %s", err)
+	}
+	if err = d.Set("reconciling", flattenNetworkSecurityUllMirroringEngineReconciling(res["reconciling"], d, config)); err != nil {
+		return fmt.Errorf("Error reading UllMirroringEngine: %s", err)
+	}
+	if err = d.Set("terraform_labels", flattenNetworkSecurityUllMirroringEngineTerraformLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading UllMirroringEngine: %s", err)
+	}
+	if err = d.Set("effective_labels", flattenNetworkSecurityUllMirroringEngineEffectiveLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading UllMirroringEngine: %s", err)
+	}
+
+	return nil
 }

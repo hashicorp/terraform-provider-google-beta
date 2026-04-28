@@ -366,17 +366,9 @@ func resourceCloudIdentityPolicyRead(d *schema.ResourceData, meta interface{}) e
 
 	log.Printf("[DEBUG] Finished reading CloudIdentityPolicy %q: %#v", d.Id(), res)
 
-	if err := d.Set("name", flattenCloudIdentityPolicyName(res["name"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Policy: %s", err)
-	}
-	if err := d.Set("customer", flattenCloudIdentityPolicyCustomer(res["customer"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Policy: %s", err)
-	}
-	if err := d.Set("policy_query", flattenCloudIdentityPolicyPolicyQuery(res["policyQuery"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Policy: %s", err)
-	}
-	if err := d.Set("setting", flattenCloudIdentityPolicySetting(res["setting"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Policy: %s", err)
+	err = ResourceCloudIdentityPolicyFlatten(d, meta, res, config, userAgent, billingProject, url, headers)
+	if err != nil {
+		return err
 	}
 
 	identity, err := d.Identity()
@@ -778,4 +770,23 @@ func resourceCloudIdentityPolicyUpdateEncoder(d *schema.ResourceData, meta inter
 	}
 
 	return obj, nil
+}
+
+func ResourceCloudIdentityPolicyFlatten(d *schema.ResourceData, meta interface{}, res map[string]interface{}, config *transport_tpg.Config, userAgent string, billingProject string, url string, headers http.Header) error {
+	var err error
+
+	if err = d.Set("name", flattenCloudIdentityPolicyName(res["name"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Policy: %s", err)
+	}
+	if err = d.Set("customer", flattenCloudIdentityPolicyCustomer(res["customer"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Policy: %s", err)
+	}
+	if err = d.Set("policy_query", flattenCloudIdentityPolicyPolicyQuery(res["policyQuery"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Policy: %s", err)
+	}
+	if err = d.Set("setting", flattenCloudIdentityPolicySetting(res["setting"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Policy: %s", err)
+	}
+
+	return nil
 }

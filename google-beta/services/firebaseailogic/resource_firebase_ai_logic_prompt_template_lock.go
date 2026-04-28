@@ -305,11 +305,9 @@ func resourceFirebaseAILogicPromptTemplateLockRead(d *schema.ResourceData, meta 
 		return fmt.Errorf("Error reading PromptTemplateLock: %s", err)
 	}
 
-	if err := d.Set("name", flattenFirebaseAILogicPromptTemplateLockName(res["name"], d, config)); err != nil {
-		return fmt.Errorf("Error reading PromptTemplateLock: %s", err)
-	}
-	if err := d.Set("locked", flattenFirebaseAILogicPromptTemplateLockLocked(res["locked"], d, config)); err != nil {
-		return fmt.Errorf("Error reading PromptTemplateLock: %s", err)
+	err = ResourceFirebaseAILogicPromptTemplateLockFlatten(d, meta, res, config, project, userAgent, billingProject, url, headers)
+	if err != nil {
+		return err
 	}
 
 	identity, err := d.Identity()
@@ -413,4 +411,17 @@ func flattenFirebaseAILogicPromptTemplateLockName(v interface{}, d *schema.Resou
 
 func flattenFirebaseAILogicPromptTemplateLockLocked(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
+}
+
+func ResourceFirebaseAILogicPromptTemplateLockFlatten(d *schema.ResourceData, meta interface{}, res map[string]interface{}, config *transport_tpg.Config, project string, userAgent string, billingProject string, url string, headers http.Header) error {
+	var err error
+
+	if err = d.Set("name", flattenFirebaseAILogicPromptTemplateLockName(res["name"], d, config)); err != nil {
+		return fmt.Errorf("Error reading PromptTemplateLock: %s", err)
+	}
+	if err = d.Set("locked", flattenFirebaseAILogicPromptTemplateLockLocked(res["locked"], d, config)); err != nil {
+		return fmt.Errorf("Error reading PromptTemplateLock: %s", err)
+	}
+
+	return nil
 }

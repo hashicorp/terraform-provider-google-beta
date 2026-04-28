@@ -393,14 +393,9 @@ func resourceServiceUsageConsumerQuotaOverrideRead(d *schema.ResourceData, meta 
 		return fmt.Errorf("Error reading ConsumerQuotaOverride: %s", err)
 	}
 
-	if err := d.Set("override_value", flattenNestedServiceUsageConsumerQuotaOverrideOverrideValue(res["overrideValue"], d, config)); err != nil {
-		return fmt.Errorf("Error reading ConsumerQuotaOverride: %s", err)
-	}
-	if err := d.Set("dimensions", flattenNestedServiceUsageConsumerQuotaOverrideDimensions(res["dimensions"], d, config)); err != nil {
-		return fmt.Errorf("Error reading ConsumerQuotaOverride: %s", err)
-	}
-	if err := d.Set("name", flattenNestedServiceUsageConsumerQuotaOverrideName(res["name"], d, config)); err != nil {
-		return fmt.Errorf("Error reading ConsumerQuotaOverride: %s", err)
+	err = ResourceServiceUsageConsumerQuotaOverrideFlatten(d, meta, res, config, project, userAgent, billingProject, url, headers)
+	if err != nil {
+		return err
 	}
 
 	identity, err := d.Identity()
@@ -692,4 +687,20 @@ func resourceServiceUsageConsumerQuotaOverrideFindNestedObjectInList(d *schema.R
 		return idx, item, nil
 	}
 	return -1, nil, nil
+}
+
+func ResourceServiceUsageConsumerQuotaOverrideFlatten(d *schema.ResourceData, meta interface{}, res map[string]interface{}, config *transport_tpg.Config, project string, userAgent string, billingProject string, url string, headers http.Header) error {
+	var err error
+
+	if err = d.Set("override_value", flattenNestedServiceUsageConsumerQuotaOverrideOverrideValue(res["overrideValue"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ConsumerQuotaOverride: %s", err)
+	}
+	if err = d.Set("dimensions", flattenNestedServiceUsageConsumerQuotaOverrideDimensions(res["dimensions"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ConsumerQuotaOverride: %s", err)
+	}
+	if err = d.Set("name", flattenNestedServiceUsageConsumerQuotaOverrideName(res["name"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ConsumerQuotaOverride: %s", err)
+	}
+
+	return nil
 }

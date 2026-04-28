@@ -268,8 +268,9 @@ func resourceKMSFolderKajPolicyConfigRead(d *schema.ResourceData, meta interface
 
 	log.Printf("[DEBUG] Finished reading KMSFolderKajPolicyConfig %q: %#v", d.Id(), res)
 
-	if err := d.Set("default_key_access_justification_policy", flattenKMSFolderKajPolicyConfigDefaultKeyAccessJustificationPolicy(res["defaultKeyAccessJustificationPolicy"], d, config)); err != nil {
-		return fmt.Errorf("Error reading FolderKajPolicyConfig: %s", err)
+	err = ResourceKMSFolderKajPolicyConfigFlatten(d, meta, res, config, userAgent, billingProject, url, headers)
+	if err != nil {
+		return err
 	}
 
 	identity, err := d.Identity()
@@ -420,4 +421,14 @@ func expandKMSFolderKajPolicyConfigDefaultKeyAccessJustificationPolicy(v interfa
 
 func expandKMSFolderKajPolicyConfigDefaultKeyAccessJustificationPolicyAllowedAccessReasons(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func ResourceKMSFolderKajPolicyConfigFlatten(d *schema.ResourceData, meta interface{}, res map[string]interface{}, config *transport_tpg.Config, userAgent string, billingProject string, url string, headers http.Header) error {
+	var err error
+
+	if err = d.Set("default_key_access_justification_policy", flattenKMSFolderKajPolicyConfigDefaultKeyAccessJustificationPolicy(res["defaultKeyAccessJustificationPolicy"], d, config)); err != nil {
+		return fmt.Errorf("Error reading FolderKajPolicyConfig: %s", err)
+	}
+
+	return nil
 }

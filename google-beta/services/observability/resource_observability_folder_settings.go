@@ -306,17 +306,9 @@ func resourceObservabilityFolderSettingsRead(d *schema.ResourceData, meta interf
 
 	log.Printf("[DEBUG] Finished reading ObservabilityFolderSettings %q: %#v", d.Id(), res)
 
-	if err := d.Set("default_storage_location", flattenObservabilityFolderSettingsDefaultStorageLocation(res["defaultStorageLocation"], d, config)); err != nil {
-		return fmt.Errorf("Error reading FolderSettings: %s", err)
-	}
-	if err := d.Set("kms_key_name", flattenObservabilityFolderSettingsKmsKeyName(res["kmsKeyName"], d, config)); err != nil {
-		return fmt.Errorf("Error reading FolderSettings: %s", err)
-	}
-	if err := d.Set("name", flattenObservabilityFolderSettingsName(res["name"], d, config)); err != nil {
-		return fmt.Errorf("Error reading FolderSettings: %s", err)
-	}
-	if err := d.Set("service_account_id", flattenObservabilityFolderSettingsServiceAccountId(res["serviceAccountId"], d, config)); err != nil {
-		return fmt.Errorf("Error reading FolderSettings: %s", err)
+	err = ResourceObservabilityFolderSettingsFlatten(d, meta, res, config, userAgent, billingProject, url, headers)
+	if err != nil {
+		return err
 	}
 
 	identity, err := d.Identity()
@@ -488,4 +480,23 @@ func expandObservabilityFolderSettingsDefaultStorageLocation(v interface{}, d tp
 
 func expandObservabilityFolderSettingsKmsKeyName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func ResourceObservabilityFolderSettingsFlatten(d *schema.ResourceData, meta interface{}, res map[string]interface{}, config *transport_tpg.Config, userAgent string, billingProject string, url string, headers http.Header) error {
+	var err error
+
+	if err = d.Set("default_storage_location", flattenObservabilityFolderSettingsDefaultStorageLocation(res["defaultStorageLocation"], d, config)); err != nil {
+		return fmt.Errorf("Error reading FolderSettings: %s", err)
+	}
+	if err = d.Set("kms_key_name", flattenObservabilityFolderSettingsKmsKeyName(res["kmsKeyName"], d, config)); err != nil {
+		return fmt.Errorf("Error reading FolderSettings: %s", err)
+	}
+	if err = d.Set("name", flattenObservabilityFolderSettingsName(res["name"], d, config)); err != nil {
+		return fmt.Errorf("Error reading FolderSettings: %s", err)
+	}
+	if err = d.Set("service_account_id", flattenObservabilityFolderSettingsServiceAccountId(res["serviceAccountId"], d, config)); err != nil {
+		return fmt.Errorf("Error reading FolderSettings: %s", err)
+	}
+
+	return nil
 }

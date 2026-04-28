@@ -468,35 +468,9 @@ func resourceSecurityScannerScanConfigRead(d *schema.ResourceData, meta interfac
 		return fmt.Errorf("Error reading ScanConfig: %s", err)
 	}
 
-	if err := d.Set("name", flattenSecurityScannerScanConfigName(res["name"], d, config)); err != nil {
-		return fmt.Errorf("Error reading ScanConfig: %s", err)
-	}
-	if err := d.Set("display_name", flattenSecurityScannerScanConfigDisplayName(res["displayName"], d, config)); err != nil {
-		return fmt.Errorf("Error reading ScanConfig: %s", err)
-	}
-	if err := d.Set("max_qps", flattenSecurityScannerScanConfigMaxQps(res["maxQps"], d, config)); err != nil {
-		return fmt.Errorf("Error reading ScanConfig: %s", err)
-	}
-	if err := d.Set("starting_urls", flattenSecurityScannerScanConfigStartingUrls(res["startingUrls"], d, config)); err != nil {
-		return fmt.Errorf("Error reading ScanConfig: %s", err)
-	}
-	if err := d.Set("authentication", flattenSecurityScannerScanConfigAuthentication(res["authentication"], d, config)); err != nil {
-		return fmt.Errorf("Error reading ScanConfig: %s", err)
-	}
-	if err := d.Set("user_agent", flattenSecurityScannerScanConfigUserAgent(res["userAgent"], d, config)); err != nil {
-		return fmt.Errorf("Error reading ScanConfig: %s", err)
-	}
-	if err := d.Set("blacklist_patterns", flattenSecurityScannerScanConfigBlacklistPatterns(res["blacklistPatterns"], d, config)); err != nil {
-		return fmt.Errorf("Error reading ScanConfig: %s", err)
-	}
-	if err := d.Set("schedule", flattenSecurityScannerScanConfigSchedule(res["schedule"], d, config)); err != nil {
-		return fmt.Errorf("Error reading ScanConfig: %s", err)
-	}
-	if err := d.Set("target_platforms", flattenSecurityScannerScanConfigTargetPlatforms(res["targetPlatforms"], d, config)); err != nil {
-		return fmt.Errorf("Error reading ScanConfig: %s", err)
-	}
-	if err := d.Set("export_to_security_command_center", flattenSecurityScannerScanConfigExportToSecurityCommandCenter(res["exportToSecurityCommandCenter"], d, config)); err != nil {
-		return fmt.Errorf("Error reading ScanConfig: %s", err)
+	err = ResourceSecurityScannerScanConfigFlatten(d, meta, res, config, project, userAgent, billingProject, url, headers)
+	if err != nil {
+		return err
 	}
 
 	identity, err := d.Identity()
@@ -1078,5 +1052,42 @@ func resourceSecurityScannerScanConfigPostCreateSetComputedFields(d *schema.Reso
 	if err := d.Set("name", flattenSecurityScannerScanConfigName(res["name"], d, config)); err != nil {
 		return fmt.Errorf(`Error setting computed identity field "name": %s`, err)
 	}
+	return nil
+}
+
+func ResourceSecurityScannerScanConfigFlatten(d *schema.ResourceData, meta interface{}, res map[string]interface{}, config *transport_tpg.Config, project string, userAgent string, billingProject string, url string, headers http.Header) error {
+	var err error
+
+	if err = d.Set("name", flattenSecurityScannerScanConfigName(res["name"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ScanConfig: %s", err)
+	}
+	if err = d.Set("display_name", flattenSecurityScannerScanConfigDisplayName(res["displayName"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ScanConfig: %s", err)
+	}
+	if err = d.Set("max_qps", flattenSecurityScannerScanConfigMaxQps(res["maxQps"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ScanConfig: %s", err)
+	}
+	if err = d.Set("starting_urls", flattenSecurityScannerScanConfigStartingUrls(res["startingUrls"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ScanConfig: %s", err)
+	}
+	if err = d.Set("authentication", flattenSecurityScannerScanConfigAuthentication(res["authentication"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ScanConfig: %s", err)
+	}
+	if err = d.Set("user_agent", flattenSecurityScannerScanConfigUserAgent(res["userAgent"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ScanConfig: %s", err)
+	}
+	if err = d.Set("blacklist_patterns", flattenSecurityScannerScanConfigBlacklistPatterns(res["blacklistPatterns"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ScanConfig: %s", err)
+	}
+	if err = d.Set("schedule", flattenSecurityScannerScanConfigSchedule(res["schedule"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ScanConfig: %s", err)
+	}
+	if err = d.Set("target_platforms", flattenSecurityScannerScanConfigTargetPlatforms(res["targetPlatforms"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ScanConfig: %s", err)
+	}
+	if err = d.Set("export_to_security_command_center", flattenSecurityScannerScanConfigExportToSecurityCommandCenter(res["exportToSecurityCommandCenter"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ScanConfig: %s", err)
+	}
+
 	return nil
 }

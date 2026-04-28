@@ -380,32 +380,9 @@ func resourceComputeTargetInstanceRead(d *schema.ResourceData, meta interface{})
 		return fmt.Errorf("Error reading TargetInstance: %s", err)
 	}
 
-	if err := d.Set("name", flattenComputeTargetInstanceName(res["name"], d, config)); err != nil {
-		return fmt.Errorf("Error reading TargetInstance: %s", err)
-	}
-	if err := d.Set("creation_timestamp", flattenComputeTargetInstanceCreationTimestamp(res["creationTimestamp"], d, config)); err != nil {
-		return fmt.Errorf("Error reading TargetInstance: %s", err)
-	}
-	if err := d.Set("network", flattenComputeTargetInstanceNetwork(res["network"], d, config)); err != nil {
-		return fmt.Errorf("Error reading TargetInstance: %s", err)
-	}
-	if err := d.Set("description", flattenComputeTargetInstanceDescription(res["description"], d, config)); err != nil {
-		return fmt.Errorf("Error reading TargetInstance: %s", err)
-	}
-	if err := d.Set("instance", flattenComputeTargetInstanceInstance(res["instance"], d, config)); err != nil {
-		return fmt.Errorf("Error reading TargetInstance: %s", err)
-	}
-	if err := d.Set("nat_policy", flattenComputeTargetInstanceNatPolicy(res["natPolicy"], d, config)); err != nil {
-		return fmt.Errorf("Error reading TargetInstance: %s", err)
-	}
-	if err := d.Set("security_policy", flattenComputeTargetInstanceSecurityPolicy(res["securityPolicy"], d, config)); err != nil {
-		return fmt.Errorf("Error reading TargetInstance: %s", err)
-	}
-	if err := d.Set("zone", flattenComputeTargetInstanceZone(res["zone"], d, config)); err != nil {
-		return fmt.Errorf("Error reading TargetInstance: %s", err)
-	}
-	if err := d.Set("self_link", tpgresource.ConvertSelfLinkToV1(res["selfLink"].(string))); err != nil {
-		return fmt.Errorf("Error reading TargetInstance: %s", err)
+	err = ResourceComputeTargetInstanceFlatten(d, meta, res, config, project, userAgent, billingProject, url, headers)
+	if err != nil {
+		return err
 	}
 
 	return nil
@@ -653,4 +630,37 @@ func expandComputeTargetInstanceZone(v interface{}, d tpgresource.TerraformResou
 		return nil, fmt.Errorf("Invalid value for zone: %s", err)
 	}
 	return f.RelativeLink(), nil
+}
+
+func ResourceComputeTargetInstanceFlatten(d *schema.ResourceData, meta interface{}, res map[string]interface{}, config *transport_tpg.Config, project string, userAgent string, billingProject string, url string, headers http.Header) error {
+	var err error
+
+	if err = d.Set("name", flattenComputeTargetInstanceName(res["name"], d, config)); err != nil {
+		return fmt.Errorf("Error reading TargetInstance: %s", err)
+	}
+	if err = d.Set("creation_timestamp", flattenComputeTargetInstanceCreationTimestamp(res["creationTimestamp"], d, config)); err != nil {
+		return fmt.Errorf("Error reading TargetInstance: %s", err)
+	}
+	if err = d.Set("network", flattenComputeTargetInstanceNetwork(res["network"], d, config)); err != nil {
+		return fmt.Errorf("Error reading TargetInstance: %s", err)
+	}
+	if err = d.Set("description", flattenComputeTargetInstanceDescription(res["description"], d, config)); err != nil {
+		return fmt.Errorf("Error reading TargetInstance: %s", err)
+	}
+	if err = d.Set("instance", flattenComputeTargetInstanceInstance(res["instance"], d, config)); err != nil {
+		return fmt.Errorf("Error reading TargetInstance: %s", err)
+	}
+	if err = d.Set("nat_policy", flattenComputeTargetInstanceNatPolicy(res["natPolicy"], d, config)); err != nil {
+		return fmt.Errorf("Error reading TargetInstance: %s", err)
+	}
+	if err = d.Set("security_policy", flattenComputeTargetInstanceSecurityPolicy(res["securityPolicy"], d, config)); err != nil {
+		return fmt.Errorf("Error reading TargetInstance: %s", err)
+	}
+	if err = d.Set("zone", flattenComputeTargetInstanceZone(res["zone"], d, config)); err != nil {
+		return fmt.Errorf("Error reading TargetInstance: %s", err)
+	}
+	if err = d.Set("self_link", tpgresource.ConvertSelfLinkToV1(res["selfLink"].(string))); err != nil {
+		return fmt.Errorf("Error reading TargetInstance: %s", err)
+	}
+	return nil
 }

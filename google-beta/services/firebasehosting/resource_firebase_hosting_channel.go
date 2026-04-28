@@ -330,23 +330,9 @@ func resourceFirebaseHostingChannelRead(d *schema.ResourceData, meta interface{}
 
 	log.Printf("[DEBUG] Finished reading FirebaseHostingChannel %q: %#v", d.Id(), res)
 
-	if err := d.Set("name", flattenFirebaseHostingChannelName(res["name"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Channel: %s", err)
-	}
-	if err := d.Set("retained_release_count", flattenFirebaseHostingChannelRetainedReleaseCount(res["retainedReleaseCount"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Channel: %s", err)
-	}
-	if err := d.Set("labels", flattenFirebaseHostingChannelLabels(res["labels"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Channel: %s", err)
-	}
-	if err := d.Set("expire_time", flattenFirebaseHostingChannelExpireTime(res["expireTime"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Channel: %s", err)
-	}
-	if err := d.Set("terraform_labels", flattenFirebaseHostingChannelTerraformLabels(res["labels"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Channel: %s", err)
-	}
-	if err := d.Set("effective_labels", flattenFirebaseHostingChannelEffectiveLabels(res["labels"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Channel: %s", err)
+	err = ResourceFirebaseHostingChannelFlatten(d, meta, res, config, userAgent, billingProject, url, headers)
+	if err != nil {
+		return err
 	}
 
 	identity, err := d.Identity()
@@ -611,4 +597,29 @@ func expandFirebaseHostingChannelEffectiveLabels(v interface{}, d tpgresource.Te
 		m[k] = val.(string)
 	}
 	return m, nil
+}
+
+func ResourceFirebaseHostingChannelFlatten(d *schema.ResourceData, meta interface{}, res map[string]interface{}, config *transport_tpg.Config, userAgent string, billingProject string, url string, headers http.Header) error {
+	var err error
+
+	if err = d.Set("name", flattenFirebaseHostingChannelName(res["name"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Channel: %s", err)
+	}
+	if err = d.Set("retained_release_count", flattenFirebaseHostingChannelRetainedReleaseCount(res["retainedReleaseCount"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Channel: %s", err)
+	}
+	if err = d.Set("labels", flattenFirebaseHostingChannelLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Channel: %s", err)
+	}
+	if err = d.Set("expire_time", flattenFirebaseHostingChannelExpireTime(res["expireTime"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Channel: %s", err)
+	}
+	if err = d.Set("terraform_labels", flattenFirebaseHostingChannelTerraformLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Channel: %s", err)
+	}
+	if err = d.Set("effective_labels", flattenFirebaseHostingChannelEffectiveLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Channel: %s", err)
+	}
+
+	return nil
 }

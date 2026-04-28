@@ -396,17 +396,9 @@ func resourceFirebaseDatabaseInstanceRead(d *schema.ResourceData, meta interface
 		return fmt.Errorf("Error reading Instance: %s", err)
 	}
 
-	if err := d.Set("name", flattenFirebaseDatabaseInstanceName(res["name"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Instance: %s", err)
-	}
-	if err := d.Set("database_url", flattenFirebaseDatabaseInstanceDatabaseUrl(res["databaseUrl"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Instance: %s", err)
-	}
-	if err := d.Set("type", flattenFirebaseDatabaseInstanceType(res["type"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Instance: %s", err)
-	}
-	if err := d.Set("state", flattenFirebaseDatabaseInstanceState(res["state"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Instance: %s", err)
+	err = ResourceFirebaseDatabaseInstanceFlatten(d, meta, res, config, project, userAgent, billingProject, url, headers)
+	if err != nil {
+		return err
 	}
 
 	identity, err := d.Identity()
@@ -644,4 +636,23 @@ func resourceFirebaseDatabaseInstanceDecoder(d *schema.ResourceData, meta interf
 	res["desired_state"] = res["state"]
 
 	return res, nil
+}
+
+func ResourceFirebaseDatabaseInstanceFlatten(d *schema.ResourceData, meta interface{}, res map[string]interface{}, config *transport_tpg.Config, project string, userAgent string, billingProject string, url string, headers http.Header) error {
+	var err error
+
+	if err = d.Set("name", flattenFirebaseDatabaseInstanceName(res["name"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Instance: %s", err)
+	}
+	if err = d.Set("database_url", flattenFirebaseDatabaseInstanceDatabaseUrl(res["databaseUrl"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Instance: %s", err)
+	}
+	if err = d.Set("type", flattenFirebaseDatabaseInstanceType(res["type"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Instance: %s", err)
+	}
+	if err = d.Set("state", flattenFirebaseDatabaseInstanceState(res["state"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Instance: %s", err)
+	}
+
+	return nil
 }

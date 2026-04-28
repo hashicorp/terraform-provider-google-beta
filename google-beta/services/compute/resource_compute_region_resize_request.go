@@ -711,29 +711,9 @@ func resourceComputeRegionResizeRequestRead(d *schema.ResourceData, meta interfa
 		return fmt.Errorf("Error reading RegionResizeRequest: %s", err)
 	}
 
-	if err := d.Set("creation_timestamp", flattenComputeRegionResizeRequestCreationTimestamp(res["creationTimestamp"], d, config)); err != nil {
-		return fmt.Errorf("Error reading RegionResizeRequest: %s", err)
-	}
-	if err := d.Set("state", flattenComputeRegionResizeRequestState(res["state"], d, config)); err != nil {
-		return fmt.Errorf("Error reading RegionResizeRequest: %s", err)
-	}
-	if err := d.Set("name", flattenComputeRegionResizeRequestName(res["name"], d, config)); err != nil {
-		return fmt.Errorf("Error reading RegionResizeRequest: %s", err)
-	}
-	if err := d.Set("description", flattenComputeRegionResizeRequestDescription(res["description"], d, config)); err != nil {
-		return fmt.Errorf("Error reading RegionResizeRequest: %s", err)
-	}
-	if err := d.Set("resize_by", flattenComputeRegionResizeRequestResizeBy(res["resizeBy"], d, config)); err != nil {
-		return fmt.Errorf("Error reading RegionResizeRequest: %s", err)
-	}
-	if err := d.Set("requested_run_duration", flattenComputeRegionResizeRequestRequestedRunDuration(res["requestedRunDuration"], d, config)); err != nil {
-		return fmt.Errorf("Error reading RegionResizeRequest: %s", err)
-	}
-	if err := d.Set("status", flattenComputeRegionResizeRequestStatus(res["status"], d, config)); err != nil {
-		return fmt.Errorf("Error reading RegionResizeRequest: %s", err)
-	}
-	if err := d.Set("region", flattenComputeRegionResizeRequestRegion(res["region"], d, config)); err != nil {
-		return fmt.Errorf("Error reading RegionResizeRequest: %s", err)
+	err = ResourceComputeRegionResizeRequestFlatten(d, meta, res, config, project, userAgent, billingProject, url, headers)
+	if err != nil {
+		return err
 	}
 
 	identity, err := d.Identity()
@@ -1478,4 +1458,35 @@ func expandComputeRegionResizeRequestRegion(v interface{}, d tpgresource.Terrafo
 		return nil, fmt.Errorf("Invalid value for region: %s", err)
 	}
 	return f.RelativeLink(), nil
+}
+
+func ResourceComputeRegionResizeRequestFlatten(d *schema.ResourceData, meta interface{}, res map[string]interface{}, config *transport_tpg.Config, project string, userAgent string, billingProject string, url string, headers http.Header) error {
+	var err error
+
+	if err = d.Set("creation_timestamp", flattenComputeRegionResizeRequestCreationTimestamp(res["creationTimestamp"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RegionResizeRequest: %s", err)
+	}
+	if err = d.Set("state", flattenComputeRegionResizeRequestState(res["state"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RegionResizeRequest: %s", err)
+	}
+	if err = d.Set("name", flattenComputeRegionResizeRequestName(res["name"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RegionResizeRequest: %s", err)
+	}
+	if err = d.Set("description", flattenComputeRegionResizeRequestDescription(res["description"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RegionResizeRequest: %s", err)
+	}
+	if err = d.Set("resize_by", flattenComputeRegionResizeRequestResizeBy(res["resizeBy"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RegionResizeRequest: %s", err)
+	}
+	if err = d.Set("requested_run_duration", flattenComputeRegionResizeRequestRequestedRunDuration(res["requestedRunDuration"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RegionResizeRequest: %s", err)
+	}
+	if err = d.Set("status", flattenComputeRegionResizeRequestStatus(res["status"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RegionResizeRequest: %s", err)
+	}
+	if err = d.Set("region", flattenComputeRegionResizeRequestRegion(res["region"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RegionResizeRequest: %s", err)
+	}
+
+	return nil
 }

@@ -423,41 +423,9 @@ func resourceNetworkSecuritySacAttachmentRead(d *schema.ResourceData, meta inter
 		return fmt.Errorf("Error reading SacAttachment: %s", err)
 	}
 
-	if err := d.Set("name", flattenNetworkSecuritySacAttachmentName(res["name"], d, config)); err != nil {
-		return fmt.Errorf("Error reading SacAttachment: %s", err)
-	}
-	if err := d.Set("create_time", flattenNetworkSecuritySacAttachmentCreateTime(res["createTime"], d, config)); err != nil {
-		return fmt.Errorf("Error reading SacAttachment: %s", err)
-	}
-	if err := d.Set("update_time", flattenNetworkSecuritySacAttachmentUpdateTime(res["updateTime"], d, config)); err != nil {
-		return fmt.Errorf("Error reading SacAttachment: %s", err)
-	}
-	if err := d.Set("labels", flattenNetworkSecuritySacAttachmentLabels(res["labels"], d, config)); err != nil {
-		return fmt.Errorf("Error reading SacAttachment: %s", err)
-	}
-	if err := d.Set("sac_realm", flattenNetworkSecuritySacAttachmentSacRealm(res["sacRealm"], d, config)); err != nil {
-		return fmt.Errorf("Error reading SacAttachment: %s", err)
-	}
-	if err := d.Set("ncc_gateway", flattenNetworkSecuritySacAttachmentNccGateway(res["nccGateway"], d, config)); err != nil {
-		return fmt.Errorf("Error reading SacAttachment: %s", err)
-	}
-	if err := d.Set("country", flattenNetworkSecuritySacAttachmentCountry(res["country"], d, config)); err != nil {
-		return fmt.Errorf("Error reading SacAttachment: %s", err)
-	}
-	if err := d.Set("time_zone", flattenNetworkSecuritySacAttachmentTimeZone(res["timeZone"], d, config)); err != nil {
-		return fmt.Errorf("Error reading SacAttachment: %s", err)
-	}
-	if err := d.Set("symantec_options", flattenNetworkSecuritySacAttachmentSymantecOptions(res["symantecOptions"], d, config)); err != nil {
-		return fmt.Errorf("Error reading SacAttachment: %s", err)
-	}
-	if err := d.Set("state", flattenNetworkSecuritySacAttachmentState(res["state"], d, config)); err != nil {
-		return fmt.Errorf("Error reading SacAttachment: %s", err)
-	}
-	if err := d.Set("terraform_labels", flattenNetworkSecuritySacAttachmentTerraformLabels(res["labels"], d, config)); err != nil {
-		return fmt.Errorf("Error reading SacAttachment: %s", err)
-	}
-	if err := d.Set("effective_labels", flattenNetworkSecuritySacAttachmentEffectiveLabels(res["labels"], d, config)); err != nil {
-		return fmt.Errorf("Error reading SacAttachment: %s", err)
+	err = ResourceNetworkSecuritySacAttachmentFlatten(d, meta, res, config, project, userAgent, billingProject, url, headers)
+	if err != nil {
+		return err
 	}
 
 	identity, err := d.Identity()
@@ -724,4 +692,47 @@ func expandNetworkSecuritySacAttachmentEffectiveLabels(v interface{}, d tpgresou
 		m[k] = val.(string)
 	}
 	return m, nil
+}
+
+func ResourceNetworkSecuritySacAttachmentFlatten(d *schema.ResourceData, meta interface{}, res map[string]interface{}, config *transport_tpg.Config, project string, userAgent string, billingProject string, url string, headers http.Header) error {
+	var err error
+
+	if err = d.Set("name", flattenNetworkSecuritySacAttachmentName(res["name"], d, config)); err != nil {
+		return fmt.Errorf("Error reading SacAttachment: %s", err)
+	}
+	if err = d.Set("create_time", flattenNetworkSecuritySacAttachmentCreateTime(res["createTime"], d, config)); err != nil {
+		return fmt.Errorf("Error reading SacAttachment: %s", err)
+	}
+	if err = d.Set("update_time", flattenNetworkSecuritySacAttachmentUpdateTime(res["updateTime"], d, config)); err != nil {
+		return fmt.Errorf("Error reading SacAttachment: %s", err)
+	}
+	if err = d.Set("labels", flattenNetworkSecuritySacAttachmentLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading SacAttachment: %s", err)
+	}
+	if err = d.Set("sac_realm", flattenNetworkSecuritySacAttachmentSacRealm(res["sacRealm"], d, config)); err != nil {
+		return fmt.Errorf("Error reading SacAttachment: %s", err)
+	}
+	if err = d.Set("ncc_gateway", flattenNetworkSecuritySacAttachmentNccGateway(res["nccGateway"], d, config)); err != nil {
+		return fmt.Errorf("Error reading SacAttachment: %s", err)
+	}
+	if err = d.Set("country", flattenNetworkSecuritySacAttachmentCountry(res["country"], d, config)); err != nil {
+		return fmt.Errorf("Error reading SacAttachment: %s", err)
+	}
+	if err = d.Set("time_zone", flattenNetworkSecuritySacAttachmentTimeZone(res["timeZone"], d, config)); err != nil {
+		return fmt.Errorf("Error reading SacAttachment: %s", err)
+	}
+	if err = d.Set("symantec_options", flattenNetworkSecuritySacAttachmentSymantecOptions(res["symantecOptions"], d, config)); err != nil {
+		return fmt.Errorf("Error reading SacAttachment: %s", err)
+	}
+	if err = d.Set("state", flattenNetworkSecuritySacAttachmentState(res["state"], d, config)); err != nil {
+		return fmt.Errorf("Error reading SacAttachment: %s", err)
+	}
+	if err = d.Set("terraform_labels", flattenNetworkSecuritySacAttachmentTerraformLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading SacAttachment: %s", err)
+	}
+	if err = d.Set("effective_labels", flattenNetworkSecuritySacAttachmentEffectiveLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading SacAttachment: %s", err)
+	}
+
+	return nil
 }

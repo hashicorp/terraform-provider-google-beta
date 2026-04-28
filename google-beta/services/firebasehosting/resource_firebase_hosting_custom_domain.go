@@ -790,47 +790,9 @@ func resourceFirebaseHostingCustomDomainRead(d *schema.ResourceData, meta interf
 		return fmt.Errorf("Error reading CustomDomain: %s", err)
 	}
 
-	if err := d.Set("name", flattenFirebaseHostingCustomDomainName(res["name"], d, config)); err != nil {
-		return fmt.Errorf("Error reading CustomDomain: %s", err)
-	}
-	if err := d.Set("create_time", flattenFirebaseHostingCustomDomainCreateTime(res["createTime"], d, config)); err != nil {
-		return fmt.Errorf("Error reading CustomDomain: %s", err)
-	}
-	if err := d.Set("update_time", flattenFirebaseHostingCustomDomainUpdateTime(res["updateTime"], d, config)); err != nil {
-		return fmt.Errorf("Error reading CustomDomain: %s", err)
-	}
-	if err := d.Set("delete_time", flattenFirebaseHostingCustomDomainDeleteTime(res["deleteTime"], d, config)); err != nil {
-		return fmt.Errorf("Error reading CustomDomain: %s", err)
-	}
-	if err := d.Set("expire_time", flattenFirebaseHostingCustomDomainExpireTime(res["expireTime"], d, config)); err != nil {
-		return fmt.Errorf("Error reading CustomDomain: %s", err)
-	}
-	if err := d.Set("etag", flattenFirebaseHostingCustomDomainEtag(res["etag"], d, config)); err != nil {
-		return fmt.Errorf("Error reading CustomDomain: %s", err)
-	}
-	if err := d.Set("host_state", flattenFirebaseHostingCustomDomainHostState(res["hostState"], d, config)); err != nil {
-		return fmt.Errorf("Error reading CustomDomain: %s", err)
-	}
-	if err := d.Set("ownership_state", flattenFirebaseHostingCustomDomainOwnershipState(res["ownershipState"], d, config)); err != nil {
-		return fmt.Errorf("Error reading CustomDomain: %s", err)
-	}
-	if err := d.Set("cert_preference", flattenFirebaseHostingCustomDomainCertPreference(res["certPreference"], d, config)); err != nil {
-		return fmt.Errorf("Error reading CustomDomain: %s", err)
-	}
-	if err := d.Set("redirect_target", flattenFirebaseHostingCustomDomainRedirectTarget(res["redirectTarget"], d, config)); err != nil {
-		return fmt.Errorf("Error reading CustomDomain: %s", err)
-	}
-	if err := d.Set("required_dns_updates", flattenFirebaseHostingCustomDomainRequiredDnsUpdates(res["requiredDnsUpdates"], d, config)); err != nil {
-		return fmt.Errorf("Error reading CustomDomain: %s", err)
-	}
-	if err := d.Set("issues", flattenFirebaseHostingCustomDomainIssues(res["issues"], d, config)); err != nil {
-		return fmt.Errorf("Error reading CustomDomain: %s", err)
-	}
-	if err := d.Set("cert", flattenFirebaseHostingCustomDomainCert(res["cert"], d, config)); err != nil {
-		return fmt.Errorf("Error reading CustomDomain: %s", err)
-	}
-	if err := d.Set("reconciling", flattenFirebaseHostingCustomDomainReconciling(res["reconciling"], d, config)); err != nil {
-		return fmt.Errorf("Error reading CustomDomain: %s", err)
+	err = ResourceFirebaseHostingCustomDomainFlatten(d, meta, res, config, project, userAgent, billingProject, url, headers)
+	if err != nil {
+		return err
 	}
 
 	identity, err := d.Identity()
@@ -1524,4 +1486,53 @@ func expandFirebaseHostingCustomDomainCertPreference(v interface{}, d tpgresourc
 
 func expandFirebaseHostingCustomDomainRedirectTarget(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func ResourceFirebaseHostingCustomDomainFlatten(d *schema.ResourceData, meta interface{}, res map[string]interface{}, config *transport_tpg.Config, project string, userAgent string, billingProject string, url string, headers http.Header) error {
+	var err error
+
+	if err = d.Set("name", flattenFirebaseHostingCustomDomainName(res["name"], d, config)); err != nil {
+		return fmt.Errorf("Error reading CustomDomain: %s", err)
+	}
+	if err = d.Set("create_time", flattenFirebaseHostingCustomDomainCreateTime(res["createTime"], d, config)); err != nil {
+		return fmt.Errorf("Error reading CustomDomain: %s", err)
+	}
+	if err = d.Set("update_time", flattenFirebaseHostingCustomDomainUpdateTime(res["updateTime"], d, config)); err != nil {
+		return fmt.Errorf("Error reading CustomDomain: %s", err)
+	}
+	if err = d.Set("delete_time", flattenFirebaseHostingCustomDomainDeleteTime(res["deleteTime"], d, config)); err != nil {
+		return fmt.Errorf("Error reading CustomDomain: %s", err)
+	}
+	if err = d.Set("expire_time", flattenFirebaseHostingCustomDomainExpireTime(res["expireTime"], d, config)); err != nil {
+		return fmt.Errorf("Error reading CustomDomain: %s", err)
+	}
+	if err = d.Set("etag", flattenFirebaseHostingCustomDomainEtag(res["etag"], d, config)); err != nil {
+		return fmt.Errorf("Error reading CustomDomain: %s", err)
+	}
+	if err = d.Set("host_state", flattenFirebaseHostingCustomDomainHostState(res["hostState"], d, config)); err != nil {
+		return fmt.Errorf("Error reading CustomDomain: %s", err)
+	}
+	if err = d.Set("ownership_state", flattenFirebaseHostingCustomDomainOwnershipState(res["ownershipState"], d, config)); err != nil {
+		return fmt.Errorf("Error reading CustomDomain: %s", err)
+	}
+	if err = d.Set("cert_preference", flattenFirebaseHostingCustomDomainCertPreference(res["certPreference"], d, config)); err != nil {
+		return fmt.Errorf("Error reading CustomDomain: %s", err)
+	}
+	if err = d.Set("redirect_target", flattenFirebaseHostingCustomDomainRedirectTarget(res["redirectTarget"], d, config)); err != nil {
+		return fmt.Errorf("Error reading CustomDomain: %s", err)
+	}
+	if err = d.Set("required_dns_updates", flattenFirebaseHostingCustomDomainRequiredDnsUpdates(res["requiredDnsUpdates"], d, config)); err != nil {
+		return fmt.Errorf("Error reading CustomDomain: %s", err)
+	}
+	if err = d.Set("issues", flattenFirebaseHostingCustomDomainIssues(res["issues"], d, config)); err != nil {
+		return fmt.Errorf("Error reading CustomDomain: %s", err)
+	}
+	if err = d.Set("cert", flattenFirebaseHostingCustomDomainCert(res["cert"], d, config)); err != nil {
+		return fmt.Errorf("Error reading CustomDomain: %s", err)
+	}
+	if err = d.Set("reconciling", flattenFirebaseHostingCustomDomainReconciling(res["reconciling"], d, config)); err != nil {
+		return fmt.Errorf("Error reading CustomDomain: %s", err)
+	}
+
+	return nil
 }

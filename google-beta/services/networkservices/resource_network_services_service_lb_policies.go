@@ -425,35 +425,9 @@ func resourceNetworkServicesServiceLbPoliciesRead(d *schema.ResourceData, meta i
 		return fmt.Errorf("Error reading ServiceLbPolicies: %s", err)
 	}
 
-	if err := d.Set("create_time", flattenNetworkServicesServiceLbPoliciesCreateTime(res["createTime"], d, config)); err != nil {
-		return fmt.Errorf("Error reading ServiceLbPolicies: %s", err)
-	}
-	if err := d.Set("update_time", flattenNetworkServicesServiceLbPoliciesUpdateTime(res["updateTime"], d, config)); err != nil {
-		return fmt.Errorf("Error reading ServiceLbPolicies: %s", err)
-	}
-	if err := d.Set("labels", flattenNetworkServicesServiceLbPoliciesLabels(res["labels"], d, config)); err != nil {
-		return fmt.Errorf("Error reading ServiceLbPolicies: %s", err)
-	}
-	if err := d.Set("description", flattenNetworkServicesServiceLbPoliciesDescription(res["description"], d, config)); err != nil {
-		return fmt.Errorf("Error reading ServiceLbPolicies: %s", err)
-	}
-	if err := d.Set("load_balancing_algorithm", flattenNetworkServicesServiceLbPoliciesLoadBalancingAlgorithm(res["loadBalancingAlgorithm"], d, config)); err != nil {
-		return fmt.Errorf("Error reading ServiceLbPolicies: %s", err)
-	}
-	if err := d.Set("auto_capacity_drain", flattenNetworkServicesServiceLbPoliciesAutoCapacityDrain(res["autoCapacityDrain"], d, config)); err != nil {
-		return fmt.Errorf("Error reading ServiceLbPolicies: %s", err)
-	}
-	if err := d.Set("failover_config", flattenNetworkServicesServiceLbPoliciesFailoverConfig(res["failoverConfig"], d, config)); err != nil {
-		return fmt.Errorf("Error reading ServiceLbPolicies: %s", err)
-	}
-	if err := d.Set("isolation_config", flattenNetworkServicesServiceLbPoliciesIsolationConfig(res["isolationConfig"], d, config)); err != nil {
-		return fmt.Errorf("Error reading ServiceLbPolicies: %s", err)
-	}
-	if err := d.Set("terraform_labels", flattenNetworkServicesServiceLbPoliciesTerraformLabels(res["labels"], d, config)); err != nil {
-		return fmt.Errorf("Error reading ServiceLbPolicies: %s", err)
-	}
-	if err := d.Set("effective_labels", flattenNetworkServicesServiceLbPoliciesEffectiveLabels(res["labels"], d, config)); err != nil {
-		return fmt.Errorf("Error reading ServiceLbPolicies: %s", err)
+	err = ResourceNetworkServicesServiceLbPoliciesFlatten(d, meta, res, config, project, userAgent, billingProject, url, headers)
+	if err != nil {
+		return err
 	}
 
 	identity, err := d.Identity()
@@ -933,4 +907,41 @@ func expandNetworkServicesServiceLbPoliciesEffectiveLabels(v interface{}, d tpgr
 		m[k] = val.(string)
 	}
 	return m, nil
+}
+
+func ResourceNetworkServicesServiceLbPoliciesFlatten(d *schema.ResourceData, meta interface{}, res map[string]interface{}, config *transport_tpg.Config, project string, userAgent string, billingProject string, url string, headers http.Header) error {
+	var err error
+
+	if err = d.Set("create_time", flattenNetworkServicesServiceLbPoliciesCreateTime(res["createTime"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ServiceLbPolicies: %s", err)
+	}
+	if err = d.Set("update_time", flattenNetworkServicesServiceLbPoliciesUpdateTime(res["updateTime"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ServiceLbPolicies: %s", err)
+	}
+	if err = d.Set("labels", flattenNetworkServicesServiceLbPoliciesLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ServiceLbPolicies: %s", err)
+	}
+	if err = d.Set("description", flattenNetworkServicesServiceLbPoliciesDescription(res["description"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ServiceLbPolicies: %s", err)
+	}
+	if err = d.Set("load_balancing_algorithm", flattenNetworkServicesServiceLbPoliciesLoadBalancingAlgorithm(res["loadBalancingAlgorithm"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ServiceLbPolicies: %s", err)
+	}
+	if err = d.Set("auto_capacity_drain", flattenNetworkServicesServiceLbPoliciesAutoCapacityDrain(res["autoCapacityDrain"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ServiceLbPolicies: %s", err)
+	}
+	if err = d.Set("failover_config", flattenNetworkServicesServiceLbPoliciesFailoverConfig(res["failoverConfig"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ServiceLbPolicies: %s", err)
+	}
+	if err = d.Set("isolation_config", flattenNetworkServicesServiceLbPoliciesIsolationConfig(res["isolationConfig"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ServiceLbPolicies: %s", err)
+	}
+	if err = d.Set("terraform_labels", flattenNetworkServicesServiceLbPoliciesTerraformLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ServiceLbPolicies: %s", err)
+	}
+	if err = d.Set("effective_labels", flattenNetworkServicesServiceLbPoliciesEffectiveLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ServiceLbPolicies: %s", err)
+	}
+
+	return nil
 }

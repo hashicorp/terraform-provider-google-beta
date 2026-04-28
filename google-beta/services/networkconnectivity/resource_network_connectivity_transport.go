@@ -503,65 +503,9 @@ func resourceNetworkConnectivityTransportRead(d *schema.ResourceData, meta inter
 		return fmt.Errorf("Error reading Transport: %s", err)
 	}
 
-	if err := d.Set("description", flattenNetworkConnectivityTransportDescription(res["description"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Transport: %s", err)
-	}
-	if err := d.Set("name", flattenNetworkConnectivityTransportName(res["name"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Transport: %s", err)
-	}
-	if err := d.Set("remote_profile", flattenNetworkConnectivityTransportRemoteProfile(res["remoteProfile"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Transport: %s", err)
-	}
-	if err := d.Set("provided_activation_key", flattenNetworkConnectivityTransportProvidedActivationKey(res["providedActivationKey"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Transport: %s", err)
-	}
-	if err := d.Set("generated_activation_key", flattenNetworkConnectivityTransportGeneratedActivationKey(res["generatedActivationKey"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Transport: %s", err)
-	}
-	if err := d.Set("bandwidth", flattenNetworkConnectivityTransportBandwidth(res["bandwidth"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Transport: %s", err)
-	}
-	if err := d.Set("labels", flattenNetworkConnectivityTransportLabels(res["labels"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Transport: %s", err)
-	}
-	if err := d.Set("stack_type", flattenNetworkConnectivityTransportStackType(res["stackType"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Transport: %s", err)
-	}
-	if err := d.Set("state", flattenNetworkConnectivityTransportState(res["state"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Transport: %s", err)
-	}
-	if err := d.Set("mtu_limit", flattenNetworkConnectivityTransportMtuLimit(res["mtuLimit"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Transport: %s", err)
-	}
-	if err := d.Set("admin_enabled", flattenNetworkConnectivityTransportAdminEnabled(res["adminEnabled"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Transport: %s", err)
-	}
-	if err := d.Set("network", flattenNetworkConnectivityTransportNetwork(res["network"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Transport: %s", err)
-	}
-	if err := d.Set("advertised_routes", flattenNetworkConnectivityTransportAdvertisedRoutes(res["advertisedRoutes"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Transport: %s", err)
-	}
-	if err := d.Set("remote_account_id", flattenNetworkConnectivityTransportRemoteAccountId(res["remoteAccountId"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Transport: %s", err)
-	}
-	if err := d.Set("peering_network", flattenNetworkConnectivityTransportPeeringNetwork(res["peeringNetwork"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Transport: %s", err)
-	}
-	if err := d.Set("hub", flattenNetworkConnectivityTransportHub(res["hub"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Transport: %s", err)
-	}
-	if err := d.Set("psc_routing_enabled", flattenNetworkConnectivityTransportPscRoutingEnabled(res["pscRoutingEnabled"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Transport: %s", err)
-	}
-	if err := d.Set("auto_accept", flattenNetworkConnectivityTransportAutoAccept(res["autoAccept"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Transport: %s", err)
-	}
-	if err := d.Set("terraform_labels", flattenNetworkConnectivityTransportTerraformLabels(res["labels"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Transport: %s", err)
-	}
-	if err := d.Set("effective_labels", flattenNetworkConnectivityTransportEffectiveLabels(res["labels"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Transport: %s", err)
+	err = ResourceNetworkConnectivityTransportFlatten(d, meta, res, config, project, userAgent, billingProject, url, headers)
+	if err != nil {
+		return err
 	}
 
 	identity, err := d.Identity()
@@ -981,4 +925,71 @@ func expandNetworkConnectivityTransportEffectiveLabels(v interface{}, d tpgresou
 		m[k] = val.(string)
 	}
 	return m, nil
+}
+
+func ResourceNetworkConnectivityTransportFlatten(d *schema.ResourceData, meta interface{}, res map[string]interface{}, config *transport_tpg.Config, project string, userAgent string, billingProject string, url string, headers http.Header) error {
+	var err error
+
+	if err = d.Set("description", flattenNetworkConnectivityTransportDescription(res["description"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Transport: %s", err)
+	}
+	if err = d.Set("name", flattenNetworkConnectivityTransportName(res["name"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Transport: %s", err)
+	}
+	if err = d.Set("remote_profile", flattenNetworkConnectivityTransportRemoteProfile(res["remoteProfile"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Transport: %s", err)
+	}
+	if err = d.Set("provided_activation_key", flattenNetworkConnectivityTransportProvidedActivationKey(res["providedActivationKey"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Transport: %s", err)
+	}
+	if err = d.Set("generated_activation_key", flattenNetworkConnectivityTransportGeneratedActivationKey(res["generatedActivationKey"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Transport: %s", err)
+	}
+	if err = d.Set("bandwidth", flattenNetworkConnectivityTransportBandwidth(res["bandwidth"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Transport: %s", err)
+	}
+	if err = d.Set("labels", flattenNetworkConnectivityTransportLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Transport: %s", err)
+	}
+	if err = d.Set("stack_type", flattenNetworkConnectivityTransportStackType(res["stackType"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Transport: %s", err)
+	}
+	if err = d.Set("state", flattenNetworkConnectivityTransportState(res["state"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Transport: %s", err)
+	}
+	if err = d.Set("mtu_limit", flattenNetworkConnectivityTransportMtuLimit(res["mtuLimit"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Transport: %s", err)
+	}
+	if err = d.Set("admin_enabled", flattenNetworkConnectivityTransportAdminEnabled(res["adminEnabled"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Transport: %s", err)
+	}
+	if err = d.Set("network", flattenNetworkConnectivityTransportNetwork(res["network"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Transport: %s", err)
+	}
+	if err = d.Set("advertised_routes", flattenNetworkConnectivityTransportAdvertisedRoutes(res["advertisedRoutes"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Transport: %s", err)
+	}
+	if err = d.Set("remote_account_id", flattenNetworkConnectivityTransportRemoteAccountId(res["remoteAccountId"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Transport: %s", err)
+	}
+	if err = d.Set("peering_network", flattenNetworkConnectivityTransportPeeringNetwork(res["peeringNetwork"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Transport: %s", err)
+	}
+	if err = d.Set("hub", flattenNetworkConnectivityTransportHub(res["hub"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Transport: %s", err)
+	}
+	if err = d.Set("psc_routing_enabled", flattenNetworkConnectivityTransportPscRoutingEnabled(res["pscRoutingEnabled"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Transport: %s", err)
+	}
+	if err = d.Set("auto_accept", flattenNetworkConnectivityTransportAutoAccept(res["autoAccept"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Transport: %s", err)
+	}
+	if err = d.Set("terraform_labels", flattenNetworkConnectivityTransportTerraformLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Transport: %s", err)
+	}
+	if err = d.Set("effective_labels", flattenNetworkConnectivityTransportEffectiveLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Transport: %s", err)
+	}
+
+	return nil
 }

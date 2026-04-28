@@ -416,41 +416,9 @@ func resourceNetworkConnectivityGatewayAdvertisedRouteRead(d *schema.ResourceDat
 		return fmt.Errorf("Error reading GatewayAdvertisedRoute: %s", err)
 	}
 
-	if err := d.Set("name", flattenNetworkConnectivityGatewayAdvertisedRouteName(res["name"], d, config)); err != nil {
-		return fmt.Errorf("Error reading GatewayAdvertisedRoute: %s", err)
-	}
-	if err := d.Set("create_time", flattenNetworkConnectivityGatewayAdvertisedRouteCreateTime(res["createTime"], d, config)); err != nil {
-		return fmt.Errorf("Error reading GatewayAdvertisedRoute: %s", err)
-	}
-	if err := d.Set("update_time", flattenNetworkConnectivityGatewayAdvertisedRouteUpdateTime(res["updateTime"], d, config)); err != nil {
-		return fmt.Errorf("Error reading GatewayAdvertisedRoute: %s", err)
-	}
-	if err := d.Set("labels", flattenNetworkConnectivityGatewayAdvertisedRouteLabels(res["labels"], d, config)); err != nil {
-		return fmt.Errorf("Error reading GatewayAdvertisedRoute: %s", err)
-	}
-	if err := d.Set("description", flattenNetworkConnectivityGatewayAdvertisedRouteDescription(res["description"], d, config)); err != nil {
-		return fmt.Errorf("Error reading GatewayAdvertisedRoute: %s", err)
-	}
-	if err := d.Set("unique_id", flattenNetworkConnectivityGatewayAdvertisedRouteUniqueId(res["uniqueId"], d, config)); err != nil {
-		return fmt.Errorf("Error reading GatewayAdvertisedRoute: %s", err)
-	}
-	if err := d.Set("state", flattenNetworkConnectivityGatewayAdvertisedRouteState(res["state"], d, config)); err != nil {
-		return fmt.Errorf("Error reading GatewayAdvertisedRoute: %s", err)
-	}
-	if err := d.Set("ip_range", flattenNetworkConnectivityGatewayAdvertisedRouteIpRange(res["ipRange"], d, config)); err != nil {
-		return fmt.Errorf("Error reading GatewayAdvertisedRoute: %s", err)
-	}
-	if err := d.Set("recipient", flattenNetworkConnectivityGatewayAdvertisedRouteRecipient(res["recipient"], d, config)); err != nil {
-		return fmt.Errorf("Error reading GatewayAdvertisedRoute: %s", err)
-	}
-	if err := d.Set("priority", flattenNetworkConnectivityGatewayAdvertisedRoutePriority(res["priority"], d, config)); err != nil {
-		return fmt.Errorf("Error reading GatewayAdvertisedRoute: %s", err)
-	}
-	if err := d.Set("terraform_labels", flattenNetworkConnectivityGatewayAdvertisedRouteTerraformLabels(res["labels"], d, config)); err != nil {
-		return fmt.Errorf("Error reading GatewayAdvertisedRoute: %s", err)
-	}
-	if err := d.Set("effective_labels", flattenNetworkConnectivityGatewayAdvertisedRouteEffectiveLabels(res["labels"], d, config)); err != nil {
-		return fmt.Errorf("Error reading GatewayAdvertisedRoute: %s", err)
+	err = ResourceNetworkConnectivityGatewayAdvertisedRouteFlatten(d, meta, res, config, project, userAgent, billingProject, url, headers)
+	if err != nil {
+		return err
 	}
 
 	identity, err := d.Identity()
@@ -788,4 +756,47 @@ func expandNetworkConnectivityGatewayAdvertisedRouteEffectiveLabels(v interface{
 		m[k] = val.(string)
 	}
 	return m, nil
+}
+
+func ResourceNetworkConnectivityGatewayAdvertisedRouteFlatten(d *schema.ResourceData, meta interface{}, res map[string]interface{}, config *transport_tpg.Config, project string, userAgent string, billingProject string, url string, headers http.Header) error {
+	var err error
+
+	if err = d.Set("name", flattenNetworkConnectivityGatewayAdvertisedRouteName(res["name"], d, config)); err != nil {
+		return fmt.Errorf("Error reading GatewayAdvertisedRoute: %s", err)
+	}
+	if err = d.Set("create_time", flattenNetworkConnectivityGatewayAdvertisedRouteCreateTime(res["createTime"], d, config)); err != nil {
+		return fmt.Errorf("Error reading GatewayAdvertisedRoute: %s", err)
+	}
+	if err = d.Set("update_time", flattenNetworkConnectivityGatewayAdvertisedRouteUpdateTime(res["updateTime"], d, config)); err != nil {
+		return fmt.Errorf("Error reading GatewayAdvertisedRoute: %s", err)
+	}
+	if err = d.Set("labels", flattenNetworkConnectivityGatewayAdvertisedRouteLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading GatewayAdvertisedRoute: %s", err)
+	}
+	if err = d.Set("description", flattenNetworkConnectivityGatewayAdvertisedRouteDescription(res["description"], d, config)); err != nil {
+		return fmt.Errorf("Error reading GatewayAdvertisedRoute: %s", err)
+	}
+	if err = d.Set("unique_id", flattenNetworkConnectivityGatewayAdvertisedRouteUniqueId(res["uniqueId"], d, config)); err != nil {
+		return fmt.Errorf("Error reading GatewayAdvertisedRoute: %s", err)
+	}
+	if err = d.Set("state", flattenNetworkConnectivityGatewayAdvertisedRouteState(res["state"], d, config)); err != nil {
+		return fmt.Errorf("Error reading GatewayAdvertisedRoute: %s", err)
+	}
+	if err = d.Set("ip_range", flattenNetworkConnectivityGatewayAdvertisedRouteIpRange(res["ipRange"], d, config)); err != nil {
+		return fmt.Errorf("Error reading GatewayAdvertisedRoute: %s", err)
+	}
+	if err = d.Set("recipient", flattenNetworkConnectivityGatewayAdvertisedRouteRecipient(res["recipient"], d, config)); err != nil {
+		return fmt.Errorf("Error reading GatewayAdvertisedRoute: %s", err)
+	}
+	if err = d.Set("priority", flattenNetworkConnectivityGatewayAdvertisedRoutePriority(res["priority"], d, config)); err != nil {
+		return fmt.Errorf("Error reading GatewayAdvertisedRoute: %s", err)
+	}
+	if err = d.Set("terraform_labels", flattenNetworkConnectivityGatewayAdvertisedRouteTerraformLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading GatewayAdvertisedRoute: %s", err)
+	}
+	if err = d.Set("effective_labels", flattenNetworkConnectivityGatewayAdvertisedRouteEffectiveLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading GatewayAdvertisedRoute: %s", err)
+	}
+
+	return nil
 }

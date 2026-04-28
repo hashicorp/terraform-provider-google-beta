@@ -4566,41 +4566,9 @@ func resourceChronicleFeedRead(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("Error reading Feed: %s", err)
 	}
 
-	if err := d.Set("state", flattenChronicleFeedState(res["state"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Feed: %s", err)
-	}
-	if err := d.Set("enabled", flattenChronicleFeedEnabled(res["enabled"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Feed: %s", err)
-	}
-	if err := d.Set("details", flattenChronicleFeedDetails(res["details"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Feed: %s", err)
-	}
-	if err := d.Set("display_name", flattenChronicleFeedDisplayName(res["displayName"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Feed: %s", err)
-	}
-	if err := d.Set("failure_details", flattenChronicleFeedFailureDetails(res["failureDetails"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Feed: %s", err)
-	}
-	if err := d.Set("failure_msg", flattenChronicleFeedFailureMsg(res["failureMsg"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Feed: %s", err)
-	}
-	if err := d.Set("last_feed_initiation_time", flattenChronicleFeedLastFeedInitiationTime(res["lastFeedInitiationTime"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Feed: %s", err)
-	}
-	if err := d.Set("name", flattenChronicleFeedName(res["name"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Feed: %s", err)
-	}
-	if err := d.Set("read_only", flattenChronicleFeedReadOnly(res["readOnly"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Feed: %s", err)
-	}
-	if err := d.Set("reference_id", flattenChronicleFeedReferenceId(res["referenceId"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Feed: %s", err)
-	}
-	if err := d.Set("uid", flattenChronicleFeedUid(res["uid"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Feed: %s", err)
-	}
-	if err := d.Set("feed", flattenChronicleFeedFeed(res["feed"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Feed: %s", err)
+	err = ResourceChronicleFeedFlatten(d, meta, res, config, project, userAgent, billingProject, url, headers)
+	if err != nil {
+		return err
 	}
 
 	identity, err := d.Identity()
@@ -17739,5 +17707,48 @@ func resourceChronicleFeedPostCreateSetComputedFields(d *schema.ResourceData, me
 			return fmt.Errorf(`Error setting computed identity field "feed": %s`, err)
 		}
 	}
+	return nil
+}
+
+func ResourceChronicleFeedFlatten(d *schema.ResourceData, meta interface{}, res map[string]interface{}, config *transport_tpg.Config, project string, userAgent string, billingProject string, url string, headers http.Header) error {
+	var err error
+
+	if err = d.Set("state", flattenChronicleFeedState(res["state"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Feed: %s", err)
+	}
+	if err = d.Set("enabled", flattenChronicleFeedEnabled(res["enabled"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Feed: %s", err)
+	}
+	if err = d.Set("details", flattenChronicleFeedDetails(res["details"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Feed: %s", err)
+	}
+	if err = d.Set("display_name", flattenChronicleFeedDisplayName(res["displayName"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Feed: %s", err)
+	}
+	if err = d.Set("failure_details", flattenChronicleFeedFailureDetails(res["failureDetails"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Feed: %s", err)
+	}
+	if err = d.Set("failure_msg", flattenChronicleFeedFailureMsg(res["failureMsg"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Feed: %s", err)
+	}
+	if err = d.Set("last_feed_initiation_time", flattenChronicleFeedLastFeedInitiationTime(res["lastFeedInitiationTime"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Feed: %s", err)
+	}
+	if err = d.Set("name", flattenChronicleFeedName(res["name"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Feed: %s", err)
+	}
+	if err = d.Set("read_only", flattenChronicleFeedReadOnly(res["readOnly"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Feed: %s", err)
+	}
+	if err = d.Set("reference_id", flattenChronicleFeedReferenceId(res["referenceId"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Feed: %s", err)
+	}
+	if err = d.Set("uid", flattenChronicleFeedUid(res["uid"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Feed: %s", err)
+	}
+	if err = d.Set("feed", flattenChronicleFeedFeed(res["feed"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Feed: %s", err)
+	}
+
 	return nil
 }

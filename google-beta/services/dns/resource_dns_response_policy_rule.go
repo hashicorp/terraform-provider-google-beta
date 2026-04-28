@@ -365,17 +365,9 @@ func resourceDNSResponsePolicyRuleRead(d *schema.ResourceData, meta interface{})
 		return fmt.Errorf("Error reading ResponsePolicyRule: %s", err)
 	}
 
-	if err := d.Set("rule_name", flattenDNSResponsePolicyRuleRuleName(res["ruleName"], d, config)); err != nil {
-		return fmt.Errorf("Error reading ResponsePolicyRule: %s", err)
-	}
-	if err := d.Set("dns_name", flattenDNSResponsePolicyRuleDnsName(res["dnsName"], d, config)); err != nil {
-		return fmt.Errorf("Error reading ResponsePolicyRule: %s", err)
-	}
-	if err := d.Set("local_data", flattenDNSResponsePolicyRuleLocalData(res["localData"], d, config)); err != nil {
-		return fmt.Errorf("Error reading ResponsePolicyRule: %s", err)
-	}
-	if err := d.Set("behavior", flattenDNSResponsePolicyRuleBehavior(res["behavior"], d, config)); err != nil {
-		return fmt.Errorf("Error reading ResponsePolicyRule: %s", err)
+	err = ResourceDNSResponsePolicyRuleFlatten(d, meta, res, config, project, userAgent, billingProject, url, headers)
+	if err != nil {
+		return err
 	}
 
 	identity, err := d.Identity()
@@ -730,4 +722,23 @@ func expandDNSResponsePolicyRuleLocalDataLocalDatasRrdatas(v interface{}, d tpgr
 
 func expandDNSResponsePolicyRuleBehavior(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func ResourceDNSResponsePolicyRuleFlatten(d *schema.ResourceData, meta interface{}, res map[string]interface{}, config *transport_tpg.Config, project string, userAgent string, billingProject string, url string, headers http.Header) error {
+	var err error
+
+	if err = d.Set("rule_name", flattenDNSResponsePolicyRuleRuleName(res["ruleName"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ResponsePolicyRule: %s", err)
+	}
+	if err = d.Set("dns_name", flattenDNSResponsePolicyRuleDnsName(res["dnsName"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ResponsePolicyRule: %s", err)
+	}
+	if err = d.Set("local_data", flattenDNSResponsePolicyRuleLocalData(res["localData"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ResponsePolicyRule: %s", err)
+	}
+	if err = d.Set("behavior", flattenDNSResponsePolicyRuleBehavior(res["behavior"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ResponsePolicyRule: %s", err)
+	}
+
+	return nil
 }

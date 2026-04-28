@@ -447,26 +447,9 @@ func resourceDataformRepositoryReleaseConfigRead(d *schema.ResourceData, meta in
 		return fmt.Errorf("Error reading RepositoryReleaseConfig: %s", err)
 	}
 
-	if err := d.Set("name", flattenDataformRepositoryReleaseConfigName(res["name"], d, config)); err != nil {
-		return fmt.Errorf("Error reading RepositoryReleaseConfig: %s", err)
-	}
-	if err := d.Set("git_commitish", flattenDataformRepositoryReleaseConfigGitCommitish(res["gitCommitish"], d, config)); err != nil {
-		return fmt.Errorf("Error reading RepositoryReleaseConfig: %s", err)
-	}
-	if err := d.Set("cron_schedule", flattenDataformRepositoryReleaseConfigCronSchedule(res["cronSchedule"], d, config)); err != nil {
-		return fmt.Errorf("Error reading RepositoryReleaseConfig: %s", err)
-	}
-	if err := d.Set("time_zone", flattenDataformRepositoryReleaseConfigTimeZone(res["timeZone"], d, config)); err != nil {
-		return fmt.Errorf("Error reading RepositoryReleaseConfig: %s", err)
-	}
-	if err := d.Set("code_compilation_config", flattenDataformRepositoryReleaseConfigCodeCompilationConfig(res["codeCompilationConfig"], d, config)); err != nil {
-		return fmt.Errorf("Error reading RepositoryReleaseConfig: %s", err)
-	}
-	if err := d.Set("recent_scheduled_release_records", flattenDataformRepositoryReleaseConfigRecentScheduledReleaseRecords(res["recentScheduledReleaseRecords"], d, config)); err != nil {
-		return fmt.Errorf("Error reading RepositoryReleaseConfig: %s", err)
-	}
-	if err := d.Set("disabled", flattenDataformRepositoryReleaseConfigDisabled(res["disabled"], d, config)); err != nil {
-		return fmt.Errorf("Error reading RepositoryReleaseConfig: %s", err)
+	err = ResourceDataformRepositoryReleaseConfigFlatten(d, meta, res, config, project, userAgent, billingProject, url, headers)
+	if err != nil {
+		return err
 	}
 
 	identity, err := d.Identity()
@@ -950,4 +933,32 @@ func expandDataformRepositoryReleaseConfigCodeCompilationConfigTablePrefix(v int
 
 func expandDataformRepositoryReleaseConfigDisabled(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func ResourceDataformRepositoryReleaseConfigFlatten(d *schema.ResourceData, meta interface{}, res map[string]interface{}, config *transport_tpg.Config, project string, userAgent string, billingProject string, url string, headers http.Header) error {
+	var err error
+
+	if err = d.Set("name", flattenDataformRepositoryReleaseConfigName(res["name"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RepositoryReleaseConfig: %s", err)
+	}
+	if err = d.Set("git_commitish", flattenDataformRepositoryReleaseConfigGitCommitish(res["gitCommitish"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RepositoryReleaseConfig: %s", err)
+	}
+	if err = d.Set("cron_schedule", flattenDataformRepositoryReleaseConfigCronSchedule(res["cronSchedule"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RepositoryReleaseConfig: %s", err)
+	}
+	if err = d.Set("time_zone", flattenDataformRepositoryReleaseConfigTimeZone(res["timeZone"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RepositoryReleaseConfig: %s", err)
+	}
+	if err = d.Set("code_compilation_config", flattenDataformRepositoryReleaseConfigCodeCompilationConfig(res["codeCompilationConfig"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RepositoryReleaseConfig: %s", err)
+	}
+	if err = d.Set("recent_scheduled_release_records", flattenDataformRepositoryReleaseConfigRecentScheduledReleaseRecords(res["recentScheduledReleaseRecords"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RepositoryReleaseConfig: %s", err)
+	}
+	if err = d.Set("disabled", flattenDataformRepositoryReleaseConfigDisabled(res["disabled"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RepositoryReleaseConfig: %s", err)
+	}
+
+	return nil
 }

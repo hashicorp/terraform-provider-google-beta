@@ -350,32 +350,9 @@ func resourceFirebaseAILogicPromptTemplateRead(d *schema.ResourceData, meta inte
 		return fmt.Errorf("Error reading PromptTemplate: %s", err)
 	}
 
-	if err := d.Set("template_id", flattenFirebaseAILogicPromptTemplateTemplateId(res["templateId"], d, config)); err != nil {
-		return fmt.Errorf("Error reading PromptTemplate: %s", err)
-	}
-	if err := d.Set("create_time", flattenFirebaseAILogicPromptTemplateCreateTime(res["createTime"], d, config)); err != nil {
-		return fmt.Errorf("Error reading PromptTemplate: %s", err)
-	}
-	if err := d.Set("display_name", flattenFirebaseAILogicPromptTemplateDisplayName(res["displayName"], d, config)); err != nil {
-		return fmt.Errorf("Error reading PromptTemplate: %s", err)
-	}
-	if err := d.Set("locked", flattenFirebaseAILogicPromptTemplateLocked(res["locked"], d, config)); err != nil {
-		return fmt.Errorf("Error reading PromptTemplate: %s", err)
-	}
-	if err := d.Set("model", flattenFirebaseAILogicPromptTemplateModel(res["model"], d, config)); err != nil {
-		return fmt.Errorf("Error reading PromptTemplate: %s", err)
-	}
-	if err := d.Set("name", flattenFirebaseAILogicPromptTemplateName(res["name"], d, config)); err != nil {
-		return fmt.Errorf("Error reading PromptTemplate: %s", err)
-	}
-	if err := d.Set("state_change_time", flattenFirebaseAILogicPromptTemplateStateChangeTime(res["stateChangeTime"], d, config)); err != nil {
-		return fmt.Errorf("Error reading PromptTemplate: %s", err)
-	}
-	if err := d.Set("template_string", flattenFirebaseAILogicPromptTemplateTemplateString(res["templateString"], d, config)); err != nil {
-		return fmt.Errorf("Error reading PromptTemplate: %s", err)
-	}
-	if err := d.Set("update_time", flattenFirebaseAILogicPromptTemplateUpdateTime(res["updateTime"], d, config)); err != nil {
-		return fmt.Errorf("Error reading PromptTemplate: %s", err)
+	err = ResourceFirebaseAILogicPromptTemplateFlatten(d, meta, res, config, project, userAgent, billingProject, url, headers)
+	if err != nil {
+		return err
 	}
 
 	identity, err := d.Identity()
@@ -620,4 +597,38 @@ func expandFirebaseAILogicPromptTemplateDisplayName(v interface{}, d tpgresource
 
 func expandFirebaseAILogicPromptTemplateTemplateString(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func ResourceFirebaseAILogicPromptTemplateFlatten(d *schema.ResourceData, meta interface{}, res map[string]interface{}, config *transport_tpg.Config, project string, userAgent string, billingProject string, url string, headers http.Header) error {
+	var err error
+
+	if err = d.Set("template_id", flattenFirebaseAILogicPromptTemplateTemplateId(res["templateId"], d, config)); err != nil {
+		return fmt.Errorf("Error reading PromptTemplate: %s", err)
+	}
+	if err = d.Set("create_time", flattenFirebaseAILogicPromptTemplateCreateTime(res["createTime"], d, config)); err != nil {
+		return fmt.Errorf("Error reading PromptTemplate: %s", err)
+	}
+	if err = d.Set("display_name", flattenFirebaseAILogicPromptTemplateDisplayName(res["displayName"], d, config)); err != nil {
+		return fmt.Errorf("Error reading PromptTemplate: %s", err)
+	}
+	if err = d.Set("locked", flattenFirebaseAILogicPromptTemplateLocked(res["locked"], d, config)); err != nil {
+		return fmt.Errorf("Error reading PromptTemplate: %s", err)
+	}
+	if err = d.Set("model", flattenFirebaseAILogicPromptTemplateModel(res["model"], d, config)); err != nil {
+		return fmt.Errorf("Error reading PromptTemplate: %s", err)
+	}
+	if err = d.Set("name", flattenFirebaseAILogicPromptTemplateName(res["name"], d, config)); err != nil {
+		return fmt.Errorf("Error reading PromptTemplate: %s", err)
+	}
+	if err = d.Set("state_change_time", flattenFirebaseAILogicPromptTemplateStateChangeTime(res["stateChangeTime"], d, config)); err != nil {
+		return fmt.Errorf("Error reading PromptTemplate: %s", err)
+	}
+	if err = d.Set("template_string", flattenFirebaseAILogicPromptTemplateTemplateString(res["templateString"], d, config)); err != nil {
+		return fmt.Errorf("Error reading PromptTemplate: %s", err)
+	}
+	if err = d.Set("update_time", flattenFirebaseAILogicPromptTemplateUpdateTime(res["updateTime"], d, config)); err != nil {
+		return fmt.Errorf("Error reading PromptTemplate: %s", err)
+	}
+
+	return nil
 }

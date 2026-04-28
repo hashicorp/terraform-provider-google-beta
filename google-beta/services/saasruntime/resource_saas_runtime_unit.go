@@ -638,80 +638,9 @@ func resourceSaasRuntimeUnitRead(d *schema.ResourceData, meta interface{}) error
 		return fmt.Errorf("Error reading Unit: %s", err)
 	}
 
-	if err := d.Set("annotations", flattenSaasRuntimeUnitAnnotations(res["annotations"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Unit: %s", err)
-	}
-	if err := d.Set("conditions", flattenSaasRuntimeUnitConditions(res["conditions"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Unit: %s", err)
-	}
-	if err := d.Set("create_time", flattenSaasRuntimeUnitCreateTime(res["createTime"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Unit: %s", err)
-	}
-	if err := d.Set("dependencies", flattenSaasRuntimeUnitDependencies(res["dependencies"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Unit: %s", err)
-	}
-	if err := d.Set("dependents", flattenSaasRuntimeUnitDependents(res["dependents"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Unit: %s", err)
-	}
-	if err := d.Set("input_variables", flattenSaasRuntimeUnitInputVariables(res["inputVariables"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Unit: %s", err)
-	}
-	if err := d.Set("labels", flattenSaasRuntimeUnitLabels(res["labels"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Unit: %s", err)
-	}
-	if err := d.Set("maintenance", flattenSaasRuntimeUnitMaintenance(res["maintenance"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Unit: %s", err)
-	}
-	if err := d.Set("management_mode", flattenSaasRuntimeUnitManagementMode(res["managementMode"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Unit: %s", err)
-	}
-	if err := d.Set("name", flattenSaasRuntimeUnitName(res["name"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Unit: %s", err)
-	}
-	if err := d.Set("ongoing_operations", flattenSaasRuntimeUnitOngoingOperations(res["ongoingOperations"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Unit: %s", err)
-	}
-	if err := d.Set("output_variables", flattenSaasRuntimeUnitOutputVariables(res["outputVariables"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Unit: %s", err)
-	}
-	if err := d.Set("pending_operations", flattenSaasRuntimeUnitPendingOperations(res["pendingOperations"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Unit: %s", err)
-	}
-	if err := d.Set("release", flattenSaasRuntimeUnitRelease(res["release"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Unit: %s", err)
-	}
-	if err := d.Set("scheduled_operations", flattenSaasRuntimeUnitScheduledOperations(res["scheduledOperations"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Unit: %s", err)
-	}
-	if err := d.Set("state", flattenSaasRuntimeUnitState(res["state"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Unit: %s", err)
-	}
-	if err := d.Set("system_cleanup_at", flattenSaasRuntimeUnitSystemCleanupAt(res["systemCleanupAt"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Unit: %s", err)
-	}
-	if err := d.Set("system_managed_state", flattenSaasRuntimeUnitSystemManagedState(res["systemManagedState"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Unit: %s", err)
-	}
-	if err := d.Set("tenant", flattenSaasRuntimeUnitTenant(res["tenant"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Unit: %s", err)
-	}
-	if err := d.Set("uid", flattenSaasRuntimeUnitUid(res["uid"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Unit: %s", err)
-	}
-	if err := d.Set("unit_kind", flattenSaasRuntimeUnitUnitKind(res["unitKind"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Unit: %s", err)
-	}
-	if err := d.Set("update_time", flattenSaasRuntimeUnitUpdateTime(res["updateTime"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Unit: %s", err)
-	}
-	if err := d.Set("effective_annotations", flattenSaasRuntimeUnitEffectiveAnnotations(res["annotations"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Unit: %s", err)
-	}
-	if err := d.Set("terraform_labels", flattenSaasRuntimeUnitTerraformLabels(res["labels"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Unit: %s", err)
-	}
-	if err := d.Set("effective_labels", flattenSaasRuntimeUnitEffectiveLabels(res["labels"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Unit: %s", err)
+	err = ResourceSaasRuntimeUnitFlatten(d, meta, res, config, project, userAgent, billingProject, url, headers)
+	if err != nil {
+		return err
 	}
 
 	identity, err := d.Identity()
@@ -1284,4 +1213,86 @@ func expandSaasRuntimeUnitEffectiveLabels(v interface{}, d tpgresource.Terraform
 		m[k] = val.(string)
 	}
 	return m, nil
+}
+
+func ResourceSaasRuntimeUnitFlatten(d *schema.ResourceData, meta interface{}, res map[string]interface{}, config *transport_tpg.Config, project string, userAgent string, billingProject string, url string, headers http.Header) error {
+	var err error
+
+	if err = d.Set("annotations", flattenSaasRuntimeUnitAnnotations(res["annotations"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Unit: %s", err)
+	}
+	if err = d.Set("conditions", flattenSaasRuntimeUnitConditions(res["conditions"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Unit: %s", err)
+	}
+	if err = d.Set("create_time", flattenSaasRuntimeUnitCreateTime(res["createTime"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Unit: %s", err)
+	}
+	if err = d.Set("dependencies", flattenSaasRuntimeUnitDependencies(res["dependencies"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Unit: %s", err)
+	}
+	if err = d.Set("dependents", flattenSaasRuntimeUnitDependents(res["dependents"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Unit: %s", err)
+	}
+	if err = d.Set("input_variables", flattenSaasRuntimeUnitInputVariables(res["inputVariables"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Unit: %s", err)
+	}
+	if err = d.Set("labels", flattenSaasRuntimeUnitLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Unit: %s", err)
+	}
+	if err = d.Set("maintenance", flattenSaasRuntimeUnitMaintenance(res["maintenance"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Unit: %s", err)
+	}
+	if err = d.Set("management_mode", flattenSaasRuntimeUnitManagementMode(res["managementMode"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Unit: %s", err)
+	}
+	if err = d.Set("name", flattenSaasRuntimeUnitName(res["name"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Unit: %s", err)
+	}
+	if err = d.Set("ongoing_operations", flattenSaasRuntimeUnitOngoingOperations(res["ongoingOperations"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Unit: %s", err)
+	}
+	if err = d.Set("output_variables", flattenSaasRuntimeUnitOutputVariables(res["outputVariables"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Unit: %s", err)
+	}
+	if err = d.Set("pending_operations", flattenSaasRuntimeUnitPendingOperations(res["pendingOperations"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Unit: %s", err)
+	}
+	if err = d.Set("release", flattenSaasRuntimeUnitRelease(res["release"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Unit: %s", err)
+	}
+	if err = d.Set("scheduled_operations", flattenSaasRuntimeUnitScheduledOperations(res["scheduledOperations"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Unit: %s", err)
+	}
+	if err = d.Set("state", flattenSaasRuntimeUnitState(res["state"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Unit: %s", err)
+	}
+	if err = d.Set("system_cleanup_at", flattenSaasRuntimeUnitSystemCleanupAt(res["systemCleanupAt"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Unit: %s", err)
+	}
+	if err = d.Set("system_managed_state", flattenSaasRuntimeUnitSystemManagedState(res["systemManagedState"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Unit: %s", err)
+	}
+	if err = d.Set("tenant", flattenSaasRuntimeUnitTenant(res["tenant"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Unit: %s", err)
+	}
+	if err = d.Set("uid", flattenSaasRuntimeUnitUid(res["uid"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Unit: %s", err)
+	}
+	if err = d.Set("unit_kind", flattenSaasRuntimeUnitUnitKind(res["unitKind"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Unit: %s", err)
+	}
+	if err = d.Set("update_time", flattenSaasRuntimeUnitUpdateTime(res["updateTime"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Unit: %s", err)
+	}
+	if err = d.Set("effective_annotations", flattenSaasRuntimeUnitEffectiveAnnotations(res["annotations"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Unit: %s", err)
+	}
+	if err = d.Set("terraform_labels", flattenSaasRuntimeUnitTerraformLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Unit: %s", err)
+	}
+	if err = d.Set("effective_labels", flattenSaasRuntimeUnitEffectiveLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Unit: %s", err)
+	}
+
+	return nil
 }

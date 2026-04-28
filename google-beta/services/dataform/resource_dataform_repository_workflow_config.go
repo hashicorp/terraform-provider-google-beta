@@ -444,23 +444,9 @@ func resourceDataformRepositoryWorkflowConfigRead(d *schema.ResourceData, meta i
 		return fmt.Errorf("Error reading RepositoryWorkflowConfig: %s", err)
 	}
 
-	if err := d.Set("name", flattenDataformRepositoryWorkflowConfigName(res["name"], d, config)); err != nil {
-		return fmt.Errorf("Error reading RepositoryWorkflowConfig: %s", err)
-	}
-	if err := d.Set("release_config", flattenDataformRepositoryWorkflowConfigReleaseConfig(res["releaseConfig"], d, config)); err != nil {
-		return fmt.Errorf("Error reading RepositoryWorkflowConfig: %s", err)
-	}
-	if err := d.Set("invocation_config", flattenDataformRepositoryWorkflowConfigInvocationConfig(res["invocationConfig"], d, config)); err != nil {
-		return fmt.Errorf("Error reading RepositoryWorkflowConfig: %s", err)
-	}
-	if err := d.Set("cron_schedule", flattenDataformRepositoryWorkflowConfigCronSchedule(res["cronSchedule"], d, config)); err != nil {
-		return fmt.Errorf("Error reading RepositoryWorkflowConfig: %s", err)
-	}
-	if err := d.Set("time_zone", flattenDataformRepositoryWorkflowConfigTimeZone(res["timeZone"], d, config)); err != nil {
-		return fmt.Errorf("Error reading RepositoryWorkflowConfig: %s", err)
-	}
-	if err := d.Set("recent_scheduled_execution_records", flattenDataformRepositoryWorkflowConfigRecentScheduledExecutionRecords(res["recentScheduledExecutionRecords"], d, config)); err != nil {
-		return fmt.Errorf("Error reading RepositoryWorkflowConfig: %s", err)
+	err = ResourceDataformRepositoryWorkflowConfigFlatten(d, meta, res, config, project, userAgent, billingProject, url, headers)
+	if err != nil {
+		return err
 	}
 
 	identity, err := d.Identity()
@@ -964,4 +950,29 @@ func expandDataformRepositoryWorkflowConfigCronSchedule(v interface{}, d tpgreso
 
 func expandDataformRepositoryWorkflowConfigTimeZone(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func ResourceDataformRepositoryWorkflowConfigFlatten(d *schema.ResourceData, meta interface{}, res map[string]interface{}, config *transport_tpg.Config, project string, userAgent string, billingProject string, url string, headers http.Header) error {
+	var err error
+
+	if err = d.Set("name", flattenDataformRepositoryWorkflowConfigName(res["name"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RepositoryWorkflowConfig: %s", err)
+	}
+	if err = d.Set("release_config", flattenDataformRepositoryWorkflowConfigReleaseConfig(res["releaseConfig"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RepositoryWorkflowConfig: %s", err)
+	}
+	if err = d.Set("invocation_config", flattenDataformRepositoryWorkflowConfigInvocationConfig(res["invocationConfig"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RepositoryWorkflowConfig: %s", err)
+	}
+	if err = d.Set("cron_schedule", flattenDataformRepositoryWorkflowConfigCronSchedule(res["cronSchedule"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RepositoryWorkflowConfig: %s", err)
+	}
+	if err = d.Set("time_zone", flattenDataformRepositoryWorkflowConfigTimeZone(res["timeZone"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RepositoryWorkflowConfig: %s", err)
+	}
+	if err = d.Set("recent_scheduled_execution_records", flattenDataformRepositoryWorkflowConfigRecentScheduledExecutionRecords(res["recentScheduledExecutionRecords"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RepositoryWorkflowConfig: %s", err)
+	}
+
+	return nil
 }

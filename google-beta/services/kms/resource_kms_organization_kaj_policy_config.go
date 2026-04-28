@@ -268,8 +268,9 @@ func resourceKMSOrganizationKajPolicyConfigRead(d *schema.ResourceData, meta int
 
 	log.Printf("[DEBUG] Finished reading KMSOrganizationKajPolicyConfig %q: %#v", d.Id(), res)
 
-	if err := d.Set("default_key_access_justification_policy", flattenKMSOrganizationKajPolicyConfigDefaultKeyAccessJustificationPolicy(res["defaultKeyAccessJustificationPolicy"], d, config)); err != nil {
-		return fmt.Errorf("Error reading OrganizationKajPolicyConfig: %s", err)
+	err = ResourceKMSOrganizationKajPolicyConfigFlatten(d, meta, res, config, userAgent, billingProject, url, headers)
+	if err != nil {
+		return err
 	}
 
 	identity, err := d.Identity()
@@ -420,4 +421,14 @@ func expandKMSOrganizationKajPolicyConfigDefaultKeyAccessJustificationPolicy(v i
 
 func expandKMSOrganizationKajPolicyConfigDefaultKeyAccessJustificationPolicyAllowedAccessReasons(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func ResourceKMSOrganizationKajPolicyConfigFlatten(d *schema.ResourceData, meta interface{}, res map[string]interface{}, config *transport_tpg.Config, userAgent string, billingProject string, url string, headers http.Header) error {
+	var err error
+
+	if err = d.Set("default_key_access_justification_policy", flattenKMSOrganizationKajPolicyConfigDefaultKeyAccessJustificationPolicy(res["defaultKeyAccessJustificationPolicy"], d, config)); err != nil {
+		return fmt.Errorf("Error reading OrganizationKajPolicyConfig: %s", err)
+	}
+
+	return nil
 }

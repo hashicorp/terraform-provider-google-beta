@@ -385,23 +385,9 @@ func resourcePrivilegedAccessManagerSettingsRead(d *schema.ResourceData, meta in
 
 	log.Printf("[DEBUG] Finished reading PrivilegedAccessManagerSettings %q: %#v", d.Id(), res)
 
-	if err := d.Set("name", flattenPrivilegedAccessManagerSettingsName(res["name"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Settings: %s", err)
-	}
-	if err := d.Set("create_time", flattenPrivilegedAccessManagerSettingsCreateTime(res["createTime"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Settings: %s", err)
-	}
-	if err := d.Set("update_time", flattenPrivilegedAccessManagerSettingsUpdateTime(res["updateTime"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Settings: %s", err)
-	}
-	if err := d.Set("etag", flattenPrivilegedAccessManagerSettingsEtag(res["etag"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Settings: %s", err)
-	}
-	if err := d.Set("service_account_approver_settings", flattenPrivilegedAccessManagerSettingsServiceAccountApproverSettings(res["serviceAccountApproverSettings"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Settings: %s", err)
-	}
-	if err := d.Set("email_notification_settings", flattenPrivilegedAccessManagerSettingsEmailNotificationSettings(res["emailNotificationSettings"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Settings: %s", err)
+	err = ResourcePrivilegedAccessManagerSettingsFlatten(d, meta, res, config, userAgent, billingProject, url, headers)
+	if err != nil {
+		return err
 	}
 
 	identity, err := d.Identity()
@@ -1062,4 +1048,29 @@ func expandPrivilegedAccessManagerSettingsEmailNotificationSettingsCustomNotific
 
 func expandPrivilegedAccessManagerSettingsEmailNotificationSettingsCustomNotificationBehaviorApproverNotificationsPendingApproval(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func ResourcePrivilegedAccessManagerSettingsFlatten(d *schema.ResourceData, meta interface{}, res map[string]interface{}, config *transport_tpg.Config, userAgent string, billingProject string, url string, headers http.Header) error {
+	var err error
+
+	if err = d.Set("name", flattenPrivilegedAccessManagerSettingsName(res["name"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Settings: %s", err)
+	}
+	if err = d.Set("create_time", flattenPrivilegedAccessManagerSettingsCreateTime(res["createTime"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Settings: %s", err)
+	}
+	if err = d.Set("update_time", flattenPrivilegedAccessManagerSettingsUpdateTime(res["updateTime"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Settings: %s", err)
+	}
+	if err = d.Set("etag", flattenPrivilegedAccessManagerSettingsEtag(res["etag"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Settings: %s", err)
+	}
+	if err = d.Set("service_account_approver_settings", flattenPrivilegedAccessManagerSettingsServiceAccountApproverSettings(res["serviceAccountApproverSettings"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Settings: %s", err)
+	}
+	if err = d.Set("email_notification_settings", flattenPrivilegedAccessManagerSettingsEmailNotificationSettings(res["emailNotificationSettings"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Settings: %s", err)
+	}
+
+	return nil
 }

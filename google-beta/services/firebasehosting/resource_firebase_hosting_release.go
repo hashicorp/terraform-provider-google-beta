@@ -323,17 +323,9 @@ func resourceFirebaseHostingReleaseRead(d *schema.ResourceData, meta interface{}
 
 	log.Printf("[DEBUG] Finished reading FirebaseHostingRelease %q: %#v", d.Id(), res)
 
-	if err := d.Set("name", flattenFirebaseHostingReleaseName(res["name"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Release: %s", err)
-	}
-	if err := d.Set("release_id", flattenFirebaseHostingReleaseReleaseId(res["name"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Release: %s", err)
-	}
-	if err := d.Set("type", flattenFirebaseHostingReleaseType(res["type"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Release: %s", err)
-	}
-	if err := d.Set("message", flattenFirebaseHostingReleaseMessage(res["message"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Release: %s", err)
+	err = ResourceFirebaseHostingReleaseFlatten(d, meta, res, config, userAgent, billingProject, url, headers)
+	if err != nil {
+		return err
 	}
 
 	identity, err := d.Identity()
@@ -427,5 +419,24 @@ func resourceFirebaseHostingReleasePostCreateSetComputedFields(d *schema.Resourc
 	if err := d.Set("release_id", flattenFirebaseHostingReleaseReleaseId(res["name"], d, config)); err != nil {
 		return fmt.Errorf(`Error setting computed identity field "release_id": %s`, err)
 	}
+	return nil
+}
+
+func ResourceFirebaseHostingReleaseFlatten(d *schema.ResourceData, meta interface{}, res map[string]interface{}, config *transport_tpg.Config, userAgent string, billingProject string, url string, headers http.Header) error {
+	var err error
+
+	if err = d.Set("name", flattenFirebaseHostingReleaseName(res["name"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Release: %s", err)
+	}
+	if err = d.Set("release_id", flattenFirebaseHostingReleaseReleaseId(res["name"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Release: %s", err)
+	}
+	if err = d.Set("type", flattenFirebaseHostingReleaseType(res["type"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Release: %s", err)
+	}
+	if err = d.Set("message", flattenFirebaseHostingReleaseMessage(res["message"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Release: %s", err)
+	}
+
 	return nil
 }

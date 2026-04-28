@@ -331,17 +331,9 @@ func resourceFirebaseHostingSiteRead(d *schema.ResourceData, meta interface{}) e
 		return fmt.Errorf("Error reading Site: %s", err)
 	}
 
-	if err := d.Set("name", flattenFirebaseHostingSiteName(res["name"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Site: %s", err)
-	}
-	if err := d.Set("app_id", flattenFirebaseHostingSiteAppId(res["appId"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Site: %s", err)
-	}
-	if err := d.Set("default_url", flattenFirebaseHostingSiteDefaultUrl(res["defaultUrl"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Site: %s", err)
-	}
-	if err := d.Set("type", flattenFirebaseHostingSiteType(res["type"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Site: %s", err)
+	err = ResourceFirebaseHostingSiteFlatten(d, meta, res, config, project, userAgent, billingProject, url, headers)
+	if err != nil {
+		return err
 	}
 
 	identity, err := d.Identity()
@@ -542,4 +534,23 @@ func flattenFirebaseHostingSiteType(v interface{}, d *schema.ResourceData, confi
 
 func expandFirebaseHostingSiteAppId(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func ResourceFirebaseHostingSiteFlatten(d *schema.ResourceData, meta interface{}, res map[string]interface{}, config *transport_tpg.Config, project string, userAgent string, billingProject string, url string, headers http.Header) error {
+	var err error
+
+	if err = d.Set("name", flattenFirebaseHostingSiteName(res["name"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Site: %s", err)
+	}
+	if err = d.Set("app_id", flattenFirebaseHostingSiteAppId(res["appId"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Site: %s", err)
+	}
+	if err = d.Set("default_url", flattenFirebaseHostingSiteDefaultUrl(res["defaultUrl"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Site: %s", err)
+	}
+	if err = d.Set("type", flattenFirebaseHostingSiteType(res["type"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Site: %s", err)
+	}
+
+	return nil
 }

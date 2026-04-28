@@ -353,20 +353,9 @@ func resourceVertexAIMetadataStoreRead(d *schema.ResourceData, meta interface{})
 		return fmt.Errorf("Error reading MetadataStore: %s", err)
 	}
 
-	if err := d.Set("description", flattenVertexAIMetadataStoreDescription(res["description"], d, config)); err != nil {
-		return fmt.Errorf("Error reading MetadataStore: %s", err)
-	}
-	if err := d.Set("create_time", flattenVertexAIMetadataStoreCreateTime(res["createTime"], d, config)); err != nil {
-		return fmt.Errorf("Error reading MetadataStore: %s", err)
-	}
-	if err := d.Set("update_time", flattenVertexAIMetadataStoreUpdateTime(res["updateTime"], d, config)); err != nil {
-		return fmt.Errorf("Error reading MetadataStore: %s", err)
-	}
-	if err := d.Set("encryption_spec", flattenVertexAIMetadataStoreEncryptionSpec(res["encryptionSpec"], d, config)); err != nil {
-		return fmt.Errorf("Error reading MetadataStore: %s", err)
-	}
-	if err := d.Set("state", flattenVertexAIMetadataStoreState(res["state"], d, config)); err != nil {
-		return fmt.Errorf("Error reading MetadataStore: %s", err)
+	err = ResourceVertexAIMetadataStoreFlatten(d, meta, res, config, project, userAgent, billingProject, url, headers)
+	if err != nil {
+		return err
 	}
 
 	identity, err := d.Identity()
@@ -547,4 +536,26 @@ func expandVertexAIMetadataStoreEncryptionSpec(v interface{}, d tpgresource.Terr
 
 func expandVertexAIMetadataStoreEncryptionSpecKmsKeyName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func ResourceVertexAIMetadataStoreFlatten(d *schema.ResourceData, meta interface{}, res map[string]interface{}, config *transport_tpg.Config, project string, userAgent string, billingProject string, url string, headers http.Header) error {
+	var err error
+
+	if err = d.Set("description", flattenVertexAIMetadataStoreDescription(res["description"], d, config)); err != nil {
+		return fmt.Errorf("Error reading MetadataStore: %s", err)
+	}
+	if err = d.Set("create_time", flattenVertexAIMetadataStoreCreateTime(res["createTime"], d, config)); err != nil {
+		return fmt.Errorf("Error reading MetadataStore: %s", err)
+	}
+	if err = d.Set("update_time", flattenVertexAIMetadataStoreUpdateTime(res["updateTime"], d, config)); err != nil {
+		return fmt.Errorf("Error reading MetadataStore: %s", err)
+	}
+	if err = d.Set("encryption_spec", flattenVertexAIMetadataStoreEncryptionSpec(res["encryptionSpec"], d, config)); err != nil {
+		return fmt.Errorf("Error reading MetadataStore: %s", err)
+	}
+	if err = d.Set("state", flattenVertexAIMetadataStoreState(res["state"], d, config)); err != nil {
+		return fmt.Errorf("Error reading MetadataStore: %s", err)
+	}
+
+	return nil
 }

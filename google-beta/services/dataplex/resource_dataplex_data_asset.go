@@ -384,23 +384,9 @@ func resourceDataplexDataAssetRead(d *schema.ResourceData, meta interface{}) err
 		return fmt.Errorf("Error reading DataAsset: %s", err)
 	}
 
-	if err := d.Set("uid", flattenDataplexDataAssetUid(res["uid"], d, config)); err != nil {
-		return fmt.Errorf("Error reading DataAsset: %s", err)
-	}
-	if err := d.Set("resource", flattenDataplexDataAssetResource(res["resource"], d, config)); err != nil {
-		return fmt.Errorf("Error reading DataAsset: %s", err)
-	}
-	if err := d.Set("labels", flattenDataplexDataAssetLabels(res["labels"], d, config)); err != nil {
-		return fmt.Errorf("Error reading DataAsset: %s", err)
-	}
-	if err := d.Set("access_group_configs", flattenDataplexDataAssetAccessGroupConfigs(res["accessGroupConfigs"], d, config)); err != nil {
-		return fmt.Errorf("Error reading DataAsset: %s", err)
-	}
-	if err := d.Set("terraform_labels", flattenDataplexDataAssetTerraformLabels(res["labels"], d, config)); err != nil {
-		return fmt.Errorf("Error reading DataAsset: %s", err)
-	}
-	if err := d.Set("effective_labels", flattenDataplexDataAssetEffectiveLabels(res["labels"], d, config)); err != nil {
-		return fmt.Errorf("Error reading DataAsset: %s", err)
+	err = ResourceDataplexDataAssetFlatten(d, meta, res, config, project, userAgent, billingProject, url, headers)
+	if err != nil {
+		return err
 	}
 
 	identity, err := d.Identity()
@@ -728,4 +714,29 @@ func expandDataplexDataAssetEffectiveLabels(v interface{}, d tpgresource.Terrafo
 		m[k] = val.(string)
 	}
 	return m, nil
+}
+
+func ResourceDataplexDataAssetFlatten(d *schema.ResourceData, meta interface{}, res map[string]interface{}, config *transport_tpg.Config, project string, userAgent string, billingProject string, url string, headers http.Header) error {
+	var err error
+
+	if err = d.Set("uid", flattenDataplexDataAssetUid(res["uid"], d, config)); err != nil {
+		return fmt.Errorf("Error reading DataAsset: %s", err)
+	}
+	if err = d.Set("resource", flattenDataplexDataAssetResource(res["resource"], d, config)); err != nil {
+		return fmt.Errorf("Error reading DataAsset: %s", err)
+	}
+	if err = d.Set("labels", flattenDataplexDataAssetLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading DataAsset: %s", err)
+	}
+	if err = d.Set("access_group_configs", flattenDataplexDataAssetAccessGroupConfigs(res["accessGroupConfigs"], d, config)); err != nil {
+		return fmt.Errorf("Error reading DataAsset: %s", err)
+	}
+	if err = d.Set("terraform_labels", flattenDataplexDataAssetTerraformLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading DataAsset: %s", err)
+	}
+	if err = d.Set("effective_labels", flattenDataplexDataAssetEffectiveLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading DataAsset: %s", err)
+	}
+
+	return nil
 }

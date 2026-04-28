@@ -387,35 +387,9 @@ func resourceNetworkSecurityUllMirroringCollectorRead(d *schema.ResourceData, me
 		return fmt.Errorf("Error reading UllMirroringCollector: %s", err)
 	}
 
-	if err := d.Set("name", flattenNetworkSecurityUllMirroringCollectorName(res["name"], d, config)); err != nil {
-		return fmt.Errorf("Error reading UllMirroringCollector: %s", err)
-	}
-	if err := d.Set("create_time", flattenNetworkSecurityUllMirroringCollectorCreateTime(res["createTime"], d, config)); err != nil {
-		return fmt.Errorf("Error reading UllMirroringCollector: %s", err)
-	}
-	if err := d.Set("update_time", flattenNetworkSecurityUllMirroringCollectorUpdateTime(res["updateTime"], d, config)); err != nil {
-		return fmt.Errorf("Error reading UllMirroringCollector: %s", err)
-	}
-	if err := d.Set("engine", flattenNetworkSecurityUllMirroringCollectorEngine(res["engine"], d, config)); err != nil {
-		return fmt.Errorf("Error reading UllMirroringCollector: %s", err)
-	}
-	if err := d.Set("forwarding_rule", flattenNetworkSecurityUllMirroringCollectorForwardingRule(res["forwardingRule"], d, config)); err != nil {
-		return fmt.Errorf("Error reading UllMirroringCollector: %s", err)
-	}
-	if err := d.Set("labels", flattenNetworkSecurityUllMirroringCollectorLabels(res["labels"], d, config)); err != nil {
-		return fmt.Errorf("Error reading UllMirroringCollector: %s", err)
-	}
-	if err := d.Set("reconciling", flattenNetworkSecurityUllMirroringCollectorReconciling(res["reconciling"], d, config)); err != nil {
-		return fmt.Errorf("Error reading UllMirroringCollector: %s", err)
-	}
-	if err := d.Set("state", flattenNetworkSecurityUllMirroringCollectorState(res["state"], d, config)); err != nil {
-		return fmt.Errorf("Error reading UllMirroringCollector: %s", err)
-	}
-	if err := d.Set("terraform_labels", flattenNetworkSecurityUllMirroringCollectorTerraformLabels(res["labels"], d, config)); err != nil {
-		return fmt.Errorf("Error reading UllMirroringCollector: %s", err)
-	}
-	if err := d.Set("effective_labels", flattenNetworkSecurityUllMirroringCollectorEffectiveLabels(res["labels"], d, config)); err != nil {
-		return fmt.Errorf("Error reading UllMirroringCollector: %s", err)
+	err = ResourceNetworkSecurityUllMirroringCollectorFlatten(d, meta, res, config, project, userAgent, billingProject, url, headers)
+	if err != nil {
+		return err
 	}
 
 	identity, err := d.Identity()
@@ -698,4 +672,41 @@ func expandNetworkSecurityUllMirroringCollectorEffectiveLabels(v interface{}, d 
 		m[k] = val.(string)
 	}
 	return m, nil
+}
+
+func ResourceNetworkSecurityUllMirroringCollectorFlatten(d *schema.ResourceData, meta interface{}, res map[string]interface{}, config *transport_tpg.Config, project string, userAgent string, billingProject string, url string, headers http.Header) error {
+	var err error
+
+	if err = d.Set("name", flattenNetworkSecurityUllMirroringCollectorName(res["name"], d, config)); err != nil {
+		return fmt.Errorf("Error reading UllMirroringCollector: %s", err)
+	}
+	if err = d.Set("create_time", flattenNetworkSecurityUllMirroringCollectorCreateTime(res["createTime"], d, config)); err != nil {
+		return fmt.Errorf("Error reading UllMirroringCollector: %s", err)
+	}
+	if err = d.Set("update_time", flattenNetworkSecurityUllMirroringCollectorUpdateTime(res["updateTime"], d, config)); err != nil {
+		return fmt.Errorf("Error reading UllMirroringCollector: %s", err)
+	}
+	if err = d.Set("engine", flattenNetworkSecurityUllMirroringCollectorEngine(res["engine"], d, config)); err != nil {
+		return fmt.Errorf("Error reading UllMirroringCollector: %s", err)
+	}
+	if err = d.Set("forwarding_rule", flattenNetworkSecurityUllMirroringCollectorForwardingRule(res["forwardingRule"], d, config)); err != nil {
+		return fmt.Errorf("Error reading UllMirroringCollector: %s", err)
+	}
+	if err = d.Set("labels", flattenNetworkSecurityUllMirroringCollectorLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading UllMirroringCollector: %s", err)
+	}
+	if err = d.Set("reconciling", flattenNetworkSecurityUllMirroringCollectorReconciling(res["reconciling"], d, config)); err != nil {
+		return fmt.Errorf("Error reading UllMirroringCollector: %s", err)
+	}
+	if err = d.Set("state", flattenNetworkSecurityUllMirroringCollectorState(res["state"], d, config)); err != nil {
+		return fmt.Errorf("Error reading UllMirroringCollector: %s", err)
+	}
+	if err = d.Set("terraform_labels", flattenNetworkSecurityUllMirroringCollectorTerraformLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading UllMirroringCollector: %s", err)
+	}
+	if err = d.Set("effective_labels", flattenNetworkSecurityUllMirroringCollectorEffectiveLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading UllMirroringCollector: %s", err)
+	}
+
+	return nil
 }

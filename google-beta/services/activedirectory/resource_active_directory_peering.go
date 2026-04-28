@@ -363,23 +363,9 @@ func resourceActiveDirectoryPeeringRead(d *schema.ResourceData, meta interface{}
 		return fmt.Errorf("Error reading Peering: %s", err)
 	}
 
-	if err := d.Set("name", flattenActiveDirectoryPeeringName(res["name"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Peering: %s", err)
-	}
-	if err := d.Set("labels", flattenActiveDirectoryPeeringLabels(res["labels"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Peering: %s", err)
-	}
-	if err := d.Set("authorized_network", flattenActiveDirectoryPeeringAuthorizedNetwork(res["authorizedNetwork"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Peering: %s", err)
-	}
-	if err := d.Set("domain_resource", flattenActiveDirectoryPeeringDomainResource(res["domainResource"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Peering: %s", err)
-	}
-	if err := d.Set("terraform_labels", flattenActiveDirectoryPeeringTerraformLabels(res["labels"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Peering: %s", err)
-	}
-	if err := d.Set("effective_labels", flattenActiveDirectoryPeeringEffectiveLabels(res["labels"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Peering: %s", err)
+	err = ResourceActiveDirectoryPeeringFlatten(d, meta, res, config, project, userAgent, billingProject, url, headers)
+	if err != nil {
+		return err
 	}
 
 	identity, err := d.Identity()
@@ -611,4 +597,29 @@ func expandActiveDirectoryPeeringEffectiveLabels(v interface{}, d tpgresource.Te
 		m[k] = val.(string)
 	}
 	return m, nil
+}
+
+func ResourceActiveDirectoryPeeringFlatten(d *schema.ResourceData, meta interface{}, res map[string]interface{}, config *transport_tpg.Config, project string, userAgent string, billingProject string, url string, headers http.Header) error {
+	var err error
+
+	if err = d.Set("name", flattenActiveDirectoryPeeringName(res["name"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Peering: %s", err)
+	}
+	if err = d.Set("labels", flattenActiveDirectoryPeeringLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Peering: %s", err)
+	}
+	if err = d.Set("authorized_network", flattenActiveDirectoryPeeringAuthorizedNetwork(res["authorizedNetwork"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Peering: %s", err)
+	}
+	if err = d.Set("domain_resource", flattenActiveDirectoryPeeringDomainResource(res["domainResource"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Peering: %s", err)
+	}
+	if err = d.Set("terraform_labels", flattenActiveDirectoryPeeringTerraformLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Peering: %s", err)
+	}
+	if err = d.Set("effective_labels", flattenActiveDirectoryPeeringEffectiveLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Peering: %s", err)
+	}
+
+	return nil
 }

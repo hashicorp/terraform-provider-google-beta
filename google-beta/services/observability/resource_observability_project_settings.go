@@ -325,17 +325,9 @@ func resourceObservabilityProjectSettingsRead(d *schema.ResourceData, meta inter
 		return fmt.Errorf("Error reading ProjectSettings: %s", err)
 	}
 
-	if err := d.Set("default_storage_location", flattenObservabilityProjectSettingsDefaultStorageLocation(res["defaultStorageLocation"], d, config)); err != nil {
-		return fmt.Errorf("Error reading ProjectSettings: %s", err)
-	}
-	if err := d.Set("kms_key_name", flattenObservabilityProjectSettingsKmsKeyName(res["kmsKeyName"], d, config)); err != nil {
-		return fmt.Errorf("Error reading ProjectSettings: %s", err)
-	}
-	if err := d.Set("name", flattenObservabilityProjectSettingsName(res["name"], d, config)); err != nil {
-		return fmt.Errorf("Error reading ProjectSettings: %s", err)
-	}
-	if err := d.Set("service_account_id", flattenObservabilityProjectSettingsServiceAccountId(res["serviceAccountId"], d, config)); err != nil {
-		return fmt.Errorf("Error reading ProjectSettings: %s", err)
+	err = ResourceObservabilityProjectSettingsFlatten(d, meta, res, config, project, userAgent, billingProject, url, headers)
+	if err != nil {
+		return err
 	}
 
 	identity, err := d.Identity()
@@ -513,4 +505,23 @@ func expandObservabilityProjectSettingsDefaultStorageLocation(v interface{}, d t
 
 func expandObservabilityProjectSettingsKmsKeyName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func ResourceObservabilityProjectSettingsFlatten(d *schema.ResourceData, meta interface{}, res map[string]interface{}, config *transport_tpg.Config, project string, userAgent string, billingProject string, url string, headers http.Header) error {
+	var err error
+
+	if err = d.Set("default_storage_location", flattenObservabilityProjectSettingsDefaultStorageLocation(res["defaultStorageLocation"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ProjectSettings: %s", err)
+	}
+	if err = d.Set("kms_key_name", flattenObservabilityProjectSettingsKmsKeyName(res["kmsKeyName"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ProjectSettings: %s", err)
+	}
+	if err = d.Set("name", flattenObservabilityProjectSettingsName(res["name"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ProjectSettings: %s", err)
+	}
+	if err = d.Set("service_account_id", flattenObservabilityProjectSettingsServiceAccountId(res["serviceAccountId"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ProjectSettings: %s", err)
+	}
+
+	return nil
 }

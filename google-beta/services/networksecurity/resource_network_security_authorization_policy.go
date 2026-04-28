@@ -456,29 +456,9 @@ func resourceNetworkSecurityAuthorizationPolicyRead(d *schema.ResourceData, meta
 		return fmt.Errorf("Error reading AuthorizationPolicy: %s", err)
 	}
 
-	if err := d.Set("create_time", flattenNetworkSecurityAuthorizationPolicyCreateTime(res["createTime"], d, config)); err != nil {
-		return fmt.Errorf("Error reading AuthorizationPolicy: %s", err)
-	}
-	if err := d.Set("update_time", flattenNetworkSecurityAuthorizationPolicyUpdateTime(res["updateTime"], d, config)); err != nil {
-		return fmt.Errorf("Error reading AuthorizationPolicy: %s", err)
-	}
-	if err := d.Set("labels", flattenNetworkSecurityAuthorizationPolicyLabels(res["labels"], d, config)); err != nil {
-		return fmt.Errorf("Error reading AuthorizationPolicy: %s", err)
-	}
-	if err := d.Set("description", flattenNetworkSecurityAuthorizationPolicyDescription(res["description"], d, config)); err != nil {
-		return fmt.Errorf("Error reading AuthorizationPolicy: %s", err)
-	}
-	if err := d.Set("action", flattenNetworkSecurityAuthorizationPolicyAction(res["action"], d, config)); err != nil {
-		return fmt.Errorf("Error reading AuthorizationPolicy: %s", err)
-	}
-	if err := d.Set("rules", flattenNetworkSecurityAuthorizationPolicyRules(res["rules"], d, config)); err != nil {
-		return fmt.Errorf("Error reading AuthorizationPolicy: %s", err)
-	}
-	if err := d.Set("terraform_labels", flattenNetworkSecurityAuthorizationPolicyTerraformLabels(res["labels"], d, config)); err != nil {
-		return fmt.Errorf("Error reading AuthorizationPolicy: %s", err)
-	}
-	if err := d.Set("effective_labels", flattenNetworkSecurityAuthorizationPolicyEffectiveLabels(res["labels"], d, config)); err != nil {
-		return fmt.Errorf("Error reading AuthorizationPolicy: %s", err)
+	err = ResourceNetworkSecurityAuthorizationPolicyFlatten(d, meta, res, config, project, userAgent, billingProject, url, headers)
+	if err != nil {
+		return err
 	}
 
 	identity, err := d.Identity()
@@ -1048,4 +1028,35 @@ func expandNetworkSecurityAuthorizationPolicyEffectiveLabels(v interface{}, d tp
 		m[k] = val.(string)
 	}
 	return m, nil
+}
+
+func ResourceNetworkSecurityAuthorizationPolicyFlatten(d *schema.ResourceData, meta interface{}, res map[string]interface{}, config *transport_tpg.Config, project string, userAgent string, billingProject string, url string, headers http.Header) error {
+	var err error
+
+	if err = d.Set("create_time", flattenNetworkSecurityAuthorizationPolicyCreateTime(res["createTime"], d, config)); err != nil {
+		return fmt.Errorf("Error reading AuthorizationPolicy: %s", err)
+	}
+	if err = d.Set("update_time", flattenNetworkSecurityAuthorizationPolicyUpdateTime(res["updateTime"], d, config)); err != nil {
+		return fmt.Errorf("Error reading AuthorizationPolicy: %s", err)
+	}
+	if err = d.Set("labels", flattenNetworkSecurityAuthorizationPolicyLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading AuthorizationPolicy: %s", err)
+	}
+	if err = d.Set("description", flattenNetworkSecurityAuthorizationPolicyDescription(res["description"], d, config)); err != nil {
+		return fmt.Errorf("Error reading AuthorizationPolicy: %s", err)
+	}
+	if err = d.Set("action", flattenNetworkSecurityAuthorizationPolicyAction(res["action"], d, config)); err != nil {
+		return fmt.Errorf("Error reading AuthorizationPolicy: %s", err)
+	}
+	if err = d.Set("rules", flattenNetworkSecurityAuthorizationPolicyRules(res["rules"], d, config)); err != nil {
+		return fmt.Errorf("Error reading AuthorizationPolicy: %s", err)
+	}
+	if err = d.Set("terraform_labels", flattenNetworkSecurityAuthorizationPolicyTerraformLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading AuthorizationPolicy: %s", err)
+	}
+	if err = d.Set("effective_labels", flattenNetworkSecurityAuthorizationPolicyEffectiveLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading AuthorizationPolicy: %s", err)
+	}
+
+	return nil
 }

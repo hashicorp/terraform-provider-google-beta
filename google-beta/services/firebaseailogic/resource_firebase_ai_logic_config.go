@@ -385,17 +385,9 @@ func resourceFirebaseAILogicConfigRead(d *schema.ResourceData, meta interface{})
 		return fmt.Errorf("Error reading Config: %s", err)
 	}
 
-	if err := d.Set("generative_language_config", flattenFirebaseAILogicConfigGenerativeLanguageConfig(res["generativeLanguageConfig"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Config: %s", err)
-	}
-	if err := d.Set("name", flattenFirebaseAILogicConfigName(res["name"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Config: %s", err)
-	}
-	if err := d.Set("telemetry_config", flattenFirebaseAILogicConfigTelemetryConfig(res["telemetryConfig"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Config: %s", err)
-	}
-	if err := d.Set("traffic_filter", flattenFirebaseAILogicConfigTrafficFilter(res["trafficFilter"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Config: %s", err)
+	err = ResourceFirebaseAILogicConfigFlatten(d, meta, res, config, project, userAgent, billingProject, url, headers)
+	if err != nil {
+		return err
 	}
 
 	identity, err := d.Identity()
@@ -777,4 +769,23 @@ func expandFirebaseAILogicConfigTrafficFilter(v interface{}, d tpgresource.Terra
 
 func expandFirebaseAILogicConfigTrafficFilterTemplateOnly(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func ResourceFirebaseAILogicConfigFlatten(d *schema.ResourceData, meta interface{}, res map[string]interface{}, config *transport_tpg.Config, project string, userAgent string, billingProject string, url string, headers http.Header) error {
+	var err error
+
+	if err = d.Set("generative_language_config", flattenFirebaseAILogicConfigGenerativeLanguageConfig(res["generativeLanguageConfig"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Config: %s", err)
+	}
+	if err = d.Set("name", flattenFirebaseAILogicConfigName(res["name"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Config: %s", err)
+	}
+	if err = d.Set("telemetry_config", flattenFirebaseAILogicConfigTelemetryConfig(res["telemetryConfig"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Config: %s", err)
+	}
+	if err = d.Set("traffic_filter", flattenFirebaseAILogicConfigTrafficFilter(res["trafficFilter"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Config: %s", err)
+	}
+
+	return nil
 }

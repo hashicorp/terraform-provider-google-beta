@@ -409,29 +409,9 @@ func resourceNetworkSecurityUllMirroringCollectorRuleRead(d *schema.ResourceData
 		return fmt.Errorf("Error reading UllMirroringCollectorRule: %s", err)
 	}
 
-	if err := d.Set("create_time", flattenNetworkSecurityUllMirroringCollectorRuleCreateTime(res["createTime"], d, config)); err != nil {
-		return fmt.Errorf("Error reading UllMirroringCollectorRule: %s", err)
-	}
-	if err := d.Set("labels", flattenNetworkSecurityUllMirroringCollectorRuleLabels(res["labels"], d, config)); err != nil {
-		return fmt.Errorf("Error reading UllMirroringCollectorRule: %s", err)
-	}
-	if err := d.Set("match", flattenNetworkSecurityUllMirroringCollectorRuleMatch(res["match"], d, config)); err != nil {
-		return fmt.Errorf("Error reading UllMirroringCollectorRule: %s", err)
-	}
-	if err := d.Set("name", flattenNetworkSecurityUllMirroringCollectorRuleName(res["name"], d, config)); err != nil {
-		return fmt.Errorf("Error reading UllMirroringCollectorRule: %s", err)
-	}
-	if err := d.Set("reconciling", flattenNetworkSecurityUllMirroringCollectorRuleReconciling(res["reconciling"], d, config)); err != nil {
-		return fmt.Errorf("Error reading UllMirroringCollectorRule: %s", err)
-	}
-	if err := d.Set("update_time", flattenNetworkSecurityUllMirroringCollectorRuleUpdateTime(res["updateTime"], d, config)); err != nil {
-		return fmt.Errorf("Error reading UllMirroringCollectorRule: %s", err)
-	}
-	if err := d.Set("terraform_labels", flattenNetworkSecurityUllMirroringCollectorRuleTerraformLabels(res["labels"], d, config)); err != nil {
-		return fmt.Errorf("Error reading UllMirroringCollectorRule: %s", err)
-	}
-	if err := d.Set("effective_labels", flattenNetworkSecurityUllMirroringCollectorRuleEffectiveLabels(res["labels"], d, config)); err != nil {
-		return fmt.Errorf("Error reading UllMirroringCollectorRule: %s", err)
+	err = ResourceNetworkSecurityUllMirroringCollectorRuleFlatten(d, meta, res, config, project, userAgent, billingProject, url, headers)
+	if err != nil {
+		return err
 	}
 
 	identity, err := d.Identity()
@@ -809,4 +789,35 @@ func expandNetworkSecurityUllMirroringCollectorRuleEffectiveLabels(v interface{}
 		m[k] = val.(string)
 	}
 	return m, nil
+}
+
+func ResourceNetworkSecurityUllMirroringCollectorRuleFlatten(d *schema.ResourceData, meta interface{}, res map[string]interface{}, config *transport_tpg.Config, project string, userAgent string, billingProject string, url string, headers http.Header) error {
+	var err error
+
+	if err = d.Set("create_time", flattenNetworkSecurityUllMirroringCollectorRuleCreateTime(res["createTime"], d, config)); err != nil {
+		return fmt.Errorf("Error reading UllMirroringCollectorRule: %s", err)
+	}
+	if err = d.Set("labels", flattenNetworkSecurityUllMirroringCollectorRuleLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading UllMirroringCollectorRule: %s", err)
+	}
+	if err = d.Set("match", flattenNetworkSecurityUllMirroringCollectorRuleMatch(res["match"], d, config)); err != nil {
+		return fmt.Errorf("Error reading UllMirroringCollectorRule: %s", err)
+	}
+	if err = d.Set("name", flattenNetworkSecurityUllMirroringCollectorRuleName(res["name"], d, config)); err != nil {
+		return fmt.Errorf("Error reading UllMirroringCollectorRule: %s", err)
+	}
+	if err = d.Set("reconciling", flattenNetworkSecurityUllMirroringCollectorRuleReconciling(res["reconciling"], d, config)); err != nil {
+		return fmt.Errorf("Error reading UllMirroringCollectorRule: %s", err)
+	}
+	if err = d.Set("update_time", flattenNetworkSecurityUllMirroringCollectorRuleUpdateTime(res["updateTime"], d, config)); err != nil {
+		return fmt.Errorf("Error reading UllMirroringCollectorRule: %s", err)
+	}
+	if err = d.Set("terraform_labels", flattenNetworkSecurityUllMirroringCollectorRuleTerraformLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading UllMirroringCollectorRule: %s", err)
+	}
+	if err = d.Set("effective_labels", flattenNetworkSecurityUllMirroringCollectorRuleEffectiveLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading UllMirroringCollectorRule: %s", err)
+	}
+
+	return nil
 }

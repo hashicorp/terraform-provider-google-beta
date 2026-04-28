@@ -417,11 +417,9 @@ func resourceTpuV2QueuedResourceRead(d *schema.ResourceData, meta interface{}) e
 		return fmt.Errorf("Error reading QueuedResource: %s", err)
 	}
 
-	if err := d.Set("name", flattenTpuV2QueuedResourceName(res["name"], d, config)); err != nil {
-		return fmt.Errorf("Error reading QueuedResource: %s", err)
-	}
-	if err := d.Set("tpu", flattenTpuV2QueuedResourceTpu(res["tpu"], d, config)); err != nil {
-		return fmt.Errorf("Error reading QueuedResource: %s", err)
+	err = ResourceTpuV2QueuedResourceFlatten(d, meta, res, config, project, userAgent, billingProject, url, headers)
+	if err != nil {
+		return err
 	}
 
 	identity, err := d.Identity()
@@ -857,4 +855,17 @@ func expandTpuV2QueuedResourceTpuNodeSpecNodeNetworkConfigCanIpForward(v interfa
 
 func expandTpuV2QueuedResourceTpuNodeSpecNodeNetworkConfigQueueCount(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func ResourceTpuV2QueuedResourceFlatten(d *schema.ResourceData, meta interface{}, res map[string]interface{}, config *transport_tpg.Config, project string, userAgent string, billingProject string, url string, headers http.Header) error {
+	var err error
+
+	if err = d.Set("name", flattenTpuV2QueuedResourceName(res["name"], d, config)); err != nil {
+		return fmt.Errorf("Error reading QueuedResource: %s", err)
+	}
+	if err = d.Set("tpu", flattenTpuV2QueuedResourceTpu(res["tpu"], d, config)); err != nil {
+		return fmt.Errorf("Error reading QueuedResource: %s", err)
+	}
+
+	return nil
 }

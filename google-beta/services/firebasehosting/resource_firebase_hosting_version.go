@@ -441,14 +441,9 @@ func resourceFirebaseHostingVersionRead(d *schema.ResourceData, meta interface{}
 
 	log.Printf("[DEBUG] Finished reading FirebaseHostingVersion %q: %#v", d.Id(), res)
 
-	if err := d.Set("name", flattenFirebaseHostingVersionName(res["name"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Version: %s", err)
-	}
-	if err := d.Set("version_id", flattenFirebaseHostingVersionVersionId(res["name"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Version: %s", err)
-	}
-	if err := d.Set("config", flattenFirebaseHostingVersionConfig(res["config"], d, config)); err != nil {
-		return fmt.Errorf("Error reading Version: %s", err)
+	err = ResourceFirebaseHostingVersionFlatten(d, meta, res, config, userAgent, billingProject, url, headers)
+	if err != nil {
+		return err
 	}
 
 	identity, err := d.Identity()
@@ -940,5 +935,21 @@ func resourceFirebaseHostingVersionPostCreateSetComputedFields(d *schema.Resourc
 	if err := d.Set("version_id", flattenFirebaseHostingVersionVersionId(res["name"], d, config)); err != nil {
 		return fmt.Errorf(`Error setting computed identity field "version_id": %s`, err)
 	}
+	return nil
+}
+
+func ResourceFirebaseHostingVersionFlatten(d *schema.ResourceData, meta interface{}, res map[string]interface{}, config *transport_tpg.Config, userAgent string, billingProject string, url string, headers http.Header) error {
+	var err error
+
+	if err = d.Set("name", flattenFirebaseHostingVersionName(res["name"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Version: %s", err)
+	}
+	if err = d.Set("version_id", flattenFirebaseHostingVersionVersionId(res["name"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Version: %s", err)
+	}
+	if err = d.Set("config", flattenFirebaseHostingVersionConfig(res["config"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Version: %s", err)
+	}
+
 	return nil
 }

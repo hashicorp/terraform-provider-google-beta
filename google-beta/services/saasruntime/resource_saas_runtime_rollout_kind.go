@@ -459,47 +459,9 @@ func resourceSaasRuntimeRolloutKindRead(d *schema.ResourceData, meta interface{}
 		return fmt.Errorf("Error reading RolloutKind: %s", err)
 	}
 
-	if err := d.Set("annotations", flattenSaasRuntimeRolloutKindAnnotations(res["annotations"], d, config)); err != nil {
-		return fmt.Errorf("Error reading RolloutKind: %s", err)
-	}
-	if err := d.Set("create_time", flattenSaasRuntimeRolloutKindCreateTime(res["createTime"], d, config)); err != nil {
-		return fmt.Errorf("Error reading RolloutKind: %s", err)
-	}
-	if err := d.Set("error_budget", flattenSaasRuntimeRolloutKindErrorBudget(res["errorBudget"], d, config)); err != nil {
-		return fmt.Errorf("Error reading RolloutKind: %s", err)
-	}
-	if err := d.Set("labels", flattenSaasRuntimeRolloutKindLabels(res["labels"], d, config)); err != nil {
-		return fmt.Errorf("Error reading RolloutKind: %s", err)
-	}
-	if err := d.Set("name", flattenSaasRuntimeRolloutKindName(res["name"], d, config)); err != nil {
-		return fmt.Errorf("Error reading RolloutKind: %s", err)
-	}
-	if err := d.Set("rollout_orchestration_strategy", flattenSaasRuntimeRolloutKindRolloutOrchestrationStrategy(res["rolloutOrchestrationStrategy"], d, config)); err != nil {
-		return fmt.Errorf("Error reading RolloutKind: %s", err)
-	}
-	if err := d.Set("uid", flattenSaasRuntimeRolloutKindUid(res["uid"], d, config)); err != nil {
-		return fmt.Errorf("Error reading RolloutKind: %s", err)
-	}
-	if err := d.Set("unit_filter", flattenSaasRuntimeRolloutKindUnitFilter(res["unitFilter"], d, config)); err != nil {
-		return fmt.Errorf("Error reading RolloutKind: %s", err)
-	}
-	if err := d.Set("unit_kind", flattenSaasRuntimeRolloutKindUnitKind(res["unitKind"], d, config)); err != nil {
-		return fmt.Errorf("Error reading RolloutKind: %s", err)
-	}
-	if err := d.Set("update_time", flattenSaasRuntimeRolloutKindUpdateTime(res["updateTime"], d, config)); err != nil {
-		return fmt.Errorf("Error reading RolloutKind: %s", err)
-	}
-	if err := d.Set("update_unit_kind_strategy", flattenSaasRuntimeRolloutKindUpdateUnitKindStrategy(res["updateUnitKindStrategy"], d, config)); err != nil {
-		return fmt.Errorf("Error reading RolloutKind: %s", err)
-	}
-	if err := d.Set("effective_annotations", flattenSaasRuntimeRolloutKindEffectiveAnnotations(res["annotations"], d, config)); err != nil {
-		return fmt.Errorf("Error reading RolloutKind: %s", err)
-	}
-	if err := d.Set("terraform_labels", flattenSaasRuntimeRolloutKindTerraformLabels(res["labels"], d, config)); err != nil {
-		return fmt.Errorf("Error reading RolloutKind: %s", err)
-	}
-	if err := d.Set("effective_labels", flattenSaasRuntimeRolloutKindEffectiveLabels(res["labels"], d, config)); err != nil {
-		return fmt.Errorf("Error reading RolloutKind: %s", err)
+	err = ResourceSaasRuntimeRolloutKindFlatten(d, meta, res, config, project, userAgent, billingProject, url, headers)
+	if err != nil {
+		return err
 	}
 
 	identity, err := d.Identity()
@@ -945,4 +907,53 @@ func expandSaasRuntimeRolloutKindEffectiveLabels(v interface{}, d tpgresource.Te
 		m[k] = val.(string)
 	}
 	return m, nil
+}
+
+func ResourceSaasRuntimeRolloutKindFlatten(d *schema.ResourceData, meta interface{}, res map[string]interface{}, config *transport_tpg.Config, project string, userAgent string, billingProject string, url string, headers http.Header) error {
+	var err error
+
+	if err = d.Set("annotations", flattenSaasRuntimeRolloutKindAnnotations(res["annotations"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RolloutKind: %s", err)
+	}
+	if err = d.Set("create_time", flattenSaasRuntimeRolloutKindCreateTime(res["createTime"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RolloutKind: %s", err)
+	}
+	if err = d.Set("error_budget", flattenSaasRuntimeRolloutKindErrorBudget(res["errorBudget"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RolloutKind: %s", err)
+	}
+	if err = d.Set("labels", flattenSaasRuntimeRolloutKindLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RolloutKind: %s", err)
+	}
+	if err = d.Set("name", flattenSaasRuntimeRolloutKindName(res["name"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RolloutKind: %s", err)
+	}
+	if err = d.Set("rollout_orchestration_strategy", flattenSaasRuntimeRolloutKindRolloutOrchestrationStrategy(res["rolloutOrchestrationStrategy"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RolloutKind: %s", err)
+	}
+	if err = d.Set("uid", flattenSaasRuntimeRolloutKindUid(res["uid"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RolloutKind: %s", err)
+	}
+	if err = d.Set("unit_filter", flattenSaasRuntimeRolloutKindUnitFilter(res["unitFilter"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RolloutKind: %s", err)
+	}
+	if err = d.Set("unit_kind", flattenSaasRuntimeRolloutKindUnitKind(res["unitKind"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RolloutKind: %s", err)
+	}
+	if err = d.Set("update_time", flattenSaasRuntimeRolloutKindUpdateTime(res["updateTime"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RolloutKind: %s", err)
+	}
+	if err = d.Set("update_unit_kind_strategy", flattenSaasRuntimeRolloutKindUpdateUnitKindStrategy(res["updateUnitKindStrategy"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RolloutKind: %s", err)
+	}
+	if err = d.Set("effective_annotations", flattenSaasRuntimeRolloutKindEffectiveAnnotations(res["annotations"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RolloutKind: %s", err)
+	}
+	if err = d.Set("terraform_labels", flattenSaasRuntimeRolloutKindTerraformLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RolloutKind: %s", err)
+	}
+	if err = d.Set("effective_labels", flattenSaasRuntimeRolloutKindEffectiveLabels(res["labels"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RolloutKind: %s", err)
+	}
+
+	return nil
 }
