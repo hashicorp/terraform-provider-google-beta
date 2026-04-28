@@ -1792,9 +1792,13 @@ func expandComputeInstance(project string, d *schema.ResourceData, config *trans
 		return nil, fmt.Errorf("Error creating metadata: %s", err)
 	}
 
-	PartnerMetadata, err := resourceInstancePartnerMetadata(d)
+	partnerMetadataMap, err := resourceInstancePartnerMetadata(d)
 	if err != nil {
 		return nil, fmt.Errorf("Error creating partner metadata: %s", err)
+	}
+	PartnerMetadata, err := convertPartnerMetadataToCompute(partnerMetadataMap)
+	if err != nil {
+		return nil, fmt.Errorf("Error converting partner metadata: %s", err)
 	}
 
 	networkInterfaces, err := expandNetworkInterfaces(d, config)
@@ -2033,7 +2037,7 @@ func resourceComputeInstanceRead(d *schema.ResourceData, meta interface{}) error
 	}
 
 	if instance.PartnerMetadata != nil {
-		partnerMetadata, err := flattenPartnerMetadata(instance.PartnerMetadata)
+		partnerMetadata, err := flattenPartnerMetadata(convertPartnerMetadataFromCompute(instance.PartnerMetadata))
 		if err != nil {
 			return fmt.Errorf("Error parsing partner metadata: %s", err)
 		}
@@ -2422,7 +2426,12 @@ func resourceComputeInstanceUpdate(d *schema.ResourceData, meta interface{}) err
 					return fmt.Errorf("Error retrieving partner_metadata: %s", err)
 				}
 				instance.Fingerprint = instance.Fingerprint
-				instance.PartnerMetadata = resourceInstancePatchPartnerMetadata(d, instance.PartnerMetadata)
+				patchedPM := resourceInstancePatchPartnerMetadata(d, convertPartnerMetadataFromCompute(instance.PartnerMetadata))
+				computePM, err := convertPartnerMetadataToCompute(patchedPM)
+				if err != nil {
+					return fmt.Errorf("Error converting partner metadata: %s", err)
+				}
+				instance.PartnerMetadata = computePM
 				instance.NullFields = []string{"partnerMetadata"}
 
 				op, err := NewClient(config, userAgent).Instances.Update(project, zone, instance.Name, instance).Do()

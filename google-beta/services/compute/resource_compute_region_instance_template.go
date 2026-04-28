@@ -1310,7 +1310,11 @@ func resourceComputeRegionInstanceTemplateCreate(d *schema.ResourceData, meta in
 		return err
 	}
 
-	PartnerMetadata, err := resourceInstancePartnerMetadata(d)
+	partnerMetadataMap, err := resourceInstancePartnerMetadata(d)
+	if err != nil {
+		return err
+	}
+	PartnerMetadata, err := convertPartnerMetadataToCompute(partnerMetadataMap)
 	if err != nil {
 		return err
 	}
@@ -1497,7 +1501,7 @@ func resourceComputeRegionInstanceTemplateRead(d *schema.ResourceData, meta inte
 	}
 
 	if instanceProperties.PartnerMetadata != nil {
-		partnerMetadata, err := flattenPartnerMetadata(instanceProperties.PartnerMetadata)
+		partnerMetadata, err := flattenPartnerMetadata(convertPartnerMetadataFromCompute(instanceProperties.PartnerMetadata))
 		if err != nil {
 			return fmt.Errorf("Error parsing partner metadata: %s", err)
 		}
