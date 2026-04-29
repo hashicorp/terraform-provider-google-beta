@@ -32,6 +32,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 	dataproc_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/dataproc"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/storage"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
@@ -1755,7 +1756,7 @@ func testAccCheckDataprocClusterAutoscaling(t *testing.T, cluster *dataproc.Clus
 }
 
 func validateBucketExists(bucket string, config *transport_tpg.Config) (bool, error) {
-	_, err := config.NewStorageClient(config.UserAgent).Buckets.Get(bucket).Do()
+	_, err := storage.NewClient(config, config.UserAgent).Buckets.Get(bucket).Do()
 
 	if err != nil {
 		if gerr, ok := err.(*googleapi.Error); ok && gerr.Code == http.StatusNotFound {
@@ -1817,7 +1818,7 @@ func testAccCheckDataprocClusterInitActionSucceeded(t *testing.T, bucket, object
 	// Ensure it exists
 	return func(s *terraform.State) error {
 		config := acctest.GoogleProviderConfig(t)
-		_, err := config.NewStorageClient(config.UserAgent).Objects.Get(bucket, object).Do()
+		_, err := storage.NewClient(config, config.UserAgent).Objects.Get(bucket, object).Do()
 		if err != nil {
 			return fmt.Errorf("Unable to verify init action success: Error reading object %s in bucket %s: %v", object, bucket, err)
 		}

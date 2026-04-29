@@ -24,6 +24,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/logging"
 )
 
 // Logging exclusions don't always work when making parallel requests, so run tests serially
@@ -142,7 +143,7 @@ func testAccCheckLoggingBillingAccountExclusionDestroyProducer(t *testing.T) fun
 
 			attributes := rs.Primary.Attributes
 
-			_, err := config.NewLoggingClient(config.UserAgent).BillingAccounts.Exclusions.Get(attributes["id"]).Do()
+			_, err := logging.NewClient(config, config.UserAgent).BillingAccounts.Exclusions.Get(attributes["id"]).Do()
 			if err == nil {
 				return fmt.Errorf("billingAccount exclusion still exists")
 			}
