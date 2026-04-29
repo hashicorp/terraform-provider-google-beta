@@ -252,7 +252,6 @@ func ResourceContainerCluster() *schema.Resource {
 			containerClusterEnableK8sBetaApisCustomizeDiff,
 			containerClusterNodeVersionCustomizeDiff,
 			tpgresource.SetDiffForLabelsWithCustomizedName("resource_labels"),
-
 			clusterAcceleratorNetworkProfileCustomizeDiff,
 		),
 

@@ -214,7 +214,6 @@ func ResourceContainerNodePool() *schema.Resource {
 		CustomizeDiff: customdiff.All(
 			tpgresource.DefaultProviderProject,
 			resourceNodeConfigEmptyGuestAccelerator,
-
 			nodePoolAcceleratorNetworkProfileCustomizeDiff,
 		),
 
@@ -549,7 +548,6 @@ var schemaNodePool = map[string]*schema.Schema{
 		Description: `Networking configuration for this NodePool. If specified, it overrides the cluster-level defaults.`,
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
-
 				"accelerator_network_profile": {
 					Type:        schema.TypeString,
 					Description: "The accelerator network profile to use for this node pool.",
@@ -1503,8 +1501,7 @@ func flattenNodeNetworkConfig(c *container.NodeNetworkConfig, d *schema.Resource
 			"additional_node_network_configs": flattenAdditionalNodeNetworkConfig(c.AdditionalNodeNetworkConfigs),
 			"additional_pod_network_configs":  flattenAdditionalPodNetworkConfig(c.AdditionalPodNetworkConfigs),
 			"subnetwork":                      c.Subnetwork,
-
-			"accelerator_network_profile": c.AcceleratorNetworkProfile,
+			"accelerator_network_profile":     c.AcceleratorNetworkProfile,
 		})
 	}
 	return result
@@ -1619,7 +1616,6 @@ func expandNodeNetworkConfig(v interface{}) *container.NodeNetworkConfig {
 			nnc.NetworkPerformanceConfig.TotalEgressBandwidthTier = total_egress_bandwidth_tier.(string)
 		}
 	}
-
 	if v, ok := networkNodeConfig["accelerator_network_profile"]; ok {
 		nnc.AcceleratorNetworkProfile = v.(string)
 	}
