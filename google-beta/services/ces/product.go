@@ -24,7 +24,7 @@ import (
 
 var Product = registry.Product{
 	Name:                 "ces",
-	BaseUrl:              "https://ces.googleapis.com/v1/",
+	BaseUrl:              "https://ces.googleapis.com/v1beta/",
 	CustomEndpointField:  "ces_custom_endpoint",
 	CustomEndpointEnvVar: "GOOGLE_CES_CUSTOM_ENDPOINT",
 }

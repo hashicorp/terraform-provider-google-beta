@@ -643,7 +643,7 @@ var DefaultBasePaths = map[string]string{
 	BinaryAuthorizationBasePathKey:      "https://binaryauthorization.googleapis.com/v1/",
 	BlockchainNodeEngineBasePathKey:     "https://blockchainnodeengine.googleapis.com/v1/",
 	CertificateManagerBasePathKey:       "https://certificatemanager.googleapis.com/v1/",
-	CESBasePathKey:                      "https://ces.googleapis.com/v1/",
+	CESBasePathKey:                      "https://ces.googleapis.com/v1beta/",
 	ChronicleBasePathKey:                "https://{{location}}-chronicle.googleapis.com/v1beta/",
 	CloudAssetBasePathKey:               "https://cloudasset.googleapis.com/v1/",
 	CloudBillingBasePathKey:             "https://cloudbilling.googleapis.com/v1/",

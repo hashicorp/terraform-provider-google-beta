@@ -4,7 +4,7 @@ resource: google_ces_example
 generation_type: mmv1
 source_file: products/ces/Example.yaml
 api_service_name: ces.googleapis.com
-api_version: v1
+api_version: v1beta
 api_resource_type_kind: Example
 autogen_status: true
 fields:
