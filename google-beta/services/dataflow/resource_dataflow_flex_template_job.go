@@ -311,7 +311,7 @@ func resourceDataflowFlexTemplateJobCreate(d *schema.ResourceData, meta interfac
 		},
 	}
 
-	response, err := config.NewDataflowClient(userAgent).Projects.Locations.FlexTemplates.Launch(project, region, &request).Do()
+	response, err := NewClient(config, userAgent).Projects.Locations.FlexTemplates.Launch(project, region, &request).Do()
 	if err != nil {
 		return err
 	}
@@ -628,7 +628,7 @@ func resourceDataflowFlexTemplateJobUpdate(d *schema.ResourceData, meta interfac
 			},
 		}
 
-		response, err := config.NewDataflowClient(userAgent).Projects.Locations.FlexTemplates.Launch(project, region, &request).Do()
+		response, err := NewClient(config, userAgent).Projects.Locations.FlexTemplates.Launch(project, region, &request).Do()
 		if err != nil {
 			return err
 		}

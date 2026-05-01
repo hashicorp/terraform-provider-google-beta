@@ -55,9 +55,16 @@ import (
 	"google.golang.org/api/googleapi"
 )
 
-import "net/url"
+import (
+	"net/url"
 
-var _ = url.Parse
+	rmClient "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager/client"
+)
+
+var (
+	_ = url.Parse
+	_ = rmClient.NewClient
+)
 
 var (
 	_ = bytes.Clone
@@ -2158,7 +2165,7 @@ func resourceComputeReservationUpdateEncoder(d *schema.ResourceData, meta interf
 			// convert id to number.
 			if err != nil {
 				config := meta.(*transport_tpg.Config)
-				project, err := config.NewResourceManagerClient(config.UserAgent).Projects.Get(projectId).Do()
+				project, err := rmClient.NewClient(config, config.UserAgent).Projects.Get(projectId).Do()
 				if err != nil {
 					return nil, fmt.Errorf("Invalid value for projectId: %s", err)
 				}

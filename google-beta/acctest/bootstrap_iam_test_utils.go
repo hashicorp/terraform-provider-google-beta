@@ -23,6 +23,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
+	rmClient "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager/client"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgiamresource"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
@@ -42,7 +43,7 @@ func BootstrapIamMembers(t *testing.T, members []IamMember) {
 	if config == nil {
 		t.Fatal("Could not bootstrap a config for BootstrapIamMembers.")
 	}
-	client := config.NewResourceManagerClient(config.UserAgent)
+	client := rmClient.NewClient(config, config.UserAgent)
 
 	// Separate the given members into two groups: project-level vs. org-level
 	var projectMembers []IamMember

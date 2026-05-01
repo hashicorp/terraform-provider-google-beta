@@ -25,6 +25,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
+	rmClient "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager/client"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
@@ -125,7 +126,7 @@ func resourceGoogleProjectDefaultServiceAccountsDoAction(d *schema.ResourceData,
 			log.Printf("restore policy is %s... ignoring error", restorePolicy)
 		}
 	case "DEPRIVILEGE":
-		iamPolicy, err := config.NewResourceManagerClient(userAgent).Projects.GetIamPolicy(project, &cloudresourcemanager.GetIamPolicyRequest{}).Do()
+		iamPolicy, err := rmClient.NewClient(config, userAgent).Projects.GetIamPolicy(project, &cloudresourcemanager.GetIamPolicyRequest{}).Do()
 		if err != nil {
 			return fmt.Errorf("cannot get IAM policy on project %s: %v", project, err)
 		}
@@ -144,7 +145,7 @@ func resourceGoogleProjectDefaultServiceAccountsDoAction(d *schema.ResourceData,
 			Policy:     iamPolicy,
 			UpdateMask: "bindings,etag,auditConfigs",
 		}
-		_, err = config.NewResourceManagerClient(userAgent).Projects.SetIamPolicy(project, updateRequest).Do()
+		_, err = rmClient.NewClient(config, userAgent).Projects.SetIamPolicy(project, updateRequest).Do()
 		if err != nil {
 			return fmt.Errorf("cannot update IAM policy on project %s: %v", project, err)
 		}

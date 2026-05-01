@@ -25,6 +25,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager"
+	rmClient "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager/client"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
@@ -231,7 +232,7 @@ func testAccCheckGoogleProjectDefaultServiceAccountsChanges(t *testing.T, projec
 				case "DELETE":
 					return fmt.Errorf("compute engine default service account is not deleted")
 				case "DEPRIVILEGE":
-					iamPolicy, err := config.NewResourceManagerClient(config.UserAgent).Projects.GetIamPolicy(project, &cloudresourcemanager.GetIamPolicyRequest{}).Do()
+					iamPolicy, err := rmClient.NewClient(config, config.UserAgent).Projects.GetIamPolicy(project, &cloudresourcemanager.GetIamPolicyRequest{}).Do()
 					if err != nil {
 						return fmt.Errorf("cannot get IAM policy on project %s: %v", project, err)
 					}
