@@ -37,6 +37,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/fwmodels"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/fwresource"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/fwtransport"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
@@ -45,6 +46,14 @@ var (
 	_ resource.ResourceWithConfigure   = &ApigeeKeystoresAliasesKeyCertFileResource{}
 	_ resource.ResourceWithImportState = &ApigeeKeystoresAliasesKeyCertFileResource{}
 )
+
+func init() {
+	registry.FrameworkResource{
+		Name:        "google_apigee_keystores_aliases_key_cert_file",
+		ProductName: "apigee",
+		Func:        NewApigeeKeystoresAliasesKeyCertFileResource,
+	}.Register()
+}
 
 func NewApigeeKeystoresAliasesKeyCertFileResource() resource.Resource {
 	return &ApigeeKeystoresAliasesKeyCertFileResource{}

@@ -38,11 +38,6 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/fwmodels"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/fwvalidators"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
-	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/apigee"
-	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebase"
-	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager"
-	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/secretmanager"
-	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/storage"
 	"github.com/hashicorp/terraform-provider-google-beta/version"
 
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
@@ -318,22 +313,12 @@ func (p *FrameworkProvider) Configure(ctx context.Context, req provider.Configur
 
 // DataSources defines the data sources implemented in the provider.
 func (p *FrameworkProvider) DataSources(_ context.Context) []func() datasource.DataSource {
-	return []func() datasource.DataSource{
-		resourcemanager.NewGoogleClientConfigDataSource,
-		resourcemanager.NewGoogleClientOpenIDUserinfoDataSource,
-		firebase.NewGoogleFirebaseAdminSdkConfigDataSource,
-		firebase.NewGoogleFirebaseAndroidAppConfigDataSource,
-		firebase.NewGoogleFirebaseAppleAppConfigDataSource,
-		firebase.NewGoogleFirebaseWebAppConfigDataSource,
-	}
+	return registry.FrameworkDataSourceFuncs()
 }
 
 // Resources defines the resources implemented in the provider.
 func (p *FrameworkProvider) Resources(_ context.Context) []func() resource.Resource {
-	return []func() resource.Resource{
-		apigee.NewApigeeKeystoresAliasesKeyCertFileResource,
-		storage.NewStorageNotificationResource,
-	}
+	return registry.FrameworkResourceFuncs()
 }
 
 // Functions defines the provider functions implemented in the provider.
@@ -350,21 +335,11 @@ func (p *FrameworkProvider) Functions(_ context.Context) []func() function.Funct
 
 // EphemeralResources defines the resources that are of ephemeral type implemented in the provider.
 func (p *FrameworkProvider) EphemeralResources(_ context.Context) []func() ephemeral.EphemeralResource {
-	return []func() ephemeral.EphemeralResource{
-		resourcemanager.GoogleEphemeralClientConfig,
-		resourcemanager.GoogleEphemeralServiceAccountAccessToken,
-		resourcemanager.GoogleEphemeralServiceAccountIdToken,
-		resourcemanager.GoogleEphemeralServiceAccountJwt,
-		resourcemanager.GoogleEphemeralServiceAccountKey,
-		secretmanager.GoogleEphemeralSecretManagerSecretVersion,
-	}
+	return registry.FrameworkEphemeralResourceFuncs()
 }
 
 func (p *FrameworkProvider) ListResources(_ context.Context) []func() list.ListResource {
-	var listResources []func() list.ListResource
-	listResources = append(listResources, generatedListResources...)
-	listResources = append(listResources, handwrittenListResources...)
-	return listResources
+	return registry.FrameworkListResourceFuncs()
 }
 
 func (p *FrameworkProvider) GenerateResourceConfig(context.Context, any) (any, error) {

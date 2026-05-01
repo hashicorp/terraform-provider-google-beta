@@ -30,6 +30,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/fwmodels"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/fwresource"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/fwtransport"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
@@ -38,6 +39,14 @@ var (
 	_ datasource.DataSource              = &GoogleFirebaseWebAppConfigDataSource{}
 	_ datasource.DataSourceWithConfigure = &GoogleFirebaseWebAppConfigDataSource{}
 )
+
+func init() {
+	registry.FrameworkDataSource{
+		Name:        "google_firebase_web_app_config",
+		ProductName: "firebase",
+		Func:        NewGoogleFirebaseWebAppConfigDataSource,
+	}.Register()
+}
 
 func NewGoogleFirebaseWebAppConfigDataSource() datasource.DataSource {
 	return &GoogleFirebaseWebAppConfigDataSource{}

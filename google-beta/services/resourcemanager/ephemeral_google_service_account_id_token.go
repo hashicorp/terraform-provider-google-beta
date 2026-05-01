@@ -30,11 +30,20 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/fwutils"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/fwvalidators"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"google.golang.org/api/iamcredentials/v1"
 )
 
 var _ ephemeral.EphemeralResource = &googleEphemeralServiceAccountIdToken{}
+
+func init() {
+	registry.FrameworkEphemeralResource{
+		Name:        "google_service_account_id_token",
+		ProductName: "resourcemanager",
+		Func:        GoogleEphemeralServiceAccountIdToken,
+	}.Register()
+}
 
 func GoogleEphemeralServiceAccountIdToken() ephemeral.EphemeralResource {
 	return &googleEphemeralServiceAccountIdToken{}

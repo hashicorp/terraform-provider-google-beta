@@ -41,6 +41,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/fwresource"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/fwtransport"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/fwvalidators"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/pubsub"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
@@ -51,6 +52,14 @@ var (
 	_ resource.ResourceWithImportState  = &storageNotificationResource{}
 	_ resource.ResourceWithUpgradeState = &storageNotificationResource{}
 )
+
+func init() {
+	registry.FrameworkResource{
+		Name:        "google_storage_notification",
+		ProductName: "storage",
+		Func:        NewStorageNotificationResource,
+	}.Register()
+}
 
 func NewStorageNotificationResource() resource.Resource {
 	return &storageNotificationResource{}
