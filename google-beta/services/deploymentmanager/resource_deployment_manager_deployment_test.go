@@ -28,6 +28,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/iambeta"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
@@ -400,7 +401,7 @@ func testDeploymentManagerDeploymentVerifyServiceAccountExists(t *testing.T, acc
 }
 
 func testCheckDeploymentServiceAccountExists(accountId string, config *transport_tpg.Config) (exists bool, err error) {
-	_, err = config.NewIamClient(config.UserAgent).Projects.ServiceAccounts.Get(
+	_, err = iambeta.NewClient(config, config.UserAgent).Projects.ServiceAccounts.Get(
 		fmt.Sprintf("projects/%s/serviceAccounts/%s@%s.iam.gserviceaccount.com", envvar.GetTestProjectFromEnv(), accountId, envvar.GetTestProjectFromEnv())).Do()
 	if err != nil {
 		if transport_tpg.IsGoogleApiErrorWithCode(err, 404) {

@@ -23,6 +23,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/iambeta"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"google.golang.org/api/iam/v1"
@@ -120,7 +121,7 @@ func dataSourceProjectIamCustomRolesRead(d *schema.ResourceData, meta interface{
 	showDeleted := d.Get("show_deleted").(bool)
 	view := d.Get("view").(string)
 
-	request := config.NewIamClient(userAgent).Projects.Roles.List("projects/" + project).ShowDeleted(showDeleted).View(view)
+	request := iambeta.NewClient(config, userAgent).Projects.Roles.List("projects/" + project).ShowDeleted(showDeleted).View(view)
 
 	err = request.Pages(context.Background(), func(roleList *iam.ListRolesResponse) error {
 		for _, role := range roleList.Roles {

@@ -24,6 +24,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/iambeta"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
@@ -112,7 +113,7 @@ func datasourceGoogleServiceAccountsRead(d *schema.ResourceData, meta interface{
 
 	accounts := make([]map[string]interface{}, 0)
 
-	request := config.NewIamClient(userAgent).Projects.ServiceAccounts.List("projects/" + project)
+	request := iambeta.NewClient(config, userAgent).Projects.ServiceAccounts.List("projects/" + project)
 
 	err = request.Pages(context.Background(), func(accountList *iam.ListServiceAccountsResponse) error {
 		for _, account := range accountList.Accounts {

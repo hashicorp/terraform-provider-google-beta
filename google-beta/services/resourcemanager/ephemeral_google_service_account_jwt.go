@@ -31,6 +31,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/fwutils"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/fwvalidators"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
+	iamcredentials_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/iamcredentials"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"google.golang.org/api/iamcredentials/v1"
 )
@@ -150,7 +151,7 @@ func (p *googleEphemeralServiceAccountJwt) Open(ctx context.Context, req ephemer
 
 	name := fmt.Sprintf("projects/-/serviceAccounts/%s", data.TargetServiceAccount.ValueString())
 
-	service := p.providerConfig.NewIamCredentialsClient(p.providerConfig.UserAgent)
+	service := iamcredentials_tpg.NewClient(p.providerConfig, p.providerConfig.UserAgent)
 	jwtRequest := &iamcredentials.SignJwtRequest{
 		Payload:   payload,
 		Delegates: fwutils.StringSet(data.Delegates),

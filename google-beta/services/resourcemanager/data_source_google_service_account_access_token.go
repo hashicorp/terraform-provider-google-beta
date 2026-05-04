@@ -23,6 +23,7 @@ import (
 	"strings"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/registry"
+	iamcredentials_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/iamcredentials"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
@@ -84,7 +85,7 @@ func dataSourceGoogleServiceAccountAccessTokenRead(d *schema.ResourceData, meta 
 
 	log.Printf("[INFO] Acquire Service Account AccessToken for %s", d.Get("target_service_account").(string))
 
-	service := config.NewIamCredentialsClient(userAgent)
+	service := iamcredentials_tpg.NewClient(config, userAgent)
 
 	name := fmt.Sprintf("projects/-/serviceAccounts/%s", d.Get("target_service_account").(string))
 	tokenRequest := &iamcredentials.GenerateAccessTokenRequest{
