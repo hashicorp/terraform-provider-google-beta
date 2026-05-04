@@ -91,5 +91,47 @@ fields:
     - field: location
       provider_only: true
     - api_field: name
+    - api_field: scenario.evaluationExpectations
+    - api_field: scenario.maxTurns
+    - api_field: scenario.rubrics
+    - api_field: scenario.scenarioExpectations.agentResponse.chunks.agentTransfer.displayName
+    - api_field: scenario.scenarioExpectations.agentResponse.chunks.agentTransfer.targetAgent
+    - api_field: scenario.scenarioExpectations.agentResponse.chunks.blob.data
+    - api_field: scenario.scenarioExpectations.agentResponse.chunks.blob.mimeType
+    - api_field: scenario.scenarioExpectations.agentResponse.chunks.image.data
+    - api_field: scenario.scenarioExpectations.agentResponse.chunks.image.mimeType
+    - api_field: scenario.scenarioExpectations.agentResponse.chunks.text
+    - api_field: scenario.scenarioExpectations.agentResponse.chunks.toolCall.args
+    - api_field: scenario.scenarioExpectations.agentResponse.chunks.toolCall.displayName
+    - api_field: scenario.scenarioExpectations.agentResponse.chunks.toolCall.id
+    - api_field: scenario.scenarioExpectations.agentResponse.chunks.toolCall.tool
+    - api_field: scenario.scenarioExpectations.agentResponse.chunks.toolCall.toolsetTool.toolId
+    - api_field: scenario.scenarioExpectations.agentResponse.chunks.toolCall.toolsetTool.toolset
+    - api_field: scenario.scenarioExpectations.agentResponse.chunks.toolResponse.displayName
+    - api_field: scenario.scenarioExpectations.agentResponse.chunks.toolResponse.id
+    - api_field: scenario.scenarioExpectations.agentResponse.chunks.toolResponse.response
+    - api_field: scenario.scenarioExpectations.agentResponse.chunks.toolResponse.tool
+    - api_field: scenario.scenarioExpectations.agentResponse.chunks.toolResponse.toolsetTool.toolId
+    - api_field: scenario.scenarioExpectations.agentResponse.chunks.toolResponse.toolsetTool.toolset
+    - api_field: scenario.scenarioExpectations.agentResponse.chunks.updatedVariables
+    - api_field: scenario.scenarioExpectations.agentResponse.role
+    - api_field: scenario.scenarioExpectations.toolExpectation.expectedToolCall.args
+    - api_field: scenario.scenarioExpectations.toolExpectation.expectedToolCall.displayName
+    - api_field: scenario.scenarioExpectations.toolExpectation.expectedToolCall.id
+    - api_field: scenario.scenarioExpectations.toolExpectation.expectedToolCall.tool
+    - api_field: scenario.scenarioExpectations.toolExpectation.expectedToolCall.toolsetTool.toolId
+    - api_field: scenario.scenarioExpectations.toolExpectation.expectedToolCall.toolsetTool.toolset
+    - api_field: scenario.scenarioExpectations.toolExpectation.mockToolResponse.displayName
+    - api_field: scenario.scenarioExpectations.toolExpectation.mockToolResponse.id
+    - api_field: scenario.scenarioExpectations.toolExpectation.mockToolResponse.response
+    - api_field: scenario.scenarioExpectations.toolExpectation.mockToolResponse.tool
+    - api_field: scenario.scenarioExpectations.toolExpectation.mockToolResponse.toolsetTool.toolId
+    - api_field: scenario.scenarioExpectations.toolExpectation.mockToolResponse.toolsetTool.toolset
+    - api_field: scenario.task
+    - api_field: scenario.taskCompletionBehavior
+    - api_field: scenario.userFacts.name
+    - api_field: scenario.userFacts.value
+    - api_field: scenario.userGoalBehavior
+    - api_field: scenario.variableOverrides
     - api_field: tags
     - api_field: updateTime

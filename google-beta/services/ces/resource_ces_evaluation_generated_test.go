@@ -538,6 +538,322 @@ resource "google_ces_evaluation" "ces_evaluation_toolset" {
 `, context)
 }
 
+func TestAccCESEvaluation_cesEvaluationScenarioFullExample(t *testing.T) {
+	t.Parallel()
+
+	randomSuffix := acctest.RandString(t, 10)
+
+	context := map[string]interface{}{
+		"app_display_name": "tf-test-my-app-scenario" + randomSuffix,
+		"app_id":           "tf-test-app-id-scenario" + randomSuffix,
+		"evaluation_id":    "tf-test-eval-scenario-full" + randomSuffix,
+		"tool_id":          "tf-test-tool-id-scenario" + randomSuffix,
+		"random_suffix":    randomSuffix,
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckCESEvaluationDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCESEvaluation_cesEvaluationScenarioFullExample(context),
+			},
+			{
+				ResourceName:            "google_ces_evaluation.ces_evaluation_scenario_full",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"app", "evaluation_id", "location"},
+			},
+			{
+				ResourceName:       "google_ces_evaluation.ces_evaluation_scenario_full",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
+		},
+	})
+}
+
+func testAccCESEvaluation_cesEvaluationScenarioFullExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_ces_app" "app" {
+  provider = google-beta
+  app_id = "%{app_id}"
+  location = "us"
+  display_name = "%{app_display_name}"
+
+  language_settings {
+    default_language_code    = "en-US"
+  }
+  time_zone_settings {
+    time_zone = "America/Los_Angeles"
+  }
+}
+
+resource "google_ces_tool" "tool" {
+  provider = google-beta
+  location       = "us"
+  app            = google_ces_app.app.app_id
+  tool_id        = "%{tool_id}"
+  execution_type = "SYNCHRONOUS"
+  python_function {
+      name = "example_function"
+      python_code = "def example_function() -> int: return 0"
+  }
+}
+
+resource "google_ces_evaluation" "ces_evaluation_scenario_full" {
+  provider = google-beta
+  evaluation_id = "%{evaluation_id}"
+  display_name = "my-evaluation-scenario-full"
+  location     = "us"
+  app          = google_ces_app.app.app_id
+  description  = "Full evaluation for testing scenario"
+  tags         = ["test", "full", "scenario"]
+
+  scenario {
+    task = "Test task"
+    max_turns = 5
+    rubrics = ["projects/${google_ces_app.app.project}/locations/us/apps/${google_ces_app.app.app_id}/rubrics/dummy-rubric"]
+    user_goal_behavior = "USER_GOAL_SATISFIED"
+    task_completion_behavior = "TASK_SATISFIED"
+    variable_overrides = {
+      key = "value"
+    }
+    evaluation_expectations = ["projects/${google_ces_app.app.project}/locations/us/apps/${google_ces_app.app.app_id}/evaluationExpectations/dummy-exp"]
+
+    user_facts {
+      name = "user_name"
+      value = "John Doe"
+    }
+
+    scenario_expectations {
+      tool_expectation {
+        expected_tool_call {
+          id = "tool-call-id"
+          tool = "projects/${google_ces_app.app.project}/locations/us/apps/${google_ces_app.app.app_id}/tools/${google_ces_tool.tool.tool_id}"
+          args = {
+            param = "value"
+          }
+        }
+        mock_tool_response {
+          id = "tool-call-id"
+          response = { result = "mocked" }
+          tool = "projects/${google_ces_app.app.project}/locations/us/apps/${google_ces_app.app.app_id}/tools/${google_ces_tool.tool.tool_id}"
+        }
+      }
+    }
+
+    scenario_expectations {
+      agent_response {
+        role = "agent"
+        chunks {
+          text = "Hello"
+        }
+        chunks {
+          updated_variables = { "key": "value" }
+        }
+        chunks {
+          blob {
+            mime_type = "text/plain"
+            data = "c29tZSBibG9iIGRhdGE="
+          }
+        }
+        chunks {
+          image {
+            mime_type = "image/png"
+            data = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAAAAAA6fptVAAAACklEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
+          }
+        }
+        chunks {
+          tool_call {
+            id = "tool-call-id-3"
+            tool = "projects/${google_ces_app.app.project}/locations/us/apps/${google_ces_app.app.app_id}/tools/${google_ces_tool.tool.tool_id}"
+            args = {
+              param = "value"
+            }
+          }
+        }
+        chunks {
+          tool_response {
+            id = "tool-call-id-3"
+            response = { result = "success" }
+            tool = "projects/${google_ces_app.app.project}/locations/us/apps/${google_ces_app.app.app_id}/tools/${google_ces_tool.tool.tool_id}"
+          }
+        }
+        chunks {
+          agent_transfer {
+            target_agent = "projects/${google_ces_app.app.project}/locations/us/apps/${google_ces_app.app.app_id}/agents/dummy-agent"
+          }
+        }
+      }
+    }
+  }
+}
+`, context)
+}
+
+func TestAccCESEvaluation_cesEvaluationScenarioToolsetExample(t *testing.T) {
+	t.Parallel()
+
+	randomSuffix := acctest.RandString(t, 10)
+
+	context := map[string]interface{}{
+		"app_display_name": "tf-test-my-app-scenario-ts" + randomSuffix,
+		"app_id":           "tf-test-app-id-scenario-ts" + randomSuffix,
+		"evaluation_id":    "tf-test-eval-scen-ts" + randomSuffix,
+		"toolset_id":       "tf-test-ts-scen" + randomSuffix,
+		"random_suffix":    randomSuffix,
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckCESEvaluationDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCESEvaluation_cesEvaluationScenarioToolsetExample(context),
+			},
+			{
+				ResourceName:            "google_ces_evaluation.ces_evaluation_scenario_toolset",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"app", "evaluation_id", "location"},
+			},
+			{
+				ResourceName:       "google_ces_evaluation.ces_evaluation_scenario_toolset",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
+		},
+	})
+}
+
+func testAccCESEvaluation_cesEvaluationScenarioToolsetExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_ces_app" "app" {
+  provider = google-beta
+  app_id = "%{app_id}"
+  location = "us"
+  display_name = "%{app_display_name}"
+
+  language_settings {
+    default_language_code    = "en-US"
+  }
+  time_zone_settings {
+    time_zone = "America/Los_Angeles"
+  }
+}
+
+resource "google_ces_toolset" "toolset" {
+  provider = google-beta
+  toolset_id = "%{toolset_id}"
+  location = "us"
+  app      = google_ces_app.app.app_id
+  display_name = "Basic toolset display name"
+  description = "Test description"
+  execution_type = "SYNCHRONOUS"
+
+  open_api_toolset {
+    open_api_schema = <<-EOT
+      openapi: 3.0.0
+      info:
+        title: My Sample API
+        version: 1.0.0
+        description: A simple API example
+      servers:
+        - url: https://api.example.com/v1
+      paths: {}
+    EOT
+    ignore_unknown_fields = false
+  }
+}
+
+resource "google_ces_evaluation" "ces_evaluation_scenario_toolset" {
+  provider = google-beta
+  evaluation_id = "%{evaluation_id}"
+  display_name = "my-evaluation-scenario-toolset"
+  location     = "us"
+  app          = google_ces_app.app.app_id
+  description  = "Full evaluation for testing scenario with toolset"
+  tags         = ["test", "full", "scenario", "toolset"]
+
+  scenario {
+    task = "Test task"
+    max_turns = 5
+    rubrics = ["projects/${google_ces_app.app.project}/locations/us/apps/${google_ces_app.app.app_id}/rubrics/dummy-rubric"]
+    user_goal_behavior = "USER_GOAL_SATISFIED"
+    task_completion_behavior = "TASK_SATISFIED"
+    variable_overrides = {
+      key = "value"
+    }
+    evaluation_expectations = ["projects/${google_ces_app.app.project}/locations/us/apps/${google_ces_app.app.app_id}/evaluationExpectations/dummy-exp"]
+
+    user_facts {
+      name = "user_name"
+      value = "John Doe"
+    }
+
+    scenario_expectations {
+      tool_expectation {
+        expected_tool_call {
+          id = "tool-call-id"
+          toolset_tool {
+            toolset = "projects/${google_ces_app.app.project}/locations/us/apps/${google_ces_app.app.app_id}/toolsets/${google_ces_toolset.toolset.toolset_id}"
+            tool_id = "dummy-tool"
+          }
+          args = {
+            param = "value"
+          }
+        }
+        mock_tool_response {
+          id = "tool-call-id"
+          response = { result = "mocked" }
+          toolset_tool {
+            toolset = "projects/${google_ces_app.app.project}/locations/us/apps/${google_ces_app.app.app_id}/toolsets/${google_ces_toolset.toolset.toolset_id}"
+            tool_id = "dummy-tool"
+          }
+        }
+      }
+    }
+
+    scenario_expectations {
+      agent_response {
+        role = "agent"
+        chunks {
+          text = "Hello"
+        }
+        chunks {
+          tool_call {
+            id = "tool-call-id-3"
+            toolset_tool {
+              toolset = "projects/${google_ces_app.app.project}/locations/us/apps/${google_ces_app.app.app_id}/toolsets/${google_ces_toolset.toolset.toolset_id}"
+              tool_id = "dummy-tool"
+            }
+            args = {
+              param = "value"
+            }
+          }
+        }
+        chunks {
+          tool_response {
+            id = "tool-call-id-3"
+            response = { result = "success" }
+            toolset_tool {
+              toolset = "projects/${google_ces_app.app.project}/locations/us/apps/${google_ces_app.app.app_id}/toolsets/${google_ces_toolset.toolset.toolset_id}"
+              tool_id = "dummy-tool"
+            }
+          }
+        }
+      }
+    }
+  }
+}
+`, context)
+}
+
 func testAccCheckCESEvaluationDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		for name, rs := range s.RootModule().Resources {
