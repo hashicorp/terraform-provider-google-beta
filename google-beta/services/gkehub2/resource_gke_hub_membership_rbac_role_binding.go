@@ -259,7 +259,7 @@ func resourceGKEHub2MembershipRBACRoleBindingCreate(d *schema.ResourceData, meta
 		obj["role"] = roleProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{GKEHub2BasePath}}projects/{{project}}/locations/{{location}}/memberships/{{membership_id}}/rbacrolebindings/?rbacrolebinding_id={{membership_rbac_role_binding_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/memberships/{{membership_id}}/rbacrolebindings/?rbacrolebinding_id={{membership_rbac_role_binding_id}}"))
 	if err != nil {
 		return err
 	}
@@ -348,7 +348,7 @@ func resourceGKEHub2MembershipRBACRoleBindingRead(d *schema.ResourceData, meta i
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{GKEHub2BasePath}}projects/{{project}}/locations/{{location}}/memberships/{{membership_id}}/rbacrolebindings/{{membership_rbac_role_binding_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/memberships/{{membership_id}}/rbacrolebindings/{{membership_rbac_role_binding_id}}"))
 	if err != nil {
 		return err
 	}
@@ -437,8 +437,7 @@ func resourceGKEHub2MembershipRBACRoleBindingDelete(d *schema.ResourceData, meta
 		return fmt.Errorf("Error fetching project for MembershipRBACRoleBinding: %s", err)
 	}
 	billingProject = project
-
-	url, err := tpgresource.ReplaceVars(d, config, "{{GKEHub2BasePath}}projects/{{project}}/locations/{{location}}/memberships/{{membership_id}}/rbacrolebindings/{{membership_rbac_role_binding_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/memberships/{{membership_id}}/rbacrolebindings/{{membership_rbac_role_binding_id}}"))
 	if err != nil {
 		return err
 	}

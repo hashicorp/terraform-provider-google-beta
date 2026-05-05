@@ -30,6 +30,7 @@ import (
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/storage"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
@@ -48,6 +49,7 @@ var (
 	_ = tpgresource.SetLabels
 	_ = transport_tpg.Config{}
 	_ = googleapi.Error{}
+	_ = storage.Product
 )
 
 func TestAccStorageDefaultObjectAccessControl_storageDefaultObjectAccessControlPublicExample(t *testing.T) {
@@ -110,8 +112,7 @@ func testAccCheckStorageDefaultObjectAccessControlDestroyProducer(t *testing.T) 
 			}
 
 			config := acctest.GoogleProviderConfig(t)
-
-			url, err := tpgresource.ReplaceVarsForTest(config, rs, "{{StorageBasePath}}b/{{bucket}}/defaultObjectAcl/{{entity}}")
+			url, err := tpgresource.ReplaceVarsForTest(config, rs, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(storage.Product, config), "b/{{bucket}}/defaultObjectAcl/{{entity}}"))
 			if err != nil {
 				return err
 			}

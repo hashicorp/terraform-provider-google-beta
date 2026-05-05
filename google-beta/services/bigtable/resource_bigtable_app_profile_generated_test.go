@@ -30,6 +30,7 @@ import (
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/bigtable"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
@@ -48,6 +49,7 @@ var (
 	_ = tpgresource.SetLabels
 	_ = transport_tpg.Config{}
 	_ = googleapi.Error{}
+	_ = bigtable.Product
 )
 
 func TestAccBigtableAppProfile_bigtableAppProfileAnyclusterExample(t *testing.T) {
@@ -348,8 +350,7 @@ func testAccCheckBigtableAppProfileDestroyProducer(t *testing.T) func(s *terrafo
 			}
 
 			config := acctest.GoogleProviderConfig(t)
-
-			url, err := tpgresource.ReplaceVarsForTest(config, rs, "{{BigtableBasePath}}projects/{{project}}/instances/{{instance}}/appProfiles/{{app_profile_id}}")
+			url, err := tpgresource.ReplaceVarsForTest(config, rs, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(bigtable.Product, config), "projects/{{project}}/instances/{{instance}}/appProfiles/{{app_profile_id}}"))
 			if err != nil {
 				return err
 			}

@@ -279,7 +279,7 @@ func resourceFirebaseAILogicConfigCreate(d *schema.ResourceData, meta interface{
 		obj["trafficFilter"] = trafficFilterProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseAILogicBasePath}}projects/{{project}}/locations/{{location}}/config?update_mask=*")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/config?update_mask=*"))
 	if err != nil {
 		return err
 	}
@@ -348,7 +348,7 @@ func resourceFirebaseAILogicConfigRead(d *schema.ResourceData, meta interface{})
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseAILogicBasePath}}projects/{{project}}/locations/{{location}}/config")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/config"))
 	if err != nil {
 		return err
 	}
@@ -461,7 +461,7 @@ func resourceFirebaseAILogicConfigUpdate(d *schema.ResourceData, meta interface{
 		obj["trafficFilter"] = trafficFilterProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseAILogicBasePath}}projects/{{project}}/locations/{{location}}/config")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/config"))
 	if err != nil {
 		return err
 	}
@@ -531,8 +531,7 @@ func resourceFirebaseAILogicConfigDelete(d *schema.ResourceData, meta interface{
 		return fmt.Errorf("Error fetching project for Config: %s", err)
 	}
 	billingProject = project
-
-	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseAILogicBasePath}}projects/{{project}}/locations/{{location}}/config?update_mask=*")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/config?update_mask=*"))
 	if err != nil {
 		return err
 	}

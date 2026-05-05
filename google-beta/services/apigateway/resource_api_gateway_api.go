@@ -229,7 +229,7 @@ func resourceApiGatewayApiCreate(d *schema.ResourceData, meta interface{}) error
 		obj["labels"] = effectiveLabelsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{ApiGatewayBasePath}}projects/{{project}}/locations/global/apis?apiId={{api_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/global/apis?apiId={{api_id}}"))
 	if err != nil {
 		return err
 	}
@@ -308,7 +308,7 @@ func resourceApiGatewayApiRead(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{ApiGatewayBasePath}}projects/{{project}}/locations/global/apis/{{api_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/global/apis/{{api_id}}"))
 	if err != nil {
 		return err
 	}
@@ -415,7 +415,7 @@ func resourceApiGatewayApiUpdate(d *schema.ResourceData, meta interface{}) error
 		obj["labels"] = effectiveLabelsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{ApiGatewayBasePath}}projects/{{project}}/locations/global/apis/{{api_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/global/apis/{{api_id}}"))
 	if err != nil {
 		return err
 	}
@@ -488,8 +488,7 @@ func resourceApiGatewayApiDelete(d *schema.ResourceData, meta interface{}) error
 		return fmt.Errorf("Error fetching project for Api: %s", err)
 	}
 	billingProject = project
-
-	url, err := tpgresource.ReplaceVars(d, config, "{{ApiGatewayBasePath}}projects/{{project}}/locations/global/apis/{{api_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/global/apis/{{api_id}}"))
 	if err != nil {
 		return err
 	}

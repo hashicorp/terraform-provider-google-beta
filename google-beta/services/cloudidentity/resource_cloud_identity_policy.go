@@ -257,7 +257,7 @@ func resourceCloudIdentityPolicyCreate(d *schema.ResourceData, meta interface{})
 		obj["setting"] = settingProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{CloudIdentityBasePath}}policies")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "policies"))
 	if err != nil {
 		return err
 	}
@@ -339,7 +339,7 @@ func resourceCloudIdentityPolicyRead(d *schema.ResourceData, meta interface{}) e
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{CloudIdentityBasePath}}{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "{{name}}"))
 	if err != nil {
 		return err
 	}
@@ -418,7 +418,7 @@ func resourceCloudIdentityPolicyUpdate(d *schema.ResourceData, meta interface{})
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{CloudIdentityBasePath}}{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "{{name}}"))
 	if err != nil {
 		return err
 	}
@@ -468,7 +468,7 @@ func resourceCloudIdentityPolicyDelete(d *schema.ResourceData, meta interface{})
 
 	billingProject := ""
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{CloudIdentityBasePath}}{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "{{name}}"))
 	if err != nil {
 		return err
 	}

@@ -30,6 +30,7 @@ import (
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/bigqueryanalyticshub"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
@@ -48,6 +49,7 @@ var (
 	_ = tpgresource.SetLabels
 	_ = transport_tpg.Config{}
 	_ = googleapi.Error{}
+	_ = bigqueryanalyticshub.Product
 )
 
 func TestAccBigqueryAnalyticsHubDataExchangeSubscription_bigqueryAnalyticshubDataexchangeSubscriptionBasicExample(t *testing.T) {
@@ -201,8 +203,7 @@ func testAccCheckBigqueryAnalyticsHubDataExchangeSubscriptionDestroyProducer(t *
 			}
 
 			config := acctest.GoogleProviderConfig(t)
-
-			url, err := tpgresource.ReplaceVarsForTest(config, rs, "{{BigqueryAnalyticsHubBasePath}}projects/{{project}}/locations/{{location}}/subscriptions/{{subscription_id}}")
+			url, err := tpgresource.ReplaceVarsForTest(config, rs, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(bigqueryanalyticshub.Product, config), "projects/{{project}}/locations/{{location}}/subscriptions/{{subscription_id}}"))
 			if err != nil {
 				return err
 			}

@@ -233,7 +233,7 @@ func resourceActiveDirectoryPeeringCreate(d *schema.ResourceData, meta interface
 		obj["labels"] = effectiveLabelsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{ActiveDirectoryBasePath}}projects/{{project}}/locations/global/peerings?peeringId={{peering_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/global/peerings?peeringId={{peering_id}}"))
 	if err != nil {
 		return err
 	}
@@ -326,7 +326,7 @@ func resourceActiveDirectoryPeeringRead(d *schema.ResourceData, meta interface{}
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{ActiveDirectoryBasePath}}{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "{{name}}"))
 	if err != nil {
 		return err
 	}
@@ -433,7 +433,7 @@ func resourceActiveDirectoryPeeringUpdate(d *schema.ResourceData, meta interface
 		obj["labels"] = effectiveLabelsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{ActiveDirectoryBasePath}}{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "{{name}}"))
 	if err != nil {
 		return err
 	}
@@ -488,8 +488,7 @@ func resourceActiveDirectoryPeeringDelete(d *schema.ResourceData, meta interface
 		return fmt.Errorf("Error fetching project for Peering: %s", err)
 	}
 	billingProject = project
-
-	url, err := tpgresource.ReplaceVars(d, config, "{{ActiveDirectoryBasePath}}projects/{{project}}/locations/global/peerings/{{peering_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/global/peerings/{{peering_id}}"))
 	if err != nil {
 		return err
 	}

@@ -30,6 +30,7 @@ import (
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/integrationconnectors"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
@@ -48,6 +49,7 @@ var (
 	_ = tpgresource.SetLabels
 	_ = transport_tpg.Config{}
 	_ = googleapi.Error{}
+	_ = integrationconnectors.Product
 )
 
 func TestAccIntegrationConnectorsEndpointAttachment_integrationConnectorsEndpointAttachmentExample(t *testing.T) {
@@ -109,8 +111,7 @@ func testAccCheckIntegrationConnectorsEndpointAttachmentDestroyProducer(t *testi
 			}
 
 			config := acctest.GoogleProviderConfig(t)
-
-			url, err := tpgresource.ReplaceVarsForTest(config, rs, "{{IntegrationConnectorsBasePath}}projects/{{project}}/locations/{{location}}/endpointAttachments/{{name}}")
+			url, err := tpgresource.ReplaceVarsForTest(config, rs, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(integrationconnectors.Product, config), "projects/{{project}}/locations/{{location}}/endpointAttachments/{{name}}"))
 			if err != nil {
 				return err
 			}

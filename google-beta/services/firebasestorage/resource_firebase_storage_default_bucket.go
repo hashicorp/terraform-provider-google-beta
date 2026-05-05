@@ -185,7 +185,7 @@ func resourceFirebaseStorageDefaultBucketCreate(d *schema.ResourceData, meta int
 		obj["location"] = locationProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseStorageBasePath}}projects/{{project}}/defaultBucket")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/defaultBucket"))
 	if err != nil {
 		return err
 	}
@@ -249,7 +249,7 @@ func resourceFirebaseStorageDefaultBucketRead(d *schema.ResourceData, meta inter
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseStorageBasePath}}projects/{{project}}/defaultBucket")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/defaultBucket"))
 	if err != nil {
 		return err
 	}
@@ -320,8 +320,7 @@ func resourceFirebaseStorageDefaultBucketDelete(d *schema.ResourceData, meta int
 		return fmt.Errorf("Error fetching project for DefaultBucket: %s", err)
 	}
 	billingProject = project
-
-	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseStorageBasePath}}projects/{{project}}/defaultBucket")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/defaultBucket"))
 	if err != nil {
 		return err
 	}

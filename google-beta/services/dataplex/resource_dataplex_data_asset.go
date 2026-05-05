@@ -258,7 +258,7 @@ func resourceDataplexDataAssetCreate(d *schema.ResourceData, meta interface{}) e
 		obj["labels"] = effectiveLabelsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{DataplexBasePath}}projects/{{project}}/locations/{{location}}/dataProducts/{{data_product_id}}/dataAssets?dataAssetId={{data_asset_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/dataProducts/{{data_product_id}}/dataAssets?dataAssetId={{data_asset_id}}"))
 	if err != nil {
 		return err
 	}
@@ -347,7 +347,7 @@ func resourceDataplexDataAssetRead(d *schema.ResourceData, meta interface{}) err
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{DataplexBasePath}}projects/{{project}}/locations/{{location}}/dataProducts/{{data_product_id}}/dataAssets/{{data_asset_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/dataProducts/{{data_product_id}}/dataAssets/{{data_asset_id}}"))
 	if err != nil {
 		return err
 	}
@@ -476,7 +476,7 @@ func resourceDataplexDataAssetUpdate(d *schema.ResourceData, meta interface{}) e
 		obj["labels"] = effectiveLabelsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{DataplexBasePath}}projects/{{project}}/locations/{{location}}/dataProducts/{{data_product_id}}/dataAssets/{{data_asset_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/dataProducts/{{data_product_id}}/dataAssets/{{data_asset_id}}"))
 	if err != nil {
 		return err
 	}
@@ -549,8 +549,7 @@ func resourceDataplexDataAssetDelete(d *schema.ResourceData, meta interface{}) e
 		return fmt.Errorf("Error fetching project for DataAsset: %s", err)
 	}
 	billingProject = project
-
-	url, err := tpgresource.ReplaceVars(d, config, "{{DataplexBasePath}}projects/{{project}}/locations/{{location}}/dataProducts/{{data_product_id}}/dataAssets/{{data_asset_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/dataProducts/{{data_product_id}}/dataAssets/{{data_asset_id}}"))
 	if err != nil {
 		return err
 	}

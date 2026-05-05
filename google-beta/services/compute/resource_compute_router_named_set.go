@@ -263,7 +263,7 @@ func resourceComputeRouterNamedSetCreate(d *schema.ResourceData, meta interface{
 		obj["name"] = nameProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/routers/{{router}}/updateNamedSet")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/regions/{{region}}/routers/{{router}}/updateNamedSet"))
 	if err != nil {
 		return err
 	}
@@ -352,7 +352,7 @@ func resourceComputeRouterNamedSetRead(d *schema.ResourceData, meta interface{})
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/routers/{{router}}/getNamedSet?namedSet={{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/regions/{{region}}/routers/{{router}}/getNamedSet?namedSet={{name}}"))
 	if err != nil {
 		return err
 	}
@@ -511,7 +511,7 @@ func resourceComputeRouterNamedSetUpdate(d *schema.ResourceData, meta interface{
 		obj["name"] = nameProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/routers/{{router}}/updateNamedSet")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/regions/{{region}}/routers/{{router}}/updateNamedSet"))
 	if err != nil {
 		return err
 	}
@@ -596,8 +596,7 @@ func resourceComputeRouterNamedSetDelete(d *schema.ResourceData, meta interface{
 		return fmt.Errorf("Error fetching project for RouterNamedSet: %s", err)
 	}
 	billingProject = project
-
-	url, err := tpgresource.ReplaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/routers/{{router}}/deleteNamedSet?namedSet={{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/regions/{{region}}/routers/{{router}}/deleteNamedSet?namedSet={{name}}"))
 	if err != nil {
 		return err
 	}

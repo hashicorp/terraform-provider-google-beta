@@ -30,6 +30,7 @@ import (
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/osconfigv2"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
@@ -48,6 +49,7 @@ var (
 	_ = tpgresource.SetLabels
 	_ = transport_tpg.Config{}
 	_ = googleapi.Error{}
+	_ = osconfigv2.Product
 )
 
 func TestAccOSConfigV2PolicyOrchestratorForOrganization_osconfigv2PolicyOrchestratorForOrganizationBasicExample(t *testing.T) {
@@ -166,8 +168,7 @@ func testAccCheckOSConfigV2PolicyOrchestratorForOrganizationDestroyProducer(t *t
 			}
 
 			config := acctest.GoogleProviderConfig(t)
-
-			url, err := tpgresource.ReplaceVarsForTest(config, rs, "{{OSConfigV2BasePath}}organizations/{{organization_id}}/locations/global/policyOrchestrators/{{policy_orchestrator_id}}")
+			url, err := tpgresource.ReplaceVarsForTest(config, rs, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(osconfigv2.Product, config), "organizations/{{organization_id}}/locations/global/policyOrchestrators/{{policy_orchestrator_id}}"))
 			if err != nil {
 				return err
 			}

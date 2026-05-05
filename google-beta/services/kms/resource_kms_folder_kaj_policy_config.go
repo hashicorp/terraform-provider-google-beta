@@ -178,7 +178,7 @@ func resourceKMSFolderKajPolicyConfigCreate(d *schema.ResourceData, meta interfa
 		obj["defaultKeyAccessJustificationPolicy"] = defaultKeyAccessJustificationPolicyProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{KMSBasePath}}folders/{{folder}}/kajPolicyConfig?updateMask=defaultKeyAccessJustificationPolicy")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "folders/{{folder}}/kajPolicyConfig?updateMask=defaultKeyAccessJustificationPolicy"))
 	if err != nil {
 		return err
 	}
@@ -241,7 +241,7 @@ func resourceKMSFolderKajPolicyConfigRead(d *schema.ResourceData, meta interface
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{KMSBasePath}}folders/{{folder}}/kajPolicyConfig")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "folders/{{folder}}/kajPolicyConfig"))
 	if err != nil {
 		return err
 	}
@@ -315,7 +315,7 @@ func resourceKMSFolderKajPolicyConfigUpdate(d *schema.ResourceData, meta interfa
 		obj["defaultKeyAccessJustificationPolicy"] = defaultKeyAccessJustificationPolicyProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{KMSBasePath}}folders/{{folder}}/kajPolicyConfig?updateMask=defaultKeyAccessJustificationPolicy")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "folders/{{folder}}/kajPolicyConfig?updateMask=defaultKeyAccessJustificationPolicy"))
 	if err != nil {
 		return err
 	}

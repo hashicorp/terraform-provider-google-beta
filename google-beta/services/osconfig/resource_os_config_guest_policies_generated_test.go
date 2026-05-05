@@ -30,6 +30,7 @@ import (
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/osconfig"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
@@ -48,6 +49,7 @@ var (
 	_ = tpgresource.SetLabels
 	_ = transport_tpg.Config{}
 	_ = googleapi.Error{}
+	_ = osconfig.Product
 )
 
 func TestAccOSConfigGuestPolicies_osConfigGuestPoliciesBasicExample(t *testing.T) {
@@ -304,8 +306,7 @@ func testAccCheckOSConfigGuestPoliciesDestroyProducer(t *testing.T) func(s *terr
 			}
 
 			config := acctest.GoogleProviderConfig(t)
-
-			url, err := tpgresource.ReplaceVarsForTest(config, rs, "{{OSConfigBasePath}}projects/{{project}}/guestPolicies/{{guest_policy_id}}")
+			url, err := tpgresource.ReplaceVarsForTest(config, rs, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(osconfig.Product, config), "projects/{{project}}/guestPolicies/{{guest_policy_id}}"))
 			if err != nil {
 				return err
 			}

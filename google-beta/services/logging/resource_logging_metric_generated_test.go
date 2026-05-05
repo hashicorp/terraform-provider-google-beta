@@ -30,6 +30,7 @@ import (
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/logging"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
@@ -48,6 +49,7 @@ var (
 	_ = tpgresource.SetLabels
 	_ = transport_tpg.Config{}
 	_ = googleapi.Error{}
+	_ = logging.Product
 )
 
 func TestAccLoggingMetric_loggingMetricBasicExample(t *testing.T) {
@@ -328,8 +330,7 @@ func testAccCheckLoggingMetricDestroyProducer(t *testing.T) func(s *terraform.St
 			}
 
 			config := acctest.GoogleProviderConfig(t)
-
-			url, err := tpgresource.ReplaceVarsForTest(config, rs, "{{LoggingBasePath}}projects/{{project}}/metrics/{{%name}}")
+			url, err := tpgresource.ReplaceVarsForTest(config, rs, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(logging.Product, config), "projects/{{project}}/metrics/{{%name}}"))
 			if err != nil {
 				return err
 			}

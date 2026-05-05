@@ -30,6 +30,7 @@ import (
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebasestorage"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
@@ -48,6 +49,7 @@ var (
 	_ = tpgresource.SetLabels
 	_ = transport_tpg.Config{}
 	_ = googleapi.Error{}
+	_ = firebasestorage.Product
 )
 
 func TestAccFirebaseStorageBucket_firebasestorageBucketBasicExample(t *testing.T) {
@@ -113,8 +115,7 @@ func testAccCheckFirebaseStorageBucketDestroyProducer(t *testing.T) func(s *terr
 			}
 
 			config := acctest.GoogleProviderConfig(t)
-
-			url, err := tpgresource.ReplaceVarsForTest(config, rs, "{{FirebaseStorageBasePath}}projects/{{project}}/buckets/{{bucket_id}}")
+			url, err := tpgresource.ReplaceVarsForTest(config, rs, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(firebasestorage.Product, config), "projects/{{project}}/buckets/{{bucket_id}}"))
 			if err != nil {
 				return err
 			}

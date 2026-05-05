@@ -30,6 +30,7 @@ import (
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebase"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
@@ -48,6 +49,7 @@ var (
 	_ = tpgresource.SetLabels
 	_ = transport_tpg.Config{}
 	_ = googleapi.Error{}
+	_ = firebase.Product
 )
 
 func TestAccFirebaseAndroidApp_firebaseAndroidAppBasicExample(t *testing.T) {
@@ -178,8 +180,7 @@ func testAccCheckFirebaseAndroidAppDestroyProducer(t *testing.T) func(s *terrafo
 			}
 
 			config := acctest.GoogleProviderConfig(t)
-
-			url, err := tpgresource.ReplaceVarsForTest(config, rs, "{{FirebaseBasePath}}projects/{{project}}/androidApps/{{app_id}}")
+			url, err := tpgresource.ReplaceVarsForTest(config, rs, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(firebase.Product, config), "projects/{{project}}/androidApps/{{app_id}}"))
 			if err != nil {
 				return err
 			}

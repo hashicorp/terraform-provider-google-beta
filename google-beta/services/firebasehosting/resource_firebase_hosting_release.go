@@ -215,7 +215,7 @@ func resourceFirebaseHostingReleaseCreate(d *schema.ResourceData, meta interface
 		obj["message"] = messageProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseHostingBasePath}}sites/{{site_id}}/channels/{{channel_id}}/releases?versionName={{version_name}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "sites/{{site_id}}/channels/{{channel_id}}/releases?versionName={{version_name}}"))
 	if err != nil {
 		return err
 	}
@@ -296,7 +296,7 @@ func resourceFirebaseHostingReleaseRead(d *schema.ResourceData, meta interface{}
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseHostingBasePath}}sites/{{site_id}}/channels/{{channel_id}}/releases/{{release_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "sites/{{site_id}}/channels/{{channel_id}}/releases/{{release_id}}"))
 	if err != nil {
 		return err
 	}

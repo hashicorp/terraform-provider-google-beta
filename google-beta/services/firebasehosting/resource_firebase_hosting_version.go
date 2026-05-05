@@ -312,7 +312,7 @@ func resourceFirebaseHostingVersionCreate(d *schema.ResourceData, meta interface
 		obj["config"] = configProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseHostingBasePath}}sites/{{site_id}}/versions")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "sites/{{site_id}}/versions"))
 	if err != nil {
 		return err
 	}
@@ -414,7 +414,7 @@ func resourceFirebaseHostingVersionRead(d *schema.ResourceData, meta interface{}
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseHostingBasePath}}sites/{{site_id}}/versions/{{version_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "sites/{{site_id}}/versions/{{version_id}}"))
 	if err != nil {
 		return err
 	}

@@ -30,6 +30,7 @@ import (
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/healthcare"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
@@ -48,6 +49,7 @@ var (
 	_ = tpgresource.SetLabels
 	_ = transport_tpg.Config{}
 	_ = googleapi.Error{}
+	_ = healthcare.Product
 )
 
 func TestAccHealthcarePipelineJob_healthcarePipelineJobReconciliationExample(t *testing.T) {
@@ -451,8 +453,7 @@ func testAccCheckHealthcarePipelineJobDestroyProducer(t *testing.T) func(s *terr
 			}
 
 			config := acctest.GoogleProviderConfig(t)
-
-			url, err := tpgresource.ReplaceVarsForTest(config, rs, "{{HealthcareBasePath}}{{dataset}}/pipelineJobs/{{name}}")
+			url, err := tpgresource.ReplaceVarsForTest(config, rs, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(healthcare.Product, config), "{{dataset}}/pipelineJobs/{{name}}"))
 			if err != nil {
 				return err
 			}

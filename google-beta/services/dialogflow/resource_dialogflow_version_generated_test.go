@@ -30,6 +30,7 @@ import (
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/dialogflow"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
@@ -48,6 +49,7 @@ var (
 	_ = tpgresource.SetLabels
 	_ = transport_tpg.Config{}
 	_ = googleapi.Error{}
+	_ = dialogflow.Product
 )
 
 func TestAccDialogflowVersion_dialogflowVersionFullExample(t *testing.T) {
@@ -134,8 +136,7 @@ func testAccCheckDialogflowVersionDestroyProducer(t *testing.T) func(s *terrafor
 			}
 
 			config := acctest.GoogleProviderConfig(t)
-
-			url, err := tpgresource.ReplaceVarsForTest(config, rs, "{{DialogflowBasePath}}{{parent}}/versions/{{name}}")
+			url, err := tpgresource.ReplaceVarsForTest(config, rs, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(dialogflow.Product, config), "{{parent}}/versions/{{name}}"))
 			if err != nil {
 				return err
 			}

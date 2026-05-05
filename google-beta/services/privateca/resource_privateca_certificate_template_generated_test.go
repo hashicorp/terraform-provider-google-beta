@@ -30,6 +30,7 @@ import (
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/privateca"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
@@ -48,6 +49,7 @@ var (
 	_ = tpgresource.SetLabels
 	_ = transport_tpg.Config{}
 	_ = googleapi.Error{}
+	_ = privateca.Product
 )
 
 func TestAccPrivatecaCertificateTemplate_privatecaTemplateBasicExample(t *testing.T) {
@@ -296,8 +298,7 @@ func testAccCheckPrivatecaCertificateTemplateDestroyProducer(t *testing.T) func(
 			}
 
 			config := acctest.GoogleProviderConfig(t)
-
-			url, err := tpgresource.ReplaceVarsForTest(config, rs, "{{PrivatecaBasePath}}projects/{{project}}/locations/{{location}}/certificateTemplates/{{name}}")
+			url, err := tpgresource.ReplaceVarsForTest(config, rs, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(privateca.Product, config), "projects/{{project}}/locations/{{location}}/certificateTemplates/{{name}}"))
 			if err != nil {
 				return err
 			}

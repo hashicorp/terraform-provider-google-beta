@@ -236,7 +236,7 @@ func resourceFirebaseAppleAppCreate(d *schema.ResourceData, meta interface{}) er
 		obj["apiKeyId"] = apiKeyIdProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseBasePath}}projects/{{project}}/iosApps")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/iosApps"))
 	if err != nil {
 		return err
 	}
@@ -329,7 +329,7 @@ func resourceFirebaseAppleAppRead(d *schema.ResourceData, meta interface{}) erro
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseBasePath}}projects/{{project}}/iosApps/{{app_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/iosApps/{{app_id}}"))
 	if err != nil {
 		return err
 	}
@@ -454,7 +454,7 @@ func resourceFirebaseAppleAppUpdate(d *schema.ResourceData, meta interface{}) er
 		obj["apiKeyId"] = apiKeyIdProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseBasePath}}projects/{{project}}/iosApps/{{app_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/iosApps/{{app_id}}"))
 	if err != nil {
 		return err
 	}

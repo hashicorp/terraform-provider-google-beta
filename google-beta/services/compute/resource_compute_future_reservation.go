@@ -925,7 +925,7 @@ func resourceComputeFutureReservationCreate(d *schema.ResourceData, meta interfa
 		obj["name"] = nameProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/zones/{{zone}}/futureReservations")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/zones/{{zone}}/futureReservations"))
 	if err != nil {
 		return err
 	}
@@ -1009,7 +1009,7 @@ func resourceComputeFutureReservationRead(d *schema.ResourceData, meta interface
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/zones/{{zone}}/futureReservations/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/zones/{{zone}}/futureReservations/{{name}}"))
 	if err != nil {
 		return err
 	}
@@ -1210,7 +1210,7 @@ func resourceComputeFutureReservationUpdate(d *schema.ResourceData, meta interfa
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/zones/{{zone}}/futureReservations/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/zones/{{zone}}/futureReservations/{{name}}"))
 	if err != nil {
 		return err
 	}
@@ -1335,8 +1335,7 @@ func resourceComputeFutureReservationDelete(d *schema.ResourceData, meta interfa
 		return fmt.Errorf("Error fetching project for FutureReservation: %s", err)
 	}
 	billingProject = project
-
-	url, err := tpgresource.ReplaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/zones/{{zone}}/futureReservations/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/zones/{{zone}}/futureReservations/{{name}}"))
 	if err != nil {
 		return err
 	}

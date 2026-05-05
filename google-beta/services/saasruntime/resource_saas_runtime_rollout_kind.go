@@ -348,7 +348,7 @@ func resourceSaasRuntimeRolloutKindCreate(d *schema.ResourceData, meta interface
 		obj["labels"] = effectiveLabelsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{SaasRuntimeBasePath}}projects/{{project}}/locations/{{location}}/rolloutKinds?rolloutKindId={{rollout_kind_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/rolloutKinds?rolloutKindId={{rollout_kind_id}}"))
 	if err != nil {
 		return err
 	}
@@ -422,7 +422,7 @@ func resourceSaasRuntimeRolloutKindRead(d *schema.ResourceData, meta interface{}
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{SaasRuntimeBasePath}}projects/{{project}}/locations/{{location}}/rolloutKinds/{{rollout_kind_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/rolloutKinds/{{rollout_kind_id}}"))
 	if err != nil {
 		return err
 	}
@@ -564,7 +564,7 @@ func resourceSaasRuntimeRolloutKindUpdate(d *schema.ResourceData, meta interface
 		obj["labels"] = effectiveLabelsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{SaasRuntimeBasePath}}projects/{{project}}/locations/{{location}}/rolloutKinds/{{rollout_kind_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/rolloutKinds/{{rollout_kind_id}}"))
 	if err != nil {
 		return err
 	}
@@ -646,8 +646,7 @@ func resourceSaasRuntimeRolloutKindDelete(d *schema.ResourceData, meta interface
 		return fmt.Errorf("Error fetching project for RolloutKind: %s", err)
 	}
 	billingProject = project
-
-	url, err := tpgresource.ReplaceVars(d, config, "{{SaasRuntimeBasePath}}projects/{{project}}/locations/{{location}}/rolloutKinds/{{rollout_kind_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/rolloutKinds/{{rollout_kind_id}}"))
 	if err != nil {
 		return err
 	}

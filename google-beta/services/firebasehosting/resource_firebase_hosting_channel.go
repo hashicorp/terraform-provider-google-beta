@@ -240,7 +240,7 @@ func resourceFirebaseHostingChannelCreate(d *schema.ResourceData, meta interface
 		obj["labels"] = effectiveLabelsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseHostingBasePath}}sites/{{site_id}}/channels?channelId={{channel_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "sites/{{site_id}}/channels?channelId={{channel_id}}"))
 	if err != nil {
 		return err
 	}
@@ -303,7 +303,7 @@ func resourceFirebaseHostingChannelRead(d *schema.ResourceData, meta interface{}
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseHostingBasePath}}sites/{{site_id}}/channels/{{channel_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "sites/{{site_id}}/channels/{{channel_id}}"))
 	if err != nil {
 		return err
 	}
@@ -400,7 +400,7 @@ func resourceFirebaseHostingChannelUpdate(d *schema.ResourceData, meta interface
 		obj["labels"] = effectiveLabelsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseHostingBasePath}}sites/{{site_id}}/channels/{{channel_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "sites/{{site_id}}/channels/{{channel_id}}"))
 	if err != nil {
 		return err
 	}
@@ -465,7 +465,7 @@ func resourceFirebaseHostingChannelDelete(d *schema.ResourceData, meta interface
 
 	billingProject := ""
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseHostingBasePath}}sites/{{site_id}}/channels/{{channel_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "sites/{{site_id}}/channels/{{channel_id}}"))
 	if err != nil {
 		return err
 	}

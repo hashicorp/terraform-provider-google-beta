@@ -30,6 +30,7 @@ import (
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/certificatemanager"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
@@ -48,6 +49,7 @@ var (
 	_ = tpgresource.SetLabels
 	_ = transport_tpg.Config{}
 	_ = googleapi.Error{}
+	_ = certificatemanager.Product
 )
 
 func TestAccCertificateManagerCertificate_certificateManagerGoogleManagedCertificateDnsExample(t *testing.T) {
@@ -640,8 +642,7 @@ func testAccCheckCertificateManagerCertificateDestroyProducer(t *testing.T) func
 			}
 
 			config := acctest.GoogleProviderConfig(t)
-
-			url, err := tpgresource.ReplaceVarsForTest(config, rs, "{{CertificateManagerBasePath}}projects/{{project}}/locations/{{location}}/certificates/{{name}}")
+			url, err := tpgresource.ReplaceVarsForTest(config, rs, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(certificatemanager.Product, config), "projects/{{project}}/locations/{{location}}/certificates/{{name}}"))
 			if err != nil {
 				return err
 			}

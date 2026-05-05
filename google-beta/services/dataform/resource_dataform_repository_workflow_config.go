@@ -328,7 +328,7 @@ func resourceDataformRepositoryWorkflowConfigCreate(d *schema.ResourceData, meta
 		obj["timeZone"] = timeZoneProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{DataformBasePath}}projects/{{project}}/locations/{{region}}/repositories/{{repository}}/workflowConfigs?workflowConfigId={{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{region}}/repositories/{{repository}}/workflowConfigs?workflowConfigId={{name}}"))
 	if err != nil {
 		return err
 	}
@@ -407,7 +407,7 @@ func resourceDataformRepositoryWorkflowConfigRead(d *schema.ResourceData, meta i
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{DataformBasePath}}projects/{{project}}/locations/{{region}}/repositories/{{repository}}/workflowConfigs/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{region}}/repositories/{{repository}}/workflowConfigs/{{name}}"))
 	if err != nil {
 		return err
 	}
@@ -548,7 +548,7 @@ func resourceDataformRepositoryWorkflowConfigUpdate(d *schema.ResourceData, meta
 		obj["timeZone"] = timeZoneProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{DataformBasePath}}projects/{{project}}/locations/{{region}}/repositories/{{repository}}/workflowConfigs/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{region}}/repositories/{{repository}}/workflowConfigs/{{name}}"))
 	if err != nil {
 		return err
 	}
@@ -595,8 +595,7 @@ func resourceDataformRepositoryWorkflowConfigDelete(d *schema.ResourceData, meta
 		return fmt.Errorf("Error fetching project for RepositoryWorkflowConfig: %s", err)
 	}
 	billingProject = project
-
-	url, err := tpgresource.ReplaceVars(d, config, "{{DataformBasePath}}projects/{{project}}/locations/{{region}}/repositories/{{repository}}/workflowConfigs/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{region}}/repositories/{{repository}}/workflowConfigs/{{name}}"))
 	if err != nil {
 		return err
 	}

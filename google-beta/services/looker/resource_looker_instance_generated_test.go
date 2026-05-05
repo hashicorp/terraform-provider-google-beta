@@ -30,6 +30,7 @@ import (
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/looker"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
@@ -48,6 +49,7 @@ var (
 	_ = tpgresource.SetLabels
 	_ = transport_tpg.Config{}
 	_ = googleapi.Error{}
+	_ = looker.Product
 )
 
 func TestAccLookerInstance_lookerInstanceBasicExample(t *testing.T) {
@@ -536,8 +538,7 @@ func testAccCheckLookerInstanceDestroyProducer(t *testing.T) func(s *terraform.S
 			}
 
 			config := acctest.GoogleProviderConfig(t)
-
-			url, err := tpgresource.ReplaceVarsForTest(config, rs, "{{LookerBasePath}}projects/{{project}}/locations/{{region}}/instances/{{name}}")
+			url, err := tpgresource.ReplaceVarsForTest(config, rs, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(looker.Product, config), "projects/{{project}}/locations/{{region}}/instances/{{name}}"))
 			if err != nil {
 				return err
 			}

@@ -331,7 +331,7 @@ func resourceDataformRepositoryReleaseConfigCreate(d *schema.ResourceData, meta 
 		obj["disabled"] = disabledProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{DataformBasePath}}projects/{{project}}/locations/{{region}}/repositories/{{repository}}/releaseConfigs?releaseConfigId={{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{region}}/repositories/{{repository}}/releaseConfigs?releaseConfigId={{name}}"))
 	if err != nil {
 		return err
 	}
@@ -410,7 +410,7 @@ func resourceDataformRepositoryReleaseConfigRead(d *schema.ResourceData, meta in
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{DataformBasePath}}projects/{{project}}/locations/{{region}}/repositories/{{repository}}/releaseConfigs/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{region}}/repositories/{{repository}}/releaseConfigs/{{name}}"))
 	if err != nil {
 		return err
 	}
@@ -557,7 +557,7 @@ func resourceDataformRepositoryReleaseConfigUpdate(d *schema.ResourceData, meta 
 		obj["disabled"] = disabledProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{DataformBasePath}}projects/{{project}}/locations/{{region}}/repositories/{{repository}}/releaseConfigs/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{region}}/repositories/{{repository}}/releaseConfigs/{{name}}"))
 	if err != nil {
 		return err
 	}
@@ -604,8 +604,7 @@ func resourceDataformRepositoryReleaseConfigDelete(d *schema.ResourceData, meta 
 		return fmt.Errorf("Error fetching project for RepositoryReleaseConfig: %s", err)
 	}
 	billingProject = project
-
-	url, err := tpgresource.ReplaceVars(d, config, "{{DataformBasePath}}projects/{{project}}/locations/{{region}}/repositories/{{repository}}/releaseConfigs/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{region}}/repositories/{{repository}}/releaseConfigs/{{name}}"))
 	if err != nil {
 		return err
 	}

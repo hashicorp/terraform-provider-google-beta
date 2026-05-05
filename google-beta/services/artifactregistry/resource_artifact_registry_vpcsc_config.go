@@ -191,22 +191,12 @@ func resourceArtifactRegistryVPCSCConfigCreate(d *schema.ResourceData, meta inte
 		return err
 	}
 
-	urlFormatted, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/locations/{{location}}/vpcscConfig")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/vpcscConfig"))
 	if err != nil {
 		return err
 	}
-	loc := tpgresource.LocationFromId(urlFormatted)
-
-	basePath, err := transport_tpg.ResourceBasePath(config.ArtifactRegistryBasePath, config.ArtifactRegistryRepBasePath, "ArtifactRegistry", config, loc)
-	if err != nil {
-		return fmt.Errorf("Error qualifying Create base path for VPCSCConfig: %s", err)
-	}
-
-	url, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/locations/{{location}}/vpcscConfig")
-	url = fmt.Sprintf("%s%s", basePath, url)
-
-	if err != nil {
-		return err
+	if strings.Contains(url, "{{location}}") {
+		return fmt.Errorf("failed to qualify endpoint for a resource with a regionalized endpoint %s", url)
 	}
 
 	log.Printf("[DEBUG] Creating new VPCSCConfig: %#v", obj)
@@ -277,21 +267,13 @@ func resourceArtifactRegistryVPCSCConfigRead(d *schema.ResourceData, meta interf
 	if err != nil {
 		return err
 	}
-	urlFormatted, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/locations/{{location}}/vpcscConfig")
+
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/vpcscConfig"))
 	if err != nil {
 		return err
 	}
-	loc := tpgresource.LocationFromId(urlFormatted)
-
-	basePath, err := transport_tpg.ResourceBasePath(config.ArtifactRegistryBasePath, config.ArtifactRegistryRepBasePath, "ArtifactRegistry", config, loc)
-	if err != nil {
-		return fmt.Errorf("Error qualifying base path for VPCSCConfig: %s", err)
-	}
-	url, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/locations/{{location}}/vpcscConfig")
-	url = fmt.Sprintf("%s%s", basePath, url)
-
-	if err != nil {
-		return err
+	if strings.Contains(url, "{{location}}") {
+		return fmt.Errorf("failed to qualify endpoint for a resource with a regionalized endpoint %s", url)
 	}
 
 	billingProject := ""
@@ -406,17 +388,12 @@ func resourceArtifactRegistryVPCSCConfigUpdate(d *schema.ResourceData, meta inte
 		return err
 	}
 
-	loc := tpgresource.LocationFromId(d.Id())
-
-	basePath, err := transport_tpg.ResourceBasePath(config.ArtifactRegistryBasePath, config.ArtifactRegistryRepBasePath, "ArtifactRegistry", config, loc)
-	if err != nil {
-		return fmt.Errorf("Error qualifying base path for VPCSCConfig: %s", err)
-	}
-	url, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/locations/{{location}}/vpcscConfig")
-	url = fmt.Sprintf("%s%s", basePath, url)
-
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/vpcscConfig"))
 	if err != nil {
 		return err
+	}
+	if strings.Contains(url, "{{location}}") {
+		return fmt.Errorf("failed to qualify endpoint for a resource with a regionalized endpoint %s", url)
 	}
 
 	log.Printf("[DEBUG] Updating VPCSCConfig %q: %#v", d.Id(), obj)

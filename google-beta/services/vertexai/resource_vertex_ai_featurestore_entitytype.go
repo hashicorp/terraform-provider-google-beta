@@ -353,7 +353,7 @@ func resourceVertexAIFeaturestoreEntitytypeCreate(d *schema.ResourceData, meta i
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{VertexAIBasePath}}{{featurestore}}/entityTypes?entityTypeId={{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "{{featurestore}}/entityTypes?entityTypeId={{name}}"))
 	if err != nil {
 		return err
 	}
@@ -435,7 +435,7 @@ func resourceVertexAIFeaturestoreEntitytypeRead(d *schema.ResourceData, meta int
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{VertexAIBasePath}}{{featurestore}}/entityTypes/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "{{featurestore}}/entityTypes/{{name}}"))
 	if err != nil {
 		return err
 	}
@@ -543,7 +543,7 @@ func resourceVertexAIFeaturestoreEntitytypeUpdate(d *schema.ResourceData, meta i
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{VertexAIBasePath}}{{featurestore}}/entityTypes/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "{{featurestore}}/entityTypes/{{name}}"))
 	if err != nil {
 		return err
 	}
@@ -613,7 +613,7 @@ func resourceVertexAIFeaturestoreEntitytypeDelete(d *schema.ResourceData, meta i
 
 	billingProject := ""
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{VertexAIBasePath}}{{featurestore}}/entityTypes/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "{{featurestore}}/entityTypes/{{name}}"))
 	if err != nil {
 		return err
 	}

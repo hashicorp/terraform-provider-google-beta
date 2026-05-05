@@ -493,7 +493,7 @@ func resourceSaasRuntimeUnitOperationCreate(d *schema.ResourceData, meta interfa
 		obj["labels"] = effectiveLabelsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{SaasRuntimeBasePath}}projects/{{project}}/locations/{{location}}/unitOperations?unitOperationId={{unit_operation_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/unitOperations?unitOperationId={{unit_operation_id}}"))
 	if err != nil {
 		return err
 	}
@@ -627,7 +627,7 @@ func resourceSaasRuntimeUnitOperationRead(d *schema.ResourceData, meta interface
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{SaasRuntimeBasePath}}projects/{{project}}/locations/{{location}}/unitOperations/{{unit_operation_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/unitOperations/{{unit_operation_id}}"))
 	if err != nil {
 		return err
 	}
@@ -721,8 +721,7 @@ func resourceSaasRuntimeUnitOperationDelete(d *schema.ResourceData, meta interfa
 		return fmt.Errorf("Error fetching project for UnitOperation: %s", err)
 	}
 	billingProject = project
-
-	url, err := tpgresource.ReplaceVars(d, config, "{{SaasRuntimeBasePath}}projects/{{project}}/locations/{{location}}/unitOperations/{{unit_operation_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/unitOperations/{{unit_operation_id}}"))
 	if err != nil {
 		return err
 	}

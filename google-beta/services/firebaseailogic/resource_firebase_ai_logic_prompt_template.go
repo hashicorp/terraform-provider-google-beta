@@ -239,7 +239,7 @@ func resourceFirebaseAILogicPromptTemplateCreate(d *schema.ResourceData, meta in
 		obj["templateString"] = templateStringProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseAILogicBasePath}}projects/{{project}}/locations/{{location}}/templates?promptTemplateId={{template_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/templates?promptTemplateId={{template_id}}"))
 	if err != nil {
 		return err
 	}
@@ -313,7 +313,7 @@ func resourceFirebaseAILogicPromptTemplateRead(d *schema.ResourceData, meta inte
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseAILogicBasePath}}projects/{{project}}/locations/{{location}}/templates/{{template_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/templates/{{template_id}}"))
 	if err != nil {
 		return err
 	}
@@ -431,7 +431,7 @@ func resourceFirebaseAILogicPromptTemplateUpdate(d *schema.ResourceData, meta in
 		obj["templateString"] = templateStringProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseAILogicBasePath}}projects/{{project}}/locations/{{location}}/templates/{{template_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/templates/{{template_id}}"))
 	if err != nil {
 		return err
 	}
@@ -497,8 +497,7 @@ func resourceFirebaseAILogicPromptTemplateDelete(d *schema.ResourceData, meta in
 		return fmt.Errorf("Error fetching project for PromptTemplate: %s", err)
 	}
 	billingProject = project
-
-	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseAILogicBasePath}}projects/{{project}}/locations/{{location}}/templates/{{template_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/templates/{{template_id}}"))
 	if err != nil {
 		return err
 	}

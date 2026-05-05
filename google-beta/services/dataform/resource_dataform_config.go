@@ -174,7 +174,7 @@ func resourceDataformConfigCreate(d *schema.ResourceData, meta interface{}) erro
 		obj["defaultKmsKeyName"] = defaultKmsKeyNameProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{DataformBasePath}}projects/{{project}}/locations/{{region}}/config")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{region}}/config"))
 	if err != nil {
 		return err
 	}
@@ -243,7 +243,7 @@ func resourceDataformConfigRead(d *schema.ResourceData, meta interface{}) error 
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{DataformBasePath}}projects/{{project}}/locations/{{region}}/config")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{region}}/config"))
 	if err != nil {
 		return err
 	}
@@ -344,7 +344,7 @@ func resourceDataformConfigUpdate(d *schema.ResourceData, meta interface{}) erro
 		obj["defaultKmsKeyName"] = defaultKmsKeyNameProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{DataformBasePath}}projects/{{project}}/locations/{{region}}/config")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{region}}/config"))
 	if err != nil {
 		return err
 	}

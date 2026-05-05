@@ -226,7 +226,7 @@ func resourceServiceUsageConsumerQuotaOverrideCreate(d *schema.ResourceData, met
 		obj["dimensions"] = dimensionsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{ServiceUsageBasePath}}projects/{{project}}/services/{{service}}/consumerQuotaMetrics/{{metric}}/limits/{{limit}}/consumerOverrides/{{name}}?force={{force}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/services/{{service}}/consumerQuotaMetrics/{{metric}}/limits/{{limit}}/consumerOverrides/{{name}}?force={{force}}"))
 	if err != nil {
 		return err
 	}
@@ -344,7 +344,7 @@ func resourceServiceUsageConsumerQuotaOverrideRead(d *schema.ResourceData, meta 
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{ServiceUsageBasePath}}projects/{{project}}/services/{{service}}/consumerQuotaMetrics/{{metric}}/limits/{{limit}}/consumerOverrides/")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/services/{{service}}/consumerQuotaMetrics/{{metric}}/limits/{{limit}}/consumerOverrides/"))
 	if err != nil {
 		return err
 	}
@@ -490,7 +490,7 @@ func resourceServiceUsageConsumerQuotaOverrideUpdate(d *schema.ResourceData, met
 		obj["overrideValue"] = overrideValueProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{ServiceUsageBasePath}}projects/{{project}}/services/{{service}}/consumerQuotaMetrics/{{metric}}/limits/{{limit}}/consumerOverrides/{{name}}?force={{force}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/services/{{service}}/consumerQuotaMetrics/{{metric}}/limits/{{limit}}/consumerOverrides/{{name}}?force={{force}}"))
 	if err != nil {
 		return err
 	}
@@ -545,8 +545,7 @@ func resourceServiceUsageConsumerQuotaOverrideDelete(d *schema.ResourceData, met
 		return fmt.Errorf("Error fetching project for ConsumerQuotaOverride: %s", err)
 	}
 	billingProject = project
-
-	url, err := tpgresource.ReplaceVars(d, config, "{{ServiceUsageBasePath}}projects/{{project}}/services/{{service}}/consumerQuotaMetrics/{{metric}}/limits/{{limit}}/consumerOverrides/{{name}}?force={{force}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/services/{{service}}/consumerQuotaMetrics/{{metric}}/limits/{{limit}}/consumerOverrides/{{name}}?force={{force}}"))
 	if err != nil {
 		return err
 	}

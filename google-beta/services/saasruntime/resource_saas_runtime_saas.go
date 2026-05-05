@@ -286,7 +286,7 @@ func resourceSaasRuntimeSaasCreate(d *schema.ResourceData, meta interface{}) err
 		obj["labels"] = effectiveLabelsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{SaasRuntimeBasePath}}projects/{{project}}/locations/{{location}}/saas?saasId={{saas_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/saas?saasId={{saas_id}}"))
 	if err != nil {
 		return err
 	}
@@ -360,7 +360,7 @@ func resourceSaasRuntimeSaasRead(d *schema.ResourceData, meta interface{}) error
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{SaasRuntimeBasePath}}projects/{{project}}/locations/{{location}}/saas/{{saas_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/saas/{{saas_id}}"))
 	if err != nil {
 		return err
 	}
@@ -484,7 +484,7 @@ func resourceSaasRuntimeSaasUpdate(d *schema.ResourceData, meta interface{}) err
 		obj["labels"] = effectiveLabelsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{SaasRuntimeBasePath}}projects/{{project}}/locations/{{location}}/saas/{{saas_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/saas/{{saas_id}}"))
 	if err != nil {
 		return err
 	}
@@ -554,8 +554,7 @@ func resourceSaasRuntimeSaasDelete(d *schema.ResourceData, meta interface{}) err
 		return fmt.Errorf("Error fetching project for Saas: %s", err)
 	}
 	billingProject = project
-
-	url, err := tpgresource.ReplaceVars(d, config, "{{SaasRuntimeBasePath}}projects/{{project}}/locations/{{location}}/saas/{{saas_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/saas/{{saas_id}}"))
 	if err != nil {
 		return err
 	}

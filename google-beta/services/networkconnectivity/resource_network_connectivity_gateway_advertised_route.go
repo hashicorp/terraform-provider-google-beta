@@ -290,7 +290,7 @@ func resourceNetworkConnectivityGatewayAdvertisedRouteCreate(d *schema.ResourceD
 		obj["labels"] = effectiveLabelsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkConnectivityBasePath}}projects/{{project}}/locations/{{location}}/spokes/{{spoke}}/gatewayAdvertisedRoutes?gatewayAdvertisedRouteId={{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/spokes/{{spoke}}/gatewayAdvertisedRoutes?gatewayAdvertisedRouteId={{name}}"))
 	if err != nil {
 		return err
 	}
@@ -379,7 +379,7 @@ func resourceNetworkConnectivityGatewayAdvertisedRouteRead(d *schema.ResourceDat
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkConnectivityBasePath}}projects/{{project}}/locations/{{location}}/spokes/{{spoke}}/gatewayAdvertisedRoutes/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/spokes/{{spoke}}/gatewayAdvertisedRoutes/{{name}}"))
 	if err != nil {
 		return err
 	}
@@ -508,7 +508,7 @@ func resourceNetworkConnectivityGatewayAdvertisedRouteUpdate(d *schema.ResourceD
 		obj["priority"] = priorityProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkConnectivityBasePath}}projects/{{project}}/locations/{{location}}/spokes/{{spoke}}/gatewayAdvertisedRoutes/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/spokes/{{spoke}}/gatewayAdvertisedRoutes/{{name}}"))
 	if err != nil {
 		return err
 	}
@@ -581,8 +581,7 @@ func resourceNetworkConnectivityGatewayAdvertisedRouteDelete(d *schema.ResourceD
 		return fmt.Errorf("Error fetching project for GatewayAdvertisedRoute: %s", err)
 	}
 	billingProject = project
-
-	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkConnectivityBasePath}}projects/{{project}}/locations/{{location}}/spokes/{{spoke}}/gatewayAdvertisedRoutes/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/spokes/{{spoke}}/gatewayAdvertisedRoutes/{{name}}"))
 	if err != nil {
 		return err
 	}

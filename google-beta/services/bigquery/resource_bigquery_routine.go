@@ -573,7 +573,7 @@ func resourceBigQueryRoutineCreate(d *schema.ResourceData, meta interface{}) err
 		obj["externalRuntimeOptions"] = externalRuntimeOptionsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{BigQueryBasePath}}projects/{{project}}/datasets/{{dataset_id}}/routines")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/datasets/{{dataset_id}}/routines"))
 	if err != nil {
 		return err
 	}
@@ -626,7 +626,7 @@ func resourceBigQueryRoutineRead(d *schema.ResourceData, meta interface{}) error
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{BigQueryBasePath}}projects/{{project}}/datasets/{{dataset_id}}/routines/{{routine_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/datasets/{{dataset_id}}/routines/{{routine_id}}"))
 	if err != nil {
 		return err
 	}
@@ -784,7 +784,7 @@ func resourceBigQueryRoutineUpdate(d *schema.ResourceData, meta interface{}) err
 		obj["externalRuntimeOptions"] = externalRuntimeOptionsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{BigQueryBasePath}}projects/{{project}}/datasets/{{dataset_id}}/routines/{{routine_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/datasets/{{dataset_id}}/routines/{{routine_id}}"))
 	if err != nil {
 		return err
 	}
@@ -831,8 +831,7 @@ func resourceBigQueryRoutineDelete(d *schema.ResourceData, meta interface{}) err
 		return fmt.Errorf("Error fetching project for Routine: %s", err)
 	}
 	billingProject = project
-
-	url, err := tpgresource.ReplaceVars(d, config, "{{BigQueryBasePath}}projects/{{project}}/datasets/{{dataset_id}}/routines/{{routine_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/datasets/{{dataset_id}}/routines/{{routine_id}}"))
 	if err != nil {
 		return err
 	}

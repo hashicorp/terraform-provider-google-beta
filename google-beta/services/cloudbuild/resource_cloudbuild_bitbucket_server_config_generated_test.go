@@ -30,6 +30,7 @@ import (
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/cloudbuild"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
@@ -48,6 +49,7 @@ var (
 	_ = tpgresource.SetLabels
 	_ = transport_tpg.Config{}
 	_ = googleapi.Error{}
+	_ = cloudbuild.Product
 )
 
 func TestAccCloudBuildBitbucketServerConfig_cloudbuildBitbucketServerConfigExample(t *testing.T) {
@@ -194,8 +196,7 @@ func testAccCheckCloudBuildBitbucketServerConfigDestroyProducer(t *testing.T) fu
 			}
 
 			config := acctest.GoogleProviderConfig(t)
-
-			url, err := tpgresource.ReplaceVarsForTest(config, rs, "{{CloudBuildBasePath}}projects/{{project}}/locations/{{location}}/bitbucketServerConfigs/{{config_id}}")
+			url, err := tpgresource.ReplaceVarsForTest(config, rs, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(cloudbuild.Product, config), "projects/{{project}}/locations/{{location}}/bitbucketServerConfigs/{{config_id}}"))
 			if err != nil {
 				return err
 			}

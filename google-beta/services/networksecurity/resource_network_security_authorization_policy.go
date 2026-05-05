@@ -335,7 +335,7 @@ func resourceNetworkSecurityAuthorizationPolicyCreate(d *schema.ResourceData, me
 		obj["labels"] = effectiveLabelsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkSecurityBasePath}}projects/{{project}}/locations/{{location}}/authorizationPolicies?authorizationPolicyId={{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/authorizationPolicies?authorizationPolicyId={{name}}"))
 	if err != nil {
 		return err
 	}
@@ -419,7 +419,7 @@ func resourceNetworkSecurityAuthorizationPolicyRead(d *schema.ResourceData, meta
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkSecurityBasePath}}projects/{{project}}/locations/{{location}}/authorizationPolicies/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/authorizationPolicies/{{name}}"))
 	if err != nil {
 		return err
 	}
@@ -549,7 +549,7 @@ func resourceNetworkSecurityAuthorizationPolicyUpdate(d *schema.ResourceData, me
 		obj["labels"] = effectiveLabelsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkSecurityBasePath}}projects/{{project}}/locations/{{location}}/authorizationPolicies/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/authorizationPolicies/{{name}}"))
 	if err != nil {
 		return err
 	}
@@ -630,8 +630,7 @@ func resourceNetworkSecurityAuthorizationPolicyDelete(d *schema.ResourceData, me
 		return fmt.Errorf("Error fetching project for AuthorizationPolicy: %s", err)
 	}
 	billingProject = project
-
-	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkSecurityBasePath}}projects/{{project}}/locations/{{location}}/authorizationPolicies/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/authorizationPolicies/{{name}}"))
 	if err != nil {
 		return err
 	}

@@ -4765,7 +4765,7 @@ func resourceComputeUrlMapCreate(d *schema.ResourceData, meta interface{}) error
 		obj["defaultRouteAction"] = defaultRouteActionProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/global/urlMaps")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/global/urlMaps"))
 	if err != nil {
 		return err
 	}
@@ -4844,7 +4844,7 @@ func resourceComputeUrlMapRead(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/global/urlMaps/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/global/urlMaps/{{name}}"))
 	if err != nil {
 		return err
 	}
@@ -5005,7 +5005,7 @@ func resourceComputeUrlMapUpdate(d *schema.ResourceData, meta interface{}) error
 		obj["defaultRouteAction"] = defaultRouteActionProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/global/urlMaps/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/global/urlMaps/{{name}}"))
 	if err != nil {
 		return err
 	}
@@ -5060,8 +5060,7 @@ func resourceComputeUrlMapDelete(d *schema.ResourceData, meta interface{}) error
 		return fmt.Errorf("Error fetching project for UrlMap: %s", err)
 	}
 	billingProject = project
-
-	url, err := tpgresource.ReplaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/global/urlMaps/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/global/urlMaps/{{name}}"))
 	if err != nil {
 		return err
 	}

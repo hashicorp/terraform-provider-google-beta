@@ -380,7 +380,7 @@ func resourceNetworkServicesAgentGatewayCreate(d *schema.ResourceData, meta inte
 		obj["labels"] = effectiveLabelsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/{{location}}/agentGateways?agentGatewayId={{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/agentGateways?agentGatewayId={{name}}"))
 	if err != nil {
 		return err
 	}
@@ -464,7 +464,7 @@ func resourceNetworkServicesAgentGatewayRead(d *schema.ResourceData, meta interf
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/{{location}}/agentGateways/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/agentGateways/{{name}}"))
 	if err != nil {
 		return err
 	}
@@ -606,7 +606,7 @@ func resourceNetworkServicesAgentGatewayUpdate(d *schema.ResourceData, meta inte
 		obj["labels"] = effectiveLabelsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/{{location}}/agentGateways/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/agentGateways/{{name}}"))
 	if err != nil {
 		return err
 	}
@@ -695,8 +695,7 @@ func resourceNetworkServicesAgentGatewayDelete(d *schema.ResourceData, meta inte
 		return fmt.Errorf("Error fetching project for AgentGateway: %s", err)
 	}
 	billingProject = project
-
-	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkServicesBasePath}}projects/{{project}}/locations/{{location}}/agentGateways/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/agentGateways/{{name}}"))
 	if err != nil {
 		return err
 	}

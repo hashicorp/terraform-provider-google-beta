@@ -192,7 +192,7 @@ func resourceObservabilityFolderSettingsCreate(d *schema.ResourceData, meta inte
 		obj["kmsKeyName"] = kmsKeyNameProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{ObservabilityBasePath}}folders/{{folder}}/locations/{{location}}/settings")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "folders/{{folder}}/locations/{{location}}/settings"))
 	if err != nil {
 		return err
 	}
@@ -279,7 +279,7 @@ func resourceObservabilityFolderSettingsRead(d *schema.ResourceData, meta interf
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{ObservabilityBasePath}}folders/{{folder}}/locations/{{location}}/settings")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "folders/{{folder}}/locations/{{location}}/settings"))
 	if err != nil {
 		return err
 	}
@@ -371,7 +371,7 @@ func resourceObservabilityFolderSettingsUpdate(d *schema.ResourceData, meta inte
 		obj["kmsKeyName"] = kmsKeyNameProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{ObservabilityBasePath}}folders/{{folder}}/locations/{{location}}/settings")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "folders/{{folder}}/locations/{{location}}/settings"))
 	if err != nil {
 		return err
 	}

@@ -198,7 +198,7 @@ func resourceFirebaseHostingSiteCreate(d *schema.ResourceData, meta interface{})
 		obj["appId"] = appIdProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseHostingBasePath}}projects/{{project}}/sites?siteId={{site_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/sites?siteId={{site_id}}"))
 	if err != nil {
 		return err
 	}
@@ -294,7 +294,7 @@ func resourceFirebaseHostingSiteRead(d *schema.ResourceData, meta interface{}) e
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseHostingBasePath}}projects/{{project}}/sites/{{site_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/sites/{{site_id}}"))
 	if err != nil {
 		return err
 	}
@@ -395,7 +395,7 @@ func resourceFirebaseHostingSiteUpdate(d *schema.ResourceData, meta interface{})
 		obj["appId"] = appIdProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseHostingBasePath}}projects/{{project}}/sites/{{site_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/sites/{{site_id}}"))
 	if err != nil {
 		return err
 	}
@@ -457,8 +457,7 @@ func resourceFirebaseHostingSiteDelete(d *schema.ResourceData, meta interface{})
 		return fmt.Errorf("Error fetching project for Site: %s", err)
 	}
 	billingProject = project
-
-	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseHostingBasePath}}projects/{{project}}/sites/{{site_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/sites/{{site_id}}"))
 	if err != nil {
 		return err
 	}

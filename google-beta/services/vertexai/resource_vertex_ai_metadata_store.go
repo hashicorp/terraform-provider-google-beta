@@ -232,7 +232,7 @@ func resourceVertexAIMetadataStoreCreate(d *schema.ResourceData, meta interface{
 		obj["encryptionSpec"] = encryptionSpecProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{VertexAIBasePath}}projects/{{project}}/locations/{{region}}/metadataStores?metadataStoreId={{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{region}}/metadataStores?metadataStoreId={{name}}"))
 	if err != nil {
 		return err
 	}
@@ -316,7 +316,7 @@ func resourceVertexAIMetadataStoreRead(d *schema.ResourceData, meta interface{})
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{VertexAIBasePath}}projects/{{project}}/locations/{{region}}/metadataStores/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{region}}/metadataStores/{{name}}"))
 	if err != nil {
 		return err
 	}
@@ -399,8 +399,7 @@ func resourceVertexAIMetadataStoreDelete(d *schema.ResourceData, meta interface{
 		return fmt.Errorf("Error fetching project for MetadataStore: %s", err)
 	}
 	billingProject = project
-
-	url, err := tpgresource.ReplaceVars(d, config, "{{VertexAIBasePath}}projects/{{project}}/locations/{{region}}/metadataStores/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{region}}/metadataStores/{{name}}"))
 	if err != nil {
 		return err
 	}

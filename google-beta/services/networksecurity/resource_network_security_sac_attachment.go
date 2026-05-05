@@ -302,7 +302,7 @@ func resourceNetworkSecuritySacAttachmentCreate(d *schema.ResourceData, meta int
 		obj["labels"] = effectiveLabelsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkSecurityBasePath}}projects/{{project}}/locations/{{location}}/sacAttachments?sacAttachmentId={{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/sacAttachments?sacAttachmentId={{name}}"))
 	if err != nil {
 		return err
 	}
@@ -386,7 +386,7 @@ func resourceNetworkSecuritySacAttachmentRead(d *schema.ResourceData, meta inter
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkSecurityBasePath}}projects/{{project}}/locations/{{location}}/sacAttachments/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/sacAttachments/{{name}}"))
 	if err != nil {
 		return err
 	}
@@ -474,8 +474,7 @@ func resourceNetworkSecuritySacAttachmentDelete(d *schema.ResourceData, meta int
 		return fmt.Errorf("Error fetching project for SacAttachment: %s", err)
 	}
 	billingProject = project
-
-	url, err := tpgresource.ReplaceVars(d, config, "{{NetworkSecurityBasePath}}projects/{{project}}/locations/{{location}}/sacAttachments/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/sacAttachments/{{name}}"))
 	if err != nil {
 		return err
 	}

@@ -30,6 +30,7 @@ import (
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/bigqueryconnection"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
@@ -48,6 +49,7 @@ var (
 	_ = tpgresource.SetLabels
 	_ = transport_tpg.Config{}
 	_ = googleapi.Error{}
+	_ = bigqueryconnection.Product
 )
 
 func TestAccBigqueryConnectionConnection_bigqueryConnectionCloudResourceExample(t *testing.T) {
@@ -786,8 +788,7 @@ func testAccCheckBigqueryConnectionConnectionDestroyProducer(t *testing.T) func(
 			}
 
 			config := acctest.GoogleProviderConfig(t)
-
-			url, err := tpgresource.ReplaceVarsForTest(config, rs, "{{BigqueryConnectionBasePath}}projects/{{project}}/locations/{{location}}/connections/{{connection_id}}")
+			url, err := tpgresource.ReplaceVarsForTest(config, rs, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(bigqueryconnection.Product, config), "projects/{{project}}/locations/{{location}}/connections/{{connection_id}}"))
 			if err != nil {
 				return err
 			}

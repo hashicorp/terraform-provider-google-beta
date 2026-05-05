@@ -30,6 +30,7 @@ import (
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/redis"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
@@ -48,6 +49,7 @@ var (
 	_ = tpgresource.SetLabels
 	_ = transport_tpg.Config{}
 	_ = googleapi.Error{}
+	_ = redis.Product
 )
 
 func TestAccRedisCluster_redisClusterHaWithLabelsExample(t *testing.T) {
@@ -996,8 +998,7 @@ func testAccCheckRedisClusterDestroyProducer(t *testing.T) func(s *terraform.Sta
 			}
 
 			config := acctest.GoogleProviderConfig(t)
-
-			url, err := tpgresource.ReplaceVarsForTest(config, rs, "{{RedisBasePath}}projects/{{project}}/locations/{{region}}/clusters/{{name}}")
+			url, err := tpgresource.ReplaceVarsForTest(config, rs, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(redis.Product, config), "projects/{{project}}/locations/{{region}}/clusters/{{name}}"))
 			if err != nil {
 				return err
 			}

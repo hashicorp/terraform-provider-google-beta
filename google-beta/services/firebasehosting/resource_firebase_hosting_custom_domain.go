@@ -658,7 +658,7 @@ func resourceFirebaseHostingCustomDomainCreate(d *schema.ResourceData, meta inte
 		obj["redirectTarget"] = redirectTargetProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseHostingBasePath}}projects/{{project}}/sites/{{site_id}}/customDomains?customDomainId={{custom_domain}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/sites/{{site_id}}/customDomains?customDomainId={{custom_domain}}"))
 	if err != nil {
 		return err
 	}
@@ -747,7 +747,7 @@ func resourceFirebaseHostingCustomDomainRead(d *schema.ResourceData, meta interf
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseHostingBasePath}}projects/{{project}}/sites/{{site_id}}/customDomains/{{custom_domain}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/sites/{{site_id}}/customDomains/{{custom_domain}}"))
 	if err != nil {
 		return err
 	}
@@ -877,7 +877,7 @@ func resourceFirebaseHostingCustomDomainUpdate(d *schema.ResourceData, meta inte
 		obj["redirectTarget"] = redirectTargetProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseHostingBasePath}}projects/{{project}}/sites/{{site_id}}/customDomains/{{custom_domain}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/sites/{{site_id}}/customDomains/{{custom_domain}}"))
 	if err != nil {
 		return err
 	}
@@ -954,8 +954,7 @@ func resourceFirebaseHostingCustomDomainDelete(d *schema.ResourceData, meta inte
 		return fmt.Errorf("Error fetching project for CustomDomain: %s", err)
 	}
 	billingProject = project
-
-	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseHostingBasePath}}projects/{{project}}/sites/{{site_id}}/customDomains/{{custom_domain}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/sites/{{site_id}}/customDomains/{{custom_domain}}"))
 	if err != nil {
 		return err
 	}

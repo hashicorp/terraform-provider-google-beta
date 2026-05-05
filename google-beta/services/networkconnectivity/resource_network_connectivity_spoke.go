@@ -638,7 +638,7 @@ func resourceNetworkConnectivitySpokeCreate(d *schema.ResourceData, meta interfa
 		obj["labels"] = effectiveLabelsProp
 	}
 
-	url, err := tpgresource.ReplaceVarsForId(d, config, "{{NetworkConnectivityBasePath}}projects/{{project}}/locations/{{location}}/spokes?spokeId={{name}}")
+	url, err := tpgresource.ReplaceVarsForId(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/spokes?spokeId={{name}}"))
 	if err != nil {
 		return err
 	}
@@ -722,7 +722,7 @@ func resourceNetworkConnectivitySpokeRead(d *schema.ResourceData, meta interface
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVarsForId(d, config, "{{NetworkConnectivityBasePath}}projects/{{project}}/locations/{{location}}/spokes/{{name}}")
+	url, err := tpgresource.ReplaceVarsForId(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/spokes/{{name}}"))
 	if err != nil {
 		return err
 	}
@@ -864,7 +864,7 @@ func resourceNetworkConnectivitySpokeUpdate(d *schema.ResourceData, meta interfa
 		obj["labels"] = effectiveLabelsProp
 	}
 
-	url, err := tpgresource.ReplaceVarsForId(d, config, "{{NetworkConnectivityBasePath}}projects/{{project}}/locations/{{location}}/spokes/{{name}}")
+	url, err := tpgresource.ReplaceVarsForId(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/spokes/{{name}}"))
 	if err != nil {
 		return err
 	}
@@ -964,8 +964,7 @@ func resourceNetworkConnectivitySpokeDelete(d *schema.ResourceData, meta interfa
 		return fmt.Errorf("Error fetching project for Spoke: %s", err)
 	}
 	billingProject = strings.TrimPrefix(project, "projects/")
-
-	url, err := tpgresource.ReplaceVarsForId(d, config, "{{NetworkConnectivityBasePath}}projects/{{project}}/locations/{{location}}/spokes/{{name}}")
+	url, err := tpgresource.ReplaceVarsForId(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/spokes/{{name}}"))
 	if err != nil {
 		return err
 	}

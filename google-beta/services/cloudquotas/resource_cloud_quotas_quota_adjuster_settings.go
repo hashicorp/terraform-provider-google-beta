@@ -188,7 +188,7 @@ func resourceCloudQuotasQuotaAdjusterSettingsCreate(d *schema.ResourceData, meta
 		obj["enablement"] = enablementProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{CloudQuotasBasePath}}{{parent}}/locations/global/quotaAdjusterSettings")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "{{parent}}/locations/global/quotaAdjusterSettings"))
 	if err != nil {
 		return err
 	}
@@ -246,7 +246,7 @@ func resourceCloudQuotasQuotaAdjusterSettingsRead(d *schema.ResourceData, meta i
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{CloudQuotasBasePath}}{{parent}}/locations/global/quotaAdjusterSettings")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "{{parent}}/locations/global/quotaAdjusterSettings"))
 	if err != nil {
 		return err
 	}
@@ -320,7 +320,7 @@ func resourceCloudQuotasQuotaAdjusterSettingsUpdate(d *schema.ResourceData, meta
 		obj["enablement"] = enablementProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{CloudQuotasBasePath}}{{parent}}/locations/global/quotaAdjusterSettings")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "{{parent}}/locations/global/quotaAdjusterSettings"))
 	if err != nil {
 		return err
 	}

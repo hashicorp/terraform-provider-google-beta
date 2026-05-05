@@ -358,7 +358,7 @@ func resourcePrivilegedAccessManagerSettingsRead(d *schema.ResourceData, meta in
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{PrivilegedAccessManagerBasePath}}{{parent}}/locations/{{location}}/settings")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "{{parent}}/locations/{{location}}/settings"))
 	if err != nil {
 		return err
 	}
@@ -455,7 +455,7 @@ func resourcePrivilegedAccessManagerSettingsUpdate(d *schema.ResourceData, meta 
 		obj["emailNotificationSettings"] = emailNotificationSettingsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{PrivilegedAccessManagerBasePath}}{{parent}}/locations/{{location}}/settings")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "{{parent}}/locations/{{location}}/settings"))
 	if err != nil {
 		return err
 	}

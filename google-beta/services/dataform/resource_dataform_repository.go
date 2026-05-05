@@ -351,7 +351,7 @@ func resourceDataformRepositoryCreate(d *schema.ResourceData, meta interface{}) 
 		obj["labels"] = effectiveLabelsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{DataformBasePath}}projects/{{project}}/locations/{{region}}/repositories?repositoryId={{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{region}}/repositories?repositoryId={{name}}"))
 	if err != nil {
 		return err
 	}
@@ -425,7 +425,7 @@ func resourceDataformRepositoryRead(d *schema.ResourceData, meta interface{}) er
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{DataformBasePath}}projects/{{project}}/locations/{{region}}/repositories/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{region}}/repositories/{{name}}"))
 	if err != nil {
 		return err
 	}
@@ -579,7 +579,7 @@ func resourceDataformRepositoryUpdate(d *schema.ResourceData, meta interface{}) 
 		obj["labels"] = effectiveLabelsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{DataformBasePath}}projects/{{project}}/locations/{{region}}/repositories/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{region}}/repositories/{{name}}"))
 	if err != nil {
 		return err
 	}
@@ -626,8 +626,7 @@ func resourceDataformRepositoryDelete(d *schema.ResourceData, meta interface{}) 
 		return fmt.Errorf("Error fetching project for Repository: %s", err)
 	}
 	billingProject = project
-
-	url, err := tpgresource.ReplaceVars(d, config, "{{DataformBasePath}}projects/{{project}}/locations/{{region}}/repositories/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{region}}/repositories/{{name}}"))
 	if err != nil {
 		return err
 	}

@@ -364,7 +364,7 @@ func resourceComputeNetworkFirewallPolicyPacketMirroringRuleCreate(d *schema.Res
 		obj["disabled"] = disabledProp
 	}
 
-	url, err := tpgresource.ReplaceVarsForId(d, config, "{{ComputeBasePath}}projects/{{project}}/global/firewallPolicies/{{firewall_policy}}/addPacketMirroringRule")
+	url, err := tpgresource.ReplaceVarsForId(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/global/firewallPolicies/{{firewall_policy}}/addPacketMirroringRule"))
 	if err != nil {
 		return err
 	}
@@ -449,7 +449,7 @@ func resourceComputeNetworkFirewallPolicyPacketMirroringRuleRead(d *schema.Resou
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVarsForId(d, config, "{{ComputeBasePath}}projects/{{project}}/global/firewallPolicies/{{firewall_policy}}/getPacketMirroringRule?priority={{priority}}")
+	url, err := tpgresource.ReplaceVarsForId(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/global/firewallPolicies/{{firewall_policy}}/getPacketMirroringRule?priority={{priority}}"))
 	if err != nil {
 		return err
 	}
@@ -616,7 +616,7 @@ func resourceComputeNetworkFirewallPolicyPacketMirroringRuleUpdate(d *schema.Res
 		obj["disabled"] = disabledProp
 	}
 
-	url, err := tpgresource.ReplaceVarsForId(d, config, "{{ComputeBasePath}}projects/{{project}}/global/firewallPolicies/{{firewall_policy}}/patchPacketMirroringRule?priority={{priority}}")
+	url, err := tpgresource.ReplaceVarsForId(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/global/firewallPolicies/{{firewall_policy}}/patchPacketMirroringRule?priority={{priority}}"))
 	if err != nil {
 		return err
 	}
@@ -671,8 +671,7 @@ func resourceComputeNetworkFirewallPolicyPacketMirroringRuleDelete(d *schema.Res
 		return fmt.Errorf("Error fetching project for NetworkFirewallPolicyPacketMirroringRule: %s", err)
 	}
 	billingProject = strings.TrimPrefix(project, "projects/")
-
-	url, err := tpgresource.ReplaceVarsForId(d, config, "{{ComputeBasePath}}projects/{{project}}/global/firewallPolicies/{{firewall_policy}}/removePacketMirroringRule?priority={{priority}}")
+	url, err := tpgresource.ReplaceVarsForId(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/global/firewallPolicies/{{firewall_policy}}/removePacketMirroringRule?priority={{priority}}"))
 	if err != nil {
 		return err
 	}

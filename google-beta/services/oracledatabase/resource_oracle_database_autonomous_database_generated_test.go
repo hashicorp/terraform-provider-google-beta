@@ -30,6 +30,7 @@ import (
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/oracledatabase"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
@@ -48,6 +49,7 @@ var (
 	_ = tpgresource.SetLabels
 	_ = transport_tpg.Config{}
 	_ = googleapi.Error{}
+	_ = oracledatabase.Product
 )
 
 func TestAccOracleDatabaseAutonomousDatabase_oracledatabaseAutonomousDatabaseBasicExample(t *testing.T) {
@@ -400,8 +402,7 @@ func testAccCheckOracleDatabaseAutonomousDatabaseDestroyProducer(t *testing.T) f
 			}
 
 			config := acctest.GoogleProviderConfig(t)
-
-			url, err := tpgresource.ReplaceVarsForTest(config, rs, "{{OracleDatabaseBasePath}}projects/{{project}}/locations/{{location}}/autonomousDatabases/{{autonomous_database_id}}")
+			url, err := tpgresource.ReplaceVarsForTest(config, rs, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(oracledatabase.Product, config), "projects/{{project}}/locations/{{location}}/autonomousDatabases/{{autonomous_database_id}}"))
 			if err != nil {
 				return err
 			}

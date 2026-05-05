@@ -189,7 +189,7 @@ func resourceFirebaseProjectCreate(d *schema.ResourceData, meta interface{}) err
 
 	obj := make(map[string]interface{})
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseBasePath}}projects/{{project}}:addFirebase")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}:addFirebase"))
 	if err != nil {
 		return err
 	}
@@ -274,7 +274,7 @@ func resourceFirebaseProjectRead(d *schema.ResourceData, meta interface{}) error
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseBasePath}}projects/{{project}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}"))
 	if err != nil {
 		return err
 	}

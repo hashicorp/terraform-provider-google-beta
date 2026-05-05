@@ -30,6 +30,7 @@ import (
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/cloudrunv2"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
@@ -48,6 +49,7 @@ var (
 	_ = tpgresource.SetLabels
 	_ = transport_tpg.Config{}
 	_ = googleapi.Error{}
+	_ = cloudrunv2.Product
 )
 
 func TestAccCloudRunV2Job_cloudrunv2JobBasicExample(t *testing.T) {
@@ -821,8 +823,7 @@ func testAccCheckCloudRunV2JobDestroyProducer(t *testing.T) func(s *terraform.St
 			}
 
 			config := acctest.GoogleProviderConfig(t)
-
-			url, err := tpgresource.ReplaceVarsForTest(config, rs, "{{CloudRunV2BasePath}}projects/{{project}}/locations/{{location}}/jobs/{{name}}")
+			url, err := tpgresource.ReplaceVarsForTest(config, rs, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(cloudrunv2.Product, config), "projects/{{project}}/locations/{{location}}/jobs/{{name}}"))
 			if err != nil {
 				return err
 			}

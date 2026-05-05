@@ -166,7 +166,7 @@ func resourceFirebaseStorageBucketCreate(d *schema.ResourceData, meta interface{
 
 	obj := make(map[string]interface{})
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseStorageBasePath}}projects/{{project}}/buckets/{{bucket_id}}:addFirebase")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/buckets/{{bucket_id}}:addFirebase"))
 	if err != nil {
 		return err
 	}
@@ -235,7 +235,7 @@ func resourceFirebaseStorageBucketRead(d *schema.ResourceData, meta interface{})
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseStorageBasePath}}projects/{{project}}/buckets/{{bucket_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/buckets/{{bucket_id}}"))
 	if err != nil {
 		return err
 	}
@@ -312,8 +312,7 @@ func resourceFirebaseStorageBucketDelete(d *schema.ResourceData, meta interface{
 		return fmt.Errorf("Error fetching project for Bucket: %s", err)
 	}
 	billingProject = project
-
-	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseStorageBasePath}}projects/{{project}}/buckets/{{bucket_id}}:removeFirebase")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/buckets/{{bucket_id}}:removeFirebase"))
 	if err != nil {
 		return err
 	}

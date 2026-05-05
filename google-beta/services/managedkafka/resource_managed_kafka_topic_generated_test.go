@@ -30,6 +30,7 @@ import (
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/managedkafka"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
@@ -48,6 +49,7 @@ var (
 	_ = tpgresource.SetLabels
 	_ = transport_tpg.Config{}
 	_ = googleapi.Error{}
+	_ = managedkafka.Product
 )
 
 func TestAccManagedKafkaTopic_managedkafkaTopicBasicExample(t *testing.T) {
@@ -130,8 +132,7 @@ func testAccCheckManagedKafkaTopicDestroyProducer(t *testing.T) func(s *terrafor
 			}
 
 			config := acctest.GoogleProviderConfig(t)
-
-			url, err := tpgresource.ReplaceVarsForTest(config, rs, "{{ManagedKafkaBasePath}}projects/{{project}}/locations/{{location}}/clusters/{{cluster}}/topics/{{topic_id}}")
+			url, err := tpgresource.ReplaceVarsForTest(config, rs, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(managedkafka.Product, config), "projects/{{project}}/locations/{{location}}/clusters/{{cluster}}/topics/{{topic_id}}"))
 			if err != nil {
 				return err
 			}

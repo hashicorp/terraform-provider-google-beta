@@ -192,7 +192,7 @@ func resourceObservabilityOrganizationSettingsCreate(d *schema.ResourceData, met
 		obj["kmsKeyName"] = kmsKeyNameProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{ObservabilityBasePath}}organizations/{{organization}}/locations/{{location}}/settings")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "organizations/{{organization}}/locations/{{location}}/settings"))
 	if err != nil {
 		return err
 	}
@@ -279,7 +279,7 @@ func resourceObservabilityOrganizationSettingsRead(d *schema.ResourceData, meta 
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{ObservabilityBasePath}}organizations/{{organization}}/locations/{{location}}/settings")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "organizations/{{organization}}/locations/{{location}}/settings"))
 	if err != nil {
 		return err
 	}
@@ -371,7 +371,7 @@ func resourceObservabilityOrganizationSettingsUpdate(d *schema.ResourceData, met
 		obj["kmsKeyName"] = kmsKeyNameProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{ObservabilityBasePath}}organizations/{{organization}}/locations/{{location}}/settings")
+	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "organizations/{{organization}}/locations/{{location}}/settings"))
 	if err != nil {
 		return err
 	}
