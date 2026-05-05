@@ -2,7 +2,7 @@
 
 NOTES:
 * compute: migrated `google_compute_instance.network_interface` field to use direct HTTP rather than a client library ([#12074](https://github.com/hashicorp/terraform-provider-google-beta/pull/12074))
-* compute: migrated `data_source_google_compute_image` datasource to use direct HTTP rather then a client library ([#12103](https://github.com/hashicorp/terraform-provider-google-beta/pull/12103))
+* compute: migrated `google_compute_image` datasource to use direct HTTP rather then a client library ([#12103](https://github.com/hashicorp/terraform-provider-google-beta/pull/12103))
 * compute: migrated `partner_metadata` field on `google_compute_instance`, `google_compute_instance_template`, and `google_compute_region_instance_template` to use direct HTTP rather than a client library ([#12090](https://github.com/hashicorp/terraform-provider-google-beta/pull/12090))
 * compute: migrated `google_compute_node_types` data source to use direct HTTP rather than a client library ([#12108](https://github.com/hashicorp/terraform-provider-google-beta/pull/12108))
 * compute: migrated `google_compute_region_instance_group` data source to use direct HTTP rather than a client library ([#12102](https://github.com/hashicorp/terraform-provider-google-beta/pull/12102))
