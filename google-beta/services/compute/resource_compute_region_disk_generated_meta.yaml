@@ -25,6 +25,8 @@ fields:
       provider_only: true
     - api_field: eraseWindowsVssSignature
     - api_field: guestOsFeatures.type
+    - api_field: sourceImage
+      field: image
     - field: interface
       provider_only: true
     - api_field: labelFingerprint
@@ -44,6 +46,12 @@ fields:
       field: snapshot
     - api_field: sourceDisk
     - api_field: sourceDiskId
+    - api_field: sourceImageEncryptionKey.kmsKeyName
+    - api_field: sourceImageEncryptionKey.kmsKeyServiceAccount
+    - api_field: sourceImageEncryptionKey.rawKey
+    - api_field: sourceImageEncryptionKey.rsaEncryptedKey
+    - api_field: sourceImageEncryptionKey.sha256
+    - api_field: sourceImageId
     - api_field: sourceSnapshotEncryptionKey.kmsKeyName
     - api_field: sourceSnapshotEncryptionKey.rawKey
     - api_field: sourceSnapshotEncryptionKey.sha256
