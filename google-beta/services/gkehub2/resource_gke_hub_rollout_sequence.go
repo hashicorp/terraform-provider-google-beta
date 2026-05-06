@@ -184,6 +184,45 @@ evaluates resource.labels.`,
 					},
 				},
 			},
+			"auto_upgrade_config": {
+				Type:     schema.TypeList,
+				Optional: true,
+				Description: `Configuration for automatic upgrades.
+If not specified, the system applies default behavior.`,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"rollout_creation_scope": {
+							Type:     schema.TypeList,
+							Optional: true,
+							Description: `Specifies the scope of automation for the creation of rollouts.
+Represents the types of rollouts (version upgrades) the sequence should
+initiate automatically.
+If this field is not specified, it defaults to all types.
+If this field is specified, but the nested upgradeTypes field is empty,
+most automatic rollouts are disabled for this sequence.
+Exceptions are rollouts enforcing our security policies (e.g. such as
+end-of-support and outdated control plane patch enforcements).
+These policy enforcements cannot be disabled.`,
+							MaxItems: 1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"upgrade_types": {
+										Type:     schema.TypeSet,
+										Optional: true,
+										Description: `The list of enabled upgrade types.
+Current valid values are 'CONTROL_PLANE_MINOR', 'CONTROL_PLANE_PATCH', 'NODE_MINOR', and 'NODE_PATCH'.`,
+										Elem: &schema.Schema{
+											Type: schema.TypeString,
+										},
+										Set: schema.HashString,
+									},
+								},
+							},
+						},
+					},
+				},
+			},
 			"display_name": {
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -294,6 +333,12 @@ func resourceGKEHub2RolloutSequenceCreate(d *schema.ResourceData, meta interface
 		return err
 	} else if v, ok := d.GetOkExists("stages"); !tpgresource.IsEmptyValue(reflect.ValueOf(stagesProp)) && (ok || !reflect.DeepEqual(v, stagesProp)) {
 		obj["stages"] = stagesProp
+	}
+	autoUpgradeConfigProp, err := expandGKEHub2RolloutSequenceAutoUpgradeConfig(d.Get("auto_upgrade_config"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("auto_upgrade_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(autoUpgradeConfigProp)) && (ok || !reflect.DeepEqual(v, autoUpgradeConfigProp)) {
+		obj["autoUpgradeConfig"] = autoUpgradeConfigProp
 	}
 	effectiveLabelsProp, err := expandGKEHub2RolloutSequenceEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
@@ -493,6 +538,12 @@ func resourceGKEHub2RolloutSequenceUpdate(d *schema.ResourceData, meta interface
 	} else if v, ok := d.GetOkExists("stages"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, stagesProp)) {
 		obj["stages"] = stagesProp
 	}
+	autoUpgradeConfigProp, err := expandGKEHub2RolloutSequenceAutoUpgradeConfig(d.Get("auto_upgrade_config"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("auto_upgrade_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, autoUpgradeConfigProp)) {
+		obj["autoUpgradeConfig"] = autoUpgradeConfigProp
+	}
 	effectiveLabelsProp, err := expandGKEHub2RolloutSequenceEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
@@ -519,6 +570,10 @@ func resourceGKEHub2RolloutSequenceUpdate(d *schema.ResourceData, meta interface
 
 	if d.HasChange("stages") {
 		updateMask = append(updateMask, "stages")
+	}
+
+	if d.HasChange("auto_upgrade_config") {
+		updateMask = append(updateMask, "autoUpgradeConfig")
 	}
 
 	if d.HasChange("effective_labels") {
@@ -747,6 +802,39 @@ func flattenGKEHub2RolloutSequenceStagesSoakDuration(v interface{}, d *schema.Re
 	return v
 }
 
+func flattenGKEHub2RolloutSequenceAutoUpgradeConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["rollout_creation_scope"] =
+		flattenGKEHub2RolloutSequenceAutoUpgradeConfigRolloutCreationScope(original["rolloutCreationScope"], d, config)
+	return []interface{}{transformed}
+}
+func flattenGKEHub2RolloutSequenceAutoUpgradeConfigRolloutCreationScope(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["upgrade_types"] =
+		flattenGKEHub2RolloutSequenceAutoUpgradeConfigRolloutCreationScopeUpgradeTypes(original["upgradeTypes"], d, config)
+	return []interface{}{transformed}
+}
+func flattenGKEHub2RolloutSequenceAutoUpgradeConfigRolloutCreationScopeUpgradeTypes(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+	return schema.NewSet(schema.HashString, v.([]interface{}))
+}
+
 func flattenGKEHub2RolloutSequenceTerraformLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
@@ -869,6 +957,55 @@ func expandGKEHub2RolloutSequenceStagesSoakDuration(v interface{}, d tpgresource
 	return v, nil
 }
 
+func expandGKEHub2RolloutSequenceAutoUpgradeConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedRolloutCreationScope, err := expandGKEHub2RolloutSequenceAutoUpgradeConfigRolloutCreationScope(original["rollout_creation_scope"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedRolloutCreationScope); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["rolloutCreationScope"] = transformedRolloutCreationScope
+	}
+
+	return transformed, nil
+}
+
+func expandGKEHub2RolloutSequenceAutoUpgradeConfigRolloutCreationScope(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedUpgradeTypes, err := expandGKEHub2RolloutSequenceAutoUpgradeConfigRolloutCreationScopeUpgradeTypes(original["upgrade_types"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedUpgradeTypes); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["upgradeTypes"] = transformedUpgradeTypes
+	}
+
+	return transformed, nil
+}
+
+func expandGKEHub2RolloutSequenceAutoUpgradeConfigRolloutCreationScopeUpgradeTypes(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	v = v.(*schema.Set).List()
+	return v, nil
+}
+
 func expandGKEHub2RolloutSequenceEffectiveLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
@@ -911,6 +1048,9 @@ func ResourceGKEHub2RolloutSequenceFlatten(d *schema.ResourceData, meta interfac
 		return fmt.Errorf("Error reading RolloutSequence: %s", err)
 	}
 	if err = d.Set("stages", flattenGKEHub2RolloutSequenceStages(res["stages"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RolloutSequence: %s", err)
+	}
+	if err = d.Set("auto_upgrade_config", flattenGKEHub2RolloutSequenceAutoUpgradeConfig(res["autoUpgradeConfig"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RolloutSequence: %s", err)
 	}
 	if err = d.Set("terraform_labels", flattenGKEHub2RolloutSequenceTerraformLabels(res["labels"], d, config)); err != nil {

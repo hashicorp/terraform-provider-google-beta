@@ -103,6 +103,16 @@ resource "google_gke_hub_rollout_sequence" "rollout_sequence" {
     fleet_projects = ["projects/%{project_id}"]
     soak_duration  = "60s"
   }
+  auto_upgrade_config {
+    rollout_creation_scope {
+      upgrade_types = [
+        "CONTROL_PLANE_MINOR",
+        "CONTROL_PLANE_PATCH",
+        "NODE_MINOR",
+        "NODE_PATCH"
+      ]
+    }
+  }
 }
 `, context)
 }
@@ -126,6 +136,14 @@ resource "google_gke_hub_rollout_sequence" "rollout_sequence" {
   stages {
         fleet_projects = ["projects/%{project_id}"]
         soak_duration  = "60s"
+  }
+  auto_upgrade_config {
+    rollout_creation_scope {
+      upgrade_types = [
+        "CONTROL_PLANE_PATCH",
+        "NODE_PATCH"
+      ]
+    }
   }
   labels = {
     some_key = "some_value"
