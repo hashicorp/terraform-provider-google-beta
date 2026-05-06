@@ -116,6 +116,7 @@ var (
 		"boot_disk.0.initialize_params.0.storage_pool",
 		"boot_disk.0.initialize_params.0.resource_policies",
 		"boot_disk.0.initialize_params.0.architecture",
+		"boot_disk.0.initialize_params.0.replica_zones",
 	}
 
 	schedulingKeys = []string{
@@ -559,6 +560,18 @@ func ResourceComputeInstance() *schema.Resource {
 										AtLeastOneOf: initializeParamsKeys,
 										ValidateFunc: validation.StringInSlice([]string{"X86_64", "ARM64"}, false),
 										Description:  `The architecture of the disk. One of "X86_64" or "ARM64".`,
+									},
+
+									"replica_zones": {
+										Type:         schema.TypeList,
+										Optional:     true,
+										ForceNew:     true,
+										AtLeastOneOf: initializeParamsKeys,
+										Description:  `A list of short names or self_links of zones in which to create a regional disk.`,
+										Elem: &schema.Schema{
+											Type:             schema.TypeString,
+											DiffSuppressFunc: tpgresource.CompareSelfLinkOrResourceName,
+										},
 									},
 								},
 							},
@@ -1715,12 +1728,26 @@ func getInstance(config *transport_tpg.Config, d *schema.ResourceData) (*compute
 }
 
 func getDisk(diskUri string, d *schema.ResourceData, config *transport_tpg.Config) (*compute.Disk, error) {
-	source, err := tpgresource.ParseDiskFieldValue(diskUri, d, config)
+	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
 		return nil, err
 	}
 
-	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
+	if strings.Contains(diskUri, "regions/") {
+		source, err := tpgresource.ParseRegionDiskFieldValue(diskUri, d, config)
+		if err != nil {
+			return nil, err
+		}
+
+		disk, err := NewClient(config, userAgent).RegionDisks.Get(source.Project, source.Region, source.Name).Do()
+		if err != nil {
+			return nil, err
+		}
+
+		return disk, err
+	}
+
+	source, err := tpgresource.ParseDiskFieldValue(diskUri, d, config)
 	if err != nil {
 		return nil, err
 	}
@@ -2843,13 +2870,9 @@ func resourceComputeInstanceUpdate(d *schema.ResourceData, meta interface{}) err
 	}
 
 	if d.HasChange("boot_disk") {
-		//default behavior for the disk is to have the same name as the instance
-		diskName := instance.Name
-		if v := tpgresource.GetResourceNameFromSelfLink(d.Get("boot_disk.0.source").(string)); v != diskName {
-			diskName = v
-		}
+		diskUri := d.Get("boot_disk.0.source").(string)
 
-		disk, err := NewClient(config, userAgent).Disks.Get(project, zone, diskName).Do()
+		disk, err := getDisk(diskUri, d, config)
 		if err != nil {
 			return fmt.Errorf("Error getting boot disk: %s", err)
 		}
@@ -2857,10 +2880,19 @@ func resourceComputeInstanceUpdate(d *schema.ResourceData, meta interface{}) err
 		obj := make(map[string]interface{})
 
 		if d.HasChange("boot_disk.0.initialize_params") {
+			var locationType, location string
+			if disk.Region != "" {
+				locationType = "regions"
+				location = tpgresource.GetResourceNameFromSelfLink(disk.Region)
+			} else {
+				locationType = "zones"
+				location = tpgresource.GetResourceNameFromSelfLink(disk.Zone)
+			}
+			urlBase := fmt.Sprintf("{{ComputeBasePath}}projects/%s/%s/%s/disks/%s", project, locationType, location, disk.Name)
+
 			if d.HasChange("boot_disk.0.initialize_params.0.size") {
 				obj["sizeGb"] = d.Get("boot_disk.0.initialize_params.0.size").(int)
-				url := "{{ComputeBasePath}}projects/{{project}}/zones/{{zone}}/disks/{{name}}/resize"
-				err := updateDisk(d, config, userAgent, project, url, obj)
+				err := updateDisk(d, config, userAgent, project, urlBase+"/resize", obj)
 				if err != nil {
 					return err
 				}
@@ -2868,8 +2900,7 @@ func resourceComputeInstanceUpdate(d *schema.ResourceData, meta interface{}) err
 			if d.HasChange("boot_disk.0.initialize_params.0.labels") {
 				obj["labels"] = tpgresource.ConvertStringMap(d.Get("boot_disk.0.initialize_params.0.labels").(map[string]interface{}))
 				obj["labelFingerprint"] = disk.LabelFingerprint
-				url := "{{ComputeBasePath}}projects/{{project}}/zones/{{zone}}/disks/{{name}}/setLabels"
-				err := updateDisk(d, config, userAgent, project, url, obj)
+				err := updateDisk(d, config, userAgent, project, urlBase+"/setLabels", obj)
 				if err != nil {
 					return err
 				}
@@ -3758,6 +3789,19 @@ func expandBootDisk(d *schema.ResourceData, config *transport_tpg.Config, projec
 		if v, ok := d.GetOk("boot_disk.0.initialize_params.0.architecture"); ok {
 			disk.InitializeParams.Architecture = v.(string)
 		}
+
+		if v, ok := d.GetOk("boot_disk.0.initialize_params.0.replica_zones"); ok {
+			replicaZones := []string{}
+			for _, zone := range v.([]interface{}) {
+				zoneStr := zone.(string)
+				if !strings.Contains(zoneStr, "/") {
+					project, _ := tpgresource.GetProject(d, config)
+					zoneStr = fmt.Sprintf("projects/%s/zones/%s", project, zoneStr)
+				}
+				replicaZones = append(replicaZones, zoneStr)
+			}
+			disk.InitializeParams.ReplicaZones = replicaZones
+		}
 	}
 
 	if v, ok := d.GetOk("boot_disk.0.mode"); ok {
@@ -3826,6 +3870,7 @@ func flattenBootDisk(d *schema.ResourceData, disk *compute.AttachedDisk, config 
 			"provisioned_throughput":         diskDetails.ProvisionedThroughput,
 			"enable_confidential_compute":    diskDetails.EnableConfidentialCompute,
 			"storage_pool":                   tpgresource.GetResourceNameFromSelfLink(diskDetails.StoragePool),
+			"replica_zones":                  flattenReplicaZones(diskDetails.ReplicaZones),
 		}}
 	}
 
@@ -3877,6 +3922,14 @@ func flattenScratchDisk(disk *compute.AttachedDisk) map[string]interface{} {
 		"size":        disk.DiskSizeGb,
 	}
 	return result
+}
+
+func flattenReplicaZones(zones []string) []interface{} {
+	rzs := make([]interface{}, len(zones))
+	for i, z := range zones {
+		rzs[i] = tpgresource.GetResourceNameFromSelfLink(z)
+	}
+	return rzs
 }
 
 func expandStoragePool(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
