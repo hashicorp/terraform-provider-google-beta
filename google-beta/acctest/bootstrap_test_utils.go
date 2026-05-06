@@ -27,16 +27,17 @@ import (
 	"testing"
 	"time"
 
-	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/kms"
-	tpgservicusage "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/serviceusage"
-	resourceManagerV3 "google.golang.org/api/cloudresourcemanager/v3"
-
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/activedirectory"
 	backupdr_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/backupdr"
 	tpgcloudbilling "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/cloudbilling"
 	tpgcompute "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/compute"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/developerconnect"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/gemini"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/iambeta"
 	tpgiamcredentials "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/iamcredentials"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/integrations"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/kms"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/privateca"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager"
 	rmClient "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager/client"
@@ -48,6 +49,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgiamresource"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
+	resourceManagerV3 "google.golang.org/api/cloudresourcemanager/v3"
 
 	"cloud.google.com/go/bigquery"
 	backupdr "google.golang.org/api/backupdr/v1"
@@ -245,7 +247,7 @@ func GenerateCloudKmsServiceIdentity(config *transport_tpg.Config, projectNum st
 	}
 
 	var opRes map[string]interface{}
-	err = tpgservicusage.ServiceUsageOperationWaitTimeWithResponse(
+	err = tpgserviceusage.ServiceUsageOperationWaitTimeWithResponse(
 		config, res, &opRes, projectNum, "Creating cloudkms service identity", config.UserAgent,
 		time.Minute*4)
 	if err != nil {
@@ -526,7 +528,7 @@ func BootstrapSharedTestADDomain(t *testing.T, testId string, networkName string
 	}
 
 	log.Printf("[DEBUG] Getting shared test active directory domain %q", adDomainName)
-	getURL := fmt.Sprintf("%s%s", config.ActiveDirectoryBasePath, adDomainName)
+	getURL := fmt.Sprintf("%s%s", transport_tpg.BaseUrl(activedirectory.Product, config), adDomainName)
 	_, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
@@ -537,7 +539,7 @@ func BootstrapSharedTestADDomain(t *testing.T, testId string, networkName string
 	})
 	if err != nil && transport_tpg.IsGoogleApiErrorWithCode(err, 404) {
 		log.Printf("[DEBUG] AD domain %q not found, bootstrapping", sharedADDomain)
-		postURL := fmt.Sprintf("%sprojects/%s/locations/global/domains?domainName=%s", config.ActiveDirectoryBasePath, project, sharedADDomain)
+		postURL := fmt.Sprintf("%sprojects/%s/locations/global/domains?domainName=%s", transport_tpg.BaseUrl(activedirectory.Product, config), project, sharedADDomain)
 		domainObj := map[string]interface{}{
 			"locations":          []string{"us-central1"},
 			"reservedIpRange":    "10.0.1.0/24",
@@ -613,7 +615,7 @@ func BootstrapSharedTestNetwork(t *testing.T, testId string) string {
 	_, err := tpgcompute.NewClient(config, config.UserAgent).Networks.Get(project, networkName).Do()
 	if err != nil && transport_tpg.IsGoogleApiErrorWithCode(err, 404) {
 		log.Printf("[DEBUG] Network %q not found, bootstrapping", networkName)
-		url := fmt.Sprintf("%sprojects/%s/global/networks", config.ComputeBasePath, project)
+		url := fmt.Sprintf("%sprojects/%s/global/networks", transport_tpg.BaseUrl(tpgcompute.Product, config), project)
 		netObj := map[string]interface{}{
 			"name":                  networkName,
 			"autoCreateSubnetworks": false,
@@ -688,7 +690,7 @@ func BootstrapSharedTestGlobalAddress(t *testing.T, testId string, params ...fun
 	_, err := tpgcompute.NewClient(config, config.UserAgent).GlobalAddresses.Get(project, addressName).Do()
 	if err != nil && transport_tpg.IsGoogleApiErrorWithCode(err, 404) {
 		log.Printf("[DEBUG] Global address %q not found, bootstrapping", addressName)
-		url := fmt.Sprintf("%sprojects/%s/global/addresses", config.ComputeBasePath, project)
+		url := fmt.Sprintf("%sprojects/%s/global/addresses", transport_tpg.BaseUrl(tpgcompute.Product, config), project)
 
 		settings := NewAddressSettings(params...)
 
@@ -1283,7 +1285,7 @@ func BootstrapSharedCaPoolInLocation(t *testing.T, location string) string {
 	}
 
 	log.Printf("[DEBUG] Getting shared CA pool %q", poolName)
-	url := fmt.Sprintf("%sprojects/%s/locations/%s/caPools/%s", config.PrivatecaBasePath, project, location, poolName)
+	url := fmt.Sprintf("%sprojects/%s/locations/%s/caPools/%s", transport_tpg.BaseUrl(privateca.Product, config), project, location, poolName)
 	_, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
@@ -1296,7 +1298,7 @@ func BootstrapSharedCaPoolInLocation(t *testing.T, location string) string {
 		poolObj := map[string]interface{}{
 			"tier": "ENTERPRISE",
 		}
-		createUrl := fmt.Sprintf("%sprojects/%s/locations/%s/caPools?caPoolId=%s", config.PrivatecaBasePath, project, location, poolName)
+		createUrl := fmt.Sprintf("%sprojects/%s/locations/%s/caPools?caPoolId=%s", transport_tpg.BaseUrl(privateca.Product, config), project, location, poolName)
 		res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 			Config:    config,
 			Method:    "POST",
@@ -1369,8 +1371,8 @@ func BootstrapSubnetWithOverrides(t *testing.T, subnetName string, networkName s
 	if err != nil && transport_tpg.IsGoogleApiErrorWithCode(err, 404) {
 		log.Printf("[DEBUG] Subnet %q not found, bootstrapping", subnetName)
 
-		networkUrl := fmt.Sprintf("%sprojects/%s/global/networks/%s", config.ComputeBasePath, projectID, networkName)
-		url := fmt.Sprintf("%sprojects/%s/regions/%s/subnetworks", config.ComputeBasePath, projectID, region)
+		networkUrl := fmt.Sprintf("%sprojects/%s/global/networks/%s", transport_tpg.BaseUrl(tpgcompute.Product, config), projectID, networkName)
+		url := fmt.Sprintf("%sprojects/%s/regions/%s/subnetworks", transport_tpg.BaseUrl(tpgcompute.Product, config), projectID, region)
 
 		defaultSubnetObj := map[string]interface{}{
 			"name":        subnetName,
@@ -1435,9 +1437,9 @@ func BootstrapNetworkAttachment(t *testing.T, networkAttachmentName string, subn
 	if err != nil && transport_tpg.IsGoogleApiErrorWithCode(err, 404) {
 		// Create Network Attachment Here.
 		log.Printf("[DEBUG] Network Attachment %s not found, bootstrapping", networkAttachmentName)
-		url := fmt.Sprintf("%sprojects/%s/regions/%s/networkAttachments", config.ComputeBasePath, projectID, region)
+		url := fmt.Sprintf("%sprojects/%s/regions/%s/networkAttachments", transport_tpg.BaseUrl(tpgcompute.Product, config), projectID, region)
 
-		subnetURL := fmt.Sprintf("%sprojects/%s/regions/%s/subnetworks/%s", config.ComputeBasePath, projectID, region, subnetName)
+		subnetURL := fmt.Sprintf("%sprojects/%s/regions/%s/subnetworks/%s", transport_tpg.BaseUrl(tpgcompute.Product, config), projectID, region, subnetName)
 		networkAttachmentObj := map[string]interface{}{
 			"name":                 networkAttachmentName,
 			"region":               region,
@@ -1498,7 +1500,7 @@ func BootstrapFirewallForDataprocSharedNetwork(t *testing.T, firewallName string
 	_, err := tpgcompute.NewClient(config, config.UserAgent).Firewalls.Get(project, firewallName).Do()
 	if err != nil && transport_tpg.IsGoogleApiErrorWithCode(err, 404) {
 		log.Printf("[DEBUG] firewallName %q not found, bootstrapping", firewallName)
-		url := fmt.Sprintf("%sprojects/%s/global/firewalls", config.ComputeBasePath, project)
+		url := fmt.Sprintf("%sprojects/%s/global/firewalls", transport_tpg.BaseUrl(tpgcompute.Product, config), project)
 
 		networkId := fmt.Sprintf("projects/%s/global/networks/%s", project, networkName)
 		allowObj := []interface{}{
@@ -1573,7 +1575,7 @@ func BootstrapComputeStoragePool(t *testing.T, storagePoolName, storagePoolType 
 	if err != nil && transport_tpg.IsGoogleApiErrorWithCode(err, 404) {
 		log.Printf("[DEBUG] Storage pool %q not found, bootstrapping", storagePoolName)
 
-		url := fmt.Sprintf("%sprojects/%s/zones/%s/storagePools", config.ComputeBasePath, projectID, zone)
+		url := fmt.Sprintf("%sprojects/%s/zones/%s/storagePools", transport_tpg.BaseUrl(tpgcompute.Product, config), projectID, zone)
 		storagePoolTypeUrl := fmt.Sprintf("/projects/%s/zones/%s/storagePoolTypes/%s", projectID, zone, storagePoolType)
 
 		storagePoolObj := map[string]interface{}{
@@ -1857,7 +1859,7 @@ func BootstrapGitRepository(t *testing.T, gitRepositoryLinkId, location, cloneUr
 	log.Printf("[DEBUG] Getting shared git repository link %q", gitRepositoryLinkId)
 
 	getURL := fmt.Sprintf("%sprojects/%s/locations/%s/connections/%s/gitRepositoryLinks/%s",
-		config.DeveloperConnectBasePath, config.Project, location, parentConnectionId, gitRepositoryLinkId)
+		transport_tpg.BaseUrl(developerconnect.Product, config), config.Project, location, parentConnectionId, gitRepositoryLinkId)
 
 	headers := make(http.Header)
 	_, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
@@ -1877,7 +1879,7 @@ func BootstrapGitRepository(t *testing.T, gitRepositoryLinkId, location, cloneUr
 		}
 
 		postURL := fmt.Sprintf("%sprojects/%s/locations/%s/connections/%s/gitRepositoryLinks?gitRepositoryLinkId=%s",
-			config.DeveloperConnectBasePath, config.Project, location, parentConnectionId, gitRepositoryLinkId)
+			transport_tpg.BaseUrl(developerconnect.Product, config), config.Project, location, parentConnectionId, gitRepositoryLinkId)
 		headers := make(http.Header)
 		_, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 			Config:    config,
@@ -1924,7 +1926,7 @@ func BootstrapDeveloperConnection(t *testing.T, connectionId, location, tokenRes
 	log.Printf("[DEBUG] Getting shared developer connection %q", connectionId)
 
 	getURL := fmt.Sprintf("%sprojects/%s/locations/%s/connections/%s",
-		config.DeveloperConnectBasePath, config.Project, location, connectionId)
+		transport_tpg.BaseUrl(developerconnect.Product, config), config.Project, location, connectionId)
 
 	headers := make(http.Header)
 	_, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
@@ -1952,7 +1954,7 @@ func BootstrapDeveloperConnection(t *testing.T, connectionId, location, tokenRes
 		}
 
 		postURL := fmt.Sprintf("%sprojects/%s/locations/%s/connections?connectionId=%s",
-			config.DeveloperConnectBasePath, config.Project, location, connectionId)
+			transport_tpg.BaseUrl(developerconnect.Product, config), config.Project, location, connectionId)
 		headers := make(http.Header)
 		_, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 			Config:    config,
@@ -1998,7 +2000,7 @@ func BoostrapSharedRepositoryGroup(t *testing.T, repositoryGroupId, location, la
 	log.Printf("[DEBUG] Getting shared repository group %q", repositoryGroupId)
 
 	getURL := fmt.Sprintf("%sprojects/%s/locations/%s/codeRepositoryIndexes/%s/repositoryGroups/%s",
-		config.GeminiBasePath, config.Project, location, codeRepositoryIndexId, repositoryGroupId)
+		transport_tpg.BaseUrl(gemini.Product, config), config.Project, location, codeRepositoryIndexId, repositoryGroupId)
 
 	headers := make(http.Header)
 	_, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
@@ -2016,7 +2018,7 @@ func BoostrapSharedRepositoryGroup(t *testing.T, repositoryGroupId, location, la
 			"branch_pattern": "main",
 		}}
 		postURL := fmt.Sprintf("%sprojects/%s/locations/%s/codeRepositoryIndexes/%s/repositoryGroups?repositoryGroupId=%s",
-			config.GeminiBasePath, config.Project, location, codeRepositoryIndexId, repositoryGroupId)
+			transport_tpg.BaseUrl(gemini.Product, config), config.Project, location, codeRepositoryIndexId, repositoryGroupId)
 		obj := map[string]interface{}{
 			"repositories": repositories,
 		}
@@ -2094,7 +2096,7 @@ func BootstrapSharedCodeRepositoryIndex(t *testing.T, codeRepositoryIndexId, loc
 
 	log.Printf("[DEBUG] Getting shared code repository index %q", codeRepositoryIndexId)
 
-	getURL := fmt.Sprintf("%sprojects/%s/locations/%s/codeRepositoryIndexes/%s", config.GeminiBasePath, config.Project, location, codeRepositoryIndexId)
+	getURL := fmt.Sprintf("%sprojects/%s/locations/%s/codeRepositoryIndexes/%s", transport_tpg.BaseUrl(gemini.Product, config), config.Project, location, codeRepositoryIndexId)
 
 	headers := make(http.Header)
 	_, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
@@ -2110,7 +2112,7 @@ func BootstrapSharedCodeRepositoryIndex(t *testing.T, codeRepositoryIndexId, loc
 	// CRI not found responds with 404 not found
 	if err != nil && transport_tpg.IsGoogleApiErrorWithCode(err, 404) {
 		log.Printf("[DEBUG] Code repository index %q not found, bootstrapping", codeRepositoryIndexId)
-		postURL := fmt.Sprintf("%sprojects/%s/locations/%s/codeRepositoryIndexes?codeRepositoryIndexId=%s", config.GeminiBasePath, config.Project, location, codeRepositoryIndexId)
+		postURL := fmt.Sprintf("%sprojects/%s/locations/%s/codeRepositoryIndexes?codeRepositoryIndexId=%s", transport_tpg.BaseUrl(gemini.Product, config), config.Project, location, codeRepositoryIndexId)
 		obj := make(map[string]interface{})
 		if labels != nil {
 			obj["labels"] = labels
@@ -2185,7 +2187,7 @@ func BootstrapSharedTestTagKeyDetails(t *testing.T, testId string, parent string
 	}
 
 	log.Printf("[DEBUG] Getting shared test tag key %q", sharedTagKey)
-	getURL := fmt.Sprintf("%stagKeys/namespaced?name=%s", config.TagsBasePath, tagKeyName)
+	getURL := fmt.Sprintf("%stagKeys/namespaced?name=%s", transport_tpg.BaseUrl(tags.Product, config), tagKeyName)
 	_, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
@@ -2209,7 +2211,7 @@ func BootstrapSharedTestTagKeyDetails(t *testing.T, testId string, parent string
 			Config:    config,
 			Method:    "POST",
 			Project:   config.Project,
-			RawURL:    config.TagsBasePath + "tagKeys/",
+			RawURL:    transport_tpg.BaseUrl(tags.Product, config) + "tagKeys/",
 			UserAgent: config.UserAgent,
 			Body:      tagKeyObj,
 			Timeout:   10 * time.Minute,
@@ -2272,7 +2274,7 @@ func BootstrapSharedTestTagValueDetails(t *testing.T, testId string, tagKey, par
 	}
 
 	log.Printf("[DEBUG] Getting shared test tag value %q", sharedTagValue)
-	getURL := fmt.Sprintf("%stagValues/namespaced?name=%s", config.TagsBasePath, tagValueName)
+	getURL := fmt.Sprintf("%stagValues/namespaced?name=%s", transport_tpg.BaseUrl(tags.Product, config), tagValueName)
 	_, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "GET",
@@ -2284,7 +2286,7 @@ func BootstrapSharedTestTagValueDetails(t *testing.T, testId string, tagKey, par
 	if err != nil && transport_tpg.IsGoogleApiErrorWithCode(err, 403) {
 		log.Printf("[DEBUG] TagValue %q not found, bootstrapping", sharedTagValue)
 		log.Printf("[DEBUG] Fetching permanent id for tagkey %s", tagKeyName)
-		tagKeyGetURL := fmt.Sprintf("%stagKeys/namespaced?name=%s", config.TagsBasePath, tagKeyName)
+		tagKeyGetURL := fmt.Sprintf("%stagKeys/namespaced?name=%s", transport_tpg.BaseUrl(tags.Product, config), tagKeyName)
 		tagKeyResponse, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 			Config:    config,
 			Method:    "GET",
@@ -2306,7 +2308,7 @@ func BootstrapSharedTestTagValueDetails(t *testing.T, testId string, tagKey, par
 			Config:    config,
 			Method:    "POST",
 			Project:   config.Project,
-			RawURL:    config.TagsBasePath + "tagValues/",
+			RawURL:    transport_tpg.BaseUrl(tags.Product, config) + "tagValues/",
 			UserAgent: config.UserAgent,
 			Body:      tagKeyObj,
 			Timeout:   10 * time.Minute,
@@ -2361,7 +2363,7 @@ func BootstrapIntegrationsClient(t *testing.T, locationID string) BootstrapClien
 	projectID := envvar.GetTestProjectFromEnv()
 	parent := fmt.Sprintf("projects/%s/locations/%s", projectID, locationID)
 
-	baseURL := fmt.Sprintf("%s%s", config.IntegrationsBasePath, parent)
+	baseURL := fmt.Sprintf("%s%s", transport_tpg.BaseUrl(integrations.Product, config), parent)
 
 	resp, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
