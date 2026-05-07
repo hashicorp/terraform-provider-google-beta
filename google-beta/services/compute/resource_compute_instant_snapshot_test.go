@@ -25,6 +25,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 	compute_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/compute"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/tags"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 
 	compute "google.golang.org/api/compute/v0.beta"
@@ -175,9 +176,9 @@ func TestAccComputeInstantSnapshot_resourceManagerTags(t *testing.T) {
 
 	org := envvar.GetTestOrgFromEnv(t)
 	suffix := acctest.RandString(t, 10)
-	tagKeyResult := acctest.BootstrapSharedTestTagKeyDetails(t, "crm-instant-snapshots-tagkey", "organizations/"+org, make(map[string]interface{}))
+	tagKeyResult := tags.BootstrapSharedTestTagKeyDetails(t, "crm-instant-snapshots-tagkey", "organizations/"+org, make(map[string]interface{}))
 	sharedTagKey, _ := tagKeyResult["shared_tag_key"]
-	tagValueResult := acctest.BootstrapSharedTestTagValueDetails(t, "crm-instant-snapshots-tagvalue", sharedTagKey, org)
+	tagValueResult := tags.BootstrapSharedTestTagValueDetails(t, "crm-instant-snapshots-tagvalue", sharedTagKey, org)
 
 	context := map[string]interface{}{
 		"random_suffix": suffix,
