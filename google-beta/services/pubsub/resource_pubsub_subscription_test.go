@@ -25,6 +25,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/pubsub"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/tags"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
@@ -635,13 +636,13 @@ func TestAccPubsubSubscription_tags(t *testing.T) {
 	t.Parallel()
 
 	subscription := fmt.Sprintf("tf-test-sub-%s", acctest.RandString(t, 10))
-	tagKey := acctest.BootstrapSharedTestOrganizationTagKey(t, "pubsub-subscription-tagkey", nil)
+	tagKey := tags.BootstrapSharedTestOrganizationTagKey(t, "pubsub-subscription-tagkey", nil)
 	context := map[string]interface{}{
 		"topic":        fmt.Sprintf("tf-test-topic-%s", acctest.RandString(t, 10)),
 		"subscription": subscription,
 		"org":          envvar.GetTestOrgFromEnv(t),
 		"tagKey":       tagKey,
-		"tagValue":     acctest.BootstrapSharedTestOrganizationTagValue(t, "pubsub-subscription-tagvalue", tagKey),
+		"tagValue":     tags.BootstrapSharedTestOrganizationTagValue(t, "pubsub-subscription-tagvalue", tagKey),
 	}
 
 	acctest.VcrTest(t, resource.TestCase{

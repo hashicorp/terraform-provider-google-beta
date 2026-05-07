@@ -24,6 +24,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 // TestAccFwProvider_user_project_override is a series of acc tests asserting how the plugin-framework provider handles credentials arguments
@@ -257,7 +258,7 @@ func testAccFwProvider_UserProjectOverride(t *testing.T) {
 	billing := envvar.GetTestBillingAccountFromEnv(t)
 	pid := "tf-test-" + acctest.RandString(t, 10)
 
-	config := acctest.BootstrapConfig(t)
+	config := transport_tpg.BootstrapConfig(t)
 	accessToken, err := acctest.SetupProjectsAndGetAccessToken(org, billing, pid, "firebase", config)
 	if err != nil || accessToken == "" {
 		if err == nil {
