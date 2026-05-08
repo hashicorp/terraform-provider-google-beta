@@ -26,6 +26,7 @@ import (
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
+	tpgcompute "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/compute"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/sql"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -339,7 +340,7 @@ func TestAccSqlDatabaseInstance_deleteDefaultUserBeforeSubsequentApiCalls(t *tes
 
 	databaseName := "tf-test-" + acctest.RandString(t, 10)
 	testId := "sql-instance-clone-2"
-	addressName := acctest.BootstrapSharedTestGlobalAddress(t, testId)
+	addressName := tpgcompute.BootstrapSharedTestGlobalAddress(t, testId)
 	networkName := acctest.BootstrapSharedServiceNetworkingConnection(t, testId)
 
 	// 1. Create an instance.
@@ -1245,7 +1246,7 @@ func TestAccSqlDatabaseInstance_withPSCEnabled_withPscAutoConnections(t *testing
 	testId := "test-psc-auto-con-1"
 	instanceName := "tf-test-" + acctest.RandString(t, 10)
 	projectId := envvar.GetTestProjectFromEnv()
-	networkName := acctest.BootstrapSharedTestNetwork(t, testId)
+	networkName := tpgcompute.BootstrapSharedTestNetwork(t, testId)
 	network_short_link_name := fmt.Sprintf("projects/%s/global/networks/%s", projectId, networkName)
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -1274,7 +1275,7 @@ func TestAccSqlDatabaseInstance_withPSCEnabled_thenAddPscAutoConnections_thenRem
 	testId := "test-psc-auto-con-2"
 	instanceName := "tf-test-" + acctest.RandString(t, 10)
 	projectId := envvar.GetTestProjectFromEnv()
-	networkName := acctest.BootstrapSharedTestNetwork(t, testId)
+	networkName := tpgcompute.BootstrapSharedTestNetwork(t, testId)
 	network_short_link_name := fmt.Sprintf("projects/%s/global/networks/%s", projectId, networkName)
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -1343,9 +1344,9 @@ func TestAccSqlDatabaseInstance_withPscEnabled_withNetworkAttachmentUri_thenRemo
 	networkNameStr := "tf-test-cloud-sql-network-psc-1"
 	subnetworkNameStr := "tf-test-cloud-sql-subnetwork-psc-1"
 	networkAttachmentNameStr := "tf-test-cloud-sql-update-na-psc-1"
-	networkName := acctest.BootstrapSharedTestNetwork(t, networkNameStr)
-	subnetworkName := acctest.BootstrapSubnet(t, subnetworkNameStr, networkName)
-	networkAttachmentName := acctest.BootstrapNetworkAttachment(t, networkAttachmentNameStr, subnetworkName)
+	networkName := tpgcompute.BootstrapSharedTestNetwork(t, networkNameStr)
+	subnetworkName := tpgcompute.BootstrapSubnet(t, subnetworkNameStr, networkName)
+	networkAttachmentName := tpgcompute.BootstrapNetworkAttachment(t, networkAttachmentNameStr, subnetworkName)
 	networkAttachmentUri := fmt.Sprintf("projects/%s/regions/%s/networkAttachments/%s", projectId, region, networkAttachmentName)
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -1393,9 +1394,9 @@ func TestAccSqlDatabaseInstance_withPscEnabled_withNetworkAttachmentUriOnCreate(
 	networkNameStr := "tf-test-cloud-sql-network-psc-2"
 	subnetworkNameStr := "tf-test-cloud-sql-subnetwork-psc-2"
 	networkAttachmentNameStr := "tf-test-cloud-sql-update-na-psc-2"
-	networkName := acctest.BootstrapSharedTestNetwork(t, networkNameStr)
-	subnetworkName := acctest.BootstrapSubnet(t, subnetworkNameStr, networkName)
-	networkAttachmentName := acctest.BootstrapNetworkAttachment(t, networkAttachmentNameStr, subnetworkName)
+	networkName := tpgcompute.BootstrapSharedTestNetwork(t, networkNameStr)
+	subnetworkName := tpgcompute.BootstrapSubnet(t, subnetworkNameStr, networkName)
+	networkAttachmentName := tpgcompute.BootstrapNetworkAttachment(t, networkAttachmentNameStr, subnetworkName)
 	networkAttachmentUri := fmt.Sprintf("projects/%s/regions/%s/networkAttachments/%s", projectId, region, networkAttachmentName)
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -1418,11 +1419,11 @@ func TestAccSqlDatabaseInstance_withPrivateNetwork_withAllocatedIpRange(t *testi
 	databaseName := "tf-test-" + acctest.RandString(t, 10)
 
 	testId := "sql-instance-allocated-1"
-	addressName := acctest.BootstrapSharedTestGlobalAddress(t, testId)
+	addressName := tpgcompute.BootstrapSharedTestGlobalAddress(t, testId)
 	networkName := acctest.BootstrapSharedServiceNetworkingConnection(t, testId)
 
 	updateTestId := "sql-instance-allocated-update-1"
-	addressName_update := acctest.BootstrapSharedTestGlobalAddress(t, updateTestId)
+	addressName_update := tpgcompute.BootstrapSharedTestGlobalAddress(t, updateTestId)
 	networkName_update := acctest.BootstrapSharedServiceNetworkingConnection(t, updateTestId)
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -1459,7 +1460,7 @@ func TestAccSqlDatabaseInstance_withPrivateNetwork_withAllocatedIpRangeReplica(t
 	databaseName := "tf-test-" + acctest.RandString(t, 10)
 
 	testId := "sql-instance-replica-1"
-	addressName := acctest.BootstrapSharedTestGlobalAddress(t, testId)
+	addressName := tpgcompute.BootstrapSharedTestGlobalAddress(t, testId)
 	networkName := acctest.BootstrapSharedServiceNetworkingConnection(t, testId)
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -1492,7 +1493,7 @@ func TestAccSqlDatabaseInstance_withPrivateNetwork_withAllocatedIpRangeClone(t *
 
 	databaseName := "tf-test-" + acctest.RandString(t, 10)
 	testId := "sql-instance-clone-1"
-	addressName := acctest.BootstrapSharedTestGlobalAddress(t, testId)
+	addressName := tpgcompute.BootstrapSharedTestGlobalAddress(t, testId)
 	networkName := acctest.BootstrapSharedServiceNetworkingConnection(t, testId)
 
 	acctest.VcrTest(t, resource.TestCase{
