@@ -31,7 +31,7 @@ IMPROVEMENTS:
 * redis: added new node types supported in `google_redis_cluster`. ([#12140](https://github.com/hashicorp/terraform-provider-google-beta/pull/12140))
 * resourcemanager: add `private_key` and `private_key_type` fields to ephemeral `google_service_account_key` resource ([#12170](https://github.com/hashicorp/terraform-provider-google-beta/pull/12170))
 * storage: added `ingest_on_write` field for `google_storage_anywhere_cache` resource ([#12162](https://github.com/hashicorp/terraform-provider-google-beta/pull/12162))
-* workstations: added `gce_hd` field to `workstations_workstation_config` resource ([#12118](https://github.com/hashicorp/terraform-provider-google-beta/pull/12118))
+* workstations: added `gce_hd` field to `google_workstations_workstation_config` resource ([#12118](https://github.com/hashicorp/terraform-provider-google-beta/pull/12118))
 
 BUG FIXES:
 * cloudfunctions2: fixed bug where `all_traffic_on_latest_revision = false` was ignored in `google_cloudfunctions2_function` ([#12148](https://github.com/hashicorp/terraform-provider-google-beta/pull/12148))
