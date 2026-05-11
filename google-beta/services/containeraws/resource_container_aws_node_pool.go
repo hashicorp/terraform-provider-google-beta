@@ -50,6 +50,7 @@ func ResourceContainerAwsNodePool() *schema.Resource {
 			tpgresource.DefaultProviderProject,
 			dcl.ResourceContainerAwsNodePoolCustomizeDiffFunc,
 			tpgresource.SetAnnotationsDiff,
+			tpgresource.DefaultProviderDeletionPolicy("DELETE"),
 		),
 
 		Schema: map[string]*schema.Schema{
@@ -198,6 +199,10 @@ func ResourceContainerAwsNodePool() *schema.Resource {
 				Computed:    true,
 				Description: "Output only. The time at which this node pool was last updated.",
 			},
+
+			//UDP schema start
+			"deletion_policy": tpgresource.DeletionPolicySchemaEntry("DELETE"),
+			//UDP schema end
 		},
 	}
 }
@@ -754,9 +759,18 @@ func resourceContainerAwsNodePoolRead(d *schema.ResourceData, meta interface{}) 
 		return fmt.Errorf("error setting update_time in state: %s", err)
 	}
 
+	if err := tpgresource.DeletionPolicyReadDefault(d, config, "DELETE"); err != nil {
+		return err
+	}
+
 	return nil
 }
 func resourceContainerAwsNodePoolUpdate(d *schema.ResourceData, meta interface{}) error {
+
+	if tpgresource.DeletionPolicyPreUpdate(d, ResourceContainerAwsNodePool) {
+		return ResourceContainerAwsNodePool().Read(d, meta)
+	}
+
 	config := meta.(*transport_tpg.Config)
 	project, err := tpgresource.GetProject(d, config)
 	if err != nil {
@@ -812,6 +826,13 @@ func resourceContainerAwsNodePoolUpdate(d *schema.ResourceData, meta interface{}
 }
 
 func resourceContainerAwsNodePoolDelete(d *schema.ResourceData, meta interface{}) error {
+
+	if ok, err := tpgresource.DeletionPolicyPreDelete(d); err != nil {
+		return err
+	} else if ok {
+		return nil
+	}
+
 	config := meta.(*transport_tpg.Config)
 	project, err := tpgresource.GetProject(d, config)
 	if err != nil {

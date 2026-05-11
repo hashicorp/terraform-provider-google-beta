@@ -135,3 +135,5 @@ fields:
     - api_field: scenario.variableOverrides
     - api_field: tags
     - api_field: updateTime
+    - field: deletion_policy
+      provider_only: true

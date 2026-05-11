@@ -19,3 +19,5 @@ fields:
     - api_field: telemetryConfig.mode
     - api_field: telemetryConfig.samplingRate
     - api_field: trafficFilter.templateOnly
+    - field: deletion_policy
+      provider_only: true

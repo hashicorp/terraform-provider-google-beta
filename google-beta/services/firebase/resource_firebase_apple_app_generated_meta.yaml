@@ -11,8 +11,8 @@ fields:
     - api_field: appId
     - api_field: appStoreId
     - api_field: bundleId
-    - field: deletion_policy
-      provider_only: true
     - api_field: displayName
     - api_field: name
     - api_field: teamId
+    - field: deletion_policy
+      provider_only: true

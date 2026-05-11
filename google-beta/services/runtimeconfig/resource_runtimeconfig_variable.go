@@ -42,6 +42,7 @@ func ResourceRuntimeconfigVariable() *schema.Resource {
 
 		CustomizeDiff: customdiff.All(
 			tpgresource.DefaultProviderProject,
+			tpgresource.DefaultProviderDeletionPolicy("DELETE"),
 		),
 
 		Schema: map[string]*schema.Schema{
@@ -86,6 +87,10 @@ func ResourceRuntimeconfigVariable() *schema.Resource {
 				Computed:    true,
 				Description: `The timestamp in RFC3339 UTC "Zulu" format, accurate to nanoseconds, representing when the variable was last updated. Example: "2016-10-09T12:33:37.578138407Z".`,
 			},
+
+			//UDP schema start
+			"deletion_policy": tpgresource.DeletionPolicySchemaEntry("DELETE"),
+			//UDP schema end
 		},
 		UseJSONNumber: true,
 	}
@@ -130,10 +135,19 @@ func resourceRuntimeconfigVariableRead(d *schema.ResourceData, meta interface{})
 		return err
 	}
 
+	if err := tpgresource.DeletionPolicyReadDefault(d, config, "DELETE"); err != nil {
+		return err
+	}
+
 	return setRuntimeConfigVariableToResourceData(d, *createdVariable)
 }
 
 func resourceRuntimeconfigVariableUpdate(d *schema.ResourceData, meta interface{}) error {
+
+	if tpgresource.DeletionPolicyPreUpdate(d, ResourceRuntimeconfigVariable) {
+		return ResourceRuntimeconfigVariable().Read(d, meta)
+	}
+
 	config := meta.(*transport_tpg.Config)
 	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
@@ -162,6 +176,13 @@ func resourceRuntimeconfigVariableUpdate(d *schema.ResourceData, meta interface{
 }
 
 func resourceRuntimeconfigVariableDelete(d *schema.ResourceData, meta interface{}) error {
+
+	if ok, err := tpgresource.DeletionPolicyPreDelete(d); err != nil {
+		return err
+	} else if ok {
+		return nil
+	}
+
 	config := meta.(*transport_tpg.Config)
 	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
