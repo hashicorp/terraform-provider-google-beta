@@ -18,3 +18,5 @@ fields:
     - api_field: sourceInstance
     - api_field: storageLocations
     - api_field: selfLink
+    - field: deletion_policy
+      provider_only: true

@@ -7,3 +7,5 @@ api_version: 'beta'
 api_resource_type_kind: 'Project'
 fields:
   - field: 'project'
+  - field: 'deletion_policy'
+    provider_only: true

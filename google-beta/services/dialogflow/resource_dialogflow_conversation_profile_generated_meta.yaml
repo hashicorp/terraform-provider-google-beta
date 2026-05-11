@@ -88,3 +88,5 @@ fields:
     - api_field: ttsConfig.voice.ssmlGender
     - api_field: ttsConfig.volumeGainDb
     - api_field: useBidiStreaming
+    - field: deletion_policy
+      provider_only: true

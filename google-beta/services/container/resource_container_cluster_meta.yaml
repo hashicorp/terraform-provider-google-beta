@@ -841,3 +841,5 @@ fields:
   - api_field: 'verticalPodAutoscaling.enabled'
   - api_field: 'workloadAltsConfig.enableAlts'
   - api_field: 'workloadIdentityConfig.workloadPool'
+  - field: 'deletion_policy'
+    provider_only: true

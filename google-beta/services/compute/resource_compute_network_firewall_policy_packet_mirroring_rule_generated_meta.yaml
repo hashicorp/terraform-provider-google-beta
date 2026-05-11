@@ -43,3 +43,5 @@ fields:
       field: target_secure_tags.state
     - api_field: packetMirroringRules.tlsInspect
       field: tls_inspect
+    - field: deletion_policy
+      provider_only: true

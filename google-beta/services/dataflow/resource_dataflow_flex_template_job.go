@@ -274,6 +274,9 @@ func ResourceDataflowFlexTemplateJob() *schema.Resource {
 				Default:     false,
 				Description: `If true, treat DRAINING and CANCELLING as terminal job states and do not wait for further changes before removing from terraform state and moving on. WARNING: this will lead to job name conflicts if you do not ensure that the job names are different, e.g. by embedding a release ID or by using a random_id.`,
 			},
+			//UDP schema start
+			"deletion_policy": tpgresource.DeletionPolicySchemaEntry("DELETE"),
+			//UDP schema end
 		},
 		UseJSONNumber: true,
 	}
@@ -538,6 +541,10 @@ func resourceDataflowFlexTemplateJobRead(d *schema.ResourceData, meta interface{
 		return nil
 	}
 
+	if err := tpgresource.DeletionPolicyReadDefault(d, config, "DELETE"); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -584,6 +591,10 @@ func resourceDataflowFlexTemplateJobUpdate(d *schema.ResourceData, meta interfac
 	// Don't send an update request if only virtual fields have changes
 	if resourceDataflowJobIsVirtualUpdate(d, ResourceDataflowFlexTemplateJob().Schema) {
 		return nil
+	}
+
+	if tpgresource.DeletionPolicyPreUpdate(d, ResourceDataflowFlexTemplateJob) {
+		return ResourceDataflowFlexTemplateJob().Read(d, meta)
 	}
 
 	if jobHasUpdate(d, ResourceDataflowFlexTemplateJob().Schema) {
@@ -651,6 +662,13 @@ func resourceDataflowFlexTemplateJobUpdate(d *schema.ResourceData, meta interfac
 }
 
 func resourceDataflowFlexTemplateJobDelete(d *schema.ResourceData, meta interface{}) error {
+
+	if ok, err := tpgresource.DeletionPolicyPreDelete(d); err != nil {
+		return err
+	} else if ok {
+		return nil
+	}
+
 	config := meta.(*transport_tpg.Config)
 	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {

@@ -27,3 +27,5 @@ fields:
       provider_only: true
     - api_field: resource.type
       field: type
+    - field: deletion_policy
+      provider_only: true

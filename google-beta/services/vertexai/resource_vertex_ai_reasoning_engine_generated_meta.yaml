@@ -16,8 +16,6 @@ fields:
     - api_field: contextSpec.memoryBankConfig.ttlConfig.granularTtlConfig.generateUpdatedTtl
     - api_field: contextSpec.memoryBankConfig.ttlConfig.memoryRevisionDefaultTtl
     - api_field: createTime
-    - field: deletion_policy
-      provider_only: true
     - api_field: description
     - api_field: displayName
     - field: effective_labels
@@ -63,3 +61,5 @@ fields:
     - field: terraform_labels
       provider_only: true
     - api_field: updateTime
+    - field: deletion_policy
+      provider_only: true

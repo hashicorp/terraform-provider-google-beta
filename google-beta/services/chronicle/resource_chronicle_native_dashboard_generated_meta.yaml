@@ -61,3 +61,5 @@ fields:
     - api_field: type
     - api_field: updateTime
     - api_field: updateUserId
+    - field: deletion_policy
+      provider_only: true

@@ -50,6 +50,7 @@ func ResourceComputeInstanceGroupManager() *schema.Resource {
 			Delete: schema.DefaultTimeout(15 * time.Minute),
 		},
 		CustomizeDiff: customdiff.All(
+			tpgresource.DefaultProviderDeletionPolicy("DELETE"),
 			tpgresource.DefaultProviderProject,
 			tpgresource.DefaultProviderZone,
 			customdiff.ForceNewIfChange("resource_policies.0.workload_policy", ForceNewResourcePoliciesWorkloadPolicyIfNewIsEmpty),
@@ -639,6 +640,9 @@ func ResourceComputeInstanceGroupManager() *schema.Resource {
 					},
 				},
 			},
+			//UDP schema start
+			"deletion_policy": tpgresource.DeletionPolicySchemaEntry("DELETE"),
+			//UDP schema end
 		},
 		UseJSONNumber: true,
 	}
@@ -1046,6 +1050,10 @@ func resourceComputeInstanceGroupManagerRead(d *schema.ResourceData, meta interf
 		if err := d.Set("wait_for_instances_status", "STABLE"); err != nil {
 			return fmt.Errorf("Error setting wait_for_instances_status in state: %s", err.Error())
 		}
+	}
+
+	if err := tpgresource.DeletionPolicyReadDefault(d, config, "DELETE"); err != nil {
+		return err
 	}
 
 	return nil
