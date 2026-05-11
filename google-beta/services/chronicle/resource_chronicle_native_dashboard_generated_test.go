@@ -66,7 +66,7 @@ func TestAccChronicleNativeDashboard_chronicleNativedashboardBasicExample(t *tes
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckChronicleNativeDashboardDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -91,7 +91,6 @@ func TestAccChronicleNativeDashboard_chronicleNativedashboardBasicExample(t *tes
 func testAccChronicleNativeDashboard_chronicleNativedashboardBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_chronicle_native_dashboard" "my_basic_dashboard" {
-  provider     = google-beta
   location     = "us"
   instance     = "%{chronicle_id}"
   display_name = "%{dashboard_name}"
