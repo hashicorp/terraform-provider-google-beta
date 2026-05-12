@@ -335,6 +335,7 @@ func TestAccComputeSecurityPolicyRule_securityPolicyRuleWithBodyExcludeExample(t
 
 	context := map[string]interface{}{
 		"backend_name":    "backendpolicy" + randomSuffix,
+		"network_name":    "tf-test-test-network" + randomSuffix,
 		"sec_policy_name": "policyruletest" + randomSuffix,
 		"random_suffix":   randomSuffix,
 	}
@@ -368,7 +369,7 @@ func testAccComputeSecurityPolicyRule_securityPolicyRuleWithBodyExcludeExample(c
 
 resource "google_compute_network" "default" {
   provider                = google-beta
-  name                    = "test-network"
+  name                    = "%{network_name}"
   auto_create_subnetworks = false
 }
 
