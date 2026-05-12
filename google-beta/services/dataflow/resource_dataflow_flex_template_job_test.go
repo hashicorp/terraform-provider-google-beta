@@ -28,6 +28,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/dataflow"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/kms"
 
 	compute_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/compute"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -319,8 +320,8 @@ func TestAccDataflowFlexTemplateJob_withKmsKey(t *testing.T) {
 
 	randStr := acctest.RandString(t, 10)
 	job := "tf-test-dataflow-job-" + randStr
-	kms := acctest.BootstrapKMSKeyInLocation(t, "us-central1")
-	cryptoKey := kms.CryptoKey.Name
+	bootstrapped := kms.BootstrapKMSKeyInLocation(t, "us-central1")
+	cryptoKey := bootstrapped.CryptoKey.Name
 	bucket := "tf-test-dataflow-bucket-" + randStr
 	topic := "tf-test-topic" + randStr
 

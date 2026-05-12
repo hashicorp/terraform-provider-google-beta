@@ -32,6 +32,7 @@ import (
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/kms"
 	storage_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/storage"
 
 	"google.golang.org/api/googleapi"
@@ -3178,7 +3179,7 @@ func TestAccStorageBucket_encryptionCmek(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"kms_key":    acctest.BootstrapKMSKeyInLocation(t, "us-central1").CryptoKey.Name,
+		"kms_key":    kms.BootstrapKMSKeyInLocation(t, "us-central1").CryptoKey.Name,
 		"random_int": acctest.RandInt(t),
 	}
 

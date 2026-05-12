@@ -32,6 +32,12 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 )
 
+import (
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/kms"
+)
+
+var _ = kms.Product
+
 var (
 	_ = fmt.Sprintf
 	_ = strings.Trim

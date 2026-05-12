@@ -37,6 +37,12 @@ import (
 	"google.golang.org/api/googleapi"
 )
 
+import (
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/kms"
+)
+
+var _ = kms.Product
+
 var (
 	_ = fmt.Sprintf
 	_ = log.Print
@@ -335,7 +341,7 @@ func TestAccColabSchedule_colabScheduleFullExample(t *testing.T) {
 		"dataform_repository":   "tf-test-dataform-repository" + randomSuffix,
 		"display_name":          "tf-test-full-schedule" + randomSuffix,
 		"end_time":              time.Date(time.Now().Year(), 12, 31, 0, 0, 0, 0, time.Now().Location()).AddDate(0, 0, 10).Format(time.RFC3339),
-		"key_name":              acctest.BootstrapKMSKeyInLocation(t, "us-central1").CryptoKey.Name,
+		"key_name":              kms.BootstrapKMSKeyInLocation(t, "us-central1").CryptoKey.Name,
 		"network_name":          "tf-test-colab-test-default" + randomSuffix,
 		"runtime_template_name": "tf-test-runtime-template" + randomSuffix,
 		"secret":                "secret" + randomSuffix,

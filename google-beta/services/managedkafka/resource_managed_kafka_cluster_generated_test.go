@@ -37,6 +37,12 @@ import (
 	"google.golang.org/api/googleapi"
 )
 
+import (
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/kms"
+)
+
+var _ = kms.Product
+
 var (
 	_ = fmt.Sprintf
 	_ = log.Print
@@ -206,7 +212,7 @@ func TestAccManagedKafkaCluster_managedkafkaClusterCmekExample(t *testing.T) {
 
 	context := map[string]interface{}{
 		"cluster_id":    "tf-test-my-cluster" + randomSuffix,
-		"key_name":      acctest.BootstrapKMSKeyInLocation(t, "us-central1").CryptoKey.Name,
+		"key_name":      kms.BootstrapKMSKeyInLocation(t, "us-central1").CryptoKey.Name,
 		"key_ring_name": "tf-test-example-key-ring" + randomSuffix,
 		"random_suffix": randomSuffix,
 	}

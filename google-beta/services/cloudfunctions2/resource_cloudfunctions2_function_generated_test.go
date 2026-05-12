@@ -37,6 +37,12 @@ import (
 	"google.golang.org/api/googleapi"
 )
 
+import (
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/kms"
+)
+
+var _ = kms.Product
+
 var (
 	_ = fmt.Sprintf
 	_ = log.Print
@@ -1014,7 +1020,7 @@ func TestAccCloudfunctions2function_cloudfunctions2CmekExample(t *testing.T) {
 		"bucket_name":       "tf-test-gcf-source" + randomSuffix,
 		"cmek-repo":         "tf-test-cmek-repo" + randomSuffix,
 		"function":          "tf-test-function-cmek" + randomSuffix,
-		"kms_key_name":      acctest.BootstrapKMSKeyInLocation(t, "us-central1").CryptoKey.Name,
+		"kms_key_name":      kms.BootstrapKMSKeyInLocation(t, "us-central1").CryptoKey.Name,
 		"kms_service_name":  "cloudkms.googleapis.com" + randomSuffix,
 		"location":          "us-central1",
 		"unencoded-ar-repo": "tf-test-ar-repo" + randomSuffix,
