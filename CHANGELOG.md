@@ -1,11 +1,5 @@
 ## 7.32.0 (Unreleased)
 
-NOTES:
-* compute: migrated `google_compute_instance_from_machine` resource  to use direct HTTP rather than a client library ([#12152](https://github.com/hashicorp/terraform-provider-google-beta/pull/12152))
-* compute: migrated `google_compute_instance_group_manager` resource to use direct HTTP rather than a client library ([#12151](https://github.com/hashicorp/terraform-provider-google-beta/pull/12151))
-* compute: migrated `google_compute_zones` data source to use direct HTTP rather than a client library ([#12153](https://github.com/hashicorp/terraform-provider-google-beta/pull/12153))
-* compute: migrated `google_compute_project_metadata_item` resource to use direct HTTP rather than a client library ([#12117](https://github.com/hashicorp/terraform-provider-google-beta/pull/12117))
-
 FEATURES:
 * **New Data Source:** `google_compute_region_instant_snapshot_iam_policy` ([#12172](https://github.com/hashicorp/terraform-provider-google-beta/pull/12172))
 * **New Resource:** `google_compute_region_instant_snapshot_iam_binding` ([#12172](https://github.com/hashicorp/terraform-provider-google-beta/pull/12172))
