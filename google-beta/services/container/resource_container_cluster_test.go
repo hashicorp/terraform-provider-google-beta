@@ -30,6 +30,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 	tpgcompute "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/compute"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/container"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/kms"
 	cloudkms "google.golang.org/api/cloudkms/v1"
 )
 
@@ -3222,7 +3223,7 @@ func TestAccContainerCluster_withBootDiskKmsKey(t *testing.T) {
 	t.Parallel()
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
-	kms := acctest.BootstrapKMSKeyInLocation(t, "us-central1")
+	bootstrapped := kms.BootstrapKMSKeyInLocation(t, "us-central1")
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
 	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
 
@@ -3239,7 +3240,7 @@ func TestAccContainerCluster_withBootDiskKmsKey(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerCluster_withBootDiskKmsKey(clusterName, kms.CryptoKey.Name, networkName, subnetworkName),
+				Config: testAccContainerCluster_withBootDiskKmsKey(clusterName, bootstrapped.CryptoKey.Name, networkName, subnetworkName),
 			},
 			{
 				ResourceName:            "google_container_cluster.with_boot_disk_kms_key",
@@ -5820,7 +5821,7 @@ func TestAccContainerCluster_nodeAutoprovisioningDefaultsBootDiskKmsKey(t *testi
 	t.Parallel()
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
-	kms := acctest.BootstrapKMSKeyInLocation(t, "us-central1")
+	bootstrapped := kms.BootstrapKMSKeyInLocation(t, "us-central1")
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
 	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
 
@@ -5837,7 +5838,7 @@ func TestAccContainerCluster_nodeAutoprovisioningDefaultsBootDiskKmsKey(t *testi
 		CheckDestroy:             testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerCluster_autoprovisioningDefaultsBootDiskKmsKey(clusterName, kms.CryptoKey.Name, networkName, subnetworkName),
+				Config: testAccContainerCluster_autoprovisioningDefaultsBootDiskKmsKey(clusterName, bootstrapped.CryptoKey.Name, networkName, subnetworkName),
 			},
 			{
 				ResourceName:      "google_container_cluster.nap_boot_disk_kms_key",
@@ -6184,7 +6185,7 @@ func TestAccContainerCluster_withDatabaseEncryption(t *testing.T) {
 	// deleted.  Also, we need to create the key in the same location as the
 	// cluster as GKE does not support the "global" location for KMS keys.
 	// See https://cloud.google.com/kubernetes-engine/docs/how-to/encrypting-secrets#creating_a_key
-	kmsData := acctest.BootstrapKMSKeyInLocation(t, "us-central1")
+	kmsData := kms.BootstrapKMSKeyInLocation(t, "us-central1")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -7012,9 +7013,9 @@ func TestAccContainerCluster_WithCPAFeatures(t *testing.T) {
 	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
 
 	// Bootstrap KMS keys and needed IAM role.
-	diskKey := acctest.BootstrapKMSKeyWithPurposeInLocationAndName(t, "ENCRYPT_DECRYPT", "us-central1", "control-plane-disk-encryption")
-	signingKey := acctest.BootstrapKMSKeyWithPurposeInLocationAndName(t, "ASYMMETRIC_SIGN", "us-central1", "rs256-service-account-signing")
-	backupKey := acctest.BootstrapKMSKeyWithPurposeInLocationAndName(t, "ENCRYPT_DECRYPT", "us-central1", "etcd-backups")
+	diskKey := kms.BootstrapKMSKeyWithPurposeInLocationAndName(t, "ENCRYPT_DECRYPT", "us-central1", "control-plane-disk-encryption")
+	signingKey := kms.BootstrapKMSKeyWithPurposeInLocationAndName(t, "ASYMMETRIC_SIGN", "us-central1", "rs256-service-account-signing")
+	backupKey := kms.BootstrapKMSKeyWithPurposeInLocationAndName(t, "ENCRYPT_DECRYPT", "us-central1", "etcd-backups")
 
 	// Here, we are granting the container engine service agent permissions on
 	// *ALL* Cloud KMS keys in the project.  A more realistic usage would be to
@@ -12635,7 +12636,7 @@ resource "google_container_cluster" "with_cost_management_config" {
 `, projectID, clusterName, enabled, networkName, subnetworkName)
 }
 
-func testAccContainerCluster_withDatabaseEncryption(clusterName string, kmsData acctest.BootstrappedKMS, networkName, subnetworkName string) string {
+func testAccContainerCluster_withDatabaseEncryption(clusterName string, kmsData kms.BootstrappedKMS, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 data "google_project" "project" {
 }
@@ -14033,7 +14034,7 @@ func TestAccContainerCluster_withConfidentialBootDisk(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	npName := fmt.Sprintf("tf-test-node-pool-%s", acctest.RandString(t, 10))
-	kms := acctest.BootstrapKMSKeyInLocation(t, "us-central1")
+	bootstrapped := kms.BootstrapKMSKeyInLocation(t, "us-central1")
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
 	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
 
@@ -14050,7 +14051,7 @@ func TestAccContainerCluster_withConfidentialBootDisk(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerCluster_withConfidentialBootDisk(clusterName, npName, kms.CryptoKey.Name, networkName, subnetworkName),
+				Config: testAccContainerCluster_withConfidentialBootDisk(clusterName, npName, bootstrapped.CryptoKey.Name, networkName, subnetworkName),
 			},
 			{
 				ResourceName:            "google_container_cluster.with_confidential_boot_disk",
@@ -14099,7 +14100,7 @@ func TestAccContainerCluster_withConfidentialBootDiskNodeConfig(t *testing.T) {
 	t.Parallel()
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
-	kms := acctest.BootstrapKMSKeyInLocation(t, "us-central1")
+	bootstrapped := kms.BootstrapKMSKeyInLocation(t, "us-central1")
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
 	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
 
@@ -14116,7 +14117,7 @@ func TestAccContainerCluster_withConfidentialBootDiskNodeConfig(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerCluster_withConfidentialBootDiskNodeConfig(clusterName, kms.CryptoKey.Name, networkName, subnetworkName),
+				Config: testAccContainerCluster_withConfidentialBootDiskNodeConfig(clusterName, bootstrapped.CryptoKey.Name, networkName, subnetworkName),
 			},
 			{
 				ResourceName:            "google_container_cluster.with_confidential_boot_disk_node_config",
@@ -16918,10 +16919,10 @@ func TestAccContainerCluster_WithCPAFeaturesUpdate(t *testing.T) {
 	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
 
 	// Bootstrap KMS keys and needed IAM role.
-	diskKey := acctest.BootstrapKMSKeyWithPurposeInLocationAndName(t, "ENCRYPT_DECRYPT", "us-central1", "control-plane-disk-encryption")
-	signingKey1 := acctest.BootstrapKMSKeyWithPurposeInLocationAndName(t, "ASYMMETRIC_SIGN", "us-central1", "rs256-service-account-signing-1")
-	signingKey2 := acctest.BootstrapKMSKeyWithPurposeInLocationAndName(t, "ASYMMETRIC_SIGN", "us-central1", "rs256-service-account-signing-2")
-	backupKey := acctest.BootstrapKMSKeyWithPurposeInLocationAndName(t, "ENCRYPT_DECRYPT", "us-central1", "etcd-backups")
+	diskKey := kms.BootstrapKMSKeyWithPurposeInLocationAndName(t, "ENCRYPT_DECRYPT", "us-central1", "control-plane-disk-encryption")
+	signingKey1 := kms.BootstrapKMSKeyWithPurposeInLocationAndName(t, "ASYMMETRIC_SIGN", "us-central1", "rs256-service-account-signing-1")
+	signingKey2 := kms.BootstrapKMSKeyWithPurposeInLocationAndName(t, "ASYMMETRIC_SIGN", "us-central1", "rs256-service-account-signing-2")
+	backupKey := kms.BootstrapKMSKeyWithPurposeInLocationAndName(t, "ENCRYPT_DECRYPT", "us-central1", "etcd-backups")
 
 	// Here, we are granting the container engine service agent permissions on
 	// *ALL* Cloud KMS keys in the project.  A more realistic usage would be to

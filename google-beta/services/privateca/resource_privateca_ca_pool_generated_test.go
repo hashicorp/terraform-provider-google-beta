@@ -37,6 +37,12 @@ import (
 	"google.golang.org/api/googleapi"
 )
 
+import (
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/kms"
+)
+
+var _ = kms.Product
+
 var (
 	_ = fmt.Sprintf
 	_ = log.Print
@@ -109,7 +115,7 @@ func TestAccPrivatecaCaPool_privatecaCapoolAllFieldsExample(t *testing.T) {
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"cloud_kms_key": acctest.BootstrapKMSKeyWithPurposeInLocation(t, "ENCRYPT_DECRYPT", "us-central1").CryptoKey.Name,
+		"cloud_kms_key": kms.BootstrapKMSKeyWithPurposeInLocation(t, "ENCRYPT_DECRYPT", "us-central1").CryptoKey.Name,
 		"name":          "tf-test-my-pool" + randomSuffix,
 		"random_suffix": randomSuffix,
 	}

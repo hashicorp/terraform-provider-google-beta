@@ -26,6 +26,7 @@ import (
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/kms"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/privateca"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
@@ -537,8 +538,8 @@ func TestAccPrivatecaCaPool_CmekKeyUpdate(t *testing.T) {
 	})
 
 	context := map[string]interface{}{
-		"kms_key1":      acctest.BootstrapKMSKeyWithPurposeInLocation(t, "ENCRYPT_DECRYPT", "us-central1").CryptoKey.Name,
-		"kms_key2":      acctest.BootstrapKMSKeyWithPurposeInLocation(t, "ENCRYPT_DECRYPT", "us-central1").CryptoKey.Name,
+		"kms_key1":      kms.BootstrapKMSKeyWithPurposeInLocation(t, "ENCRYPT_DECRYPT", "us-central1").CryptoKey.Name,
+		"kms_key2":      kms.BootstrapKMSKeyWithPurposeInLocation(t, "ENCRYPT_DECRYPT", "us-central1").CryptoKey.Name,
 		"random_suffix": acctest.RandString(t, 10),
 	}
 

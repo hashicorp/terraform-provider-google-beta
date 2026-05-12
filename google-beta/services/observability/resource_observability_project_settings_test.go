@@ -25,6 +25,7 @@ import (
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/kms"
 )
 
 func TestAccObservabilityProjectSettings_update(t *testing.T) {
@@ -32,7 +33,7 @@ func TestAccObservabilityProjectSettings_update(t *testing.T) {
 
 	context := map[string]interface{}{
 		"org_id":        envvar.GetTestOrgFromEnv(t),
-		"kms_key_name":  acctest.BootstrapKMSKeyInLocation(t, "us").CryptoKey.Name,
+		"kms_key_name":  kms.BootstrapKMSKeyInLocation(t, "us").CryptoKey.Name,
 		"random_suffix": acctest.RandString(t, 10),
 	}
 

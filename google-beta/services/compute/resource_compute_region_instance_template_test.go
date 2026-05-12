@@ -30,6 +30,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 	tpgcompute "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/compute"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/kms"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
@@ -1380,7 +1381,7 @@ func TestAccComputeRegionInstanceTemplate_diskEncryptionKey(t *testing.T) {
 	t.Parallel()
 
 	var instanceTemplate compute.InstanceTemplate
-	kmsKey := acctest.BootstrapKMSKeyInLocation(t, "us-central1")
+	kmsKey := kms.BootstrapKMSKeyInLocation(t, "us-central1")
 	context := map[string]interface{}{
 		"kms_key_self_link": kmsKey.CryptoKey.Name,
 		"template_name":     fmt.Sprintf("tf-test-instance-template-%s", acctest.RandString(t, 10)),
@@ -1406,7 +1407,7 @@ func TestAccComputeRegionInstanceTemplate_sourceSnapshotEncryptionKey(t *testing
 	t.Parallel()
 
 	var instanceTemplate compute.InstanceTemplate
-	kmsKey := acctest.BootstrapKMSKeyInLocation(t, "us-central1")
+	kmsKey := kms.BootstrapKMSKeyInLocation(t, "us-central1")
 
 	context := map[string]interface{}{
 		"kms_ring_name":     tpgresource.GetResourceNameFromSelfLink(kmsKey.KeyRing.Name),
@@ -1468,7 +1469,7 @@ func TestAccComputeRegionInstanceTemplate_sourceImageEncryptionKey(t *testing.T)
 	t.Parallel()
 
 	var instanceTemplate compute.InstanceTemplate
-	kmsKey := acctest.BootstrapKMSKeyInLocation(t, "us-central1")
+	kmsKey := kms.BootstrapKMSKeyInLocation(t, "us-central1")
 
 	context := map[string]interface{}{
 		"kms_ring_name":     tpgresource.GetResourceNameFromSelfLink(kmsKey.KeyRing.Name),

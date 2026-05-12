@@ -26,6 +26,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 	tpgcloudfunctions "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/cloudfunctions"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/kms"
 	"google.golang.org/api/cloudfunctions/v1"
 )
 
@@ -325,7 +326,7 @@ func TestAccCloudFunctionsFunction_cmek(t *testing.T) {
 	acctest.SkipIfVcr(t)
 	t.Parallel()
 
-	kmsKey := acctest.BootstrapKMSKeyInLocation(t, "us-central1")
+	kmsKey := kms.BootstrapKMSKeyInLocation(t, "us-central1")
 	funcResourceName := "google_cloudfunctions_function.function"
 	arRepoName := fmt.Sprintf("tf-cmek-test-docker-repository-%s", acctest.RandString(t, 10))
 	functionName := fmt.Sprintf("tf-cmek-test-%s", acctest.RandString(t, 10))
