@@ -27,6 +27,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 	tpgcompute "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/compute"
+	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
 func TestForceNewResourcePoliciesWorkloadPolicyIfNewIsEmpty(t *testing.T) {
@@ -634,8 +635,15 @@ func testAccCheckInstanceGroupManagerDestroyProducer(t *testing.T) func(s *terra
 			if rs.Type != "google_compute_instance_group_manager" {
 				continue
 			}
-			_, err := tpgcompute.NewClient(config, config.UserAgent).InstanceGroupManagers.Get(
-				config.Project, rs.Primary.Attributes["zone"], rs.Primary.Attributes["name"]).Do()
+			url := fmt.Sprintf("%sprojects/%s/zones/%s/instanceGroupManagers/%s",
+				config.ComputeBasePath, config.Project, rs.Primary.Attributes["zone"], rs.Primary.Attributes["name"])
+			_, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
+				Config:    config,
+				Method:    "GET",
+				Project:   config.Project,
+				RawURL:    url,
+				UserAgent: config.UserAgent,
+			})
 			if err == nil {
 				return fmt.Errorf("InstanceGroupManager still exists")
 			}
