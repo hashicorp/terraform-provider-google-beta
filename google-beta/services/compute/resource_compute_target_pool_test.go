@@ -21,6 +21,7 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
+	tpgcompute "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/compute"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
@@ -162,7 +163,7 @@ func testAccCheckComputeTargetPoolDestroyProducer(t *testing.T) func(s *terrafor
 				continue
 			}
 
-			url := fmt.Sprintf("%sprojects/%s/regions/%s/targetPools/%s", config.ComputeBasePath, config.Project, config.Region, rs.Primary.Attributes["name"])
+			url := fmt.Sprintf("%sprojects/%s/regions/%s/targetPools/%s", transport_tpg.BaseUrl(tpgcompute.Product, config), config.Project, config.Region, rs.Primary.Attributes["name"])
 			_, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 				Config:    config,
 				Method:    "GET",
@@ -192,7 +193,7 @@ func testAccCheckComputeTargetPoolExists(t *testing.T, n string) resource.TestCh
 
 		config := acctest.GoogleProviderConfig(t)
 
-		url := fmt.Sprintf("%sprojects/%s/regions/%s/targetPools/%s", config.ComputeBasePath, config.Project, config.Region, rs.Primary.Attributes["name"])
+		url := fmt.Sprintf("%sprojects/%s/regions/%s/targetPools/%s", transport_tpg.BaseUrl(tpgcompute.Product, config), config.Project, config.Region, rs.Primary.Attributes["name"])
 		found, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 			Config:    config,
 			Method:    "GET",
