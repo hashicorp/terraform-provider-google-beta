@@ -30,6 +30,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
+	tpgcompute "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/compute"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/kms"
 
 	compute "google.golang.org/api/compute/v0.beta"
@@ -484,7 +485,7 @@ func testAccCheckComputeRegionDiskExists(t *testing.T, n string, disk *compute.D
 
 		config := acctest.GoogleProviderConfig(t)
 
-		url := fmt.Sprintf("%sprojects/%s/regions/%s/disks/%s", config.ComputeBasePath, p, rs.Primary.Attributes["region"], rs.Primary.Attributes["name"])
+		url := fmt.Sprintf("%sprojects/%s/regions/%s/disks/%s", transport_tpg.BaseUrl(tpgcompute.Product, config), p, rs.Primary.Attributes["region"], rs.Primary.Attributes["name"])
 		res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 			Config:    config,
 			Method:    "GET",
