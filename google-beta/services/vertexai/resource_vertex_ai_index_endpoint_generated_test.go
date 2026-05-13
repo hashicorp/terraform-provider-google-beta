@@ -39,9 +39,13 @@ import (
 
 import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/kms"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/servicenetworking"
 )
 
-var _ = kms.Product
+var (
+	_ = kms.Product
+	_ = servicenetworking.Product
+)
 
 var (
 	_ = fmt.Sprintf
@@ -66,7 +70,7 @@ func TestAccVertexAIIndexEndpoint_vertexAiIndexEndpointTestExample(t *testing.T)
 	context := map[string]interface{}{
 		"index_endpoint_display_name": "tf-test-sample-endpoint" + randomSuffix,
 		"kms_key_name":                kms.BootstrapKMSKeyInLocation(t, "us-central1").CryptoKey.Name,
-		"network_name":                acctest.BootstrapSharedServiceNetworkingConnection(t, "vpc-network-1"),
+		"network_name":                servicenetworking.BootstrapSharedServiceNetworkingConnection(t, "vpc-network-1"),
 		"random_suffix":               randomSuffix,
 	}
 

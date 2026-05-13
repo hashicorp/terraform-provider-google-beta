@@ -27,6 +27,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/servicenetworking"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
@@ -101,7 +102,7 @@ func TestAccVmwareengineDatastore_vmwareEngineDatastoreFilestore_update(t *testi
 	context := map[string]interface{}{
 		"region":        envvar.GetTestRegionFromEnv(),
 		"zone":          envvar.GetTestZoneFromEnv(),
-		"network_name":  acctest.BootstrapSharedServiceNetworkingConnection(t, "datastore-test"),
+		"network_name":  servicenetworking.BootstrapSharedServiceNetworkingConnection(t, "datastore-test"),
 		"random_suffix": acctest.RandString(t, 10),
 	}
 
@@ -189,7 +190,7 @@ func TestAccVmwareengineDatastore_vmwareEngineDatastoreNetapp_update(t *testing.
 	context := map[string]interface{}{
 		"region":        envvar.GetTestRegionFromEnv(),
 		"zone":          envvar.GetTestZoneFromEnv(),
-		"network_name":  acctest.BootstrapSharedServiceNetworkingConnection(t, "datastore-test", acctest.ServiceNetworkWithParentService("netapp.servicenetworking.goog")),
+		"network_name":  servicenetworking.BootstrapSharedServiceNetworkingConnection(t, "datastore-test", servicenetworking.ServiceNetworkWithParentService("netapp.servicenetworking.goog")),
 		"random_suffix": acctest.RandString(t, 10),
 	}
 

@@ -31,6 +31,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/backupdr"
 	tpgcompute "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/compute"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/kms"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/servicenetworking"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/sql"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
@@ -509,7 +510,7 @@ func TestAccSqlDatabaseInstance_deleteDefaultUserBeforeSubsequentApiCalls(t *tes
 	databaseName := "tf-test-" + acctest.RandString(t, 10)
 	testId := "sql-instance-clone-2"
 	addressName := tpgcompute.BootstrapSharedTestGlobalAddress(t, testId)
-	networkName := acctest.BootstrapSharedServiceNetworkingConnection(t, testId)
+	networkName := servicenetworking.BootstrapSharedServiceNetworkingConnection(t, testId)
 
 	// 1. Create an instance.
 	// 2. Add a root@'%' user.
@@ -1124,7 +1125,7 @@ func TestAccSqlDatabaseInstance_withPrivateNetwork_withoutAllocatedIpRange(t *te
 	t.Parallel()
 
 	databaseName := "tf-test-" + acctest.RandString(t, 10)
-	networkName := acctest.BootstrapSharedServiceNetworkingConnection(t, "sql-instance-1")
+	networkName := servicenetworking.BootstrapSharedServiceNetworkingConnection(t, "sql-instance-1")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -1588,11 +1589,11 @@ func TestAccSqlDatabaseInstance_withPrivateNetwork_withAllocatedIpRange(t *testi
 
 	testId := "sql-instance-allocated-1"
 	addressName := tpgcompute.BootstrapSharedTestGlobalAddress(t, testId)
-	networkName := acctest.BootstrapSharedServiceNetworkingConnection(t, testId)
+	networkName := servicenetworking.BootstrapSharedServiceNetworkingConnection(t, testId)
 
 	updateTestId := "sql-instance-allocated-update-1"
 	addressName_update := tpgcompute.BootstrapSharedTestGlobalAddress(t, updateTestId)
-	networkName_update := acctest.BootstrapSharedServiceNetworkingConnection(t, updateTestId)
+	networkName_update := servicenetworking.BootstrapSharedServiceNetworkingConnection(t, updateTestId)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -1629,7 +1630,7 @@ func TestAccSqlDatabaseInstance_withPrivateNetwork_withAllocatedIpRangeReplica(t
 
 	testId := "sql-instance-replica-1"
 	addressName := tpgcompute.BootstrapSharedTestGlobalAddress(t, testId)
-	networkName := acctest.BootstrapSharedServiceNetworkingConnection(t, testId)
+	networkName := servicenetworking.BootstrapSharedServiceNetworkingConnection(t, testId)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -1662,7 +1663,7 @@ func TestAccSqlDatabaseInstance_withPrivateNetwork_withAllocatedIpRangeClone(t *
 	databaseName := "tf-test-" + acctest.RandString(t, 10)
 	testId := "sql-instance-clone-1"
 	addressName := tpgcompute.BootstrapSharedTestGlobalAddress(t, testId)
-	networkName := acctest.BootstrapSharedServiceNetworkingConnection(t, testId)
+	networkName := servicenetworking.BootstrapSharedServiceNetworkingConnection(t, testId)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -2642,7 +2643,7 @@ func TestAccSqlDatabaseInstance_ActiveDirectory(t *testing.T) {
 
 	t.Parallel()
 	databaseName := "tf-test-" + acctest.RandString(t, 10)
-	networkName := acctest.BootstrapSharedServiceNetworkingConnection(t, "sql-instance-ad-1")
+	networkName := servicenetworking.BootstrapSharedServiceNetworkingConnection(t, "sql-instance-ad-1")
 	rootPassword := acctest.RandString(t, 15)
 	adDomainName := BootstrapSharedTestADDomain(t, "test-domain", networkName)
 
@@ -3618,7 +3619,7 @@ func TestAccSqlDatabaseInstance_MysqlEplusWithFailoverReplicaSetupWithPrivateNet
 
 	primaryName := "tf-test-mysql-primary-" + acctest.RandString(t, 10)
 	replicaName := "tf-test-mysql-replica-" + acctest.RandString(t, 10)
-	networkName := acctest.BootstrapSharedServiceNetworkingConnection(t, "endpoint")
+	networkName := servicenetworking.BootstrapSharedServiceNetworkingConnection(t, "endpoint")
 	projectId := envvar.GetTestProjectFromEnv()
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -3657,7 +3658,7 @@ func TestAccSqlDatabaseInstance_PostgresEplusWithFailoverReplicaSetupWithPrivate
 
 	primaryName := "tf-test-postgres-primary-" + acctest.RandString(t, 10)
 	replicaName := "tf-test-postgres-replica-" + acctest.RandString(t, 10)
-	networkName := acctest.BootstrapSharedServiceNetworkingConnection(t, "endpoint")
+	networkName := servicenetworking.BootstrapSharedServiceNetworkingConnection(t, "endpoint")
 	projectId := envvar.GetTestProjectFromEnv()
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -3695,7 +3696,7 @@ func TestAccSqlDatabaseInstance_MysqlEplusWithPrivateNetwork(t *testing.T) {
 	t.Parallel()
 
 	instanceName := "tf-test-" + acctest.RandString(t, 10)
-	networkName := acctest.BootstrapSharedServiceNetworkingConnection(t, "endpoint")
+	networkName := servicenetworking.BootstrapSharedServiceNetworkingConnection(t, "endpoint")
 	projectId := envvar.GetTestProjectFromEnv()
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -3722,7 +3723,7 @@ func TestAccSqlDatabaseInstance_PostgresEplusWithPrivateNetwork(t *testing.T) {
 	t.Parallel()
 
 	instanceName := "tf-test-" + acctest.RandString(t, 10)
-	networkName := acctest.BootstrapSharedServiceNetworkingConnection(t, "endpoint")
+	networkName := servicenetworking.BootstrapSharedServiceNetworkingConnection(t, "endpoint")
 	projectId := envvar.GetTestProjectFromEnv()
 
 	acctest.VcrTest(t, resource.TestCase{
