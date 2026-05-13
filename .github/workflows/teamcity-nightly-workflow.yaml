@@ -8,6 +8,10 @@ on:
         - cron: '0 19 * * *' # 7PM PST
           timezone: 'America/Los_Angeles'
 
+# The reusable workflow creates a nightly-test branch from main.
+permissions:
+    contents: write
+
 jobs:
     # uses the same teamcity nightly workflow used in terraform-provider-google
     # as well as the default value for DAYS_THRESHOLD
