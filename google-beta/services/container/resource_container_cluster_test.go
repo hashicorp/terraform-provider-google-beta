@@ -5190,6 +5190,7 @@ func TestAccContainerCluster_withSecretManagerConfig(t *testing.T) {
 		},
 	})
 }
+
 func TestAccContainerCluster_withSecretSyncConfig(t *testing.T) {
 	t.Parallel()
 
@@ -13214,6 +13215,7 @@ resource "google_container_cluster" "primary" {
 }
 `, projectID, name, networkName, subnetworkName)
 }
+
 func testAccContainerCluster_forSecretSyncConfig(projectID, name, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 data "google_project" "project" {
