@@ -104,6 +104,7 @@ resource "google_compute_autoscaler" "default" {
     max_replicas    = 5
     min_replicas    = 1
     cooldown_period = 60
+    stabilization_period = 300
 
     metric {
       name                       = "pubsub.googleapis.com/subscription/num_undelivered_messages"
@@ -223,6 +224,7 @@ resource "google_compute_autoscaler" "foobar" {
     max_replicas    = 5
     min_replicas    = 1
     cooldown_period = 60
+    stabilization_period = 300
 
     cpu_utilization {
       target = 0.5
