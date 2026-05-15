@@ -52,7 +52,7 @@ func init() {
 		Name:        "google_compute_backend_bucket_iam_member",
 		ProductName: "Compute",
 		Type:        registry.SchemaTypeIAMResource,
-		Schema:      tpgiamresource.ResourceIamMember(ComputeBackendBucketIamSchema, ComputeBackendBucketIamUpdaterProducer, ComputeBackendBucketIdParseFunc),
+		Schema:      tpgiamresource.ResourceIamMember(ComputeBackendBucketIamSchema, ComputeBackendBucketIamUpdaterProducer, ComputeBackendBucketIdParseFunc, tpgiamresource.IamWithParentResourceIdentity(ComputeBackendBucketIamParentParentResourceIdentityParser)),
 	}.Register()
 	registry.Schema{
 		Name:        "google_compute_backend_bucket_iam_policy",
@@ -249,6 +249,16 @@ func (u *ComputeBackendBucketIamUpdater) qualifyBackendBucketUrl(methodIdentifie
 
 func (u *ComputeBackendBucketIamUpdater) GetResourceId() string {
 	return fmt.Sprintf("projects/%s/global/backendBuckets/%s", u.project, u.name)
+}
+
+func ComputeBackendBucketIamParentParentResourceIdentityParser(d *schema.ResourceData, identity *schema.IdentityData, transportConfig *transport_tpg.Config) (string, error) {
+	return tpgiamresource.ParseIamResourceIdentity(d, identity, transportConfig, tpgiamresource.IamResourceIdentityConfig{
+		Params: []tpgiamresource.IamIdentityParam{
+			{Key: "project", IdentityKey: "project"},
+			{Key: "name", IdentityKey: "name"},
+		},
+		UriFormat: "projects/%s/global/backendBuckets/%s",
+	})
 }
 
 func (u *ComputeBackendBucketIamUpdater) GetMutexKey() string {

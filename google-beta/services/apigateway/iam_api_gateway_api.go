@@ -52,7 +52,7 @@ func init() {
 		Name:        "google_api_gateway_api_iam_member",
 		ProductName: "ApiGateway",
 		Type:        registry.SchemaTypeIAMResource,
-		Schema:      tpgiamresource.ResourceIamMember(ApiGatewayApiIamSchema, ApiGatewayApiIamUpdaterProducer, ApiGatewayApiIdParseFunc),
+		Schema:      tpgiamresource.ResourceIamMember(ApiGatewayApiIamSchema, ApiGatewayApiIamUpdaterProducer, ApiGatewayApiIdParseFunc, tpgiamresource.IamWithParentResourceIdentity(ApiGatewayApiIamParentParentResourceIdentityParser)),
 	}.Register()
 	registry.Schema{
 		Name:        "google_api_gateway_api_iam_policy",
@@ -249,6 +249,16 @@ func (u *ApiGatewayApiIamUpdater) qualifyApiUrl(methodIdentifier string) (string
 
 func (u *ApiGatewayApiIamUpdater) GetResourceId() string {
 	return fmt.Sprintf("projects/%s/locations/global/apis/%s", u.project, u.api)
+}
+
+func ApiGatewayApiIamParentParentResourceIdentityParser(d *schema.ResourceData, identity *schema.IdentityData, transportConfig *transport_tpg.Config) (string, error) {
+	return tpgiamresource.ParseIamResourceIdentity(d, identity, transportConfig, tpgiamresource.IamResourceIdentityConfig{
+		Params: []tpgiamresource.IamIdentityParam{
+			{Key: "project", IdentityKey: "project"},
+			{Key: "api", IdentityKey: "api"},
+		},
+		UriFormat: "projects/%s/locations/global/apis/%s",
+	})
 }
 
 func (u *ApiGatewayApiIamUpdater) GetMutexKey() string {

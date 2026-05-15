@@ -52,7 +52,7 @@ func init() {
 		Name:        "google_compute_machine_image_iam_member",
 		ProductName: "Compute",
 		Type:        registry.SchemaTypeIAMResource,
-		Schema:      tpgiamresource.ResourceIamMember(ComputeMachineImageIamSchema, ComputeMachineImageIamUpdaterProducer, ComputeMachineImageIdParseFunc),
+		Schema:      tpgiamresource.ResourceIamMember(ComputeMachineImageIamSchema, ComputeMachineImageIamUpdaterProducer, ComputeMachineImageIdParseFunc, tpgiamresource.IamWithParentResourceIdentity(ComputeMachineImageIamParentParentResourceIdentityParser)),
 	}.Register()
 	registry.Schema{
 		Name:        "google_compute_machine_image_iam_policy",
@@ -253,6 +253,16 @@ func (u *ComputeMachineImageIamUpdater) qualifyMachineImageUrl(methodIdentifier 
 
 func (u *ComputeMachineImageIamUpdater) GetResourceId() string {
 	return fmt.Sprintf("projects/%s/global/machineImages/%s", u.project, u.machineImage)
+}
+
+func ComputeMachineImageIamParentParentResourceIdentityParser(d *schema.ResourceData, identity *schema.IdentityData, transportConfig *transport_tpg.Config) (string, error) {
+	return tpgiamresource.ParseIamResourceIdentity(d, identity, transportConfig, tpgiamresource.IamResourceIdentityConfig{
+		Params: []tpgiamresource.IamIdentityParam{
+			{Key: "project", IdentityKey: "project"},
+			{Key: "machineImage", IdentityKey: "machine_image"},
+		},
+		UriFormat: "projects/%s/global/machineImages/%s",
+	})
 }
 
 func (u *ComputeMachineImageIamUpdater) GetMutexKey() string {

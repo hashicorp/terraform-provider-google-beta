@@ -52,7 +52,7 @@ func init() {
 		Name:        "google_vertex_ai_featurestore_iam_member",
 		ProductName: "VertexAI",
 		Type:        registry.SchemaTypeIAMResource,
-		Schema:      tpgiamresource.ResourceIamMember(VertexAIFeaturestoreIamSchema, VertexAIFeaturestoreIamUpdaterProducer, VertexAIFeaturestoreIdParseFunc),
+		Schema:      tpgiamresource.ResourceIamMember(VertexAIFeaturestoreIamSchema, VertexAIFeaturestoreIamUpdaterProducer, VertexAIFeaturestoreIdParseFunc, tpgiamresource.IamWithParentResourceIdentity(VertexAIFeaturestoreIamParentParentResourceIdentityParser)),
 	}.Register()
 	registry.Schema{
 		Name:        "google_vertex_ai_featurestore_iam_policy",
@@ -273,6 +273,17 @@ func (u *VertexAIFeaturestoreIamUpdater) qualifyFeaturestoreUrl(methodIdentifier
 
 func (u *VertexAIFeaturestoreIamUpdater) GetResourceId() string {
 	return fmt.Sprintf("projects/%s/locations/%s/featurestores/%s", u.project, u.region, u.featurestore)
+}
+
+func VertexAIFeaturestoreIamParentParentResourceIdentityParser(d *schema.ResourceData, identity *schema.IdentityData, transportConfig *transport_tpg.Config) (string, error) {
+	return tpgiamresource.ParseIamResourceIdentity(d, identity, transportConfig, tpgiamresource.IamResourceIdentityConfig{
+		Params: []tpgiamresource.IamIdentityParam{
+			{Key: "project", IdentityKey: "project"},
+			{Key: "region", IdentityKey: "region"},
+			{Key: "featurestore", IdentityKey: "featurestore"},
+		},
+		UriFormat: "projects/%s/locations/%s/featurestores/%s",
+	})
 }
 
 func (u *VertexAIFeaturestoreIamUpdater) GetMutexKey() string {

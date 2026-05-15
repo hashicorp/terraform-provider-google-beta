@@ -52,7 +52,7 @@ func init() {
 		Name:        "google_vertex_ai_featurestore_entitytype_iam_member",
 		ProductName: "VertexAI",
 		Type:        registry.SchemaTypeIAMResource,
-		Schema:      tpgiamresource.ResourceIamMember(VertexAIFeaturestoreEntitytypeIamSchema, VertexAIFeaturestoreEntitytypeIamUpdaterProducer, VertexAIFeaturestoreEntitytypeIdParseFunc),
+		Schema:      tpgiamresource.ResourceIamMember(VertexAIFeaturestoreEntitytypeIamSchema, VertexAIFeaturestoreEntitytypeIamUpdaterProducer, VertexAIFeaturestoreEntitytypeIdParseFunc, tpgiamresource.IamWithParentResourceIdentity(VertexAIFeaturestoreEntitytypeIamParentParentResourceIdentityParser)),
 	}.Register()
 	registry.Schema{
 		Name:        "google_vertex_ai_featurestore_entitytype_iam_policy",
@@ -230,6 +230,16 @@ func (u *VertexAIFeaturestoreEntitytypeIamUpdater) qualifyFeaturestoreEntitytype
 
 func (u *VertexAIFeaturestoreEntitytypeIamUpdater) GetResourceId() string {
 	return fmt.Sprintf("%s/entityTypes/%s", u.featurestore, u.entitytype)
+}
+
+func VertexAIFeaturestoreEntitytypeIamParentParentResourceIdentityParser(d *schema.ResourceData, identity *schema.IdentityData, transportConfig *transport_tpg.Config) (string, error) {
+	return tpgiamresource.ParseIamResourceIdentity(d, identity, transportConfig, tpgiamresource.IamResourceIdentityConfig{
+		Params: []tpgiamresource.IamIdentityParam{
+			{Key: "featurestore", IdentityKey: "featurestore"},
+			{Key: "entitytype", IdentityKey: "entitytype"},
+		},
+		UriFormat: "%s/entityTypes/%s",
+	})
 }
 
 func (u *VertexAIFeaturestoreEntitytypeIamUpdater) GetMutexKey() string {

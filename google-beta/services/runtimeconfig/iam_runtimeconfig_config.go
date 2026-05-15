@@ -52,7 +52,7 @@ func init() {
 		Name:        "google_runtimeconfig_config_iam_member",
 		ProductName: "RuntimeConfig",
 		Type:        registry.SchemaTypeIAMResource,
-		Schema:      tpgiamresource.ResourceIamMember(RuntimeConfigConfigIamSchema, RuntimeConfigConfigIamUpdaterProducer, RuntimeConfigConfigIdParseFunc),
+		Schema:      tpgiamresource.ResourceIamMember(RuntimeConfigConfigIamSchema, RuntimeConfigConfigIamUpdaterProducer, RuntimeConfigConfigIdParseFunc, tpgiamresource.IamWithParentResourceIdentity(RuntimeConfigConfigIamParentParentResourceIdentityParser)),
 	}.Register()
 	registry.Schema{
 		Name:        "google_runtimeconfig_config_iam_policy",
@@ -249,6 +249,16 @@ func (u *RuntimeConfigConfigIamUpdater) qualifyConfigUrl(methodIdentifier string
 
 func (u *RuntimeConfigConfigIamUpdater) GetResourceId() string {
 	return fmt.Sprintf("projects/%s/configs/%s", u.project, u.config)
+}
+
+func RuntimeConfigConfigIamParentParentResourceIdentityParser(d *schema.ResourceData, identity *schema.IdentityData, transportConfig *transport_tpg.Config) (string, error) {
+	return tpgiamresource.ParseIamResourceIdentity(d, identity, transportConfig, tpgiamresource.IamResourceIdentityConfig{
+		Params: []tpgiamresource.IamIdentityParam{
+			{Key: "project", IdentityKey: "project"},
+			{Key: "config", IdentityKey: "config"},
+		},
+		UriFormat: "projects/%s/configs/%s",
+	})
 }
 
 func (u *RuntimeConfigConfigIamUpdater) GetMutexKey() string {
