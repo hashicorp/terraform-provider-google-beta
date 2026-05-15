@@ -91,7 +91,6 @@ func TestAccApiGatewayGatewayIamMemberGenerated(t *testing.T) {
 		},
 	})
 }
-
 func TestAccApiGatewayGatewayIamPolicyGenerated(t *testing.T) {
 	t.Parallel()
 

@@ -52,7 +52,7 @@ func init() {
 		Name:        "google_iap_location_web_iam_member",
 		ProductName: "Iap",
 		Type:        registry.SchemaTypeIAMResource,
-		Schema:      tpgiamresource.ResourceIamMember(IapLocationWebIamSchema, IapLocationWebIamUpdaterProducer, IapLocationWebIdParseFunc),
+		Schema:      tpgiamresource.ResourceIamMember(IapLocationWebIamSchema, IapLocationWebIamUpdaterProducer, IapLocationWebIdParseFunc, tpgiamresource.IamWithParentResourceIdentity(IapLocationWebIamParentParentResourceIdentityParser)),
 	}.Register()
 	registry.Schema{
 		Name:        "google_iap_location_web_iam_policy",
@@ -267,6 +267,16 @@ func (u *IapLocationWebIamUpdater) qualifyLocationWebUrl(methodIdentifier string
 
 func (u *IapLocationWebIamUpdater) GetResourceId() string {
 	return fmt.Sprintf("projects/%s/locations/%s/iap_web", u.project, u.location)
+}
+
+func IapLocationWebIamParentParentResourceIdentityParser(d *schema.ResourceData, identity *schema.IdentityData, transportConfig *transport_tpg.Config) (string, error) {
+	return tpgiamresource.ParseIamResourceIdentity(d, identity, transportConfig, tpgiamresource.IamResourceIdentityConfig{
+		Params: []tpgiamresource.IamIdentityParam{
+			{Key: "project", IdentityKey: "project"},
+			{Key: "location", IdentityKey: "location"},
+		},
+		UriFormat: "projects/%s/locations/%s/iap_web",
+	})
 }
 
 func (u *IapLocationWebIamUpdater) GetMutexKey() string {

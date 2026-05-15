@@ -52,7 +52,7 @@ func init() {
 		Name:        "google_dataform_repository_iam_member",
 		ProductName: "Dataform",
 		Type:        registry.SchemaTypeIAMResource,
-		Schema:      tpgiamresource.ResourceIamMember(DataformRepositoryIamSchema, DataformRepositoryIamUpdaterProducer, DataformRepositoryIdParseFunc),
+		Schema:      tpgiamresource.ResourceIamMember(DataformRepositoryIamSchema, DataformRepositoryIamUpdaterProducer, DataformRepositoryIdParseFunc, tpgiamresource.IamWithParentResourceIdentity(DataformRepositoryIamParentParentResourceIdentityParser)),
 	}.Register()
 	registry.Schema{
 		Name:        "google_dataform_repository_iam_policy",
@@ -273,6 +273,17 @@ func (u *DataformRepositoryIamUpdater) qualifyRepositoryUrl(methodIdentifier str
 
 func (u *DataformRepositoryIamUpdater) GetResourceId() string {
 	return fmt.Sprintf("projects/%s/locations/%s/repositories/%s", u.project, u.region, u.repository)
+}
+
+func DataformRepositoryIamParentParentResourceIdentityParser(d *schema.ResourceData, identity *schema.IdentityData, transportConfig *transport_tpg.Config) (string, error) {
+	return tpgiamresource.ParseIamResourceIdentity(d, identity, transportConfig, tpgiamresource.IamResourceIdentityConfig{
+		Params: []tpgiamresource.IamIdentityParam{
+			{Key: "project", IdentityKey: "project"},
+			{Key: "region", IdentityKey: "region"},
+			{Key: "repository", IdentityKey: "repository"},
+		},
+		UriFormat: "projects/%s/locations/%s/repositories/%s",
+	})
 }
 
 func (u *DataformRepositoryIamUpdater) GetMutexKey() string {
