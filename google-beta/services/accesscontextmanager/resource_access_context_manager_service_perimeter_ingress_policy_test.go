@@ -26,6 +26,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/accesscontextmanager"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/iambeta"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
@@ -35,11 +36,11 @@ import (
 
 func testAccAccessContextManagerServicePerimeterIngressPolicy_basicTest(t *testing.T) {
 	org := envvar.GetTestOrgFromEnv(t)
-	//projects := acctest.BootstrapServicePerimeterProjects(t, 1)
+	//projects := BootstrapServicePerimeterProjects(t, 1)
 
 	// Bootstrap a service account to use as ingress from identity
 	initialServiceAccount := envvar.GetTestServiceAccountFromEnv(t)
-	serviceAccount := acctest.BootstrapServiceAccount(t, "acm-ingress-2", initialServiceAccount)
+	serviceAccount := iambeta.BootstrapServiceAccount(t, "acm-ingress-2", initialServiceAccount)
 
 	policyTitle := acctest.RandString(t, 10)
 	perimeterTitle := "perimeter"

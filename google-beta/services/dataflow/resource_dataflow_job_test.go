@@ -30,6 +30,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	compute_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/compute"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/dataflow"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager"
 	dataflowapi "google.golang.org/api/dataflow/v1b3"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
@@ -405,7 +406,7 @@ func TestAccDataflowJob_withKmsKey(t *testing.T) {
 	bucket := "tf-test-dataflow-gcs-" + randStr
 	job := "tf-test-dataflow-job-" + randStr
 
-	acctest.BootstrapIamMembers(t, []acctest.IamMember{
+	resourcemanager.BootstrapIamMembers(t, []resourcemanager.IamMember{
 		{
 			Member: "serviceAccount:service-{project_number}@compute-system.iam.gserviceaccount.com",
 			Role:   "roles/cloudkms.cryptoKeyEncrypterDecrypter",
