@@ -31,6 +31,9 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/integrations"
+
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager"
+
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
@@ -102,7 +105,7 @@ resource "google_integrations_client" "example" {
 func TestAccIntegrationsClient_integrationsClientFullExample(t *testing.T) {
 	acctest.SkipIfVcr(t)
 	t.Parallel()
-	acctest.BootstrapIamMembers(t, []acctest.IamMember{
+	resourcemanager.BootstrapIamMembers(t, []resourcemanager.IamMember{
 		{
 			Member: "serviceAccount:service-{project_number}@gcp-sa-integrations.iam.gserviceaccount.com",
 			Role:   "roles/cloudkmskacls.serviceAgent",

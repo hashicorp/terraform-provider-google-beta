@@ -29,6 +29,7 @@ import (
 	tpgcompute "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/compute"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/container"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/kms"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/tags"
 )
 
@@ -1432,7 +1433,7 @@ func TestAccContainerNodePool_withBootDiskKmsKey(t *testing.T) {
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
 	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
 
-	acctest.BootstrapIamMembers(t, []acctest.IamMember{
+	resourcemanager.BootstrapIamMembers(t, []resourcemanager.IamMember{
 		{
 			Member: "serviceAccount:service-{project_number}@compute-system.iam.gserviceaccount.com",
 			Role:   "roles/cloudkms.cryptoKeyEncrypterDecrypter",
@@ -5572,7 +5573,7 @@ func TestAccContainerNodePool_withConfidentialBootDisk(t *testing.T) {
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
 	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
 
-	acctest.BootstrapIamMembers(t, []acctest.IamMember{
+	resourcemanager.BootstrapIamMembers(t, []resourcemanager.IamMember{
 		{
 			Member: "serviceAccount:service-{project_number}@compute-system.iam.gserviceaccount.com",
 			Role:   "roles/cloudkms.cryptoKeyEncrypterDecrypter",

@@ -31,6 +31,9 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/osconfigv2"
+
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager"
+
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
@@ -54,7 +57,7 @@ var (
 
 func TestAccOSConfigV2PolicyOrchestrator_osconfigv2PolicyOrchestratorBasicExample(t *testing.T) {
 	t.Parallel()
-	acctest.BootstrapIamMembers(t, []acctest.IamMember{
+	resourcemanager.BootstrapIamMembers(t, []resourcemanager.IamMember{
 		{
 			Member: "serviceAccount:service-{project_number}@gcp-sa-osconfig.iam.gserviceaccount.com",
 			Role:   "roles/osconfig.serviceAgent",
