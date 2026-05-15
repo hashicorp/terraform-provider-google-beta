@@ -27,15 +27,12 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 	tpgcompute "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/compute"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
-
-	compute "google.golang.org/api/compute/v0.beta"
-	"google.golang.org/api/googleapi"
 )
 
 func TestAccComputeInstanceFromMachineImage_basic(t *testing.T) {
 	t.Parallel()
 
-	var instance compute.Instance
+	var instance map[string]interface{}
 	instanceName := fmt.Sprintf("tf-test-%s", acctest.RandString(t, 10))
 	generatedInstanceName := fmt.Sprintf("tf-test-generated-%s", acctest.RandString(t, 10))
 	resourceName := "google_compute_instance_from_machine_image.foobar"
@@ -63,14 +60,11 @@ func TestAccComputeInstanceFromMachineImage_basic(t *testing.T) {
 func TestAccComputeInstanceFromMachineImage_maxRunDuration(t *testing.T) {
 	t.Parallel()
 
-	var instance compute.Instance
+	var instance map[string]interface{}
 	instanceName := fmt.Sprintf("tf-test-%s", acctest.RandString(t, 10))
 	generatedInstanceName := fmt.Sprintf("tf-test-generated-%s", acctest.RandString(t, 10))
 	resourceName := "google_compute_instance_from_machine_image.foobar"
-	var expectedMaxRunDuration = compute.Duration{}
-	// Define in testAccComputeInstanceFromMachineImage_maxRunDuration
-	expectedMaxRunDuration.Nanos = 123
-	expectedMaxRunDuration.Seconds = 60
+	var expectedMaxRunDuration = map[string]interface{}{"nanos": float64(123), "seconds": "60"}
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -96,7 +90,7 @@ func TestAccComputeInstanceFromMachineImage_maxRunDuration(t *testing.T) {
 func TestAccComputeInstanceFromMachineImage_preemptionNoticeDuration(t *testing.T) {
 	t.Parallel()
 
-	var instance compute.Instance
+	var instance map[string]interface{}
 	instanceName := fmt.Sprintf("tf-test-%s", acctest.RandString(t, 10))
 	generatedInstanceName := fmt.Sprintf("tf-test-generated-%s", acctest.RandString(t, 10))
 	resourceName := "google_compute_instance_from_machine_image.foobar"
@@ -125,7 +119,7 @@ func TestAccComputeInstanceFromMachineImage_terminationTime(t *testing.T) {
 	acctest.SkipIfVcr(t)
 	t.Parallel()
 
-	var instance compute.Instance
+	var instance map[string]interface{}
 	instanceName := fmt.Sprintf("tf-test-%s", acctest.RandString(t, 10))
 	generatedInstanceName := fmt.Sprintf("tf-test-generated-%s", acctest.RandString(t, 10))
 	resourceName := "google_compute_instance_from_machine_image.foobar"
@@ -154,13 +148,11 @@ func TestAccComputeInstanceFromMachineImage_terminationTime(t *testing.T) {
 func TestAccComputeInstanceFromMachineImage_localSsdRecoveryTimeout(t *testing.T) {
 	t.Parallel()
 
-	var instance compute.Instance
+	var instance map[string]interface{}
 	instanceName := fmt.Sprintf("tf-test-%s", acctest.RandString(t, 10))
 	generatedInstanceName := fmt.Sprintf("tf-test-generated-%s", acctest.RandString(t, 10))
 	resourceName := "google_compute_instance_from_machine_image.foobar"
-	var expectedLocalSsdRecoveryTimeout = compute.Duration{}
-	expectedLocalSsdRecoveryTimeout.Nanos = 0
-	expectedLocalSsdRecoveryTimeout.Seconds = 3600
+	var expectedLocalSsdRecoveryTimeout = map[string]interface{}{"nanos": float64(0), "seconds": "3600"}
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -181,13 +173,11 @@ func TestAccComputeInstanceFromMachineImage_localSsdRecoveryTimeout(t *testing.T
 func TestAccComputeInstanceFromMachineImageWithOverride_localSsdRecoveryTimeout(t *testing.T) {
 	t.Parallel()
 
-	var instance compute.Instance
+	var instance map[string]interface{}
 	instanceName := fmt.Sprintf("tf-test-%s", acctest.RandString(t, 10))
 	generatedInstanceName := fmt.Sprintf("tf-test-generated-%s", acctest.RandString(t, 10))
 	resourceName := "google_compute_instance_from_machine_image.foobar"
-	var expectedLocalSsdRecoveryTimeout = compute.Duration{}
-	expectedLocalSsdRecoveryTimeout.Nanos = 0
-	expectedLocalSsdRecoveryTimeout.Seconds = 7200
+	var expectedLocalSsdRecoveryTimeout = map[string]interface{}{"nanos": float64(0), "seconds": "7200"}
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -208,14 +198,20 @@ func TestAccComputeInstanceFromMachineImageWithOverride_localSsdRecoveryTimeout(
 func TestAccComputeInstanceFromMachineImageWithOverride_partnerMetadata(t *testing.T) {
 	t.Parallel()
 
-	var instance compute.Instance
+	var instance map[string]interface{}
 	instanceName := fmt.Sprintf("tf-test-%s", acctest.RandString(t, 10))
 	generatedInstanceName := fmt.Sprintf("tf-test-generated-%s", acctest.RandString(t, 10))
 	resourceName := "google_compute_instance_from_machine_image.foobar"
 	var namespace = "test.compute.googleapis.com"
-	expectedPartnerMetadata := make(map[string]compute.StructuredEntries)
-	expectedPartnerMetadata[namespace] = compute.StructuredEntries{
-		Entries: googleapi.RawMessage(`{"key1": "value1", "key2": 2,"key3": {"key31":"value31"}}`),
+	expectedPartnerMetadata := make(map[string]map[string]interface{})
+	expectedPartnerMetadata[namespace] = map[string]interface{}{
+		"entries": map[string]interface{}{
+			"key1": "value1",
+			"key2": float64(2),
+			"key3": map[string]interface{}{
+				"key31": "value31",
+			},
+		},
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -237,7 +233,7 @@ func TestAccComputeInstanceFromMachineImageWithOverride_partnerMetadata(t *testi
 func TestAccComputeInstanceFromMachineImage_overrideMetadataDotStartupScript(t *testing.T) {
 	t.Parallel()
 
-	var instance compute.Instance
+	var instance map[string]interface{}
 	instanceName := fmt.Sprintf("tf-test-%s", acctest.RandString(t, 10))
 	generatedInstanceName := fmt.Sprintf("tf-test-generated-%s", acctest.RandString(t, 10))
 	resourceName := "google_compute_instance_from_machine_image.foobar"
@@ -262,7 +258,7 @@ func TestAccComputeInstanceFromMachineImage_overrideMetadataDotStartupScript(t *
 func TestAccComputeInstanceFromMachineImage_diffProject(t *testing.T) {
 	t.Parallel()
 
-	var instance compute.Instance
+	var instance map[string]interface{}
 	instanceName := fmt.Sprintf("tf-test-%s", acctest.RandString(t, 10))
 	generatedInstanceName := fmt.Sprintf("tf-test-generated-%s", acctest.RandString(t, 10))
 	resourceName := "google_compute_instance_from_machine_image.foobar"
@@ -293,7 +289,7 @@ func TestAccComputeInstanceFromMachineImage_diffProject(t *testing.T) {
 func TestAccComputeInstanceFromMachineImage_confidentialInstanceConfigMain(t *testing.T) {
 	t.Parallel()
 
-	var instance compute.Instance
+	var instance map[string]interface{}
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -353,7 +349,7 @@ func TestAccComputeInstanceFromMachineImage_confidentialInstanceConfigMain(t *te
 func TestAccComputeInstanceFromMachineImage_withSourceMachineImageEncryptionKey(t *testing.T) {
 	t.Parallel()
 
-	var instance compute.Instance
+	var instance map[string]interface{}
 	var instanceName = fmt.Sprintf("tf-test-%s", acctest.RandString(t, 10))
 	var resourceName = "google_compute_instance_from_machine_image.foobar"
 	var machineImageName = fmt.Sprintf("tf-test-%s", acctest.RandString(t, 10))
@@ -383,7 +379,7 @@ func TestAccComputeInstanceFromMachineImage_withSourceMachineImageEncryptionKey(
 func TestAccComputeInstanceFromMachineImage_VSSWindows(t *testing.T) {
 	t.Parallel()
 
-	var instance compute.Instance
+	var instance map[string]interface{}
 
 	context_1 := map[string]interface{}{
 		"instance1_name": fmt.Sprintf("tf-test-%s", acctest.RandString(t, 10)),
@@ -1386,7 +1382,7 @@ resource "google_compute_instance_from_machine_image" "foobar" {
 func TestAccComputeInstanceFromMachineImage_IgmpQuery_v2(t *testing.T) {
 	t.Parallel()
 
-	var instance compute.Instance
+	var instance map[string]interface{}
 	instanceName := fmt.Sprintf("tf-test-%s", acctest.RandString(t, 10))
 	suffix := acctest.RandString(t, 10)
 	envRegion := envvar.GetTestRegionFromEnv()
