@@ -32,15 +32,12 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/vertexai"
 
+	tpgcompute "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/compute"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/servicenetworking"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
 	"google.golang.org/api/googleapi"
-)
-
-import (
-	tpgcompute "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/compute"
-	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/servicenetworking"
 )
 
 var (
