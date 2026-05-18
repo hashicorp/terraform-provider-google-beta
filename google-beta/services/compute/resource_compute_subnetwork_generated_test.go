@@ -918,6 +918,110 @@ resource "google_compute_network" "custom-test" {
 `, context)
 }
 
+func TestAccComputeSubnetwork_subnetworkWithSecondaryIpv6RangeExample(t *testing.T) {
+	t.Parallel()
+
+	randomSuffix := acctest.RandString(t, 10)
+
+	context := map[string]interface{}{
+		"network_name":    "tf-test-network-with-secondary-ranges" + randomSuffix,
+		"pap_name":        "tf-test-pap-for-secondary-ranges" + randomSuffix,
+		"pdp_name":        "tf-test-pdp-for-secondary-ranges" + randomSuffix,
+		"sub_pdp_name":    "tf-test-sub-pdp-for-secondary-ranges" + randomSuffix,
+		"subnetwork_name": "tf-test-subnet-with-secondary-ranges" + randomSuffix,
+		"random_suffix":   randomSuffix,
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckComputeSubnetworkDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeSubnetwork_subnetworkWithSecondaryIpv6RangeExample(context),
+			},
+			{
+				ResourceName:            "google_compute_subnetwork.subnetwork_with_secondary_ipv6_range",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"network", "params", "region", "reserved_internal_range"},
+			},
+			{
+				ResourceName:       "google_compute_subnetwork.subnetwork_with_secondary_ipv6_range",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
+		},
+	})
+}
+
+func testAccComputeSubnetwork_subnetworkWithSecondaryIpv6RangeExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_compute_subnetwork" "subnetwork_with_secondary_ipv6_range" {
+  provider         = google-beta
+  name             = "%{subnetwork_name}"
+  region           = "us-central1"
+  network          = google_compute_network.custom-test.id
+  stack_type       = "IPV6_ONLY"
+  ipv6_access_type = "INTERNAL"
+
+  secondary_ip_range {
+    range_name    = "v6-ula"
+    ip_version    = "IPV6"
+  }
+
+  secondary_ip_range {
+    range_name    = "v6-byogua-auto"
+    ip_version    = "IPV6"
+    ip_collection = google_compute_public_delegated_prefix.ipv6_sub_pdp.self_link
+  }
+
+  secondary_ip_range {
+    range_name    = "v6-byogua-manual"
+    ip_version    = "IPV6"
+    ip_collection = google_compute_public_delegated_prefix.ipv6_sub_pdp.self_link
+    ip_cidr_range = "2001:db8:0:2::/64"
+  }
+}
+
+resource "google_compute_network" "custom-test" {
+  provider                = google-beta
+  name                    = "%{network_name}"
+  auto_create_subnetworks = false
+  enable_ula_internal_ipv6 = true
+}
+
+resource "google_compute_public_advertised_prefix" "ipv6_pap" {
+  provider         = google-beta
+  name             = "%{pap_name}"
+  ip_cidr_range    = "2001:db8::/40"
+  pdp_scope        = "REGIONAL"
+  ipv6_access_type = "INTERNAL"
+  description      = "GOOGLE_INTERNAL_TEST_PREFIX"
+}
+
+resource "google_compute_public_delegated_prefix" "ipv6_pdp" {
+  provider         = google-beta
+  name             = "%{pdp_name}"
+  region           = "us-central1"
+  description      = "PDP in internal subnet mode"
+  ip_cidr_range    = "2001:db8::/48"
+  parent_prefix    = google_compute_public_advertised_prefix.ipv6_pap.id
+  mode             = "DELEGATION"
+}
+
+resource "google_compute_public_delegated_prefix" "ipv6_sub_pdp" {
+  provider      = google-beta
+  name          = "%{sub_pdp_name}"
+  region        = "us-central1"
+  ip_cidr_range = "2001:db8::/56"
+  parent_prefix = google_compute_public_delegated_prefix.ipv6_pdp.id
+  mode          = "INTERNAL_IPV6_SUBNETWORK_CREATION"
+}
+`, context)
+}
+
 func testAccCheckComputeSubnetworkDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		for name, rs := range s.RootModule().Resources {

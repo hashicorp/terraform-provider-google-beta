@@ -143,6 +143,137 @@ func IpDiffSuppress(_, old, new string, d *schema.ResourceData) bool {
 	return addr_equality && netmask_equality
 }
 
+// CustomDiff function for secondary_ip_range.
+// Normalizes old state and new config sets before Set comparison to prevent false TypeSet diffs.
+// Specifically handles two Beta-only scenarios where state diverges from HCL config:
+// 1. Automatically inherits allocated ULA CIDRs from state when omitted in HCL config.
+// 2. Normalizes ip_collection self-links to relative paths to match user config short names.
+func resourceComputeSubnetworkSecondaryIpRangeCustomDiff(_ context.Context, diff *schema.ResourceDiff, meta interface{}) error {
+	return resourceComputeSubnetworkSecondaryIpRangeCustomDiffFunc(diff)
+}
+
+func resourceComputeSubnetworkSecondaryIpRangeCustomDiffFunc(diff tpgresource.TerraformResourceDiff) error {
+	if len(diff.GetChangedKeysPrefix("secondary_ip_range")) == 0 {
+		return nil
+	}
+
+	oldCount, newCount := diff.GetChange("secondary_ip_range.#")
+	count := oldCount.(int)
+	if newCount.(int) > count {
+		count = newCount.(int)
+	}
+	if count < 1 {
+		return nil
+	}
+
+	// Extract pristine user CIDR config directly from HCL
+	configCidrByName := make(map[string]string)
+	rawConfig := diff.GetRawConfig().GetAttr("secondary_ip_range")
+	if rawConfig.IsKnown() && !rawConfig.IsNull() {
+		for _, item := range rawConfig.AsValueSlice() {
+			if item.IsKnown() && !item.IsNull() && item.GetAttr("range_name").IsKnown() && !item.GetAttr("range_name").IsNull() {
+				nameVal := item.GetAttr("range_name").AsString()
+				if nameVal != "" {
+					if cidrVal := item.GetAttr("ip_cidr_range"); cidrVal.IsKnown() && !cidrVal.IsNull() {
+						configCidrByName[nameVal] = cidrVal.AsString()
+					} else {
+						configCidrByName[nameVal] = ""
+					}
+				}
+			}
+		}
+	}
+
+	// Extract old state and new proposed maps
+	oldByName := make(map[string]map[string]interface{})
+	var oldList, newList []interface{}
+	for i := 0; i < count; i++ {
+		o, n := diff.GetChange(fmt.Sprintf("secondary_ip_range.%d", i))
+		if o != nil {
+			oldList = append(oldList, o)
+			if m, ok := o.(map[string]interface{}); ok && m["range_name"] != nil {
+				oldByName[m["range_name"].(string)] = m
+			}
+		}
+		if n != nil {
+			newList = append(newList, n)
+		}
+	}
+
+	// Helper: normalizes CIDR strings and ip_collection self-links
+	normalizeItem := func(m map[string]interface{}, overrideCidr string) map[string]interface{} {
+		clean := make(map[string]interface{})
+		for k, v := range m {
+			if k == "ip_cidr_range" {
+				cidrStr, _ := v.(string)
+				if overrideCidr != "" {
+					cidrStr = overrideCidr
+				}
+				if cidrStr == "" {
+					continue
+				}
+				if ip, ipNet, err := net.ParseCIDR(cidrStr); err == nil {
+					maskSize, _ := ipNet.Mask.Size()
+					cidrStr = fmt.Sprintf("%s/%d", ip.String(), maskSize)
+				}
+				clean[k] = cidrStr
+				continue
+			}
+			if v == nil || v == "" {
+				continue
+			}
+			if k == "ip_collection" {
+				if rel, err := tpgresource.GetRelativePath(v.(string)); err == nil {
+					clean[k] = rel
+				} else {
+					clean[k] = v
+				}
+			} else {
+				clean[k] = v
+			}
+		}
+		return clean
+	}
+
+	// Build clean normalized sets
+	var normalizedOld, normalizedNew []interface{}
+	for _, o := range oldList {
+		normalizedOld = append(normalizedOld, normalizeItem(o.(map[string]interface{}), ""))
+	}
+	for _, n := range newList {
+		m := n.(map[string]interface{})
+		rangeName, _ := m["range_name"].(string)
+		userCidr := configCidrByName[rangeName]
+		if userCidr == "" {
+			// Inherit allocated state CIDR for ULA ranges
+			if oldItem, ok := oldByName[rangeName]; ok && oldItem["ip_cidr_range"] != nil {
+				userCidr, _ = oldItem["ip_cidr_range"].(string)
+			}
+		}
+		normalizedNew = append(normalizedNew, normalizeItem(m, userCidr))
+	}
+
+	// Compare Sets and Clear Diff
+	var hashFunc schema.SchemaSetFunc
+	if ResourceComputeSubnetwork().Schema != nil && ResourceComputeSubnetwork().Schema["secondary_ip_range"] != nil {
+		hashFunc = schema.HashResource(ResourceComputeSubnetwork().Schema["secondary_ip_range"].Elem.(*schema.Resource))
+	} else {
+		hashFunc = func(v interface{}) int {
+			buf := &bytes.Buffer{}
+			json.NewEncoder(buf).Encode(v)
+			return schema.HashString(buf.String())
+		}
+	}
+
+	if schema.NewSet(hashFunc, normalizedOld).Equal(schema.NewSet(hashFunc, normalizedNew)) {
+		if err := diff.Clear("secondary_ip_range"); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 var (
 	_ = bytes.Clone
 	_ = context.WithCancel
@@ -205,6 +336,7 @@ func ResourceComputeSubnetwork() *schema.Resource {
 			resourceComputeSubnetworkSecondaryIpRangeSetStyleDiff,
 			customdiff.ForceNewIfChange("ip_cidr_range", IsShrinkageIpCidr),
 			sendSecondaryIpRangeIfEmptyDiff,
+			resourceComputeSubnetworkSecondaryIpRangeCustomDiff,
 			tpgresource.DefaultProviderProject,
 			tpgresource.DefaultProviderDeletionPolicy("DELETE"),
 		),
@@ -499,6 +631,22 @@ range. Provide this property when you create the subnetwork.
 Ranges must be unique and non-overlapping with all primary and
 secondary IP ranges within a network. Only IPv4 is supported.
 Field is optional when 'reserved_internal_range' is defined, otherwise required.`,
+						},
+						"ip_collection": {
+							Type:             schema.TypeString,
+							Optional:         true,
+							DiffSuppressFunc: tpgresource.CompareSelfLinkOrResourceName,
+							Description: `Reference to a Public Delegated Prefix (PDP) for BYOIP.
+This field should be specified for configuring BYOGUA internal IPv6 secondary range.
+When specified along with the ip_cidr_range, the ip_cidr_range must lie within the PDP referenced by the 'ipCollection' field.
+When specified without the ip_cidr_range, the range is auto-allocated from the PDP referenced by the 'ipCollection' field.`,
+						},
+						"ip_version": {
+							Type:         schema.TypeString,
+							Computed:     true,
+							Optional:     true,
+							ValidateFunc: verify.ValidateEnum([]string{"IPV4", "IPV6", ""}),
+							Description:  `The IP version of the secondary range. If not specified, IPV4 is used. Possible values: ["IPV4", "IPV6"]`,
 						},
 						"reserved_internal_range": {
 							Type:             schema.TypeString,
@@ -937,18 +1085,6 @@ func resourceComputeSubnetworkRead(d *schema.ResourceData, meta interface{}) err
 }
 
 func resourceComputeSubnetworkUpdate(d *schema.ResourceData, meta interface{}) error {
-	clientSideFields := map[string]bool{"deletion_policy": true}
-	clientSideOnly := true
-	for field := range ResourceComputeSubnetwork().Schema {
-		if d.HasChange(field) && !clientSideFields[field] {
-			clientSideOnly = false
-			break
-		}
-	}
-	if clientSideOnly {
-		log.Print("[DEBUG] Only client-side changes detected. Cancelling update operation.")
-		return resourceComputeSubnetworkRead(d, meta)
-	}
 
 	config := meta.(*transport_tpg.Config)
 	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
@@ -1377,10 +1513,11 @@ func resourceComputeSubnetworkUpdate(d *schema.ResourceData, meta interface{}) e
 
 	// Handle the "Send Empty" override logic
 	if v, ok := d.GetOk("send_secondary_ip_range_if_empty"); ok && v.(bool) {
-		if sv, ok := d.GetOk("secondary_ip_range"); ok {
+		oldRanges, _ := d.GetChange("secondary_ip_range")
+		if oldRanges != nil {
 			configValue := d.GetRawConfig().GetAttr("secondary_ip_range")
-			stateValue := sv.([]interface{})
-			if configValue.LengthInt() == 0 && len(stateValue) != 0 {
+			stateValue := oldRanges.([]interface{})
+			if (configValue.IsNull() || configValue.LengthInt() == 0) && len(stateValue) != 0 {
 				log.Printf("[DEBUG] Sending empty secondary_ip_range in update")
 				obj := make(map[string]interface{})
 				obj["secondaryIpRanges"] = make([]interface{}, 0)
@@ -1733,6 +1870,8 @@ func flattenComputeSubnetworkSecondaryIpRange(v interface{}, d *schema.ResourceD
 			"range_name":              flattenComputeSubnetworkSecondaryIpRangeRangeName(original["rangeName"], d, config),
 			"ip_cidr_range":           flattenComputeSubnetworkSecondaryIpRangeIpCidrRange(original["ipCidrRange"], d, config),
 			"reserved_internal_range": flattenComputeSubnetworkSecondaryIpRangeReservedInternalRange(original["reservedInternalRange"], d, config),
+			"ip_version":              flattenComputeSubnetworkSecondaryIpRangeIpVersion(original["ipVersion"], d, config),
+			"ip_collection":           flattenComputeSubnetworkSecondaryIpRangeIpCollection(original["ipCollection"], d, config),
 		})
 	}
 	return transformed
@@ -1746,6 +1885,17 @@ func flattenComputeSubnetworkSecondaryIpRangeIpCidrRange(v interface{}, d *schem
 }
 
 func flattenComputeSubnetworkSecondaryIpRangeReservedInternalRange(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+	return tpgresource.ConvertSelfLinkToV1(v.(string))
+}
+
+func flattenComputeSubnetworkSecondaryIpRangeIpVersion(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenComputeSubnetworkSecondaryIpRangeIpCollection(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
 	}
@@ -1906,6 +2056,20 @@ func expandComputeSubnetworkSecondaryIpRange(v interface{}, d tpgresource.Terraf
 			transformed["reservedInternalRange"] = transformedReservedInternalRange
 		}
 
+		transformedIpVersion, err := expandComputeSubnetworkSecondaryIpRangeIpVersion(original["ip_version"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedIpVersion); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["ipVersion"] = transformedIpVersion
+		}
+
+		transformedIpCollection, err := expandComputeSubnetworkSecondaryIpRangeIpCollection(original["ip_collection"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedIpCollection); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["ipCollection"] = transformedIpCollection
+		}
+
 		req = append(req, transformed)
 	}
 	return req, nil
@@ -1920,6 +2084,14 @@ func expandComputeSubnetworkSecondaryIpRangeIpCidrRange(v interface{}, d tpgreso
 }
 
 func expandComputeSubnetworkSecondaryIpRangeReservedInternalRange(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeSubnetworkSecondaryIpRangeIpVersion(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandComputeSubnetworkSecondaryIpRangeIpCollection(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
