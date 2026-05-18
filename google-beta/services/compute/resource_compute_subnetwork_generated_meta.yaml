@@ -35,6 +35,10 @@ fields:
     - api_field: role
     - api_field: secondaryIpRanges.ipCidrRange
       field: secondary_ip_range.ip_cidr_range
+    - api_field: secondaryIpRanges.ipCollection
+      field: secondary_ip_range.ip_collection
+    - api_field: secondaryIpRanges.ipVersion
+      field: secondary_ip_range.ip_version
     - api_field: secondaryIpRanges.rangeName
       field: secondary_ip_range.range_name
     - api_field: secondaryIpRanges.reservedInternalRange
