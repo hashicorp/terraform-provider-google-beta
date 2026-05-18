@@ -32,17 +32,12 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/notebooks"
 
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/kms"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
 	"google.golang.org/api/googleapi"
 )
-
-import (
-	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/kms"
-)
-
-var _ = kms.Product
 
 var (
 	_ = fmt.Sprintf
