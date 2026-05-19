@@ -73,6 +73,13 @@ fields:
     - api_field: notificationConfig.messageFormat
     - api_field: notificationConfig.topic
     - api_field: securitySettings
+    - api_field: sipConfig.allowVirtualAgentInteraction
+    - api_field: sipConfig.copyInboundCallLegHeaders
+    - api_field: sipConfig.createConversationOnTheFly
+    - api_field: sipConfig.ignoreReinviteMediaDirection
+    - api_field: sipConfig.inactiveStart
+    - api_field: sipConfig.keepConversationRunning
+    - api_field: sipConfig.maxAudioRecordingDuration
     - api_field: sttConfig.audioEncoding
     - api_field: sttConfig.enableWordInfo
     - api_field: sttConfig.languageCode
