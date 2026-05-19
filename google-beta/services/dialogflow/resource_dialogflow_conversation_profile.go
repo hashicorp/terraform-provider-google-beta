@@ -142,7 +142,7 @@ func ResourceDialogflowConversationProfile() *schema.Resource {
 			"location": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: `desc`,
+				Description: `The location of the conversation profile.`,
 			},
 			"automated_agent_config": {
 				Type:        schema.TypeList,
@@ -304,7 +304,7 @@ This feature is supported for types: DIALOGFLOW_ASSIST.`,
 																		"agent": {
 																			Type:        schema.TypeString,
 																			Required:    true,
-																			Description: `he name of a Dialogflow virtual agent used for end user side intent detection and suggestion. Format: projects/<Project ID>/locations/<Location ID>/agent.`,
+																			Description: `The name of a Dialogflow virtual agent used for end user side intent detection and suggestion. Format: projects/<Project ID>/locations/<Location ID>/agent.`,
 																		},
 																		"human_agent_side_config": {
 																			Type:        schema.TypeList,
@@ -371,7 +371,7 @@ This feature is only supported for types: ARTICLE_SUGGESTION, FAQ.`,
 															"sections": {
 																Type:        schema.TypeList,
 																Optional:    true,
-																Description: `he customized sections chosen to return when requesting a summary of a conversation.`,
+																Description: `The customized sections chosen to return when requesting a summary of a conversation.`,
 																MaxItems:    1,
 																Elem: &schema.Resource{
 																	Schema: map[string]*schema.Schema{
@@ -580,7 +580,7 @@ This feature is supported for types: DIALOGFLOW_ASSIST.`,
 																		"agent": {
 																			Type:        schema.TypeString,
 																			Required:    true,
-																			Description: `he name of a Dialogflow virtual agent used for end user side intent detection and suggestion. Format: projects/<Project ID>/locations/<Location ID>/agent.`,
+																			Description: `The name of a Dialogflow virtual agent used for end user side intent detection and suggestion. Format: projects/<Project ID>/locations/<Location ID>/agent.`,
 																		},
 																		"human_agent_side_config": {
 																			Type:        schema.TypeList,
@@ -609,7 +609,7 @@ This feature is supported for types: DIALOGFLOW_ASSIST.`,
 															"sections": {
 																Type:        schema.TypeList,
 																Optional:    true,
-																Description: `he customized sections chosen to return when requesting a summary of a conversation.`,
+																Description: `The customized sections chosen to return when requesting a summary of a conversation.`,
 																MaxItems:    1,
 																Elem: &schema.Resource{
 																	Schema: map[string]*schema.Schema{
@@ -689,7 +689,7 @@ If groupSuggestionResponses set to true. All the suggestions to the same partici
 						"message_analysis_config": {
 							Type:        schema.TypeList,
 							Optional:    true,
-							Description: `desc`,
+							Description: `Configuration for analyzing conversation messages.`,
 							MaxItems:    1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
@@ -852,6 +852,54 @@ Expects the format "projects/<Project ID>/locations/<Location ID>/topics/<Topic 
 				Optional:    true,
 				Description: `Name of the CX SecuritySettings reference for the agent.`,
 			},
+			"sip_config": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: `Configuration for SIP.`,
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"allow_virtual_agent_interaction": {
+							Type:        schema.TypeBool,
+							Optional:    true,
+							Description: `Allows interactions with a Dialogflow virtual agent even if the call is connected for SIPREC purposes.`,
+						},
+						"copy_inbound_call_leg_headers": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							Description: `List of inbound call leg headers to be copied to outbound call legs created later.`,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+						},
+						"create_conversation_on_the_fly": {
+							Type:        schema.TypeBool,
+							Optional:    true,
+							Description: `Asks Dialogflow Telephony to create the conversation provided in the SIP header on the fly when the call comes in.`,
+						},
+						"ignore_reinvite_media_direction": {
+							Type:        schema.TypeBool,
+							Optional:    true,
+							Description: `Ignores any media direction in the reINVITE SDP offer. Reuse the previous media direction.`,
+						},
+						"inactive_start": {
+							Type:        schema.TypeBool,
+							Optional:    true,
+							Description: `Starts the conversation with inactive SDP directives`,
+						},
+						"keep_conversation_running": {
+							Type:        schema.TypeBool,
+							Optional:    true,
+							Description: `Keeps the conversation running even if the call is disconnected.`,
+						},
+						"max_audio_recording_duration": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: `Max duration for audio recording. Overrides the default value of 15 min. Max value is 8 hours.`,
+						},
+					},
+				},
+			},
 			"stt_config": {
 				Type:        schema.TypeList,
 				Optional:    true,
@@ -862,8 +910,8 @@ Expects the format "projects/<Project ID>/locations/<Location ID>/topics/<Topic 
 						"audio_encoding": {
 							Type:         schema.TypeString,
 							Optional:     true,
-							ValidateFunc: verify.ValidateEnum([]string{"AUDIO_ENCODING_UNSPECIFIED", "AUDIO_ENCODING_LINEAR_16", "AUDIO_ENCODING_FLAC", "AUDIO_ENCODING_MULAW", "AUDIO_ENCODING_AMR", "AUDIO_ENCODING_AMR_WB", "AUDIO_ENCODING_OGG_OPUS", "AUDIOENCODING_SPEEX_WITH_HEADER_BYTE", ""}),
-							Description:  `Audio encoding of the audio content to process. Possible values: ["AUDIO_ENCODING_UNSPECIFIED", "AUDIO_ENCODING_LINEAR_16", "AUDIO_ENCODING_FLAC", "AUDIO_ENCODING_MULAW", "AUDIO_ENCODING_AMR", "AUDIO_ENCODING_AMR_WB", "AUDIO_ENCODING_OGG_OPUS", "AUDIOENCODING_SPEEX_WITH_HEADER_BYTE"]`,
+							ValidateFunc: verify.ValidateEnum([]string{"AUDIO_ENCODING_UNSPECIFIED", "AUDIO_ENCODING_LINEAR_16", "AUDIO_ENCODING_FLAC", "AUDIO_ENCODING_MULAW", "AUDIO_ENCODING_AMR", "AUDIO_ENCODING_AMR_WB", "AUDIO_ENCODING_OGG_OPUS", "AUDIO_ENCODING_SPEEX_WITH_HEADER_BYTE", ""}),
+							Description:  `Audio encoding of the audio content to process. Possible values: ["AUDIO_ENCODING_UNSPECIFIED", "AUDIO_ENCODING_LINEAR_16", "AUDIO_ENCODING_FLAC", "AUDIO_ENCODING_MULAW", "AUDIO_ENCODING_AMR", "AUDIO_ENCODING_AMR_WB", "AUDIO_ENCODING_OGG_OPUS", "AUDIO_ENCODING_SPEEX_WITH_HEADER_BYTE"]`,
 						},
 						"enable_word_info": {
 							Type:        schema.TypeBool,
@@ -896,7 +944,7 @@ Leave this field unspecified to use Agent Speech settings for model selection.`,
 						"use_timeout_based_endpointing": {
 							Type:        schema.TypeBool,
 							Optional:    true,
-							Description: `Use timeout based endpointing, interpreting endpointer sensitivy as seconds of timeout value.`,
+							Description: `Use timeout based endpointing, interpreting endpointer sensitivity as seconds of timeout value.`,
 						},
 					},
 				},
@@ -968,7 +1016,7 @@ Leave this field unspecified to use Agent Speech settings for model selection.`,
 			"name": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: `name`,
+				Description: `Identifier. The unique identifier of this conversation profile.`,
 			},
 			"project": {
 				Type:     schema.TypeString,
@@ -1078,6 +1126,12 @@ func resourceDialogflowConversationProfileCreate(d *schema.ResourceData, meta in
 		return err
 	} else if v, ok := d.GetOkExists("tts_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(ttsConfigProp)) && (ok || !reflect.DeepEqual(v, ttsConfigProp)) {
 		obj["ttsConfig"] = ttsConfigProp
+	}
+	sipConfigProp, err := expandDialogflowConversationProfileSipConfig(d.Get("sip_config"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("sip_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(sipConfigProp)) && (ok || !reflect.DeepEqual(v, sipConfigProp)) {
+		obj["sipConfig"] = sipConfigProp
 	}
 	newRecognitionResultNotificationConfigProp, err := expandDialogflowConversationProfileNewRecognitionResultNotificationConfig(d.Get("new_recognition_result_notification_config"), d, config)
 	if err != nil {
@@ -1385,6 +1439,12 @@ func resourceDialogflowConversationProfileUpdate(d *schema.ResourceData, meta in
 	} else if v, ok := d.GetOkExists("tts_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, ttsConfigProp)) {
 		obj["ttsConfig"] = ttsConfigProp
 	}
+	sipConfigProp, err := expandDialogflowConversationProfileSipConfig(d.Get("sip_config"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("sip_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, sipConfigProp)) {
+		obj["sipConfig"] = sipConfigProp
+	}
 	newRecognitionResultNotificationConfigProp, err := expandDialogflowConversationProfileNewRecognitionResultNotificationConfig(d.Get("new_recognition_result_notification_config"), d, config)
 	if err != nil {
 		return err
@@ -1451,6 +1511,10 @@ func resourceDialogflowConversationProfileUpdate(d *schema.ResourceData, meta in
 
 	if d.HasChange("tts_config") {
 		updateMask = append(updateMask, "ttsConfig")
+	}
+
+	if d.HasChange("sip_config") {
+		updateMask = append(updateMask, "sipConfig")
 	}
 
 	if d.HasChange("new_recognition_result_notification_config") {
@@ -2499,6 +2563,59 @@ func flattenDialogflowConversationProfileTtsConfigVoiceName(v interface{}, d *sc
 }
 
 func flattenDialogflowConversationProfileTtsConfigVoiceSsmlGender(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenDialogflowConversationProfileSipConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["create_conversation_on_the_fly"] =
+		flattenDialogflowConversationProfileSipConfigCreateConversationOnTheFly(original["createConversationOnTheFly"], d, config)
+	transformed["inactive_start"] =
+		flattenDialogflowConversationProfileSipConfigInactiveStart(original["inactiveStart"], d, config)
+	transformed["max_audio_recording_duration"] =
+		flattenDialogflowConversationProfileSipConfigMaxAudioRecordingDuration(original["maxAudioRecordingDuration"], d, config)
+	transformed["allow_virtual_agent_interaction"] =
+		flattenDialogflowConversationProfileSipConfigAllowVirtualAgentInteraction(original["allowVirtualAgentInteraction"], d, config)
+	transformed["keep_conversation_running"] =
+		flattenDialogflowConversationProfileSipConfigKeepConversationRunning(original["keepConversationRunning"], d, config)
+	transformed["copy_inbound_call_leg_headers"] =
+		flattenDialogflowConversationProfileSipConfigCopyInboundCallLegHeaders(original["copyInboundCallLegHeaders"], d, config)
+	transformed["ignore_reinvite_media_direction"] =
+		flattenDialogflowConversationProfileSipConfigIgnoreReinviteMediaDirection(original["ignoreReinviteMediaDirection"], d, config)
+	return []interface{}{transformed}
+}
+func flattenDialogflowConversationProfileSipConfigCreateConversationOnTheFly(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenDialogflowConversationProfileSipConfigInactiveStart(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenDialogflowConversationProfileSipConfigMaxAudioRecordingDuration(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenDialogflowConversationProfileSipConfigAllowVirtualAgentInteraction(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenDialogflowConversationProfileSipConfigKeepConversationRunning(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenDialogflowConversationProfileSipConfigCopyInboundCallLegHeaders(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenDialogflowConversationProfileSipConfigIgnoreReinviteMediaDirection(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -4068,6 +4185,98 @@ func expandDialogflowConversationProfileTtsConfigVoiceSsmlGender(v interface{}, 
 	return v, nil
 }
 
+func expandDialogflowConversationProfileSipConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedCreateConversationOnTheFly, err := expandDialogflowConversationProfileSipConfigCreateConversationOnTheFly(original["create_conversation_on_the_fly"], d, config)
+	if err != nil {
+		return nil, err
+	} else {
+		transformed["createConversationOnTheFly"] = transformedCreateConversationOnTheFly
+	}
+
+	transformedInactiveStart, err := expandDialogflowConversationProfileSipConfigInactiveStart(original["inactive_start"], d, config)
+	if err != nil {
+		return nil, err
+	} else {
+		transformed["inactiveStart"] = transformedInactiveStart
+	}
+
+	transformedMaxAudioRecordingDuration, err := expandDialogflowConversationProfileSipConfigMaxAudioRecordingDuration(original["max_audio_recording_duration"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedMaxAudioRecordingDuration); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["maxAudioRecordingDuration"] = transformedMaxAudioRecordingDuration
+	}
+
+	transformedAllowVirtualAgentInteraction, err := expandDialogflowConversationProfileSipConfigAllowVirtualAgentInteraction(original["allow_virtual_agent_interaction"], d, config)
+	if err != nil {
+		return nil, err
+	} else {
+		transformed["allowVirtualAgentInteraction"] = transformedAllowVirtualAgentInteraction
+	}
+
+	transformedKeepConversationRunning, err := expandDialogflowConversationProfileSipConfigKeepConversationRunning(original["keep_conversation_running"], d, config)
+	if err != nil {
+		return nil, err
+	} else {
+		transformed["keepConversationRunning"] = transformedKeepConversationRunning
+	}
+
+	transformedCopyInboundCallLegHeaders, err := expandDialogflowConversationProfileSipConfigCopyInboundCallLegHeaders(original["copy_inbound_call_leg_headers"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedCopyInboundCallLegHeaders); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["copyInboundCallLegHeaders"] = transformedCopyInboundCallLegHeaders
+	}
+
+	transformedIgnoreReinviteMediaDirection, err := expandDialogflowConversationProfileSipConfigIgnoreReinviteMediaDirection(original["ignore_reinvite_media_direction"], d, config)
+	if err != nil {
+		return nil, err
+	} else {
+		transformed["ignoreReinviteMediaDirection"] = transformedIgnoreReinviteMediaDirection
+	}
+
+	return transformed, nil
+}
+
+func expandDialogflowConversationProfileSipConfigCreateConversationOnTheFly(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandDialogflowConversationProfileSipConfigInactiveStart(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandDialogflowConversationProfileSipConfigMaxAudioRecordingDuration(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandDialogflowConversationProfileSipConfigAllowVirtualAgentInteraction(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandDialogflowConversationProfileSipConfigKeepConversationRunning(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandDialogflowConversationProfileSipConfigCopyInboundCallLegHeaders(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandDialogflowConversationProfileSipConfigIgnoreReinviteMediaDirection(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
 func expandDialogflowConversationProfileNewRecognitionResultNotificationConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	if v == nil {
 		return nil, nil
@@ -4153,6 +4362,9 @@ func ResourceDialogflowConversationProfileFlatten(d *schema.ResourceData, meta i
 		return fmt.Errorf("Error reading ConversationProfile: %s", err)
 	}
 	if err = d.Set("tts_config", flattenDialogflowConversationProfileTtsConfig(res["ttsConfig"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ConversationProfile: %s", err)
+	}
+	if err = d.Set("sip_config", flattenDialogflowConversationProfileSipConfig(res["sipConfig"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ConversationProfile: %s", err)
 	}
 	if err = d.Set("new_recognition_result_notification_config", flattenDialogflowConversationProfileNewRecognitionResultNotificationConfig(res["newRecognitionResultNotificationConfig"], d, config)); err != nil {
