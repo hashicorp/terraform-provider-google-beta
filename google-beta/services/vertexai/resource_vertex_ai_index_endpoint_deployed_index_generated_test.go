@@ -30,10 +30,9 @@ import (
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
-	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/vertexai"
-
-	tpgcompute "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/compute"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/compute"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/servicenetworking"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/vertexai"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
@@ -61,7 +60,7 @@ func TestAccVertexAIIndexEndpointDeployedIndex_vertexAiIndexEndpointDeployedInde
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"address_name":       tpgcompute.BootstrapSharedTestGlobalAddress(t, "vpc-network-1", tpgcompute.AddressWithPrefixLength(8)),
+		"address_name":       compute.BootstrapSharedTestGlobalAddress(t, "vpc-network-1", compute.AddressWithPrefixLength(8)),
 		"bucket_name":        "tf-test-bucket-name" + randomSuffix,
 		"deployed_index_id":  "tf_test_deployed_index_id" + randomSuffix,
 		"display_name":       "tf-test-vertex-deployed-index" + randomSuffix,
@@ -184,7 +183,7 @@ func TestAccVertexAIIndexEndpointDeployedIndex_vertexAiIndexEndpointDeployedInde
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"address_name":       tpgcompute.BootstrapSharedTestGlobalAddress(t, "vpc-network-1", tpgcompute.AddressWithPrefixLength(8)),
+		"address_name":       compute.BootstrapSharedTestGlobalAddress(t, "vpc-network-1", compute.AddressWithPrefixLength(8)),
 		"bucket_name":        "tf-test-bucket-name" + randomSuffix,
 		"deployed_index_id":  "tf_test_deployed_index_id" + randomSuffix,
 		"display_name":       "tf-test-vertex-deployed-index" + randomSuffix,
