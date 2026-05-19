@@ -31,8 +31,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/alloydb"
-
-	tpgcompute "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/compute"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/compute"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/servicenetworking"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
@@ -117,7 +116,7 @@ func TestAccAlloydbCluster_alloydbClusterBeforeUpgradeExample(t *testing.T) {
 	context := map[string]interface{}{
 		"alloydb_cluster_name":  "tf-test-alloydb-cluster" + randomSuffix,
 		"alloydb_instance_name": "tf-test-alloydb-instance" + randomSuffix,
-		"network_name":          tpgcompute.BootstrapSharedTestNetwork(t, "alloydb-1"),
+		"network_name":          compute.BootstrapSharedTestNetwork(t, "alloydb-1"),
 		"random_suffix":         randomSuffix,
 	}
 
@@ -187,7 +186,7 @@ func TestAccAlloydbCluster_alloydbClusterAfterUpgradeExample(t *testing.T) {
 	context := map[string]interface{}{
 		"alloydb_cluster_name":  "tf-test-alloydb-cluster" + randomSuffix,
 		"alloydb_instance_name": "tf-test-alloydb-instance" + randomSuffix,
-		"network_name":          tpgcompute.BootstrapSharedTestNetwork(t, "alloydb-1"),
+		"network_name":          compute.BootstrapSharedTestNetwork(t, "alloydb-1"),
 		"random_suffix":         randomSuffix,
 	}
 
