@@ -26,6 +26,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/parametermanagerregional"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/secretmanagerregional"
 )
 
 func TestAccDataSourceParameterManagerRegionalRegionalParameterVersionRender_basicWithResourceReference(t *testing.T) {

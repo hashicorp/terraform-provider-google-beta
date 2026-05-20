@@ -19,7 +19,9 @@ package compute_test
 import (
 	"fmt"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/certificatemanager"
 	compute_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/compute"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/networksecurity"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	"testing"
 

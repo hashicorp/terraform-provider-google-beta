@@ -26,6 +26,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/kms"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/spanner"
 )
 
 func TestAccSpannerDatabase_basic(t *testing.T) {

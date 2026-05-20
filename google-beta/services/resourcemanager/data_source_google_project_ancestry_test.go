@@ -23,6 +23,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager"
 )
 
 func TestAccDataSourceGoogleProjectAncestry_basic(t *testing.T) {

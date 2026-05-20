@@ -18,6 +18,7 @@ package iambeta_test
 
 import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/iambeta"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"

@@ -26,6 +26,8 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 	tpgcompute "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/compute"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/kms"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 

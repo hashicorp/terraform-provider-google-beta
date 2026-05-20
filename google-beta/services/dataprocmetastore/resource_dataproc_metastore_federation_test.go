@@ -26,6 +26,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/dataprocmetastore"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/tags"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"strings"

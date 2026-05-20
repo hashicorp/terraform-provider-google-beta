@@ -22,6 +22,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/biglake"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/storage"
 )
 
 func TestAccBiglakeDatabase_biglakeDatabase_update(t *testing.T) {

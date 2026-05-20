@@ -24,6 +24,7 @@ import (
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/chronicle"
 )
 
 // TestAccChronicleNativeDashboard_chronicleNativedashboardUpdateExample tests updating a Native Dashboard and the layout/filter association of an existing Chart within it.

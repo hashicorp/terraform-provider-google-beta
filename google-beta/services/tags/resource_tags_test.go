@@ -23,6 +23,11 @@ import (
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/cloudrun"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/compute"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/tags"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/tagslocation"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"

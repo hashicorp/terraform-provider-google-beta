@@ -25,6 +25,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	tpgcompute "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/compute"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/kms"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/lustre"
 )
 
 func TestAccLustreInstance_withMaintenancePolicy(t *testing.T) {

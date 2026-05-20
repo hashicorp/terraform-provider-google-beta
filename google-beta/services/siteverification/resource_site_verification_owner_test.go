@@ -21,6 +21,9 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/siteverification"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/storage"
 )
 
 func TestAccSiteVerificationOwner_siteVerificationBucket(t *testing.T) {

@@ -36,6 +36,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/dialogflow"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/dialogflowcx"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/pubsub"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager"
 )
 
 func TestAccDialogflowConversationProfile_update(t *testing.T) {

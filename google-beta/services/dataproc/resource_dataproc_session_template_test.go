@@ -24,8 +24,11 @@ import (
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/dataproc"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/dataprocmetastore"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/kms"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/storage"
 )
 
 func TestAccDataprocSessionTemplate_update(t *testing.T) {

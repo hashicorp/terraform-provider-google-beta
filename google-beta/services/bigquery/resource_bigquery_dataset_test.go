@@ -24,6 +24,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 	bigquery_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/bigquery"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/kms"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/tags"
 	"google.golang.org/api/bigquery/v2"
 	"regexp"
 	"strings"

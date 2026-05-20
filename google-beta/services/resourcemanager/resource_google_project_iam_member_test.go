@@ -26,6 +26,7 @@ import (
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager"
 )
 
 func projectIamMemberImportStep(resourceName, pid, role, member string) resource.TestStep {

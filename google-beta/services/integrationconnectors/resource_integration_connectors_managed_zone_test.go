@@ -23,6 +23,10 @@ import (
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/compute"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/dns"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/integrationconnectors"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager"
 )
 
 func TestAccIntegrationConnectorsManagedZone_integrationConnectorsManagedZoneExample_update(t *testing.T) {

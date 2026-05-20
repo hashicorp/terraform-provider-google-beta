@@ -22,6 +22,13 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/bigquery"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/datalossprevention"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/pubsub"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/sql"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/storage"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/tags"
 )
 
 func TestAccDataLossPreventionDiscoveryConfig_Update(t *testing.T) {

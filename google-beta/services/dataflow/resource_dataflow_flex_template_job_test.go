@@ -29,7 +29,9 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/dataflow"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/kms"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/pubsub"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/storage"
 
 	compute_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/compute"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"

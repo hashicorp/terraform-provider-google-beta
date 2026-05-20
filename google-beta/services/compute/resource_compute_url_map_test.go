@@ -22,6 +22,7 @@ import (
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	tpgcompute "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/compute"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/storage"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
