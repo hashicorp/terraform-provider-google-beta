@@ -114,6 +114,7 @@ var (
 		"addons_config.0.lustre_csi_driver_config",
 		"addons_config.0.slice_controller_config",
 		"addons_config.0.pod_snapshot_config",
+		"addons_config.0.agent_sandbox_config",
 		"addons_config.0.istio_config",
 		"addons_config.0.kalm_config",
 	}
@@ -687,6 +688,23 @@ func ResourceContainerCluster() *schema.Resource {
 												},
 											},
 										},
+									},
+								},
+							},
+						},
+						"agent_sandbox_config": {
+							Type:         schema.TypeList,
+							Optional:     true,
+							Computed:     true,
+							AtLeastOneOf: addonsConfigKeys,
+							MaxItems:     1,
+							Description:  `The status of the Agent Sandbox addon. It is disabled by default. Set enabled = true to enable.`,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"enabled": {
+										Type:        schema.TypeBool,
+										Required:    true,
+										Description: `Whether the Agent Sandbox feature is enabled.`,
 									},
 								},
 							},
@@ -5881,6 +5899,14 @@ func expandClusterAddonsConfig(configured interface{}) *container.AddonsConfig {
 		}
 	}
 
+	if v, ok := config["agent_sandbox_config"]; ok && len(v.([]interface{})) > 0 {
+		addon := v.([]interface{})[0].(map[string]interface{})
+		ac.AgentSandboxConfig = &container.AgentSandboxConfig{
+			Enabled:         addon["enabled"].(bool),
+			ForceSendFields: []string{"Enabled"},
+		}
+	}
+
 	if v, ok := config["istio_config"]; ok && len(v.([]interface{})) > 0 {
 		addon := v.([]interface{})[0].(map[string]interface{})
 		ac.IstioConfig = &container.IstioConfig{
@@ -7569,6 +7595,14 @@ func flattenClusterAddonsConfig(c *container.AddonsConfig) []map[string]interfac
 		}
 	}
 
+	if c.AgentSandboxConfig != nil {
+		result["agent_sandbox_config"] = []map[string]interface{}{
+			{
+				"enabled": c.AgentSandboxConfig.Enabled,
+			},
+		}
+	}
+
 	if c.IstioConfig != nil {
 		result["istio_config"] = []map[string]interface{}{
 			{
@@ -9040,6 +9074,28 @@ func clusterAcceleratorNetworkProfileCustomizeDiff(_ context.Context, diff *sche
 	}
 
 	return nil
+}
+
+func expandAgentSandboxConfig(v interface{}) *container.AgentSandboxConfig {
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil
+	}
+	raw := l[0].(map[string]interface{})
+	return &container.AgentSandboxConfig{
+		Enabled: raw["enabled"].(bool),
+	}
+}
+
+func flattenAgentSandboxConfig(v *container.AgentSandboxConfig) []interface{} {
+	if v == nil {
+		return nil
+	}
+	return []interface{}{
+		map[string]interface{}{
+			"enabled": v.Enabled,
+		},
+	}
 }
 
 func init() {
