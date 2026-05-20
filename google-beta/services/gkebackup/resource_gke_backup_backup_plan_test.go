@@ -22,6 +22,8 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 	tpgcompute "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/compute"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/container"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/gkebackup"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )

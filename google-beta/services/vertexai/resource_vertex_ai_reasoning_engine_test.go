@@ -25,6 +25,9 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/kms"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/secretmanager"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/storage"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/vertexai"
 )
 
 func TestAccVertexAIReasoningEngine_vertexAiReasoningEngineUpdate(t *testing.T) {

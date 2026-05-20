@@ -19,6 +19,8 @@ package compute_test
 import (
 	"fmt"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/compute"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/servicedirectory"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"

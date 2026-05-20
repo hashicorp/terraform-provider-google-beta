@@ -19,6 +19,7 @@ package vertexai_test
 import (
 	"fmt"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/vertexai"
 	"strings"
 	"testing"
 

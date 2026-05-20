@@ -18,6 +18,8 @@ package workstations_test
 
 import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/compute"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/workstations"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"

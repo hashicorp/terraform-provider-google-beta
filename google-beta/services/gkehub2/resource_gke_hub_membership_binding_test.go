@@ -24,6 +24,9 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 	tpgcompute "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/compute"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/container"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/gkehub"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/gkehub2"
 )
 
 func TestAccGKEHub2MembershipBinding_gkehubMembershipBindingBasicExample_update(t *testing.T) {

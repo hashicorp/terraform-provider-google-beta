@@ -22,6 +22,7 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/beyondcorp"
 )
 
 func TestAccDataSourceGoogleBeyondcorpSecurityGateway_basic(t *testing.T) {

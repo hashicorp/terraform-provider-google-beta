@@ -24,6 +24,8 @@ import (
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanagerv3"
 )
 
 func TestAccResourceManagerCapability_resourceManagerCapabilityExample_basic(t *testing.T) {

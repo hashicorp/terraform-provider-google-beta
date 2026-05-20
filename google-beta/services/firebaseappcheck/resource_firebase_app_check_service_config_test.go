@@ -23,6 +23,10 @@ import (
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebase"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebaseappcheck"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebasedatabase"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager"
 )
 
 func TestAccFirebaseAppCheckServiceConfig_firebaseAppCheckServiceConfigUpdate(t *testing.T) {

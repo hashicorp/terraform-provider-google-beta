@@ -23,6 +23,7 @@ import (
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/iam3"
 )
 
 func TestAccIAM3OrganizationsPolicyBinding_iam3OrganizationsPolicyBindingExample_update(t *testing.T) {

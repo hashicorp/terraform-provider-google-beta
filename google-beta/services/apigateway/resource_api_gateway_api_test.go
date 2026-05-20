@@ -18,6 +18,7 @@ package apigateway_test
 
 import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/apigateway"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
