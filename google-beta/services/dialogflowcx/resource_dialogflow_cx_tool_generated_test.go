@@ -30,7 +30,10 @@ import (
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/bigquery"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/dialogflowcx"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/discoveryengine"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/integrationconnectors"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
