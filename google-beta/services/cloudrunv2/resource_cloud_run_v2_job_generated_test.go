@@ -31,6 +31,10 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/cloudrunv2"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/compute"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/secretmanager"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/sql"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/vpcaccess"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
