@@ -2745,6 +2745,68 @@ func TestAccComputeInstance_secondaryAliasIpRange(t *testing.T) {
 	})
 }
 
+func TestAccComputeInstance_addAliasIpv6Range(t *testing.T) {
+	t.Parallel()
+
+	var instance map[string]interface{}
+	instanceName := fmt.Sprintf("tf-test-%s", acctest.RandString(t, 10))
+	networkName := fmt.Sprintf("tf-test-%s", acctest.RandString(t, 10))
+	subnetName := fmt.Sprintf("tf-test-%s", acctest.RandString(t, 10))
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckComputeInstanceDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeInstance_aliasIpv6Range_noAlias(networkName, subnetName, instanceName),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar", &instance),
+				),
+			},
+			{
+				Config: testAccComputeInstance_aliasIpv6Range(networkName, subnetName, instanceName),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar", &instance),
+					testAccCheckComputeInstanceHasAliasIpv6Range(&instance, "/96"),
+				),
+			},
+			computeInstanceImportStep("us-central1-a", instanceName, []string{"network_interface.0.alias_ipv6_range.0.ip_cidr_range"}),
+		},
+	})
+}
+
+func TestAccComputeInstance_removeAliasIpv6Range(t *testing.T) {
+	t.Parallel()
+
+	var instance map[string]interface{}
+	instanceName := fmt.Sprintf("tf-test-%s", acctest.RandString(t, 10))
+	networkName := fmt.Sprintf("tf-test-%s", acctest.RandString(t, 10))
+	subnetName := fmt.Sprintf("tf-test-%s", acctest.RandString(t, 10))
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		CheckDestroy:             testAccCheckComputeInstanceDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeInstance_aliasIpv6Range(networkName, subnetName, instanceName),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar", &instance),
+					testAccCheckComputeInstanceHasAliasIpv6Range(&instance, "/96"),
+				),
+			},
+			{
+				Config: testAccComputeInstance_aliasIpv6Range_noAlias(networkName, subnetName, instanceName),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckComputeInstanceExists(t, "google_compute_instance.foobar", &instance),
+					testAccCheckComputeInstanceNoAliasIpv6Range(&instance),
+				),
+			},
+		},
+	})
+}
+
 func TestAccComputeInstance_aliasIpRangeCommonAddresses(t *testing.T) {
 	t.Parallel()
 
@@ -6447,6 +6509,49 @@ func testAccCheckComputeInstanceHasAliasIpRange(instance *map[string]interface{}
 	}
 }
 
+func testAccCheckComputeInstanceHasAliasIpv6Range(instance *map[string]interface{}, iPCidrRange string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		nics, _ := (*instance)["networkInterfaces"].([]interface{})
+		for _, rawNi := range nics {
+			ni, ok := rawNi.(map[string]interface{})
+			if !ok {
+				continue
+			}
+			ranges, _ := ni["aliasIpv6Ranges"].([]interface{})
+			for _, rawRange := range ranges {
+				aliasIpRange, ok := rawRange.(map[string]interface{})
+				if !ok {
+					continue
+				}
+				cidr, _ := aliasIpRange["ipCidrRange"].(string)
+				if cidr == iPCidrRange || tpgcompute.IpCidrRangeDiffSuppress("ip_cidr_range", cidr, iPCidrRange, nil) {
+					return nil
+				}
+			}
+		}
+
+		return fmt.Errorf("Alias ipv6 range with cidr %s not present", iPCidrRange)
+	}
+}
+
+func testAccCheckComputeInstanceNoAliasIpv6Range(instance *map[string]interface{}) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		nics, _ := (*instance)["networkInterfaces"].([]interface{})
+		for _, rawNi := range nics {
+			ni, ok := rawNi.(map[string]interface{})
+			if !ok {
+				continue
+			}
+			ranges, _ := ni["aliasIpv6Ranges"].([]interface{})
+			if len(ranges) > 0 {
+				return fmt.Errorf("Alias ipv6 range still present on instance")
+			}
+
+		}
+		return nil
+	}
+}
+
 func testAccCheckComputeInstanceHasAssignedNatIP(s *terraform.State) error {
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != "google_compute_instance" {
@@ -9905,6 +10010,101 @@ resource "google_compute_instance" "foobar" {
     alias_ip_range {
       subnetwork_range_name = google_compute_subnetwork.inst-test-subnetwork.secondary_ip_range[1].range_name
       ip_cidr_range         = "10.1.0.0/20"
+    }
+  }
+}
+`, network, subnet, instance)
+}
+
+func testAccComputeInstance_aliasIpv6Range_noAlias(network, subnet, instance string) string {
+	return fmt.Sprintf(`
+data "google_compute_image" "my_image" {
+  family  = "debian-11"
+  project = "debian-cloud"
+}
+
+resource "google_compute_network" "test-network" {
+  name                    = "%s"
+  auto_create_subnetworks = false
+  enable_ula_internal_ipv6 = true
+}
+
+resource "google_compute_subnetwork" "test-subnetwork" {
+  name             = "%s"
+  region           = "us-central1"
+  network          = google_compute_network.test-network.id
+  stack_type       = "IPV6_ONLY"
+  ipv6_access_type = "INTERNAL"
+
+  secondary_ip_range {
+    range_name    = "v6-ula"
+    ip_version    = "IPV6"
+  }
+}
+
+resource "google_compute_instance" "foobar" {
+  name         = "%s"
+  machine_type = "e2-medium"
+  zone         = "us-central1-a"
+
+  boot_disk {
+    initialize_params {
+      image = data.google_compute_image.my_image.self_link
+    }
+  }
+
+  network_interface {
+    subnetwork = google_compute_subnetwork.test-subnetwork.self_link
+    stack_type = "IPV6_ONLY"
+  }
+}
+`, network, subnet, instance)
+}
+
+func testAccComputeInstance_aliasIpv6Range(network, subnet, instance string) string {
+	return fmt.Sprintf(`
+data "google_compute_image" "my_image" {
+  family  = "debian-11"
+  project = "debian-cloud"
+}
+
+resource "google_compute_network" "test-network" {
+  name                    = "%s"
+  auto_create_subnetworks = false
+  enable_ula_internal_ipv6 = true
+}
+
+resource "google_compute_subnetwork" "test-subnetwork" {
+  name             = "%s"
+  region           = "us-central1"
+  network          = google_compute_network.test-network.id
+  stack_type       = "IPV6_ONLY"
+  ipv6_access_type = "INTERNAL"
+
+  secondary_ip_range {
+    range_name    = "v6-ula"
+    ip_version    = "IPV6"
+  }
+}
+
+resource "google_compute_instance" "foobar" {
+  name         = "%s"
+  machine_type = "e2-medium"
+  zone         = "us-central1-a"
+
+  boot_disk {
+    initialize_params {
+      image = data.google_compute_image.my_image.self_link
+    }
+  }
+
+  network_interface {
+    subnetwork = google_compute_subnetwork.test-subnetwork.self_link
+    stack_type = "IPV6_ONLY"
+
+    alias_ipv6_range {
+      subnetwork_range_name = "v6-ula"
+      ip_cidr_range         = "/96"
     }
   }
 }
