@@ -146,6 +146,11 @@ func ResourceFirebaseStorageDefaultBucket() *schema.Resource {
 				Description: `The resource name of the underlying Google Cloud Storage bucket.`,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"bucket_id": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: `The last segment of bucket.name.`,
+						},
 						"name": {
 							Type:     schema.TypeString,
 							Computed: true,
@@ -424,12 +429,12 @@ func flattenFirebaseStorageDefaultBucketBucket(v interface{}, d *schema.Resource
 		return nil
 	}
 	transformed := make(map[string]interface{})
-	transformed["name"] =
-		flattenFirebaseStorageDefaultBucketBucketName(original["name"], d, config)
+	transformed["name"] = original["name"]
+	if name, ok := original["name"].(string); ok {
+		parts := strings.Split(name, "/")
+		transformed["bucket_id"] = parts[len(parts)-1]
+	}
 	return []interface{}{transformed}
-}
-func flattenFirebaseStorageDefaultBucketBucketName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
-	return v
 }
 
 func flattenFirebaseStorageDefaultBucketLocation(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
