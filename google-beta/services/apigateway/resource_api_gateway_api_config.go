@@ -421,7 +421,7 @@ func resourceApiGatewayApiConfigCreate(d *schema.ResourceData, meta interface{})
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/global/apis/{{api}}/configs?apiConfigId={{api_config_id}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/global/apis/{{api}}/configs?apiConfigId={{api_config_id}}")
 	if err != nil {
 		return err
 	}
@@ -505,7 +505,7 @@ func resourceApiGatewayApiConfigRead(d *schema.ResourceData, meta interface{}) e
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/global/apis/{{api}}/configs/{{api_config_id}}?view=FULL"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/global/apis/{{api}}/configs/{{api_config_id}}?view=FULL")
 	if err != nil {
 		return err
 	}
@@ -672,7 +672,7 @@ func resourceApiGatewayApiConfigUpdate(d *schema.ResourceData, meta interface{})
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/global/apis/{{api}}/configs/{{api_config_id}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/global/apis/{{api}}/configs/{{api_config_id}}")
 	if err != nil {
 		return err
 	}
@@ -764,7 +764,7 @@ func resourceApiGatewayApiConfigDelete(d *schema.ResourceData, meta interface{})
 		return fmt.Errorf("Error fetching project for ApiConfig: %s", err)
 	}
 	billingProject = project
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/global/apis/{{api}}/configs/{{api_config_id}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/global/apis/{{api}}/configs/{{api_config_id}}")
 	if err != nil {
 		return err
 	}

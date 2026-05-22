@@ -267,7 +267,7 @@ func testAccCheckDataformRepositoryReleaseConfigDestroyProducer(t *testing.T) fu
 			}
 
 			config := acctest.GoogleProviderConfig(t)
-			url, err := tpgresource.ReplaceVarsForTest(config, rs, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(dataform.Product, config), "projects/{{project}}/locations/{{region}}/repositories/{{repository}}/releaseConfigs/{{name}}"))
+			url, err := tpgresource.ReplaceVarsForTest(config, rs, transport_tpg.BaseUrl(dataform.Product, config)+"projects/{{project}}/locations/{{region}}/repositories/{{repository}}/releaseConfigs/{{name}}")
 			if err != nil {
 				return err
 			}

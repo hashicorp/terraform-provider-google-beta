@@ -252,7 +252,7 @@ func resourceComputeRegionBackendBucketCreate(d *schema.ResourceData, meta inter
 		obj["loadBalancingScheme"] = loadBalancingSchemeProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/regions/{{region}}/backendBuckets"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/regions/{{region}}/backendBuckets")
 	if err != nil {
 		return err
 	}
@@ -336,7 +336,7 @@ func resourceComputeRegionBackendBucketRead(d *schema.ResourceData, meta interfa
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/regions/{{region}}/backendBuckets/{{name}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/regions/{{region}}/backendBuckets/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -492,7 +492,7 @@ func resourceComputeRegionBackendBucketUpdate(d *schema.ResourceData, meta inter
 		obj["loadBalancingScheme"] = loadBalancingSchemeProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/regions/{{region}}/backendBuckets/{{name}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/regions/{{region}}/backendBuckets/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -554,7 +554,7 @@ func resourceComputeRegionBackendBucketDelete(d *schema.ResourceData, meta inter
 		return fmt.Errorf("Error fetching project for RegionBackendBucket: %s", err)
 	}
 	billingProject = project
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/regions/{{region}}/backendBuckets/{{name}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/regions/{{region}}/backendBuckets/{{name}}")
 	if err != nil {
 		return err
 	}

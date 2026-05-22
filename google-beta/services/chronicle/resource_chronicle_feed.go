@@ -4386,7 +4386,7 @@ func resourceChronicleFeedCreate(d *schema.ResourceData, meta interface{}) error
 		obj["feed"] = feedProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/instances/{{instance}}/feeds"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/{{location}}/instances/{{instance}}/feeds")
 	if err != nil {
 		return err
 	}
@@ -4541,7 +4541,7 @@ func resourceChronicleFeedRead(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/instances/{{instance}}/feeds/{{feed}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/{{location}}/instances/{{instance}}/feeds/{{feed}}")
 	if err != nil {
 		return err
 	}
@@ -4713,7 +4713,7 @@ func resourceChronicleFeedUpdate(d *schema.ResourceData, meta interface{}) error
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/instances/{{instance}}/feeds/{{feed}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/{{location}}/instances/{{instance}}/feeds/{{feed}}")
 	if err != nil {
 		return err
 	}
@@ -4822,7 +4822,7 @@ func resourceChronicleFeedDelete(d *schema.ResourceData, meta interface{}) error
 		return fmt.Errorf("Error fetching project for Feed: %s", err)
 	}
 	billingProject = project
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/instances/{{instance}}/feeds/{{feed}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/{{location}}/instances/{{instance}}/feeds/{{feed}}")
 	if err != nil {
 		return err
 	}

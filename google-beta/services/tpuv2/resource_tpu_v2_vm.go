@@ -710,7 +710,7 @@ func resourceTpuV2VmCreate(d *schema.ResourceData, meta interface{}) error {
 		obj["labels"] = effectiveLabelsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{zone}}/nodes?nodeId={{name}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/{{zone}}/nodes?nodeId={{name}}")
 	if err != nil {
 		return err
 	}
@@ -794,7 +794,7 @@ func resourceTpuV2VmRead(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{zone}}/nodes/{{name}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/{{zone}}/nodes/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -956,7 +956,7 @@ func resourceTpuV2VmUpdate(d *schema.ResourceData, meta interface{}) error {
 		obj["labels"] = effectiveLabelsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{zone}}/nodes/{{name}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/{{zone}}/nodes/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -1048,7 +1048,7 @@ func resourceTpuV2VmDelete(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("Error fetching project for Vm: %s", err)
 	}
 	billingProject = project
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{zone}}/nodes/{{name}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/{{zone}}/nodes/{{name}}")
 	if err != nil {
 		return err
 	}

@@ -294,7 +294,7 @@ func resourceHealthcareDicomStoreCreate(d *schema.ResourceData, meta interface{}
 		obj["labels"] = effectiveLabelsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "{{dataset}}/dicomStores?dicomStoreId={{name}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"{{dataset}}/dicomStores?dicomStoreId={{name}}")
 	if err != nil {
 		return err
 	}
@@ -357,7 +357,7 @@ func resourceHealthcareDicomStoreRead(d *schema.ResourceData, meta interface{}) 
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "{{dataset}}/dicomStores/{{name}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"{{dataset}}/dicomStores/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -493,7 +493,7 @@ func resourceHealthcareDicomStoreUpdate(d *schema.ResourceData, meta interface{}
 		obj["labels"] = effectiveLabelsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "{{dataset}}/dicomStores/{{name}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"{{dataset}}/dicomStores/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -565,7 +565,7 @@ func resourceHealthcareDicomStoreDelete(d *schema.ResourceData, meta interface{}
 
 	billingProject := ""
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "{{dataset}}/dicomStores/{{name}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"{{dataset}}/dicomStores/{{name}}")
 	if err != nil {
 		return err
 	}

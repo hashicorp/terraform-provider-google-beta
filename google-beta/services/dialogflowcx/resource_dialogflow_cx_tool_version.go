@@ -697,7 +697,7 @@ func resourceDialogflowCXToolVersionCreate(d *schema.ResourceData, meta interfac
 		obj["tool"] = toolProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "{{parent}}/versions"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"{{parent}}/versions")
 	if err != nil {
 		return err
 	}
@@ -786,7 +786,7 @@ func resourceDialogflowCXToolVersionRead(d *schema.ResourceData, meta interface{
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "{{parent}}/versions/{{name}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"{{parent}}/versions/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -894,7 +894,7 @@ func resourceDialogflowCXToolVersionDelete(d *schema.ResourceData, meta interfac
 
 	billingProject := ""
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "{{parent}}/versions/{{name}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"{{parent}}/versions/{{name}}")
 	if err != nil {
 		return err
 	}

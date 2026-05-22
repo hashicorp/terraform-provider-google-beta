@@ -398,7 +398,7 @@ func resourceComputeRolloutPlanCreate(d *schema.ResourceData, meta interface{}) 
 		obj["name"] = nameProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/global/rolloutPlans"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/global/rolloutPlans")
 	if err != nil {
 		return err
 	}
@@ -477,7 +477,7 @@ func resourceComputeRolloutPlanRead(d *schema.ResourceData, meta interface{}) er
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/global/rolloutPlans/{{name}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/global/rolloutPlans/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -579,7 +579,7 @@ func resourceComputeRolloutPlanDelete(d *schema.ResourceData, meta interface{}) 
 		return fmt.Errorf("Error fetching project for RolloutPlan: %s", err)
 	}
 	billingProject = project
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/global/rolloutPlans/{{name}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/global/rolloutPlans/{{name}}")
 	if err != nil {
 		return err
 	}

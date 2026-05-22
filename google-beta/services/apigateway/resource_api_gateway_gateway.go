@@ -253,7 +253,7 @@ func resourceApiGatewayGatewayCreate(d *schema.ResourceData, meta interface{}) e
 		obj["labels"] = effectiveLabelsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{region}}/gateways?gatewayId={{gateway_id}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/{{region}}/gateways?gatewayId={{gateway_id}}")
 	if err != nil {
 		return err
 	}
@@ -337,7 +337,7 @@ func resourceApiGatewayGatewayRead(d *schema.ResourceData, meta interface{}) err
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{region}}/gateways/{{gateway_id}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/{{region}}/gateways/{{gateway_id}}")
 	if err != nil {
 		return err
 	}
@@ -487,7 +487,7 @@ func resourceApiGatewayGatewayUpdate(d *schema.ResourceData, meta interface{}) e
 		obj["labels"] = effectiveLabelsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{region}}/gateways/{{gateway_id}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/{{region}}/gateways/{{gateway_id}}")
 	if err != nil {
 		return err
 	}
@@ -571,7 +571,7 @@ func resourceApiGatewayGatewayDelete(d *schema.ResourceData, meta interface{}) e
 		return fmt.Errorf("Error fetching project for Gateway: %s", err)
 	}
 	billingProject = project
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{region}}/gateways/{{gateway_id}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/{{region}}/gateways/{{gateway_id}}")
 	if err != nil {
 		return err
 	}

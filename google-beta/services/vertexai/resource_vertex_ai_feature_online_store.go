@@ -409,7 +409,7 @@ func resourceVertexAIFeatureOnlineStoreCreate(d *schema.ResourceData, meta inter
 		obj["labels"] = effectiveLabelsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{region}}/featureOnlineStores?featureOnlineStoreId={{name}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/{{region}}/featureOnlineStores?featureOnlineStoreId={{name}}")
 	if err != nil {
 		return err
 	}
@@ -493,7 +493,7 @@ func resourceVertexAIFeatureOnlineStoreRead(d *schema.ResourceData, meta interfa
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{region}}/featureOnlineStores/{{name}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/{{region}}/featureOnlineStores/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -666,7 +666,7 @@ func resourceVertexAIFeatureOnlineStoreUpdate(d *schema.ResourceData, meta inter
 		obj["labels"] = effectiveLabelsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{region}}/featureOnlineStores/{{name}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/{{region}}/featureOnlineStores/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -762,7 +762,7 @@ func resourceVertexAIFeatureOnlineStoreDelete(d *schema.ResourceData, meta inter
 		return fmt.Errorf("Error fetching project for FeatureOnlineStore: %s", err)
 	}
 	billingProject = project
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{region}}/featureOnlineStores/{{name}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/{{region}}/featureOnlineStores/{{name}}")
 	if err != nil {
 		return err
 	}

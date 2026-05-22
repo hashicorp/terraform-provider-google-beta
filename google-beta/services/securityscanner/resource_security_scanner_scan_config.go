@@ -369,7 +369,7 @@ func resourceSecurityScannerScanConfigCreate(d *schema.ResourceData, meta interf
 		obj["exportToSecurityCommandCenter"] = exportToSecurityCommandCenterProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/scanConfigs"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/scanConfigs")
 	if err != nil {
 		return err
 	}
@@ -444,7 +444,7 @@ func resourceSecurityScannerScanConfigRead(d *schema.ResourceData, meta interfac
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "{{name}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"{{name}}")
 	if err != nil {
 		return err
 	}
@@ -619,7 +619,7 @@ func resourceSecurityScannerScanConfigUpdate(d *schema.ResourceData, meta interf
 		obj["exportToSecurityCommandCenter"] = exportToSecurityCommandCenterProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "{{name}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"{{name}}")
 	if err != nil {
 		return err
 	}
@@ -720,7 +720,7 @@ func resourceSecurityScannerScanConfigDelete(d *schema.ResourceData, meta interf
 		return fmt.Errorf("Error fetching project for ScanConfig: %s", err)
 	}
 	billingProject = project
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "{{name}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"{{name}}")
 	if err != nil {
 		return err
 	}

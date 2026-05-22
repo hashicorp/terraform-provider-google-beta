@@ -260,7 +260,7 @@ func resourceFirebaseAndroidAppCreate(d *schema.ResourceData, meta interface{}) 
 		obj["etag"] = etagProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/androidApps"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/androidApps")
 	if err != nil {
 		return err
 	}
@@ -353,7 +353,7 @@ func resourceFirebaseAndroidAppRead(d *schema.ResourceData, meta interface{}) er
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/androidApps/{{app_id}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/androidApps/{{app_id}}")
 	if err != nil {
 		return err
 	}
@@ -504,7 +504,7 @@ func resourceFirebaseAndroidAppUpdate(d *schema.ResourceData, meta interface{}) 
 		obj["etag"] = etagProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/androidApps/{{app_id}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/androidApps/{{app_id}}")
 	if err != nil {
 		return err
 	}

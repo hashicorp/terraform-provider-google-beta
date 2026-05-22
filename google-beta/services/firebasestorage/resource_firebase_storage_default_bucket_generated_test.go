@@ -106,7 +106,7 @@ func testAccCheckFirebaseStorageDefaultBucketDestroyProducer(t *testing.T) func(
 			}
 
 			config := acctest.GoogleProviderConfig(t)
-			url, err := tpgresource.ReplaceVarsForTest(config, rs, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(firebasestorage.Product, config), "projects/{{project}}/defaultBucket"))
+			url, err := tpgresource.ReplaceVarsForTest(config, rs, transport_tpg.BaseUrl(firebasestorage.Product, config)+"projects/{{project}}/defaultBucket")
 			if err != nil {
 				return err
 			}

@@ -196,7 +196,7 @@ func resourceFirebaseAILogicPromptTemplateLockCreate(d *schema.ResourceData, met
 
 	obj := make(map[string]interface{})
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/templates/{{template_id}}:modifyLock?locked=true"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/{{location}}/templates/{{template_id}}:modifyLock?locked=true")
 	if err != nil {
 		return err
 	}
@@ -270,7 +270,7 @@ func resourceFirebaseAILogicPromptTemplateLockRead(d *schema.ResourceData, meta 
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/templates/{{template_id}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/{{location}}/templates/{{template_id}}")
 	if err != nil {
 		return err
 	}
@@ -390,7 +390,7 @@ func resourceFirebaseAILogicPromptTemplateLockDelete(d *schema.ResourceData, met
 		return fmt.Errorf("Error fetching project for PromptTemplateLock: %s", err)
 	}
 	billingProject = project
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/templates/{{template_id}}:modifyLock?locked=false"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/{{location}}/templates/{{template_id}}:modifyLock?locked=false")
 	if err != nil {
 		return err
 	}

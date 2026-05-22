@@ -1027,7 +1027,7 @@ func resourceOSConfigGuestPoliciesCreate(d *schema.ResourceData, meta interface{
 		obj["etag"] = etagProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/guestPolicies?guestPolicyId={{guest_policy_id}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/guestPolicies?guestPolicyId={{guest_policy_id}}")
 	if err != nil {
 		return err
 	}
@@ -1096,7 +1096,7 @@ func resourceOSConfigGuestPoliciesRead(d *schema.ResourceData, meta interface{})
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/guestPolicies/{{guest_policy_id}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/guestPolicies/{{guest_policy_id}}")
 	if err != nil {
 		return err
 	}
@@ -1253,7 +1253,7 @@ func resourceOSConfigGuestPoliciesUpdate(d *schema.ResourceData, meta interface{
 		obj["etag"] = etagProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/guestPolicies/{{guest_policy_id}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/guestPolicies/{{guest_policy_id}}")
 	if err != nil {
 		return err
 	}
@@ -1307,7 +1307,7 @@ func resourceOSConfigGuestPoliciesDelete(d *schema.ResourceData, meta interface{
 		return fmt.Errorf("Error fetching project for GuestPolicies: %s", err)
 	}
 	billingProject = project
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/guestPolicies/{{guest_policy_id}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/guestPolicies/{{guest_policy_id}}")
 	if err != nil {
 		return err
 	}

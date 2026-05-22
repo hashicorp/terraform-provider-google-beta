@@ -1140,7 +1140,7 @@ func resourceDialogflowConversationProfileCreate(d *schema.ResourceData, meta in
 		obj["newRecognitionResultNotificationConfig"] = newRecognitionResultNotificationConfigProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/conversationProfiles"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/{{location}}/conversationProfiles")
 	if err != nil {
 		return err
 	}
@@ -1240,7 +1240,7 @@ func resourceDialogflowConversationProfileRead(d *schema.ResourceData, meta inte
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "{{name}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"{{name}}")
 	if err != nil {
 		return err
 	}
@@ -1452,7 +1452,7 @@ func resourceDialogflowConversationProfileUpdate(d *schema.ResourceData, meta in
 		obj["newRecognitionResultNotificationConfig"] = newRecognitionResultNotificationConfigProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "{{name}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"{{name}}")
 	if err != nil {
 		return err
 	}
@@ -1589,7 +1589,7 @@ func resourceDialogflowConversationProfileDelete(d *schema.ResourceData, meta in
 		return fmt.Errorf("Error fetching project for ConversationProfile: %s", err)
 	}
 	billingProject = project
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "{{name}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"{{name}}")
 	if err != nil {
 		return err
 	}

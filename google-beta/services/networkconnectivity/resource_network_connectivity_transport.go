@@ -395,7 +395,7 @@ func resourceNetworkConnectivityTransportCreate(d *schema.ResourceData, meta int
 		obj["labels"] = effectiveLabelsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{region}}/transports?transportId={{name}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/{{region}}/transports?transportId={{name}}")
 	if err != nil {
 		return err
 	}
@@ -479,7 +479,7 @@ func resourceNetworkConnectivityTransportRead(d *schema.ResourceData, meta inter
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{region}}/transports/{{name}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/{{region}}/transports/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -665,7 +665,7 @@ func resourceNetworkConnectivityTransportUpdate(d *schema.ResourceData, meta int
 		obj["labels"] = effectiveLabelsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{region}}/transports/{{name}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/{{region}}/transports/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -719,7 +719,7 @@ func resourceNetworkConnectivityTransportDelete(d *schema.ResourceData, meta int
 		return fmt.Errorf("Error fetching project for Transport: %s", err)
 	}
 	billingProject = project
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{region}}/transports/{{name}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/{{region}}/transports/{{name}}")
 	if err != nil {
 		return err
 	}

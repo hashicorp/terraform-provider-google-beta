@@ -199,7 +199,7 @@ func testAccCheckApiGatewayGatewayDestroyProducer(t *testing.T) func(s *terrafor
 			}
 
 			config := acctest.GoogleProviderConfig(t)
-			url, err := tpgresource.ReplaceVarsForTest(config, rs, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(apigateway.Product, config), "projects/{{project}}/locations/{{region}}/gateways/{{gateway_id}}"))
+			url, err := tpgresource.ReplaceVarsForTest(config, rs, transport_tpg.BaseUrl(apigateway.Product, config)+"projects/{{project}}/locations/{{region}}/gateways/{{gateway_id}}")
 			if err != nil {
 				return err
 			}
