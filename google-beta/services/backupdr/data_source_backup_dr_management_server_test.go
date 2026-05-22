@@ -24,7 +24,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
-	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/backupdr"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/backupdr"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/servicenetworking"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
@@ -66,7 +66,7 @@ func testAccCheckBackupDRManagementServerDestroyProducer(t *testing.T) func(s *t
 
 			config := acctest.GoogleProviderConfig(t)
 
-			url, err := tpgresource.ReplaceVarsForTest(config, rs, `{{BackupDRBasePath}}projects/{{project}}/locations/{{location}}/managementServers/{{name}}`)
+			url, err := tpgresource.ReplaceVarsForTest(config, rs, transport_tpg.BaseUrl(backupdr.Product, config)+`projects/{{project}}/locations/{{location}}/managementServers/{{name}}`)
 			if err != nil {
 				return err
 			}

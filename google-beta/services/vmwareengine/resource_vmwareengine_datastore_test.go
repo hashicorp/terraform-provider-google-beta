@@ -31,7 +31,7 @@ import (
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/netapp"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/servicenetworking"
-	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/vmwareengine"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/vmwareengine"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
@@ -287,7 +287,7 @@ func testAccCheckVmwareengineDatastoreDestroyProducer(t *testing.T) func(s *terr
 
 			config := acctest.GoogleProviderConfig(t)
 
-			url, err := tpgresource.ReplaceVarsForTest(config, rs, "{{VmwareengineBasePath}}projects/{{project}}/locations/{{location}}/datastores/{{name}}")
+			url, err := tpgresource.ReplaceVarsForTest(config, rs, transport_tpg.BaseUrl(vmwareengine.Product, config)+"projects/{{project}}/locations/{{location}}/datastores/{{name}}")
 			if err != nil {
 				return err
 			}
