@@ -110,7 +110,7 @@ func testAccCheckNetworkSecuritySacRealmDestroyProducer(t *testing.T) func(s *te
 			}
 
 			config := acctest.GoogleProviderConfig(t)
-			url, err := tpgresource.ReplaceVarsForTest(config, rs, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(networksecurity.Product, config), "projects/{{project}}/locations/global/sacRealms/{{name}}"))
+			url, err := tpgresource.ReplaceVarsForTest(config, rs, transport_tpg.BaseUrl(networksecurity.Product, config)+"projects/{{project}}/locations/global/sacRealms/{{name}}")
 			if err != nil {
 				return err
 			}

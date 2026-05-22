@@ -752,7 +752,7 @@ func resourceAlloydbInstanceCreate(d *schema.ResourceData, meta interface{}) err
 		obj["annotations"] = effectiveAnnotationsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "{{cluster}}/instances?instanceId={{instance_id}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"{{cluster}}/instances?instanceId={{instance_id}}")
 	if err != nil {
 		return err
 	}
@@ -814,7 +814,7 @@ func resourceAlloydbInstanceRead(d *schema.ResourceData, meta interface{}) error
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "{{cluster}}/instances/{{instance_id}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"{{cluster}}/instances/{{instance_id}}")
 	if err != nil {
 		return err
 	}
@@ -977,7 +977,7 @@ func resourceAlloydbInstanceUpdate(d *schema.ResourceData, meta interface{}) err
 		obj["annotations"] = effectiveAnnotationsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "{{cluster}}/instances/{{instance_id}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"{{cluster}}/instances/{{instance_id}}")
 	if err != nil {
 		return err
 	}
@@ -1105,7 +1105,7 @@ func resourceAlloydbInstanceDelete(d *schema.ResourceData, meta interface{}) err
 
 	billingProject := ""
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "{{cluster}}/instances/{{instance_id}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"{{cluster}}/instances/{{instance_id}}")
 	if err != nil {
 		return err
 	}

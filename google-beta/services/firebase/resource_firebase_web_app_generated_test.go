@@ -199,7 +199,7 @@ func testAccCheckFirebaseWebAppDestroyProducer(t *testing.T) func(s *terraform.S
 			}
 
 			config := acctest.GoogleProviderConfig(t)
-			url, err := tpgresource.ReplaceVarsForTest(config, rs, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(firebase.Product, config), "projects/{{project}}/webApps/{{app_id}}"))
+			url, err := tpgresource.ReplaceVarsForTest(config, rs, transport_tpg.BaseUrl(firebase.Product, config)+"projects/{{project}}/webApps/{{app_id}}")
 			if err != nil {
 				return err
 			}

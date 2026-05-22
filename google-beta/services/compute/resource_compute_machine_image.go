@@ -306,7 +306,7 @@ func resourceComputeMachineImageCreate(d *schema.ResourceData, meta interface{})
 		obj["params"] = paramsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/global/machineImages"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/global/machineImages")
 	if err != nil {
 		return err
 	}
@@ -385,7 +385,7 @@ func resourceComputeMachineImageRead(d *schema.ResourceData, meta interface{}) e
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/global/machineImages/{{name}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/global/machineImages/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -487,7 +487,7 @@ func resourceComputeMachineImageDelete(d *schema.ResourceData, meta interface{})
 		return fmt.Errorf("Error fetching project for MachineImage: %s", err)
 	}
 	billingProject = project
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/global/machineImages/{{name}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/global/machineImages/{{name}}")
 	if err != nil {
 		return err
 	}

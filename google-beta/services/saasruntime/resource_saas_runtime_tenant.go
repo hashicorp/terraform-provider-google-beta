@@ -301,7 +301,7 @@ func resourceSaasRuntimeTenantCreate(d *schema.ResourceData, meta interface{}) e
 		obj["labels"] = effectiveLabelsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/tenants?tenantId={{tenant_id}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/{{location}}/tenants?tenantId={{tenant_id}}")
 	if err != nil {
 		return err
 	}
@@ -375,7 +375,7 @@ func resourceSaasRuntimeTenantRead(d *schema.ResourceData, meta interface{}) err
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/tenants/{{tenant_id}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/{{location}}/tenants/{{tenant_id}}")
 	if err != nil {
 		return err
 	}
@@ -519,7 +519,7 @@ func resourceSaasRuntimeTenantUpdate(d *schema.ResourceData, meta interface{}) e
 		obj["labels"] = effectiveLabelsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/tenants/{{tenant_id}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/{{location}}/tenants/{{tenant_id}}")
 	if err != nil {
 		return err
 	}
@@ -592,7 +592,7 @@ func resourceSaasRuntimeTenantDelete(d *schema.ResourceData, meta interface{}) e
 		return fmt.Errorf("Error fetching project for Tenant: %s", err)
 	}
 	billingProject = project
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/tenants/{{tenant_id}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/{{location}}/tenants/{{tenant_id}}")
 	if err != nil {
 		return err
 	}

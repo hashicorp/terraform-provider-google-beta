@@ -292,7 +292,7 @@ func resourceComputeRegionTargetTcpProxyCreate(d *schema.ResourceData, meta inte
 		obj["region"] = regionProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/regions/{{region}}/targetTcpProxies"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/regions/{{region}}/targetTcpProxies")
 	if err != nil {
 		return err
 	}
@@ -376,7 +376,7 @@ func resourceComputeRegionTargetTcpProxyRead(d *schema.ResourceData, meta interf
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/regions/{{region}}/targetTcpProxies/{{name}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/regions/{{region}}/targetTcpProxies/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -484,7 +484,7 @@ func resourceComputeRegionTargetTcpProxyDelete(d *schema.ResourceData, meta inte
 		return fmt.Errorf("Error fetching project for RegionTargetTcpProxy: %s", err)
 	}
 	billingProject = project
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/regions/{{region}}/targetTcpProxies/{{name}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/regions/{{region}}/targetTcpProxies/{{name}}")
 	if err != nil {
 		return err
 	}

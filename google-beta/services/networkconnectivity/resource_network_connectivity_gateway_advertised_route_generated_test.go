@@ -161,7 +161,7 @@ func testAccCheckNetworkConnectivityGatewayAdvertisedRouteDestroyProducer(t *tes
 			}
 
 			config := acctest.GoogleProviderConfig(t)
-			url, err := tpgresource.ReplaceVarsForTest(config, rs, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(networkconnectivity.Product, config), "projects/{{project}}/locations/{{location}}/spokes/{{spoke}}/gatewayAdvertisedRoutes/{{name}}"))
+			url, err := tpgresource.ReplaceVarsForTest(config, rs, transport_tpg.BaseUrl(networkconnectivity.Product, config)+"projects/{{project}}/locations/{{location}}/spokes/{{spoke}}/gatewayAdvertisedRoutes/{{name}}")
 			if err != nil {
 				return err
 			}

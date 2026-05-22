@@ -352,7 +352,7 @@ func testAccCheckApiGatewayApiConfigDestroyProducer(t *testing.T) func(s *terraf
 			}
 
 			config := acctest.GoogleProviderConfig(t)
-			url, err := tpgresource.ReplaceVarsForTest(config, rs, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(apigateway.Product, config), "projects/{{project}}/locations/global/apis/{{api}}/configs/{{api_config_id}}"))
+			url, err := tpgresource.ReplaceVarsForTest(config, rs, transport_tpg.BaseUrl(apigateway.Product, config)+"projects/{{project}}/locations/global/apis/{{api}}/configs/{{api_config_id}}")
 			if err != nil {
 				return err
 			}

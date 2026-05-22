@@ -156,7 +156,7 @@ func testAccCheckFirebaseExtensionsInstanceDestroyProducer(t *testing.T) func(s 
 			}
 
 			config := acctest.GoogleProviderConfig(t)
-			url, err := tpgresource.ReplaceVarsForTest(config, rs, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(firebaseextensions.Product, config), "projects/{{project}}/instances/{{instance_id}}"))
+			url, err := tpgresource.ReplaceVarsForTest(config, rs, transport_tpg.BaseUrl(firebaseextensions.Product, config)+"projects/{{project}}/instances/{{instance_id}}")
 			if err != nil {
 				return err
 			}

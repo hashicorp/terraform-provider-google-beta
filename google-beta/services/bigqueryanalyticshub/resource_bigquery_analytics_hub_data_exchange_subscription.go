@@ -406,7 +406,7 @@ func resourceBigqueryAnalyticsHubDataExchangeSubscriptionCreate(d *schema.Resour
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{data_exchange_project}}/locations/{{data_exchange_location}}/dataExchanges/{{data_exchange_id}}:subscribe"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{data_exchange_project}}/locations/{{data_exchange_location}}/dataExchanges/{{data_exchange_id}}:subscribe")
 	if err != nil {
 		return err
 	}
@@ -480,7 +480,7 @@ func resourceBigqueryAnalyticsHubDataExchangeSubscriptionRead(d *schema.Resource
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/subscriptions/{{subscription_id}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/{{location}}/subscriptions/{{subscription_id}}")
 	if err != nil {
 		return err
 	}
@@ -708,7 +708,7 @@ func resourceBigqueryAnalyticsHubDataExchangeSubscriptionDelete(d *schema.Resour
 		return fmt.Errorf("Error fetching project for DataExchangeSubscription: %s", err)
 	}
 	billingProject = project
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/subscriptions/{{subscription_id}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/{{location}}/subscriptions/{{subscription_id}}")
 	if err != nil {
 		return err
 	}

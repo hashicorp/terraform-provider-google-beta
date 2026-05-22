@@ -242,7 +242,7 @@ func resourceNetworkSecurityUllMirroringEngineCreate(d *schema.ResourceData, met
 		obj["labels"] = effectiveLabelsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/ullMirroringEngines?ullMirroringEngineId={{ull_mirroring_engine_id}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/{{location}}/ullMirroringEngines?ullMirroringEngineId={{ull_mirroring_engine_id}}")
 	if err != nil {
 		return err
 	}
@@ -326,7 +326,7 @@ func resourceNetworkSecurityUllMirroringEngineRead(d *schema.ResourceData, meta 
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/ullMirroringEngines/{{ull_mirroring_engine_id}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/{{location}}/ullMirroringEngines/{{ull_mirroring_engine_id}}")
 	if err != nil {
 		return err
 	}
@@ -464,7 +464,7 @@ func resourceNetworkSecurityUllMirroringEngineUpdate(d *schema.ResourceData, met
 		obj["labels"] = effectiveLabelsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/ullMirroringEngines/{{ull_mirroring_engine_id}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/{{location}}/ullMirroringEngines/{{ull_mirroring_engine_id}}")
 	if err != nil {
 		return err
 	}
@@ -540,7 +540,7 @@ func resourceNetworkSecurityUllMirroringEngineDelete(d *schema.ResourceData, met
 		return fmt.Errorf("Error fetching project for UllMirroringEngine: %s", err)
 	}
 	billingProject = project
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/ullMirroringEngines/{{ull_mirroring_engine_id}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/{{location}}/ullMirroringEngines/{{ull_mirroring_engine_id}}")
 	if err != nil {
 		return err
 	}

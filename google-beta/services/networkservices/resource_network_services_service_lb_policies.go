@@ -317,7 +317,7 @@ func resourceNetworkServicesServiceLbPoliciesCreate(d *schema.ResourceData, meta
 		obj["labels"] = effectiveLabelsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/serviceLbPolicies?serviceLbPolicyId={{name}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/{{location}}/serviceLbPolicies?serviceLbPolicyId={{name}}")
 	if err != nil {
 		return err
 	}
@@ -401,7 +401,7 @@ func resourceNetworkServicesServiceLbPoliciesRead(d *schema.ResourceData, meta i
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/serviceLbPolicies/{{name}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/{{location}}/serviceLbPolicies/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -569,7 +569,7 @@ func resourceNetworkServicesServiceLbPoliciesUpdate(d *schema.ResourceData, meta
 		obj["labels"] = effectiveLabelsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/serviceLbPolicies/{{name}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/{{location}}/serviceLbPolicies/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -665,7 +665,7 @@ func resourceNetworkServicesServiceLbPoliciesDelete(d *schema.ResourceData, meta
 		return fmt.Errorf("Error fetching project for ServiceLbPolicies: %s", err)
 	}
 	billingProject = project
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/locations/{{location}}/serviceLbPolicies/{{name}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/{{location}}/serviceLbPolicies/{{name}}")
 	if err != nil {
 		return err
 	}

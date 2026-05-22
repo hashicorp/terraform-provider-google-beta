@@ -212,7 +212,7 @@ func testAccCheckDataformRepositoryWorkflowConfigDestroyProducer(t *testing.T) f
 			}
 
 			config := acctest.GoogleProviderConfig(t)
-			url, err := tpgresource.ReplaceVarsForTest(config, rs, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(dataform.Product, config), "projects/{{project}}/locations/{{region}}/repositories/{{repository}}/workflowConfigs/{{name}}"))
+			url, err := tpgresource.ReplaceVarsForTest(config, rs, transport_tpg.BaseUrl(dataform.Product, config)+"projects/{{project}}/locations/{{region}}/repositories/{{repository}}/workflowConfigs/{{name}}")
 			if err != nil {
 				return err
 			}

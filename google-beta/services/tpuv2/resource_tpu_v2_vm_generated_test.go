@@ -270,7 +270,7 @@ func testAccCheckTpuV2VmDestroyProducer(t *testing.T) func(s *terraform.State) e
 			}
 
 			config := acctest.GoogleProviderConfig(t)
-			url, err := tpgresource.ReplaceVarsForTest(config, rs, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(tpuv2.Product, config), "projects/{{project}}/locations/{{zone}}/nodes/{{name}}"))
+			url, err := tpgresource.ReplaceVarsForTest(config, rs, transport_tpg.BaseUrl(tpuv2.Product, config)+"projects/{{project}}/locations/{{zone}}/nodes/{{name}}")
 			if err != nil {
 				return err
 			}

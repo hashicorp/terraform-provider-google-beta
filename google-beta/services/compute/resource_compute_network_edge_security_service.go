@@ -247,7 +247,7 @@ func resourceComputeNetworkEdgeSecurityServiceCreate(d *schema.ResourceData, met
 		obj["securityPolicy"] = securityPolicyProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/regions/{{region}}/networkEdgeSecurityServices?networkEdgeSecurityService={{name}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/regions/{{region}}/networkEdgeSecurityServices?networkEdgeSecurityService={{name}}")
 	if err != nil {
 		return err
 	}
@@ -331,7 +331,7 @@ func resourceComputeNetworkEdgeSecurityServiceRead(d *schema.ResourceData, meta 
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/regions/{{region}}/networkEdgeSecurityServices/{{name}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/regions/{{region}}/networkEdgeSecurityServices/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -481,7 +481,7 @@ func resourceComputeNetworkEdgeSecurityServiceUpdate(d *schema.ResourceData, met
 		obj["securityPolicy"] = securityPolicyProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/regions/{{region}}/networkEdgeSecurityServices/{{name}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/regions/{{region}}/networkEdgeSecurityServices/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -565,7 +565,7 @@ func resourceComputeNetworkEdgeSecurityServiceDelete(d *schema.ResourceData, met
 		return fmt.Errorf("Error fetching project for NetworkEdgeSecurityService: %s", err)
 	}
 	billingProject = project
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/regions/{{region}}/networkEdgeSecurityServices/{{name}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/regions/{{region}}/networkEdgeSecurityServices/{{name}}")
 	if err != nil {
 		return err
 	}

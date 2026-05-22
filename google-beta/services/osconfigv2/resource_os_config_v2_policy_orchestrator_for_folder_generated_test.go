@@ -218,7 +218,7 @@ func testAccCheckOSConfigV2PolicyOrchestratorForFolderDestroyProducer(t *testing
 			}
 
 			config := acctest.GoogleProviderConfig(t)
-			url, err := tpgresource.ReplaceVarsForTest(config, rs, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(osconfigv2.Product, config), "folders/{{folder_id}}/locations/global/policyOrchestrators/{{policy_orchestrator_id}}"))
+			url, err := tpgresource.ReplaceVarsForTest(config, rs, transport_tpg.BaseUrl(osconfigv2.Product, config)+"folders/{{folder_id}}/locations/global/policyOrchestrators/{{policy_orchestrator_id}}")
 			if err != nil {
 				return err
 			}

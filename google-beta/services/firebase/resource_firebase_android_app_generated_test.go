@@ -181,7 +181,7 @@ func testAccCheckFirebaseAndroidAppDestroyProducer(t *testing.T) func(s *terrafo
 			}
 
 			config := acctest.GoogleProviderConfig(t)
-			url, err := tpgresource.ReplaceVarsForTest(config, rs, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(firebase.Product, config), "projects/{{project}}/androidApps/{{app_id}}"))
+			url, err := tpgresource.ReplaceVarsForTest(config, rs, transport_tpg.BaseUrl(firebase.Product, config)+"projects/{{project}}/androidApps/{{app_id}}")
 			if err != nil {
 				return err
 			}

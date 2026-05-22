@@ -182,7 +182,7 @@ func resourceKMSProjectKajPolicyConfigCreate(d *schema.ResourceData, meta interf
 		obj["defaultKeyAccessJustificationPolicy"] = defaultKeyAccessJustificationPolicyProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/kajPolicyConfig?updateMask=defaultKeyAccessJustificationPolicy"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/kajPolicyConfig?updateMask=defaultKeyAccessJustificationPolicy")
 	if err != nil {
 		return err
 	}
@@ -251,7 +251,7 @@ func resourceKMSProjectKajPolicyConfigRead(d *schema.ResourceData, meta interfac
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/kajPolicyConfig"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/kajPolicyConfig")
 	if err != nil {
 		return err
 	}
@@ -342,7 +342,7 @@ func resourceKMSProjectKajPolicyConfigUpdate(d *schema.ResourceData, meta interf
 		obj["defaultKeyAccessJustificationPolicy"] = defaultKeyAccessJustificationPolicyProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/kajPolicyConfig?updateMask=defaultKeyAccessJustificationPolicy"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/kajPolicyConfig?updateMask=defaultKeyAccessJustificationPolicy")
 	if err != nil {
 		return err
 	}

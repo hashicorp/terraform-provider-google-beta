@@ -401,7 +401,7 @@ func resourceFirebaseExtensionsInstanceCreate(d *schema.ResourceData, meta inter
 		obj["etag"] = etagProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/instances?instanceId={{instance_id}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/instances?instanceId={{instance_id}}")
 	if err != nil {
 		return err
 	}
@@ -480,7 +480,7 @@ func resourceFirebaseExtensionsInstanceRead(d *schema.ResourceData, meta interfa
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/instances/{{instance_id}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/instances/{{instance_id}}")
 	if err != nil {
 		return err
 	}
@@ -613,7 +613,7 @@ func resourceFirebaseExtensionsInstanceUpdate(d *schema.ResourceData, meta inter
 		obj["etag"] = etagProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/instances/{{instance_id}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/instances/{{instance_id}}")
 	if err != nil {
 		return err
 	}
@@ -698,7 +698,7 @@ func resourceFirebaseExtensionsInstanceDelete(d *schema.ResourceData, meta inter
 		return fmt.Errorf("Error fetching project for Instance: %s", err)
 	}
 	billingProject = project
-	url, err := tpgresource.ReplaceVars(d, config, fmt.Sprintf("%s%s", transport_tpg.BaseUrl(Product, config), "projects/{{project}}/instances/{{instance_id}}"))
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/instances/{{instance_id}}")
 	if err != nil {
 		return err
 	}
