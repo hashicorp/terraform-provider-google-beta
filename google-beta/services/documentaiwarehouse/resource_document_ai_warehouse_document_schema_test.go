@@ -26,7 +26,7 @@ import (
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
-	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/documentaiwarehouse"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/documentaiwarehouse"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
@@ -609,7 +609,7 @@ func testAccCheckDocumentAIWarehouseDocumentSchemaDestroyProducer(t *testing.T) 
 
 			config := acctest.GoogleProviderConfig(t)
 
-			url, err := tpgresource.ReplaceVarsForTest(config, rs, "{{DocumentAIWarehouseBasePath}}{{name}}")
+			url, err := tpgresource.ReplaceVarsForTest(config, rs, transport_tpg.BaseUrl(documentaiwarehouse.Product, config)+"{{name}}")
 			if err != nil {
 				return err
 			}

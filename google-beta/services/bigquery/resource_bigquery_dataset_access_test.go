@@ -26,7 +26,7 @@ import (
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
-	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/bigquery"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/bigquery"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/logging"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
@@ -377,7 +377,7 @@ func testAccCheckBigQueryDatasetAccess(t *testing.T, n string, expected map[stri
 		}
 
 		config := acctest.GoogleProviderConfig(t)
-		url, err := tpgresource.ReplaceVarsForTest(config, rs, "{{BigQueryBasePath}}projects/{{project}}/datasets/{{dataset_id}}")
+		url, err := tpgresource.ReplaceVarsForTest(config, rs, transport_tpg.BaseUrl(bigquery.Product, config)+"projects/{{project}}/datasets/{{dataset_id}}")
 		if err != nil {
 			return err
 		}
