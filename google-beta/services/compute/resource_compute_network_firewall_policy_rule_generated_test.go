@@ -441,6 +441,162 @@ resource "google_compute_network" "network" {
 `, context)
 }
 
+func TestAccComputeNetworkFirewallPolicyRule_networkFirewallPolicyRuleTargetTypeInternalManagedLbExample(t *testing.T) {
+	t.Parallel()
+
+	randomSuffix := acctest.RandString(t, 10)
+
+	context := map[string]interface{}{
+		"org_id":          envvar.GetTestOrgFromEnv(t),
+		"project_name":    envvar.GetTestProjectFromEnv(),
+		"backend_service": "tf-test-backend-service" + randomSuffix,
+		"backend_subnet":  "tf-test-backend-subnet" + randomSuffix,
+		"forwarding_rule": "tf-test-forwarding-rule" + randomSuffix,
+		"fw_policy":       "tf-test-fw-policy" + randomSuffix,
+		"hc":              "tf-test-health-check" + randomSuffix,
+		"network":         "network" + randomSuffix,
+		"proxy_subnet":    "tf-test-proxy-subnet" + randomSuffix,
+		"target_proxy":    "tf-test-target-http-proxy" + randomSuffix,
+		"url_map":         "tf-test-url-map" + randomSuffix,
+		"random_suffix":   randomSuffix,
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckComputeNetworkFirewallPolicyRuleDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeNetworkFirewallPolicyRule_networkFirewallPolicyRuleTargetTypeInternalManagedLbExample(context),
+			},
+			{
+				ResourceName:            "google_compute_network_firewall_policy_rule.primary",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"firewall_policy"},
+			},
+			{
+				ResourceName:       "google_compute_network_firewall_policy_rule.primary",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
+		},
+	})
+}
+
+func testAccComputeNetworkFirewallPolicyRule_networkFirewallPolicyRuleTargetTypeInternalManagedLbExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_compute_network" "net" {
+  provider                = google-beta
+  name                    = "%{network}"
+  auto_create_subnetworks = false
+}
+
+resource "google_compute_subnetwork" "backend" {
+  provider      = google-beta
+  name          = "%{backend_subnet}"
+  region        = "us-central1"
+  network       = google_compute_network.net.id
+  ip_cidr_range = "10.10.0.0/24"
+}
+
+resource "google_compute_subnetwork" "proxy" {
+  provider      = google-beta
+  name          = "%{proxy_subnet}"
+  region        = "us-central1"
+  network       = google_compute_network.net.id
+  ip_cidr_range = "10.20.0.0/24"
+  purpose       = "REGIONAL_MANAGED_PROXY"
+  role          = "ACTIVE"
+}
+
+resource "google_compute_region_health_check" "default" {
+  provider = google-beta
+  name     = "%{hc}"
+  region   = "us-central1"
+
+  http_health_check {
+    port = 80
+  }
+}
+
+resource "google_compute_region_backend_service" "default" {
+  provider              = google-beta
+  name                  = "%{backend_service}"
+  region                = "us-central1"
+  protocol              = "HTTP"
+  load_balancing_scheme = "INTERNAL_MANAGED"
+  health_checks         = [google_compute_region_health_check.default.id]
+}
+
+resource "google_compute_region_url_map" "default" {
+  provider        = google-beta
+  name            = "%{url_map}"
+  region          = "us-central1"
+  default_service = google_compute_region_backend_service.default.id
+}
+
+resource "google_compute_region_target_http_proxy" "default" {
+  provider = google-beta
+  name     = "%{target_proxy}"
+  region   = "us-central1"
+  url_map  = google_compute_region_url_map.default.id
+}
+
+resource "google_compute_forwarding_rule" "ilb" {
+  provider              = google-beta
+  name                  = "%{forwarding_rule}"
+  region                = "us-central1"
+  network               = google_compute_network.net.id
+  subnetwork            = google_compute_subnetwork.backend.id
+  load_balancing_scheme = "INTERNAL_MANAGED"
+  target                = google_compute_region_target_http_proxy.default.id
+  ip_protocol           = "TCP"
+  port_range            = "80"
+
+  depends_on = [
+    google_compute_subnetwork.proxy
+  ]
+}
+
+resource "google_compute_network_firewall_policy" "fw_policy" {
+  provider = google-beta
+  name     = "%{fw_policy}"
+  project  = "%{project_name}"
+}
+
+resource "google_compute_network_firewall_policy_rule" "primary" {
+  provider        = google-beta
+  firewall_policy = google_compute_network_firewall_policy.fw_policy.name
+  priority        = 1000
+  action          = "allow"
+  direction       = "INGRESS"
+
+  target_type = "INTERNAL_MANAGED_LB"
+
+  target_forwarding_rules = [
+    google_compute_forwarding_rule.ilb.id
+  ]
+
+  match {
+    src_ip_ranges = ["10.0.0.0/8"]
+
+    layer4_configs {
+      ip_protocol = "tcp"
+    }
+  }
+}
+
+resource "google_compute_network_firewall_policy_association" "global_assoc" {
+  provider          = google-beta
+  name              = "global-policy-assoc-%{random_suffix}"
+  firewall_policy   = google_compute_network_firewall_policy.fw_policy.id
+  attachment_target = google_compute_network.net.id
+}
+`, context)
+}
+
 func testAccCheckComputeNetworkFirewallPolicyRuleDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		for name, rs := range s.RootModule().Resources {
