@@ -1,4 +1,4 @@
-## 7.34.0 (Unreleased)
+## 7.34.0 (May 27, 2026)
 
 NOTES:
 * compute: migrated `google_compute_region_instance_template` to use direct HTTP rather than a client library ([#27471](https://github.com/hashicorp/terraform-provider-google/pull/27471))
