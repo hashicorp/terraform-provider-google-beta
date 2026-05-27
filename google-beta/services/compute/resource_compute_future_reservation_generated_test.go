@@ -81,7 +81,7 @@ func TestAccComputeFutureReservation_futureReservationBasicExample(t *testing.T)
 				ResourceName:            "google_compute_future_reservation.gce_future_reservation",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"auto_created_reservations_delete_time", "auto_delete_auto_created_reservations"},
+				ImportStateVerifyIgnore: []string{"auto_created_reservations_delete_time", "auto_delete_auto_created_reservations", "params"},
 			},
 			{
 				ResourceName:       "google_compute_future_reservation.gce_future_reservation",
@@ -145,7 +145,7 @@ func TestAccComputeFutureReservation_futureReservationAggregateReservationExampl
 				ResourceName:            "google_compute_future_reservation.gce_future_reservation",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"auto_created_reservations_delete_time", "auto_delete_auto_created_reservations"},
+				ImportStateVerifyIgnore: []string{"auto_created_reservations_delete_time", "auto_delete_auto_created_reservations", "params"},
 			},
 			{
 				ResourceName:       "google_compute_future_reservation.gce_future_reservation",
@@ -218,7 +218,7 @@ func TestAccComputeFutureReservation_sharedFutureReservationExample(t *testing.T
 				ResourceName:            "google_compute_future_reservation.gce_future_reservation",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"auto_created_reservations_delete_time", "auto_delete_auto_created_reservations"},
+				ImportStateVerifyIgnore: []string{"auto_created_reservations_delete_time", "auto_delete_auto_created_reservations", "params"},
 			},
 			{
 				ResourceName:       "google_compute_future_reservation.gce_future_reservation",
