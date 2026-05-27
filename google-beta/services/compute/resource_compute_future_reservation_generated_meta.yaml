@@ -23,6 +23,7 @@ fields:
     - api_field: description
     - api_field: name
     - api_field: namePrefix
+    - api_field: params.resourceManagerTags
     - api_field: planningStatus
     - api_field: reservationMode
     - api_field: reservationName
