@@ -1,0 +1,17 @@
+# Copyright IBM Corp. 2014, 2026
+# SPDX-License-Identifier: MPL-2.0
+resource: google_ces_security_settings
+generation_type: mmv1
+source_file: products/ces/SecuritySettings.yaml
+api_service_name: ces.googleapis.com
+api_version: v1beta
+api_resource_type_kind: SecuritySettings
+fields:
+    - api_field: createTime
+    - api_field: endpointControlPolicy.allowedOrigins
+    - api_field: endpointControlPolicy.enforcementScope
+    - api_field: etag
+    - field: location
+      provider_only: true
+    - api_field: name
+    - api_field: updateTime
