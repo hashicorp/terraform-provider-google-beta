@@ -17,6 +17,8 @@ fields:
       field: access_groups.group_id
     - api_field: accessGroups.value.principal.googleGroup
       field: access_groups.principal.google_group
+    - api_field: accessGroups.value.principal.serviceAccount
+      field: access_groups.principal.service_account
     - api_field: assetCount
     - api_field: createTime
     - field: data_product_id
