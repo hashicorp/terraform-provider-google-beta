@@ -31,6 +31,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/dataplex"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
@@ -65,7 +66,7 @@ func TestAccDataplexDataProduct_dataplexDataProductBasicExample(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckDataplexDataProductDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -106,7 +107,6 @@ resource "google_dataplex_data_product" "example" {
     }
   }
 
-  provider = google-beta
 }
 `, context)
 }
@@ -124,7 +124,7 @@ func TestAccDataplexDataProduct_dataplexDataProductFullExample(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckDataplexDataProductDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -148,6 +148,11 @@ func TestAccDataplexDataProduct_dataplexDataProductFullExample(t *testing.T) {
 
 func testAccDataplexDataProduct_dataplexDataProductFullExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
+resource "google_service_account" "test_sa" {
+  account_id   = "tf-test-sa-%{random_suffix}"
+  display_name = "Test Service Account"
+}
+
 resource "google_dataplex_data_product" "example" {
   project         = "%{project_name}"
   location        = "us-central1"
@@ -178,11 +183,10 @@ resource "google_dataplex_data_product" "example" {
     group_id     = "scientist"
     display_name = "Data Scientist"
     principal {
-      google_group = "tf-test-scientists-%{random_suffix}@example.com"
+      service_account = google_service_account.test_sa.email
     }
   }
 
-  provider = google-beta
 }
 `, context)
 }

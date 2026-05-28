@@ -67,7 +67,7 @@ func TestAccDataplexDataProductDataAsset_dataplexDataProductDataAssetBasicExampl
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckDataplexDataProductDataAssetDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -107,14 +107,12 @@ resource "google_dataplex_data_product" "example" {
     }
   }
 
-  provider = google-beta
 }
 
 resource "google_bigquery_dataset" "example" {
   project    = "%{project_name}"
   dataset_id = "tf_test_dataset_%{random_suffix}"
   location   = "us-central1"
-  provider   = google-beta
 }
 
 resource "google_dataplex_data_product_data_asset" "example" {
@@ -124,7 +122,6 @@ resource "google_dataplex_data_product_data_asset" "example" {
   data_asset_id   = "%{data_asset_id}"
   resource        = "//bigquery.googleapis.com/projects/${google_bigquery_dataset.example.project}/datasets/${google_bigquery_dataset.example.dataset_id}"
 
-  provider = google-beta
 }
 `, context)
 }
@@ -143,7 +140,7 @@ func TestAccDataplexDataProductDataAsset_dataplexDataProductDataAssetFullExample
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckDataplexDataProductDataAssetDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -192,14 +189,12 @@ resource "google_dataplex_data_product" "example" {
     }
   }
 
-  provider = google-beta
 }
 
 resource "google_bigquery_dataset" "example" {
   project    = "%{project_name}"
   dataset_id = "tf_test_dataset_%{random_suffix}"
   location   = "us-central1"
-  provider   = google-beta
 }
 
 resource "google_dataplex_data_product_data_asset" "example" {
@@ -224,7 +219,6 @@ resource "google_dataplex_data_product_data_asset" "example" {
     iam_roles    = ["roles/bigquery.dataEditor"]
   }
 
-  provider = google-beta
 }
 `, context)
 }
