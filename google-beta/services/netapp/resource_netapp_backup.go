@@ -203,6 +203,7 @@ Format: 'projects/{{project}}/locations/{{location}}/storagePools/{{storage_pool
 						},
 						"snapshot_uuid": {
 							Type:        schema.TypeString,
+							Computed:    true,
 							Optional:    true,
 							ForceNew:    true,
 							Description: `The UUID of the ONTAP source snapshot.`,
