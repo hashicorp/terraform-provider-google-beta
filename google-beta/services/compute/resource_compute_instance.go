@@ -1871,6 +1871,15 @@ func expandComputeInstance(project string, d *schema.ResourceData, config *trans
 		return nil, fmt.Errorf("Error creating reservation affinity: %s", err)
 	}
 
+	instanceEncryptionKeyMap := expandComputeInstanceEncryptionKey(d)
+	var instanceEncryptionKey *compute.CustomerEncryptionKey
+	if instanceEncryptionKeyMap != nil {
+		instanceEncryptionKey = &compute.CustomerEncryptionKey{}
+		if err := tpgresource.Convert(instanceEncryptionKeyMap, instanceEncryptionKey); err != nil {
+			return nil, fmt.Errorf("Error converting instance_encryption_key: %s", err)
+		}
+	}
+
 	// Create the instance information
 	return &compute.Instance{
 		CanIpForward:               d.Get("can_ip_forward").(bool),
@@ -1899,7 +1908,7 @@ func expandComputeInstance(project string, d *schema.ResourceData, config *trans
 		ResourcePolicies:           tpgresource.ConvertStringArr(d.Get("resource_policies").([]interface{})),
 		ReservationAffinity:        reservationAffinity,
 		KeyRevocationActionType:    d.Get("key_revocation_action_type").(string),
-		InstanceEncryptionKey:      expandComputeInstanceEncryptionKey(d),
+		InstanceEncryptionKey:      instanceEncryptionKey,
 		EraseWindowsVssSignature:   d.Get("erase_windows_vss_signature").(bool),
 	}, nil
 }
@@ -2393,7 +2402,15 @@ func resourceComputeInstanceRead(d *schema.ResourceData, meta interface{}) error
 	if err := d.Set("key_revocation_action_type", instance.KeyRevocationActionType); err != nil {
 		return fmt.Errorf("Error setting key_revocation_action_type: %s", err)
 	}
-	if err := d.Set("instance_encryption_key", flattenComputeInstanceEncryptionKey(instance.InstanceEncryptionKey)); err != nil {
+	var instanceEncryptionKeyMap map[string]interface{}
+	if instance.InstanceEncryptionKey != nil {
+		var err error
+		instanceEncryptionKeyMap, err = tpgresource.ConvertToMap(instance.InstanceEncryptionKey)
+		if err != nil {
+			return fmt.Errorf("Error converting instance_encryption_key: %s", err)
+		}
+	}
+	if err := d.Set("instance_encryption_key", flattenComputeInstanceEncryptionKey(instanceEncryptionKeyMap)); err != nil {
 		return fmt.Errorf("Error setting instance_encryption_key: %s", err)
 	}
 	// If not forced to false, upgrading to a new provider version and subsequently changing a vm property
