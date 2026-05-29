@@ -75,7 +75,7 @@ func TestAccFirebaseAILogicPromptTemplateLock_firebaseailogicPromptTemplateLockB
 				ResourceName:            "google_firebase_ai_logic_prompt_template_lock.basic_lock",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"location", "template_id"},
+				ImportStateVerifyIgnore: []string{"location", "regional_propagation_disabled", "template_id"},
 			},
 			{
 				ResourceName:       "google_firebase_ai_logic_prompt_template_lock.basic_lock",
@@ -105,6 +105,63 @@ resource "google_firebase_ai_logic_prompt_template_lock" "basic_lock" {
   provider = google-beta
   location = google_firebase_ai_logic_prompt_template.basic.location
   template_id = google_firebase_ai_logic_prompt_template.basic.template_id
+}
+`, context)
+}
+
+func TestAccFirebaseAILogicPromptTemplateLock_firebaseailogicPromptTemplateLockGlobalOnlyExample(t *testing.T) {
+	t.Parallel()
+
+	randomSuffix := acctest.RandString(t, 10)
+
+	context := map[string]interface{}{
+		"template_id":   "tf-test-global-only-lock-template" + randomSuffix,
+		"random_suffix": randomSuffix,
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckFirebaseAILogicPromptTemplateLockDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccFirebaseAILogicPromptTemplateLock_firebaseailogicPromptTemplateLockGlobalOnlyExample(context),
+			},
+			{
+				ResourceName:            "google_firebase_ai_logic_prompt_template_lock.global_only_lock",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"location", "regional_propagation_disabled", "template_id"},
+			},
+			{
+				ResourceName:       "google_firebase_ai_logic_prompt_template_lock.global_only_lock",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
+		},
+	})
+}
+
+func testAccFirebaseAILogicPromptTemplateLock_firebaseailogicPromptTemplateLockGlobalOnlyExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_firebase_ai_logic_prompt_template" "global_only" {
+  provider = google-beta
+  location = "global"
+  template_id = "%{template_id}"
+  template_string = <<EOF
+---
+model: googleai/gemini-1.5-flash
+---
+Hello World
+EOF
+}
+
+resource "google_firebase_ai_logic_prompt_template_lock" "global_only_lock" {
+  provider = google-beta
+  location = google_firebase_ai_logic_prompt_template.global_only.location
+  template_id = google_firebase_ai_logic_prompt_template.global_only.template_id
+  regional_propagation_disabled = true
 }
 `, context)
 }

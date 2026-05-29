@@ -68,22 +68,24 @@ func TestAccFirebaseAILogicPromptTemplate_firebaseailogicPromptTemplateUpdate(t 
 		CheckDestroy: testAccCheckFirebaseAILogicPromptTemplateDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccFirebaseAILogicPromptTemplate_firebaseailogicPromptTemplateUpdateExample(context, "Hello from Version 1"),
+				// Create template with regional propagation. This creates the template in all regions.
+				Config: testAccFirebaseAILogicPromptTemplate_firebaseailogicPromptTemplateUpdateExample(context, "Hello from Version 1", false),
 			},
 			{
 				ResourceName:            "google_firebase_ai_logic_prompt_template.updating",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"location"},
+				ImportStateVerifyIgnore: []string{"location", "regional_propagation_disabled"},
 			},
 			{
-				Config: testAccFirebaseAILogicPromptTemplate_firebaseailogicPromptTemplateUpdateExample(context, "Hello from Updated Version 2"),
+				// Update template without propagation. This updates the template in "global" only.
+				Config: testAccFirebaseAILogicPromptTemplate_firebaseailogicPromptTemplateUpdateExample(context, "Hello from Updated Version 2", false),
 			},
 			{
 				ResourceName:            "google_firebase_ai_logic_prompt_template.updating",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"location"},
+				ImportStateVerifyIgnore: []string{"location", "regional_propagation_disabled"},
 			},
 		},
 	})
@@ -116,7 +118,7 @@ func TestAccFirebaseAILogicPromptTemplate_firebaseailogicPromptTemplateComplexUp
 				ResourceName:            "google_firebase_ai_logic_prompt_template.complex",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"location"},
+				ImportStateVerifyIgnore: []string{"location", "regional_propagation_disabled"},
 			},
 			{
 				Config: testAccFirebaseAILogicPromptTemplate_firebaseailogicPromptTemplateComplexUpdateExample(context, "Updated Name", "gemini-1.5-flash", "Hello V1"),
@@ -128,7 +130,7 @@ func TestAccFirebaseAILogicPromptTemplate_firebaseailogicPromptTemplateComplexUp
 				ResourceName:            "google_firebase_ai_logic_prompt_template.complex",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"location"},
+				ImportStateVerifyIgnore: []string{"location", "regional_propagation_disabled"},
 			},
 			{
 				Config: testAccFirebaseAILogicPromptTemplate_firebaseailogicPromptTemplateComplexUpdateExample(context, "Final Name", "gemini-2.0-flash", "Hello V2"),
@@ -141,7 +143,7 @@ func TestAccFirebaseAILogicPromptTemplate_firebaseailogicPromptTemplateComplexUp
 				ResourceName:            "google_firebase_ai_logic_prompt_template.complex",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"location"},
+				ImportStateVerifyIgnore: []string{"location", "regional_propagation_disabled"},
 			},
 		},
 	})
@@ -164,24 +166,32 @@ func TestAccFirebaseAILogicPromptTemplate_firebaseailogicPromptTemplateLockedUpd
 		CheckDestroy: testAccCheckFirebaseAILogicPromptTemplateDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccFirebaseAILogicPromptTemplate_firebaseailogicPromptTemplateLockedExample(context, "Hello V1"),
+				// Create template, then lock without regional propagation. This locks the template in "global" only.
+				Config: testAccFirebaseAILogicPromptTemplate_firebaseailogicPromptTemplateLockedExample(context, "Hello V1", true),
 			},
 			{
-				Config:      testAccFirebaseAILogicPromptTemplate_firebaseailogicPromptTemplateLockedExample(context, "Hello V2"),
+				// Lock template with propagation. This locks the template in all regions.
+				Config: testAccFirebaseAILogicPromptTemplate_firebaseailogicPromptTemplateLockedExample(context, "Hello V1", false),
+			},
+			{
+				// Template is locked; updating its content should fail.
+				Config:      testAccFirebaseAILogicPromptTemplate_firebaseailogicPromptTemplateLockedExample(context, "Hello V2", false),
 				ExpectError: regexp.MustCompile("(?s)Error updating PromptTemplate.*Precondition check failed"),
 			},
 		},
 	})
 }
 
-func testAccFirebaseAILogicPromptTemplate_firebaseailogicPromptTemplateUpdateExample(context map[string]interface{}, message string) string {
+func testAccFirebaseAILogicPromptTemplate_firebaseailogicPromptTemplateUpdateExample(context map[string]interface{}, message string, regionalPropagationDisabled bool) string {
 	context["template_message"] = message
+	context["regional_propagation_disabled"] = regionalPropagationDisabled
 	return acctest.Nprintf(`
 resource "google_firebase_ai_logic_prompt_template" "updating" {
   provider = google-beta
   project  = "%{project_id}"
   location = "global"
   template_id = "tf-test-update-%{random_suffix}"
+  regional_propagation_disabled = %{regional_propagation_disabled}
   template_string = <<EOF
 ---
 model: googleai/gemini-2.0-flash
@@ -213,8 +223,9 @@ EOF
 `, context)
 }
 
-func testAccFirebaseAILogicPromptTemplate_firebaseailogicPromptTemplateLockedExample(context map[string]interface{}, message string) string {
+func testAccFirebaseAILogicPromptTemplate_firebaseailogicPromptTemplateLockedExample(context map[string]interface{}, message string, regionalPropagationDisabled bool) string {
 	context["template_message"] = message
+	context["regional_propagation_disabled"] = regionalPropagationDisabled
 	return acctest.Nprintf(`
 resource "google_firebase_ai_logic_prompt_template" "locked" {
   provider = google-beta
@@ -234,6 +245,7 @@ resource "google_firebase_ai_logic_prompt_template_lock" "locked_lock" {
   project  = google_firebase_ai_logic_prompt_template.locked.project
   location = google_firebase_ai_logic_prompt_template.locked.location
   template_id = google_firebase_ai_logic_prompt_template.locked.template_id
+  regional_propagation_disabled = %{regional_propagation_disabled}
 }
 `, context)
 }
@@ -259,7 +271,7 @@ func TestAccFirebaseAILogicPromptTemplate_regional(t *testing.T) {
 				ResourceName:            "google_firebase_ai_logic_prompt_template.regional",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"location"},
+				ImportStateVerifyIgnore: []string{"location", "regional_propagation_disabled"},
 			},
 		},
 	})

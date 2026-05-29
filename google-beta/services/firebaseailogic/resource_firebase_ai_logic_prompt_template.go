@@ -165,6 +165,13 @@ PromptTemplate's resource name.`,
 				Optional:    true,
 				Description: `The display name of the PromptTemplate.`,
 			},
+			"regional_propagation_disabled": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Description: `For the 'global' location only. If true, the write operation (create,
+update, or delete) will apply to the global region only. Otherwise, the
+operation will also propagate to all applicable regions.`,
+			},
 			"create_time": {
 				Type:        schema.TypeString,
 				Computed:    true,
@@ -272,6 +279,12 @@ func resourceFirebaseAILogicPromptTemplateCreate(d *schema.ResourceData, meta in
 	}
 
 	headers := make(http.Header)
+	if d.Get("regional_propagation_disabled").(bool) {
+		url, err = transport_tpg.AddQueryParams(url, map[string]string{"regionalPropagationDisabled": "true"})
+		if err != nil {
+			return err
+		}
+	}
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -492,6 +505,12 @@ func resourceFirebaseAILogicPromptTemplateUpdate(d *schema.ResourceData, meta in
 	if err != nil {
 		return err
 	}
+	if d.Get("regional_propagation_disabled").(bool) {
+		url, err = transport_tpg.AddQueryParams(url, map[string]string{"regionalPropagationDisabled": "true"})
+		if err != nil {
+			return err
+		}
+	}
 
 	// err == nil indicates that the billing_project value was found
 	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
@@ -556,6 +575,12 @@ func resourceFirebaseAILogicPromptTemplateDelete(d *schema.ResourceData, meta in
 	}
 
 	headers := make(http.Header)
+	if d.Get("regional_propagation_disabled").(bool) {
+		url, err = transport_tpg.AddQueryParams(url, map[string]string{"regionalPropagationDisabled": "true"})
+		if err != nil {
+			return err
+		}
+	}
 
 	log.Printf("[DEBUG] Deleting PromptTemplate %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
