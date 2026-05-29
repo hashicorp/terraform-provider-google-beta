@@ -74,7 +74,7 @@ func TestAccFirebaseAILogicPromptTemplate_firebaseailogicPromptTemplateFileExamp
 				ResourceName:            "google_firebase_ai_logic_prompt_template.file",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"location"},
+				ImportStateVerifyIgnore: []string{"location", "regional_propagation_disabled"},
 			},
 			{
 				ResourceName:       "google_firebase_ai_logic_prompt_template.file",
@@ -92,6 +92,52 @@ resource "google_firebase_ai_logic_prompt_template" "file" {
   provider = google-beta
   location = "global"
   template_id = "%{template_id}"
+  template_string = file("test-fixtures/hello_world.prompt")
+}
+`, context)
+}
+
+func TestAccFirebaseAILogicPromptTemplate_firebaseailogicPromptTemplateGlobalOnlyExample(t *testing.T) {
+	t.Parallel()
+
+	randomSuffix := acctest.RandString(t, 10)
+
+	context := map[string]interface{}{
+		"template_id":   "tf-test-global-only-template" + randomSuffix,
+		"random_suffix": randomSuffix,
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckFirebaseAILogicPromptTemplateDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccFirebaseAILogicPromptTemplate_firebaseailogicPromptTemplateGlobalOnlyExample(context),
+			},
+			{
+				ResourceName:            "google_firebase_ai_logic_prompt_template.global_only",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"location", "regional_propagation_disabled"},
+			},
+			{
+				ResourceName:       "google_firebase_ai_logic_prompt_template.global_only",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
+		},
+	})
+}
+
+func testAccFirebaseAILogicPromptTemplate_firebaseailogicPromptTemplateGlobalOnlyExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_firebase_ai_logic_prompt_template" "global_only" {
+  provider = google-beta
+  location = "global"
+  template_id = "%{template_id}"
+  regional_propagation_disabled = true
   template_string = file("test-fixtures/hello_world.prompt")
 }
 `, context)
@@ -119,7 +165,7 @@ func TestAccFirebaseAILogicPromptTemplate_firebaseailogicPromptTemplateBasicExam
 				ResourceName:            "google_firebase_ai_logic_prompt_template.basic",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"location"},
+				ImportStateVerifyIgnore: []string{"location", "regional_propagation_disabled"},
 			},
 			{
 				ResourceName:       "google_firebase_ai_logic_prompt_template.basic",

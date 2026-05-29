@@ -153,6 +153,14 @@ func ResourceFirebaseAILogicPromptTemplateLock() *schema.Resource {
 				ForceNew:    true,
 				Description: `The ID of the prompt template.`,
 			},
+			"regional_propagation_disabled": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				ForceNew: true,
+				Description: `For the 'global' location only. If true, the modifyLock operation will
+apply to the global region only. Otherwise, the operation will also
+propagate to all applicable regions.`,
+			},
 			"locked": {
 				Type:     schema.TypeBool,
 				Computed: true,
@@ -216,6 +224,12 @@ func resourceFirebaseAILogicPromptTemplateLockCreate(d *schema.ResourceData, met
 	}
 
 	headers := make(http.Header)
+	if d.Get("regional_propagation_disabled").(bool) {
+		url, err = transport_tpg.AddQueryParams(url, map[string]string{"regionalPropagationDisabled": "true"})
+		if err != nil {
+			return err
+		}
+	}
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -403,6 +417,12 @@ func resourceFirebaseAILogicPromptTemplateLockDelete(d *schema.ResourceData, met
 	}
 
 	headers := make(http.Header)
+	if d.Get("regional_propagation_disabled").(bool) {
+		url, err = transport_tpg.AddQueryParams(url, map[string]string{"regionalPropagationDisabled": "true"})
+		if err != nil {
+			return err
+		}
+	}
 
 	log.Printf("[DEBUG] Deleting PromptTemplateLock %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
