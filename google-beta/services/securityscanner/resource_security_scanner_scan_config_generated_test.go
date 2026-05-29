@@ -103,6 +103,57 @@ resource "google_security_scanner_scan_config" "scan-config" {
 `, context)
 }
 
+func TestAccSecurityScannerScanConfig_scanConfigIgnoreHttpStatusErrorsExample(t *testing.T) {
+	t.Parallel()
+
+	randomSuffix := acctest.RandString(t, 10)
+
+	context := map[string]interface{}{
+		"address_name":     "tf-test-scan-ignore-http-ip" + randomSuffix,
+		"scan_config_name": "tf-test-terraform-scan-config" + randomSuffix,
+		"random_suffix":    randomSuffix,
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckSecurityScannerScanConfigDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccSecurityScannerScanConfig_scanConfigIgnoreHttpStatusErrorsExample(context),
+			},
+			{
+				ResourceName:      "google_security_scanner_scan_config.scan-config",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
+				ResourceName:       "google_security_scanner_scan_config.scan-config",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
+		},
+	})
+}
+
+func testAccSecurityScannerScanConfig_scanConfigIgnoreHttpStatusErrorsExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_compute_address" "scanner_static_ip" {
+  provider = google-beta
+  name     = "%{address_name}"
+}
+
+resource "google_security_scanner_scan_config" "scan-config" {
+  provider                  = google-beta
+  display_name              = "%{scan_config_name}"
+  starting_urls             = ["http://${google_compute_address.scanner_static_ip.address}"]
+  target_platforms          = ["COMPUTE"]
+  ignore_http_status_errors = true
+}
+`, context)
+}
+
 func testAccCheckSecurityScannerScanConfigDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		for name, rs := range s.RootModule().Resources {

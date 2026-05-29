@@ -15,6 +15,7 @@ fields:
     - api_field: blacklistPatterns
     - api_field: displayName
     - api_field: exportToSecurityCommandCenter
+    - api_field: ignoreHttpStatusErrors
     - api_field: maxQps
     - api_field: name
     - api_field: schedule.intervalDurationDays

@@ -231,6 +231,11 @@ https://cloud.google.com/security-scanner/docs/excluded-urls`,
 				Description:  `Controls export of scan configurations and results to Cloud Security Command Center. Default value: "ENABLED" Possible values: ["ENABLED", "DISABLED"]`,
 				Default:      "ENABLED",
 			},
+			"ignore_http_status_errors": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: `Whether to keep scanning even if most requests return HTTP error codes.`,
+			},
 			"max_qps": {
 				Type:         schema.TypeInt,
 				Optional:     true,
@@ -367,6 +372,12 @@ func resourceSecurityScannerScanConfigCreate(d *schema.ResourceData, meta interf
 		return err
 	} else if v, ok := d.GetOkExists("export_to_security_command_center"); !tpgresource.IsEmptyValue(reflect.ValueOf(exportToSecurityCommandCenterProp)) && (ok || !reflect.DeepEqual(v, exportToSecurityCommandCenterProp)) {
 		obj["exportToSecurityCommandCenter"] = exportToSecurityCommandCenterProp
+	}
+	ignoreHttpStatusErrorsProp, err := expandSecurityScannerScanConfigIgnoreHttpStatusErrors(d.Get("ignore_http_status_errors"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("ignore_http_status_errors"); !tpgresource.IsEmptyValue(reflect.ValueOf(ignoreHttpStatusErrorsProp)) && (ok || !reflect.DeepEqual(v, ignoreHttpStatusErrorsProp)) {
+		obj["ignoreHttpStatusErrors"] = ignoreHttpStatusErrorsProp
 	}
 
 	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/scanConfigs")
@@ -618,6 +629,12 @@ func resourceSecurityScannerScanConfigUpdate(d *schema.ResourceData, meta interf
 	} else if v, ok := d.GetOkExists("export_to_security_command_center"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, exportToSecurityCommandCenterProp)) {
 		obj["exportToSecurityCommandCenter"] = exportToSecurityCommandCenterProp
 	}
+	ignoreHttpStatusErrorsProp, err := expandSecurityScannerScanConfigIgnoreHttpStatusErrors(d.Get("ignore_http_status_errors"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("ignore_http_status_errors"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, ignoreHttpStatusErrorsProp)) {
+		obj["ignoreHttpStatusErrors"] = ignoreHttpStatusErrorsProp
+	}
 
 	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"{{name}}")
 	if err != nil {
@@ -662,6 +679,10 @@ func resourceSecurityScannerScanConfigUpdate(d *schema.ResourceData, meta interf
 
 	if d.HasChange("export_to_security_command_center") {
 		updateMask = append(updateMask, "exportToSecurityCommandCenter")
+	}
+
+	if d.HasChange("ignore_http_status_errors") {
+		updateMask = append(updateMask, "ignoreHttpStatusErrors")
 	}
 	// updateMask is a URL parameter but not present in the schema, so ReplaceVars
 	// won't set it
@@ -913,6 +934,10 @@ func flattenSecurityScannerScanConfigExportToSecurityCommandCenter(v interface{}
 	return v
 }
 
+func flattenSecurityScannerScanConfigIgnoreHttpStatusErrors(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func expandSecurityScannerScanConfigDisplayName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
@@ -1092,6 +1117,10 @@ func expandSecurityScannerScanConfigExportToSecurityCommandCenter(v interface{},
 	return v, nil
 }
 
+func expandSecurityScannerScanConfigIgnoreHttpStatusErrors(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
 func resourceSecurityScannerScanConfigPostCreateSetComputedFields(d *schema.ResourceData, meta interface{}, res map[string]interface{}) error {
 	config := meta.(*transport_tpg.Config)
 	if err := d.Set("name", flattenSecurityScannerScanConfigName(res["name"], d, config)); err != nil {
@@ -1131,6 +1160,9 @@ func ResourceSecurityScannerScanConfigFlatten(d *schema.ResourceData, meta inter
 		return fmt.Errorf("Error reading ScanConfig: %s", err)
 	}
 	if err = d.Set("export_to_security_command_center", flattenSecurityScannerScanConfigExportToSecurityCommandCenter(res["exportToSecurityCommandCenter"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ScanConfig: %s", err)
+	}
+	if err = d.Set("ignore_http_status_errors", flattenSecurityScannerScanConfigIgnoreHttpStatusErrors(res["ignoreHttpStatusErrors"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ScanConfig: %s", err)
 	}
 
