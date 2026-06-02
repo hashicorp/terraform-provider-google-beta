@@ -222,6 +222,7 @@ the specified value if the system is overloaded. Default is 1.0.`,
 			},
 			"traffic_filter": {
 				Type:        schema.TypeList,
+				Computed:    true,
 				Optional:    true,
 				Description: `Configuration for traffic filtering.`,
 				MaxItems:    1,
@@ -229,6 +230,7 @@ the specified value if the system is overloaded. Default is 1.0.`,
 					Schema: map[string]*schema.Schema{
 						"template_only": {
 							Type:     schema.TypeBool,
+							Computed: true,
 							Optional: true,
 							Description: `Only allows users to use AI Logic via prompt templates for this project.
 If true, only calls using server templates are permitted.`,
@@ -680,36 +682,21 @@ func flattenFirebaseAILogicConfigTelemetryConfigSamplingRate(v interface{}, d *s
 	return v
 }
 
-func flattenFirebaseAILogicConfigTrafficFilter(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) interface{} {
-	userState := d.Get("traffic_filter").([]interface{})
-
-	var apiState []interface{}
-	apiEnabled := false
-	if original, ok := v.(map[string]interface{}); ok {
-		block := make(map[string]interface{})
-		if templateOnly, ok := original["templateOnly"].(bool); ok && templateOnly {
-			block["template_only"] = true
-			apiEnabled = true
-		} else {
-			block["template_only"] = false
-		}
-		apiState = []interface{}{block}
+func flattenFirebaseAILogicConfigTrafficFilter(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
 	}
-
-	userEnabled := false
-	if len(userState) > 0 && userState[0] != nil {
-		if tfMap, ok := userState[0].(map[string]interface{}); ok {
-			userEnabled, _ = tfMap["template_only"].(bool)
-		}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
 	}
-
-	if apiEnabled || userEnabled {
-		return apiState
-	}
-
-	// Both API and user agree the feature is disabled.
-	// Return the userState to prevent perpetual diffs.
-	return userState
+	transformed := make(map[string]interface{})
+	transformed["template_only"] =
+		flattenFirebaseAILogicConfigTrafficFilterTemplateOnly(original["templateOnly"], d, config)
+	return []interface{}{transformed}
+}
+func flattenFirebaseAILogicConfigTrafficFilterTemplateOnly(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
 }
 
 func expandFirebaseAILogicConfigGenerativeLanguageConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
@@ -805,7 +792,7 @@ func expandFirebaseAILogicConfigTrafficFilter(v interface{}, d tpgresource.Terra
 	transformedTemplateOnly, err := expandFirebaseAILogicConfigTrafficFilterTemplateOnly(original["template_only"], d, config)
 	if err != nil {
 		return nil, err
-	} else if val := reflect.ValueOf(transformedTemplateOnly); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+	} else {
 		transformed["templateOnly"] = transformedTemplateOnly
 	}
 
