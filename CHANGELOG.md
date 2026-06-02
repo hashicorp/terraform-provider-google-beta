@@ -2,10 +2,10 @@
 
 FEATURES:
 * **New Data Source:** `google_oracle_database_goldengate_connection_types` ([#12329](https://github.com/hashicorp/terraform-provider-google-beta/pull/12329))
-* **New Resource:** `google_ces_security_settings` (beta) ([#12327](https://github.com/hashicorp/terraform-provider-google-beta/pull/12327))
+* **New Resource:** `google_ces_security_settings` ([#12327](https://github.com/hashicorp/terraform-provider-google-beta/pull/12327))
 * **New Resource:** `google_chronicle_findings_refinement` ([#12348](https://github.com/hashicorp/terraform-provider-google-beta/pull/12348))
-* **New Resource:** `google_iam_folder_access_policy` (beta) ([#12326](https://github.com/hashicorp/terraform-provider-google-beta/pull/12326))
-* **New Resource:** `google_iam_project_access_policy` (beta) ([#12317](https://github.com/hashicorp/terraform-provider-google-beta/pull/12317))
+* **New Resource:** `google_iam_folder_access_policy` ([#12326](https://github.com/hashicorp/terraform-provider-google-beta/pull/12326))
+* **New Resource:** `google_iam_project_access_policy` ([#12317](https://github.com/hashicorp/terraform-provider-google-beta/pull/12317))
 * **New Resource:** `google_migration_center_discovery_client` ([#12333](https://github.com/hashicorp/terraform-provider-google-beta/pull/12333))
 * **New Resource:** `google_migration_center_report` ([#12322](https://github.com/hashicorp/terraform-provider-google-beta/pull/12322))
 * **New Resource:** `google_oracle_database_goldengate_connection_assignment` ([#12328](https://github.com/hashicorp/terraform-provider-google-beta/pull/12328))
@@ -23,7 +23,7 @@ IMPROVEMENTS:
 * container: added additional value `KCP_VPA` for `logging_config.enable_components` field to `google_container_cluster` resource ([#12320](https://github.com/hashicorp/terraform-provider-google-beta/pull/12320))
 * dataplex: added `service_account` support to `google_dataplex_data_product` access group principals ([#12345](https://github.com/hashicorp/terraform-provider-google-beta/pull/12345))
 * firestore: added `ttl_config.expiration_offset` field to `google_firestore_field` resource ([#12346](https://github.com/hashicorp/terraform-provider-google-beta/pull/12346))
-* netapp: marked `ontap_source.snapshot_uuid` field as Computed in `google_netapp_backup` resource (beta) ([#12341](https://github.com/hashicorp/terraform-provider-google-beta/pull/12341))
+* netapp: marked `ontap_source.snapshot_uuid` field as Computed in `google_netapp_backup` resource ([#12341](https://github.com/hashicorp/terraform-provider-google-beta/pull/12341))
 * networkmanagement: added `gke_pod` and `network_type` fields to `google_network_management_connectivity_test` resource ([#12342](https://github.com/hashicorp/terraform-provider-google-beta/pull/12342))
 
 BUG FIXES:
