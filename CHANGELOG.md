@@ -1,4 +1,4 @@
-## 7.35.0 (Unreleased)
+## 7.35.0 (June 2, 2026)
 
 FEATURES:
 * **New Data Source:** `google_oracle_database_goldengate_connection_types` ([#12329](https://github.com/hashicorp/terraform-provider-google-beta/pull/12329))
@@ -28,6 +28,7 @@ IMPROVEMENTS:
 
 BUG FIXES:
 * resourcemanager: fixed a bug where ephemeral `google_service_account_key` failed on deletion if the parent service account had already been deleted ([#12316](https://github.com/hashicorp/terraform-provider-google-beta/pull/12316))
+* storage: fixed missing identity error when updating values in `google_storage_bucket` ([#12356](https://github.com/hashicorp/terraform-provider-google-beta/pull/12356))
 
 ## 7.34.0 (May 27, 2026)
 
