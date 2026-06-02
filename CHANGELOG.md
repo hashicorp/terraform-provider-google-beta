@@ -1,4 +1,4 @@
-## 7.35.0 (Unreleased)
+## 7.35.0 (June 2, 2026)
 
 FEATURES:
 * **New Data Source:** `google_oracle_database_goldengate_connection_types` ([#12329](https://github.com/hashicorp/terraform-provider-google-beta/pull/12329))
