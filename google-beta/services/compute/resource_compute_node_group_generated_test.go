@@ -154,7 +154,7 @@ resource "google_compute_node_template" "soletenant-tmpl" {
 resource "google_compute_node_group" "nodes" {
   provider    = google-beta
   name        = "%{group_name}"
-  zone        = "us-central1-f"
+  zone        = "us-central1-c"
   description = "example google_compute_node_group for Terraform Google Provider"
 
   initial_size          = 1
