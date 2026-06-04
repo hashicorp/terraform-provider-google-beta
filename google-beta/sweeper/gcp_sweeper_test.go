@@ -128,6 +128,7 @@ import (
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/integrationconnectors"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/integrations"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/kms"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/licensemanager"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/logging"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/looker"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/lustre"
