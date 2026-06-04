@@ -162,6 +162,11 @@ func ResourceDataformRepositoryWorkflowConfig() *schema.Resource {
 				Optional:    true,
 				Description: `Optional. Optional schedule (in cron format) for automatic creation of compilation results.`,
 			},
+			"disabled": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: `Disables automatic creation of workflow invocations.`,
+			},
 			"invocation_config": {
 				Type:        schema.TypeList,
 				Optional:    true,
@@ -339,6 +344,12 @@ func resourceDataformRepositoryWorkflowConfigCreate(d *schema.ResourceData, meta
 		return err
 	} else if v, ok := d.GetOkExists("time_zone"); !tpgresource.IsEmptyValue(reflect.ValueOf(timeZoneProp)) && (ok || !reflect.DeepEqual(v, timeZoneProp)) {
 		obj["timeZone"] = timeZoneProp
+	}
+	disabledProp, err := expandDataformRepositoryWorkflowConfigDisabled(d.Get("disabled"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("disabled"); !tpgresource.IsEmptyValue(reflect.ValueOf(disabledProp)) && (ok || !reflect.DeepEqual(v, disabledProp)) {
+		obj["disabled"] = disabledProp
 	}
 
 	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/{{region}}/repositories/{{repository}}/workflowConfigs?workflowConfigId={{name}}")
@@ -585,6 +596,12 @@ func resourceDataformRepositoryWorkflowConfigUpdate(d *schema.ResourceData, meta
 		return err
 	} else if v, ok := d.GetOkExists("time_zone"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, timeZoneProp)) {
 		obj["timeZone"] = timeZoneProp
+	}
+	disabledProp, err := expandDataformRepositoryWorkflowConfigDisabled(d.Get("disabled"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("disabled"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, disabledProp)) {
+		obj["disabled"] = disabledProp
 	}
 
 	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/{{region}}/repositories/{{repository}}/workflowConfigs/{{name}}")
@@ -853,6 +870,10 @@ func flattenDataformRepositoryWorkflowConfigRecentScheduledExecutionRecordsError
 	return v
 }
 
+func flattenDataformRepositoryWorkflowConfigDisabled(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func expandDataformRepositoryWorkflowConfigName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
@@ -997,6 +1018,10 @@ func expandDataformRepositoryWorkflowConfigTimeZone(v interface{}, d tpgresource
 	return v, nil
 }
 
+func expandDataformRepositoryWorkflowConfigDisabled(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
 func ResourceDataformRepositoryWorkflowConfigFlatten(d *schema.ResourceData, meta interface{}, res map[string]interface{}, config *transport_tpg.Config, project string, userAgent string, billingProject string, url string, headers http.Header) error {
 	var err error
 
@@ -1016,6 +1041,9 @@ func ResourceDataformRepositoryWorkflowConfigFlatten(d *schema.ResourceData, met
 		return fmt.Errorf("Error reading RepositoryWorkflowConfig: %s", err)
 	}
 	if err = d.Set("recent_scheduled_execution_records", flattenDataformRepositoryWorkflowConfigRecentScheduledExecutionRecords(res["recentScheduledExecutionRecords"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RepositoryWorkflowConfig: %s", err)
+	}
+	if err = d.Set("disabled", flattenDataformRepositoryWorkflowConfigDisabled(res["disabled"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RepositoryWorkflowConfig: %s", err)
 	}
 
