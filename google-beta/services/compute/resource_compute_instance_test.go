@@ -4897,6 +4897,32 @@ func testAccComputeInstance_nic_securityPolicyCreateWithTwoAccessConfigsUpdateSe
 		CheckDestroy:             testAccCheckComputeInstanceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
+				// Clean up any NetworkEdgeSecurityService left over from a previously failed recording
+				// before creating a new one. Only one can exist per region.
+				PreConfig: func() {
+					config := acctest.GoogleProviderConfig(t)
+					client := tpgcompute.NewClient(config, config.UserAgent)
+					found, err := client.NetworkEdgeSecurityServices.AggregatedList(config.Project).Do()
+					if err != nil {
+						return
+					}
+					scopedList, ok := found.Items["regions/europe-west1"]
+					if !ok {
+						return
+					}
+					for _, nesec := range scopedList.NetworkEdgeSecurityServices {
+						if !strings.HasPrefix(nesec.Name, "tf-test-") {
+							continue
+						}
+						op, err := client.NetworkEdgeSecurityServices.Delete(config.Project, "europe-west1", nesec.Name).Do()
+						if err != nil {
+							continue
+						}
+						if waitErr := tpgcompute.ComputeOperationWaitTime(config, op, config.Project, "deleting leftover NetworkEdgeSecurityService", config.UserAgent, 10*time.Minute); waitErr != nil {
+							t.Logf("Warning: cleanup of leftover NetworkEdgeSecurityService %q failed: %v", nesec.Name, waitErr)
+						}
+					}
+				},
 				Config: testAccComputeInstance_nic_securityPolicyCreateWithTwoAccessConfigsWithTwoSecurityPoliciesAndStatus(suffix, policyName, instanceName, "\"\"", "RUNNING"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(
@@ -5229,7 +5255,7 @@ func testAccCheckComputeInstanceUpdateMachineType(t *testing.T, n string) resour
 
 		config := acctest.GoogleProviderConfig(t)
 
-		stopUrl := fmt.Sprintf("%sprojects/%s/zones/%s/instances/%s/stop", transport_tpg.BaseUrl(tpgcompute.Product, config), config.Project, rs.Primary.Attributes["zone"], rs.Primary.Attributes["name"])
+		stopUrl := fmt.Sprintf("%sprojects/%s/zones/%s/instances/%s/stop", transport_tpg.BaseUrl(tpgcompute.Product, config), config.Project, rs.Primary.Attributes["zone"], tpgresource.GetResourceNameFromSelfLink(rs.Primary.Attributes["name"]))
 		res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 			Config:    config,
 			Method:    "POST",
@@ -5245,7 +5271,7 @@ func testAccCheckComputeInstanceUpdateMachineType(t *testing.T, n string) resour
 			return fmt.Errorf("Could not stop instance: %s", err)
 		}
 
-		setMachineTypeUrl := fmt.Sprintf("%sprojects/%s/zones/%s/instances/%s/setMachineType", transport_tpg.BaseUrl(tpgcompute.Product, config), config.Project, rs.Primary.Attributes["zone"], rs.Primary.Attributes["name"])
+		setMachineTypeUrl := fmt.Sprintf("%sprojects/%s/zones/%s/instances/%s/setMachineType", transport_tpg.BaseUrl(tpgcompute.Product, config), config.Project, rs.Primary.Attributes["zone"], tpgresource.GetResourceNameFromSelfLink(rs.Primary.Attributes["name"]))
 		res, err = transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 			Config:    config,
 			Method:    "POST",
@@ -5620,7 +5646,7 @@ func testAccCheckComputeInstanceDestroyProducer(t *testing.T) func(s *terraform.
 				continue
 			}
 
-			url := fmt.Sprintf("%sprojects/%s/zones/%s/instances/%s", transport_tpg.BaseUrl(tpgcompute.Product, config), config.Project, rs.Primary.Attributes["zone"], rs.Primary.Attributes["name"])
+			url := fmt.Sprintf("%sprojects/%s/zones/%s/instances/%s", transport_tpg.BaseUrl(tpgcompute.Product, config), config.Project, rs.Primary.Attributes["zone"], tpgresource.GetResourceNameFromSelfLink(rs.Primary.Attributes["name"]))
 			_, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 				Config:    config,
 				Method:    "GET",
@@ -5657,7 +5683,7 @@ func testAccCheckComputeInstanceExistsInProject(t *testing.T, n, p string, insta
 		}
 
 		config := acctest.GoogleProviderConfig(t)
-		url := fmt.Sprintf("%sprojects/%s/zones/%s/instances/%s", transport_tpg.BaseUrl(tpgcompute.Product, config), p, rs.Primary.Attributes["zone"], rs.Primary.Attributes["name"])
+		url := fmt.Sprintf("%sprojects/%s/zones/%s/instances/%s", transport_tpg.BaseUrl(tpgcompute.Product, config), p, rs.Primary.Attributes["zone"], tpgresource.GetResourceNameFromSelfLink(rs.Primary.Attributes["name"]))
 		url = fmt.Sprintf("%s?view=FULL", url)
 		found, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 			Config:    config,
@@ -5671,7 +5697,7 @@ func testAccCheckComputeInstanceExistsInProject(t *testing.T, n, p string, insta
 		}
 
 		name, _ := found["name"].(string)
-		if name != rs.Primary.Attributes["name"] {
+		if name != tpgresource.GetResourceNameFromSelfLink(rs.Primary.Attributes["name"]) {
 			return fmt.Errorf("Instance not found")
 		}
 
