@@ -28,6 +28,7 @@ import (
 	tpgcompute "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/compute"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/kms"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
@@ -434,7 +435,7 @@ func testAccCheckComputeInstanceFromMachineImageDestroyProducer(t *testing.T) fu
 			}
 
 			instanceURL := fmt.Sprintf("%sprojects/%s/zones/%s/instances/%s",
-				transport_tpg.BaseUrl(tpgcompute.Product, config), config.Project, rs.Primary.Attributes["zone"], rs.Primary.ID)
+				transport_tpg.BaseUrl(tpgcompute.Product, config), config.Project, rs.Primary.Attributes["zone"], tpgresource.GetResourceNameFromSelfLink(rs.Primary.ID))
 			_, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 				Config:    config,
 				Method:    "GET",
