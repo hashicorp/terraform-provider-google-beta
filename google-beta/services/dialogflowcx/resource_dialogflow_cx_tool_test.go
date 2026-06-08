@@ -25,6 +25,7 @@ import (
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/bigquery"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/dialogflowcx"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/integrationconnectors"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager"
 )
 
 func TestAccDialogflowCXTool_update(t *testing.T) {

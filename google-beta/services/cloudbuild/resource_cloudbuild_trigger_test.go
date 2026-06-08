@@ -24,6 +24,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/cloudbuild"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/pubsub"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/secretmanager"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"

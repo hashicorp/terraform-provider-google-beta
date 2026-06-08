@@ -23,6 +23,7 @@ import (
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/certificatemanager"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/compute"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/networksecurity"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"

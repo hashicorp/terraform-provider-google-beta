@@ -34,6 +34,7 @@ import (
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/compute"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/filestore"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/networkservices"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/secretmanager"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/sql"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/storage"

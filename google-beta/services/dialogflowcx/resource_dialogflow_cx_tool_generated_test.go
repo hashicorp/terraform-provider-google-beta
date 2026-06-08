@@ -34,6 +34,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/dialogflowcx"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/discoveryengine"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/integrationconnectors"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 

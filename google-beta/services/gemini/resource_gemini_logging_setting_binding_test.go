@@ -25,6 +25,7 @@ import (
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/gemini"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager"
 )
 
 func TestAccGeminiLoggingSettingBinding_update(t *testing.T) {
