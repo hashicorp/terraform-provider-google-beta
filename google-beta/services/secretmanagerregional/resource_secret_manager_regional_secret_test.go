@@ -24,6 +24,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/kms"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/pubsub"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/secretmanagerregional"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/tags"
 

@@ -34,6 +34,7 @@ import (
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/container"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/gkehub"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/gkehub2"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 

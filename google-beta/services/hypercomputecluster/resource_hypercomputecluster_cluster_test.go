@@ -27,6 +27,7 @@ import (
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/filestore"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/hypercomputecluster"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/lustre"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/servicenetworking"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/storage"
 )

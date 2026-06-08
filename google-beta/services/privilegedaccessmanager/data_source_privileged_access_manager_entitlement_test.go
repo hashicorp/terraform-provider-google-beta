@@ -23,6 +23,7 @@ import (
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/privilegedaccessmanager"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager"
 )
 
 func TestAccDataSourceGooglePrivilegedAccessManagerEntitlement_basic(t *testing.T) {

@@ -33,6 +33,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/dataproc"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/dataprocmetastore"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/kms"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/storage"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"

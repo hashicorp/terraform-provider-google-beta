@@ -30,6 +30,7 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/memorystore"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/networkconnectivityv1"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/privateca"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/storage"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )

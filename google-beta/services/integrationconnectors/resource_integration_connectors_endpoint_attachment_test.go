@@ -23,6 +23,7 @@ import (
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/integrationconnectors"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager"
 )
 
 func TestAccIntegrationConnectorsEndpointAttachment_integrationConnectorsEndpointAttachmentExample_update(t *testing.T) {

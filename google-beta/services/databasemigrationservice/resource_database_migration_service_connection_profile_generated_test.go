@@ -33,6 +33,7 @@ import (
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/alloydb"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/compute"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/databasemigrationservice"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/servicenetworking"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/sql"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
