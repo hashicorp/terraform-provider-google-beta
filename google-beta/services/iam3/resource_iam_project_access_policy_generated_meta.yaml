@@ -7,6 +7,7 @@ api_service_name: iam.googleapis.com
 api_version: v3beta
 api_resource_type_kind: AccessPolicy
 autogen_status: true
+autogen_version: 1
 fields:
     - field: access_policy_id
       provider_only: true
