@@ -7,6 +7,7 @@ api_service_name: firebasevertexai.googleapis.com
 api_version: v1beta
 api_resource_type_kind: PromptTemplate
 autogen_status: true
+autogen_version: 1
 fields:
     - api_field: createTime
     - api_field: displayName
