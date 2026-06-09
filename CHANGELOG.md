@@ -33,7 +33,7 @@ IMPROVEMENTS:
 * firebaseailogic: added `regional_propagation_disabled` field to `google_firebase_ai_logic_prompt_template` and `google_firebase_ai_logic_prompt_template_lock` resources ([#12349](https://github.com/hashicorp/terraform-provider-google-beta/pull/12349))
 * hypercomputecluster: marked `network_resources` field as required in `google_hypercomputecluster_cluster` resource to align with API validation ([#12374](https://github.com/hashicorp/terraform-provider-google-beta/pull/12374))
 * securesourcemanager: added `psc_allowed_projects` field to `google_secure_source_manager_instance` resource ([#12402](https://github.com/hashicorp/terraform-provider-google-beta/pull/12402))
-* securityscanner: added `ignore_http_status_errors` field to `google_security_scanner_scan_config` resource (beta) ([#12352](https://github.com/hashicorp/terraform-provider-google-beta/pull/12352))
+* securityscanner: added `ignore_http_status_errors` field to `google_security_scanner_scan_config` resource ([#12352](https://github.com/hashicorp/terraform-provider-google-beta/pull/12352))
 * workbench: added `NVIDIA_RTX6000` to the supported `gce_setup.accelerator_configs.type` values on `google_workbench_instance` ([#12415](https://github.com/hashicorp/terraform-provider-google-beta/pull/12415))
 
 BUG FIXES:
