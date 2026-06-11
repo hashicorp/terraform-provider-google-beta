@@ -245,7 +245,11 @@ resource "google_dataform_repository" "dataform_repository" {
     table_prefix = "prefix_"
   }
 
-  service_account = "1234567890-compute@developer.gserviceaccount.com"
+  service_account = "${data.google_project.project.number}-compute@developer.gserviceaccount.com"
+}
+
+data "google_project" "project" {
+  provider = google-beta
 }
 `, context)
 }
