@@ -117,7 +117,10 @@ func TestAccSecurityScannerScanConfig_scanConfigIgnoreHttpStatusErrorsExample(t 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
-		CheckDestroy:             testAccCheckSecurityScannerScanConfigDestroyProducer(t),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccCheckSecurityScannerScanConfigDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccSecurityScannerScanConfig_scanConfigIgnoreHttpStatusErrorsExample(context),
@@ -144,12 +147,18 @@ resource "google_compute_address" "scanner_static_ip" {
   name     = "%{address_name}"
 }
 
+resource "time_sleep" "wait_15_seconds" {
+  create_duration = "15s"
+  depends_on      = [google_compute_address.scanner_static_ip]
+}
+
 resource "google_security_scanner_scan_config" "scan-config" {
   provider                  = google-beta
   display_name              = "%{scan_config_name}"
   starting_urls             = ["http://${google_compute_address.scanner_static_ip.address}"]
   target_platforms          = ["COMPUTE"]
   ignore_http_status_errors = true
+  depends_on                = [time_sleep.wait_15_seconds]
 }
 `, context)
 }
