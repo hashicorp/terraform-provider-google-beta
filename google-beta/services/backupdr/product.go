@@ -24,7 +24,7 @@ import (
 
 var Product = registry.Product{
 	Name:                 "backupdr",
-	BaseUrl:              "https://backupdr.googleapis.com/v1/",
+	BaseUrl:              "https://backupdr.googleapis.com/v1beta/",
 	CustomEndpointField:  "backup_dr_custom_endpoint",
 	CustomEndpointEnvVar: "GOOGLE_BACKUP_DR_CUSTOM_ENDPOINT",
 }
