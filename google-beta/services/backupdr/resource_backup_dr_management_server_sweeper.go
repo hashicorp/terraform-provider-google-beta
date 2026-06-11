@@ -117,7 +117,7 @@ func listAndActionBackupDRManagementServer(action sweeper.ResourceAction) error 
 		}
 
 		// Prepare list URL
-		listTemplate := strings.Split("https://backupdr.googleapis.com/v1/projects/{{project}}/locations/{{location}}/managementServers", "?")[0]
+		listTemplate := strings.Split("https://backupdr.googleapis.com/v1beta/projects/{{project}}/locations/{{location}}/managementServers", "?")[0]
 		listUrl, err := tpgresource.ReplaceVars(mockConfig, config, listTemplate)
 		if err != nil {
 			log.Printf("[INFO][SWEEPER_LOG] error preparing sweeper list url: %s", err)
@@ -195,7 +195,7 @@ func deleteResourceBackupDRManagementServer(config *transport_tpg.Config, d *tpg
 		return nil
 	}
 
-	deleteTemplate := "https://backupdr.googleapis.com/v1/projects/{{project}}/locations/{{location}}/managementServers/{{name}}"
+	deleteTemplate := "https://backupdr.googleapis.com/v1beta/projects/{{project}}/locations/{{location}}/managementServers/{{name}}"
 
 	url, err := tpgresource.ReplaceVars(d, config, deleteTemplate)
 	if err != nil {
