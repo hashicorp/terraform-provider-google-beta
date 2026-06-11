@@ -159,8 +159,6 @@ resource "google_network_services_agent_gateway" "default" {
   name     = "%{name}"
   location = "us-central1"
 
-  protocols = ["MCP"]
-
   google_managed {
     governed_access_path = "CLIENT_TO_AGENT"
   }
@@ -213,8 +211,6 @@ func testAccNetworkServicesAgentGateway_networkServicesAgentGatewaySelfManagedEx
 resource "google_network_services_agent_gateway" "default" {
   name = "%{name}"
   location = "us-central1"
-
-  protocols = ["MCP"]
 
   self_managed {
     resource_uri = "projects/%{project}/locations/us-central1/gateways/my-gateway"
