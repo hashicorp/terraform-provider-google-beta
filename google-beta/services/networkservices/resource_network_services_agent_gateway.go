@@ -205,6 +205,7 @@ private VPCs network.`,
 									"network_attachment": {
 										Type:             schema.TypeString,
 										Required:         true,
+										ForceNew:         true,
 										DiffSuppressFunc: tpgresource.ProjectNumberDiffSuppress,
 										Description:      `The URI of the Network Attachment resource.`,
 									},
