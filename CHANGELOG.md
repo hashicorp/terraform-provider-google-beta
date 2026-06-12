@@ -15,8 +15,8 @@ FEATURES:
 * **New Data Source:** `google_oracle_database_goldengate_deployment_versions` ([#12451](https://github.com/hashicorp/terraform-provider-google-beta/pull/12451))
 * **New Data Source:** `google_storage_control_project_intelligence_finding` ([#12444](https://github.com/hashicorp/terraform-provider-google-beta/pull/12444))
 * **New Data Source:** `google_storage_control_project_intelligence_findings` ([#12444](https://github.com/hashicorp/terraform-provider-google-beta/pull/12444))
-* **New Resource:** `google_chronicle_soarnetwork` ([#12439](https://github.com/hashicorp/terraform-provider-google-beta/pull/12439))
 * **New Resource:** `google_chronicle_parser` ([#12477](https://github.com/hashicorp/terraform-provider-google-beta/pull/12477))
+* **New Resource:** `google_chronicle_soar_network` (beta) ([#12439](https://github.com/hashicorp/terraform-provider-google-beta/pull/12439))
 * **New Resource:** `google_migration_center_import_data_file` ([#12423](https://github.com/hashicorp/terraform-provider-google-beta/pull/12423))
 * **New Resource:** `google_network_services_agent_gateway` ([#12479](https://github.com/hashicorp/terraform-provider-google-beta/pull/12479))
 * **New Resource:** `google_vertex_ai_tensorboard_experiment` ([#12472](https://github.com/hashicorp/terraform-provider-google-beta/pull/12472))
@@ -50,12 +50,12 @@ BUG FIXES:
 * ces: fixed persistent diff in `google_ces_guardrail` when `llm_prompt_security` is configured with `default_settings` ([#12446](https://github.com/hashicorp/terraform-provider-google-beta/pull/12446))
 * cloudrun: fixed a permadiff for the `run.googleapis.com/gpu-zonal-redundancy-disabled` annotation in `google_cloud_run_service` ([#12462](https://github.com/hashicorp/terraform-provider-google-beta/pull/12462))
 * cloudrunv2: fixed bug where only one `http_get.http_headers` block could be specified in container startup probe and liveness probe in `google_cloud_run_v2_worker_pool` resource ([#12476](https://github.com/hashicorp/terraform-provider-google-beta/pull/12476))
-* cloudsql: fixed inconsistent result after apply error when adding `users` of type `CLOUD_IAM_GROUP` with capitalized domain names for MySQL ([#12460](https://github.com/hashicorp/terraform-provider-google-beta/pull/12460))
-* compute: fixed diff when using `existing_reservations` field in `google_region_commitment` ([#12453](https://github.com/hashicorp/terraform-provider-google-beta/pull/12453))
 * compute: fixed an issue in `google_compute_subnetwork` where `secondary_ip_range` entries linked to an `internal_range` could not be removed and adding new ranges would sometimes fail due to positional shifts ([#27175](https://github.com/hashicorp/terraform-provider-google/issues/27175)) ([#12422](https://github.com/hashicorp/terraform-provider-google-beta/pull/12422))
-* google_compute_security_policy: fixed rules being unnecessarily recreated due to TypeSet hash instability ([#12436](https://github.com/hashicorp/terraform-provider-google-beta/pull/12436))
-* google_sql_database_instance: fixed permadiff on `connection_pool_config` when `connection_pooling_enabled` is set to `false` ([#12417](https://github.com/hashicorp/terraform-provider-google-beta/pull/12417))
+* compute: fixed diff when using `existing_reservations` field in `google_region_commitment` ([#12453](https://github.com/hashicorp/terraform-provider-google-beta/pull/12453))
+* compute: fixed rules in `google_compute_security_policy` being unnecessarily recreated due to TypeSet hash instability ([#12436](https://github.com/hashicorp/terraform-provider-google-beta/pull/12436))
+* sql: fixed inconsistent result after apply error when adding `users` of type `CLOUD_IAM_GROUP` with capitalized domain names for MySQL ([#12460](https://github.com/hashicorp/terraform-provider-google-beta/pull/12460))
 * storage: fixed OOM issue for `google_storage_bucket` `force_destroy` by limiting the number of outstanding tasks to 2000 ([#12455](https://github.com/hashicorp/terraform-provider-google-beta/pull/12455))
+
 
 ## 7.36.0 (June 09, 2026)
 
