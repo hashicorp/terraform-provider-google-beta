@@ -455,7 +455,7 @@ func TestAccNetworkSecurityAuthzPolicy_networkSecurityAuthzPolicyNetworkRulesExa
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckNetworkSecurityAuthzPolicyDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -500,14 +500,12 @@ func TestAccNetworkSecurityAuthzPolicy_networkSecurityAuthzPolicyNetworkRulesExa
 func testAccNetworkSecurityAuthzPolicy_networkSecurityAuthzPolicyWithNetworkRulesExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_network" "default" {
-  provider                = google-beta
   name                    = "%{network_name}"
   project                 = "%{project}"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "default" {
-  provider                = google-beta
   name          = "%{subnet_name}"
   project       = "%{project}"
   region        = "us-east4"
@@ -516,7 +514,6 @@ resource "google_compute_subnetwork" "default" {
 }
 
 resource "google_compute_subnetwork" "proxy_only" {
-  provider                = google-beta
   name          = "%{proxy_subnet_name}"
   project       = "%{project}"
   region        = "us-east4"
@@ -529,14 +526,12 @@ resource "google_compute_subnetwork" "proxy_only" {
 }
 
 resource "google_network_security_gateway_security_policy" "default" {
-  provider                = google-beta
   name     = "%{swp_policy}"
   project  = "%{project}"
   location = "us-east4"
 }
 
 resource "google_compute_address" "swp_ip" {
-  provider     = google-beta
   name         = "%{gateway_name}" # Alterado para amarrar com a regra de nomenclatura do GCP
   project      = "%{project}"
   region       = "us-east4"
@@ -546,7 +541,6 @@ resource "google_compute_address" "swp_ip" {
 }
 
 resource "google_network_services_gateway" "swp_gateway" {
-  provider                = google-beta
   name     = "%{gateway_name}"
   project  = "%{project}"
   location = "us-east4"
@@ -568,7 +562,6 @@ resource "google_network_services_gateway" "swp_gateway" {
 }
 
 resource "google_network_security_authz_policy" "default" {
-  provider = google-beta
   name           = "%{resource_name}"
   project        = "%{project}"
   location       = "us-east4"
