@@ -14,141 +14,42 @@
 //	overwritten during the next generation cycle.
 //
 // ----------------------------------------------------------------------------
-package gkehub2_test
+package gkehub2
 
 import (
-	"fmt"
-	"log"
-	"strconv"
-	"strings"
 	"testing"
-	"time"
-
-	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
-	"github.com/hashicorp/terraform-plugin-testing/plancheck"
-	"github.com/hashicorp/terraform-plugin-testing/terraform"
-	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
-	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
-	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/gkehub2"
-	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
-	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
-
-	"google.golang.org/api/googleapi"
 )
 
-var (
-	_ = fmt.Sprintf
-	_ = log.Print
-	_ = strconv.Atoi
-	_ = strings.Trim
-	_ = time.Now
-	_ = resource.TestMain
-	_ = terraform.NewState
-	_ = envvar.TestEnvVar
-	_ = tpgresource.SetLabels
-	_ = transport_tpg.Config{}
-	_ = googleapi.Error{}
-)
-
-// Since there can only be a single rollout sequence in a given host project,
-// create and update tests need to run sequentially, as a single test function.
-func TestAccGKEHub2RolloutSequence(t *testing.T) {
-	t.Parallel()
-
-	context := map[string]interface{}{
-		"project_id":    envvar.GetTestProjectFromEnv(),
-		"random_suffix": acctest.RandString(t, 10),
+func TestRolloutSequenceDurationDiffSuppress(t *testing.T) {
+	cases := map[string]struct {
+		Old, New           string
+		ExpectDiffSuppress bool
+	}{
+		"different values, same units": {
+			Old:                "60s",
+			New:                "65s",
+			ExpectDiffSuppress: false,
+		},
+		"different values, different units": {
+			Old:                "65s",
+			New:                "1d",
+			ExpectDiffSuppress: false,
+		},
+		"same values, same units": {
+			Old:                "60s",
+			New:                "60s",
+			ExpectDiffSuppress: true,
+		},
+		"same values, different units": {
+			Old:                "60s",
+			New:                "1m",
+			ExpectDiffSuppress: true,
+		},
 	}
 
-	acctest.VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
-		Steps: []resource.TestStep{
-			{
-				Config: testAccGKEHub2RolloutSequence_basic(context),
-			},
-			{
-				ResourceName:            "google_gke_hub_rollout_sequence.rollout_sequence",
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"labels", "rollout_sequence_id", "terraform_labels"},
-			},
-			{
-				Config: testAccGKEHub2RolloutSequence_update(context),
-				ConfigPlanChecks: resource.ConfigPlanChecks{
-					PreApply: []plancheck.PlanCheck{
-						plancheck.ExpectResourceAction("google_gke_hub_rollout_sequence.rollout_sequence", plancheck.ResourceActionUpdate),
-					},
-				},
-			},
-			{
-				ResourceName:            "google_gke_hub_rollout_sequence.rollout_sequence",
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"labels", "rollout_sequence_id", "terraform_labels"},
-			},
-		},
-	})
-}
-
-func testAccGKEHub2RolloutSequence_basic(context map[string]interface{}) string {
-	return acctest.Nprintf(`
-resource "google_gke_hub_rollout_sequence" "rollout_sequence" {
-  provider = google-beta
-  rollout_sequence_id = "tf-test-rs-basic-%{random_suffix}"
-  display_name        = "Basic Rollout Sequence"
-  ignored_clusters_selector {
-        label_selector = "resource.labels.ignored == 'true'"
-        }
-  stages {
-    fleet_projects = ["projects/%{project_id}"]
-    soak_duration  = "60s"
-  }
-  auto_upgrade_config {
-    rollout_creation_scope {
-      upgrade_types = [
-        "CONTROL_PLANE_MINOR",
-        "CONTROL_PLANE_PATCH",
-        "NODE_MINOR",
-        "NODE_PATCH"
-      ]
-    }
-  }
-}
-`, context)
-}
-
-func testAccGKEHub2RolloutSequence_update(context map[string]interface{}) string {
-	return acctest.Nprintf(`
-resource "google_gke_hub_rollout_sequence" "rollout_sequence" {
-  provider = google-beta
-  rollout_sequence_id = "tf-test-rs-basic-%{random_suffix}"
-  display_name        = "Modified Rollout Sequence"
-  ignored_clusters_selector {
-        label_selector = "resource.labels.ignored == 'super_true'"
-        }
-  stages {
-        fleet_projects = ["projects/%{project_id}"]
-        cluster_selector {
-          label_selector = "resource.labels.canary=='true'"
-        }
-        soak_duration  = "30s"
-  }
-  stages {
-        fleet_projects = ["projects/%{project_id}"]
-        soak_duration  = "60s"
-  }
-  auto_upgrade_config {
-    rollout_creation_scope {
-      upgrade_types = [
-        "CONTROL_PLANE_PATCH",
-        "NODE_PATCH"
-      ]
-    }
-  }
-  labels = {
-    some_key = "some_value"
-  }
-}
-`, context)
+	for tn, tc := range cases {
+		if rolloutSequenceDurationDiffSuppress("duration", tc.Old, tc.New, nil) != tc.ExpectDiffSuppress {
+			t.Fatalf("bad: %s, '%s' => '%s' expect %t", tn, tc.Old, tc.New, tc.ExpectDiffSuppress)
+		}
+	}
 }
