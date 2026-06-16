@@ -16,7 +16,7 @@ FEATURES:
 * **New Data Source:** `google_storage_control_project_intelligence_finding` ([#12444](https://github.com/hashicorp/terraform-provider-google-beta/pull/12444))
 * **New Data Source:** `google_storage_control_project_intelligence_findings` ([#12444](https://github.com/hashicorp/terraform-provider-google-beta/pull/12444))
 * **New Resource:** `google_chronicle_parser` ([#12477](https://github.com/hashicorp/terraform-provider-google-beta/pull/12477))
-* **New Resource:** `google_chronicle_soar_network` (beta) ([#12439](https://github.com/hashicorp/terraform-provider-google-beta/pull/12439))
+* **New Resource:** `google_chronicle_soar_network` ([#12439](https://github.com/hashicorp/terraform-provider-google-beta/pull/12439))
 * **New Resource:** `google_migration_center_import_data_file` ([#12423](https://github.com/hashicorp/terraform-provider-google-beta/pull/12423))
 * **New Resource:** `google_network_services_agent_gateway` ([#12479](https://github.com/hashicorp/terraform-provider-google-beta/pull/12479))
 * **New Resource:** `google_vertex_ai_tensorboard_experiment` ([#12472](https://github.com/hashicorp/terraform-provider-google-beta/pull/12472))
