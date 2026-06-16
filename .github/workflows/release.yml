@@ -20,7 +20,7 @@ jobs:
           export PREV_TAG=$(git tag --list 'v*' --sort=-version:refname | head -n 2 | tail -n 1)
           export PREV_VERSION=${PREV_TAG//v}
           sed -n -e "1{/# /d;}" -e "2{/^$/d;}" -e "/# $PREV_VERSION/q;p" CHANGELOG.md > release-notes.txt
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v6.0.0
+      - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: release-notes
           path: release-notes.txt
