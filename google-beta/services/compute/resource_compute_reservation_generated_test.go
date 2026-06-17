@@ -76,7 +76,7 @@ func TestAccComputeReservation_reservationBasicExample(t *testing.T) {
 				ResourceName:            "google_compute_reservation.gce_reservation",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"delete_after_duration", "enable_emergent_maintenance", "params", "share_settings", "zone"},
+				ImportStateVerifyIgnore: []string{"delete_after_duration", "enable_emergent_maintenance", "params", "zone"},
 			},
 		},
 	})
@@ -121,7 +121,7 @@ func TestAccComputeReservation_reservationBasicBetaExample(t *testing.T) {
 				ResourceName:            "google_compute_reservation.gce_reservation",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"delete_after_duration", "enable_emergent_maintenance", "params", "share_settings", "zone"},
+				ImportStateVerifyIgnore: []string{"delete_after_duration", "enable_emergent_maintenance", "params", "zone"},
 			},
 		},
 	})
@@ -171,7 +171,7 @@ func TestAccComputeReservation_reservationSourceInstanceTemplateExample(t *testi
 				ResourceName:            "google_compute_reservation.gce_reservation_source_instance_template",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"delete_after_duration", "enable_emergent_maintenance", "params", "share_settings", "zone"},
+				ImportStateVerifyIgnore: []string{"delete_after_duration", "enable_emergent_maintenance", "params", "zone"},
 			},
 		},
 	})
@@ -253,7 +253,7 @@ func TestAccComputeReservation_reservationSharingPolicyExample(t *testing.T) {
 				ResourceName:            "google_compute_reservation.gce_reservation_sharing_policy",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"delete_after_duration", "enable_emergent_maintenance", "params", "share_settings", "zone"},
+				ImportStateVerifyIgnore: []string{"delete_after_duration", "enable_emergent_maintenance", "params", "zone"},
 			},
 		},
 	})
@@ -342,7 +342,7 @@ func TestAccComputeReservation_sharedReservationBasicExample(t *testing.T) {
 				ResourceName:            "google_compute_reservation.gce_reservation",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"delete_after_duration", "enable_emergent_maintenance", "params", "share_settings", "zone"},
+				ImportStateVerifyIgnore: []string{"delete_after_duration", "enable_emergent_maintenance", "params", "share_settings.0.project_map", "zone"},
 			},
 		},
 	})
@@ -439,7 +439,7 @@ func TestAccComputeReservation_sharedReservationBetaExample(t *testing.T) {
 				ResourceName:            "google_compute_reservation.gce_reservation",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"delete_after_duration", "enable_emergent_maintenance", "params", "share_settings", "zone"},
+				ImportStateVerifyIgnore: []string{"delete_after_duration", "enable_emergent_maintenance", "params", "share_settings.0.projects", "zone"},
 			},
 		},
 	})
