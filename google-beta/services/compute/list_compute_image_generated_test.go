@@ -89,6 +89,7 @@ func testAccComputeImage_imageBasicExampleListQuery(context map[string]interface
 	return acctest.Nprintf(`
 list "google_compute_image" "list_query" {
     provider = google
+	limit = 10000
     config {
     }
 }
