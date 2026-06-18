@@ -138,6 +138,14 @@ var (
 		"settings.0.insights_config.0.query_plans_per_minute",
 		"settings.0.insights_config.0.enhanced_query_insights_enabled",
 	}
+	performanceCaptureConfigKeys = []string{
+		"settings.0.performance_capture_config.0.enabled",
+		"settings.0.performance_capture_config.0.probing_interval_seconds",
+		"settings.0.performance_capture_config.0.probe_threshold",
+		"settings.0.performance_capture_config.0.running_threads_threshold",
+		"settings.0.performance_capture_config.0.seconds_behind_source_threshold",
+		"settings.0.performance_capture_config.0.transaction_duration_threshold",
+	}
 
 	sqlServerAuditConfigurationKeys = []string{
 		"settings.0.sql_server_audit_config.0.bucket",
@@ -894,6 +902,59 @@ API (for read pools, effective_availability_type may differ from availability_ty
 								},
 							},
 							Description: `Configuration of Query Insights.`,
+						},
+						"performance_capture_config": {
+							Type:     schema.TypeList,
+							Optional: true,
+							Computed: true,
+							MaxItems: 1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"enabled": {
+										Type:         schema.TypeBool,
+										Optional:     true,
+										Computed:     true,
+										AtLeastOneOf: performanceCaptureConfigKeys,
+										Description:  `Enable or disable the Performance Capture.`,
+									},
+									"probing_interval_seconds": {
+										Type:         schema.TypeInt,
+										Optional:     true,
+										Computed:     true,
+										AtLeastOneOf: performanceCaptureConfigKeys,
+										Description:  `The time interval in seconds between any two probes.`,
+									},
+									"probe_threshold": {
+										Type:         schema.TypeInt,
+										Optional:     true,
+										Computed:     true,
+										AtLeastOneOf: performanceCaptureConfigKeys,
+										Description:  `The minimum number of consecutive readings above threshold that triggers instance state capture.`,
+									},
+									"running_threads_threshold": {
+										Type:         schema.TypeInt,
+										Optional:     true,
+										Computed:     true,
+										AtLeastOneOf: performanceCaptureConfigKeys,
+										Description:  `The minimum number of server threads running to trigger the capture on primary.`,
+									},
+									"seconds_behind_source_threshold": {
+										Type:         schema.TypeInt,
+										Optional:     true,
+										Computed:     true,
+										AtLeastOneOf: performanceCaptureConfigKeys,
+										Description:  `The minimum number of seconds replica must be lagging behind primary to trigger capture on replica.`,
+									},
+									"transaction_duration_threshold": {
+										Type:         schema.TypeInt,
+										Optional:     true,
+										Computed:     true,
+										AtLeastOneOf: performanceCaptureConfigKeys,
+										Description:  `The amount of time in seconds that a transaction needs to have been open before getting recorded.`,
+									},
+								},
+							},
+							Description: `Configuration of Performance Capture.`,
 						},
 						"entraid_config": {
 							Type:             schema.TypeList,
@@ -1928,6 +1989,7 @@ func expandSqlDatabaseInstanceSettings(configured []interface{}, databaseVersion
 		InsightsConfig:                expandInsightsConfig(_settings["insights_config"].([]interface{})),
 		PasswordValidationPolicy:      expandPasswordValidationPolicy(_settings["password_validation_policy"].([]interface{})),
 		ConnectionPoolConfig:          expandConnectionPoolConfig(_settings["connection_pool_config"].(*schema.Set).List()),
+		PerformanceCaptureConfig:      expandPerformanceCaptureConfig(_settings["performance_capture_config"].([]interface{})),
 		ReadPoolAutoScaleConfig:       expandReadPoolAutoScaleConfig(_settings["read_pool_auto_scale_config"].([]interface{})),
 	}
 
@@ -2309,6 +2371,22 @@ func expandInsightsConfig(configured []interface{}) *sqladmin.InsightsConfig {
 		// so Terraform can disable features (false) instead of leaving them as the
 		// server-side defaults when omitted.
 		ForceSendFields: []string{"EnhancedQueryInsightsEnabled"},
+	}
+}
+func expandPerformanceCaptureConfig(configured []interface{}) *sqladmin.PerformanceCaptureConfig {
+	if len(configured) == 0 || configured[0] == nil {
+		return nil
+	}
+
+	_performanceCaptureConfig := configured[0].(map[string]interface{})
+	return &sqladmin.PerformanceCaptureConfig{
+		Enabled:                      _performanceCaptureConfig["enabled"].(bool),
+		ProbingIntervalSeconds:       int64(_performanceCaptureConfig["probing_interval_seconds"].(int)),
+		ProbeThreshold:               int64(_performanceCaptureConfig["probe_threshold"].(int)),
+		RunningThreadsThreshold:      int64(_performanceCaptureConfig["running_threads_threshold"].(int)),
+		SecondsBehindSourceThreshold: int64(_performanceCaptureConfig["seconds_behind_source_threshold"].(int)),
+		TransactionDurationThreshold: int64(_performanceCaptureConfig["transaction_duration_threshold"].(int)),
+		ForceSendFields:              []string{"Enabled"},
 	}
 }
 
@@ -3186,6 +3264,9 @@ func flattenSettings(settings *sqladmin.Settings, iType string, d *schema.Resour
 	if settings.InsightsConfig != nil {
 		data["insights_config"] = flattenInsightsConfig(settings.InsightsConfig)
 	}
+	if settings.PerformanceCaptureConfig != nil {
+		data["performance_capture_config"] = flattenPerformanceCaptureConfig(settings.PerformanceCaptureConfig)
+	}
 
 	if settings.ReadPoolAutoScaleConfig != nil {
 		data["read_pool_auto_scale_config"] = flattenReadPoolAutoScaleConfig(settings.ReadPoolAutoScaleConfig)
@@ -3597,6 +3678,18 @@ func flattenInsightsConfig(insightsConfig *sqladmin.InsightsConfig) interface{} 
 		"record_client_address":           insightsConfig.RecordClientAddress,
 		"query_plans_per_minute":          insightsConfig.QueryPlansPerMinute,
 		"enhanced_query_insights_enabled": insightsConfig.EnhancedQueryInsightsEnabled,
+	}
+
+	return []map[string]interface{}{data}
+}
+func flattenPerformanceCaptureConfig(performanceCaptureConfig *sqladmin.PerformanceCaptureConfig) interface{} {
+	data := map[string]interface{}{
+		"enabled":                         performanceCaptureConfig.Enabled,
+		"probing_interval_seconds":        performanceCaptureConfig.ProbingIntervalSeconds,
+		"probe_threshold":                 performanceCaptureConfig.ProbeThreshold,
+		"running_threads_threshold":       performanceCaptureConfig.RunningThreadsThreshold,
+		"seconds_behind_source_threshold": performanceCaptureConfig.SecondsBehindSourceThreshold,
+		"transaction_duration_threshold":  performanceCaptureConfig.TransactionDurationThreshold,
 	}
 
 	return []map[string]interface{}{data}
