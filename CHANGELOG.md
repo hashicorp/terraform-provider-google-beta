@@ -47,7 +47,6 @@ IMPROVEMENTS:
 * gkehub: added support for specifying `soak_duration` in minutes, hours and days to the `google_gke_hub_rollout_sequence` resource ([#12512](https://github.com/hashicorp/terraform-provider-google-beta/pull/12512))
 * iamworkforcepool: added write-only support for `oidc.client_secret` in `google_iam_workforce_pool_provider` ([#12500](https://github.com/hashicorp/terraform-provider-google-beta/pull/12500))
 * kms: added resource identity support for `google_kms_crypto_key_version` resource ([#12504](https://github.com/hashicorp/terraform-provider-google-beta/pull/12504))
-* networksecurity: added `network_rules` field on `google_network_security_authz_policy` resource ([#12488](https://github.com/hashicorp/terraform-provider-google-beta/pull/12488))
 * networkservices: added `dns_peering_config` field to `google_network_services_agent_gateway` resource ([#12481](https://github.com/hashicorp/terraform-provider-google-beta/pull/12481))
 * sql: added `mode`, `dns_servers`, `admin_credential_secret_name`, and `organizational_unit` fields to `active_directory_config` block in `google_sql_database_instance` resource for SQL Server instances ([#12495](https://github.com/hashicorp/terraform-provider-google-beta/pull/12495))
 * sql: added `performance_capture_config` to `google_sql_database_instance` ([#12536](https://github.com/hashicorp/terraform-provider-google-beta/pull/12536))
