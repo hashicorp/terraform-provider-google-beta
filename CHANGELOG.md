@@ -14,7 +14,6 @@ FEATURES:
 * **New Resource:** `google_chronicle_findings_refinement_deployment` ([#12532](https://github.com/hashicorp/terraform-provider-google-beta/pull/12532))
 * **New Resource:** `google_chronicle_parser_extension` ([#12517](https://github.com/hashicorp/terraform-provider-google-beta/pull/12517))
 * **New Resource:** `google_dataplex_metadata_feed` ([#12537](https://github.com/hashicorp/terraform-provider-google-beta/pull/12537))
-* **New Resource:** `google_vertex_ai_online_evaluator` ([#12538](https://github.com/hashicorp/terraform-provider-google-beta/pull/12538))
 * **New Resource:** `google_vertex_ai_schedule` ([#12510](https://github.com/hashicorp/terraform-provider-google-beta/pull/12510))
 * **New Resource:** `google_vertex_ai_tensorboard_run` ([#12524](https://github.com/hashicorp/terraform-provider-google-beta/pull/12524))
 * **New Resource:** `google_compute_address` ([#12528](https://github.com/hashicorp/terraform-provider-google-beta/pull/12528))
