@@ -1226,8 +1226,10 @@ func ResourceComputeRolloutPlanFlatten(d *schema.ResourceData, meta interface{},
 	if err = d.Set("name", flattenComputeRolloutPlanName(res["name"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RolloutPlan: %s", err)
 	}
-	if err = d.Set("self_link", tpgresource.ConvertSelfLinkToV1(res["selfLink"].(string))); err != nil {
-		return fmt.Errorf("Error reading RolloutPlan: %s", err)
+	if selfLink, ok := res["selfLink"].(string); ok && selfLink != "" {
+		if err = d.Set("self_link", tpgresource.ConvertSelfLinkToV1(selfLink)); err != nil {
+			return fmt.Errorf("Error reading RolloutPlan: %s", err)
+		}
 	}
 	return nil
 }
