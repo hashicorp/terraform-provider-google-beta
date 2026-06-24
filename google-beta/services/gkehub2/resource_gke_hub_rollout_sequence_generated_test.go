@@ -72,7 +72,7 @@ func TestAccGKEHub2RolloutSequence_gkeHubRolloutSequenceBasicExample(t *testing.
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckGKEHub2RolloutSequenceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -117,7 +117,6 @@ func TestAccGKEHub2RolloutSequence_gkeHubRolloutSequenceBasicExample(t *testing.
 func testAccGKEHub2RolloutSequence_gkeHubRolloutSequenceCreateExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_gke_hub_rollout_sequence" "rollout_sequence" {
-  provider = google-beta
   rollout_sequence_id = "%{rollout_sequence_id}"
   display_name        = "Basic Rollout Sequence"
   ignored_clusters_selector {
@@ -144,7 +143,6 @@ resource "google_gke_hub_rollout_sequence" "rollout_sequence" {
 func testAccGKEHub2RolloutSequence_gkeHubRolloutSequenceUpdateExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_gke_hub_rollout_sequence" "rollout_sequence" {
-  provider = google-beta
   rollout_sequence_id = "%{rollout_sequence_id}"
   display_name        = "Modified Rollout Sequence"
   ignored_clusters_selector {
