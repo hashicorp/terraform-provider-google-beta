@@ -225,6 +225,13 @@ UDFs](https://cloud.google.com/bigquery/docs/user-defined-functions-python#confi
 see [Configure container limits for Python
 UDFs](https://cloud.google.com/bigquery/docs/user-defined-functions-python#configure-container-limits)`,
 						},
+						"container_request_concurrency": {
+							Type:     schema.TypeString,
+							Optional: true,
+							Description: `Maximum number of concurrent requests per Python UDF container instance. For more
+information, see [Configure container limits for Python
+UDFs](https://cloud.google.com/bigquery/docs/user-defined-functions-python#configure-container-limits)`,
+						},
 						"max_batching_rows": {
 							Type:     schema.TypeString,
 							Optional: true,
@@ -1235,6 +1242,8 @@ func flattenBigQueryRoutineExternalRuntimeOptions(v interface{}, d *schema.Resou
 		flattenBigQueryRoutineExternalRuntimeOptionsMaxBatchingRows(original["maxBatchingRows"], d, config)
 	transformed["runtime_version"] =
 		flattenBigQueryRoutineExternalRuntimeOptionsRuntimeVersion(original["runtimeVersion"], d, config)
+	transformed["container_request_concurrency"] =
+		flattenBigQueryRoutineExternalRuntimeOptionsContainerRequestConcurrency(original["containerRequestConcurrency"], d, config)
 	return []interface{}{transformed}
 }
 func flattenBigQueryRoutineExternalRuntimeOptionsContainerMemory(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -1254,6 +1263,10 @@ func flattenBigQueryRoutineExternalRuntimeOptionsMaxBatchingRows(v interface{}, 
 }
 
 func flattenBigQueryRoutineExternalRuntimeOptionsRuntimeVersion(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenBigQueryRoutineExternalRuntimeOptionsContainerRequestConcurrency(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -1676,6 +1689,13 @@ func expandBigQueryRoutineExternalRuntimeOptions(v interface{}, d tpgresource.Te
 		transformed["runtimeVersion"] = transformedRuntimeVersion
 	}
 
+	transformedContainerRequestConcurrency, err := expandBigQueryRoutineExternalRuntimeOptionsContainerRequestConcurrency(original["container_request_concurrency"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedContainerRequestConcurrency); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["containerRequestConcurrency"] = transformedContainerRequestConcurrency
+	}
+
 	return transformed, nil
 }
 
@@ -1696,6 +1716,10 @@ func expandBigQueryRoutineExternalRuntimeOptionsMaxBatchingRows(v interface{}, d
 }
 
 func expandBigQueryRoutineExternalRuntimeOptionsRuntimeVersion(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandBigQueryRoutineExternalRuntimeOptionsContainerRequestConcurrency(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

@@ -514,6 +514,7 @@ resource "google_bigquery_routine" "python_function" {
     container_memory = "512Mi"
     container_cpu = 0.5
     runtime_version = "python-3.11"
+    container_request_concurrency = "1"
   }
 
 }
