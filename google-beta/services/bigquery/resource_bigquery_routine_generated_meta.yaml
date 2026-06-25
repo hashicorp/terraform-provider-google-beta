@@ -21,6 +21,7 @@ fields:
     - api_field: determinismLevel
     - api_field: externalRuntimeOptions.containerCpu
     - api_field: externalRuntimeOptions.containerMemory
+    - api_field: externalRuntimeOptions.containerRequestConcurrency
     - api_field: externalRuntimeOptions.maxBatchingRows
     - api_field: externalRuntimeOptions.runtimeConnection
     - api_field: externalRuntimeOptions.runtimeVersion
