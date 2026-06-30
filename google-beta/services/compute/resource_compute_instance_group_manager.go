@@ -387,6 +387,7 @@ func ResourceComputeInstanceGroupManager() *schema.Resource {
 							ValidateFunc: validation.StringInSlice([]string{"YES", "NO"}, true),
 							Description:  `Specifies whether to apply the group's latest configuration when repairing a VM. Valid options are: YES, NO. If YES and you updated the group's instance template or per-instance configurations after the VM was created, then these changes are applied when VM is repaired. If NO (default), then updates are applied in accordance with the group's update policy type.`,
 						},
+
 						"on_repair": {
 							Type:        schema.TypeList,
 							Computed:    true,
@@ -1822,6 +1823,7 @@ func expandInstanceLifecyclePolicy(configured []interface{}) *compute.InstanceGr
 		instanceLifecyclePolicy.ForceUpdateOnRepair = data["force_update_on_repair"].(string)
 		instanceLifecyclePolicy.DefaultActionOnFailure = data["default_action_on_failure"].(string)
 		instanceLifecyclePolicy.OnFailedHealthCheck = data["on_failed_health_check"].(string)
+
 		instanceLifecyclePolicy.OnRepair = expandOnRepair(data["on_repair"].([]any))
 	}
 	return instanceLifecyclePolicy
@@ -1834,6 +1836,7 @@ func expandInstanceLifecyclePolicyV2(configured []interface{}) map[string]interf
 		instanceLifecyclePolicy["forceUpdateOnRepair"] = data["force_update_on_repair"].(string)
 		instanceLifecyclePolicy["defaultActionOnFailure"] = data["default_action_on_failure"].(string)
 		instanceLifecyclePolicy["onFailedHealthCheck"] = data["on_failed_health_check"].(string)
+
 		instanceLifecyclePolicy["onRepair"] = expandOnRepairV2(data["on_repair"].([]any))
 	}
 	return instanceLifecyclePolicy
