@@ -7,9 +7,20 @@ api_service_name: aiplatform.googleapis.com
 api_version: v1beta1
 api_resource_type_kind: ReasoningEngine
 fields:
+    - api_field: contextSpec.memoryBankConfig.customizationConfigs.consolidationConfig.revisionsPerCandidateCount
+    - api_field: contextSpec.memoryBankConfig.customizationConfigs.enableThirdPersonMemories
+    - api_field: contextSpec.memoryBankConfig.customizationConfigs.memoryTopics.customMemoryTopic.description
+    - api_field: contextSpec.memoryBankConfig.customizationConfigs.memoryTopics.customMemoryTopic.label
+    - api_field: contextSpec.memoryBankConfig.customizationConfigs.memoryTopics.managedMemoryTopic.managedTopicEnum
+    - api_field: contextSpec.memoryBankConfig.customizationConfigs.scopeKeys
     - api_field: contextSpec.memoryBankConfig.disableMemoryRevisions
     - api_field: contextSpec.memoryBankConfig.generationConfig.model
     - api_field: contextSpec.memoryBankConfig.similaritySearchConfig.embeddingModel
+    - api_field: contextSpec.memoryBankConfig.structuredMemoryConfigs.schemaConfigs.id
+    - api_field: contextSpec.memoryBankConfig.structuredMemoryConfigs.schemaConfigs.schema
+      field: context_spec.memory_bank_config.structured_memory_configs.schema_configs.memory_schema
+      json: true
+    - api_field: contextSpec.memoryBankConfig.structuredMemoryConfigs.scopeKeys
     - api_field: contextSpec.memoryBankConfig.ttlConfig.defaultTtl
     - api_field: contextSpec.memoryBankConfig.ttlConfig.granularTtlConfig.createTtl
     - api_field: contextSpec.memoryBankConfig.ttlConfig.granularTtlConfig.generateCreatedTtl
