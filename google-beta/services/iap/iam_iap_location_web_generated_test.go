@@ -60,7 +60,7 @@ func TestAccIapLocationWebIamBindingGenerated(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		ExternalProviders: map[string]resource.ExternalProvider{
 			"time": {},
 		},
@@ -110,7 +110,7 @@ func TestAccIapLocationWebIamMemberGenerated(t *testing.T) {
 			tfversion.RequireAbove(tfversion.Version1_12_0), // resource identity min version
 		},
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		ExternalProviders: map[string]resource.ExternalProvider{
 			"time": {},
 		},
@@ -152,7 +152,7 @@ func TestAccIapLocationWebIamPolicyGenerated(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		ExternalProviders: map[string]resource.ExternalProvider{
 			"time": {},
 		},
@@ -199,7 +199,7 @@ func TestAccIapLocationWebIamBindingGenerated_withCondition(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		ExternalProviders: map[string]resource.ExternalProvider{
 			"time": {},
 		},
@@ -238,7 +238,7 @@ func TestAccIapLocationWebIamBindingGenerated_withAndWithoutCondition(t *testing
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		ExternalProviders: map[string]resource.ExternalProvider{
 			"time": {},
 		},
@@ -287,7 +287,7 @@ func TestAccIapLocationWebIamMemberGenerated_withCondition(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		ExternalProviders: map[string]resource.ExternalProvider{
 			"time": {},
 		},
@@ -326,7 +326,7 @@ func TestAccIapLocationWebIamMemberGenerated_withAndWithoutCondition(t *testing.
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		ExternalProviders: map[string]resource.ExternalProvider{
 			"time": {},
 		},
@@ -379,7 +379,7 @@ func TestAccIapLocationWebIamPolicyGenerated_withCondition(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		ExternalProviders: map[string]resource.ExternalProvider{
 			"time": {},
 		},
@@ -406,7 +406,6 @@ func TestAccIapLocationWebIamPolicyGenerated_withCondition(t *testing.T) {
 func testAccIapLocationWebIamMember_basicGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_project" "project" {
-  provider   = google-beta
   project_id = "tf-test%{random_suffix}"
   name       = "tf-test%{random_suffix}"
   org_id     = "%{org_id}"
@@ -420,7 +419,6 @@ resource "time_sleep" "wait_60_seconds" {
 }
 
 resource "google_project_service" "project_service" {
-  provider   = google-beta
   project    = google_project.project.project_id
   service    = "iap.googleapis.com"
 
@@ -429,7 +427,6 @@ resource "google_project_service" "project_service" {
 }
 
 resource "google_iap_location_web_iam_member" "foo" {
-  provider = google-beta
   project = google_project_service.project_service.project
   location = "us-central1"
   role = "%{role}"
@@ -441,7 +438,6 @@ resource "google_iap_location_web_iam_member" "foo" {
 func testAccIapLocationWebIamPolicy_basicGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_project" "project" {
-  provider   = google-beta
   project_id = "tf-test%{random_suffix}"
   name       = "tf-test%{random_suffix}"
   org_id     = "%{org_id}"
@@ -455,7 +451,6 @@ resource "time_sleep" "wait_60_seconds" {
 }
 
 resource "google_project_service" "project_service" {
-  provider   = google-beta
   project    = google_project.project.project_id
   service    = "iap.googleapis.com"
 
@@ -464,7 +459,6 @@ resource "google_project_service" "project_service" {
 }
 
 data "google_iam_policy" "foo" {
-  provider = google-beta
   binding {
     role = "%{role}"
     members = ["user:admin@hashicorptest.com"]
@@ -472,14 +466,12 @@ data "google_iam_policy" "foo" {
 }
 
 resource "google_iap_location_web_iam_policy" "foo" {
-  provider = google-beta
   project = google_project_service.project_service.project
   location = "us-central1"
   policy_data = data.google_iam_policy.foo.policy_data
 }
 
 data "google_iap_location_web_iam_policy" "foo" {
-  provider = google-beta
   project = google_project_service.project_service.project
   location = "us-central1"
   depends_on = [
@@ -492,7 +484,6 @@ data "google_iap_location_web_iam_policy" "foo" {
 func testAccIapLocationWebIamPolicy_emptyBinding(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_project" "project" {
-  provider   = google-beta
   project_id = "tf-test%{random_suffix}"
   name       = "tf-test%{random_suffix}"
   org_id     = "%{org_id}"
@@ -506,7 +497,6 @@ resource "time_sleep" "wait_60_seconds" {
 }
 
 resource "google_project_service" "project_service" {
-  provider   = google-beta
   project    = google_project.project.project_id
   service    = "iap.googleapis.com"
 
@@ -515,11 +505,9 @@ resource "google_project_service" "project_service" {
 }
 
 data "google_iam_policy" "foo" {
-  provider = google-beta
 }
 
 resource "google_iap_location_web_iam_policy" "foo" {
-  provider = google-beta
   project = google_project_service.project_service.project
   location = "us-central1"
   policy_data = data.google_iam_policy.foo.policy_data
@@ -530,7 +518,6 @@ resource "google_iap_location_web_iam_policy" "foo" {
 func testAccIapLocationWebIamBinding_basicGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_project" "project" {
-  provider   = google-beta
   project_id = "tf-test%{random_suffix}"
   name       = "tf-test%{random_suffix}"
   org_id     = "%{org_id}"
@@ -544,7 +531,6 @@ resource "time_sleep" "wait_60_seconds" {
 }
 
 resource "google_project_service" "project_service" {
-  provider   = google-beta
   project    = google_project.project.project_id
   service    = "iap.googleapis.com"
 
@@ -553,7 +539,6 @@ resource "google_project_service" "project_service" {
 }
 
 resource "google_iap_location_web_iam_binding" "foo" {
-  provider = google-beta
   project = google_project_service.project_service.project
   location = "us-central1"
   role = "%{role}"
@@ -565,7 +550,6 @@ resource "google_iap_location_web_iam_binding" "foo" {
 func testAccIapLocationWebIamBinding_updateGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_project" "project" {
-  provider   = google-beta
   project_id = "tf-test%{random_suffix}"
   name       = "tf-test%{random_suffix}"
   org_id     = "%{org_id}"
@@ -579,7 +563,6 @@ resource "time_sleep" "wait_60_seconds" {
 }
 
 resource "google_project_service" "project_service" {
-  provider   = google-beta
   project    = google_project.project.project_id
   service    = "iap.googleapis.com"
 
@@ -588,7 +571,6 @@ resource "google_project_service" "project_service" {
 }
 
 resource "google_iap_location_web_iam_binding" "foo" {
-  provider = google-beta
   project = google_project_service.project_service.project
   location = "us-central1"
   role = "%{role}"
@@ -600,7 +582,6 @@ resource "google_iap_location_web_iam_binding" "foo" {
 func testAccIapLocationWebIamBinding_withConditionGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_project" "project" {
-  provider   = google-beta
   project_id = "tf-test%{random_suffix}"
   name       = "tf-test%{random_suffix}"
   org_id     = "%{org_id}"
@@ -614,7 +595,6 @@ resource "time_sleep" "wait_60_seconds" {
 }
 
 resource "google_project_service" "project_service" {
-  provider   = google-beta
   project    = google_project.project.project_id
   service    = "iap.googleapis.com"
 
@@ -623,7 +603,6 @@ resource "google_project_service" "project_service" {
 }
 
 resource "google_iap_location_web_iam_binding" "foo" {
-  provider = google-beta
   project = google_project_service.project_service.project
   location = "us-central1"
   role = "%{role}"
@@ -640,7 +619,6 @@ resource "google_iap_location_web_iam_binding" "foo" {
 func testAccIapLocationWebIamBinding_withAndWithoutConditionGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_project" "project" {
-  provider   = google-beta
   project_id = "tf-test%{random_suffix}"
   name       = "tf-test%{random_suffix}"
   org_id     = "%{org_id}"
@@ -654,7 +632,6 @@ resource "time_sleep" "wait_60_seconds" {
 }
 
 resource "google_project_service" "project_service" {
-  provider   = google-beta
   project    = google_project.project.project_id
   service    = "iap.googleapis.com"
 
@@ -663,7 +640,6 @@ resource "google_project_service" "project_service" {
 }
 
 resource "google_iap_location_web_iam_binding" "foo" {
-  provider = google-beta
   project = google_project_service.project_service.project
   location = "us-central1"
   role = "%{role}"
@@ -671,7 +647,6 @@ resource "google_iap_location_web_iam_binding" "foo" {
 }
 
 resource "google_iap_location_web_iam_binding" "foo2" {
-  provider = google-beta
   project = google_project_service.project_service.project
   location = "us-central1"
   role = "%{role}"
@@ -684,7 +659,6 @@ resource "google_iap_location_web_iam_binding" "foo2" {
 }
 
 resource "google_iap_location_web_iam_binding" "foo3" {
-  provider = google-beta
   project = google_project_service.project_service.project
   location = "us-central1"
   role = "%{role}"
@@ -702,7 +676,6 @@ resource "google_iap_location_web_iam_binding" "foo3" {
 func testAccIapLocationWebIamMember_withConditionGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_project" "project" {
-  provider   = google-beta
   project_id = "tf-test%{random_suffix}"
   name       = "tf-test%{random_suffix}"
   org_id     = "%{org_id}"
@@ -716,7 +689,6 @@ resource "time_sleep" "wait_60_seconds" {
 }
 
 resource "google_project_service" "project_service" {
-  provider   = google-beta
   project    = google_project.project.project_id
   service    = "iap.googleapis.com"
 
@@ -725,7 +697,6 @@ resource "google_project_service" "project_service" {
 }
 
 resource "google_iap_location_web_iam_member" "foo" {
-  provider = google-beta
   project = google_project_service.project_service.project
   location = "us-central1"
   role = "%{role}"
@@ -742,7 +713,6 @@ resource "google_iap_location_web_iam_member" "foo" {
 func testAccIapLocationWebIamMember_withAndWithoutConditionGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_project" "project" {
-  provider   = google-beta
   project_id = "tf-test%{random_suffix}"
   name       = "tf-test%{random_suffix}"
   org_id     = "%{org_id}"
@@ -756,7 +726,6 @@ resource "time_sleep" "wait_60_seconds" {
 }
 
 resource "google_project_service" "project_service" {
-  provider   = google-beta
   project    = google_project.project.project_id
   service    = "iap.googleapis.com"
 
@@ -765,7 +734,6 @@ resource "google_project_service" "project_service" {
 }
 
 resource "google_iap_location_web_iam_member" "foo" {
-  provider = google-beta
   project = google_project_service.project_service.project
   location = "us-central1"
   role = "%{role}"
@@ -773,7 +741,6 @@ resource "google_iap_location_web_iam_member" "foo" {
 }
 
 resource "google_iap_location_web_iam_member" "foo2" {
-  provider = google-beta
   project = google_project_service.project_service.project
   location = "us-central1"
   role = "%{role}"
@@ -786,7 +753,6 @@ resource "google_iap_location_web_iam_member" "foo2" {
 }
 
 resource "google_iap_location_web_iam_member" "foo3" {
-  provider = google-beta
   project = google_project_service.project_service.project
   location = "us-central1"
   role = "%{role}"
@@ -804,7 +770,6 @@ resource "google_iap_location_web_iam_member" "foo3" {
 func testAccIapLocationWebIamPolicy_withConditionGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_project" "project" {
-  provider   = google-beta
   project_id = "tf-test%{random_suffix}"
   name       = "tf-test%{random_suffix}"
   org_id     = "%{org_id}"
@@ -818,7 +783,6 @@ resource "time_sleep" "wait_60_seconds" {
 }
 
 resource "google_project_service" "project_service" {
-  provider   = google-beta
   project    = google_project.project.project_id
   service    = "iap.googleapis.com"
 
@@ -827,7 +791,6 @@ resource "google_project_service" "project_service" {
 }
 
 data "google_iam_policy" "foo" {
-  provider = google-beta
   binding {
     role = "%{role}"
     members = ["user:admin@hashicorptest.com"]
@@ -850,7 +813,6 @@ data "google_iam_policy" "foo" {
 }
 
 resource "google_iap_location_web_iam_policy" "foo" {
-  provider = google-beta
   project = google_project_service.project_service.project
   location = "us-central1"
   policy_data = data.google_iam_policy.foo.policy_data

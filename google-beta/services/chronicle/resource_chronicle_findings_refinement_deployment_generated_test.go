@@ -74,7 +74,7 @@ func TestAccChronicleFindingsRefinementDeployment_chronicleFindingsRefinementDep
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccChronicleFindingsRefinementDeployment_chronicleFindingsRefinementDeploymentFullExample(context),
@@ -118,7 +118,6 @@ func TestAccChronicleFindingsRefinementDeployment_chronicleFindingsRefinementDep
 func testAccChronicleFindingsRefinementDeployment_chronicleFindingsRefinementDeploymentFullExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_chronicle_findings_refinement" "my-findings-refinement" {
-  provider = google-beta
   location = "us"
   instance = "%{chronicle_id}"
   display_name = "%{display_name}" 
@@ -132,7 +131,6 @@ resource "google_chronicle_findings_refinement" "my-findings-refinement" {
 }
 
 resource "google_chronicle_findings_refinement_deployment" "example" {
- provider = google-beta
  location = "us"
  instance = "%{chronicle_id}"
  findings_refinement = element(split("/", resource.google_chronicle_findings_refinement.my-findings-refinement.name), length(split("/", resource.google_chronicle_findings_refinement.my-findings-refinement.name)) - 1)
@@ -145,7 +143,6 @@ resource "google_chronicle_findings_refinement_deployment" "example" {
 func testAccChronicleFindingsRefinementDeployment_chronicleFindingsRefinementDeploymentUpdateExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_chronicle_findings_refinement" "my-findings-refinement" {
-  provider = google-beta
   location = "us"
   instance = "%{chronicle_id}"
   display_name = "%{display_name}" 
@@ -159,7 +156,6 @@ resource "google_chronicle_findings_refinement" "my-findings-refinement" {
 }
 
 resource "google_chronicle_findings_refinement_deployment" "example" {
- provider = google-beta
  location = "us"
  instance = "%{chronicle_id}"
  findings_refinement = element(split("/", resource.google_chronicle_findings_refinement.my-findings-refinement.name), length(split("/", resource.google_chronicle_findings_refinement.my-findings-refinement.name)) - 1)

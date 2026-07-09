@@ -70,7 +70,7 @@ func TestAccChronicleEnvironment_chronicleEnvironmentUpdateExample(t *testing.T)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckChronicleEnvironmentDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -115,7 +115,6 @@ func TestAccChronicleEnvironment_chronicleEnvironmentUpdateExample(t *testing.T)
 func testAccChronicleEnvironment_chronicleEnvironmentBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_chronicle_environment" "sample" {
-  provider = google-beta
   location = "us"
   instance = "%{chronicle_id}"
 
@@ -136,7 +135,6 @@ resource "google_chronicle_environment" "sample" {
 func testAccChronicleEnvironment_chronicleEnvironmentFullExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_chronicle_environment" "sample" {
-  provider = google-beta
   location = "us"
   instance = "%{chronicle_id}"
   

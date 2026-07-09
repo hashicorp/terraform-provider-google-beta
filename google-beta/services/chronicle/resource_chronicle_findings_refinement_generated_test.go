@@ -66,7 +66,7 @@ func TestAccChronicleFindingsRefinement_chronicleFindingsRefinementBasicExample(
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccChronicleFindingsRefinement_chronicleFindingsRefinementBasicExample(context),
@@ -90,7 +90,6 @@ func TestAccChronicleFindingsRefinement_chronicleFindingsRefinementBasicExample(
 func testAccChronicleFindingsRefinement_chronicleFindingsRefinementBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_chronicle_findings_refinement" "findings_refinement_example" {
-  provider = google-beta
   location = "us"
   instance = "%{chronicle_id}"
   display_name = "%{display_name}" 
@@ -132,7 +131,7 @@ func TestAccChronicleFindingsRefinement_chronicleFindingsRefinementUpdateExample
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccChronicleFindingsRefinement_chronicleFindingsRefinementFullExample(context),
@@ -176,7 +175,6 @@ func TestAccChronicleFindingsRefinement_chronicleFindingsRefinementUpdateExample
 func testAccChronicleFindingsRefinement_chronicleFindingsRefinementFullExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_chronicle_findings_refinement" "findings_refinement_example" {
-  provider = google-beta
   location = "us"
   instance = "%{chronicle_id}"
   display_name = "%{display_name}" 
