@@ -138,6 +138,14 @@ var (
 		"settings.0.insights_config.0.query_plans_per_minute",
 		"settings.0.insights_config.0.enhanced_query_insights_enabled",
 	}
+	performanceCaptureConfigKeys = []string{
+		"settings.0.performance_capture_config.0.enabled",
+		"settings.0.performance_capture_config.0.probing_interval_seconds",
+		"settings.0.performance_capture_config.0.probe_threshold",
+		"settings.0.performance_capture_config.0.running_threads_threshold",
+		"settings.0.performance_capture_config.0.seconds_behind_source_threshold",
+		"settings.0.performance_capture_config.0.transaction_duration_threshold",
+	}
 
 	sqlServerAuditConfigurationKeys = []string{
 		"settings.0.sql_server_audit_config.0.bucket",
@@ -266,6 +274,13 @@ func ResourceSqlDatabaseInstance() *schema.Resource {
 				Default:     true,
 				Optional:    true,
 				Description: `Used to block Terraform from deleting a SQL Instance. Defaults to true.`,
+			},
+			"enforce_new_sql_network_architecture": {
+				Type:             schema.TypeBool,
+				Optional:         true,
+				Computed:         true,
+				DiffSuppressFunc: sqlNetworkArchitectureDiffSuppress,
+				Description:      `Whether to enforce the new SQL network architecture.`,
 			},
 			"final_backup_description": {
 				Type:        schema.TypeString,
@@ -680,6 +695,12 @@ API (for read pools, effective_availability_type may differ from availability_ty
 													Computed:    true,
 													Description: `Whether PSC write endpoint DNS is enabled for this instance.`,
 												},
+												"psc_auto_connection_policy_enabled": {
+													Type:        schema.TypeBool,
+													Optional:    true,
+													Computed:    true,
+													Description: `Whether a service connection policy is created for the auto connections configured for the instance.`,
+												},
 												"allowed_consumer_projects": {
 													Type:     schema.TypeSet,
 													Optional: true,
@@ -702,6 +723,7 @@ API (for read pools, effective_availability_type may differ from availability_ty
 															"consumer_service_project_id": {
 																Type:        schema.TypeString,
 																Optional:    true,
+																Computed:    true,
 																Description: `The project ID of consumer service project of this consumer endpoint.`,
 															},
 															"consumer_network": {
@@ -723,6 +745,16 @@ API (for read pools, effective_availability_type may differ from availability_ty
 																Type:        schema.TypeString,
 																Computed:    true,
 																Description: `The connection status of the consumer endpoint.`,
+															},
+															"service_connection_policy": {
+																Type:        schema.TypeString,
+																Computed:    true,
+																Description: `The service connection policy created for the auto connection.`,
+															},
+															"service_connection_policy_creation_result": {
+																Type:        schema.TypeString,
+																Computed:    true,
+																Description: `The result of the service connection policy creation.`,
 															},
 														},
 													},
@@ -894,6 +926,59 @@ API (for read pools, effective_availability_type may differ from availability_ty
 								},
 							},
 							Description: `Configuration of Query Insights.`,
+						},
+						"performance_capture_config": {
+							Type:     schema.TypeList,
+							Optional: true,
+							Computed: true,
+							MaxItems: 1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"enabled": {
+										Type:         schema.TypeBool,
+										Optional:     true,
+										Computed:     true,
+										AtLeastOneOf: performanceCaptureConfigKeys,
+										Description:  `Enable or disable the Performance Capture.`,
+									},
+									"probing_interval_seconds": {
+										Type:         schema.TypeInt,
+										Optional:     true,
+										Computed:     true,
+										AtLeastOneOf: performanceCaptureConfigKeys,
+										Description:  `The time interval in seconds between any two probes.`,
+									},
+									"probe_threshold": {
+										Type:         schema.TypeInt,
+										Optional:     true,
+										Computed:     true,
+										AtLeastOneOf: performanceCaptureConfigKeys,
+										Description:  `The minimum number of consecutive readings above threshold that triggers instance state capture.`,
+									},
+									"running_threads_threshold": {
+										Type:         schema.TypeInt,
+										Optional:     true,
+										Computed:     true,
+										AtLeastOneOf: performanceCaptureConfigKeys,
+										Description:  `The minimum number of server threads running to trigger the capture on primary.`,
+									},
+									"seconds_behind_source_threshold": {
+										Type:         schema.TypeInt,
+										Optional:     true,
+										Computed:     true,
+										AtLeastOneOf: performanceCaptureConfigKeys,
+										Description:  `The minimum number of seconds replica must be lagging behind primary to trigger capture on replica.`,
+									},
+									"transaction_duration_threshold": {
+										Type:         schema.TypeInt,
+										Optional:     true,
+										Computed:     true,
+										AtLeastOneOf: performanceCaptureConfigKeys,
+										Description:  `The amount of time in seconds that a transaction needs to have been open before getting recorded.`,
+									},
+								},
+							},
+							Description: `Configuration of Performance Capture.`,
 						},
 						"entraid_config": {
 							Type:             schema.TypeList,
@@ -1623,6 +1708,14 @@ func pitrSupportDbCustomizeDiff(_ context.Context, diff *schema.ResourceDiff, v 
 	return nil
 }
 
+func sqlNetworkArchitectureDiffSuppress(k, old, new string, d *schema.ResourceData) bool {
+	// By default, new Cloud SQL instances created in projects created after August 2021 use the new network architecture.
+	// If the state is true and the config is false, suppress the diff.
+	// This follows the gcloud pattern where the flag is an irreversible opt-in.
+	// See https://docs.cloud.google.com/sql/docs/mysql/upgrade-cloud-sql-instance-new-network-architecture#new-arch
+	return old == "true" && new == "false"
+}
+
 func resourceSqlDatabaseInstanceCreate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
 	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
@@ -1669,6 +1762,10 @@ func resourceSqlDatabaseInstanceCreate(d *schema.ResourceData, meta interface{})
 		DatabaseVersion:      databaseVersion,
 		MasterInstanceName:   d.Get("master_instance_name").(string),
 		ReplicaConfiguration: expandReplicaConfiguration(d.Get("replica_configuration").([]interface{})),
+	}
+
+	if d.Get("enforce_new_sql_network_architecture").(bool) {
+		instance.SqlNetworkArchitecture = "NEW_NETWORK_ARCHITECTURE"
 	}
 
 	cloneContext, cloneSourceInstance := expandCloneContext(d.Get("clone").([]interface{}))
@@ -1928,6 +2025,7 @@ func expandSqlDatabaseInstanceSettings(configured []interface{}, databaseVersion
 		InsightsConfig:                expandInsightsConfig(_settings["insights_config"].([]interface{})),
 		PasswordValidationPolicy:      expandPasswordValidationPolicy(_settings["password_validation_policy"].([]interface{})),
 		ConnectionPoolConfig:          expandConnectionPoolConfig(_settings["connection_pool_config"].(*schema.Set).List()),
+		PerformanceCaptureConfig:      expandPerformanceCaptureConfig(_settings["performance_capture_config"].([]interface{})),
 		ReadPoolAutoScaleConfig:       expandReadPoolAutoScaleConfig(_settings["read_pool_auto_scale_config"].([]interface{})),
 	}
 
@@ -2078,12 +2176,13 @@ func expandPscConfig(configured []interface{}) *sqladmin.PscConfig {
 	for _, _pscConfig := range configured {
 		_entry := _pscConfig.(map[string]interface{})
 		return &sqladmin.PscConfig{
-			PscEnabled:                 _entry["psc_enabled"].(bool),
-			PscAutoDnsEnabled:          _entry["psc_auto_dns_enabled"].(bool),
-			PscWriteEndpointDnsEnabled: _entry["psc_write_endpoint_dns_enabled"].(bool),
-			AllowedConsumerProjects:    tpgresource.ConvertStringArr(_entry["allowed_consumer_projects"].(*schema.Set).List()),
-			NetworkAttachmentUri:       _entry["network_attachment_uri"].(string),
-			PscAutoConnections:         expandPscAutoConnectionConfig(_entry["psc_auto_connections"].([]interface{})),
+			PscEnabled:                     _entry["psc_enabled"].(bool),
+			PscAutoDnsEnabled:              _entry["psc_auto_dns_enabled"].(bool),
+			PscWriteEndpointDnsEnabled:     _entry["psc_write_endpoint_dns_enabled"].(bool),
+			PscAutoConnectionPolicyEnabled: _entry["psc_auto_connection_policy_enabled"].(bool),
+			AllowedConsumerProjects:        tpgresource.ConvertStringArr(_entry["allowed_consumer_projects"].(*schema.Set).List()),
+			NetworkAttachmentUri:           _entry["network_attachment_uri"].(string),
+			PscAutoConnections:             expandPscAutoConnectionConfig(_entry["psc_auto_connections"].([]interface{})),
 		}
 	}
 
@@ -2311,6 +2410,22 @@ func expandInsightsConfig(configured []interface{}) *sqladmin.InsightsConfig {
 		ForceSendFields: []string{"EnhancedQueryInsightsEnabled"},
 	}
 }
+func expandPerformanceCaptureConfig(configured []interface{}) *sqladmin.PerformanceCaptureConfig {
+	if len(configured) == 0 || configured[0] == nil {
+		return nil
+	}
+
+	_performanceCaptureConfig := configured[0].(map[string]interface{})
+	return &sqladmin.PerformanceCaptureConfig{
+		Enabled:                      _performanceCaptureConfig["enabled"].(bool),
+		ProbingIntervalSeconds:       int64(_performanceCaptureConfig["probing_interval_seconds"].(int)),
+		ProbeThreshold:               int64(_performanceCaptureConfig["probe_threshold"].(int)),
+		RunningThreadsThreshold:      int64(_performanceCaptureConfig["running_threads_threshold"].(int)),
+		SecondsBehindSourceThreshold: int64(_performanceCaptureConfig["seconds_behind_source_threshold"].(int)),
+		TransactionDurationThreshold: int64(_performanceCaptureConfig["transaction_duration_threshold"].(int)),
+		ForceSendFields:              []string{"Enabled"},
+	}
+}
 
 func expandPasswordValidationPolicy(configured []interface{}) *sqladmin.PasswordValidationPolicy {
 	if len(configured) == 0 || configured[0] == nil {
@@ -2423,6 +2538,9 @@ func resourceSqlDatabaseInstanceRead(d *schema.ResourceData, meta interface{}) e
 	}
 	if err := d.Set("instance_type", instance.InstanceType); err != nil {
 		return fmt.Errorf("Error setting instance_type: %s", err)
+	}
+	if err := d.Set("enforce_new_sql_network_architecture", instance.SqlNetworkArchitecture == "NEW_NETWORK_ARCHITECTURE"); err != nil {
+		return fmt.Errorf("Error setting enforce_new_sql_network_architecture: %s", err)
 	}
 	if err := d.Set("node_count", instance.NodeCount); err != nil {
 		return fmt.Errorf("Error setting node_count: %s", err)
@@ -2574,6 +2692,32 @@ func resourceSqlDatabaseInstanceUpdate(d *schema.ResourceData, meta interface{})
 		})
 		if err != nil {
 			return fmt.Errorf("Error, failed to patch instance settings for %s: %s", instance.Name, err)
+		}
+		err = SqlAdminOperationWaitTime(config, op, project, "Patch Instance", userAgent, d.Timeout(schema.TimeoutUpdate))
+		if err != nil {
+			return err
+		}
+		err = resourceSqlDatabaseInstanceRead(d, meta)
+		if err != nil {
+			return err
+		}
+	}
+
+	// We check for HasChange because we only want to trigger the network architecture upgrade
+	// if the configuration has explicitly changed. We also check the current value to ensure
+	// it's true, as this is an irreversible opt-in.
+	if d.HasChange("enforce_new_sql_network_architecture") && d.Get("enforce_new_sql_network_architecture").(bool) {
+		instance = &sqladmin.DatabaseInstance{SqlNetworkArchitecture: "NEW_NETWORK_ARCHITECTURE"}
+		err = transport_tpg.Retry(transport_tpg.RetryOptions{
+			RetryFunc: func() (rerr error) {
+				op, rerr = NewClient(config, userAgent).Instances.Patch(project, d.Get("name").(string), instance).Do()
+				return rerr
+			},
+			Timeout:              d.Timeout(schema.TimeoutUpdate),
+			ErrorRetryPredicates: []transport_tpg.RetryErrorPredicateFunc{transport_tpg.IsSqlOperationInProgressError},
+		})
+		if err != nil {
+			return fmt.Errorf("Error, failed to patch instance settings for %s: %s", d.Get("name").(string), err)
 		}
 		err = SqlAdminOperationWaitTime(config, op, project, "Patch Instance", userAgent, d.Timeout(schema.TimeoutUpdate))
 		if err != nil {
@@ -3186,6 +3330,9 @@ func flattenSettings(settings *sqladmin.Settings, iType string, d *schema.Resour
 	if settings.InsightsConfig != nil {
 		data["insights_config"] = flattenInsightsConfig(settings.InsightsConfig)
 	}
+	if settings.PerformanceCaptureConfig != nil {
+		data["performance_capture_config"] = flattenPerformanceCaptureConfig(settings.PerformanceCaptureConfig)
+	}
 
 	if settings.ReadPoolAutoScaleConfig != nil {
 		data["read_pool_auto_scale_config"] = flattenReadPoolAutoScaleConfig(settings.ReadPoolAutoScaleConfig)
@@ -3446,11 +3593,13 @@ func flattenPscAutoConnections(pscAutoConnections []*sqladmin.PscAutoConnectionC
 
 	for _, flag := range pscAutoConnections {
 		data := map[string]interface{}{
-			"consumer_network":            flag.ConsumerNetwork,
-			"consumer_network_status":     flag.ConsumerNetworkStatus,
-			"consumer_service_project_id": flag.ConsumerProject,
-			"ip_address":                  flag.IpAddress,
-			"status":                      flag.Status,
+			"consumer_network":                          flag.ConsumerNetwork,
+			"consumer_network_status":                   flag.ConsumerNetworkStatus,
+			"consumer_service_project_id":               flag.ConsumerProject,
+			"ip_address":                                flag.IpAddress,
+			"status":                                    flag.Status,
+			"service_connection_policy":                 flag.ServiceConnectionPolicy,
+			"service_connection_policy_creation_result": flag.ServiceConnectionPolicyCreationResult,
 		}
 
 		flags = append(flags, data)
@@ -3461,12 +3610,13 @@ func flattenPscAutoConnections(pscAutoConnections []*sqladmin.PscAutoConnectionC
 
 func flattenPscConfigs(pscConfig *sqladmin.PscConfig) interface{} {
 	data := map[string]interface{}{
-		"psc_enabled":                    pscConfig.PscEnabled,
-		"psc_auto_dns_enabled":           pscConfig.PscAutoDnsEnabled,
-		"psc_write_endpoint_dns_enabled": pscConfig.PscWriteEndpointDnsEnabled,
-		"allowed_consumer_projects":      schema.NewSet(schema.HashString, tpgresource.ConvertStringArrToInterface(pscConfig.AllowedConsumerProjects)),
-		"network_attachment_uri":         pscConfig.NetworkAttachmentUri,
-		"psc_auto_connections":           flattenPscAutoConnections(pscConfig.PscAutoConnections),
+		"psc_enabled":                        pscConfig.PscEnabled,
+		"psc_auto_dns_enabled":               pscConfig.PscAutoDnsEnabled,
+		"psc_write_endpoint_dns_enabled":     pscConfig.PscWriteEndpointDnsEnabled,
+		"psc_auto_connection_policy_enabled": pscConfig.PscAutoConnectionPolicyEnabled,
+		"allowed_consumer_projects":          schema.NewSet(schema.HashString, tpgresource.ConvertStringArrToInterface(pscConfig.AllowedConsumerProjects)),
+		"network_attachment_uri":             pscConfig.NetworkAttachmentUri,
+		"psc_auto_connections":               flattenPscAutoConnections(pscConfig.PscAutoConnections),
 	}
 
 	return []map[string]interface{}{data}
@@ -3597,6 +3747,18 @@ func flattenInsightsConfig(insightsConfig *sqladmin.InsightsConfig) interface{} 
 		"record_client_address":           insightsConfig.RecordClientAddress,
 		"query_plans_per_minute":          insightsConfig.QueryPlansPerMinute,
 		"enhanced_query_insights_enabled": insightsConfig.EnhancedQueryInsightsEnabled,
+	}
+
+	return []map[string]interface{}{data}
+}
+func flattenPerformanceCaptureConfig(performanceCaptureConfig *sqladmin.PerformanceCaptureConfig) interface{} {
+	data := map[string]interface{}{
+		"enabled":                         performanceCaptureConfig.Enabled,
+		"probing_interval_seconds":        performanceCaptureConfig.ProbingIntervalSeconds,
+		"probe_threshold":                 performanceCaptureConfig.ProbeThreshold,
+		"running_threads_threshold":       performanceCaptureConfig.RunningThreadsThreshold,
+		"seconds_behind_source_threshold": performanceCaptureConfig.SecondsBehindSourceThreshold,
+		"transaction_duration_threshold":  performanceCaptureConfig.TransactionDurationThreshold,
 	}
 
 	return []map[string]interface{}{data}

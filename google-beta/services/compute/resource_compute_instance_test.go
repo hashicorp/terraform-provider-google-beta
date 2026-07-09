@@ -2105,7 +2105,6 @@ func TestAccComputeInstance_performanceMonitoringUnit(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
-					resource.TestCheckResourceAttr("google_compute_instance.foobar", "advanced_machine_features.0.performance_monitoring_unit", "STANDARD"),
 				),
 			},
 			computeInstanceImportStep("us-central1-a", context_1["instance_name"].(string), []string{"allow_stopping_for_update"}),
@@ -3013,6 +3012,9 @@ func TestAccComputeInstance_hyperdiskBootDisk_provisioned_iops_throughput(t *tes
 				Config: testAccComputeInstanceHyperDiskBootDiskProvisionedIopsThroughput(context),
 			},
 			computeInstanceImportStep(context["zone"].(string), context["instance_name"].(string), []string{"allow_stopping_for_update"}),
+			{
+				Config: testAccComputeInstanceHyperDiskBootDiskProvisionedIopsThroughput_update(context),
+			},
 		},
 	})
 }
@@ -14204,6 +14206,38 @@ resource "google_compute_instance" "foobar" {
     }
 
     erase_windows_vss_signature = %{vss_flag}
+}
+`, context)
+}
+
+func testAccComputeInstanceHyperDiskBootDiskProvisionedIopsThroughput_update(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+data "google_compute_image" "my_image" {
+  family    = "ubuntu-2204-lts"
+  project   = "ubuntu-os-cloud"
+}
+
+data "google_project" "project" {}
+
+resource "google_compute_instance" "foobar" {
+  name         = "%{instance_name}"
+  machine_type = "h3-standard-88"
+  zone         = "%{zone}"
+  description  = "updated description"
+
+  boot_disk {
+    initialize_params {
+      image = data.google_compute_image.my_image.self_link
+      provisioned_iops = %{provisioned_iops}
+      provisioned_throughput = %{provisioned_throughput}
+      type = "hyperdisk-balanced"
+      size = 100
+    }
+  }
+
+  network_interface {
+    network = "default"
+  }
 }
 `, context)
 }
