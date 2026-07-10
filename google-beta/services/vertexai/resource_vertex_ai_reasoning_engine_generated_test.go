@@ -687,6 +687,10 @@ resource "google_vertex_ai_reasoning_engine" "reasoning_engine" {
   region       = "us-central1"
   provider     = google-beta
 
+  traffic_config {
+    traffic_split_always_latest {}
+  }
+
   context_spec {
     memory_bank_config {
       generation_config {
