@@ -149,13 +149,40 @@ func ResourceVertexAIReasoningEngine() *schema.Resource {
 			},
 			"context_spec": {
 				Type:        schema.TypeList,
+				Computed:    true,
 				Optional:    true,
 				Description: `Optional. Configuration for how Agent Engine sub-resources should manage context.`,
 				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"example_store_config": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							Description: `Optional. Specification for an Example Store, which manages few-shot examples for the Agent Engine.`,
+							MaxItems:    1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"similarity_search_config": {
+										Type:        schema.TypeList,
+										Optional:    true,
+										Description: `Optional. Configuration for how to perform similarity search on examples.`,
+										MaxItems:    1,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"embedding_model": {
+													Type:        schema.TypeString,
+													Required:    true,
+													Description: `Required. The Gemini model used to generate embeddings to lookup similar examples.`,
+												},
+											},
+										},
+									},
+								},
+							},
+						},
 						"memory_bank_config": {
 							Type:        schema.TypeList,
+							Computed:    true,
 							Optional:    true,
 							Description: `Specification for a Memory Bank, which manages memories for the Agent Engine.`,
 							MaxItems:    1,
@@ -420,10 +447,32 @@ Please refer to the field 'effective_labels' for all of the labels present on th
 				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"agent_card": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringIsJSON,
+							StateFunc:    func(v interface{}) string { s, _ := structure.NormalizeJsonString(v); return s },
+							Description:  `Optional. The A2A Agent Card for the agent (if available).`,
+						},
 						"agent_framework": {
 							Type:        schema.TypeString,
 							Optional:    true,
 							Description: `Optional. The OSS agent framework used to develop the agent.`,
+						},
+						"build_spec": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							Description: `Optional. Configuration for building container image.`,
+							MaxItems:    1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"worker_pool": {
+										Type:        schema.TypeString,
+										Optional:    true,
+										Description: `Optional. The resource name of the Cloud Build WorkerPool to use for the build.`,
+									},
+								},
+							},
 						},
 						"class_methods": {
 							Type:         schema.TypeString,
@@ -699,17 +748,72 @@ container image that is to be run on each worker replica.`,
 						},
 						"deployment_spec": {
 							Type:        schema.TypeList,
+							Computed:    true,
 							Optional:    true,
 							Description: `Optional. The specification of a Reasoning Engine deployment.`,
 							MaxItems:    1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
+									"agent_gateway_config": {
+										Type:        schema.TypeList,
+										Optional:    true,
+										Description: `Optional. Agent Gateway configuration for a Reasoning Engine deployment.`,
+										MaxItems:    1,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"agent_to_anywhere_config": {
+													Type:        schema.TypeList,
+													Optional:    true,
+													Description: `Optional. Configuration for traffic originating from the Reasoning Engine.`,
+													MaxItems:    1,
+													Elem: &schema.Resource{
+														Schema: map[string]*schema.Schema{
+															"agent_gateway": {
+																Type:        schema.TypeString,
+																Required:    true,
+																Description: `Required. The resource name of the Agent Gateway for outbound traffic.`,
+															},
+														},
+													},
+												},
+												"client_to_agent_config": {
+													Type:        schema.TypeList,
+													Optional:    true,
+													Description: `Optional. Configuration for traffic targeting the Reasoning Engine.`,
+													MaxItems:    1,
+													Elem: &schema.Resource{
+														Schema: map[string]*schema.Schema{
+															"agent_gateway": {
+																Type:        schema.TypeString,
+																Required:    true,
+																Description: `Required. The resource name of the Agent Gateway to use for inbound traffic.`,
+															},
+														},
+													},
+												},
+											},
+										},
+									},
+									"agent_server_mode": {
+										Type:         schema.TypeString,
+										Optional:     true,
+										ValidateFunc: verify.ValidateEnum([]string{"STABLE", "EXPERIMENTAL", ""}),
+										Description: `Optional. The agent server mode specifies what features are used when deploy the agent to agent engine.
+Possible values:
+* 'STABLE': Stable agent server mode.
+* 'EXPERIMENTAL': Experimental agent server mode. Possible values: ["STABLE", "EXPERIMENTAL"]`,
+									},
 									"container_concurrency": {
 										Type:     schema.TypeInt,
 										Computed: true,
 										Optional: true,
 										Description: `Optional. Concurrency for each container and agent server.
 Recommended value: 2 * cpu + 1. Defaults to 9.`,
+									},
+									"dedicated_ingress_endpoint_enabled": {
+										Type:        schema.TypeBool,
+										Optional:    true,
+										Description: `Optional. Whether to enable dedicated ingress endpoint for the deployment. If true, the deployment will be accessible via a dedicated endpoint. This is required to enable GKE V2 runtime.`,
 									},
 									"env": {
 										Type:     schema.TypeSet,
@@ -718,6 +822,41 @@ Recommended value: 2 * cpu + 1. Defaults to 9.`,
 Engine deployment.`,
 										Elem: vertexaiReasoningEngineSpecDeploymentSpecEnvSchema(),
 										// Default schema.HashSchema is used.
+									},
+									"keep_alive_probe": {
+										Type:        schema.TypeList,
+										Optional:    true,
+										Description: `Optional. Specifies the configuration for keep-alive probe.`,
+										MaxItems:    1,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"http_get": {
+													Type:        schema.TypeList,
+													Optional:    true,
+													Description: `Specifies the HTTP GET configuration for the probe.`,
+													MaxItems:    1,
+													Elem: &schema.Resource{
+														Schema: map[string]*schema.Schema{
+															"path": {
+																Type:        schema.TypeString,
+																Required:    true,
+																Description: `Required. Specifies the path of the HTTP GET request (e.g., '"/is_busy"').`,
+															},
+															"port": {
+																Type:        schema.TypeInt,
+																Optional:    true,
+																Description: `Optional. Specifies the port number on the container to which the request is sent.`,
+															},
+														},
+													},
+												},
+												"max_seconds": {
+													Type:        schema.TypeInt,
+													Optional:    true,
+													Description: `Optional. Specifies the maximum duration (in seconds) to keep the instance alive via this probe. Can be a maximum of 3600 seconds (1 hour).`,
+												},
+											},
+										},
 									},
 									"max_instances": {
 										Type:     schema.TypeInt,
@@ -819,6 +958,11 @@ Platform Reasoning Engine service Agent.`,
 								},
 							},
 						},
+						"example_store": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: `Optional. The resource name of the linked ExampleStore.`,
+						},
 						"identity_type": {
 							Type:         schema.TypeString,
 							Optional:     true,
@@ -881,6 +1025,48 @@ Agent in the project will be used.`,
 							MaxItems:    1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
+									"agent_config_source": {
+										Type:        schema.TypeList,
+										Optional:    true,
+										Description: `Optional. Specification for the deploying from agent config.`,
+										MaxItems:    1,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"adk_config": {
+													Type:        schema.TypeList,
+													Optional:    true,
+													Description: `Required. Configuration for the Agent Development Kit (ADK).`,
+													MaxItems:    1,
+													Elem: &schema.Resource{
+														Schema: map[string]*schema.Schema{
+															"json_config": {
+																Type:         schema.TypeString,
+																Required:     true,
+																ValidateFunc: validation.StringIsJSON,
+																StateFunc:    func(v interface{}) string { s, _ := structure.NormalizeJsonString(v); return s },
+																Description:  `Required. The value of the ADK config in JSON format.`,
+															},
+														},
+													},
+												},
+												"inline_source": {
+													Type:        schema.TypeList,
+													Optional:    true,
+													Description: `Optional. Any additional files needed to interpret the config.`,
+													MaxItems:    1,
+													Elem: &schema.Resource{
+														Schema: map[string]*schema.Schema{
+															"source_archive": {
+																Type:        schema.TypeString,
+																Required:    true,
+																Description: `Required. Input only. The application source code archive, provided as a compressed tarball (.tar.gz) file.`,
+															},
+														},
+													},
+												},
+											},
+										},
+									},
 									"developer_connect_source": {
 										Type:        schema.TypeList,
 										Optional:    true,
@@ -1002,6 +1188,58 @@ default value is 3.10.`,
 					},
 				},
 			},
+			"traffic_config": {
+				Type:        schema.TypeList,
+				Computed:    true,
+				Optional:    true,
+				Description: `Optional. Traffic distribution configuration for the Reasoning Engine.`,
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"traffic_split_always_latest": {
+							Type:     schema.TypeList,
+							Optional: true,
+							Description: `Optional. Traffic distribution configuration, where all traffic is sent to the
+latest Runtime Revision.`,
+							MaxItems: 1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{},
+							},
+						},
+						"traffic_split_manual": {
+							Type:     schema.TypeList,
+							Optional: true,
+							Description: `Optional. Manual traffic distribution configuration, where the user specifies the
+Runtime Revision IDs and the percentage of traffic to send to each.`,
+							MaxItems: 1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"targets": {
+										Type:     schema.TypeList,
+										Optional: true,
+										Description: `Optional. A list of traffic targets for the Runtimes Revisions. The sum of
+percentages must equal to 100.`,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"percent": {
+													Type:        schema.TypeInt,
+													Required:    true,
+													Description: `Required. Specifies percent of the traffic to this Runtime Revision.`,
+												},
+												"runtime_revision_name": {
+													Type:        schema.TypeString,
+													Required:    true,
+													Description: `Required. The Runtime Revision name to which to send this portion of traffic.`,
+												},
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
 			"create_time": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -1032,6 +1270,11 @@ projects/{project}/locations/{location}/reasoningEngines/{reasoningEngine}`,
 				Computed: true,
 				Description: `The timestamp of when the Index was last updated in RFC3339 UTC "Zulu"
 format, with nanosecond resolution and up to nine fractional digits.`,
+			},
+			"url": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: `Output only. The URL of the reasoning engine.`,
 			},
 			"project": {
 				Type:     schema.TypeString,
@@ -1149,6 +1392,12 @@ func resourceVertexAIReasoningEngineCreate(d *schema.ResourceData, meta interfac
 		return err
 	} else if v, ok := d.GetOkExists("context_spec"); !tpgresource.IsEmptyValue(reflect.ValueOf(contextSpecProp)) && (ok || !reflect.DeepEqual(v, contextSpecProp)) {
 		obj["contextSpec"] = contextSpecProp
+	}
+	trafficConfigProp, err := expandVertexAIReasoningEngineTrafficConfig(d.Get("traffic_config"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("traffic_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(trafficConfigProp)) && (ok || !reflect.DeepEqual(v, trafficConfigProp)) {
+		obj["trafficConfig"] = trafficConfigProp
 	}
 	effectiveLabelsProp, err := expandVertexAIReasoningEngineEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
@@ -1410,6 +1659,12 @@ func resourceVertexAIReasoningEngineUpdate(d *schema.ResourceData, meta interfac
 	} else if v, ok := d.GetOkExists("context_spec"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, contextSpecProp)) {
 		obj["contextSpec"] = contextSpecProp
 	}
+	trafficConfigProp, err := expandVertexAIReasoningEngineTrafficConfig(d.Get("traffic_config"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("traffic_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, trafficConfigProp)) {
+		obj["trafficConfig"] = trafficConfigProp
+	}
 	effectiveLabelsProp, err := expandVertexAIReasoningEngineEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
@@ -1442,6 +1697,10 @@ func resourceVertexAIReasoningEngineUpdate(d *schema.ResourceData, meta interfac
 		updateMask = append(updateMask, "contextSpec")
 	}
 
+	if d.HasChange("traffic_config") {
+		updateMask = append(updateMask, "trafficConfig")
+	}
+
 	if d.HasChange("effective_labels") {
 		updateMask = append(updateMask, "labels")
 	}
@@ -1450,6 +1709,28 @@ func resourceVertexAIReasoningEngineUpdate(d *schema.ResourceData, meta interfac
 	url, err = transport_tpg.AddQueryParams(url, map[string]string{"updateMask": strings.Join(updateMask, ",")})
 	if err != nil {
 		return err
+	}
+	// Remove unchanged fields from the request body to avoid API validation errors on defaulted fields.
+	if !d.HasChange("context_spec") {
+		delete(obj, "contextSpec")
+	}
+
+	if !d.HasChange("traffic_config") {
+		delete(obj, "trafficConfig")
+	}
+
+	if !d.HasChange("spec") {
+		delete(obj, "spec")
+	} else {
+		// If spec changed, check if deployment_spec inside it changed.
+		// If deployment_spec didn't change, remove it from spec map.
+		if specList, ok := obj["spec"].([]interface{}); ok && len(specList) > 0 {
+			if specMap, ok := specList[0].(map[string]interface{}); ok {
+				if !d.HasChange("spec.0.deployment_spec") {
+					delete(specMap, "deploymentSpec")
+				}
+			}
+		}
 	}
 
 	// err == nil indicates that the billing_project value was found
@@ -1665,6 +1946,12 @@ func flattenVertexAIReasoningEngineSpec(v interface{}, d *schema.ResourceData, c
 		flattenVertexAIReasoningEngineSpecIdentityType(original["identityType"], d, config)
 	transformed["effective_identity"] =
 		flattenVertexAIReasoningEngineSpecEffectiveIdentity(original["effectiveIdentity"], d, config)
+	transformed["example_store"] =
+		flattenVertexAIReasoningEngineSpecExampleStore(original["exampleStore"], d, config)
+	transformed["agent_card"] =
+		flattenVertexAIReasoningEngineSpecAgentCard(original["agentCard"], d, config)
+	transformed["build_spec"] =
+		flattenVertexAIReasoningEngineSpecBuildSpec(original["buildSpec"], d, config)
 	return []interface{}{transformed}
 }
 func flattenVertexAIReasoningEngineSpecAgentFramework(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -1706,33 +1993,36 @@ func flattenVertexAIReasoningEngineSpecDeploymentSpec(v interface{}, d *schema.R
 		flattenVertexAIReasoningEngineSpecDeploymentSpecMaxInstances(original["maxInstances"], d, config)
 	transformed["container_concurrency"] =
 		flattenVertexAIReasoningEngineSpecDeploymentSpecContainerConcurrency(original["containerConcurrency"], d, config)
+	transformed["agent_server_mode"] =
+		flattenVertexAIReasoningEngineSpecDeploymentSpecAgentServerMode(original["agentServerMode"], d, config)
+	transformed["agent_gateway_config"] =
+		flattenVertexAIReasoningEngineSpecDeploymentSpecAgentGatewayConfig(original["agentGatewayConfig"], d, config)
+	transformed["keep_alive_probe"] =
+		flattenVertexAIReasoningEngineSpecDeploymentSpecKeepAliveProbe(original["keepAliveProbe"], d, config)
+	transformed["dedicated_ingress_endpoint_enabled"] =
+		flattenVertexAIReasoningEngineSpecDeploymentSpecDedicatedIngressEndpointEnabled(original["dedicatedIngressEndpointEnabled"], d, config)
 	return []interface{}{transformed}
 }
 func flattenVertexAIReasoningEngineSpecDeploymentSpecEnv(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
-		return v
+		return nil
 	}
 	l := v.([]interface{})
-	transformed := schema.NewSet(schema.HashResource(vertexaiReasoningEngineSpecDeploymentSpecEnvSchema()), []interface{}{})
+	transformed := make([]interface{}, 0, len(l))
 	for _, raw := range l {
-		original := raw.(map[string]interface{})
-		if len(original) < 1 {
-			// Do not include empty json objects coming back from the api
+		if raw == nil {
 			continue
 		}
-		transformed.Add(map[string]interface{}{
-			"name":  flattenVertexAIReasoningEngineSpecDeploymentSpecEnvName(original["name"], d, config),
-			"value": flattenVertexAIReasoningEngineSpecDeploymentSpecEnvValue(original["value"], d, config),
+		original := raw.(map[string]interface{})
+		if original["name"] == "GOOGLE_CLOUD_AGENT_ENGINE_ENABLE_TELEMETRY" {
+			continue
+		}
+		transformed = append(transformed, map[string]interface{}{
+			"name":  original["name"],
+			"value": original["value"],
 		})
 	}
 	return transformed
-}
-func flattenVertexAIReasoningEngineSpecDeploymentSpecEnvName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
-	return v
-}
-
-func flattenVertexAIReasoningEngineSpecDeploymentSpecEnvValue(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
-	return v
 }
 
 func flattenVertexAIReasoningEngineSpecDeploymentSpecSecretEnv(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -1887,6 +2177,131 @@ func flattenVertexAIReasoningEngineSpecDeploymentSpecContainerConcurrency(v inte
 	return v // let terraform core handle it otherwise
 }
 
+func flattenVertexAIReasoningEngineSpecDeploymentSpecAgentServerMode(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenVertexAIReasoningEngineSpecDeploymentSpecAgentGatewayConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["client_to_agent_config"] =
+		flattenVertexAIReasoningEngineSpecDeploymentSpecAgentGatewayConfigClientToAgentConfig(original["clientToAgentConfig"], d, config)
+	transformed["agent_to_anywhere_config"] =
+		flattenVertexAIReasoningEngineSpecDeploymentSpecAgentGatewayConfigAgentToAnywhereConfig(original["agentToAnywhereConfig"], d, config)
+	return []interface{}{transformed}
+}
+func flattenVertexAIReasoningEngineSpecDeploymentSpecAgentGatewayConfigClientToAgentConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["agent_gateway"] =
+		flattenVertexAIReasoningEngineSpecDeploymentSpecAgentGatewayConfigClientToAgentConfigAgentGateway(original["agentGateway"], d, config)
+	return []interface{}{transformed}
+}
+func flattenVertexAIReasoningEngineSpecDeploymentSpecAgentGatewayConfigClientToAgentConfigAgentGateway(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenVertexAIReasoningEngineSpecDeploymentSpecAgentGatewayConfigAgentToAnywhereConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["agent_gateway"] =
+		flattenVertexAIReasoningEngineSpecDeploymentSpecAgentGatewayConfigAgentToAnywhereConfigAgentGateway(original["agentGateway"], d, config)
+	return []interface{}{transformed}
+}
+func flattenVertexAIReasoningEngineSpecDeploymentSpecAgentGatewayConfigAgentToAnywhereConfigAgentGateway(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenVertexAIReasoningEngineSpecDeploymentSpecKeepAliveProbe(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["http_get"] =
+		flattenVertexAIReasoningEngineSpecDeploymentSpecKeepAliveProbeHttpGet(original["httpGet"], d, config)
+	transformed["max_seconds"] =
+		flattenVertexAIReasoningEngineSpecDeploymentSpecKeepAliveProbeMaxSeconds(original["maxSeconds"], d, config)
+	return []interface{}{transformed}
+}
+func flattenVertexAIReasoningEngineSpecDeploymentSpecKeepAliveProbeHttpGet(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["path"] =
+		flattenVertexAIReasoningEngineSpecDeploymentSpecKeepAliveProbeHttpGetPath(original["path"], d, config)
+	transformed["port"] =
+		flattenVertexAIReasoningEngineSpecDeploymentSpecKeepAliveProbeHttpGetPort(original["port"], d, config)
+	return []interface{}{transformed}
+}
+func flattenVertexAIReasoningEngineSpecDeploymentSpecKeepAliveProbeHttpGetPath(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenVertexAIReasoningEngineSpecDeploymentSpecKeepAliveProbeHttpGetPort(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	// Handles the string fixed64 format
+	if strVal, ok := v.(string); ok {
+		if intVal, err := tpgresource.StringToFixed64(strVal); err == nil {
+			return intVal
+		}
+	}
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
+}
+
+func flattenVertexAIReasoningEngineSpecDeploymentSpecKeepAliveProbeMaxSeconds(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	// Handles the string fixed64 format
+	if strVal, ok := v.(string); ok {
+		if intVal, err := tpgresource.StringToFixed64(strVal); err == nil {
+			return intVal
+		}
+	}
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
+}
+
+func flattenVertexAIReasoningEngineSpecDeploymentSpecDedicatedIngressEndpointEnabled(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenVertexAIReasoningEngineSpecPackageSpec(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
@@ -1956,6 +2371,8 @@ func flattenVertexAIReasoningEngineSpecSourceCodeSpec(v interface{}, d *schema.R
 		flattenVertexAIReasoningEngineSpecSourceCodeSpecPythonSpec(original["pythonSpec"], d, config)
 	transformed["developer_connect_source"] =
 		flattenVertexAIReasoningEngineSpecSourceCodeSpecDeveloperConnectSource(original["developerConnectSource"], d, config)
+	transformed["agent_config_source"] =
+		flattenVertexAIReasoningEngineSpecSourceCodeSpecAgentConfigSource(original["agentConfigSource"], d, config)
 	return []interface{}{transformed}
 }
 func flattenVertexAIReasoningEngineSpecSourceCodeSpecInlineSource(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -2056,6 +2473,63 @@ func flattenVertexAIReasoningEngineSpecSourceCodeSpecDeveloperConnectSourceConfi
 	return v
 }
 
+func flattenVertexAIReasoningEngineSpecSourceCodeSpecAgentConfigSource(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["adk_config"] =
+		flattenVertexAIReasoningEngineSpecSourceCodeSpecAgentConfigSourceAdkConfig(original["adkConfig"], d, config)
+	transformed["inline_source"] =
+		flattenVertexAIReasoningEngineSpecSourceCodeSpecAgentConfigSourceInlineSource(original["inlineSource"], d, config)
+	return []interface{}{transformed}
+}
+func flattenVertexAIReasoningEngineSpecSourceCodeSpecAgentConfigSourceAdkConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["json_config"] =
+		flattenVertexAIReasoningEngineSpecSourceCodeSpecAgentConfigSourceAdkConfigJsonConfig(original["jsonConfig"], d, config)
+	return []interface{}{transformed}
+}
+func flattenVertexAIReasoningEngineSpecSourceCodeSpecAgentConfigSourceAdkConfigJsonConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	b, err := json.Marshal(v)
+	if err != nil {
+		// TODO: return error once https://github.com/GoogleCloudPlatform/magic-modules/issues/3257 is fixed.
+		log.Printf("[ERROR] failed to marshal schema to JSON: %v", err)
+	}
+	return string(b)
+}
+
+func flattenVertexAIReasoningEngineSpecSourceCodeSpecAgentConfigSourceInlineSource(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["source_archive"] =
+		flattenVertexAIReasoningEngineSpecSourceCodeSpecAgentConfigSourceInlineSourceSourceArchive(original["sourceArchive"], d, config)
+	return []interface{}{transformed}
+}
+func flattenVertexAIReasoningEngineSpecSourceCodeSpecAgentConfigSourceInlineSourceSourceArchive(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenVertexAIReasoningEngineSpecServiceAccount(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
@@ -2065,6 +2539,39 @@ func flattenVertexAIReasoningEngineSpecIdentityType(v interface{}, d *schema.Res
 }
 
 func flattenVertexAIReasoningEngineSpecEffectiveIdentity(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenVertexAIReasoningEngineSpecExampleStore(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenVertexAIReasoningEngineSpecAgentCard(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	b, err := json.Marshal(v)
+	if err != nil {
+		// TODO: return error once https://github.com/GoogleCloudPlatform/magic-modules/issues/3257 is fixed.
+		log.Printf("[ERROR] failed to marshal schema to JSON: %v", err)
+	}
+	return string(b)
+}
+
+func flattenVertexAIReasoningEngineSpecBuildSpec(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["worker_pool"] =
+		flattenVertexAIReasoningEngineSpecBuildSpecWorkerPool(original["workerPool"], d, config)
+	return []interface{}{transformed}
+}
+func flattenVertexAIReasoningEngineSpecBuildSpecWorkerPool(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -2079,6 +2586,8 @@ func flattenVertexAIReasoningEngineContextSpec(v interface{}, d *schema.Resource
 	transformed := make(map[string]interface{})
 	transformed["memory_bank_config"] =
 		flattenVertexAIReasoningEngineContextSpecMemoryBankConfig(original["memoryBankConfig"], d, config)
+	transformed["example_store_config"] =
+		flattenVertexAIReasoningEngineContextSpecExampleStoreConfig(original["exampleStoreConfig"], d, config)
 	return []interface{}{transformed}
 }
 func flattenVertexAIReasoningEngineContextSpecMemoryBankConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -2372,6 +2881,116 @@ func flattenVertexAIReasoningEngineContextSpecMemoryBankConfigStructuredMemoryCo
 	return string(b)
 }
 
+func flattenVertexAIReasoningEngineContextSpecExampleStoreConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["similarity_search_config"] =
+		flattenVertexAIReasoningEngineContextSpecExampleStoreConfigSimilaritySearchConfig(original["similaritySearchConfig"], d, config)
+	return []interface{}{transformed}
+}
+func flattenVertexAIReasoningEngineContextSpecExampleStoreConfigSimilaritySearchConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["embedding_model"] =
+		flattenVertexAIReasoningEngineContextSpecExampleStoreConfigSimilaritySearchConfigEmbeddingModel(original["embeddingModel"], d, config)
+	return []interface{}{transformed}
+}
+func flattenVertexAIReasoningEngineContextSpecExampleStoreConfigSimilaritySearchConfigEmbeddingModel(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenVertexAIReasoningEngineTrafficConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["traffic_split_manual"] =
+		flattenVertexAIReasoningEngineTrafficConfigTrafficSplitManual(original["trafficSplitManual"], d, config)
+	transformed["traffic_split_always_latest"] =
+		flattenVertexAIReasoningEngineTrafficConfigTrafficSplitAlwaysLatest(original["trafficSplitAlwaysLatest"], d, config)
+	return []interface{}{transformed}
+}
+func flattenVertexAIReasoningEngineTrafficConfigTrafficSplitManual(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["targets"] =
+		flattenVertexAIReasoningEngineTrafficConfigTrafficSplitManualTargets(original["targets"], d, config)
+	return []interface{}{transformed}
+}
+func flattenVertexAIReasoningEngineTrafficConfigTrafficSplitManualTargets(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+	l := v.([]interface{})
+	transformed := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		original := raw.(map[string]interface{})
+		if len(original) < 1 {
+			// Do not include empty json objects coming back from the api
+			continue
+		}
+		transformed = append(transformed, map[string]interface{}{
+			"runtime_revision_name": flattenVertexAIReasoningEngineTrafficConfigTrafficSplitManualTargetsRuntimeRevisionName(original["runtimeRevisionName"], d, config),
+			"percent":               flattenVertexAIReasoningEngineTrafficConfigTrafficSplitManualTargetsPercent(original["percent"], d, config),
+		})
+	}
+	return transformed
+}
+func flattenVertexAIReasoningEngineTrafficConfigTrafficSplitManualTargetsRuntimeRevisionName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenVertexAIReasoningEngineTrafficConfigTrafficSplitManualTargetsPercent(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	// Handles the string fixed64 format
+	if strVal, ok := v.(string); ok {
+		if intVal, err := tpgresource.StringToFixed64(strVal); err == nil {
+			return intVal
+		}
+	}
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
+}
+
+func flattenVertexAIReasoningEngineTrafficConfigTrafficSplitAlwaysLatest(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	return []interface{}{transformed}
+}
+
+func flattenVertexAIReasoningEngineUrl(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenVertexAIReasoningEngineTerraformLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
@@ -2500,6 +3119,27 @@ func expandVertexAIReasoningEngineSpec(v interface{}, d tpgresource.TerraformRes
 		transformed["effectiveIdentity"] = transformedEffectiveIdentity
 	}
 
+	transformedExampleStore, err := expandVertexAIReasoningEngineSpecExampleStore(original["example_store"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedExampleStore); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["exampleStore"] = transformedExampleStore
+	}
+
+	transformedAgentCard, err := expandVertexAIReasoningEngineSpecAgentCard(original["agent_card"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedAgentCard); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["agentCard"] = transformedAgentCard
+	}
+
+	transformedBuildSpec, err := expandVertexAIReasoningEngineSpecBuildSpec(original["build_spec"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedBuildSpec); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["buildSpec"] = transformedBuildSpec
+	}
+
 	return transformed, nil
 }
 
@@ -2578,6 +3218,34 @@ func expandVertexAIReasoningEngineSpecDeploymentSpec(v interface{}, d tpgresourc
 		return nil, err
 	} else if val := reflect.ValueOf(transformedContainerConcurrency); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["containerConcurrency"] = transformedContainerConcurrency
+	}
+
+	transformedAgentServerMode, err := expandVertexAIReasoningEngineSpecDeploymentSpecAgentServerMode(original["agent_server_mode"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedAgentServerMode); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["agentServerMode"] = transformedAgentServerMode
+	}
+
+	transformedAgentGatewayConfig, err := expandVertexAIReasoningEngineSpecDeploymentSpecAgentGatewayConfig(original["agent_gateway_config"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedAgentGatewayConfig); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["agentGatewayConfig"] = transformedAgentGatewayConfig
+	}
+
+	transformedKeepAliveProbe, err := expandVertexAIReasoningEngineSpecDeploymentSpecKeepAliveProbe(original["keep_alive_probe"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedKeepAliveProbe); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["keepAliveProbe"] = transformedKeepAliveProbe
+	}
+
+	transformedDedicatedIngressEndpointEnabled, err := expandVertexAIReasoningEngineSpecDeploymentSpecDedicatedIngressEndpointEnabled(original["dedicated_ingress_endpoint_enabled"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedDedicatedIngressEndpointEnabled); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["dedicatedIngressEndpointEnabled"] = transformedDedicatedIngressEndpointEnabled
 	}
 
 	return transformed, nil
@@ -2805,6 +3473,165 @@ func expandVertexAIReasoningEngineSpecDeploymentSpecContainerConcurrency(v inter
 	return v, nil
 }
 
+func expandVertexAIReasoningEngineSpecDeploymentSpecAgentServerMode(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandVertexAIReasoningEngineSpecDeploymentSpecAgentGatewayConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedClientToAgentConfig, err := expandVertexAIReasoningEngineSpecDeploymentSpecAgentGatewayConfigClientToAgentConfig(original["client_to_agent_config"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedClientToAgentConfig); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["clientToAgentConfig"] = transformedClientToAgentConfig
+	}
+
+	transformedAgentToAnywhereConfig, err := expandVertexAIReasoningEngineSpecDeploymentSpecAgentGatewayConfigAgentToAnywhereConfig(original["agent_to_anywhere_config"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedAgentToAnywhereConfig); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["agentToAnywhereConfig"] = transformedAgentToAnywhereConfig
+	}
+
+	return transformed, nil
+}
+
+func expandVertexAIReasoningEngineSpecDeploymentSpecAgentGatewayConfigClientToAgentConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedAgentGateway, err := expandVertexAIReasoningEngineSpecDeploymentSpecAgentGatewayConfigClientToAgentConfigAgentGateway(original["agent_gateway"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedAgentGateway); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["agentGateway"] = transformedAgentGateway
+	}
+
+	return transformed, nil
+}
+
+func expandVertexAIReasoningEngineSpecDeploymentSpecAgentGatewayConfigClientToAgentConfigAgentGateway(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandVertexAIReasoningEngineSpecDeploymentSpecAgentGatewayConfigAgentToAnywhereConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedAgentGateway, err := expandVertexAIReasoningEngineSpecDeploymentSpecAgentGatewayConfigAgentToAnywhereConfigAgentGateway(original["agent_gateway"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedAgentGateway); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["agentGateway"] = transformedAgentGateway
+	}
+
+	return transformed, nil
+}
+
+func expandVertexAIReasoningEngineSpecDeploymentSpecAgentGatewayConfigAgentToAnywhereConfigAgentGateway(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandVertexAIReasoningEngineSpecDeploymentSpecKeepAliveProbe(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedHttpGet, err := expandVertexAIReasoningEngineSpecDeploymentSpecKeepAliveProbeHttpGet(original["http_get"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedHttpGet); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["httpGet"] = transformedHttpGet
+	}
+
+	transformedMaxSeconds, err := expandVertexAIReasoningEngineSpecDeploymentSpecKeepAliveProbeMaxSeconds(original["max_seconds"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedMaxSeconds); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["maxSeconds"] = transformedMaxSeconds
+	}
+
+	return transformed, nil
+}
+
+func expandVertexAIReasoningEngineSpecDeploymentSpecKeepAliveProbeHttpGet(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedPath, err := expandVertexAIReasoningEngineSpecDeploymentSpecKeepAliveProbeHttpGetPath(original["path"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedPath); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["path"] = transformedPath
+	}
+
+	transformedPort, err := expandVertexAIReasoningEngineSpecDeploymentSpecKeepAliveProbeHttpGetPort(original["port"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedPort); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["port"] = transformedPort
+	}
+
+	return transformed, nil
+}
+
+func expandVertexAIReasoningEngineSpecDeploymentSpecKeepAliveProbeHttpGetPath(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandVertexAIReasoningEngineSpecDeploymentSpecKeepAliveProbeHttpGetPort(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandVertexAIReasoningEngineSpecDeploymentSpecKeepAliveProbeMaxSeconds(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandVertexAIReasoningEngineSpecDeploymentSpecDedicatedIngressEndpointEnabled(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
 func expandVertexAIReasoningEngineSpecPackageSpec(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	if v == nil {
 		return nil, nil
@@ -2928,6 +3755,13 @@ func expandVertexAIReasoningEngineSpecSourceCodeSpec(v interface{}, d tpgresourc
 		return nil, err
 	} else if val := reflect.ValueOf(transformedDeveloperConnectSource); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["developerConnectSource"] = transformedDeveloperConnectSource
+	}
+
+	transformedAgentConfigSource, err := expandVertexAIReasoningEngineSpecSourceCodeSpecAgentConfigSource(original["agent_config_source"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedAgentConfigSource); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["agentConfigSource"] = transformedAgentConfigSource
 	}
 
 	return transformed, nil
@@ -3126,6 +3960,95 @@ func expandVertexAIReasoningEngineSpecSourceCodeSpecDeveloperConnectSourceConfig
 	return v, nil
 }
 
+func expandVertexAIReasoningEngineSpecSourceCodeSpecAgentConfigSource(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedAdkConfig, err := expandVertexAIReasoningEngineSpecSourceCodeSpecAgentConfigSourceAdkConfig(original["adk_config"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedAdkConfig); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["adkConfig"] = transformedAdkConfig
+	}
+
+	transformedInlineSource, err := expandVertexAIReasoningEngineSpecSourceCodeSpecAgentConfigSourceInlineSource(original["inline_source"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedInlineSource); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["inlineSource"] = transformedInlineSource
+	}
+
+	return transformed, nil
+}
+
+func expandVertexAIReasoningEngineSpecSourceCodeSpecAgentConfigSourceAdkConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedJsonConfig, err := expandVertexAIReasoningEngineSpecSourceCodeSpecAgentConfigSourceAdkConfigJsonConfig(original["json_config"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedJsonConfig); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["jsonConfig"] = transformedJsonConfig
+	}
+
+	return transformed, nil
+}
+
+func expandVertexAIReasoningEngineSpecSourceCodeSpecAgentConfigSourceAdkConfigJsonConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	b := []byte(v.(string))
+	if len(b) == 0 {
+		return nil, nil
+	}
+	var j interface{}
+	if err := json.Unmarshal(b, &j); err != nil {
+		return nil, err
+	}
+	return j, nil
+}
+
+func expandVertexAIReasoningEngineSpecSourceCodeSpecAgentConfigSourceInlineSource(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedSourceArchive, err := expandVertexAIReasoningEngineSpecSourceCodeSpecAgentConfigSourceInlineSourceSourceArchive(original["source_archive"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedSourceArchive); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["sourceArchive"] = transformedSourceArchive
+	}
+
+	return transformed, nil
+}
+
+func expandVertexAIReasoningEngineSpecSourceCodeSpecAgentConfigSourceInlineSourceSourceArchive(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
 func expandVertexAIReasoningEngineSpecServiceAccount(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
@@ -3135,6 +4058,48 @@ func expandVertexAIReasoningEngineSpecIdentityType(v interface{}, d tpgresource.
 }
 
 func expandVertexAIReasoningEngineSpecEffectiveIdentity(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandVertexAIReasoningEngineSpecExampleStore(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandVertexAIReasoningEngineSpecAgentCard(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	b := []byte(v.(string))
+	if len(b) == 0 {
+		return nil, nil
+	}
+	var j interface{}
+	if err := json.Unmarshal(b, &j); err != nil {
+		return nil, err
+	}
+	return j, nil
+}
+
+func expandVertexAIReasoningEngineSpecBuildSpec(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedWorkerPool, err := expandVertexAIReasoningEngineSpecBuildSpecWorkerPool(original["worker_pool"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedWorkerPool); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["workerPool"] = transformedWorkerPool
+	}
+
+	return transformed, nil
+}
+
+func expandVertexAIReasoningEngineSpecBuildSpecWorkerPool(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
@@ -3155,6 +4120,13 @@ func expandVertexAIReasoningEngineContextSpec(v interface{}, d tpgresource.Terra
 		return nil, err
 	} else if val := reflect.ValueOf(transformedMemoryBankConfig); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["memoryBankConfig"] = transformedMemoryBankConfig
+	}
+
+	transformedExampleStoreConfig, err := expandVertexAIReasoningEngineContextSpecExampleStoreConfig(original["example_store_config"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedExampleStoreConfig); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["exampleStoreConfig"] = transformedExampleStoreConfig
 	}
 
 	return transformed, nil
@@ -3624,6 +4596,163 @@ func expandVertexAIReasoningEngineContextSpecMemoryBankConfigStructuredMemoryCon
 	return j, nil
 }
 
+func expandVertexAIReasoningEngineContextSpecExampleStoreConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedSimilaritySearchConfig, err := expandVertexAIReasoningEngineContextSpecExampleStoreConfigSimilaritySearchConfig(original["similarity_search_config"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedSimilaritySearchConfig); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["similaritySearchConfig"] = transformedSimilaritySearchConfig
+	}
+
+	return transformed, nil
+}
+
+func expandVertexAIReasoningEngineContextSpecExampleStoreConfigSimilaritySearchConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedEmbeddingModel, err := expandVertexAIReasoningEngineContextSpecExampleStoreConfigSimilaritySearchConfigEmbeddingModel(original["embedding_model"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedEmbeddingModel); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["embeddingModel"] = transformedEmbeddingModel
+	}
+
+	return transformed, nil
+}
+
+func expandVertexAIReasoningEngineContextSpecExampleStoreConfigSimilaritySearchConfigEmbeddingModel(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandVertexAIReasoningEngineTrafficConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedTrafficSplitManual, err := expandVertexAIReasoningEngineTrafficConfigTrafficSplitManual(original["traffic_split_manual"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedTrafficSplitManual); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["trafficSplitManual"] = transformedTrafficSplitManual
+	}
+
+	transformedTrafficSplitAlwaysLatest, err := expandVertexAIReasoningEngineTrafficConfigTrafficSplitAlwaysLatest(original["traffic_split_always_latest"], d, config)
+	if err != nil {
+		return nil, err
+	} else {
+		transformed["trafficSplitAlwaysLatest"] = transformedTrafficSplitAlwaysLatest
+	}
+
+	return transformed, nil
+}
+
+func expandVertexAIReasoningEngineTrafficConfigTrafficSplitManual(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedTargets, err := expandVertexAIReasoningEngineTrafficConfigTrafficSplitManualTargets(original["targets"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedTargets); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["targets"] = transformedTargets
+	}
+
+	return transformed, nil
+}
+
+func expandVertexAIReasoningEngineTrafficConfigTrafficSplitManualTargets(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
+	l := v.([]interface{})
+	req := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		if raw == nil {
+			continue
+		}
+		original := raw.(map[string]interface{})
+		transformed := make(map[string]interface{})
+
+		transformedRuntimeRevisionName, err := expandVertexAIReasoningEngineTrafficConfigTrafficSplitManualTargetsRuntimeRevisionName(original["runtime_revision_name"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedRuntimeRevisionName); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["runtimeRevisionName"] = transformedRuntimeRevisionName
+		}
+
+		transformedPercent, err := expandVertexAIReasoningEngineTrafficConfigTrafficSplitManualTargetsPercent(original["percent"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedPercent); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["percent"] = transformedPercent
+		}
+
+		req = append(req, transformed)
+	}
+	return req, nil
+}
+
+func expandVertexAIReasoningEngineTrafficConfigTrafficSplitManualTargetsRuntimeRevisionName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandVertexAIReasoningEngineTrafficConfigTrafficSplitManualTargetsPercent(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandVertexAIReasoningEngineTrafficConfigTrafficSplitAlwaysLatest(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
+	l := v.([]interface{})
+	if len(l) == 0 {
+		return nil, nil
+	}
+
+	if l[0] == nil {
+		transformed := make(map[string]interface{})
+		return transformed, nil
+	}
+	transformed := make(map[string]interface{})
+
+	return transformed, nil
+}
+
 func expandVertexAIReasoningEngineEffectiveLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
 	if v == nil {
 		return map[string]string{}, nil
@@ -3663,6 +4792,12 @@ func ResourceVertexAIReasoningEngineFlatten(d *schema.ResourceData, meta interfa
 		return fmt.Errorf("Error reading ReasoningEngine: %s", err)
 	}
 	if err = d.Set("context_spec", flattenVertexAIReasoningEngineContextSpec(res["contextSpec"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ReasoningEngine: %s", err)
+	}
+	if err = d.Set("traffic_config", flattenVertexAIReasoningEngineTrafficConfig(res["trafficConfig"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ReasoningEngine: %s", err)
+	}
+	if err = d.Set("url", flattenVertexAIReasoningEngineUrl(res["url"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ReasoningEngine: %s", err)
 	}
 	if err = d.Set("terraform_labels", flattenVertexAIReasoningEngineTerraformLabels(res["labels"], d, config)); err != nil {
