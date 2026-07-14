@@ -806,6 +806,15 @@ The sum of job name and token length must be fewer than 63 characters.`,
 The sum of job name and token length must be fewer than 63 characters.`,
 				ConflictsWith: []string{"run_execution_token"},
 			},
+			"tags": {
+				Type:     schema.TypeMap,
+				Optional: true,
+				ForceNew: true,
+				Description: `A map of resource manager tags.
+Resource manager tag keys and values have the same definition as resource manager tags.
+Keys must be in the format tagKeys/{tag_key_id}, and values are in the format tagValues/{tag_value_id}.`,
+				Elem: &schema.Schema{Type: schema.TypeString},
+			},
 			"conditions": {
 				Type:        schema.TypeList,
 				Computed:    true,
@@ -1152,6 +1161,12 @@ func resourceCloudRunV2JobCreate(d *schema.ResourceData, meta interface{}) error
 		return err
 	} else if v, ok := d.GetOkExists("template"); !tpgresource.IsEmptyValue(reflect.ValueOf(templateProp)) && (ok || !reflect.DeepEqual(v, templateProp)) {
 		obj["template"] = templateProp
+	}
+	tagsProp, err := expandCloudRunV2JobTags(d.Get("tags"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("tags"); !tpgresource.IsEmptyValue(reflect.ValueOf(tagsProp)) && (ok || !reflect.DeepEqual(v, tagsProp)) {
+		obj["tags"] = tagsProp
 	}
 	effectiveLabelsProp, err := expandCloudRunV2JobEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
@@ -3998,6 +4013,17 @@ func expandCloudRunV2JobTemplateTemplateNodeSelectorAccelerator(v interface{}, d
 
 func expandCloudRunV2JobTemplateTemplateGpuZonalRedundancyDisabled(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func expandCloudRunV2JobTags(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
+	if v == nil {
+		return map[string]string{}, nil
+	}
+	m := make(map[string]string)
+	for k, val := range v.(map[string]interface{}) {
+		m[k] = val.(string)
+	}
+	return m, nil
 }
 
 func expandCloudRunV2JobEffectiveLabels(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (map[string]string, error) {
