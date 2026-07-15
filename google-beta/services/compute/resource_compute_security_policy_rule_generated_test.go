@@ -336,10 +336,12 @@ func TestAccComputeSecurityPolicyRule_securityPolicyRuleWithBodyExcludeExample(t
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"backend_name":    "backendpolicy" + randomSuffix,
-		"network_name":    "tf-test-test-network" + randomSuffix,
-		"sec_policy_name": "policyruletest" + randomSuffix,
-		"random_suffix":   randomSuffix,
+		"backend_name":      "backendpolicy" + randomSuffix,
+		"health_check_name": "tf-test-test-health-check" + randomSuffix,
+		"network_name":      "tf-test-test-network" + randomSuffix,
+		"sec_policy_name":   "policyruletest" + randomSuffix,
+		"subnetwork_name":   "tf-test-test-subnet" + randomSuffix,
+		"random_suffix":     randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -377,7 +379,7 @@ resource "google_compute_network" "default" {
 
 resource "google_compute_subnetwork" "default" {
   provider      = google-beta
-  name          = "test-subnet"
+  name          = "%{subnetwork_name}"
   region        = "us-west2"
   network       = google_compute_network.default.id
   ip_cidr_range = "10.10.0.0/24"
@@ -385,7 +387,7 @@ resource "google_compute_subnetwork" "default" {
 
 resource "google_compute_health_check" "default" {
   provider = google-beta
-  name     = "test-health-check"
+  name     = "%{health_check_name}"
 
   http_health_check {
     port = 80
