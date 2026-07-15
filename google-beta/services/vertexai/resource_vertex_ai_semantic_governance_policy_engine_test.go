@@ -40,7 +40,7 @@ func TestAccVertexAISemanticGovernancePolicyEngine_lifecycle(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckVertexAISemanticGovernancePolicyEngineDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -75,8 +75,7 @@ func TestAccVertexAISemanticGovernancePolicyEngine_lifecycle(t *testing.T) {
 func testAccVertexAISemanticGovernancePolicyEngine_basic(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_vertex_ai_semantic_governance_policy_engine" "sgpe" {
-  provider = google-beta
-  region   = "us-central1"
+  region = "us-central1"
 }
 `, context)
 }
