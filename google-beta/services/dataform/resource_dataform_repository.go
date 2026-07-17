@@ -174,7 +174,13 @@ func ResourceDataformRepository() *schema.Resource {
 							Type:         schema.TypeString,
 							Optional:     true,
 							Description:  `The name of the Secret Manager secret version to use as an authentication token for Git operations. This secret is for assigning with HTTPS only(for SSH use 'ssh_authentication_config'). Must be in the format projects/*/secrets/*/versions/*.`,
-							ExactlyOneOf: []string{"git_remote_settings.0.authentication_token_secret_version", "git_remote_settings.0.ssh_authentication_config"},
+							ExactlyOneOf: []string{"git_remote_settings.0.authentication_token_secret_version", "git_remote_settings.0.git_repository_link", "git_remote_settings.0.ssh_authentication_config"},
+						},
+						"git_repository_link": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							Description:  `The name of the Developer Connect GitRepositoryLink to use for machine credentials. Must be in the format projects/*/locations/*/connections/*/gitRepositoryLinks/*.`,
+							ExactlyOneOf: []string{"git_remote_settings.0.authentication_token_secret_version", "git_remote_settings.0.git_repository_link", "git_remote_settings.0.ssh_authentication_config"},
 						},
 						"ssh_authentication_config": {
 							Type:        schema.TypeList,
@@ -195,7 +201,7 @@ func ResourceDataformRepository() *schema.Resource {
 									},
 								},
 							},
-							ExactlyOneOf: []string{"git_remote_settings.0.authentication_token_secret_version", "git_remote_settings.0.ssh_authentication_config"},
+							ExactlyOneOf: []string{"git_remote_settings.0.authentication_token_secret_version", "git_remote_settings.0.git_repository_link", "git_remote_settings.0.ssh_authentication_config"},
 						},
 						"token_status": {
 							Type:        schema.TypeString,
@@ -742,6 +748,8 @@ func flattenDataformRepositoryGitRemoteSettings(v interface{}, d *schema.Resourc
 		flattenDataformRepositoryGitRemoteSettingsAuthenticationTokenSecretVersion(original["authenticationTokenSecretVersion"], d, config)
 	transformed["ssh_authentication_config"] =
 		flattenDataformRepositoryGitRemoteSettingsSshAuthenticationConfig(original["sshAuthenticationConfig"], d, config)
+	transformed["git_repository_link"] =
+		flattenDataformRepositoryGitRemoteSettingsGitRepositoryLink(original["gitRepositoryLink"], d, config)
 	transformed["token_status"] =
 		flattenDataformRepositoryGitRemoteSettingsTokenStatus(original["tokenStatus"], d, config)
 	return []interface{}{transformed}
@@ -778,6 +786,10 @@ func flattenDataformRepositoryGitRemoteSettingsSshAuthenticationConfigUserPrivat
 }
 
 func flattenDataformRepositoryGitRemoteSettingsSshAuthenticationConfigHostPublicKey(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenDataformRepositoryGitRemoteSettingsGitRepositoryLink(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -908,6 +920,13 @@ func expandDataformRepositoryGitRemoteSettings(v interface{}, d tpgresource.Terr
 		transformed["sshAuthenticationConfig"] = transformedSshAuthenticationConfig
 	}
 
+	transformedGitRepositoryLink, err := expandDataformRepositoryGitRemoteSettingsGitRepositoryLink(original["git_repository_link"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedGitRepositoryLink); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["gitRepositoryLink"] = transformedGitRepositoryLink
+	}
+
 	transformedTokenStatus, err := expandDataformRepositoryGitRemoteSettingsTokenStatus(original["token_status"], d, config)
 	if err != nil {
 		return nil, err
@@ -964,6 +983,10 @@ func expandDataformRepositoryGitRemoteSettingsSshAuthenticationConfigUserPrivate
 }
 
 func expandDataformRepositoryGitRemoteSettingsSshAuthenticationConfigHostPublicKey(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandDataformRepositoryGitRemoteSettingsGitRepositoryLink(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

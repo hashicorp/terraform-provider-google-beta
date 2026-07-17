@@ -20,6 +20,7 @@ package compute_test
 import (
 	"fmt"
 	"log"
+	"regexp"
 	"strconv"
 	"strings"
 	"testing"
@@ -40,6 +41,7 @@ import (
 var (
 	_ = fmt.Sprintf
 	_ = log.Print
+	_ = regexp.MatchString
 	_ = strconv.Atoi
 	_ = strings.Trim
 	_ = time.Now
@@ -67,7 +69,7 @@ func TestAccComputeRouterNamedSet_routerNamedSetRoutePolicyExample(t *testing.T)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeRouterNamedSetDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -92,13 +94,11 @@ func TestAccComputeRouterNamedSet_routerNamedSetRoutePolicyExample(t *testing.T)
 func testAccComputeRouterNamedSet_routerNamedSetRoutePolicyExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_network" "my_network" {
-  provider = google-beta
   name                    = "%{network_name}"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_router" "my_router" {
-  provider = google-beta
   name    = "%{router_name}"
   network = google_compute_network.my_network.name
   region  = "us-central1"
@@ -108,7 +108,6 @@ resource "google_compute_router" "my_router" {
 }
 
 resource "google_compute_router_named_set" "my_prefix_set" {
-  provider = google-beta
   name        = "%{named_set_name}"
   router      = google_compute_router.my_router.name
   region      = google_compute_router.my_router.region
@@ -131,7 +130,6 @@ resource "google_compute_router_named_set" "my_prefix_set" {
 }
 
 resource "google_compute_router_route_policy" "my_route_policy" {
-  provider = google-beta
   name   = "%{route_policy_name}"
   router = google_compute_router.my_router.name
   region = google_compute_router.my_router.region
@@ -166,7 +164,7 @@ func TestAccComputeRouterNamedSet_routerNamedSetPrefixExample(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeRouterNamedSetDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -191,20 +189,17 @@ func TestAccComputeRouterNamedSet_routerNamedSetPrefixExample(t *testing.T) {
 func testAccComputeRouterNamedSet_routerNamedSetPrefixExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_network" "net" {
-  provider = google-beta
   name                    = "%{network_name}"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_router" "router" {
-  provider = google-beta
   name    = "%{router_name}"
   network = google_compute_network.net.name
   region  = "us-central1"
 }
 
 resource "google_compute_router_named_set" "prefix_set" {
-  provider = google-beta
   name        = "%{named_set_name}"
   router      = google_compute_router.router.name
   region      = "us-central1"
@@ -239,7 +234,7 @@ func TestAccComputeRouterNamedSet_routerNamedSetCommunityExample(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeRouterNamedSetDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -264,20 +259,17 @@ func TestAccComputeRouterNamedSet_routerNamedSetCommunityExample(t *testing.T) {
 func testAccComputeRouterNamedSet_routerNamedSetCommunityExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_network" "net" {
-  provider = google-beta
   name                    = "%{network_name}"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_router" "router" {
-  provider = google-beta
   name    = "%{router_name}"
   network = google_compute_network.net.name
   region  = "us-central1"
 }
 
 resource "google_compute_router_named_set" "community_set" {
-  provider = google-beta
   name        = "%{named_set_name}"
   router      = google_compute_router.router.name
   region      = "us-central1"

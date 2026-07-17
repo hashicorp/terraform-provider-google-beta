@@ -20,6 +20,7 @@ package compute_test
 import (
 	"fmt"
 	"log"
+	"regexp"
 	"strconv"
 	"strings"
 	"testing"
@@ -40,6 +41,7 @@ import (
 var (
 	_ = fmt.Sprintf
 	_ = log.Print
+	_ = regexp.MatchString
 	_ = strconv.Atoi
 	_ = strings.Trim
 	_ = time.Now
@@ -59,6 +61,7 @@ func TestAccComputeNetworkEdgeSecurityService_computeNetworkEdgeSecurityServiceB
 
 	context := map[string]interface{}{
 		"project_id":    envvar.GetTestProjectFromEnv(),
+		"region":        "us-east1",
 		"resource_name": "tf-test-my-edge-security-service" + randomSuffix,
 		"random_suffix": randomSuffix,
 	}
@@ -93,7 +96,7 @@ resource "google_compute_network_edge_security_service" "default" {
   provider     = google-beta  
 
   name         = "%{resource_name}"
-  region       = "us-east1"
+  region       = "%{region}"
   description  = "My basic resource"
 }
 `, context)
