@@ -121,13 +121,13 @@ func ResourceComputeFutureReservation() *schema.Resource {
 			Version: 1,
 			SchemaFunc: func() map[string]*schema.Schema {
 				return map[string]*schema.Schema{
-					"zone": {
-						Type:              schema.TypeString,
-						RequiredForImport: true,
-					},
 					"name": {
 						Type:              schema.TypeString,
 						RequiredForImport: true,
+					},
+					"zone": {
+						Type:              schema.TypeString,
+						OptionalForImport: true,
 					},
 					"project": {
 						Type:              schema.TypeString,
@@ -150,7 +150,7 @@ created. The name must be 1-63 characters long, and comply with
 RFC1035. Specifically, the name must be 1-63 characters long and match
 the regular expression '[a-z]([-a-z0-9]*[a-z0-9])?' which means the
 first character must be a lowercase letter, and all following
-characters must be a dash, lowercase letter, or digit, except the las
+characters must be a dash, lowercase letter, or digit, except the last
 character, which cannot be a dash.`,
 			},
 			"time_window": {
@@ -512,6 +512,14 @@ and values are in the format tagValues/456.`,
 					},
 				},
 			},
+			"zone": {
+				Type:             schema.TypeString,
+				Computed:         true,
+				Optional:         true,
+				ForceNew:         true,
+				DiffSuppressFunc: tpgresource.CompareSelfLinkOrResourceName,
+				Description:      `The zone where the future reservation is located.`,
+			},
 			"creation_timestamp": {
 				Type:        schema.TypeString,
 				Computed:    true,
@@ -814,11 +822,6 @@ and values are in the format tagValues/456.`,
 					},
 				},
 			},
-			"zone": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: `URL of the Zone where this future reservation resides.`,
-			},
 			"project": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -962,6 +965,12 @@ func resourceComputeFutureReservationCreate(d *schema.ResourceData, meta interfa
 	} else if v, ok := d.GetOkExists("name"); !tpgresource.IsEmptyValue(reflect.ValueOf(nameProp)) && (ok || !reflect.DeepEqual(v, nameProp)) {
 		obj["name"] = nameProp
 	}
+	zoneProp, err := expandComputeFutureReservationZone(d.Get("zone"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("zone"); !tpgresource.IsEmptyValue(reflect.ValueOf(zoneProp)) && (ok || !reflect.DeepEqual(v, zoneProp)) {
+		obj["zone"] = zoneProp
+	}
 
 	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/zones/{{zone}}/futureReservations")
 	if err != nil {
@@ -1018,14 +1027,14 @@ func resourceComputeFutureReservationCreate(d *schema.ResourceData, meta interfa
 
 	identity, err := d.Identity()
 	if err == nil && identity != nil {
-		if zoneValue, ok := d.GetOk("zone"); ok && zoneValue.(string) != "" {
-			if err = identity.Set("zone", zoneValue.(string)); err != nil {
-				return fmt.Errorf("Error setting zone: %s", err)
-			}
-		}
 		if nameValue, ok := d.GetOk("name"); ok && nameValue.(string) != "" {
 			if err = identity.Set("name", nameValue.(string)); err != nil {
 				return fmt.Errorf("Error setting name: %s", err)
+			}
+		}
+		if zoneValue, ok := d.GetOk("zone"); ok && zoneValue.(string) != "" {
+			if err = identity.Set("zone", zoneValue.(string)); err != nil {
+				return fmt.Errorf("Error setting zone: %s", err)
 			}
 		}
 		if projectValue, ok := d.GetOk("project"); ok && projectValue.(string) != "" {
@@ -1104,16 +1113,16 @@ func resourceComputeFutureReservationRead(d *schema.ResourceData, meta interface
 
 	identity, err := d.Identity()
 	if err == nil && identity != nil {
-		if v, ok := identity.GetOk("zone"); !ok && v == "" {
-			err = identity.Set("zone", d.Get("zone").(string))
-			if err != nil {
-				return fmt.Errorf("Error setting zone: %s", err)
-			}
-		}
 		if v, ok := identity.GetOk("name"); !ok && v == "" {
 			err = identity.Set("name", d.Get("name").(string))
 			if err != nil {
 				return fmt.Errorf("Error setting name: %s", err)
+			}
+		}
+		if v, ok := identity.GetOk("zone"); !ok && v == "" {
+			err = identity.Set("zone", d.Get("zone").(string))
+			if err != nil {
+				return fmt.Errorf("Error setting zone: %s", err)
 			}
 		}
 		if v, ok := identity.GetOk("project"); !ok && v == "" {
@@ -1150,14 +1159,14 @@ func resourceComputeFutureReservationUpdate(d *schema.ResourceData, meta interfa
 	}
 	identity, err := d.Identity()
 	if err == nil && identity != nil {
-		if zoneValue, ok := d.GetOk("zone"); ok && zoneValue.(string) != "" {
-			if err = identity.Set("zone", zoneValue.(string)); err != nil {
-				return fmt.Errorf("Error setting zone: %s", err)
-			}
-		}
 		if nameValue, ok := d.GetOk("name"); ok && nameValue.(string) != "" {
 			if err = identity.Set("name", nameValue.(string)); err != nil {
 				return fmt.Errorf("Error setting name: %s", err)
+			}
+		}
+		if zoneValue, ok := d.GetOk("zone"); ok && zoneValue.(string) != "" {
+			if err = identity.Set("zone", zoneValue.(string)); err != nil {
+				return fmt.Errorf("Error setting zone: %s", err)
 			}
 		}
 		if projectValue, ok := d.GetOk("project"); ok && projectValue.(string) != "" {
@@ -1466,10 +1475,6 @@ func resourceComputeFutureReservationImport(d *schema.ResourceData, meta interfa
 	d.SetId(id)
 
 	return []*schema.ResourceData{d}, nil
-}
-
-func flattenComputeFutureReservationZone(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
-	return v
 }
 
 func flattenComputeFutureReservationCreationTimestamp(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -2311,6 +2316,13 @@ func flattenComputeFutureReservationName(v interface{}, d *schema.ResourceData, 
 	return v
 }
 
+func flattenComputeFutureReservationZone(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+	return tpgresource.ConvertSelfLinkToV1(v.(string))
+}
+
 func expandComputeFutureReservationDescription(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
@@ -2941,6 +2953,14 @@ func expandComputeFutureReservationName(v interface{}, d tpgresource.TerraformRe
 	return v, nil
 }
 
+func expandComputeFutureReservationZone(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	f, err := tpgresource.ParseGlobalFieldValue("zones", v.(string), "project", d, config, true)
+	if err != nil {
+		return nil, fmt.Errorf("Invalid value for zone: %s", err)
+	}
+	return f.RelativeLink(), nil
+}
+
 func resourceComputeFutureReservationUpdateEncoder(d *schema.ResourceData, meta interface{}, obj map[string]interface{}) (map[string]interface{}, error) {
 	nameProp := d.Get("name")
 	if v, ok := d.GetOkExists("name"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, nameProp)) {
@@ -2952,9 +2972,6 @@ func resourceComputeFutureReservationUpdateEncoder(d *schema.ResourceData, meta 
 func ResourceComputeFutureReservationFlatten(d *schema.ResourceData, meta interface{}, res map[string]interface{}, config *transport_tpg.Config, project string, userAgent string, billingProject string, url string, headers http.Header) error {
 	var err error
 
-	if err = d.Set("zone", flattenComputeFutureReservationZone(res["zone"], d, config)); err != nil {
-		return fmt.Errorf("Error reading FutureReservation: %s", err)
-	}
 	if err = d.Set("creation_timestamp", flattenComputeFutureReservationCreationTimestamp(res["creationTimestamp"], d, config)); err != nil {
 		return fmt.Errorf("Error reading FutureReservation: %s", err)
 	}
@@ -3007,6 +3024,9 @@ func ResourceComputeFutureReservationFlatten(d *schema.ResourceData, meta interf
 		return fmt.Errorf("Error reading FutureReservation: %s", err)
 	}
 	if err = d.Set("name", flattenComputeFutureReservationName(res["name"], d, config)); err != nil {
+		return fmt.Errorf("Error reading FutureReservation: %s", err)
+	}
+	if err = d.Set("zone", flattenComputeFutureReservationZone(res["zone"], d, config)); err != nil {
 		return fmt.Errorf("Error reading FutureReservation: %s", err)
 	}
 	if selfLink, ok := res["selfLink"].(string); ok && selfLink != "" {

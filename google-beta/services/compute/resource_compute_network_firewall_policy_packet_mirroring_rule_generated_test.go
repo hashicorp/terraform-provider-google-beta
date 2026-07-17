@@ -20,6 +20,7 @@ package compute_test
 import (
 	"fmt"
 	"log"
+	"regexp"
 	"strconv"
 	"strings"
 	"testing"
@@ -43,6 +44,7 @@ import (
 var (
 	_ = fmt.Sprintf
 	_ = log.Print
+	_ = regexp.MatchString
 	_ = strconv.Atoi
 	_ = strings.Trim
 	_ = time.Now
@@ -123,7 +125,7 @@ resource "google_compute_network_firewall_policy_packet_mirroring_rule" "primary
   description             = "This is a simple packet mirroring rule description"
   direction               = "INGRESS"
   disabled                = false
-  firewall_policy         = google_compute_network_firewall_policy.basic_network_firewall_policy.name
+  firewall_policy         = google_compute_network_firewall_policy.basic_network_firewall_policy.id
   priority                = 1000
   rule_name               = "test-rule"
 

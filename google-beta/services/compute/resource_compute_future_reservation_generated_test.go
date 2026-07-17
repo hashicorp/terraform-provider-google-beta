@@ -20,6 +20,7 @@ package compute_test
 import (
 	"fmt"
 	"log"
+	"regexp"
 	"strconv"
 	"strings"
 	"testing"
@@ -42,6 +43,7 @@ import (
 var (
 	_ = fmt.Sprintf
 	_ = log.Print
+	_ = regexp.MatchString
 	_ = strconv.Atoi
 	_ = strings.Trim
 	_ = time.Now
@@ -81,7 +83,7 @@ func TestAccComputeFutureReservation_futureReservationBasicExample(t *testing.T)
 				ResourceName:            "google_compute_future_reservation.gce_future_reservation",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"auto_created_reservations_delete_time", "auto_delete_auto_created_reservations", "params"},
+				ImportStateVerifyIgnore: []string{"auto_created_reservations_delete_time", "auto_delete_auto_created_reservations", "params", "zone"},
 			},
 			{
 				ResourceName:       "google_compute_future_reservation.gce_future_reservation",
@@ -99,6 +101,7 @@ resource "google_compute_future_reservation" "gce_future_reservation" {
   provider = google-beta
   name     = "%{future_reservation_name}"
   project  = "%{project}"
+  zone     = "us-central1-a"
   auto_delete_auto_created_reservations = true
   planning_status = "DRAFT"
   name_prefix = "fr-basic"
@@ -145,7 +148,7 @@ func TestAccComputeFutureReservation_futureReservationAggregateReservationExampl
 				ResourceName:            "google_compute_future_reservation.gce_future_reservation",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"auto_created_reservations_delete_time", "auto_delete_auto_created_reservations", "params"},
+				ImportStateVerifyIgnore: []string{"auto_created_reservations_delete_time", "auto_delete_auto_created_reservations", "params", "zone"},
 			},
 			{
 				ResourceName:       "google_compute_future_reservation.gce_future_reservation",
@@ -163,6 +166,7 @@ resource "google_compute_future_reservation" "gce_future_reservation" {
   provider = google-beta
   name     = "%{future_reservation_name}"
   project  = "%{project}"
+  zone     = "us-central1-a"
   auto_delete_auto_created_reservations = true
   planning_status = "DRAFT"
   name_prefix = "fr-basic"
@@ -218,7 +222,7 @@ func TestAccComputeFutureReservation_sharedFutureReservationExample(t *testing.T
 				ResourceName:            "google_compute_future_reservation.gce_future_reservation",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"auto_created_reservations_delete_time", "auto_delete_auto_created_reservations", "params"},
+				ImportStateVerifyIgnore: []string{"auto_created_reservations_delete_time", "auto_delete_auto_created_reservations", "params", "zone"},
 			},
 			{
 				ResourceName:       "google_compute_future_reservation.gce_future_reservation",
@@ -271,6 +275,7 @@ resource "google_compute_future_reservation" "gce_future_reservation" {
   provider = google-beta
   project = google_project.owner_project.project_id
   name    = "%{future_reservation_name}"
+  zone    = "us-central1-a"
   auto_delete_auto_created_reservations = true
   time_window {
     start_time = "%{start_time}"

@@ -20,6 +20,7 @@ package vertexai_test
 import (
 	"fmt"
 	"log"
+	"regexp"
 	"strconv"
 	"strings"
 	"testing"
@@ -44,6 +45,7 @@ import (
 var (
 	_ = fmt.Sprintf
 	_ = log.Print
+	_ = regexp.MatchString
 	_ = strconv.Atoi
 	_ = strings.Trim
 	_ = time.Now
@@ -686,6 +688,10 @@ resource "google_vertex_ai_reasoning_engine" "reasoning_engine" {
   description  = "Reasoning engine with context spec"
   region       = "us-central1"
   provider     = google-beta
+
+  traffic_config {
+    traffic_split_always_latest {}
+  }
 
   context_spec {
     memory_bank_config {

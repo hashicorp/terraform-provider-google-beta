@@ -12,6 +12,7 @@ fields:
       provider_only: true
     - api_field: gitRemoteSettings.authenticationTokenSecretVersion
     - api_field: gitRemoteSettings.defaultBranch
+    - api_field: gitRemoteSettings.gitRepositoryLink
     - api_field: gitRemoteSettings.sshAuthenticationConfig.hostPublicKey
     - api_field: gitRemoteSettings.sshAuthenticationConfig.userPrivateKeySecretVersion
     - api_field: gitRemoteSettings.tokenStatus
