@@ -1211,13 +1211,14 @@ func ResourceContainerCluster() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"enable_components": {
-							Type:        schema.TypeList,
+							Type:        schema.TypeSet,
 							Required:    true,
 							Description: `GKE components exposing logs. Valid values include SYSTEM_COMPONENTS, APISERVER, CONTROLLER_MANAGER, KCP_CONNECTION, KCP_SSHD, KCP_HPA, KCP_VPA, SCHEDULER, and WORKLOADS.`,
 							Elem: &schema.Schema{
 								Type:         schema.TypeString,
 								ValidateFunc: validation.StringInSlice([]string{"SYSTEM_COMPONENTS", "APISERVER", "CONTROLLER_MANAGER", "KCP_CONNECTION", "KCP_SSHD", "KCP_HPA", "KCP_VPA", "SCHEDULER", "WORKLOADS"}, false),
 							},
+							Set: schema.HashString,
 						},
 					},
 				},
@@ -1532,13 +1533,14 @@ func ResourceContainerCluster() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"enable_components": {
-							Type:        schema.TypeList,
+							Type:        schema.TypeSet,
 							Optional:    true,
 							Computed:    true,
 							Description: `GKE components exposing metrics. Valid values include SYSTEM_COMPONENTS, APISERVER, SCHEDULER, CONTROLLER_MANAGER, STORAGE, HPA, POD, DAEMONSET, DEPLOYMENT, STATEFULSET, WORKLOADS, KUBELET, CADVISOR, DCGM and JOBSET.`,
 							Elem: &schema.Schema{
 								Type: schema.TypeString,
 							},
+							Set: schema.HashString,
 						},
 						"managed_prometheus": {
 							Type:        schema.TypeList,
@@ -7428,7 +7430,7 @@ func expandContainerClusterLoggingConfig(configured interface{}) *container.Logg
 	var components []string
 	if l[0] != nil {
 		config := l[0].(map[string]interface{})
-		components = tpgresource.ConvertStringArr(config["enable_components"].([]interface{}))
+		components = tpgresource.ConvertStringSet(config["enable_components"].(*schema.Set))
 	}
 
 	return &container.LoggingConfig{
@@ -7447,9 +7449,9 @@ func expandMonitoringConfig(configured interface{}) *container.MonitoringConfig 
 	config := l[0].(map[string]interface{})
 
 	if v, ok := config["enable_components"]; ok {
-		enable_components := v.([]interface{})
+		enable_components := v.(*schema.Set)
 		mc.ComponentConfig = &container.MonitoringComponentConfig{
-			EnableComponents: tpgresource.ConvertStringArr(enable_components),
+			EnableComponents: tpgresource.ConvertStringSet(enable_components),
 		}
 	}
 	if v, ok := config["managed_prometheus"]; ok && len(v.([]interface{})) > 0 {
