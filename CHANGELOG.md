@@ -1,8 +1,8 @@
 ## 7.41.0 (Unreleased)
 
 FEATURES:
-* **New Resource:** `google_biglake_hive_table` (beta) ([#12721](https://github.com/hashicorp/terraform-provider-google-beta/pull/12721))
-* **New Resource:** `google_compute_global_vm_extension_policy` (beta) ([#12673](https://github.com/hashicorp/terraform-provider-google-beta/pull/12673))
+* **New Resource:** `google_biglake_hive_table` ([#12721](https://github.com/hashicorp/terraform-provider-google-beta/pull/12721))
+* **New Resource:** `google_compute_global_vm_extension_policy` ([#12673](https://github.com/hashicorp/terraform-provider-google-beta/pull/12673))
 * **New List Resource:** `google_compute_backend_bucket_signed_url_key` ([#12713](https://github.com/hashicorp/terraform-provider-google-beta/pull/12713))
 * **New List Resource:** `google_compute_backend_service_signed_url_key` ([#12713](https://github.com/hashicorp/terraform-provider-google-beta/pull/12713))
 * **New List Resource:** `google_compute_network_firewall_policy` ([#12713](https://github.com/hashicorp/terraform-provider-google-beta/pull/12713))
@@ -25,7 +25,7 @@ IMPROVEMENTS:
 * compute: added 3500GB and 7000GB SSD partition size to `google_compute_instance_template` resource ([#12708](https://github.com/hashicorp/terraform-provider-google-beta/pull/12708))
 * compute: added `FLEX_START` and `RESERVATION_BOUND` support to `google_compute_instance`, `google_compute_instance_template`, and `google_compute_region_instance_template` resources ([#12720](https://github.com/hashicorp/terraform-provider-google-beta/pull/12720))
 * container: added the support for updating `node_image_config` and `image_type` fields at the same time ([#12674](https://github.com/hashicorp/terraform-provider-google-beta/pull/12674))
-* dataform: added `git_repository_link` field to `google_dataform_repository` resource (beta) ([#12683](https://github.com/hashicorp/terraform-provider-google-beta/pull/12683))
+* dataform: added `git_repository_link` field to `google_dataform_repository` resource ([#12683](https://github.com/hashicorp/terraform-provider-google-beta/pull/12683))
 * dataproc: added `confidential_instance_type` to `google_dataproc_cluster` resource ([#12725](https://github.com/hashicorp/terraform-provider-google-beta/pull/12725))
 * dataproc: added `instance_selection.disk_config` field to `google_dataproc_cluster` resource ([#12698](https://github.com/hashicorp/terraform-provider-google-beta/pull/12698))
 * discoveryengine: added `enable_llm_layout_parsing` and `enable_get_processed_document` fields to `google_discovery_engine_data_store` resource ([#12675](https://github.com/hashicorp/terraform-provider-google-beta/pull/12675))
