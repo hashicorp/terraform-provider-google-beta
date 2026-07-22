@@ -202,6 +202,12 @@ func expandScheduling(v interface{}) (map[string]interface{}, error) {
 	if v, ok := original["provisioning_model"]; ok {
 		result["provisioningModel"] = v.(string)
 	}
+
+	omitDurations := false
+	if pm, ok := result["provisioningModel"].(string); ok && pm == "RESERVATION_BOUND" {
+		omitDurations = true
+	}
+
 	if v, ok := original["instance_termination_action"]; ok {
 		result["instanceTerminationAction"] = v.(string)
 	}
@@ -213,7 +219,9 @@ func expandScheduling(v interface{}) (map[string]interface{}, error) {
 		if err != nil {
 			return nil, err
 		}
-		result["maxRunDuration"] = transformedMaxRunDuration
+		if transformedMaxRunDuration != nil || !omitDurations {
+			result["maxRunDuration"] = transformedMaxRunDuration
+		}
 	}
 
 	if v, ok := original["on_instance_stop_action"]; ok {
@@ -221,7 +229,9 @@ func expandScheduling(v interface{}) (map[string]interface{}, error) {
 		if err != nil {
 			return nil, err
 		}
-		result["onInstanceStopAction"] = transformedOnInstanceStopAction
+		if transformedOnInstanceStopAction != nil || !omitDurations {
+			result["onInstanceStopAction"] = transformedOnInstanceStopAction
+		}
 	}
 	if v, ok := original["host_error_timeout_seconds"]; ok {
 		//host_error_timeout_seconds doesn't get removed correctly due to an API bug on instances.SetScheduling.
@@ -242,7 +252,9 @@ func expandScheduling(v interface{}) (map[string]interface{}, error) {
 		if err != nil {
 			return nil, err
 		}
-		result["gracefulShutdown"] = transformedGracefulShutdown
+		if transformedGracefulShutdown != nil || !omitDurations {
+			result["gracefulShutdown"] = transformedGracefulShutdown
+		}
 	}
 
 	if v, ok := original["skip_guest_os_shutdown"]; ok {
@@ -254,14 +266,18 @@ func expandScheduling(v interface{}) (map[string]interface{}, error) {
 		if err != nil {
 			return nil, err
 		}
-		result["preemptionNoticeDuration"] = transformedPreemptionNoticeDuration
+		if transformedPreemptionNoticeDuration != nil || !omitDurations {
+			result["preemptionNoticeDuration"] = transformedPreemptionNoticeDuration
+		}
 	}
 	if v, ok := original["local_ssd_recovery_timeout"]; ok {
 		transformedLocalSsdRecoveryTimeout, err := expandComputeLocalSsdRecoveryTimeout(v)
 		if err != nil {
 			return nil, err
 		}
-		result["localSsdRecoveryTimeout"] = transformedLocalSsdRecoveryTimeout
+		if transformedLocalSsdRecoveryTimeout != nil || !omitDurations {
+			result["localSsdRecoveryTimeout"] = transformedLocalSsdRecoveryTimeout
+		}
 	}
 	if v, ok := original["termination_time"]; ok && v.(string) != "" {
 		result["terminationTime"] = v.(string)
@@ -727,7 +743,7 @@ func flattenNetworkInterfaces(d *schema.ResourceData, config *transport_tpg.Conf
 			"subnetwork":                  tpgresource.ConvertSelfLinkToV1(subnetwork),
 			"subnetwork_project":          subnet.Project,
 			"access_config":               ac,
-			"alias_ip_range":              flattenAliasIpRange(d, aliasIpRanges, i),
+			"alias_ip_range":              FlattenAliasIpRangeHTTP(d, aliasIpRanges, i),
 			"alias_ipv6_range":            flattenIpv6AliasRange(d, getInterfaceSlice(iface["aliasIpv6Ranges"]), i),
 			"nic_type":                    nicType,
 			"stack_type":                  stackType,
