@@ -65,7 +65,7 @@ func TestAccComputeRolloutPlan_rolloutPlanBasicExample(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeRolloutPlanDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -89,7 +89,6 @@ func TestAccComputeRolloutPlan_rolloutPlanBasicExample(t *testing.T) {
 func testAccComputeRolloutPlan_rolloutPlanBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_rollout_plan" "default" {
-  provider       = google-beta
   name           = "tf-test-rollout-plan-%{random_suffix}"
   description    = "A test rollout plan"
   location_scope = "ZONAL"
