@@ -73,7 +73,7 @@ func TestAccComputeGlobalVmExtensionPolicy_computeGlobalVmExtensionPolicyBasicEx
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeGlobalVmExtensionPolicyDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -118,7 +118,6 @@ func TestAccComputeGlobalVmExtensionPolicy_computeGlobalVmExtensionPolicyBasicEx
 func testAccComputeGlobalVmExtensionPolicy_computeGlobalVmExtensionPolicyBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_global_vm_extension_policy" "ops_agent_policy" {
-  provider    = google-beta
   name        = "global-ops-agent-vme-policy-%{random_suffix}"
   description = "A basic global VM extension policy"
   priority    = 10
@@ -148,7 +147,6 @@ resource "google_compute_global_vm_extension_policy" "ops_agent_policy" {
 func testAccComputeGlobalVmExtensionPolicy_computeGlobalVmExtensionPolicyUpdateExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_global_vm_extension_policy" "ops_agent_policy" {
-  provider    = google-beta
   name        = "global-ops-agent-vme-policy-%{random_suffix}"
   description = "A basic global VM extension policy"
   priority    = 20
@@ -193,7 +191,7 @@ func TestAccComputeGlobalVmExtensionPolicy_computeGlobalVmExtensionPolicyRollout
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeGlobalVmExtensionPolicyDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -238,7 +236,6 @@ func TestAccComputeGlobalVmExtensionPolicy_computeGlobalVmExtensionPolicyRollout
 func testAccComputeGlobalVmExtensionPolicy_computeGlobalVmExtensionPolicyUpdateRolloutExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_global_vm_extension_policy" "ops_agent_policy" {
-  provider    = google-beta
   name        = "global-ops-agent-vme-policy-%{random_suffix}"
   description = "A basic global VM extension policy"
   priority    = 10
@@ -279,7 +276,7 @@ func TestAccComputeGlobalVmExtensionPolicy_computeGlobalVmExtensionPolicyCustomR
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeGlobalVmExtensionPolicyDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -304,7 +301,6 @@ func TestAccComputeGlobalVmExtensionPolicy_computeGlobalVmExtensionPolicyCustomR
 func testAccComputeGlobalVmExtensionPolicy_computeGlobalVmExtensionPolicyCustomRolloutExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_global_vm_extension_policy" "ops_agent_policy" {
-  provider    = google-beta
   name        = "global-ops-agent-vme-policy-%{random_suffix}"
   description = "A global VM extension policy with a custom rollout plan"
   priority    = 10
@@ -330,11 +326,9 @@ resource "google_compute_global_vm_extension_policy" "ops_agent_policy" {
 }
 
 data "google_project" "project" {
-  provider = google-beta
 }
 
 resource "google_compute_rollout_plan" "custom_rollout" {
-  provider       = google-beta
   name           = "custom-rollout-plan-%{random_suffix}"
   location_scope = "ZONAL"
 
