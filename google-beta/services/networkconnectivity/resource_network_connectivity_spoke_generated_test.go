@@ -838,7 +838,7 @@ func TestAccNetworkConnectivitySpoke_networkConnectivitySpokeGatewayExample(t *t
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckNetworkConnectivitySpokeDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -863,13 +863,11 @@ func TestAccNetworkConnectivitySpoke_networkConnectivitySpokeGatewayExample(t *t
 func testAccNetworkConnectivitySpoke_networkConnectivitySpokeGatewayExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_network" "network" {
-  provider = google-beta
   name        = "%{network_name}"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "subnetwork" {
-  provider = google-beta
   name          = "tf-test-subnet%{random_suffix}"
   ip_cidr_range = "10.0.0.0/28"
   region        = "us-central1"
@@ -877,7 +875,6 @@ resource "google_compute_subnetwork" "subnetwork" {
 }
 
 resource "google_network_connectivity_hub" "basic_hub" {
-  provider = google-beta
   name        = "%{hub_name}"
   description = "A sample hub"
   labels = {
@@ -887,7 +884,6 @@ resource "google_network_connectivity_hub" "basic_hub" {
 }
 
 resource "google_network_connectivity_spoke" "primary" {
-  provider = google-beta
   name        = "%{spoke_name}"
   location = "us-central1"
   description = "A sample spoke of type Gateway"
