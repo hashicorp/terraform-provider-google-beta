@@ -40,8 +40,7 @@ BUG FIXES:
 * sql: fixed issue where updates to `settings.ip_configuration.psc_config.allowed_consumer_projects` in `google_sql_database_instance` were silently ignored on in-place updates ([#12759](https://github.com/hashicorp/terraform-provider-google-beta/pull/12759))
 * vertexai: fixed `google_vertex_ai_endpoint_with_model_garden_deployment` destroying and recreating the endpoint when `min_replica_count`, `max_replica_count`, `required_replica_count`, or `autoscaling_metric_specs` changed ([#12735](https://github.com/hashicorp/terraform-provider-google-beta/pull/12735))
 
-
-## 7.41.0 (Unreleased)
+## 7.41.0 (July 17, 2026)
 
 FEATURES:
 * **New List Resource:** `google_compute_backend_bucket_signed_url_key` ([#12713](https://github.com/hashicorp/terraform-provider-google-beta/pull/12713))
