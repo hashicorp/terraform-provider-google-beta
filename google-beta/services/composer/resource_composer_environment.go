@@ -384,6 +384,24 @@ func ResourceComposerEnvironment() *schema.Resource {
 										ValidateFunc: validateComposerInternalIpv4CidrBlock,
 										Description:  `IPv4 cidr range that will be used by Composer internal components.`,
 									},
+									"traffic_routing_config": {
+										Type:        schema.TypeList,
+										Optional:    true,
+										Computed:    true,
+										MaxItems:    1,
+										Description: `Traffic routing configuration for Cloud Composer environment.`,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"cloud_run_functions_routing": {
+													Type:         schema.TypeString,
+													Optional:     true,
+													Computed:     true,
+													ValidateFunc: validation.StringInSlice([]string{"DIRECT", "VIA_NETWORK_ATTACHMENT"}, false),
+													Description:  `Traffic routing mode for Cloud Run functions. Possible values: ["DIRECT", "VIA_NETWORK_ATTACHMENT"]`,
+												},
+											},
+										},
+									},
 								},
 							},
 						},
@@ -1305,6 +1323,21 @@ func resourceComposerEnvironmentUpdate(d *schema.ResourceData, meta interface{})
 			}
 		}
 
+		if d.HasChange("config.0.node_config.0.traffic_routing_config") {
+			patchObj := &composer.Environment{
+				Config: &composer.EnvironmentConfig{
+					NodeConfig: &composer.NodeConfig{},
+				},
+			}
+			if config != nil && config.NodeConfig != nil {
+				patchObj.Config.NodeConfig.TrafficRoutingConfig = config.NodeConfig.TrafficRoutingConfig
+			}
+			err = resourceComposerEnvironmentPatchField("config.nodeConfig.trafficRoutingConfig", userAgent, patchObj, d, tfConfig)
+			if err != nil {
+				return err
+			}
+		}
+
 		if d.HasChange("config.0.software_config.0.image_version") {
 			patchObj := &composer.Environment{
 				Config: &composer.EnvironmentConfig{
@@ -1724,9 +1757,9 @@ func flattenComposerEnvironmentConfig(envCfg *composer.EnvironmentConfig) interf
 	transformed["dag_gcs_prefix"] = envCfg.DagGcsPrefix
 	transformed["node_count"] = envCfg.NodeCount
 	transformed["airflow_uri"] = envCfg.AirflowUri
-	transformed["node_config"] = flattenComposerEnvironmentConfigNodeConfig(envCfg.NodeConfig)
 	transformed["software_config"] = flattenComposerEnvironmentConfigSoftwareConfig(envCfg.SoftwareConfig)
 	imageVersion := envCfg.SoftwareConfig.ImageVersion
+	transformed["node_config"] = flattenComposerEnvironmentConfigNodeConfig(envCfg.NodeConfig, imageVersion)
 	if !isComposer3(imageVersion) {
 		transformed["private_environment_config"] = flattenComposerEnvironmentConfigPrivateEnvironmentConfig(envCfg.PrivateEnvironmentConfig)
 	}
@@ -1980,7 +2013,7 @@ func flattenComposerEnvironmentConfigPrivateEnvironmentConfig(envCfg *composer.P
 	return []interface{}{transformed}
 }
 
-func flattenComposerEnvironmentConfigNodeConfig(nodeCfg *composer.NodeConfig) interface{} {
+func flattenComposerEnvironmentConfigNodeConfig(nodeCfg *composer.NodeConfig, imageVersion string) interface{} {
 	if nodeCfg == nil {
 		return nil
 	}
@@ -1998,6 +2031,9 @@ func flattenComposerEnvironmentConfigNodeConfig(nodeCfg *composer.NodeConfig) in
 	transformed["tags"] = flattenComposerEnvironmentConfigNodeConfigTags(nodeCfg.Tags)
 	transformed["ip_allocation_policy"] = flattenComposerEnvironmentConfigNodeConfigIPAllocationPolicy(nodeCfg.IpAllocationPolicy)
 	transformed["composer_internal_ipv4_cidr_block"] = nodeCfg.ComposerInternalIpv4CidrBlock
+	if isComposer3(imageVersion) {
+		transformed["traffic_routing_config"] = flattenComposerEnvironmentConfigNodeConfigTrafficRoutingConfig(nodeCfg.TrafficRoutingConfig)
+	}
 	return []interface{}{transformed}
 }
 
@@ -2012,6 +2048,15 @@ func flattenComposerEnvironmentConfigNodeConfigIPAllocationPolicy(ipPolicy *comp
 	transformed["services_ipv4_cidr_block"] = ipPolicy.ServicesIpv4CidrBlock
 	transformed["services_secondary_range_name"] = ipPolicy.ServicesSecondaryRangeName
 
+	return []interface{}{transformed}
+}
+
+func flattenComposerEnvironmentConfigNodeConfigTrafficRoutingConfig(cfg *composer.TrafficRoutingConfig) interface{} {
+	if cfg == nil {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["cloud_run_functions_routing"] = cfg.CloudRunFunctionsRouting
 	return []interface{}{transformed}
 }
 
@@ -2649,6 +2694,31 @@ func expandComposerEnvironmentConfigNodeConfig(v interface{}, d *schema.Resource
 		transformed.ComposerInternalIpv4CidrBlock = transformedComposerInternalIpv4CidrBlock.(string)
 	}
 
+	transformedTrafficRoutingConfig, err := expandComposerEnvironmentTrafficRoutingConfig(original["traffic_routing_config"], d, config)
+	if err != nil {
+		return nil, err
+	}
+	transformed.TrafficRoutingConfig = transformedTrafficRoutingConfig
+
+	return transformed, nil
+}
+
+func expandComposerEnvironmentTrafficRoutingConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) (*composer.TrafficRoutingConfig, error) {
+	if v == nil {
+		return nil, nil
+	}
+	l, ok := v.([]interface{})
+	if !ok || len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := &composer.TrafficRoutingConfig{}
+
+	if v, ok := original["cloud_run_functions_routing"]; ok && v != nil {
+		transformed.CloudRunFunctionsRouting = v.(string)
+	}
+
 	return transformed, nil
 }
 
@@ -3142,6 +3212,7 @@ func versionValidationCustomizeDiffFunc(ctx context.Context, d *schema.ResourceD
 		"config.0.master_authorized_networks_config":                         false,
 		"config.0.node_config.0.composer_network_attachment":                 true, // allowed only in composer 3
 		"config.0.node_config.0.composer_internal_ipv4_cidr_block":           true,
+		"config.0.node_config.0.traffic_routing_config":                      true,
 		"config.0.software_config.0.web_server_plugins_mode":                 true,
 		"config.0.enable_private_environment":                                true,
 		"config.0.enable_private_builds_only":                                true,
