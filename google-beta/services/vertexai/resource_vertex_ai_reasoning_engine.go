@@ -54,6 +54,42 @@ import (
 	"google.golang.org/api/googleapi"
 )
 
+func vertexAiReasoningEngineRuntimeRevisionNameDiffSuppress(k, old, new string, d *schema.ResourceData) bool {
+	if old == new {
+		return true
+	}
+	if old == "" || new == "" {
+		return false
+	}
+
+	// Short name suffix matching (e.g., "rev-1" or "1" against full URI "projects/.../runtimeRevisions/rev-1")
+	if strings.HasSuffix(old, "/"+new) || strings.HasSuffix(old, "/rev-"+new) {
+		return true
+	}
+
+	// Keyword matching for LATEST or PREVIOUS
+	if new == "LATEST" || new == "PREVIOUS" {
+		if d != nil {
+			if d.HasChange("spec") {
+				return false
+			}
+			oldTargets, newTargets := d.GetChange("traffic_config.0.traffic_split_manual.0.targets")
+			if oldSlice, ok1 := oldTargets.([]interface{}); ok1 {
+				if newSlice, ok2 := newTargets.([]interface{}); ok2 {
+					if len(oldSlice) != len(newSlice) {
+						return false
+					}
+				}
+			}
+		}
+		if len(old) > 0 {
+			return true
+		}
+	}
+
+	return false
+}
+
 var (
 	_ = bytes.Clone
 	_ = context.WithCancel
@@ -1189,11 +1225,13 @@ default value is 3.10.`,
 				},
 			},
 			"traffic_config": {
-				Type:        schema.TypeList,
-				Computed:    true,
-				Optional:    true,
-				Description: `Optional. Traffic distribution configuration for the Reasoning Engine.`,
-				MaxItems:    1,
+				Type:     schema.TypeList,
+				Computed: true,
+				Optional: true,
+				Description: `Optional. Traffic distribution configuration for the Reasoning Engine.
+
+~> **Note:** Because revision IDs do not exist before the resource is created, the best practice for initial deployment is to set 'traffic_split_always_latest {}'. Once the resource is created, you can update the configuration to a manual split using newly generated revision IDs, short names (e.g. 'rev-1'), or keywords such as 'LATEST' and 'PREVIOUS'.`,
+				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"traffic_split_always_latest": {
@@ -1205,6 +1243,7 @@ latest Runtime Revision.`,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{},
 							},
+							ConflictsWith: []string{"traffic_config.0.traffic_split_manual"},
 						},
 						"traffic_split_manual": {
 							Type:     schema.TypeList,
@@ -1227,15 +1266,17 @@ percentages must equal to 100.`,
 													Description: `Required. Specifies percent of the traffic to this Runtime Revision.`,
 												},
 												"runtime_revision_name": {
-													Type:        schema.TypeString,
-													Required:    true,
-													Description: `Required. The Runtime Revision name to which to send this portion of traffic.`,
+													Type:             schema.TypeString,
+													Required:         true,
+													DiffSuppressFunc: vertexAiReasoningEngineRuntimeRevisionNameDiffSuppress,
+													Description:      `Required. The Runtime Revision name to which to send this portion of traffic. Accepts revision IDs, short names (e.g. 'rev-1'), or keywords such as 'LATEST' and 'PREVIOUS'. Note: Keywords like 'LATEST' and 'PREVIOUS' resolve at apply time to the concrete underlying revision ID and remain pinned until 'traffic_config' is updated in Terraform.`,
 												},
 											},
 										},
 									},
 								},
 							},
+							ConflictsWith: []string{"traffic_config.0.traffic_split_always_latest"},
 						},
 					},
 				},
@@ -4728,7 +4769,121 @@ func expandVertexAIReasoningEngineTrafficConfigTrafficSplitManualTargets(v inter
 }
 
 func expandVertexAIReasoningEngineTrafficConfigTrafficSplitManualTargetsRuntimeRevisionName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
-	return v, nil
+	if v == nil {
+		return nil, nil
+	}
+	s, ok := v.(string)
+	if !ok || s == "" {
+		return v, nil
+	}
+
+	// Keyword resolution for LATEST or PREVIOUS by querying live API runtimeRevisions
+	if s == "LATEST" || s == "PREVIOUS" {
+		url, err := tpgresource.ReplaceVars(d, config, "{{VertexAIBasePath}}projects/{{project}}/locations/{{region}}/reasoningEngines/{{name}}/runtimeRevisions")
+		if err != nil || strings.Contains(url, "{{name}}") {
+			return nil, fmt.Errorf("cannot resolve keyword %q: reasoning engine resource name is not yet available (deploy using 'traffic_split_always_latest {}' first)", s)
+		}
+		userAgent, uErr := tpgresource.GenerateUserAgentString(d, config.UserAgent)
+		project, pErr := tpgresource.GetProject(d, config)
+
+		var res map[string]interface{}
+		var reqErr error
+		if uErr != nil {
+			reqErr = uErr
+		} else if pErr != nil {
+			reqErr = pErr
+		} else {
+			res, reqErr = transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
+				Config:    config,
+				Method:    "GET",
+				Project:   project,
+				RawURL:    url,
+				UserAgent: userAgent,
+			})
+		}
+
+		var revs []struct {
+			name       string
+			createTime string
+		}
+		var rawRevs []interface{}
+		if res != nil {
+			if r, ok := res["runtimeRevisions"].([]interface{}); ok && len(r) > 0 {
+				rawRevs = r
+			} else if r, ok := res["reasoningEngineRuntimeRevisions"].([]interface{}); ok && len(r) > 0 {
+				rawRevs = r
+			}
+		}
+
+		if len(rawRevs) > 0 {
+			for _, r := range rawRevs {
+				if rMap, ok := r.(map[string]interface{}); ok {
+					rName, _ := rMap["name"].(string)
+					rTime, _ := rMap["createTime"].(string)
+					if rName != "" {
+						revs = append(revs, struct {
+							name       string
+							createTime string
+						}{name: rName, createTime: rTime})
+					}
+				}
+			}
+		}
+
+		if len(revs) > 0 {
+			// Helper to extract numeric revision ID for sorting fallback (e.g. "rev-10" -> 10)
+			extractRevisionNumber := func(name string) int {
+				base := name
+				if idx := strings.LastIndex(name, "/"); idx != -1 {
+					base = name[idx+1:]
+				}
+				trimmed := strings.TrimPrefix(base, "rev-")
+				if n, err := strconv.Atoi(trimmed); err == nil {
+					return n
+				}
+				return 0
+			}
+
+			// Sort revisions by createTime ascending, falling back to numeric revision ID comparison
+			sort.Slice(revs, func(i, j int) bool {
+				t1, err1 := time.Parse(time.RFC3339Nano, revs[i].createTime)
+				t2, err2 := time.Parse(time.RFC3339Nano, revs[j].createTime)
+				if err1 == nil && err2 == nil && !t1.Equal(t2) {
+					return t1.Before(t2)
+				}
+				num1 := extractRevisionNumber(revs[i].name)
+				num2 := extractRevisionNumber(revs[j].name)
+				if num1 != 0 && num2 != 0 && num1 != num2 {
+					return num1 < num2
+				}
+				return revs[i].name < revs[j].name
+			})
+			if s == "LATEST" {
+				s = revs[len(revs)-1].name
+			} else if s == "PREVIOUS" {
+				if len(revs) > 1 {
+					s = revs[len(revs)-2].name
+				} else {
+					return nil, fmt.Errorf("cannot resolve keyword %q: no previous runtime revision exists for this ReasoningEngine", s)
+				}
+			}
+		} else if reqErr != nil {
+			return nil, fmt.Errorf("error querying runtime revisions from GCP API to resolve keyword %q: %w", s, reqErr)
+		} else {
+			return nil, fmt.Errorf("cannot resolve keyword %q: no runtime revisions returned by GCP API for this ReasoningEngine", s)
+		}
+	}
+
+	// Expand short revision names into full resource URIs
+	if !strings.HasPrefix(s, "projects/") && !strings.Contains(s, "/runtimeRevisions/") {
+		resName, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/locations/{{region}}/reasoningEngines/{{name}}")
+		if err != nil || strings.Contains(resName, "{{name}}") {
+			return nil, fmt.Errorf("cannot use revision short name or keyword %q during initial creation: reasoning engine resource must be created first using 'traffic_split_always_latest {}'", s)
+		}
+		return fmt.Sprintf("%s/runtimeRevisions/%s", resName, s), nil
+	}
+
+	return s, nil
 }
 
 func expandVertexAIReasoningEngineTrafficConfigTrafficSplitManualTargetsPercent(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
