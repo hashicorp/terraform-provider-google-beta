@@ -35,6 +35,7 @@ fields:
   - api_field: 'config.nodeConfig.ipAllocationPolicy.useIpAliases'
   - api_field: 'config.nodeConfig.machineType'
   - api_field: 'config.nodeConfig.maxPodsPerNode'
+  - api_field: 'config.nodeConfig.trafficRoutingConfig.cloudRunFunctionsRouting'
   - api_field: 'config.nodeConfig.network'
   - api_field: 'config.nodeConfig.oauthScopes'
   - api_field: 'config.nodeConfig.serviceAccount'
