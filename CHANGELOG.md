@@ -1,6 +1,7 @@
-## 7.42.0 (July 28, 2026)
+## 7.42.0 (Unreleased)
 
 NOTES:
+* compute: migrated `google_compute_region_instance_template` resource to use direct HTTP rather than a client library ([#12752](https://github.com/hashicorp/terraform-provider-google-beta/pull/12752))
 
 DEPRECATIONS:
 * vertexai: deprecated `google_vertex_ai_schedule`, an accidentally-added duplicate resource; use `google_colab_schedule` instead. ([#12739](https://github.com/hashicorp/terraform-provider-google-beta/pull/12739))
