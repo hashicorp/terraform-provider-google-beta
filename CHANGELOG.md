@@ -1,7 +1,6 @@
-## 7.42.0 (Unreleased)
+## 7.42.0 (July 28, 2026)
 
 NOTES:
-* compute: migrated `google_compute_region_instance_template` resource to use direct HTTP rather than a client library ([#12752](https://github.com/hashicorp/terraform-provider-google-beta/pull/12752))
 
 DEPRECATIONS:
 * vertexai: deprecated `google_vertex_ai_schedule`, an accidentally-added duplicate resource; use `google_colab_schedule` instead. ([#12739](https://github.com/hashicorp/terraform-provider-google-beta/pull/12739))
@@ -16,19 +15,19 @@ FEATURES:
 
 IMPROVEMENTS:
 * bigquery: added `table_type` field to `google_bigquery_routine` resource ([#12761](https://github.com/hashicorp/terraform-provider-google-beta/pull/12761))
-* colab: added `catch_up`, `create_pipeline_job_request`, `create_time`, `last_pause_time`, `last_resume_time`, `last_scheduled_run_response`, `max_concurrent_active_run_count`, `next_run_time`, `started_run_count`, `update_time`, and sub-fields under `create_notebook_execution_job_request.notebook_execution_job` (`create_time`, `custom_environment_spec`, `encryption_spec`, `job_state`, `kernel_name`, `labels`, `name`, `schedule_resource_name`, `workbench_runtime`) and sub-fields under `create_notebook_execution_job_request` (`notebook_execution_job_id`, `parent`) to `google_colab_schedule` ([#12739](https://github.com/hashicorp/terraform-provider-google-beta/pull/12739))
-* composer: added `config.node_config.traffic_routing_config` argument to `google_composer_environment` resource ([#12733](https://github.com/hashicorp/terraform-provider-google-beta/pull/12733))
+* colab: added `catch_up`, `create_pipeline_job_request`, `create_time`, `last_pause_time`, `last_resume_time`, `last_scheduled_run_response`, `max_concurrent_active_run_count`, `next_run_time`, `started_run_count`, `update_time` fields, and sub-fields under `create_notebook_execution_job_request.notebook_execution_job` (`create_time`, `custom_environment_spec`, `encryption_spec`, `job_state`, `kernel_name`, `labels`, `name`, `schedule_resource_name`, `workbench_runtime`) and under `create_notebook_execution_job_request` (`notebook_execution_job_id`, `parent`) to `google_colab_schedule` resource ([#12739](https://github.com/hashicorp/terraform-provider-google-beta/pull/12739))
+* composer: added `config.node_config.traffic_routing_config` field to `google_composer_environment` resource ([#12733](https://github.com/hashicorp/terraform-provider-google-beta/pull/12733))
 * compute: added `effective_location` field to `google_compute_interconnect` resource ([#12742](https://github.com/hashicorp/terraform-provider-google-beta/pull/12742))
 * compute: added `request_headers` and `response_headers` fields to `log_config` on `google_compute_backend_service` and `google_compute_region_backend_service` resources ([#12746](https://github.com/hashicorp/terraform-provider-google-beta/pull/12746))
 * compute: added identity support to `google_compute_instance`, allowing resource import using an `identity` block ([#12754](https://github.com/hashicorp/terraform-provider-google-beta/pull/12754))
 * compute: changed `location` field to mutable for `google_compute_interconnect` resource ([#12742](https://github.com/hashicorp/terraform-provider-google-beta/pull/12742))
 * container: added `addons_config.node_readiness_config` field to `google_container_cluster` resource ([#12743](https://github.com/hashicorp/terraform-provider-google-beta/pull/12743))
-* container: added `rollback_safe_upgrade`, `desired_emulated_version`, and `emulated_version` fields to `google_container_cluster` ([#12757](https://github.com/hashicorp/terraform-provider-google-beta/pull/12757))
-* container: increased default timeout to 2 hours for `google_container_node_pool` ([#12727](https://github.com/hashicorp/terraform-provider-google-beta/pull/12727))
+* container: added `rollback_safe_upgrade`, `desired_emulated_version`, and `emulated_version` fields to `google_container_cluster` resource ([#12757](https://github.com/hashicorp/terraform-provider-google-beta/pull/12757))
+* container: increased default timeout to 2 hours for `google_container_node_pool` resource ([#12727](https://github.com/hashicorp/terraform-provider-google-beta/pull/12727))
 * dataproc: added `confidential_instance_type` field to `google_dataproc_cluster` resource ([#12725](https://github.com/hashicorp/terraform-provider-google-beta/pull/12725))
 * gkehub: added `min_control_plane_version`, `min_node_version`, `target_control_plane_version`, `target_node_version`, and `operational_state` fields to `google_gke_hub_rollout_sequence` resource ([#12749](https://github.com/hashicorp/terraform-provider-google-beta/pull/12749))
 * hypercomputecluster: increased default timeouts for `google_hypercomputecluster_cluster` to 120 minutes ([#12763](https://github.com/hashicorp/terraform-provider-google-beta/pull/12763))
-* modelarmor: added `template_metadata.filter_version_selector` to `google_model_armor_template` ([#12736](https://github.com/hashicorp/terraform-provider-google-beta/pull/12736))
+* modelarmor: added `template_metadata.filter_version_selector` field to `google_model_armor_template` resource ([#12736](https://github.com/hashicorp/terraform-provider-google-beta/pull/12736))
 * sql: added identity support to `google_sql_user` for `terraform query` support ([#12748](https://github.com/hashicorp/terraform-provider-google-beta/pull/12748))
 
 BUG FIXES:
