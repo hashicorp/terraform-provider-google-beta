@@ -80,7 +80,7 @@ func TestAccBigqueryAnalyticsHubQueryTemplate_bigqueryAnalyticshubQuerytemplateB
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckBigqueryAnalyticsHubQueryTemplateDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -125,11 +125,9 @@ func TestAccBigqueryAnalyticsHubQueryTemplate_bigqueryAnalyticshubQuerytemplateB
 func testAccBigqueryAnalyticsHubQueryTemplate_bigqueryAnalyticshubQuerytemplateBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 data "google_client_openid_userinfo" "me" {
-  provider = google-beta
 }
 
 resource "google_bigquery_analytics_hub_data_exchange" "querytemplate" {
-  provider = google-beta
   display_name = "My Audience Data Exchange"
   data_exchange_id = "%{data_exchange_id}"
   description = "%{desc}"
@@ -140,7 +138,6 @@ resource "google_bigquery_analytics_hub_data_exchange" "querytemplate" {
 }
 
 resource "google_bigquery_analytics_hub_query_template" "querytemplate" {
-  provider = google-beta
   location = "us"
   data_exchange_id = google_bigquery_analytics_hub_data_exchange.querytemplate.data_exchange_id
   query_template_id = "%{query_template_id}"
