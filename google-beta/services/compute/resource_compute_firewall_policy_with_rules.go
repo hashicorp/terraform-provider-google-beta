@@ -1265,7 +1265,8 @@ func flattenComputeFirewallPolicyWithRulesRule(v interface{}, d *schema.Resource
 	}
 	l := v.([]interface{})
 	transformed := make([]interface{}, 0, len(l))
-	for _, raw := range l {
+	for i, raw := range l {
+		_ = i
 		original := raw.(map[string]interface{})
 		if len(original) < 1 {
 			// Do not include empty json objects coming back from the api
@@ -1413,7 +1414,8 @@ func flattenComputeFirewallPolicyWithRulesRuleMatchSrcSecureTag(v interface{}, d
 	}
 	l := v.([]interface{})
 	transformed := make([]interface{}, 0, len(l))
-	for _, raw := range l {
+	for i, raw := range l {
+		_ = i
 		original := raw.(map[string]interface{})
 		if len(original) < 1 {
 			// Do not include empty json objects coming back from the api
@@ -1440,7 +1442,8 @@ func flattenComputeFirewallPolicyWithRulesRuleMatchLayer4Config(v interface{}, d
 	}
 	l := v.([]interface{})
 	transformed := make([]interface{}, 0, len(l))
-	for _, raw := range l {
+	for i, raw := range l {
+		_ = i
 		original := raw.(map[string]interface{})
 		if len(original) < 1 {
 			// Do not include empty json objects coming back from the api
@@ -1467,7 +1470,8 @@ func flattenComputeFirewallPolicyWithRulesRuleTargetSecureTag(v interface{}, d *
 	}
 	l := v.([]interface{})
 	transformed := make([]interface{}, 0, len(l))
-	for _, raw := range l {
+	for i, raw := range l {
+		_ = i
 		original := raw.(map[string]interface{})
 		if len(original) < 1 {
 			// Do not include empty json objects coming back from the api
@@ -1529,7 +1533,8 @@ func flattenComputeFirewallPolicyWithRulesPredefinedRules(v interface{}, d *sche
 	}
 	l := v.([]interface{})
 	transformed := make([]interface{}, 0, len(l))
-	for _, raw := range l {
+	for i, raw := range l {
+		_ = i
 		original := raw.(map[string]interface{})
 		if len(original) < 1 {
 			// Do not include empty json objects coming back from the api
@@ -1659,7 +1664,8 @@ func flattenComputeFirewallPolicyWithRulesPredefinedRulesMatchLayer4Config(v int
 	}
 	l := v.([]interface{})
 	transformed := make([]interface{}, 0, len(l))
-	for _, raw := range l {
+	for i, raw := range l {
+		_ = i
 		original := raw.(map[string]interface{})
 		if len(original) < 1 {
 			// Do not include empty json objects coming back from the api
@@ -1686,7 +1692,8 @@ func flattenComputeFirewallPolicyWithRulesPredefinedRulesMatchSrcSecureTag(v int
 	}
 	l := v.([]interface{})
 	transformed := make([]interface{}, 0, len(l))
-	for _, raw := range l {
+	for i, raw := range l {
+		_ = i
 		original := raw.(map[string]interface{})
 		if len(original) < 1 {
 			// Do not include empty json objects coming back from the api
@@ -1713,7 +1720,8 @@ func flattenComputeFirewallPolicyWithRulesPredefinedRulesTargetSecureTag(v inter
 	}
 	l := v.([]interface{})
 	transformed := make([]interface{}, 0, len(l))
-	for _, raw := range l {
+	for i, raw := range l {
+		_ = i
 		original := raw.(map[string]interface{})
 		if len(original) < 1 {
 			// Do not include empty json objects coming back from the api
