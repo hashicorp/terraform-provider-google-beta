@@ -558,6 +558,14 @@ values are in the format 'tagValues/456'.`,
 					},
 				},
 			},
+			"idle_action": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: verify.ValidateEnum([]string{"STOP", "SUSPEND", ""}),
+				Description: `The action to take when the workstation has been idle for the duration specified in idle_timeout.
+Defaults to STOP. Default value: "STOP" Possible values: ["STOP", "SUSPEND"]`,
+				Default: "STOP",
+			},
 			"idle_timeout": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -831,6 +839,12 @@ func resourceWorkstationsWorkstationConfigCreate(d *schema.ResourceData, meta in
 		return err
 	} else if v, ok := d.GetOkExists("idle_timeout"); !tpgresource.IsEmptyValue(reflect.ValueOf(idleTimeoutProp)) && (ok || !reflect.DeepEqual(v, idleTimeoutProp)) {
 		obj["idleTimeout"] = idleTimeoutProp
+	}
+	idleActionProp, err := expandWorkstationsWorkstationConfigIdleAction(d.Get("idle_action"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("idle_action"); !tpgresource.IsEmptyValue(reflect.ValueOf(idleActionProp)) && (ok || !reflect.DeepEqual(v, idleActionProp)) {
+		obj["idleAction"] = idleActionProp
 	}
 	runningTimeoutProp, err := expandWorkstationsWorkstationConfigRunningTimeout(d.Get("running_timeout"), d, config)
 	if err != nil {
@@ -1166,6 +1180,12 @@ func resourceWorkstationsWorkstationConfigUpdate(d *schema.ResourceData, meta in
 	} else if v, ok := d.GetOkExists("idle_timeout"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, idleTimeoutProp)) {
 		obj["idleTimeout"] = idleTimeoutProp
 	}
+	idleActionProp, err := expandWorkstationsWorkstationConfigIdleAction(d.Get("idle_action"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("idle_action"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, idleActionProp)) {
+		obj["idleAction"] = idleActionProp
+	}
 	runningTimeoutProp, err := expandWorkstationsWorkstationConfigRunningTimeout(d.Get("running_timeout"), d, config)
 	if err != nil {
 		return err
@@ -1258,6 +1278,10 @@ func resourceWorkstationsWorkstationConfigUpdate(d *schema.ResourceData, meta in
 
 	if d.HasChange("idle_timeout") {
 		updateMask = append(updateMask, "idleTimeout")
+	}
+
+	if d.HasChange("idle_action") {
+		updateMask = append(updateMask, "idleAction")
 	}
 
 	if d.HasChange("running_timeout") {
@@ -1502,6 +1526,10 @@ func flattenWorkstationsWorkstationConfigCreateTime(v interface{}, d *schema.Res
 }
 
 func flattenWorkstationsWorkstationConfigIdleTimeout(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenWorkstationsWorkstationConfigIdleAction(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -2300,6 +2328,10 @@ func expandWorkstationsWorkstationConfigEtag(v interface{}, d tpgresource.Terraf
 }
 
 func expandWorkstationsWorkstationConfigIdleTimeout(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandWorkstationsWorkstationConfigIdleAction(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
@@ -3276,6 +3308,9 @@ func ResourceWorkstationsWorkstationConfigFlatten(d *schema.ResourceData, meta i
 		return fmt.Errorf("Error reading WorkstationConfig: %s", err)
 	}
 	if err = d.Set("idle_timeout", flattenWorkstationsWorkstationConfigIdleTimeout(res["idleTimeout"], d, config)); err != nil {
+		return fmt.Errorf("Error reading WorkstationConfig: %s", err)
+	}
+	if err = d.Set("idle_action", flattenWorkstationsWorkstationConfigIdleAction(res["idleAction"], d, config)); err != nil {
 		return fmt.Errorf("Error reading WorkstationConfig: %s", err)
 	}
 	if err = d.Set("running_timeout", flattenWorkstationsWorkstationConfigRunningTimeout(res["runningTimeout"], d, config)); err != nil {
