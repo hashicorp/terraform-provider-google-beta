@@ -26,6 +26,7 @@ jobs:
           path: release-notes.txt
           retention-days: 1
   terraform-provider-release:
+    environment: release
     name: 'Terraform Provider Release'
     needs: [release-notes]
     uses: hashicorp/ghaction-terraform-provider-release/.github/workflows/hashicorp.yml@v4.2.1
