@@ -60,6 +60,7 @@ fields:
     - api_field: host.gceInstance.shieldedInstanceConfig.enableVtpm
     - api_field: host.gceInstance.tags
     - api_field: host.gceInstance.vmTags
+    - api_field: idleAction
     - api_field: idleTimeout
     - api_field: labels
     - field: location
