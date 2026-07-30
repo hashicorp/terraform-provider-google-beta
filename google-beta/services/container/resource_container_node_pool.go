@@ -1560,6 +1560,7 @@ func flattenNodePool(d *schema.ResourceData, config *transport_tpg.Config, np *c
 		"managed_instance_group_urls": managedIgmUrls,
 		"version":                     np.Version,
 		"network_config":              flattenNodeNetworkConfig(np.NetworkConfig, d, prefix),
+		"ignore_node_count_changes":   d.Get(prefix + "ignore_node_count_changes"),
 	}
 
 	if np.Autoscaling != nil {
