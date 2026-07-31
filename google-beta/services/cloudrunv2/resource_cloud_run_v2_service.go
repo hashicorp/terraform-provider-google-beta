@@ -759,6 +759,16 @@ If not specified or 0, defaults to 80 when requested CPU >= 1 and defaults to 1 
 							MaxItems:    1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
+									"concurrency_utilization": {
+										Type:        schema.TypeFloat,
+										Optional:    true,
+										Description: `Determines a threshold for concurrency utilization before scaling begins. Accepted values are between 0.1 and 0.95 (inclusive) or 0.0 to disable concurrency utilization as threshold for scaling. CPU and concurrency scaling cannot both be disabled.`,
+									},
+									"cpu_utilization": {
+										Type:        schema.TypeFloat,
+										Optional:    true,
+										Description: `Determines a threshold for CPU utilization before scaling begins. Accepted values are between 0.1 and 0.95 (inclusive) or 0.0 to disable CPU utilization as threshold for scaling. CPU and concurrency scaling cannot both be disabled.`,
+									},
 									"max_instance_count": {
 										Type:     schema.TypeInt,
 										Optional: true,
@@ -2439,6 +2449,10 @@ func flattenCloudRunV2ServiceTemplateScaling(v interface{}, d *schema.ResourceDa
 		flattenCloudRunV2ServiceTemplateScalingMinInstanceCount(original["minInstanceCount"], d, config)
 	transformed["max_instance_count"] =
 		flattenCloudRunV2ServiceTemplateScalingMaxInstanceCount(original["maxInstanceCount"], d, config)
+	transformed["cpu_utilization"] =
+		flattenCloudRunV2ServiceTemplateScalingCpuUtilization(original["cpuUtilization"], d, config)
+	transformed["concurrency_utilization"] =
+		flattenCloudRunV2ServiceTemplateScalingConcurrencyUtilization(original["concurrencyUtilization"], d, config)
 	return []interface{}{transformed}
 }
 func flattenCloudRunV2ServiceTemplateScalingMinInstanceCount(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -2473,6 +2487,14 @@ func flattenCloudRunV2ServiceTemplateScalingMaxInstanceCount(v interface{}, d *s
 	}
 
 	return v // let terraform core handle it otherwise
+}
+
+func flattenCloudRunV2ServiceTemplateScalingCpuUtilization(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenCloudRunV2ServiceTemplateScalingConcurrencyUtilization(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
 }
 
 func flattenCloudRunV2ServiceTemplateVpcAccess(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -4420,6 +4442,20 @@ func expandCloudRunV2ServiceTemplateScaling(v interface{}, d tpgresource.Terrafo
 		transformed["maxInstanceCount"] = transformedMaxInstanceCount
 	}
 
+	transformedCpuUtilization, err := expandCloudRunV2ServiceTemplateScalingCpuUtilization(original["cpu_utilization"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedCpuUtilization); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["cpuUtilization"] = transformedCpuUtilization
+	}
+
+	transformedConcurrencyUtilization, err := expandCloudRunV2ServiceTemplateScalingConcurrencyUtilization(original["concurrency_utilization"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedConcurrencyUtilization); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["concurrencyUtilization"] = transformedConcurrencyUtilization
+	}
+
 	return transformed, nil
 }
 
@@ -4428,6 +4464,14 @@ func expandCloudRunV2ServiceTemplateScalingMinInstanceCount(v interface{}, d tpg
 }
 
 func expandCloudRunV2ServiceTemplateScalingMaxInstanceCount(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandCloudRunV2ServiceTemplateScalingCpuUtilization(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandCloudRunV2ServiceTemplateScalingConcurrencyUtilization(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
