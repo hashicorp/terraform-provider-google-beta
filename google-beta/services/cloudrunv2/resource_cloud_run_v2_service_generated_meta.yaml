@@ -130,6 +130,8 @@ fields:
     - api_field: template.maxInstanceRequestConcurrency
     - api_field: template.nodeSelector.accelerator
     - api_field: template.revision
+    - api_field: template.scaling.concurrencyUtilization
+    - api_field: template.scaling.cpuUtilization
     - api_field: template.scaling.maxInstanceCount
     - api_field: template.scaling.minInstanceCount
     - api_field: template.serviceAccount
