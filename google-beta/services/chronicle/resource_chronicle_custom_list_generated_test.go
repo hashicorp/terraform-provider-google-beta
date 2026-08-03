@@ -72,7 +72,7 @@ func TestAccChronicleCustomList_chronicleCustomlistUpdateExample(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckChronicleCustomListDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -117,7 +117,6 @@ func TestAccChronicleCustomList_chronicleCustomlistUpdateExample(t *testing.T) {
 func testAccChronicleCustomList_chronicleCustomlistBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_chronicle_custom_list" "sample" {
-  provider = google-beta
   location = "us"
   instance = "%{chronicle_id}"
 
@@ -133,7 +132,6 @@ resource "google_chronicle_custom_list" "sample" {
 func testAccChronicleCustomList_chronicleCustomlistFullExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_chronicle_custom_list" "sample" {
-  provider = google-beta
   location = "us"
   instance = "%{chronicle_id}"
 
