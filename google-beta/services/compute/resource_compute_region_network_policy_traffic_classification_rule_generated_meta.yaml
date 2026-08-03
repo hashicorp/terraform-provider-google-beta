@@ -1,0 +1,33 @@
+# Copyright IBM Corp. 2014, 2026
+# SPDX-License-Identifier: MPL-2.0
+resource: google_compute_region_network_policy_traffic_classification_rule
+generation_type: mmv1
+source_file: products/compute/RegionNetworkPolicyTrafficClassificationRule.yaml
+api_service_name: compute.googleapis.com
+api_version: beta
+api_resource_type_kind: NetworkPolicy
+fields:
+    - api_field: action.dscpMode
+    - api_field: action.dscpValue
+    - api_field: action.trafficClass
+    - api_field: action.type
+    - api_field: creationTimestamp
+    - api_field: description
+    - api_field: disabled
+    - api_field: kind
+    - api_field: match.destIpRanges
+    - api_field: match.layer4Configs.ipProtocol
+    - api_field: match.layer4Configs.ports
+    - api_field: match.srcIpRanges
+    - field: network_policy
+      provider_only: true
+    - api_field: priority
+    - field: region
+      provider_only: true
+    - api_field: ruleName
+    - api_field: ruleTupleCount
+    - api_field: targetSecureTags.name
+    - api_field: targetSecureTags.state
+    - api_field: targetServiceAccounts
+    - field: deletion_policy
+      provider_only: true

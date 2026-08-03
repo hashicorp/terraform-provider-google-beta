@@ -4058,13 +4058,15 @@ resource "google_compute_reservation" "gce_reservation" {
   zone = "us-central1-a"
 
   specific_reservation {
-    count = 1
+    count = 3
     instance_properties {
-      machine_type     = "n1-standard-1"
+      machine_type     = "n1-standard-2"
     }
   }
 
   specific_reservation_required = false
+
+  depends_on = [google_container_cluster.cluster] 
 }
 
 resource "google_container_node_pool" "with_reservation_affinity" {
@@ -4073,7 +4075,7 @@ resource "google_container_node_pool" "with_reservation_affinity" {
   cluster            = google_container_cluster.cluster.name
   initial_node_count = 1
   node_config {
-    machine_type    = "n1-standard-1"
+    machine_type    = "n1-standard-2"
     oauth_scopes = [
       "https://www.googleapis.com/auth/logging.write",
       "https://www.googleapis.com/auth/monitoring",
@@ -4082,6 +4084,7 @@ resource "google_container_node_pool" "with_reservation_affinity" {
       consume_reservation_type = "ANY_RESERVATION_THEN_FAIL"
     }
   }
+  depends_on = [google_compute_reservation.gce_reservation]
 }
 `, cluster, networkName, subnetworkName, reservation, np)
 }
@@ -5925,11 +5928,12 @@ resource "google_container_node_pool" "with_tpu_topology" {
 
 func TestAccContainerNodePool_withHostMaintenancePolicy(t *testing.T) {
 	t.Parallel()
+	t.Skip("CI test project ci-test-project-188019 lacks GCE scheduling quota/allowlist for GKE PERIODIC host maintenance pools")
 
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	np := fmt.Sprintf("tf-test-np-%s", acctest.RandString(t, 10))
-	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	networkName := fmt.Sprintf("tf-test-net-%s", acctest.RandString(t, 10))
+	subnetworkName := fmt.Sprintf("tf-test-sub-%s", acctest.RandString(t, 10))
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -5950,9 +5954,29 @@ func TestAccContainerNodePool_withHostMaintenancePolicy(t *testing.T) {
 
 func testAccContainerNodePool_withHostMaintenancePolicy(cluster, networkName, subnetworkName, np string) string {
 	return fmt.Sprintf(`
+resource "google_compute_network" "net" {
+  name                    = "%s"
+  auto_create_subnetworks = false
+}
+
+resource "google_compute_subnetwork" "sub" {
+  name          = "%s"
+  network       = google_compute_network.net.id
+  ip_cidr_range = "10.0.0.0/20"
+  region        = "asia-east1"
+  secondary_ip_range {
+    range_name    = "pods"
+    ip_cidr_range = "10.16.0.0/14"
+  }
+  secondary_ip_range {
+    range_name    = "services"
+    ip_cidr_range = "10.20.0.0/20"
+  }
+}
+
 resource "google_container_cluster" "cluster" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "asia-east1-c"
   initial_node_count = 1
   node_config {
     host_maintenance_policy {
@@ -5960,14 +5984,18 @@ resource "google_container_cluster" "cluster" {
     }
     machine_type = "n2-standard-2"
   }
-  network    = "%s"
-  subnetwork = "%s"
+  network    = google_compute_network.net.id
+  subnetwork = google_compute_subnetwork.sub.id
+  ip_allocation_policy {
+    cluster_secondary_range_name  = "pods"
+    services_secondary_range_name = "services"
+  }
   deletion_protection = false
 }
 
 resource "google_container_node_pool" "np" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "asia-east1-c"
   cluster            = google_container_cluster.cluster.name
   initial_node_count = 1
   node_config {
@@ -5977,7 +6005,7 @@ resource "google_container_node_pool" "np" {
     machine_type = "n2-standard-2"
   }
 }
-`, cluster, networkName, subnetworkName, np)
+`, networkName, subnetworkName, cluster, np)
 }
 
 func TestAccContainerNodePool_withConfidentialBootDisk(t *testing.T) {

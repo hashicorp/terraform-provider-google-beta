@@ -51,7 +51,7 @@ func TestAccComputeRolloutPlanListQuery_generated(t *testing.T) {
 			tfversion.SkipBelow(tfversion.Version1_14_0),
 		},
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeRolloutPlanDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -86,7 +86,7 @@ func TestAccComputeRolloutPlanListQuery_generated(t *testing.T) {
 func testAccComputeRolloutPlan_rolloutPlanBasicExampleListQuery(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 list "google_compute_rollout_plan" "list_query" {
-    provider = google-beta
+    provider = google
 	limit = 10000
     config {
     }
