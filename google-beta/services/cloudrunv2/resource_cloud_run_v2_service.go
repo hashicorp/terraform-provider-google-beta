@@ -482,6 +482,11 @@ Defaults to 1 second. Must be smaller than period_seconds.`,
 											},
 										},
 									},
+									"sandbox_launcher": {
+										Type:        schema.TypeBool,
+										Optional:    true,
+										Description: `Indicates that this container can act as a sandbox supervisor and launch sandboxes.`,
+									},
 									"source_code": {
 										Type:        schema.TypeList,
 										Optional:    true,
@@ -754,6 +759,16 @@ If not specified or 0, defaults to 80 when requested CPU >= 1 and defaults to 1 
 							MaxItems:    1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
+									"concurrency_utilization": {
+										Type:        schema.TypeFloat,
+										Optional:    true,
+										Description: `Determines a threshold for concurrency utilization before scaling begins. Accepted values are between 0.1 and 0.95 (inclusive) or 0.0 to disable concurrency utilization as threshold for scaling. CPU and concurrency scaling cannot both be disabled.`,
+									},
+									"cpu_utilization": {
+										Type:        schema.TypeFloat,
+										Optional:    true,
+										Description: `Determines a threshold for CPU utilization before scaling begins. Accepted values are between 0.1 and 0.95 (inclusive) or 0.0 to disable CPU utilization as threshold for scaling. CPU and concurrency scaling cannot both be disabled.`,
+									},
 									"max_instance_count": {
 										Type:     schema.TypeInt,
 										Optional: true,
@@ -2434,6 +2449,10 @@ func flattenCloudRunV2ServiceTemplateScaling(v interface{}, d *schema.ResourceDa
 		flattenCloudRunV2ServiceTemplateScalingMinInstanceCount(original["minInstanceCount"], d, config)
 	transformed["max_instance_count"] =
 		flattenCloudRunV2ServiceTemplateScalingMaxInstanceCount(original["maxInstanceCount"], d, config)
+	transformed["cpu_utilization"] =
+		flattenCloudRunV2ServiceTemplateScalingCpuUtilization(original["cpuUtilization"], d, config)
+	transformed["concurrency_utilization"] =
+		flattenCloudRunV2ServiceTemplateScalingConcurrencyUtilization(original["concurrencyUtilization"], d, config)
 	return []interface{}{transformed}
 }
 func flattenCloudRunV2ServiceTemplateScalingMinInstanceCount(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -2470,6 +2489,14 @@ func flattenCloudRunV2ServiceTemplateScalingMaxInstanceCount(v interface{}, d *s
 	return v // let terraform core handle it otherwise
 }
 
+func flattenCloudRunV2ServiceTemplateScalingCpuUtilization(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenCloudRunV2ServiceTemplateScalingConcurrencyUtilization(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenCloudRunV2ServiceTemplateVpcAccess(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
@@ -2501,7 +2528,8 @@ func flattenCloudRunV2ServiceTemplateVpcAccessNetworkInterfaces(v interface{}, d
 	}
 	l := v.([]interface{})
 	transformed := make([]interface{}, 0, len(l))
-	for _, raw := range l {
+	for i, raw := range l {
+		_ = i
 		original := raw.(map[string]interface{})
 		if len(original) < 1 {
 			// Do not include empty json objects coming back from the api
@@ -2541,29 +2569,31 @@ func flattenCloudRunV2ServiceTemplateContainers(v interface{}, d *schema.Resourc
 	}
 	l := v.([]interface{})
 	transformed := make([]interface{}, 0, len(l))
-	for _, raw := range l {
+	for i, raw := range l {
+		_ = i
 		original := raw.(map[string]interface{})
 		if len(original) < 1 {
 			// Do not include empty json objects coming back from the api
 			continue
 		}
 		transformed = append(transformed, map[string]interface{}{
-			"name":            flattenCloudRunV2ServiceTemplateContainersName(original["name"], d, config),
-			"image":           flattenCloudRunV2ServiceTemplateContainersImage(original["image"], d, config),
-			"command":         flattenCloudRunV2ServiceTemplateContainersCommand(original["command"], d, config),
-			"args":            flattenCloudRunV2ServiceTemplateContainersArgs(original["args"], d, config),
-			"env":             flattenCloudRunV2ServiceTemplateContainersEnv(original["env"], d, config),
-			"resources":       flattenCloudRunV2ServiceTemplateContainersResources(original["resources"], d, config),
-			"ports":           flattenCloudRunV2ServiceTemplateContainersPorts(original["ports"], d, config),
-			"volume_mounts":   flattenCloudRunV2ServiceTemplateContainersVolumeMounts(original["volumeMounts"], d, config),
-			"working_dir":     flattenCloudRunV2ServiceTemplateContainersWorkingDir(original["workingDir"], d, config),
-			"liveness_probe":  flattenCloudRunV2ServiceTemplateContainersLivenessProbe(original["livenessProbe"], d, config),
-			"startup_probe":   flattenCloudRunV2ServiceTemplateContainersStartupProbe(original["startupProbe"], d, config),
-			"readiness_probe": flattenCloudRunV2ServiceTemplateContainersReadinessProbe(original["readinessProbe"], d, config),
-			"depends_on":      flattenCloudRunV2ServiceTemplateContainersDependsOn(original["dependsOn"], d, config),
-			"base_image_uri":  flattenCloudRunV2ServiceTemplateContainersBaseImageUri(original["baseImageUri"], d, config),
-			"build_info":      flattenCloudRunV2ServiceTemplateContainersBuildInfo(original["buildInfo"], d, config),
-			"source_code":     flattenCloudRunV2ServiceTemplateContainersSourceCode(original["sourceCode"], d, config),
+			"name":             flattenCloudRunV2ServiceTemplateContainersName(original["name"], d, config),
+			"image":            flattenCloudRunV2ServiceTemplateContainersImage(original["image"], d, config),
+			"command":          flattenCloudRunV2ServiceTemplateContainersCommand(original["command"], d, config),
+			"args":             flattenCloudRunV2ServiceTemplateContainersArgs(original["args"], d, config),
+			"env":              flattenCloudRunV2ServiceTemplateContainersEnv(original["env"], d, config),
+			"resources":        flattenCloudRunV2ServiceTemplateContainersResources(original["resources"], d, config),
+			"ports":            flattenCloudRunV2ServiceTemplateContainersPorts(original["ports"], d, config),
+			"sandbox_launcher": flattenCloudRunV2ServiceTemplateContainersSandboxLauncher(original["sandboxLauncher"], d, config),
+			"volume_mounts":    flattenCloudRunV2ServiceTemplateContainersVolumeMounts(original["volumeMounts"], d, config),
+			"working_dir":      flattenCloudRunV2ServiceTemplateContainersWorkingDir(original["workingDir"], d, config),
+			"liveness_probe":   flattenCloudRunV2ServiceTemplateContainersLivenessProbe(original["livenessProbe"], d, config),
+			"startup_probe":    flattenCloudRunV2ServiceTemplateContainersStartupProbe(original["startupProbe"], d, config),
+			"readiness_probe":  flattenCloudRunV2ServiceTemplateContainersReadinessProbe(original["readinessProbe"], d, config),
+			"depends_on":       flattenCloudRunV2ServiceTemplateContainersDependsOn(original["dependsOn"], d, config),
+			"base_image_uri":   flattenCloudRunV2ServiceTemplateContainersBaseImageUri(original["baseImageUri"], d, config),
+			"build_info":       flattenCloudRunV2ServiceTemplateContainersBuildInfo(original["buildInfo"], d, config),
+			"source_code":      flattenCloudRunV2ServiceTemplateContainersSourceCode(original["sourceCode"], d, config),
 		})
 	}
 	return transformed
@@ -2590,7 +2620,8 @@ func flattenCloudRunV2ServiceTemplateContainersEnv(v interface{}, d *schema.Reso
 	}
 	l := v.([]interface{})
 	transformed := schema.NewSet(schema.HashResource(cloudrunv2ServiceTemplateContainersContainersEnvSchema()), []interface{}{})
-	for _, raw := range l {
+	for i, raw := range l {
+		_ = i
 		original := raw.(map[string]interface{})
 		if len(original) < 1 {
 			// Do not include empty json objects coming back from the api
@@ -2683,7 +2714,8 @@ func flattenCloudRunV2ServiceTemplateContainersPorts(v interface{}, d *schema.Re
 	}
 	l := v.([]interface{})
 	transformed := make([]interface{}, 0, len(l))
-	for _, raw := range l {
+	for i, raw := range l {
+		_ = i
 		original := raw.(map[string]interface{})
 		if len(original) < 1 {
 			// Do not include empty json objects coming back from the api
@@ -2717,13 +2749,18 @@ func flattenCloudRunV2ServiceTemplateContainersPortsContainerPort(v interface{},
 	return v // let terraform core handle it otherwise
 }
 
+func flattenCloudRunV2ServiceTemplateContainersSandboxLauncher(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenCloudRunV2ServiceTemplateContainersVolumeMounts(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
 	}
 	l := v.([]interface{})
 	transformed := make([]interface{}, 0, len(l))
-	for _, raw := range l {
+	for i, raw := range l {
+		_ = i
 		original := raw.(map[string]interface{})
 		if len(original) < 1 {
 			// Do not include empty json objects coming back from the api
@@ -2887,7 +2924,8 @@ func flattenCloudRunV2ServiceTemplateContainersLivenessProbeHttpGetHttpHeaders(v
 	}
 	l := v.([]interface{})
 	transformed := make([]interface{}, 0, len(l))
-	for _, raw := range l {
+	for i, raw := range l {
+		_ = i
 		original := raw.(map[string]interface{})
 		if len(original) < 1 {
 			// Do not include empty json objects coming back from the api
@@ -3105,7 +3143,8 @@ func flattenCloudRunV2ServiceTemplateContainersStartupProbeHttpGetHttpHeaders(v 
 	}
 	l := v.([]interface{})
 	transformed := make([]interface{}, 0, len(l))
-	for _, raw := range l {
+	for i, raw := range l {
+		_ = i
 		original := raw.(map[string]interface{})
 		if len(original) < 1 {
 			// Do not include empty json objects coming back from the api
@@ -3422,7 +3461,8 @@ func flattenCloudRunV2ServiceTemplateVolumes(v interface{}, d *schema.ResourceDa
 	}
 	l := v.([]interface{})
 	transformed := make([]interface{}, 0, len(l))
-	for _, raw := range l {
+	for i, raw := range l {
+		_ = i
 		original := raw.(map[string]interface{})
 		if len(original) < 1 {
 			// Do not include empty json objects coming back from the api
@@ -3487,7 +3527,8 @@ func flattenCloudRunV2ServiceTemplateVolumesSecretItems(v interface{}, d *schema
 	}
 	l := v.([]interface{})
 	transformed := make([]interface{}, 0, len(l))
-	for _, raw := range l {
+	for i, raw := range l {
+		_ = i
 		original := raw.(map[string]interface{})
 		if len(original) < 1 {
 			// Do not include empty json objects coming back from the api
@@ -3704,7 +3745,8 @@ func flattenCloudRunV2ServiceTraffic(v interface{}, d *schema.ResourceData, conf
 	}
 	l := v.([]interface{})
 	transformed := make([]interface{}, 0, len(l))
-	for _, raw := range l {
+	for i, raw := range l {
+		_ = i
 		original := raw.(map[string]interface{})
 		if len(original) < 1 {
 			// Do not include empty json objects coming back from the api
@@ -3821,7 +3863,8 @@ func flattenCloudRunV2ServiceConditions(v interface{}, d *schema.ResourceData, c
 	}
 	l := v.([]interface{})
 	transformed := make([]interface{}, 0, len(l))
-	for _, raw := range l {
+	for i, raw := range l {
+		_ = i
 		original := raw.(map[string]interface{})
 		if len(original) < 1 {
 			// Do not include empty json objects coming back from the api
@@ -3886,7 +3929,8 @@ func flattenCloudRunV2ServiceTrafficStatuses(v interface{}, d *schema.ResourceDa
 	}
 	l := v.([]interface{})
 	transformed := make([]interface{}, 0, len(l))
-	for _, raw := range l {
+	for i, raw := range l {
+		_ = i
 		original := raw.(map[string]interface{})
 		if len(original) < 1 {
 			// Do not include empty json objects coming back from the api
@@ -4398,6 +4442,20 @@ func expandCloudRunV2ServiceTemplateScaling(v interface{}, d tpgresource.Terrafo
 		transformed["maxInstanceCount"] = transformedMaxInstanceCount
 	}
 
+	transformedCpuUtilization, err := expandCloudRunV2ServiceTemplateScalingCpuUtilization(original["cpu_utilization"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedCpuUtilization); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["cpuUtilization"] = transformedCpuUtilization
+	}
+
+	transformedConcurrencyUtilization, err := expandCloudRunV2ServiceTemplateScalingConcurrencyUtilization(original["concurrency_utilization"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedConcurrencyUtilization); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["concurrencyUtilization"] = transformedConcurrencyUtilization
+	}
+
 	return transformed, nil
 }
 
@@ -4406,6 +4464,14 @@ func expandCloudRunV2ServiceTemplateScalingMinInstanceCount(v interface{}, d tpg
 }
 
 func expandCloudRunV2ServiceTemplateScalingMaxInstanceCount(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandCloudRunV2ServiceTemplateScalingCpuUtilization(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandCloudRunV2ServiceTemplateScalingConcurrencyUtilization(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
@@ -4572,6 +4638,13 @@ func expandCloudRunV2ServiceTemplateContainers(v interface{}, d tpgresource.Terr
 			return nil, err
 		} else if val := reflect.ValueOf(transformedPorts); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 			transformed["ports"] = transformedPorts
+		}
+
+		transformedSandboxLauncher, err := expandCloudRunV2ServiceTemplateContainersSandboxLauncher(original["sandbox_launcher"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedSandboxLauncher); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["sandboxLauncher"] = transformedSandboxLauncher
 		}
 
 		transformedVolumeMounts, err := expandCloudRunV2ServiceTemplateContainersVolumeMounts(original["volume_mounts"], d, config)
@@ -4857,6 +4930,10 @@ func expandCloudRunV2ServiceTemplateContainersPortsName(v interface{}, d tpgreso
 }
 
 func expandCloudRunV2ServiceTemplateContainersPortsContainerPort(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandCloudRunV2ServiceTemplateContainersSandboxLauncher(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 

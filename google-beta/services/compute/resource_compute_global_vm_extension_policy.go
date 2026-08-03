@@ -804,7 +804,7 @@ func resourceComputeGlobalVmExtensionPolicyDelete(d *schema.ResourceData, meta i
 	}
 
 	if policyName != "" {
-		listUrl := fmt.Sprintf("https://compute.googleapis.com/compute/beta/projects/%s/global/rollouts?filter=rolloutEntity.orchestratedEntity.orchestrationSource%%20eq%%20%%22.*%s%%22", project, policyName)
+		listUrl := transport_tpg.BaseUrl(Product, config) + fmt.Sprintf("projects/%s/global/rollouts?filter=rolloutEntity.orchestratedEntity.orchestrationSource%%20eq%%20%%22.*%s%%22", project, policyName)
 		listRes, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 			Config:    config,
 			Method:    "GET",
@@ -822,7 +822,7 @@ func resourceComputeGlobalVmExtensionPolicyDelete(d *schema.ResourceData, meta i
 					if rollout, ok := item.(map[string]interface{}); ok {
 						if rolloutName, ok := rollout["name"].(string); ok && rolloutName != "" {
 							log.Printf("[DEBUG] Deleting historical rollout %q owned by policy %q to unlock referenced rollout plan", rolloutName, policyName)
-							deleteUrl := fmt.Sprintf("https://compute.googleapis.com/compute/beta/projects/%s/global/rollouts/%s", project, rolloutName)
+							deleteUrl := transport_tpg.BaseUrl(Product, config) + fmt.Sprintf("projects/%s/global/rollouts/%s", project, rolloutName)
 
 							res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 								Config:    config,
@@ -911,7 +911,8 @@ func flattenComputeGlobalVmExtensionPolicyInstanceSelectors(v interface{}, d *sc
 	}
 	l := v.([]interface{})
 	transformed := make([]interface{}, 0, len(l))
-	for _, raw := range l {
+	for i, raw := range l {
+		_ = i
 		original := raw.(map[string]interface{})
 		if len(original) < 1 {
 			// Do not include empty json objects coming back from the api
@@ -1028,7 +1029,8 @@ func flattenComputeGlobalVmExtensionPolicyRolloutOperationRolloutStatusCurrentRo
 	}
 	l := v.([]interface{})
 	transformed := make([]interface{}, 0, len(l))
-	for _, raw := range l {
+	for i, raw := range l {
+		_ = i
 		original := raw.(map[string]interface{})
 		if len(original) < 1 {
 			// Do not include empty json objects coming back from the api

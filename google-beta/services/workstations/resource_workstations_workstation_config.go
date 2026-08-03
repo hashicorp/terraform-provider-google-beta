@@ -558,6 +558,14 @@ values are in the format 'tagValues/456'.`,
 					},
 				},
 			},
+			"idle_action": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: verify.ValidateEnum([]string{"STOP", "SUSPEND", ""}),
+				Description: `The action to take when the workstation has been idle for the duration specified in idle_timeout.
+Defaults to STOP. Default value: "STOP" Possible values: ["STOP", "SUSPEND"]`,
+				Default: "STOP",
+			},
 			"idle_timeout": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -831,6 +839,12 @@ func resourceWorkstationsWorkstationConfigCreate(d *schema.ResourceData, meta in
 		return err
 	} else if v, ok := d.GetOkExists("idle_timeout"); !tpgresource.IsEmptyValue(reflect.ValueOf(idleTimeoutProp)) && (ok || !reflect.DeepEqual(v, idleTimeoutProp)) {
 		obj["idleTimeout"] = idleTimeoutProp
+	}
+	idleActionProp, err := expandWorkstationsWorkstationConfigIdleAction(d.Get("idle_action"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("idle_action"); !tpgresource.IsEmptyValue(reflect.ValueOf(idleActionProp)) && (ok || !reflect.DeepEqual(v, idleActionProp)) {
+		obj["idleAction"] = idleActionProp
 	}
 	runningTimeoutProp, err := expandWorkstationsWorkstationConfigRunningTimeout(d.Get("running_timeout"), d, config)
 	if err != nil {
@@ -1166,6 +1180,12 @@ func resourceWorkstationsWorkstationConfigUpdate(d *schema.ResourceData, meta in
 	} else if v, ok := d.GetOkExists("idle_timeout"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, idleTimeoutProp)) {
 		obj["idleTimeout"] = idleTimeoutProp
 	}
+	idleActionProp, err := expandWorkstationsWorkstationConfigIdleAction(d.Get("idle_action"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("idle_action"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, idleActionProp)) {
+		obj["idleAction"] = idleActionProp
+	}
 	runningTimeoutProp, err := expandWorkstationsWorkstationConfigRunningTimeout(d.Get("running_timeout"), d, config)
 	if err != nil {
 		return err
@@ -1258,6 +1278,10 @@ func resourceWorkstationsWorkstationConfigUpdate(d *schema.ResourceData, meta in
 
 	if d.HasChange("idle_timeout") {
 		updateMask = append(updateMask, "idleTimeout")
+	}
+
+	if d.HasChange("idle_action") {
+		updateMask = append(updateMask, "idleAction")
 	}
 
 	if d.HasChange("running_timeout") {
@@ -1505,6 +1529,10 @@ func flattenWorkstationsWorkstationConfigIdleTimeout(v interface{}, d *schema.Re
 	return v
 }
 
+func flattenWorkstationsWorkstationConfigIdleAction(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenWorkstationsWorkstationConfigRunningTimeout(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
@@ -1679,7 +1707,8 @@ func flattenWorkstationsWorkstationConfigHostGceInstanceAccelerators(v interface
 	}
 	l := v.([]interface{})
 	transformed := make([]interface{}, 0, len(l))
-	for _, raw := range l {
+	for i, raw := range l {
+		_ = i
 		original := raw.(map[string]interface{})
 		if len(original) < 1 {
 			// Do not include empty json objects coming back from the api
@@ -1719,7 +1748,8 @@ func flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigs(v interface
 	}
 	l := v.([]interface{})
 	transformed := make([]interface{}, 0, len(l))
-	for _, raw := range l {
+	for i, raw := range l {
+		_ = i
 		original := raw.(map[string]interface{})
 		if len(original) < 1 {
 			// Do not include empty json objects coming back from the api
@@ -1788,7 +1818,8 @@ func flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigsAccelerators
 	}
 	l := v.([]interface{})
 	transformed := make([]interface{}, 0, len(l))
-	for _, raw := range l {
+	for i, raw := range l {
+		_ = i
 		original := raw.(map[string]interface{})
 		if len(original) < 1 {
 			// Do not include empty json objects coming back from the api
@@ -1836,7 +1867,8 @@ func flattenWorkstationsWorkstationConfigPersistentDirectories(v interface{}, d 
 	}
 	l := v.([]interface{})
 	transformed := make([]interface{}, 0, len(l))
-	for _, raw := range l {
+	for i, raw := range l {
+		_ = i
 		original := raw.(map[string]interface{})
 		if len(original) < 1 {
 			// Do not include empty json objects coming back from the api
@@ -1962,7 +1994,8 @@ func flattenWorkstationsWorkstationConfigEphemeralDirectories(v interface{}, d *
 	}
 	l := v.([]interface{})
 	transformed := make([]interface{}, 0, len(l))
-	for _, raw := range l {
+	for i, raw := range l {
+		_ = i
 		original := raw.(map[string]interface{})
 		if len(original) < 1 {
 			// Do not include empty json objects coming back from the api
@@ -2103,7 +2136,8 @@ func flattenWorkstationsWorkstationConfigReadinessChecks(v interface{}, d *schem
 	}
 	l := v.([]interface{})
 	transformed := make([]interface{}, 0, len(l))
-	for _, raw := range l {
+	for i, raw := range l {
+		_ = i
 		original := raw.(map[string]interface{})
 		if len(original) < 1 {
 			// Do not include empty json objects coming back from the api
@@ -2168,7 +2202,8 @@ func flattenWorkstationsWorkstationConfigAllowedPorts(v interface{}, d *schema.R
 	}
 	l := v.([]interface{})
 	transformed := make([]interface{}, 0, len(l))
-	for _, raw := range l {
+	for i, raw := range l {
+		_ = i
 		original := raw.(map[string]interface{})
 		if len(original) < 1 {
 			// Do not include empty json objects coming back from the api
@@ -2221,7 +2256,8 @@ func flattenWorkstationsWorkstationConfigConditions(v interface{}, d *schema.Res
 	}
 	l := v.([]interface{})
 	transformed := make([]interface{}, 0, len(l))
-	for _, raw := range l {
+	for i, raw := range l {
+		_ = i
 		original := raw.(map[string]interface{})
 		if len(original) < 1 {
 			// Do not include empty json objects coming back from the api
@@ -2292,6 +2328,10 @@ func expandWorkstationsWorkstationConfigEtag(v interface{}, d tpgresource.Terraf
 }
 
 func expandWorkstationsWorkstationConfigIdleTimeout(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandWorkstationsWorkstationConfigIdleAction(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
@@ -3268,6 +3308,9 @@ func ResourceWorkstationsWorkstationConfigFlatten(d *schema.ResourceData, meta i
 		return fmt.Errorf("Error reading WorkstationConfig: %s", err)
 	}
 	if err = d.Set("idle_timeout", flattenWorkstationsWorkstationConfigIdleTimeout(res["idleTimeout"], d, config)); err != nil {
+		return fmt.Errorf("Error reading WorkstationConfig: %s", err)
+	}
+	if err = d.Set("idle_action", flattenWorkstationsWorkstationConfigIdleAction(res["idleAction"], d, config)); err != nil {
 		return fmt.Errorf("Error reading WorkstationConfig: %s", err)
 	}
 	if err = d.Set("running_timeout", flattenWorkstationsWorkstationConfigRunningTimeout(res["runningTimeout"], d, config)); err != nil {

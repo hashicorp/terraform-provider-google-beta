@@ -669,6 +669,10 @@ func TestUnitFlattenClusterNodePools(t *testing.T) {
 						Optional: true,
 						Elem:     &schema.Resource{Schema: map[string]*schema.Schema{"create_pod_range": {Type: schema.TypeBool}}},
 					},
+					"ignore_node_count_changes": {
+						Type:     schema.TypeBool,
+						Optional: true,
+					},
 				},
 			},
 			Optional: true,
@@ -706,6 +710,7 @@ func TestUnitFlattenClusterNodePools(t *testing.T) {
 					"managed_instance_group_urls": []string{},
 					"version":                     "",
 					"network_config":              []map[string]interface{}{},
+					"ignore_node_count_changes":   false,
 				},
 				{
 					"name":                        "pool-2",
@@ -718,6 +723,7 @@ func TestUnitFlattenClusterNodePools(t *testing.T) {
 					"managed_instance_group_urls": []string{},
 					"version":                     "",
 					"network_config":              []map[string]interface{}{},
+					"ignore_node_count_changes":   false,
 				},
 			},
 			expectError: false,

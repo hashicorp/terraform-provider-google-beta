@@ -2783,7 +2783,8 @@ func flattenComputeBackendServiceBackend(v interface{}, d *schema.ResourceData, 
 	}
 	l := v.([]interface{})
 	transformed := schema.NewSet(resourceGoogleComputeBackendServiceBackendHash, []interface{}{})
-	for _, raw := range l {
+	for i, raw := range l {
+		_ = i
 		original := raw.(map[string]interface{})
 		if len(original) < 1 {
 			// Do not include empty json objects coming back from the api
@@ -2975,7 +2976,8 @@ func flattenComputeBackendServiceBackendCustomMetrics(v interface{}, d *schema.R
 	}
 	l := v.([]interface{})
 	transformed := make([]interface{}, 0, len(l))
-	for _, raw := range l {
+	for i, raw := range l {
+		_ = i
 		original := raw.(map[string]interface{})
 		if len(original) < 1 {
 			// Do not include empty json objects coming back from the api
@@ -3448,7 +3450,8 @@ func flattenComputeBackendServiceCdnPolicyNegativeCachingPolicy(v interface{}, d
 	}
 	l := v.([]interface{})
 	transformed := make([]interface{}, 0, len(l))
-	for _, raw := range l {
+	for i, raw := range l {
+		_ = i
 		original := raw.(map[string]interface{})
 		if len(original) < 1 {
 			// Do not include empty json objects coming back from the api
@@ -3522,7 +3525,8 @@ func flattenComputeBackendServiceCdnPolicyBypassCacheOnRequestHeaders(v interfac
 	}
 	l := v.([]interface{})
 	transformed := make([]interface{}, 0, len(l))
-	for _, raw := range l {
+	for i, raw := range l {
+		_ = i
 		original := raw.(map[string]interface{})
 		if len(original) < 1 {
 			// Do not include empty json objects coming back from the api
@@ -3683,7 +3687,8 @@ func flattenComputeBackendServiceLocalityLbPolicies(v interface{}, d *schema.Res
 	}
 	l := v.([]interface{})
 	transformed := make([]interface{}, 0, len(l))
-	for _, raw := range l {
+	for i, raw := range l {
+		_ = i
 		original := raw.(map[string]interface{})
 		if len(original) < 1 {
 			// Do not include empty json objects coming back from the api
@@ -3742,7 +3747,8 @@ func flattenComputeBackendServiceCustomMetrics(v interface{}, d *schema.Resource
 	}
 	l := v.([]interface{})
 	transformed := make([]interface{}, 0, len(l))
-	for _, raw := range l {
+	for i, raw := range l {
+		_ = i
 		original := raw.(map[string]interface{})
 		if len(original) < 1 {
 			// Do not include empty json objects coming back from the api
@@ -4270,7 +4276,8 @@ func flattenComputeBackendServiceLogConfigRequestHeaders(v interface{}, d *schem
 	}
 	l := v.([]interface{})
 	transformed := make([]interface{}, 0, len(l))
-	for _, raw := range l {
+	for i, raw := range l {
+		_ = i
 		original := raw.(map[string]interface{})
 		if len(original) < 1 {
 			// Do not include empty json objects coming back from the api
@@ -4292,7 +4299,8 @@ func flattenComputeBackendServiceLogConfigResponseHeaders(v interface{}, d *sche
 	}
 	l := v.([]interface{})
 	transformed := make([]interface{}, 0, len(l))
-	for _, raw := range l {
+	for i, raw := range l {
+		_ = i
 		original := raw.(map[string]interface{})
 		if len(original) < 1 {
 			// Do not include empty json objects coming back from the api
@@ -4339,7 +4347,8 @@ func flattenComputeBackendServiceTlsSettingsSubjectAltNames(v interface{}, d *sc
 	}
 	l := v.([]interface{})
 	transformed := make([]interface{}, 0, len(l))
-	for _, raw := range l {
+	for i, raw := range l {
+		_ = i
 		original := raw.(map[string]interface{})
 		if len(original) < 1 {
 			// Do not include empty json objects coming back from the api
