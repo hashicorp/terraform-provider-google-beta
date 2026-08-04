@@ -8,6 +8,9 @@ on:
         - cron: '0 19 * * *' # 7PM PST
           timezone: 'America/Los_Angeles'
 
+permissions:
+  contents: write # Required to create, rename, and delete branches
+
 jobs:
     # uses the same teamcity nightly workflow used in terraform-provider-google
     # as well as the default value for DAYS_THRESHOLD
