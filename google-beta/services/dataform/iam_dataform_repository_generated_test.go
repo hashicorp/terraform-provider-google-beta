@@ -63,7 +63,7 @@ func TestAccDataformRepositoryIamBindingGenerated(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDataformRepositoryIamBinding_basicGenerated(context),
@@ -109,7 +109,7 @@ func TestAccDataformRepositoryIamMemberGenerated(t *testing.T) {
 			tfversion.RequireAbove(tfversion.Version1_12_0), // resource identity min version
 		},
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
 				// Test Iam Member creation (no update for member, no need to test)
@@ -147,7 +147,7 @@ func TestAccDataformRepositoryIamPolicyGenerated(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDataformRepositoryIamPolicy_basicGenerated(context),
@@ -175,16 +175,13 @@ func TestAccDataformRepositoryIamPolicyGenerated(t *testing.T) {
 func testAccDataformRepositoryIamMember_basicGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 data "google_project" "project" {
-  provider = google-beta
 }
 
 resource "google_sourcerepo_repository" "git_repository" {
-  provider = google-beta
   name = "%{git_repository_name}"
 }
 
 resource "google_secret_manager_secret" "secret" {
-  provider = google-beta
   secret_id = "%{secret_name}"
 
   replication {
@@ -193,28 +190,24 @@ resource "google_secret_manager_secret" "secret" {
 }
 
 resource "google_secret_manager_secret_version" "secret_version" {
-  provider = google-beta
   secret = google_secret_manager_secret.secret.id
 
   secret_data = "%{data}"
 }
 
 resource "google_kms_key_ring" "keyring" {
-  provider = google-beta
   
   name     = "%{key_ring_name}"
   location = "us-central1"
 }
 
 resource "google_kms_crypto_key" "example_key" {
-  provider = google-beta
   
   name            = "%{crypto_key_name}"
   key_ring        = google_kms_key_ring.keyring.id
 }
 
 resource "google_kms_crypto_key_iam_binding" "crypto_key_binding" {
-  provider = google-beta
 
   crypto_key_id = google_kms_crypto_key.example_key.id
   role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
@@ -225,7 +218,6 @@ resource "google_kms_crypto_key_iam_binding" "crypto_key_binding" {
 }
 
 resource "google_dataform_repository" "dataform_repository" {
-  provider = google-beta
   name = "%{dataform_repository_name}"
   display_name = "%{dataform_repository_name}"
   npmrc_environment_variables_secret_version = google_secret_manager_secret_version.secret_version.id
@@ -254,7 +246,6 @@ resource "google_dataform_repository" "dataform_repository" {
 }
 
 resource "google_dataform_repository_iam_member" "foo" {
-  provider = google-beta
   project = google_dataform_repository.dataform_repository.project
   region = google_dataform_repository.dataform_repository.region
   repository = google_dataform_repository.dataform_repository.name
@@ -267,16 +258,13 @@ resource "google_dataform_repository_iam_member" "foo" {
 func testAccDataformRepositoryIamPolicy_basicGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 data "google_project" "project" {
-  provider = google-beta
 }
 
 resource "google_sourcerepo_repository" "git_repository" {
-  provider = google-beta
   name = "%{git_repository_name}"
 }
 
 resource "google_secret_manager_secret" "secret" {
-  provider = google-beta
   secret_id = "%{secret_name}"
 
   replication {
@@ -285,28 +273,24 @@ resource "google_secret_manager_secret" "secret" {
 }
 
 resource "google_secret_manager_secret_version" "secret_version" {
-  provider = google-beta
   secret = google_secret_manager_secret.secret.id
 
   secret_data = "%{data}"
 }
 
 resource "google_kms_key_ring" "keyring" {
-  provider = google-beta
   
   name     = "%{key_ring_name}"
   location = "us-central1"
 }
 
 resource "google_kms_crypto_key" "example_key" {
-  provider = google-beta
   
   name            = "%{crypto_key_name}"
   key_ring        = google_kms_key_ring.keyring.id
 }
 
 resource "google_kms_crypto_key_iam_binding" "crypto_key_binding" {
-  provider = google-beta
 
   crypto_key_id = google_kms_crypto_key.example_key.id
   role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
@@ -317,7 +301,6 @@ resource "google_kms_crypto_key_iam_binding" "crypto_key_binding" {
 }
 
 resource "google_dataform_repository" "dataform_repository" {
-  provider = google-beta
   name = "%{dataform_repository_name}"
   display_name = "%{dataform_repository_name}"
   npmrc_environment_variables_secret_version = google_secret_manager_secret_version.secret_version.id
@@ -346,7 +329,6 @@ resource "google_dataform_repository" "dataform_repository" {
 }
 
 data "google_iam_policy" "foo" {
-  provider = google-beta
   binding {
     role = "%{role}"
     members = ["user:admin@hashicorptest.com"]
@@ -354,7 +336,6 @@ data "google_iam_policy" "foo" {
 }
 
 resource "google_dataform_repository_iam_policy" "foo" {
-  provider = google-beta
   project = google_dataform_repository.dataform_repository.project
   region = google_dataform_repository.dataform_repository.region
   repository = google_dataform_repository.dataform_repository.name
@@ -362,7 +343,6 @@ resource "google_dataform_repository_iam_policy" "foo" {
 }
 
 data "google_dataform_repository_iam_policy" "foo" {
-  provider = google-beta
   project = google_dataform_repository.dataform_repository.project
   region = google_dataform_repository.dataform_repository.region
   repository = google_dataform_repository.dataform_repository.name
@@ -376,16 +356,13 @@ data "google_dataform_repository_iam_policy" "foo" {
 func testAccDataformRepositoryIamPolicy_emptyBinding(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 data "google_project" "project" {
-  provider = google-beta
 }
 
 resource "google_sourcerepo_repository" "git_repository" {
-  provider = google-beta
   name = "%{git_repository_name}"
 }
 
 resource "google_secret_manager_secret" "secret" {
-  provider = google-beta
   secret_id = "%{secret_name}"
 
   replication {
@@ -394,28 +371,24 @@ resource "google_secret_manager_secret" "secret" {
 }
 
 resource "google_secret_manager_secret_version" "secret_version" {
-  provider = google-beta
   secret = google_secret_manager_secret.secret.id
 
   secret_data = "%{data}"
 }
 
 resource "google_kms_key_ring" "keyring" {
-  provider = google-beta
   
   name     = "%{key_ring_name}"
   location = "us-central1"
 }
 
 resource "google_kms_crypto_key" "example_key" {
-  provider = google-beta
   
   name            = "%{crypto_key_name}"
   key_ring        = google_kms_key_ring.keyring.id
 }
 
 resource "google_kms_crypto_key_iam_binding" "crypto_key_binding" {
-  provider = google-beta
 
   crypto_key_id = google_kms_crypto_key.example_key.id
   role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
@@ -426,7 +399,6 @@ resource "google_kms_crypto_key_iam_binding" "crypto_key_binding" {
 }
 
 resource "google_dataform_repository" "dataform_repository" {
-  provider = google-beta
   name = "%{dataform_repository_name}"
   display_name = "%{dataform_repository_name}"
   npmrc_environment_variables_secret_version = google_secret_manager_secret_version.secret_version.id
@@ -455,11 +427,9 @@ resource "google_dataform_repository" "dataform_repository" {
 }
 
 data "google_iam_policy" "foo" {
-  provider = google-beta
 }
 
 resource "google_dataform_repository_iam_policy" "foo" {
-  provider = google-beta
   project = google_dataform_repository.dataform_repository.project
   region = google_dataform_repository.dataform_repository.region
   repository = google_dataform_repository.dataform_repository.name
@@ -471,16 +441,13 @@ resource "google_dataform_repository_iam_policy" "foo" {
 func testAccDataformRepositoryIamBinding_basicGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 data "google_project" "project" {
-  provider = google-beta
 }
 
 resource "google_sourcerepo_repository" "git_repository" {
-  provider = google-beta
   name = "%{git_repository_name}"
 }
 
 resource "google_secret_manager_secret" "secret" {
-  provider = google-beta
   secret_id = "%{secret_name}"
 
   replication {
@@ -489,28 +456,24 @@ resource "google_secret_manager_secret" "secret" {
 }
 
 resource "google_secret_manager_secret_version" "secret_version" {
-  provider = google-beta
   secret = google_secret_manager_secret.secret.id
 
   secret_data = "%{data}"
 }
 
 resource "google_kms_key_ring" "keyring" {
-  provider = google-beta
   
   name     = "%{key_ring_name}"
   location = "us-central1"
 }
 
 resource "google_kms_crypto_key" "example_key" {
-  provider = google-beta
   
   name            = "%{crypto_key_name}"
   key_ring        = google_kms_key_ring.keyring.id
 }
 
 resource "google_kms_crypto_key_iam_binding" "crypto_key_binding" {
-  provider = google-beta
 
   crypto_key_id = google_kms_crypto_key.example_key.id
   role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
@@ -521,7 +484,6 @@ resource "google_kms_crypto_key_iam_binding" "crypto_key_binding" {
 }
 
 resource "google_dataform_repository" "dataform_repository" {
-  provider = google-beta
   name = "%{dataform_repository_name}"
   display_name = "%{dataform_repository_name}"
   npmrc_environment_variables_secret_version = google_secret_manager_secret_version.secret_version.id
@@ -550,7 +512,6 @@ resource "google_dataform_repository" "dataform_repository" {
 }
 
 resource "google_dataform_repository_iam_binding" "foo" {
-  provider = google-beta
   project = google_dataform_repository.dataform_repository.project
   region = google_dataform_repository.dataform_repository.region
   repository = google_dataform_repository.dataform_repository.name
@@ -563,16 +524,13 @@ resource "google_dataform_repository_iam_binding" "foo" {
 func testAccDataformRepositoryIamBinding_updateGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 data "google_project" "project" {
-  provider = google-beta
 }
 
 resource "google_sourcerepo_repository" "git_repository" {
-  provider = google-beta
   name = "%{git_repository_name}"
 }
 
 resource "google_secret_manager_secret" "secret" {
-  provider = google-beta
   secret_id = "%{secret_name}"
 
   replication {
@@ -581,28 +539,24 @@ resource "google_secret_manager_secret" "secret" {
 }
 
 resource "google_secret_manager_secret_version" "secret_version" {
-  provider = google-beta
   secret = google_secret_manager_secret.secret.id
 
   secret_data = "%{data}"
 }
 
 resource "google_kms_key_ring" "keyring" {
-  provider = google-beta
   
   name     = "%{key_ring_name}"
   location = "us-central1"
 }
 
 resource "google_kms_crypto_key" "example_key" {
-  provider = google-beta
   
   name            = "%{crypto_key_name}"
   key_ring        = google_kms_key_ring.keyring.id
 }
 
 resource "google_kms_crypto_key_iam_binding" "crypto_key_binding" {
-  provider = google-beta
 
   crypto_key_id = google_kms_crypto_key.example_key.id
   role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
@@ -613,7 +567,6 @@ resource "google_kms_crypto_key_iam_binding" "crypto_key_binding" {
 }
 
 resource "google_dataform_repository" "dataform_repository" {
-  provider = google-beta
   name = "%{dataform_repository_name}"
   display_name = "%{dataform_repository_name}"
   npmrc_environment_variables_secret_version = google_secret_manager_secret_version.secret_version.id
@@ -642,7 +595,6 @@ resource "google_dataform_repository" "dataform_repository" {
 }
 
 resource "google_dataform_repository_iam_binding" "foo" {
-  provider = google-beta
   project = google_dataform_repository.dataform_repository.project
   region = google_dataform_repository.dataform_repository.region
   repository = google_dataform_repository.dataform_repository.name
