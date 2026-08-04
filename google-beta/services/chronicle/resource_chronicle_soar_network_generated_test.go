@@ -72,7 +72,7 @@ func TestAccChronicleSoarNetwork_chronicleSoarnetworkUpdateExample(t *testing.T)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckChronicleSoarNetworkDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -117,7 +117,6 @@ func TestAccChronicleSoarNetwork_chronicleSoarnetworkUpdateExample(t *testing.T)
 func testAccChronicleSoarNetwork_chronicleSoarnetworkBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_chronicle_soar_network" "sample" {
-  provider = google-beta
   location = "us"
   instance = "%{chronicle_id}"
 
@@ -134,7 +133,6 @@ resource "google_chronicle_soar_network" "sample" {
 func testAccChronicleSoarNetwork_chronicleSoarnetworkFullExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_chronicle_soar_network" "sample" {
-  provider = google-beta
   location = "us"
   instance = "%{chronicle_id}"
 
