@@ -15,6 +15,10 @@ fields:
     - api_field: contextSpec.memoryBankConfig.customizationConfigs.memoryTopics.managedMemoryTopic.managedTopicEnum
     - api_field: contextSpec.memoryBankConfig.customizationConfigs.scopeKeys
     - api_field: contextSpec.memoryBankConfig.disableMemoryRevisions
+    - api_field: contextSpec.memoryBankConfig.generationConfig.generationTriggerConfig.generationRule.eventCount
+    - api_field: contextSpec.memoryBankConfig.generationConfig.generationTriggerConfig.generationRule.fixedInterval
+    - api_field: contextSpec.memoryBankConfig.generationConfig.generationTriggerConfig.generationRule.idleDuration
+    - api_field: contextSpec.memoryBankConfig.generationConfig.generationTriggerConfig.generationRule.overlapEventCount
     - api_field: contextSpec.memoryBankConfig.generationConfig.model
     - api_field: contextSpec.memoryBankConfig.similaritySearchConfig.embeddingModel
     - api_field: contextSpec.memoryBankConfig.structuredMemoryConfigs.schemaConfigs.id
