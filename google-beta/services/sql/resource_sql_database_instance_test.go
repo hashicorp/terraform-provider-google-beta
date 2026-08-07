@@ -1287,7 +1287,6 @@ func TestAccSqlDatabaseInstance_updateMCPEnabled(t *testing.T) {
 		},
 	})
 }
-
 func TestAccSqlDatabaseInstance_withPSCEnabled_withAutoConnectionPolicy(t *testing.T) {
 	t.Parallel()
 
@@ -7443,7 +7442,6 @@ resource "google_sql_database_instance" "instance" {
 }
 `, projectId, projectId, orgId, billingAccount, instanceName)
 }
-
 func testAccSqlDatabaseInstance_withPSCEnabled_withAutoConnectionPolicy(instanceName string, networkName string, projectId string) string {
 	return fmt.Sprintf(`
 resource "google_project_service_identity" "gcp_sa_cloud_sql" {
