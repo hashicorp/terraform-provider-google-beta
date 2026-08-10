@@ -1,3 +1,56 @@
+## 7.44.0 (Unreleased)
+
+UNKNOWN CHANGELOG TYPE:
+* Added issues: write permissions for upstream-mm.yml ([#12833](https://github.com/hashicorp/terraform-provider-google-beta/pull/12833))
+* Grant write permission for teamcity-nightly-workflow to handle branches ([#12827](https://github.com/hashicorp/terraform-provider-google-beta/pull/12827))
+* Revert "release: read secrets from 'release' environment (#12751)" ([#12830](https://github.com/hashicorp/terraform-provider-google-beta/pull/12830))
+* Update CODEOWNERS ([#12832](https://github.com/hashicorp/terraform-provider-google-beta/pull/12832))
+* build(deps): bump github.com/getkin/kin-openapi from 0.127.0 to 0.144.0 in /mmv1 ([#12849](https://github.com/hashicorp/terraform-provider-google-beta/pull/12849))
+* build(deps): bump golang.org/x/net from 0.54.0 to 0.55.0 in /tools/go-changelog ([#12850](https://github.com/hashicorp/terraform-provider-google-beta/pull/12850))
+
+FEATURES:
+* **New List Resource:** `google_bigquery_dataset_iam_member` ([#12809](https://github.com/hashicorp/terraform-provider-google-beta/pull/12809))
+* **New List Resource:** `google_bigquery_table` ([#12807](https://github.com/hashicorp/terraform-provider-google-beta/pull/12807))
+* **New Resource:** `google_dataform_repository_iam_binding` ([#12825](https://github.com/hashicorp/terraform-provider-google-beta/pull/12825))
+* **New Resource:** `google_dataform_repository_iam_member` ([#12825](https://github.com/hashicorp/terraform-provider-google-beta/pull/12825))
+* **New Resource:** `google_dataform_repository_iam_policy` ([#12825](https://github.com/hashicorp/terraform-provider-google-beta/pull/12825))
+* **New Resource:** `google_dataform_repository` ([#12825](https://github.com/hashicorp/terraform-provider-google-beta/pull/12825))
+* **New Resource:** `google_vertex_ai_evaluation_metric` ([#12840](https://github.com/hashicorp/terraform-provider-google-beta/pull/12840))
+* **New Resource:** chronicle: `google_chronicle_custom_list` (GA) ([#12820](https://github.com/hashicorp/terraform-provider-google-beta/pull/12820))
+* **New Resource:** chronicle: `google_chronicle_soar_network` (GA) ([#12835](https://github.com/hashicorp/terraform-provider-google-beta/pull/12835))
+* **New Resource:** google_iam_access_policy (ga) ([#12839](https://github.com/hashicorp/terraform-provider-google-beta/pull/12839))
+
+IMPROVEMENTS:
+* bigquery: added resource identity support to `google_bigquery_table` ([#12806](https://github.com/hashicorp/terraform-provider-google-beta/pull/12806))
+* cloudrunv2: added `cpu_utilization` and `concurrency_utilization` fields to `google_cloud_run_v2_service` revision scaling configuration (beta) ([#12814](https://github.com/hashicorp/terraform-provider-google-beta/pull/12814))
+* compute: promoted `host_error_timeout_seconds` field in `google_compute_instance`, `google_compute_instance_template` and `google_compute_region_instance_template` to GA ([#12846](https://github.com/hashicorp/terraform-provider-google-beta/pull/12846))
+* container: added `high_scale_checkpointing_config` block to `addons_config` in `google_container_cluster` ([#12844](https://github.com/hashicorp/terraform-provider-google-beta/pull/12844))
+* dataproc: added `attached_disk_config` to `disk_config` to support attached disks in the `google_dataproc_cluster` resource. ([#12816](https://github.com/hashicorp/terraform-provider-google-beta/pull/12816))
+* memorystore: documented `TOKEN_AUTH` as a `google-beta`-only value for `authorization_mode` field on `google_memorystore_instance` resource ([#12810](https://github.com/hashicorp/terraform-provider-google-beta/pull/12810))
+* networkservices: added `allow_global_access` field to `google_network_services_gateway` ([#12815](https://github.com/hashicorp/terraform-provider-google-beta/pull/12815))
+* oracledatabase: added `identity_connector` to `google_oracle_database_exadb_vm_cluster` for CMEK support ([#12817](https://github.com/hashicorp/terraform-provider-google-beta/pull/12817))
+* securesourcemanager: added `service_account` and `scan_config` to `google_secure_source_manager_repository`. ([#12837](https://github.com/hashicorp/terraform-provider-google-beta/pull/12837))
+* sql: Remove `ForceNew` config from `disk_type` field schema, allowing it to change in future without requiring sql database instance to be destroyed and recreated. ([#12818](https://github.com/hashicorp/terraform-provider-google-beta/pull/12818))
+* sql: added `password_secret_version` and `user` fields into  `google_sql_provision_script` resource ([#12821](https://github.com/hashicorp/terraform-provider-google-beta/pull/12821))
+* vertexai: added `generation_trigger_config` block to `google_vertex_ai_reasoning_engine` (beta) ([#12831](https://github.com/hashicorp/terraform-provider-google-beta/pull/12831))
+* workstations: added `idle_action` field to `google_workstations_workstation_config` (beta) ([#12804](https://github.com/hashicorp/terraform-provider-google-beta/pull/12804))
+
+BUG FIXES:
+* appengine: fixed acceptance test enum values for `app_engine_bundled_services` in `google_app_engine_standard_app_version` ([#12842](https://github.com/hashicorp/terraform-provider-google-beta/pull/12842))
+* backupdr: fixed issue where `google_backup_dr_restore_workload` dropped `resource_manager_tags` during restore requests, causing tags shown in plan to not be applied to restored resources ([#12812](https://github.com/hashicorp/terraform-provider-google-beta/pull/12812))
+* biglakeiceberg: fixed a permadiff in `google_biglake_iceberg_table` by suppressing diffs on `location` when the API-returned path contains a suffix folder. ([#12808](https://github.com/hashicorp/terraform-provider-google-beta/pull/12808))
+* biglakeiceberg: fixed perma-diff on `write.parquet.compression-codec` in `google_biglake_iceberg_table` ([#12836](https://github.com/hashicorp/terraform-provider-google-beta/pull/12836))
+* bigquery: fixed a provider panic when reading incomplete IAM conditions on `google_bigquery_dataset_iam_member` ([#12819](https://github.com/hashicorp/terraform-provider-google-beta/pull/12819))
+* cloudrunv2: fix perpetual diff in `templates.container.resources.limits` block in `google_cloud_run_v2_service` resource ([#12845](https://github.com/hashicorp/terraform-provider-google-beta/pull/12845))
+* cloudrunv2: set `template.scaling.maxInstanceCount` to `Computed` in `google_cloud_run_v2_service` resource ([#12829](https://github.com/hashicorp/terraform-provider-google-beta/pull/12829))
+* cloudsecuritycompliance: fixed state drift on `supported_enforcement_modes` in `google_cloud_security_compliance_framework` resource ([#12851](https://github.com/hashicorp/terraform-provider-google-beta/pull/12851))
+* container: fixed a bug where `google_container_node_pool` and `google_container_cluster` failed to invalidate their Instance Group Manager cache when a resize occurred or when `ignore_node_count_changes` was active ([#12811](https://github.com/hashicorp/terraform-provider-google-beta/pull/12811))
+* container: fixed a permadiff where `ignore_node_count_changes` was not persisted in `google_container_cluster.node_pool` ([#12805](https://github.com/hashicorp/terraform-provider-google-beta/pull/12805))
+* networkconnectivity: made `google_network_connectivity_transport` `network` field optional ([#12823](https://github.com/hashicorp/terraform-provider-google-beta/pull/12823))
+* recaptchaenterprise: fixed updates to `google_recaptcha_enterprise_key` so existing `challenge_settings.action_settings` entries are preserved when the action map changes. ([#12848](https://github.com/hashicorp/terraform-provider-google-beta/pull/12848))
+* servicenetworking: fixed `google_service_networking_connection` ignoring the configured `delete` timeout, which used the `create` timeout instead ([#12824](https://github.com/hashicorp/terraform-provider-google-beta/pull/12824))
+
+
 ## 7.43.0 (Unreleased)
 
 ## 7.42.0 (July 28, 2026)
