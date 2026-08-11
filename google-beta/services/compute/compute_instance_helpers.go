@@ -432,11 +432,11 @@ func flattenScheduling(resp map[string]interface{}) []map[string]interface{} {
 		schedulingMap["on_instance_stop_action"] = flattenOnInstanceStopAction(ois)
 	}
 
-	schedulingMap["skip_guest_os_shutdown"] = resp["skipGuestOsShutdown"]
-
 	if h := getInt(resp["hostErrorTimeoutSeconds"]); h != 0 {
 		schedulingMap["host_error_timeout_seconds"] = h
 	}
+
+	schedulingMap["skip_guest_os_shutdown"] = resp["skipGuestOsShutdown"]
 
 	if mi, ok := resp["maintenanceInterval"].(string); ok && mi != "" {
 		schedulingMap["maintenance_interval"] = mi

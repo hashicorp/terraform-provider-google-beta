@@ -206,7 +206,7 @@ func ResourceDataformRepository() *schema.Resource {
 						"token_status": {
 							Type:        schema.TypeString,
 							Computed:    true,
-							Description: `Indicates the status of the Git access token. https://cloud.google.com/dataform/reference/rest/v1beta1/projects.locations.repositories#TokenStatus`,
+							Description: `Indicates the status of the Git access token. https://cloud.google.com/dataform/reference/rest/v1/projects.locations.repositories#TokenStatus`,
 						},
 					},
 				},
