@@ -153,7 +153,6 @@ import (
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/networkmanagement"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/networksecurity"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/networkservices"
-	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/notebooks"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/observability"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/oracledatabase"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/orgpolicy"
