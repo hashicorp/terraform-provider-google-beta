@@ -481,6 +481,7 @@ func resourcePrivilegedAccessManagerSettingsUpdate(d *schema.ResourceData, meta 
 	if err != nil {
 		return err
 	}
+
 	baseUrlForEtag, err := tpgresource.ReplaceVars(d, config, "{{PrivilegedAccessManagerBasePath}}{{parent}}/locations/{{location}}/settings")
 	if err != nil {
 		return err
