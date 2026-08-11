@@ -101,7 +101,7 @@ func TestAccIAM3FolderAccessPolicy_accessPolicyFolderTestExample(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		ExternalProviders: map[string]resource.ExternalProvider{
 			"time": {},
 		},
@@ -169,13 +169,11 @@ func TestAccIAM3FolderAccessPolicy_accessPolicyFolderTestExample(t *testing.T) {
 func testAccIAM3FolderAccessPolicy_accessPolicyFolderMinimalExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_folder" "folder" {
-  provider     = google-beta
   display_name = "%{folder_name}"
   parent       = "organizations/%{org_id}"
   deletion_protection = false
 }
 resource "google_project" "project" {
-  provider        = google-beta
   project_id      = "%{project_name}"
   name            = "%{project_name}"
   folder_id       = google_folder.folder.folder_id
@@ -184,7 +182,6 @@ resource "google_project" "project" {
   depends_on = [google_folder.folder]
 }
 resource "google_project_service" "iam_api" {
-  provider = google-beta
   project  = google_project.project.project_id
   service  = "iam.googleapis.com"
   disable_on_destroy = false
@@ -198,7 +195,6 @@ resource "time_sleep" "wait_for_propagation" {
   ]
 }
 resource "google_service_account" "test_sa" {
-  provider        = google-beta
   account_id   = "%{account_id}"
   display_name = "Test Service Account for Access Policy"
   project      = google_project.project.project_id
@@ -207,7 +203,6 @@ resource "google_service_account" "test_sa" {
   ]
 }
 resource "google_iam_folder_access_policy" "example" {
-  provider          = google-beta
   folder            = google_folder.folder.folder_id
   location          = "global"
   access_policy_id  = "%{access_policy_id}"
@@ -231,13 +226,11 @@ resource "google_iam_folder_access_policy" "example" {
 func testAccIAM3FolderAccessPolicy_accessPolicyFolderFullExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_folder" "folder" {
-  provider     = google-beta
   display_name = "%{folder_name}"
   parent       = "organizations/%{org_id}"
   deletion_protection = false
 }
 resource "google_project" "project" {
-  provider        = google-beta
   project_id      = "%{project_name}"
   name            = "%{project_name}"
   folder_id       = google_folder.folder.folder_id
@@ -246,7 +239,6 @@ resource "google_project" "project" {
   depends_on = [google_folder.folder]
 }
 resource "google_project_service" "iam_api" {
-  provider = google-beta
   project  = google_project.project.project_id
   service  = "iam.googleapis.com"
   disable_on_destroy = false
@@ -260,7 +252,6 @@ resource "time_sleep" "wait_for_propagation" {
   ]
 }
 resource "google_service_account" "test_sa" {
-  provider        = google-beta
   account_id   = "%{account_id}"
   display_name = "Test Service Account for Access Policy"
   project      = google_project.project.project_id
@@ -269,7 +260,6 @@ resource "google_service_account" "test_sa" {
   ]
 }
 resource "google_service_account" "excluded_sa" {
-  provider        = google-beta
   account_id   = "%{excluded_account_id}"
   display_name = "Excluded Service Account for Access Policy"
   project      = google_project.project.project_id
@@ -278,7 +268,6 @@ resource "google_service_account" "excluded_sa" {
   ]
 }
 resource "google_iam_folder_access_policy" "example" {
-  provider          = google-beta
   folder            = google_folder.folder.folder_id
   location          = "global"
   access_policy_id  = "%{access_policy_id}"
