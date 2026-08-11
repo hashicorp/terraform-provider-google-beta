@@ -1525,6 +1525,7 @@ func resourceDialogflowConversationProfileUpdate(d *schema.ResourceData, meta in
 	if err != nil {
 		return err
 	}
+
 	location := d.Get("location").(string)
 	universeDomain := config.UniverseDomain
 

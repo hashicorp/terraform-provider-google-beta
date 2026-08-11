@@ -515,6 +515,7 @@ func resourceFirebaseDatabaseInstanceUpdate(d *schema.ResourceData, meta interfa
 
 	log.Printf("[DEBUG] Updating Instance %q: %#v", d.Id(), obj)
 	headers := make(http.Header)
+
 	// start of customized code
 	if d.HasChange("desired_state") {
 		if p, ok := d.GetOk("desired_state"); ok && p.(string) != d.Get("state").(string) {
