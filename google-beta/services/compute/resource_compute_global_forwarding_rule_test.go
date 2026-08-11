@@ -474,14 +474,17 @@ resource "google_compute_target_http_proxy" "proxy2" {
 
 resource "google_compute_backend_service" "backend" {
   name          = "%s"
-  health_checks = [google_compute_http_health_check.zero.self_link]
+  health_checks = [google_compute_health_check.zero.self_link]
 }
 
-resource "google_compute_http_health_check" "zero" {
+resource "google_compute_health_check" "zero" {
   name               = "%s"
-  request_path       = "/"
   check_interval_sec = 1
   timeout_sec        = 1
+  http_health_check {
+    port         = 80
+    request_path = "/"
+  }
 }
 
 resource "google_compute_url_map" "url_map" {
@@ -529,14 +532,17 @@ resource "google_compute_target_http_proxy" "proxy" {
 
 resource "google_compute_backend_service" "backend" {
   name          = "%s"
-  health_checks = [google_compute_http_health_check.zero.self_link]
+  health_checks = [google_compute_health_check.zero.self_link]
 }
 
-resource "google_compute_http_health_check" "zero" {
+resource "google_compute_health_check" "zero" {
   name               = "%s"
-  request_path       = "/"
   check_interval_sec = 1
   timeout_sec        = 1
+  http_health_check {
+    port         = 80
+    request_path = "/"
+  }
 }
 
 resource "google_compute_url_map" "urlmap" {
@@ -584,14 +590,17 @@ resource "google_compute_target_http_proxy" "proxy" {
 
 resource "google_compute_backend_service" "backend" {
   name          = "%s"
-  health_checks = [google_compute_http_health_check.zero.self_link]
+  health_checks = [google_compute_health_check.zero.self_link]
 }
 
-resource "google_compute_http_health_check" "zero" {
+resource "google_compute_health_check" "zero" {
   name               = "%s"
-  request_path       = "/"
   check_interval_sec = 1
   timeout_sec        = 1
+  http_health_check {
+    port         = 80
+    request_path = "/"
+  }
 }
 
 resource "google_compute_url_map" "urlmap" {
@@ -737,14 +746,17 @@ resource "google_compute_target_http_proxy" "proxy" {
 
 resource "google_compute_backend_service" "backend" {
   name          = "%s"
-  health_checks = [google_compute_http_health_check.zero.self_link]
+  health_checks = [google_compute_health_check.zero.self_link]
 }
 
-resource "google_compute_http_health_check" "zero" {
+resource "google_compute_health_check" "zero" {
   name               = "%s"
-  request_path       = "/"
   check_interval_sec = 1
   timeout_sec        = 1
+  http_health_check {
+    port         = 80
+    request_path = "/"
+  }
 }
 
 resource "google_compute_url_map" "urlmap" {
