@@ -59,7 +59,6 @@ FEATURES:
 * **New List Resource:** `google_project_iam_custom_role` ([#12791](https://github.com/hashicorp/terraform-provider-google-beta/pull/12791))
 * **New List Resource:** `google_pubsub_subscription_iam_member` ([#12798](https://github.com/hashicorp/terraform-provider-google-beta/pull/12798))
 * **New List Resource:** `google_service_account_iam_member` ([#12802](https://github.com/hashicorp/terraform-provider-google-beta/pull/12802))
-* **New Resource:** `google_apihub_runtime_project_attachment` ([#12764](https://github.com/hashicorp/terraform-provider-google-beta/pull/12764))
 * **New Resource:** `google_cloud_support_support_event_subscription` ([#12783](https://github.com/hashicorp/terraform-provider-google-beta/pull/12783))
 * **New Resource:** `google_compute_region_network_policy_traffic_classification_rule` ([#12778](https://github.com/hashicorp/terraform-provider-google-beta/pull/12778))
 * **New Resource:** `google_netapp_trial` ([#12777](https://github.com/hashicorp/terraform-provider-google-beta/pull/12777))
