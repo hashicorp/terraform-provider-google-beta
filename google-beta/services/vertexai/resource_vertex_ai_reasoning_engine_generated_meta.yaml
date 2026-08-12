@@ -48,6 +48,7 @@ fields:
     - api_field: spec.classMethods
       json: true
     - api_field: spec.containerSpec.imageUri
+    - api_field: spec.containerSpec.port
     - api_field: spec.deploymentSpec.agentGatewayConfig.agentToAnywhereConfig.agentGateway
     - api_field: spec.deploymentSpec.agentGatewayConfig.clientToAgentConfig.agentGateway
     - api_field: spec.deploymentSpec.agentServerMode
