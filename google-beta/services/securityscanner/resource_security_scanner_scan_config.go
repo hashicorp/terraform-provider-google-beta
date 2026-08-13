@@ -265,6 +265,12 @@ which means the scan will be scheduled to start immediately.`,
 					},
 				},
 			},
+			"static_ip_scan": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Description: `Whether the scan configuration has enabled static IP address scan feature.
+If enabled, the scanner will access applications from static IP addresses.`,
+			},
 			"target_platforms": {
 				Type:        schema.TypeList,
 				Optional:    true,
@@ -377,6 +383,12 @@ func resourceSecurityScannerScanConfigCreate(d *schema.ResourceData, meta interf
 		return err
 	} else if v, ok := d.GetOkExists("ignore_http_status_errors"); !tpgresource.IsEmptyValue(reflect.ValueOf(ignoreHttpStatusErrorsProp)) && (ok || !reflect.DeepEqual(v, ignoreHttpStatusErrorsProp)) {
 		obj["ignoreHttpStatusErrors"] = ignoreHttpStatusErrorsProp
+	}
+	staticIpScanProp, err := expandSecurityScannerScanConfigStaticIpScan(d.Get("static_ip_scan"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("static_ip_scan"); !tpgresource.IsEmptyValue(reflect.ValueOf(staticIpScanProp)) && (ok || !reflect.DeepEqual(v, staticIpScanProp)) {
+		obj["staticIpScan"] = staticIpScanProp
 	}
 
 	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/scanConfigs")
@@ -634,6 +646,12 @@ func resourceSecurityScannerScanConfigUpdate(d *schema.ResourceData, meta interf
 	} else if v, ok := d.GetOkExists("ignore_http_status_errors"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, ignoreHttpStatusErrorsProp)) {
 		obj["ignoreHttpStatusErrors"] = ignoreHttpStatusErrorsProp
 	}
+	staticIpScanProp, err := expandSecurityScannerScanConfigStaticIpScan(d.Get("static_ip_scan"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("static_ip_scan"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, staticIpScanProp)) {
+		obj["staticIpScan"] = staticIpScanProp
+	}
 
 	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"{{name}}")
 	if err != nil {
@@ -682,6 +700,10 @@ func resourceSecurityScannerScanConfigUpdate(d *schema.ResourceData, meta interf
 
 	if d.HasChange("ignore_http_status_errors") {
 		updateMask = append(updateMask, "ignoreHttpStatusErrors")
+	}
+
+	if d.HasChange("static_ip_scan") {
+		updateMask = append(updateMask, "staticIpScan")
 	}
 	// updateMask is a URL parameter but not present in the schema, so ReplaceVars
 	// won't set it
@@ -937,6 +959,10 @@ func flattenSecurityScannerScanConfigIgnoreHttpStatusErrors(v interface{}, d *sc
 	return v
 }
 
+func flattenSecurityScannerScanConfigStaticIpScan(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func expandSecurityScannerScanConfigDisplayName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
@@ -1120,6 +1146,10 @@ func expandSecurityScannerScanConfigIgnoreHttpStatusErrors(v interface{}, d tpgr
 	return v, nil
 }
 
+func expandSecurityScannerScanConfigStaticIpScan(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
 func resourceSecurityScannerScanConfigPostCreateSetComputedFields(d *schema.ResourceData, meta interface{}, res map[string]interface{}) error {
 	config := meta.(*transport_tpg.Config)
 	if err := d.Set("name", flattenSecurityScannerScanConfigName(res["name"], d, config)); err != nil {
@@ -1162,6 +1192,9 @@ func ResourceSecurityScannerScanConfigFlatten(d *schema.ResourceData, meta inter
 		return fmt.Errorf("Error reading ScanConfig: %s", err)
 	}
 	if err = d.Set("ignore_http_status_errors", flattenSecurityScannerScanConfigIgnoreHttpStatusErrors(res["ignoreHttpStatusErrors"], d, config)); err != nil {
+		return fmt.Errorf("Error reading ScanConfig: %s", err)
+	}
+	if err = d.Set("static_ip_scan", flattenSecurityScannerScanConfigStaticIpScan(res["staticIpScan"], d, config)); err != nil {
 		return fmt.Errorf("Error reading ScanConfig: %s", err)
 	}
 

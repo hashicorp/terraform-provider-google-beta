@@ -21,6 +21,7 @@ fields:
     - api_field: schedule.intervalDurationDays
     - api_field: schedule.scheduleTime
     - api_field: startingUrls
+    - api_field: staticIpScan
     - api_field: targetPlatforms
     - api_field: userAgent
     - field: deletion_policy
