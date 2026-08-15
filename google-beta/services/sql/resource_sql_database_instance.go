@@ -145,6 +145,14 @@ var (
 		"settings.0.performance_capture_config.0.running_threads_threshold",
 		"settings.0.performance_capture_config.0.seconds_behind_source_threshold",
 		"settings.0.performance_capture_config.0.transaction_duration_threshold",
+		"settings.0.performance_capture_config.0.cpu_utilization_threshold_percent",
+		"settings.0.performance_capture_config.0.memory_usage_threshold_percent",
+		"settings.0.performance_capture_config.0.history_list_length_threshold_count",
+		"settings.0.performance_capture_config.0.semaphore_wait_threshold_count",
+		"settings.0.performance_capture_config.0.transaction_lock_wait_threshold_count",
+		"settings.0.performance_capture_config.0.transaction_kill_threshold_seconds",
+		"settings.0.performance_capture_config.0.transaction_kill_type",
+		"settings.0.performance_capture_config.0.transaction_kill_excluded_user_hosts",
 	}
 
 	sqlServerAuditConfigurationKeys = []string{
@@ -984,6 +992,63 @@ API (for read pools, effective_availability_type may differ from availability_ty
 										Computed:     true,
 										AtLeastOneOf: performanceCaptureConfigKeys,
 										Description:  `The amount of time in seconds that a transaction needs to have been open before getting recorded.`,
+									},
+									"cpu_utilization_threshold_percent": {
+										Type:         schema.TypeInt,
+										Optional:     true,
+										Computed:     true,
+										AtLeastOneOf: performanceCaptureConfigKeys,
+										Description:  `The minimum percentage of CPU utilization that triggers the performance capture. Valid range is 10 to 99. 0 disables the check.`,
+									},
+									"memory_usage_threshold_percent": {
+										Type:         schema.TypeInt,
+										Optional:     true,
+										Computed:     true,
+										AtLeastOneOf: performanceCaptureConfigKeys,
+										Description:  `The minimum percentage of memory usage that triggers the performance capture. Valid range is 10 to 99. 0 disables the check.`,
+									},
+									"history_list_length_threshold_count": {
+										Type:         schema.TypeInt,
+										Optional:     true,
+										Computed:     true,
+										AtLeastOneOf: performanceCaptureConfigKeys,
+										Description:  `The minimum number of undo log entries in the history list length that triggers the performance capture. Valid range is 10000 to 10000000. 0 disables the check.`,
+									},
+									"semaphore_wait_threshold_count": {
+										Type:         schema.TypeInt,
+										Optional:     true,
+										Computed:     true,
+										AtLeastOneOf: performanceCaptureConfigKeys,
+										Description:  `The minimum number of semaphore waits that triggers the performance capture. Valid range is 10 to 10000. 0 disables the check.`,
+									},
+									"transaction_lock_wait_threshold_count": {
+										Type:         schema.TypeInt,
+										Optional:     true,
+										Computed:     true,
+										AtLeastOneOf: performanceCaptureConfigKeys,
+										Description:  `The minimum number of transactions in lock wait state that triggers the performance capture. Valid range is 10 to 10000. 0 disables the check.`,
+									},
+									"transaction_kill_threshold_seconds": {
+										Type:         schema.TypeInt,
+										Optional:     true,
+										Computed:     true,
+										AtLeastOneOf: performanceCaptureConfigKeys,
+										Description:  `The amount of time in seconds that a transaction needs to have been open before the watcher starts terminating it. Valid range is 60 to 604800. 0 disables termination.`,
+									},
+									"transaction_kill_type": {
+										Type:         schema.TypeString,
+										Optional:     true,
+										Computed:     true,
+										AtLeastOneOf: performanceCaptureConfigKeys,
+										ValidateFunc: validation.StringInSlice([]string{"TRANSACTION_KILL_TYPE_UNSPECIFIED", "READ_ONLY_TRANSACTIONS", "ALL_TRANSACTIONS"}, false),
+										Description:  `Determines which transactions are allowed to be terminated when they exceed transaction_kill_threshold_seconds. Possible values are: "TRANSACTION_KILL_TYPE_UNSPECIFIED", "READ_ONLY_TRANSACTIONS", "ALL_TRANSACTIONS".`,
+									},
+									"transaction_kill_excluded_user_hosts": {
+										Type:         schema.TypeList,
+										Optional:     true,
+										AtLeastOneOf: performanceCaptureConfigKeys,
+										Elem:         &schema.Schema{Type: schema.TypeString},
+										Description:  `A list of users to exclude from transaction termination. Entries can be in the format 'user@host' or just 'user'.`,
 									},
 								},
 							},
@@ -2440,13 +2505,21 @@ func expandPerformanceCaptureConfig(configured []interface{}) *sqladmin.Performa
 
 	_performanceCaptureConfig := configured[0].(map[string]interface{})
 	return &sqladmin.PerformanceCaptureConfig{
-		Enabled:                      _performanceCaptureConfig["enabled"].(bool),
-		ProbingIntervalSeconds:       int64(_performanceCaptureConfig["probing_interval_seconds"].(int)),
-		ProbeThreshold:               int64(_performanceCaptureConfig["probe_threshold"].(int)),
-		RunningThreadsThreshold:      int64(_performanceCaptureConfig["running_threads_threshold"].(int)),
-		SecondsBehindSourceThreshold: int64(_performanceCaptureConfig["seconds_behind_source_threshold"].(int)),
-		TransactionDurationThreshold: int64(_performanceCaptureConfig["transaction_duration_threshold"].(int)),
-		ForceSendFields:              []string{"Enabled"},
+		Enabled:                           _performanceCaptureConfig["enabled"].(bool),
+		ProbingIntervalSeconds:            int64(_performanceCaptureConfig["probing_interval_seconds"].(int)),
+		ProbeThreshold:                    int64(_performanceCaptureConfig["probe_threshold"].(int)),
+		RunningThreadsThreshold:           int64(_performanceCaptureConfig["running_threads_threshold"].(int)),
+		SecondsBehindSourceThreshold:      int64(_performanceCaptureConfig["seconds_behind_source_threshold"].(int)),
+		TransactionDurationThreshold:      int64(_performanceCaptureConfig["transaction_duration_threshold"].(int)),
+		CpuUtilizationThresholdPercent:    int64(_performanceCaptureConfig["cpu_utilization_threshold_percent"].(int)),
+		MemoryUsageThresholdPercent:       int64(_performanceCaptureConfig["memory_usage_threshold_percent"].(int)),
+		HistoryListLengthThresholdCount:   int64(_performanceCaptureConfig["history_list_length_threshold_count"].(int)),
+		SemaphoreWaitThresholdCount:       int64(_performanceCaptureConfig["semaphore_wait_threshold_count"].(int)),
+		TransactionLockWaitThresholdCount: int64(_performanceCaptureConfig["transaction_lock_wait_threshold_count"].(int)),
+		TransactionKillThresholdSeconds:   int64(_performanceCaptureConfig["transaction_kill_threshold_seconds"].(int)),
+		TransactionKillType:               _performanceCaptureConfig["transaction_kill_type"].(string),
+		TransactionKillExcludedUserHosts:  tpgresource.ConvertStringArr(_performanceCaptureConfig["transaction_kill_excluded_user_hosts"].([]interface{})),
+		ForceSendFields:                   []string{"Enabled"},
 	}
 }
 
@@ -3786,12 +3859,20 @@ func flattenInsightsConfig(insightsConfig *sqladmin.InsightsConfig) interface{} 
 }
 func flattenPerformanceCaptureConfig(performanceCaptureConfig *sqladmin.PerformanceCaptureConfig) interface{} {
 	data := map[string]interface{}{
-		"enabled":                         performanceCaptureConfig.Enabled,
-		"probing_interval_seconds":        performanceCaptureConfig.ProbingIntervalSeconds,
-		"probe_threshold":                 performanceCaptureConfig.ProbeThreshold,
-		"running_threads_threshold":       performanceCaptureConfig.RunningThreadsThreshold,
-		"seconds_behind_source_threshold": performanceCaptureConfig.SecondsBehindSourceThreshold,
-		"transaction_duration_threshold":  performanceCaptureConfig.TransactionDurationThreshold,
+		"enabled":                               performanceCaptureConfig.Enabled,
+		"probing_interval_seconds":              performanceCaptureConfig.ProbingIntervalSeconds,
+		"probe_threshold":                       performanceCaptureConfig.ProbeThreshold,
+		"running_threads_threshold":             performanceCaptureConfig.RunningThreadsThreshold,
+		"seconds_behind_source_threshold":       performanceCaptureConfig.SecondsBehindSourceThreshold,
+		"transaction_duration_threshold":        performanceCaptureConfig.TransactionDurationThreshold,
+		"cpu_utilization_threshold_percent":     performanceCaptureConfig.CpuUtilizationThresholdPercent,
+		"memory_usage_threshold_percent":        performanceCaptureConfig.MemoryUsageThresholdPercent,
+		"history_list_length_threshold_count":   performanceCaptureConfig.HistoryListLengthThresholdCount,
+		"semaphore_wait_threshold_count":        performanceCaptureConfig.SemaphoreWaitThresholdCount,
+		"transaction_lock_wait_threshold_count": performanceCaptureConfig.TransactionLockWaitThresholdCount,
+		"transaction_kill_threshold_seconds":    performanceCaptureConfig.TransactionKillThresholdSeconds,
+		"transaction_kill_type":                 performanceCaptureConfig.TransactionKillType,
+		"transaction_kill_excluded_user_hosts":  performanceCaptureConfig.TransactionKillExcludedUserHosts,
 	}
 
 	return []map[string]interface{}{data}
