@@ -568,7 +568,11 @@ func TestAccDataflowJob_withAttributionLabelCreationOnly(t *testing.T) {
 					resource.TestCheckResourceAttr("google_dataflow_job.big_data", "terraform_labels.goog-terraform-provisioned", "true"),
 					resource.TestCheckResourceAttr("google_dataflow_job.big_data", "terraform_labels.user_label", "foo"),
 
-					resource.TestCheckResourceAttr("google_dataflow_job.big_data", "effective_labels.%", "5"), // Includes 3 server generated labels
+					resource.TestCheckResourceAttr("google_dataflow_job.big_data", "effective_labels.user_label", "foo"),
+					resource.TestCheckResourceAttr("google_dataflow_job.big_data", "effective_labels.goog-terraform-provisioned", "true"),
+					resource.TestCheckResourceAttrSet("google_dataflow_job.big_data", "effective_labels.goog-dataflow-provided-template-name"),
+					resource.TestCheckResourceAttrSet("google_dataflow_job.big_data", "effective_labels.goog-dataflow-provided-template-type"),
+					resource.TestCheckResourceAttrSet("google_dataflow_job.big_data", "effective_labels.goog-dataflow-provided-template-version"),
 				),
 			},
 			{
@@ -587,7 +591,11 @@ func TestAccDataflowJob_withAttributionLabelCreationOnly(t *testing.T) {
 					resource.TestCheckResourceAttr("google_dataflow_job.big_data", "terraform_labels.goog-terraform-provisioned", "true"),
 					resource.TestCheckResourceAttr("google_dataflow_job.big_data", "terraform_labels.user_label", "bar"),
 
-					resource.TestCheckResourceAttr("google_dataflow_job.big_data", "effective_labels.%", "5"), // Includes 3 server generated labels
+					resource.TestCheckResourceAttr("google_dataflow_job.big_data", "effective_labels.user_label", "bar"),
+					resource.TestCheckResourceAttr("google_dataflow_job.big_data", "effective_labels.goog-terraform-provisioned", "true"),
+					resource.TestCheckResourceAttrSet("google_dataflow_job.big_data", "effective_labels.goog-dataflow-provided-template-name"),
+					resource.TestCheckResourceAttrSet("google_dataflow_job.big_data", "effective_labels.goog-dataflow-provided-template-type"),
+					resource.TestCheckResourceAttrSet("google_dataflow_job.big_data", "effective_labels.goog-dataflow-provided-template-version"),
 				),
 			},
 			{
@@ -625,7 +633,11 @@ func TestAccDataflowJob_withAttributionLabelProactive(t *testing.T) {
 					resource.TestCheckResourceAttr("google_dataflow_job.big_data", "terraform_labels.%", "1"),
 					resource.TestCheckResourceAttr("google_dataflow_job.big_data", "terraform_labels.user_label", "foo"),
 
-					resource.TestCheckResourceAttr("google_dataflow_job.big_data", "effective_labels.%", "4"), // Includes 3 server generated labels
+					resource.TestCheckResourceAttr("google_dataflow_job.big_data", "effective_labels.user_label", "foo"),
+					resource.TestCheckResourceAttrSet("google_dataflow_job.big_data", "effective_labels.goog-dataflow-provided-template-name"),
+					resource.TestCheckResourceAttrSet("google_dataflow_job.big_data", "effective_labels.goog-dataflow-provided-template-type"),
+					resource.TestCheckResourceAttrSet("google_dataflow_job.big_data", "effective_labels.goog-dataflow-provided-template-version"),
+					resource.TestCheckNoResourceAttr("google_dataflow_job.big_data", "effective_labels.goog-terraform-provisioned"),
 				),
 			},
 			{
@@ -644,7 +656,11 @@ func TestAccDataflowJob_withAttributionLabelProactive(t *testing.T) {
 					resource.TestCheckResourceAttr("google_dataflow_job.big_data", "terraform_labels.goog-terraform-provisioned", "true"),
 					resource.TestCheckResourceAttr("google_dataflow_job.big_data", "terraform_labels.user_label", "bar"),
 
-					resource.TestCheckResourceAttr("google_dataflow_job.big_data", "effective_labels.%", "5"), // Includes 3 server generated labels
+					resource.TestCheckResourceAttr("google_dataflow_job.big_data", "effective_labels.user_label", "bar"),
+					resource.TestCheckResourceAttr("google_dataflow_job.big_data", "effective_labels.goog-terraform-provisioned", "true"),
+					resource.TestCheckResourceAttrSet("google_dataflow_job.big_data", "effective_labels.goog-dataflow-provided-template-name"),
+					resource.TestCheckResourceAttrSet("google_dataflow_job.big_data", "effective_labels.goog-dataflow-provided-template-type"),
+					resource.TestCheckResourceAttrSet("google_dataflow_job.big_data", "effective_labels.goog-dataflow-provided-template-version"),
 				),
 			},
 			{
