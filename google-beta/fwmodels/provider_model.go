@@ -236,6 +236,7 @@ type ProviderModel struct {
 	TranscoderCustomEndpoint               types.String `tfsdk:"transcoder_custom_endpoint"`
 	VectorSearchCustomEndpoint             types.String `tfsdk:"vector_search_custom_endpoint"`
 	VertexAICustomEndpoint                 types.String `tfsdk:"vertex_ai_custom_endpoint"`
+	VertexAiAadCustomEndpoint              types.String `tfsdk:"vertex_ai_aad_custom_endpoint"`
 	VmwareengineCustomEndpoint             types.String `tfsdk:"vmwareengine_custom_endpoint"`
 	VPCAccessCustomEndpoint                types.String `tfsdk:"vpc_access_custom_endpoint"`
 	WorkbenchCustomEndpoint                types.String `tfsdk:"workbench_custom_endpoint"`

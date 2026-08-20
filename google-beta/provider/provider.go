@@ -1131,6 +1131,11 @@ func Provider() *schema.Provider {
 				Optional:     true,
 				ValidateFunc: ValidateCustomEndpoint,
 			},
+			"vertex_ai_aad_custom_endpoint": &schema.Schema{
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: ValidateCustomEndpoint,
+			},
 			"vmwareengine_custom_endpoint": &schema.Schema{
 				Type:         schema.TypeString,
 				Optional:     true,

@@ -197,6 +197,7 @@ import (
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/transcoder"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/vectorsearch"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/vertexai"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/vertexaiaad"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/vmwareengine"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/vpcaccess"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/workbench"
