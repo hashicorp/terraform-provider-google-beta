@@ -50,7 +50,7 @@ func TestAccComputeBackendServiceIamBindingGenerated(t *testing.T) {
 		"random_suffix":           randomSuffix,
 		"role":                    "roles/compute.admin",
 		"backend_service_name":    "tf-test-backend-service" + randomSuffix,
-		"http_health_check_name":  "tf-test-health-check" + randomSuffix,
+		"health_check_name":       "tf-test-health-check" + randomSuffix,
 		"condition_title":         "expires_after_2019_12_31",
 		"condition_expr":          `request.time < timestamp(\"2020-01-01T00:00:00Z\")`,
 		"condition_desc":          "Expiring at midnight of 2019-12-31",
@@ -94,7 +94,7 @@ func TestAccComputeBackendServiceIamMemberGenerated(t *testing.T) {
 		"random_suffix":           randomSuffix,
 		"role":                    "roles/compute.admin",
 		"backend_service_name":    "tf-test-backend-service" + randomSuffix,
-		"http_health_check_name":  "tf-test-health-check" + randomSuffix,
+		"health_check_name":       "tf-test-health-check" + randomSuffix,
 		"condition_title":         "expires_after_2019_12_31",
 		"condition_expr":          `request.time < timestamp(\"2020-01-01T00:00:00Z\")`,
 		"condition_desc":          "Expiring at midnight of 2019-12-31",
@@ -136,7 +136,7 @@ func TestAccComputeBackendServiceIamPolicyGenerated(t *testing.T) {
 		"random_suffix":           randomSuffix,
 		"role":                    "roles/compute.admin",
 		"backend_service_name":    "tf-test-backend-service" + randomSuffix,
-		"http_health_check_name":  "tf-test-health-check" + randomSuffix,
+		"health_check_name":       "tf-test-health-check" + randomSuffix,
 		"condition_title":         "expires_after_2019_12_31",
 		"condition_expr":          `request.time < timestamp(\"2020-01-01T00:00:00Z\")`,
 		"condition_desc":          "Expiring at midnight of 2019-12-31",
@@ -180,7 +180,7 @@ func TestAccComputeBackendServiceIamBindingGenerated_withCondition(t *testing.T)
 		"random_suffix":           randomSuffix,
 		"role":                    "roles/compute.admin",
 		"backend_service_name":    "tf-test-backend-service" + randomSuffix,
-		"http_health_check_name":  "tf-test-health-check" + randomSuffix,
+		"health_check_name":       "tf-test-health-check" + randomSuffix,
 		"condition_title":         "expires_after_2019_12_31",
 		"condition_expr":          `request.time < timestamp(\"2020-01-01T00:00:00Z\")`,
 		"condition_desc":          "Expiring at midnight of 2019-12-31",
@@ -216,7 +216,7 @@ func TestAccComputeBackendServiceIamBindingGenerated_withAndWithoutCondition(t *
 		"random_suffix":           randomSuffix,
 		"role":                    "roles/compute.admin",
 		"backend_service_name":    "tf-test-backend-service" + randomSuffix,
-		"http_health_check_name":  "tf-test-health-check" + randomSuffix,
+		"health_check_name":       "tf-test-health-check" + randomSuffix,
 		"condition_title":         "expires_after_2019_12_31",
 		"condition_expr":          `request.time < timestamp(\"2020-01-01T00:00:00Z\")`,
 		"condition_desc":          "Expiring at midnight of 2019-12-31",
@@ -262,7 +262,7 @@ func TestAccComputeBackendServiceIamMemberGenerated_withCondition(t *testing.T) 
 		"random_suffix":           randomSuffix,
 		"role":                    "roles/compute.admin",
 		"backend_service_name":    "tf-test-backend-service" + randomSuffix,
-		"http_health_check_name":  "tf-test-health-check" + randomSuffix,
+		"health_check_name":       "tf-test-health-check" + randomSuffix,
 		"condition_title":         "expires_after_2019_12_31",
 		"condition_expr":          `request.time < timestamp(\"2020-01-01T00:00:00Z\")`,
 		"condition_desc":          "Expiring at midnight of 2019-12-31",
@@ -298,7 +298,7 @@ func TestAccComputeBackendServiceIamMemberGenerated_withAndWithoutCondition(t *t
 		"random_suffix":           randomSuffix,
 		"role":                    "roles/compute.admin",
 		"backend_service_name":    "tf-test-backend-service" + randomSuffix,
-		"http_health_check_name":  "tf-test-health-check" + randomSuffix,
+		"health_check_name":       "tf-test-health-check" + randomSuffix,
 		"condition_title":         "expires_after_2019_12_31",
 		"condition_expr":          `request.time < timestamp(\"2020-01-01T00:00:00Z\")`,
 		"condition_desc":          "Expiring at midnight of 2019-12-31",
@@ -344,7 +344,7 @@ func TestAccComputeBackendServiceIamPolicyGenerated_withCondition(t *testing.T) 
 		"random_suffix":           randomSuffix,
 		"role":                    "roles/compute.admin",
 		"backend_service_name":    "tf-test-backend-service" + randomSuffix,
-		"http_health_check_name":  "tf-test-health-check" + randomSuffix,
+		"health_check_name":       "tf-test-health-check" + randomSuffix,
 		"condition_title":         "expires_after_2019_12_31",
 		"condition_expr":          `request.time < timestamp(\"2020-01-01T00:00:00Z\")`,
 		"condition_desc":          "Expiring at midnight of 2019-12-31",
@@ -383,14 +383,17 @@ func testAccComputeBackendServiceIamMember_basicGenerated(context map[string]int
 	return acctest.Nprintf(`
 resource "google_compute_backend_service" "default" {
   name          = "%{backend_service_name}"
-  health_checks = [google_compute_http_health_check.default.id]
+  health_checks = [google_compute_health_check.default.id]
 }
 
-resource "google_compute_http_health_check" "default" {
-  name               = "%{http_health_check_name}"
-  request_path       = "/"
+resource "google_compute_health_check" "default" {
+  name               = "%{health_check_name}"
   check_interval_sec = 1
   timeout_sec        = 1
+  http_health_check {
+    port         = 80
+    request_path = "/"
+  }
 }
 
 resource "google_compute_backend_service_iam_member" "foo" {
@@ -406,14 +409,17 @@ func testAccComputeBackendServiceIamPolicy_basicGenerated(context map[string]int
 	return acctest.Nprintf(`
 resource "google_compute_backend_service" "default" {
   name          = "%{backend_service_name}"
-  health_checks = [google_compute_http_health_check.default.id]
+  health_checks = [google_compute_health_check.default.id]
 }
 
-resource "google_compute_http_health_check" "default" {
-  name               = "%{http_health_check_name}"
-  request_path       = "/"
+resource "google_compute_health_check" "default" {
+  name               = "%{health_check_name}"
   check_interval_sec = 1
   timeout_sec        = 1
+  http_health_check {
+    port         = 80
+    request_path = "/"
+  }
 }
 
 data "google_iam_policy" "foo" {
@@ -443,14 +449,17 @@ func testAccComputeBackendServiceIamPolicy_emptyBinding(context map[string]inter
 	return acctest.Nprintf(`
 resource "google_compute_backend_service" "default" {
   name          = "%{backend_service_name}"
-  health_checks = [google_compute_http_health_check.default.id]
+  health_checks = [google_compute_health_check.default.id]
 }
 
-resource "google_compute_http_health_check" "default" {
-  name               = "%{http_health_check_name}"
-  request_path       = "/"
+resource "google_compute_health_check" "default" {
+  name               = "%{health_check_name}"
   check_interval_sec = 1
   timeout_sec        = 1
+  http_health_check {
+    port         = 80
+    request_path = "/"
+  }
 }
 
 data "google_iam_policy" "foo" {
@@ -468,14 +477,17 @@ func testAccComputeBackendServiceIamBinding_basicGenerated(context map[string]in
 	return acctest.Nprintf(`
 resource "google_compute_backend_service" "default" {
   name          = "%{backend_service_name}"
-  health_checks = [google_compute_http_health_check.default.id]
+  health_checks = [google_compute_health_check.default.id]
 }
 
-resource "google_compute_http_health_check" "default" {
-  name               = "%{http_health_check_name}"
-  request_path       = "/"
+resource "google_compute_health_check" "default" {
+  name               = "%{health_check_name}"
   check_interval_sec = 1
   timeout_sec        = 1
+  http_health_check {
+    port         = 80
+    request_path = "/"
+  }
 }
 
 resource "google_compute_backend_service_iam_binding" "foo" {
@@ -491,14 +503,17 @@ func testAccComputeBackendServiceIamBinding_updateGenerated(context map[string]i
 	return acctest.Nprintf(`
 resource "google_compute_backend_service" "default" {
   name          = "%{backend_service_name}"
-  health_checks = [google_compute_http_health_check.default.id]
+  health_checks = [google_compute_health_check.default.id]
 }
 
-resource "google_compute_http_health_check" "default" {
-  name               = "%{http_health_check_name}"
-  request_path       = "/"
+resource "google_compute_health_check" "default" {
+  name               = "%{health_check_name}"
   check_interval_sec = 1
   timeout_sec        = 1
+  http_health_check {
+    port         = 80
+    request_path = "/"
+  }
 }
 
 resource "google_compute_backend_service_iam_binding" "foo" {
@@ -514,14 +529,17 @@ func testAccComputeBackendServiceIamBinding_withConditionGenerated(context map[s
 	return acctest.Nprintf(`
 resource "google_compute_backend_service" "default" {
   name          = "%{backend_service_name}"
-  health_checks = [google_compute_http_health_check.default.id]
+  health_checks = [google_compute_health_check.default.id]
 }
 
-resource "google_compute_http_health_check" "default" {
-  name               = "%{http_health_check_name}"
-  request_path       = "/"
+resource "google_compute_health_check" "default" {
+  name               = "%{health_check_name}"
   check_interval_sec = 1
   timeout_sec        = 1
+  http_health_check {
+    port         = 80
+    request_path = "/"
+  }
 }
 
 resource "google_compute_backend_service_iam_binding" "foo" {
@@ -542,14 +560,17 @@ func testAccComputeBackendServiceIamBinding_withAndWithoutConditionGenerated(con
 	return acctest.Nprintf(`
 resource "google_compute_backend_service" "default" {
   name          = "%{backend_service_name}"
-  health_checks = [google_compute_http_health_check.default.id]
+  health_checks = [google_compute_health_check.default.id]
 }
 
-resource "google_compute_http_health_check" "default" {
-  name               = "%{http_health_check_name}"
-  request_path       = "/"
+resource "google_compute_health_check" "default" {
+  name               = "%{health_check_name}"
   check_interval_sec = 1
   timeout_sec        = 1
+  http_health_check {
+    port         = 80
+    request_path = "/"
+  }
 }
 
 resource "google_compute_backend_service_iam_binding" "foo" {
@@ -590,14 +611,17 @@ func testAccComputeBackendServiceIamMember_withConditionGenerated(context map[st
 	return acctest.Nprintf(`
 resource "google_compute_backend_service" "default" {
   name          = "%{backend_service_name}"
-  health_checks = [google_compute_http_health_check.default.id]
+  health_checks = [google_compute_health_check.default.id]
 }
 
-resource "google_compute_http_health_check" "default" {
-  name               = "%{http_health_check_name}"
-  request_path       = "/"
+resource "google_compute_health_check" "default" {
+  name               = "%{health_check_name}"
   check_interval_sec = 1
   timeout_sec        = 1
+  http_health_check {
+    port         = 80
+    request_path = "/"
+  }
 }
 
 resource "google_compute_backend_service_iam_member" "foo" {
@@ -618,14 +642,17 @@ func testAccComputeBackendServiceIamMember_withAndWithoutConditionGenerated(cont
 	return acctest.Nprintf(`
 resource "google_compute_backend_service" "default" {
   name          = "%{backend_service_name}"
-  health_checks = [google_compute_http_health_check.default.id]
+  health_checks = [google_compute_health_check.default.id]
 }
 
-resource "google_compute_http_health_check" "default" {
-  name               = "%{http_health_check_name}"
-  request_path       = "/"
+resource "google_compute_health_check" "default" {
+  name               = "%{health_check_name}"
   check_interval_sec = 1
   timeout_sec        = 1
+  http_health_check {
+    port         = 80
+    request_path = "/"
+  }
 }
 
 resource "google_compute_backend_service_iam_member" "foo" {
@@ -666,14 +693,17 @@ func testAccComputeBackendServiceIamPolicy_withConditionGenerated(context map[st
 	return acctest.Nprintf(`
 resource "google_compute_backend_service" "default" {
   name          = "%{backend_service_name}"
-  health_checks = [google_compute_http_health_check.default.id]
+  health_checks = [google_compute_health_check.default.id]
 }
 
-resource "google_compute_http_health_check" "default" {
-  name               = "%{http_health_check_name}"
-  request_path       = "/"
+resource "google_compute_health_check" "default" {
+  name               = "%{health_check_name}"
   check_interval_sec = 1
   timeout_sec        = 1
+  http_health_check {
+    port         = 80
+    request_path = "/"
+  }
 }
 
 data "google_iam_policy" "foo" {
