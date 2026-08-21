@@ -118,7 +118,6 @@ BUG FIXES:
 * networksecurity: fixed `google_network_security_gateway_security_policy` to force replacement when `name` or `location` is modified ([#12894](https://github.com/hashicorp/terraform-provider-google-beta/pull/12894))
 * networkservices: fixed `google_network_services_gateway` to force replacement when `name` or `location` is modified ([#12902](https://github.com/hashicorp/terraform-provider-google-beta/pull/12902))
 
-## 7.46.0 (Unreleased)
 
 ## 7.45.0 (August 18, 2026)
 
