@@ -42,39 +42,6 @@ BUG FIXES:
 * container: fixed a permadiff on `enable_private_endpoint` and `master_global_access_config.enabled` in `google_container_cluster` when `control_plane_endpoints_config.ip_endpoints_config.enabled` is set to `false` ([#12944](https://github.com/hashicorp/terraform-provider-google-beta/pull/12944))
 * sql: fixed `google_sql_user` returning `Missing Resource Identity After Read` when the parent Cloud SQL instance is stopped ([#12940](https://github.com/hashicorp/terraform-provider-google-beta/pull/12940))
 
-## 7.45.0 (August 18, 2026)
-
-FEATURES:
-* **New Data Source:** `google_iam_workload_identity_pool_openid_config` ([#12903](https://github.com/hashicorp/terraform-provider-google-beta/pull/12903))
-* **New Resource:** `google_agentic_applications_analyst_agent_persona` ([#12895](https://github.com/hashicorp/terraform-provider-google-beta/pull/12895))
-* **New Resource:** `google_firestore_change_stream` ([#12908](https://github.com/hashicorp/terraform-provider-google-beta/pull/12908))
-
-IMPROVEMENTS:
-* accesscontextmanager: added `dry_run_access_levels` and `principal` fields to `google_access_context_manager_gcp_user_access_binding` resource ([#12885](https://github.com/hashicorp/terraform-provider-google-beta/pull/12885))
-* accesscontextmanager: updated `group_key` to be optional and conflict with `principal` on `google_access_context_manager_gcp_user_access_binding` resource ([#12885](https://github.com/hashicorp/terraform-provider-google-beta/pull/12885))
-* bigqueryreservation: added `labels` field to `google_bigquery_reservation` resource ([#12852](https://github.com/hashicorp/terraform-provider-google-beta/pull/12852))
-* certificatemanager: enabled write-only support for `pem_private_key` on `google_certificate_manager_certificate` resource ([#12905](https://github.com/hashicorp/terraform-provider-google-beta/pull/12905))
-* ces: added `snippets_config` field to `data_store_tool.modality_configs` and `service_directory_config` field to `python_function` in `google_ces_tool` ([#12878](https://github.com/hashicorp/terraform-provider-google-beta/pull/12878))
-* chronicle: added `schedule_customizations` field to `google_chronicle_rule_deployment` resource ([#12856](https://github.com/hashicorp/terraform-provider-google-beta/pull/12856))
-* cloudrunv2: added `templates.sandboxes` field to `google_cloud_run_v2_service` resource ([#12868](https://github.com/hashicorp/terraform-provider-google-beta/pull/12868))
-* colab: added `custom_environment_spec.shielded_instance_config` and `workbench_runtime.vm_image` fields to `google_colab_notebook_execution` resource ([#12892](https://github.com/hashicorp/terraform-provider-google-beta/pull/12892))
-* securityscanner: added `static_ip_scan` field to `google_security_scanner_scan_config` resource ([#12899](https://github.com/hashicorp/terraform-provider-google-beta/pull/12899))
-* sql: added `cpu_utilization_threshold_percent`, `memory_usage_threshold_percent`, `history_list_length_threshold_count`, `semaphore_wait_threshold_count`, `transaction_lock_wait_threshold_count`, `transaction_kill_threshold_seconds`, `transaction_kill_type`, and `transaction_kill_excluded_user_hosts` fields to `settings.performance_capture_config` in `google_sql_database_instance` resource ([#12910](https://github.com/hashicorp/terraform-provider-google-beta/pull/12910))
-* vertexai: added `spec.container_spec.port` field to `google_vertex_ai_reasoning_engine` resource ([#12881](https://github.com/hashicorp/terraform-provider-google-beta/pull/12881))
-* workbench: added `compute_instance_id` field to `google_workbench_instance` resource ([#12891](https://github.com/hashicorp/terraform-provider-google-beta/pull/12891))
-
-BUG FIXES:
-* alloydb: fixed an issue where `updateMask` URL parameter was dropped during cluster updates (e.g. `database_version` upgrade) due to variable shadowing ([#12909](https://github.com/hashicorp/terraform-provider-google-beta/pull/12909))
-* appengine: fixed permadiff in `google_app_engine_standard_app_version` ([#12863](https://github.com/hashicorp/terraform-provider-google-beta/pull/12863))
-* apphub: fixed panic in `google_apphub_service` and `google_apphub_workload` resources when parsing `extended_metadata` containing MCP server definitions ([#12883](https://github.com/hashicorp/terraform-provider-google-beta/pull/12883))
-* bigquery: fixed an issue where updating `google_bigquery_dataset` overwrote fine-grained IAM permissions ([#12893](https://github.com/hashicorp/terraform-provider-google-beta/pull/12893))
-* cloudsecuritycompliance: fixed state drift on `supported_enforcement_modes` in `google_cloud_security_compliance_framework` resource ([#12851](https://github.com/hashicorp/terraform-provider-google-beta/pull/12851))
-* colab: fixed drift detection on `direct_notebook_source.content` field in `google_colab_notebook_execution` resource ([#12892](https://github.com/hashicorp/terraform-provider-google-beta/pull/12892))
-* compute: fixed a panic in `google_compute_shared_vpc_service_project` during `terraform plan`/`refresh` when the shared VPC link had been removed outside of Terraform ([#12869](https://github.com/hashicorp/terraform-provider-google-beta/pull/12869))
-* compute: fixed permadiff on `adaptive_protection_config.layer_7_ddos_defense_config.enable` in `google_compute_security_policy` when field is not set in config ([#12870](https://github.com/hashicorp/terraform-provider-google-beta/pull/12870))
-* compute: fixed permadiffs for `google_compute_disk` on Fedora CoreOS images ([#12853](https://github.com/hashicorp/terraform-provider-google-beta/pull/12853))
-* networksecurity: fixed `google_network_security_gateway_security_policy` to force replacement when `name` or `location` is modified ([#12894](https://github.com/hashicorp/terraform-provider-google-beta/pull/12894))
-* networkservices: fixed `google_network_services_gateway` to force replacement when `name` or `location` is modified ([#12902](https://github.com/hashicorp/terraform-provider-google-beta/pull/12902))
 
 ## 7.45.0 (August 18, 2026)
 
