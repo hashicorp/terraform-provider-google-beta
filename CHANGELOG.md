@@ -33,7 +33,6 @@ IMPROVEMENTS:
 * compute: added write-only arguments for IAP `oauth2_client_id` and `oauth2_client_secret` to `google_compute_backend_service` resource ([#12915](https://github.com/hashicorp/terraform-provider-google-beta/pull/12915))
 * container: added `opportunistic_maintenance_strategy` to `host_maintenance_policy` in `node_config` for `google_container_cluster` and `google_container_node_pool` ([#12925](https://github.com/hashicorp/terraform-provider-google-beta/pull/12925))
 * discoveryengine: made `google_discovery_engine_search_engine` `search_engine_config.required_subscription_tier` updatable ([#12954](https://github.com/hashicorp/terraform-provider-google-beta/pull/12954))
-* filestore: added regional endpoint (REP) support for `google_filestore_instance`, `google_filestore_backup`, and `google_filestore_snapshot` ([#12950](https://github.com/hashicorp/terraform-provider-google-beta/pull/12950))
 * securesourcemanager: added `PULL_REQUEST_COMMENT` enum to `events` field in `google_secure_source_manager_hook` ([#12932](https://github.com/hashicorp/terraform-provider-google-beta/pull/12932))
 * sql: added `replication_lag_max_seconds` to `google_sql_database_instance` ([#12919](https://github.com/hashicorp/terraform-provider-google-beta/pull/12919))
 * vertexai: added `disable_natural_language_memories` and `generate_memories_examples` fields to `google_vertex_ai_reasoning_engine` ([#12949](https://github.com/hashicorp/terraform-provider-google-beta/pull/12949))
