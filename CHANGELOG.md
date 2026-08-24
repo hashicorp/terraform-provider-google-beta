@@ -1,5 +1,48 @@
 ## 7.46.0 (Unreleased)
 
+DEPRECATIONS:
+* beyondcorp: deprecated `google_beyondcorp_app_connection`, `google_beyondcorp_app_connector`, and `google_beyondcorp_app_gateway` resources and data sources. Use `google_beyondcorp_security_gateway` and `google_beyondcorp_security_gateway_application` instead. ([#12939](https://github.com/hashicorp/terraform-provider-google-beta/pull/12939))
+
+FEATURES:
+* **New Data Source:** `google_memorystore_acl_policy` ([#12947](https://github.com/hashicorp/terraform-provider-google-beta/pull/12947))
+* **New Data Source:** `google_redis_cluster_acl_policy` ([#12948](https://github.com/hashicorp/terraform-provider-google-beta/pull/12948))
+* **New List Resource:** `google_migration_center_assets_export_job` ([#12929](https://github.com/hashicorp/terraform-provider-google-beta/pull/12929))
+* **New List Resource:** `google_migration_center_discovery_client` ([#12929](https://github.com/hashicorp/terraform-provider-google-beta/pull/12929))
+* **New List Resource:** `google_migration_center_group` ([#12929](https://github.com/hashicorp/terraform-provider-google-beta/pull/12929))
+* **New List Resource:** `google_migration_center_import_job` ([#12929](https://github.com/hashicorp/terraform-provider-google-beta/pull/12929))
+* **New List Resource:** `google_migration_center_preference_set` ([#12929](https://github.com/hashicorp/terraform-provider-google-beta/pull/12929))
+* **New List Resource:** `google_migration_center_report_config` ([#12929](https://github.com/hashicorp/terraform-provider-google-beta/pull/12929))
+* **New List Resource:** `google_migration_center_source` ([#12929](https://github.com/hashicorp/terraform-provider-google-beta/pull/12929))
+* **New List Resource:** `google_network_services_authz_extension` ([#12941](https://github.com/hashicorp/terraform-provider-google-beta/pull/12941))
+* **New List Resource:** `google_network_services_multicast_consumer_association` ([#12941](https://github.com/hashicorp/terraform-provider-google-beta/pull/12941))
+* **New List Resource:** `google_network_services_multicast_domain_activation` ([#12941](https://github.com/hashicorp/terraform-provider-google-beta/pull/12941))
+* **New List Resource:** `google_network_services_multicast_domain_group` ([#12941](https://github.com/hashicorp/terraform-provider-google-beta/pull/12941))
+* **New List Resource:** `google_network_services_multicast_domain` ([#12941](https://github.com/hashicorp/terraform-provider-google-beta/pull/12941))
+* **New List Resource:** `google_network_services_multicast_group_consumer_activation` ([#12941](https://github.com/hashicorp/terraform-provider-google-beta/pull/12941))
+* **New List Resource:** `google_network_services_multicast_group_producer_activation` ([#12941](https://github.com/hashicorp/terraform-provider-google-beta/pull/12941))
+* **New List Resource:** `google_network_services_multicast_group_range_activation` ([#12941](https://github.com/hashicorp/terraform-provider-google-beta/pull/12941))
+* **New List Resource:** `google_network_services_multicast_group_range` ([#12941](https://github.com/hashicorp/terraform-provider-google-beta/pull/12941))
+* **New List Resource:** `google_network_services_multicast_producer_association` ([#12941](https://github.com/hashicorp/terraform-provider-google-beta/pull/12941))
+* **New Resource:** `google_memorystore_acl_policy` ([#12947](https://github.com/hashicorp/terraform-provider-google-beta/pull/12947))
+* **New Resource:** `google_redis_cluster_acl_policy` ([#12948](https://github.com/hashicorp/terraform-provider-google-beta/pull/12948))
+* **New Resource:** `google_vertex_ai_agent_anomaly_detection_scope` ([#12916](https://github.com/hashicorp/terraform-provider-google-beta/pull/12916))
+
+IMPROVEMENTS:
+* biglake: added `serde_info` field to `google_biglake_table` resource ([#12953](https://github.com/hashicorp/terraform-provider-google-beta/pull/12953))
+* ces: added `connector_toolset` and `timeout` fields to `google_ces_toolset` resource ([#12928](https://github.com/hashicorp/terraform-provider-google-beta/pull/12928))
+* compute: added write-only arguments for IAP `oauth2_client_id` and `oauth2_client_secret` to `google_compute_backend_service` resource ([#12915](https://github.com/hashicorp/terraform-provider-google-beta/pull/12915))
+* container: added `opportunistic_maintenance_strategy` to `host_maintenance_policy` in `node_config` for `google_container_cluster` and `google_container_node_pool` ([#12925](https://github.com/hashicorp/terraform-provider-google-beta/pull/12925))
+* discoveryengine: made `google_discovery_engine_search_engine` `search_engine_config.required_subscription_tier` updatable ([#12954](https://github.com/hashicorp/terraform-provider-google-beta/pull/12954))
+* securesourcemanager: added `PULL_REQUEST_COMMENT` enum to `events` field in `google_secure_source_manager_hook` ([#12932](https://github.com/hashicorp/terraform-provider-google-beta/pull/12932))
+* sql: added `replication_lag_max_seconds` to `google_sql_database_instance` ([#12919](https://github.com/hashicorp/terraform-provider-google-beta/pull/12919))
+* vertexai: added `disable_natural_language_memories` and `generate_memories_examples` fields to `google_vertex_ai_reasoning_engine` ([#12949](https://github.com/hashicorp/terraform-provider-google-beta/pull/12949))
+
+BUG FIXES:
+* compute: fixed truncation of results at 500 images in `google_compute_images` data source ([#12934](https://github.com/hashicorp/terraform-provider-google-beta/pull/12934))
+* container: fixed a permadiff on `enable_private_endpoint` and `master_global_access_config.enabled` in `google_container_cluster` when `control_plane_endpoints_config.ip_endpoints_config.enabled` is set to `false` ([#12944](https://github.com/hashicorp/terraform-provider-google-beta/pull/12944))
+* sql: fixed `google_sql_user` returning `Missing Resource Identity After Read` when the parent Cloud SQL instance is stopped ([#12940](https://github.com/hashicorp/terraform-provider-google-beta/pull/12940))
+
+
 ## 7.45.0 (August 18, 2026)
 
 FEATURES:
