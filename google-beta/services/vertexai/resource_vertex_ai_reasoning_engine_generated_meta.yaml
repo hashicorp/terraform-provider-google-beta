@@ -71,6 +71,7 @@ fields:
     - api_field: spec.agentCard
       json: true
     - api_field: spec.agentFramework
+    - api_field: spec.buildSpec.serviceAccount
     - api_field: spec.buildSpec.workerPool
     - api_field: spec.classMethods
       json: true

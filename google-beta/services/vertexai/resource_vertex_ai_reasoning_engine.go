@@ -810,6 +810,11 @@ Please refer to the field 'effective_labels' for all of the labels present on th
 							MaxItems:    1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
+									"service_account": {
+										Type:        schema.TypeString,
+										Optional:    true,
+										Description: `Optional. The service account that the Cloud Build builder runs as.`,
+									},
 									"worker_pool": {
 										Type:        schema.TypeString,
 										Optional:    true,
@@ -2946,9 +2951,15 @@ func flattenVertexAIReasoningEngineSpecBuildSpec(v interface{}, d *schema.Resour
 	transformed := make(map[string]interface{})
 	transformed["worker_pool"] =
 		flattenVertexAIReasoningEngineSpecBuildSpecWorkerPool(original["workerPool"], d, config)
+	transformed["service_account"] =
+		flattenVertexAIReasoningEngineSpecBuildSpecServiceAccount(original["serviceAccount"], d, config)
 	return []interface{}{transformed}
 }
 func flattenVertexAIReasoningEngineSpecBuildSpecWorkerPool(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenVertexAIReasoningEngineSpecBuildSpecServiceAccount(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -4930,10 +4941,21 @@ func expandVertexAIReasoningEngineSpecBuildSpec(v interface{}, d tpgresource.Ter
 		transformed["workerPool"] = transformedWorkerPool
 	}
 
+	transformedServiceAccount, err := expandVertexAIReasoningEngineSpecBuildSpecServiceAccount(original["service_account"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedServiceAccount); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["serviceAccount"] = transformedServiceAccount
+	}
+
 	return transformed, nil
 }
 
 func expandVertexAIReasoningEngineSpecBuildSpecWorkerPool(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandVertexAIReasoningEngineSpecBuildSpecServiceAccount(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
