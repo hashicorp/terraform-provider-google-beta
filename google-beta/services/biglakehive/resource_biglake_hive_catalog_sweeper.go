@@ -142,9 +142,9 @@ func listAndActionBiglakeHiveHiveCatalog(action sweeper.ResourceAction) error {
 		}
 
 		// First try the expected resource key
-		resourceList, ok := res["hiveCatalogs"]
+		resourceList, ok := res["catalogs"]
 		if ok {
-			log.Printf("[INFO][SWEEPER_LOG] Found resources under expected key 'hiveCatalogs'")
+			log.Printf("[INFO][SWEEPER_LOG] Found resources under expected key 'catalogs'")
 		} else {
 			// Next, try the common "items" pattern
 			resourceList, ok = res["items"]

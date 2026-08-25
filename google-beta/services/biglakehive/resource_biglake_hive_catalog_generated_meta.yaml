@@ -5,7 +5,7 @@ generation_type: mmv1
 source_file: products/biglakehive/HiveCatalog.yaml
 api_service_name: biglake.googleapis.com
 api_version: v1beta
-api_resource_type_kind: HiveCatalog
+api_resource_type_kind: Catalog
 fields:
     - api_field: createTime
     - api_field: description
