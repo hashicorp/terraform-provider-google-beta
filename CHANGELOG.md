@@ -1,4 +1,88 @@
-## 7.46.0 (Unreleased)
+## 8.0.0 (August 26, 2026)
+
+[Terraform Google Provider Beta 8.0.0 Upgrade Guide](https://registry.terraform.io/providers/hashicorp/google-beta/latest/docs/guides/version_8_upgrade)
+
+BREAKING RESOURCE REMOVALS:
+* beyondcorp: removed `google_beyondcorp_app_connection`, `google_beyondcorp_app_connector`, and `google_beyondcorp_app_gateway` resources, and the `google_beyondcorp_app_connection`, `google_beyondcorp_app_connector`, and `google_beyondcorp_app_gateway` data sources. Use `google_beyondcorp_security_gateway` and `google_beyondcorp_security_gateway_application` instead. ([#18675](https://github.com/GoogleCloudPlatform/magic-modules/pull/18675))
+* iap: removed `google_iap_brand` and `google_iap_client` resources, and the `google_iap_client` data source. ([#18679](https://github.com/GoogleCloudPlatform/magic-modules/pull/18679))
+* mlengine: removed `google_ml_engine_model` resource. Migrate machine learning deployments to `google_vertex_ai_endpoint` or Vertex AI Model Garden resources. ([#18681](https://github.com/GoogleCloudPlatform/magic-modules/pull/18681))
+* notebooks: removed `google_notebooks_environment`, `google_notebooks_instance` (and associated IAM resources), and `google_notebooks_runtime` (and associated IAM resources). Migrate to `google_workbench_instance`. ([#18583](https://github.com/GoogleCloudPlatform/magic-modules/pull/18583))
+* vertexai: removed `google_vertex_ai_schedule` resource. Use `google_colab_schedule` instead. ([#18673](https://github.com/GoogleCloudPlatform/magic-modules/pull/18673))
+
+BREAKING FIELD REMOVALS:
+* backupdr: removed `resource_type` argument from `google_backup_dr_backup_plan_associations` and `google_backup_dr_data_source_references` data sources. ([#18688](https://github.com/GoogleCloudPlatform/magic-modules/pull/18688))
+* cloudrunv2: removed `custom_audiences` field from `google_cloud_run_v2_worker_pool` resource. ([#18193](https://github.com/GoogleCloudPlatform/magic-modules/pull/18193))
+* cloudrunv2: removed `http_get.http_headers.port` probe field from `google_cloud_run_v2_worker_pool` resource. ([#18290](https://github.com/GoogleCloudPlatform/magic-modules/pull/18290))
+* compute: removed `attachment` attribute within `logical_structure.*.zones` from `google_compute_interconnect_attachment_group` resource in favor of `attachments`. ([#18676](https://github.com/GoogleCloudPlatform/magic-modules/pull/18676))
+* compute: removed `reservation_block_count` field from `google_compute_reservation` resource in favor of `resource_status[0].reservation_block_count`. ([#18611](https://github.com/GoogleCloudPlatform/magic-modules/pull/18611))
+* datalossprevention: removed `actions.publish_findings_to_cloud_data_catalog` field from `google_data_loss_prevention_job_trigger` resource in favor of `actions.publish_findings_to_dataplex_catalog`. ([#18530](https://github.com/GoogleCloudPlatform/magic-modules/pull/18530))
+* integrations: removed `run_as_service_account` argument from `google_integrations_client` resource. ([#18680](https://github.com/GoogleCloudPlatform/magic-modules/pull/18680))
+* netapp: removed `scale_tier` argument from `google_netapp_storage_pool` resource in favor of `scale_type`. ([#18286](https://github.com/GoogleCloudPlatform/magic-modules/pull/18286))
+
+BREAKING INCREASED VALIDATION:
+* bigquerydatatransfer: changed constraint between `sensitive_params.0.secret_access_key` and `sensitive_params.0.secret_access_key_wo` from `AtLeastOneOf` to `ExactlyOneOf` in `google_bigquery_data_transfer_config` resource. ([#18325](https://github.com/GoogleCloudPlatform/magic-modules/pull/18325))
+* cloudrunv2: made `http_get.http_headers.name` required when `http_get.http_headers` is set in `google_cloud_run_v2_worker_pool` resource. ([#18290](https://github.com/GoogleCloudPlatform/magic-modules/pull/18290))
+* iamworkforcepool: made `claim_mapping` a required field on create in `google_iam_workforce_pool_provider_scim_tenant` resource. ([#18348](https://github.com/GoogleCloudPlatform/magic-modules/pull/18348))
+* monitoring: changed constraint between `http_check.0.auth_info.0.password` and `http_check.0.auth_info.0.password_wo` to `ExactlyOneOf` in `google_monitoring_uptime_check_config` resource. ([#18325](https://github.com/GoogleCloudPlatform/magic-modules/pull/18325))
+* secretmanager: made `secret_data_wo_version` required when `secret_data_wo` is set (`RequiredWith`) in `google_secret_manager_secret_version` resource. ([#18325](https://github.com/GoogleCloudPlatform/magic-modules/pull/18325))
+* workflows: made `source_contents` a required argument in `google_workflows_workflow` resource. ([#18411](https://github.com/GoogleCloudPlatform/magic-modules/pull/18411))
+
+OTHER BREAKING CHANGES:
+* bigquerydatatransfer: converted `sensitive_params.0.secret_access_key_wo_version` from `Integer` to `String` data type with state migration in `google_bigquery_data_transfer_config` resource. ([#18731](https://github.com/GoogleCloudPlatform/magic-modules/pull/18731))
+* bigquery: removed `default_from_api` for `default_collation` in `google_bigquery_dataset` resource; setting `default_collation = ""` now explicitly clears collation. ([#18585](https://github.com/GoogleCloudPlatform/magic-modules/pull/18585))
+* cloudsecuritycompliance: converted `cloud_control_details` from `list` to `set` in `google_cloud_security_compliance_framework` resource. ([#18596](https://github.com/GoogleCloudPlatform/magic-modules/pull/18596))
+* compute: added default empty strings (`""`) to `project_id_or_num`, `network_url`, and `endpoint_url` within `consumer_accept_lists` in `google_compute_service_attachment` resource to resolve permadiffs. ([#18276](https://github.com/GoogleCloudPlatform/magic-modules/pull/18276))
+* compute: changed default value of `load_balancing_scheme` from `EXTERNAL` to `EXTERNAL_MANAGED` in `google_compute_backend_service` and `google_compute_global_forwarding_rule` resources. ([#18557](https://github.com/GoogleCloudPlatform/magic-modules/pull/18557))
+* compute: updated `guest_accelerator` in `google_compute_instance` to plan and apply removal/replacement when `count` is explicitly set to `0` (or `guest_accelerator = []`). ([#18426](https://github.com/GoogleCloudPlatform/magic-modules/pull/18426))
+* compute: converted `nat_subnets` and `consumer_reject_lists` from `list` to `set` in `google_compute_service_attachment` resource. ([#18694](https://github.com/GoogleCloudPlatform/magic-modules/pull/18694))
+* container: extended `name_prefix` max length from 14 to 31 characters in `google_container_node_pool` and `google_container_cluster` resources. ([#18477](https://github.com/GoogleCloudPlatform/magic-modules/pull/18477))
+* container: converted `enable_components` in `logging_config` and `monitoring_config` from `list` to `set` in `google_container_cluster` resource. ([#18262](https://github.com/GoogleCloudPlatform/magic-modules/pull/18262))
+* secretmanager: converted `secret_data_wo_version` from `Integer` to `String` data type with state migration in `google_secret_manager_secret_version` resource. ([#18325](https://github.com/GoogleCloudPlatform/magic-modules/pull/18325))
+
+## 7.46.0 (August 26, 2026)
+
+DEPRECATIONS:
+* beyondcorp: deprecated `google_beyondcorp_app_connection`, `google_beyondcorp_app_connector`, and `google_beyondcorp_app_gateway` resources and data sources. Use `google_beyondcorp_security_gateway` and `google_beyondcorp_security_gateway_application` instead. ([#12939](https://github.com/hashicorp/terraform-provider-google-beta/pull/12939))
+
+FEATURES:
+* **New Data Source:** `google_memorystore_acl_policy` ([#12947](https://github.com/hashicorp/terraform-provider-google-beta/pull/12947))
+* **New Data Source:** `google_redis_cluster_acl_policy` ([#12948](https://github.com/hashicorp/terraform-provider-google-beta/pull/12948))
+* **New List Resource:** `google_migration_center_assets_export_job` ([#12929](https://github.com/hashicorp/terraform-provider-google-beta/pull/12929))
+* **New List Resource:** `google_migration_center_discovery_client` ([#12929](https://github.com/hashicorp/terraform-provider-google-beta/pull/12929))
+* **New List Resource:** `google_migration_center_group` ([#12929](https://github.com/hashicorp/terraform-provider-google-beta/pull/12929))
+* **New List Resource:** `google_migration_center_import_job` ([#12929](https://github.com/hashicorp/terraform-provider-google-beta/pull/12929))
+* **New List Resource:** `google_migration_center_preference_set` ([#12929](https://github.com/hashicorp/terraform-provider-google-beta/pull/12929))
+* **New List Resource:** `google_migration_center_report_config` ([#12929](https://github.com/hashicorp/terraform-provider-google-beta/pull/12929))
+* **New List Resource:** `google_migration_center_source` ([#12929](https://github.com/hashicorp/terraform-provider-google-beta/pull/12929))
+* **New List Resource:** `google_network_services_authz_extension` ([#12941](https://github.com/hashicorp/terraform-provider-google-beta/pull/12941))
+* **New List Resource:** `google_network_services_multicast_consumer_association` ([#12941](https://github.com/hashicorp/terraform-provider-google-beta/pull/12941))
+* **New List Resource:** `google_network_services_multicast_domain_activation` ([#12941](https://github.com/hashicorp/terraform-provider-google-beta/pull/12941))
+* **New List Resource:** `google_network_services_multicast_domain_group` ([#12941](https://github.com/hashicorp/terraform-provider-google-beta/pull/12941))
+* **New List Resource:** `google_network_services_multicast_domain` ([#12941](https://github.com/hashicorp/terraform-provider-google-beta/pull/12941))
+* **New List Resource:** `google_network_services_multicast_group_consumer_activation` ([#12941](https://github.com/hashicorp/terraform-provider-google-beta/pull/12941))
+* **New List Resource:** `google_network_services_multicast_group_producer_activation` ([#12941](https://github.com/hashicorp/terraform-provider-google-beta/pull/12941))
+* **New List Resource:** `google_network_services_multicast_group_range_activation` ([#12941](https://github.com/hashicorp/terraform-provider-google-beta/pull/12941))
+* **New List Resource:** `google_network_services_multicast_group_range` ([#12941](https://github.com/hashicorp/terraform-provider-google-beta/pull/12941))
+* **New List Resource:** `google_network_services_multicast_producer_association` ([#12941](https://github.com/hashicorp/terraform-provider-google-beta/pull/12941))
+* **New Resource:** `google_memorystore_acl_policy` ([#12947](https://github.com/hashicorp/terraform-provider-google-beta/pull/12947))
+* **New Resource:** `google_redis_cluster_acl_policy` ([#12948](https://github.com/hashicorp/terraform-provider-google-beta/pull/12948))
+* **New Resource:** `google_vertex_ai_agent_anomaly_detection_scope` ([#12916](https://github.com/hashicorp/terraform-provider-google-beta/pull/12916))
+
+IMPROVEMENTS:
+* biglake: added `serde_info` field to `google_biglake_table` resource ([#12953](https://github.com/hashicorp/terraform-provider-google-beta/pull/12953))
+* ces: added `connector_toolset` and `timeout` fields to `google_ces_toolset` resource ([#12928](https://github.com/hashicorp/terraform-provider-google-beta/pull/12928))
+* compute: added write-only arguments for IAP `oauth2_client_id` and `oauth2_client_secret` to `google_compute_backend_service` resource ([#12915](https://github.com/hashicorp/terraform-provider-google-beta/pull/12915))
+* container: added `opportunistic_maintenance_strategy` to `host_maintenance_policy` in `node_config` for `google_container_cluster` and `google_container_node_pool` ([#12925](https://github.com/hashicorp/terraform-provider-google-beta/pull/12925))
+* discoveryengine: made `google_discovery_engine_search_engine` `search_engine_config.required_subscription_tier` updatable ([#12954](https://github.com/hashicorp/terraform-provider-google-beta/pull/12954))
+* securesourcemanager: added `PULL_REQUEST_COMMENT` enum to `events` field in `google_secure_source_manager_hook` ([#12932](https://github.com/hashicorp/terraform-provider-google-beta/pull/12932))
+* sql: added `replication_lag_max_seconds` to `google_sql_database_instance` ([#12919](https://github.com/hashicorp/terraform-provider-google-beta/pull/12919))
+* vertexai: added `disable_natural_language_memories` and `generate_memories_examples` fields to `google_vertex_ai_reasoning_engine` ([#12949](https://github.com/hashicorp/terraform-provider-google-beta/pull/12949))
+
+BUG FIXES:
+* compute: fixed truncation of results at 500 images in `google_compute_images` data source ([#12934](https://github.com/hashicorp/terraform-provider-google-beta/pull/12934))
+* container: fixed a permadiff on `enable_private_endpoint` and `master_global_access_config.enabled` in `google_container_cluster` when `control_plane_endpoints_config.ip_endpoints_config.enabled` is set to `false` ([#12944](https://github.com/hashicorp/terraform-provider-google-beta/pull/12944))
+* sql: fixed `google_sql_user` returning `Missing Resource Identity After Read` when the parent Cloud SQL instance is stopped ([#12940](https://github.com/hashicorp/terraform-provider-google-beta/pull/12940))
+
 
 ## 7.45.0 (August 18, 2026)
 
