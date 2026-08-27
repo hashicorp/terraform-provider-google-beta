@@ -146,7 +146,6 @@ func ListComputeNetworkFirewallPolicyPacketMirroringRules(config *transport_tpg.
 	if err != nil {
 		return err
 	}
-
 	return transport_tpg.ListPages(transport_tpg.ListPagesOptions{
 		Config:         config,
 		TempData:       resourceData,
