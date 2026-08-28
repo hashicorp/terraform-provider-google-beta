@@ -137,6 +137,13 @@ func TestAccCloudRunV2Service_cloudrunv2ServiceScalingControlsExample(t *testing
 		"random_suffix":          randomSuffix,
 	}
 
+	context_2 := map[string]interface{}{
+		"cloud_run_service_name": "tf-test-cloudrun-service" + randomSuffix,
+		"concurrency_util":       0,
+		"cpu_util":               "0.6",
+		"random_suffix":          randomSuffix,
+	}
+
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
@@ -159,6 +166,26 @@ func TestAccCloudRunV2Service_cloudrunv2ServiceScalingControlsExample(t *testing
 			},
 			{
 				Config: testAccCloudRunV2Service_cloudrunv2ServiceScalingControlsExample(context_1),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_cloud_run_v2_service.default", plancheck.ResourceActionUpdate),
+					},
+				},
+			},
+			{
+				ResourceName:            "google_cloud_run_v2_service.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"annotations", "deletion_protection", "labels", "location", "name", "tags", "terraform_labels"},
+			},
+			{
+				ResourceName:       "google_cloud_run_v2_service.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
+			{
+				Config: testAccCloudRunV2Service_cloudrunv2ServiceScalingControlsExample(context_2),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
 						plancheck.ExpectResourceAction("google_cloud_run_v2_service.default", plancheck.ResourceActionUpdate),
