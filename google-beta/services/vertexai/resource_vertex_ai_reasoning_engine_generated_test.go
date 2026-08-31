@@ -869,7 +869,7 @@ func TestAccVertexAIReasoningEngine_vertexAiReasoningEngineGranularTtlExample(t 
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckVertexAIReasoningEngineDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -897,7 +897,6 @@ resource "google_vertex_ai_reasoning_engine" "reasoning_engine" {
   display_name = "%{name}"
   description  = "Reasoning engine with granular ttl"
   region       = "us-central1"
-  provider     = google-beta
 
   context_spec {
     memory_bank_config {
@@ -920,9 +919,7 @@ resource "google_vertex_ai_reasoning_engine" "reasoning_engine" {
   }
 }
 
-data "google_project" "project" {
-  provider = google-beta
-}
+data "google_project" "project" {}
 `, context)
 }
 
