@@ -765,6 +765,17 @@ resource "google_vertex_ai_reasoning_engine" "reasoning_engine" {
                     output  = "pizza"
                   }
                 }
+                parts {
+                  audio_transcription {
+                    speaker_label = "spk_1"
+                    text          = "I like pepperoni pizza"
+                    words {
+                      start_offset = "0.5s"
+                      end_offset   = "1.5s"
+                      word         = "pepperoni"
+                    }
+                  }
+                }
               }
             }
           }
