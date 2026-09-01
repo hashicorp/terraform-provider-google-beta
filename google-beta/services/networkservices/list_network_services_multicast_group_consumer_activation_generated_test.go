@@ -30,6 +30,9 @@ import (
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/compute"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/networkconnectivityv1"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/networkservices"
 )
 
 var (
