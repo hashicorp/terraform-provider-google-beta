@@ -1,5 +1,9 @@
-## 7.46.0 (Unreleased)
+## 7.46.1 (Unreleased)
 
+BUG FIXES:
+* compute: fix permadiff regression when iap is omitted ([#13041](https://github.com/hashicorp/terraform-provider-google-beta/pull/13041))
+
+## 7.46.0 (August 25th, 2026)
 DEPRECATIONS:
 * beyondcorp: deprecated `google_beyondcorp_app_connection`, `google_beyondcorp_app_connector`, and `google_beyondcorp_app_gateway` resources and data sources. Use `google_beyondcorp_security_gateway` and `google_beyondcorp_security_gateway_application` instead. ([#12939](https://github.com/hashicorp/terraform-provider-google-beta/pull/12939))
 
