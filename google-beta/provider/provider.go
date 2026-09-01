@@ -1096,6 +1096,11 @@ func Provider() *schema.Provider {
 				Optional:     true,
 				ValidateFunc: ValidateCustomEndpoint,
 			},
+			"storage_ftp_custom_endpoint": &schema.Schema{
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: ValidateCustomEndpoint,
+			},
 			"storage_insights_custom_endpoint": &schema.Schema{
 				Type:         schema.TypeString,
 				Optional:     true,
