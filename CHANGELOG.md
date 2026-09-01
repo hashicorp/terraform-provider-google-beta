@@ -1,3 +1,62 @@
+## 8.1.0 (Unreleased)
+
+NOTES:
+* compute: migrated `google_compute_global_address` data source to use direct HTTP rather than a client library ([#12982](https://github.com/hashicorp/terraform-provider-google-beta/pull/12982))
+* compute: migrated `google_compute_interconnect_locations` data source to use direct HTTP rather than a client library ([#12999](https://github.com/hashicorp/terraform-provider-google-beta/pull/12999))
+* compute: migrated `google_compute_shared_vpc_host_project` to use direct HTTP rather than a client library ([#13013](https://github.com/hashicorp/terraform-provider-google-beta/pull/13013))
+* container: migrated `google_container_node_pool` to use direct HTTP rather than a client library ([#13012](https://github.com/hashicorp/terraform-provider-google-beta/pull/13012))
+* resourcemanager: migrated `google_project` to use direct HTTP rather than a client library ([#12998](https://github.com/hashicorp/terraform-provider-google-beta/pull/12998))
+
+DEPRECATIONS:
+* workstations: deprecated `details` in `google_workstations_workstation_config` (no longer populated by the API; will be removed in a future major release) ([#13016](https://github.com/hashicorp/terraform-provider-google-beta/pull/13016))
+
+FEATURES:
+* **New List Resource:** `google_apigee_addons_config` ([#12983](https://github.com/hashicorp/terraform-provider-google-beta/pull/12983))
+* **New List Resource:** `google_apigee_api_product` ([#13010](https://github.com/hashicorp/terraform-provider-google-beta/pull/13010))
+* **New List Resource:** `google_apigee_data_collector` ([#13010](https://github.com/hashicorp/terraform-provider-google-beta/pull/13010))
+* **New List Resource:** `google_apigee_datastore` ([#13010](https://github.com/hashicorp/terraform-provider-google-beta/pull/13010))
+* **New List Resource:** `google_apigee_endpoint_attachment` ([#13010](https://github.com/hashicorp/terraform-provider-google-beta/pull/13010))
+* **New List Resource:** `google_apigee_envgroup` ([#13010](https://github.com/hashicorp/terraform-provider-google-beta/pull/13010))
+* **New List Resource:** `google_apigee_environment_keyvaluemaps` ([#13009](https://github.com/hashicorp/terraform-provider-google-beta/pull/13009))
+* **New List Resource:** `google_apigee_organization` ([#13009](https://github.com/hashicorp/terraform-provider-google-beta/pull/13009))
+* **New List Resource:** `google_apigee_target_server` ([#13009](https://github.com/hashicorp/terraform-provider-google-beta/pull/13009))
+* **New List Resource:** `google_colab_notebook_execution` ([#13008](https://github.com/hashicorp/terraform-provider-google-beta/pull/13008))
+* **New List Resource:** `google_colab_runtime` ([#13008](https://github.com/hashicorp/terraform-provider-google-beta/pull/13008))
+* **New List Resource:** `google_colab_runtime_template` ([#13008](https://github.com/hashicorp/terraform-provider-google-beta/pull/13008))
+* **New List Resource:** `google_colab_schedule` ([#13008](https://github.com/hashicorp/terraform-provider-google-beta/pull/13008))
+* **New Resource:** `google_eventarc_pipeline_iam_binding` ([#13021](https://github.com/hashicorp/terraform-provider-google-beta/pull/13021))
+* **New Resource:** `google_eventarc_pipeline_iam_member` ([#13021](https://github.com/hashicorp/terraform-provider-google-beta/pull/13021))
+* **New Resource:** `google_eventarc_pipeline_iam_policy` ([#13021](https://github.com/hashicorp/terraform-provider-google-beta/pull/13021))
+* **New Resource:** `google_monitoring_snooze` ([#12981](https://github.com/hashicorp/terraform-provider-google-beta/pull/12981))
+* **New Resource:** `google_network_management_network_monitoring_provider` ([#13000](https://github.com/hashicorp/terraform-provider-google-beta/pull/13000))
+* **New Resource:** `google_observability_bucket` ([#13017](https://github.com/hashicorp/terraform-provider-google-beta/pull/13017))
+* **New Resource:** `google_scc_notification_service_account` ([#12987](https://github.com/hashicorp/terraform-provider-google-beta/pull/12987))
+
+IMPROVEMENTS:
+* bigqueryanalyticshub: added `destination_pubsub_subscription` to `google_bigquery_analytics_hub_listing_subscription` ([#13006](https://github.com/hashicorp/terraform-provider-google-beta/pull/13006))
+* ces: added `api_authentication` field to `google_ces_tool.remote_agent_tool` ([#13003](https://github.com/hashicorp/terraform-provider-google-beta/pull/13003))
+* ces: added `error_handling_settings` field to `google_ces_app` ([#12989](https://github.com/hashicorp/terraform-provider-google-beta/pull/12989))
+* ces: added `instagram_credentials` and `whatsapp_credentials` fields to `google_ces_deployment` resource ([#12984](https://github.com/hashicorp/terraform-provider-google-beta/pull/12984))
+* ces: added `language_code_variable` field to `google_ces_agent` resource ([#13007](https://github.com/hashicorp/terraform-provider-google-beta/pull/13007))
+* ces: added `retention_window` field to `google_ces_app` resource ([#12972](https://github.com/hashicorp/terraform-provider-google-beta/pull/12972))
+* ces: added `vpc_sc_settings` field to `google_ces_app` resource ([#12971](https://github.com/hashicorp/terraform-provider-google-beta/pull/12971))
+* ces: added `whatsapp_config` field to `google_ces_app` resource ([#12974](https://github.com/hashicorp/terraform-provider-google-beta/pull/12974))
+* cloudrunv2: added `template.containers.sandbox_launcher` field to `google_cloud_run_v2_worker_pool` resource ([#13005](https://github.com/hashicorp/terraform-provider-google-beta/pull/13005))
+* cloudrunv2: supported explicitly disabling `cpu_utilization` and `concurrency_utilization` autoscaling thresholds with `0.0` in `google_cloud_run_v2_service` ([#13022](https://github.com/hashicorp/terraform-provider-google-beta/pull/13022))
+* discoveryengine: added `last_user_update_time` field to `google_discovery_engine_license_config` resource ([#13002](https://github.com/hashicorp/terraform-provider-google-beta/pull/13002))
+* networkservices: added `forward_attributes` field to `google_network_services_authz_extension` ([#12970](https://github.com/hashicorp/terraform-provider-google-beta/pull/12970))
+* servicenetworking: added `REMOVE_PEERING` value to `deletion_policy` on `google_service_networking_connection`, which removes the VPC peering when the connection cannot be deleted because service producer resources still use it ([#12980](https://github.com/hashicorp/terraform-provider-google-beta/pull/12980))
+* vertexai: added `gateway_configs` field to `google_vertex_ai_semantic_governance_policy_engine` ([#12975](https://github.com/hashicorp/terraform-provider-google-beta/pull/12975))
+* vertexai: added `spec.build_spec.service_account` field to `google_vertex_ai_reasoning_engine` ([#12978](https://github.com/hashicorp/terraform-provider-google-beta/pull/12978))
+
+BUG FIXES:
+* clouddeploy: fixed `tasks` field being silently dropped from `predeploy` and `postdeploy` blocks across all strategy variants ([#12979](https://github.com/hashicorp/terraform-provider-google-beta/pull/12979))
+* composer: fixed `google_composer_user_workloads_secret` writing the secret `data` values into provider debug logs ([#12986](https://github.com/hashicorp/terraform-provider-google-beta/pull/12986))
+* container: switched to server side request validation to allow for concurrent Cluster Upgrades. `google_container_cluster` and `google_container_node_pool` resources will proceed while not in a resting state for updates (but will continue to wait for one after creates). ([#13011](https://github.com/hashicorp/terraform-provider-google-beta/pull/13011))
+* iam: fixed validation of `google_iam_workload_identity_pool` IDs ending in `.svc.id.goog` where the base name ends in one of the suffix's characters ([#13014](https://github.com/hashicorp/terraform-provider-google-beta/pull/13014))
+* provider: fixed an issue where an invalid `credentials` value could be echoed back in the error message when it failed to parse ([#13001](https://github.com/hashicorp/terraform-provider-google-beta/pull/13001))
+* workstations: fixed unconvertible type error when reading `conditions` in `google_workstations_workstation_config` and `google_workstations_workstation_cluster` ([#13016](https://github.com/hashicorp/terraform-provider-google-beta/pull/13016))
+
 ## 8.0.0 (August 26, 2026)
 
 [Terraform Google Provider Beta 8.0.0 Upgrade Guide](https://registry.terraform.io/providers/hashicorp/google-beta/latest/docs/guides/version_8_upgrade)
