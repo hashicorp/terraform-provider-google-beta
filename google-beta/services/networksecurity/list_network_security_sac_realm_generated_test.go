@@ -22,6 +22,7 @@ package networksecurity_test
 import (
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/querycheck"
@@ -36,6 +37,7 @@ import (
 var (
 	_ = strings.Trim
 	_ = envvar.TestEnvVar
+	_ = time.Now
 )
 
 func TestAccNetworkSecuritySacRealmListQuery_generated(t *testing.T) {
