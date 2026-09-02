@@ -6,6 +6,8 @@ source_file: products/biglakehive/HiveDatabase.yaml
 api_service_name: biglake.googleapis.com
 api_version: v1beta
 api_resource_type_kind: Database
+api_variant_patterns:
+    - projects/{project}/catalogs/{catalog}/databases/{database}
 fields:
     - field: catalog
       provider_only: true
