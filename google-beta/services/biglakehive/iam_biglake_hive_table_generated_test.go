@@ -67,7 +67,7 @@ func TestAccBiglakeHiveHiveTableIamBindingGenerated(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccBiglakeHiveHiveTableIamBinding_basicGenerated(context),
@@ -120,7 +120,7 @@ func TestAccBiglakeHiveHiveTableIamMemberGenerated(t *testing.T) {
 			tfversion.RequireAbove(tfversion.Version1_12_0), // resource identity min version
 		},
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
 				// Test Iam Member creation (no update for member, no need to test)
@@ -165,7 +165,7 @@ func TestAccBiglakeHiveHiveTableIamPolicyGenerated(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccBiglakeHiveHiveTableIamPolicy_basicGenerated(context),
@@ -192,14 +192,6 @@ func TestAccBiglakeHiveHiveTableIamPolicyGenerated(t *testing.T) {
 
 func testAccBiglakeHiveHiveTableIamMember_basicGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
-terraform {
-  required_providers {
-    google = {
-      source = "hashicorp/google-beta"
-    }
-  }
-}
-
 resource "google_storage_bucket" "bucket" {
   name          = "%{bucket_name}"
   location      = "us-central1"
@@ -246,7 +238,6 @@ resource "google_biglake_hive_table" "my_hive_table" {
 }
 
 resource "google_biglake_hive_table_iam_member" "foo" {
-  provider = google-beta
   project      = google_biglake_hive_table.my_hive_table.project
   catalog      = google_biglake_hive_table.my_hive_table.catalog
   database     = google_biglake_hive_table.my_hive_table.database
@@ -259,14 +250,6 @@ resource "google_biglake_hive_table_iam_member" "foo" {
 
 func testAccBiglakeHiveHiveTableIamPolicy_basicGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
-terraform {
-  required_providers {
-    google = {
-      source = "hashicorp/google-beta"
-    }
-  }
-}
-
 resource "google_storage_bucket" "bucket" {
   name          = "%{bucket_name}"
   location      = "us-central1"
@@ -313,7 +296,6 @@ resource "google_biglake_hive_table" "my_hive_table" {
 }
 
 data "google_iam_policy" "foo" {
-  provider = google-beta
   binding {
     role = "%{role}"
     members = ["user:admin@hashicorptest.com"]
@@ -321,7 +303,6 @@ data "google_iam_policy" "foo" {
 }
 
 resource "google_biglake_hive_table_iam_policy" "foo" {
-  provider = google-beta
   project      = google_biglake_hive_table.my_hive_table.project
   catalog      = google_biglake_hive_table.my_hive_table.catalog
   database     = google_biglake_hive_table.my_hive_table.database
@@ -330,7 +311,6 @@ resource "google_biglake_hive_table_iam_policy" "foo" {
 }
 
 data "google_biglake_hive_table_iam_policy" "foo" {
-  provider = google-beta
   project      = google_biglake_hive_table.my_hive_table.project
   catalog      = google_biglake_hive_table.my_hive_table.catalog
   database     = google_biglake_hive_table.my_hive_table.database
@@ -344,14 +324,6 @@ data "google_biglake_hive_table_iam_policy" "foo" {
 
 func testAccBiglakeHiveHiveTableIamPolicy_emptyBinding(context map[string]interface{}) string {
 	return acctest.Nprintf(`
-terraform {
-  required_providers {
-    google = {
-      source = "hashicorp/google-beta"
-    }
-  }
-}
-
 resource "google_storage_bucket" "bucket" {
   name          = "%{bucket_name}"
   location      = "us-central1"
@@ -398,11 +370,9 @@ resource "google_biglake_hive_table" "my_hive_table" {
 }
 
 data "google_iam_policy" "foo" {
-  provider = google-beta
 }
 
 resource "google_biglake_hive_table_iam_policy" "foo" {
-  provider = google-beta
   project      = google_biglake_hive_table.my_hive_table.project
   catalog      = google_biglake_hive_table.my_hive_table.catalog
   database     = google_biglake_hive_table.my_hive_table.database
@@ -414,14 +384,6 @@ resource "google_biglake_hive_table_iam_policy" "foo" {
 
 func testAccBiglakeHiveHiveTableIamBinding_basicGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
-terraform {
-  required_providers {
-    google = {
-      source = "hashicorp/google-beta"
-    }
-  }
-}
-
 resource "google_storage_bucket" "bucket" {
   name          = "%{bucket_name}"
   location      = "us-central1"
@@ -468,7 +430,6 @@ resource "google_biglake_hive_table" "my_hive_table" {
 }
 
 resource "google_biglake_hive_table_iam_binding" "foo" {
-  provider = google-beta
   project      = google_biglake_hive_table.my_hive_table.project
   catalog      = google_biglake_hive_table.my_hive_table.catalog
   database     = google_biglake_hive_table.my_hive_table.database
@@ -481,14 +442,6 @@ resource "google_biglake_hive_table_iam_binding" "foo" {
 
 func testAccBiglakeHiveHiveTableIamBinding_updateGenerated(context map[string]interface{}) string {
 	return acctest.Nprintf(`
-terraform {
-  required_providers {
-    google = {
-      source = "hashicorp/google-beta"
-    }
-  }
-}
-
 resource "google_storage_bucket" "bucket" {
   name          = "%{bucket_name}"
   location      = "us-central1"
@@ -535,7 +488,6 @@ resource "google_biglake_hive_table" "my_hive_table" {
 }
 
 resource "google_biglake_hive_table_iam_binding" "foo" {
-  provider = google-beta
   project      = google_biglake_hive_table.my_hive_table.project
   catalog      = google_biglake_hive_table.my_hive_table.catalog
   database     = google_biglake_hive_table.my_hive_table.database

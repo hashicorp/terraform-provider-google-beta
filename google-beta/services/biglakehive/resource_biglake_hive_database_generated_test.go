@@ -77,7 +77,7 @@ func TestAccBiglakeHiveHiveDatabase_biglakeHiveDatabaseExample(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckBiglakeHiveHiveDatabaseDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -121,14 +121,6 @@ func TestAccBiglakeHiveHiveDatabase_biglakeHiveDatabaseExample(t *testing.T) {
 
 func testAccBiglakeHiveHiveDatabase_biglakeHiveDatabaseExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
-terraform {
-  required_providers {
-    google = {
-      source = "hashicorp/google-beta"
-    }
-  }
-}
-
 resource "google_storage_bucket" "bucket" {
   name          = "%{bucket_name}"
   location      = "us-central1"
@@ -165,7 +157,7 @@ func testAccCheckBiglakeHiveHiveDatabaseDestroyProducer(t *testing.T) func(s *te
 			}
 
 			config := acctest.GoogleProviderConfig(t)
-			url, err := tpgresource.ReplaceVarsForTest(config, rs, transport_tpg.BaseUrl(biglakehive.Product, config)+"hive/v1beta/projects/{{project}}/catalogs/{{catalog}}/databases/{{name}}")
+			url, err := tpgresource.ReplaceVarsForTest(config, rs, transport_tpg.BaseUrl(biglakehive.Product, config)+"hive/v1/projects/{{project}}/catalogs/{{catalog}}/databases/{{name}}")
 			if err != nil {
 				return err
 			}

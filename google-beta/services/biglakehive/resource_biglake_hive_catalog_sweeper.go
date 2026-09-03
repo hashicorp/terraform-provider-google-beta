@@ -117,7 +117,7 @@ func listAndActionBiglakeHiveHiveCatalog(action sweeper.ResourceAction) error {
 		}
 
 		// Prepare list URL
-		listTemplate := strings.Split("https://biglake.googleapis.com/hive/v1beta/projects/{{project}}/catalogs", "?")[0]
+		listTemplate := strings.Split("https://biglake.googleapis.com/hive/v1/projects/{{project}}/catalogs", "?")[0]
 		listUrl, err := tpgresource.ReplaceVars(mockConfig, config, listTemplate)
 		if err != nil {
 			log.Printf("[INFO][SWEEPER_LOG] error preparing sweeper list url: %s", err)
@@ -195,7 +195,7 @@ func deleteResourceBiglakeHiveHiveCatalog(config *transport_tpg.Config, d *tpgre
 		return nil
 	}
 
-	deleteTemplate := "https://biglake.googleapis.com/hive/v1beta/projects/{{project}}/catalogs/{{name}}"
+	deleteTemplate := "https://biglake.googleapis.com/hive/v1/projects/{{project}}/catalogs/{{name}}"
 
 	url, err := tpgresource.ReplaceVars(d, config, deleteTemplate)
 	if err != nil {
