@@ -69,7 +69,7 @@ func TestAccObservabilityOrganizationSettings_observabilityOrganizationSettingsB
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		ExternalProviders: map[string]resource.ExternalProvider{
 			"time": {},
 		},
@@ -96,7 +96,6 @@ func TestAccObservabilityOrganizationSettings_observabilityOrganizationSettingsB
 func testAccObservabilityOrganizationSettings_observabilityOrganizationSettingsBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 data "google_observability_organization_settings" "settings_data" {
-  provider     = "google-beta"
   organization = "%{org_id}"
   location     = "us"
 }
@@ -108,7 +107,6 @@ resource "time_sleep" "wait_for_sa_propagation" {
 }
 
 resource "google_kms_crypto_key_iam_member" "iam" {
-  provider      = "google-beta"
   crypto_key_id = "%{kms_key_name}"
   role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
   member        = "serviceAccount:${data.google_observability_organization_settings.settings_data.service_account_id}"
@@ -116,7 +114,6 @@ resource "google_kms_crypto_key_iam_member" "iam" {
 }
 
 resource "google_observability_organization_settings" "primary" {
-  provider                 = "google-beta"
   location                 = "us"
   organization             = "%{org_id}"
   kms_key_name             = "%{kms_key_name}"
@@ -138,7 +135,7 @@ func TestAccObservabilityOrganizationSettings_observabilityOrganizationSettingsB
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		ExternalProviders: map[string]resource.ExternalProvider{
 			"time": {},
 		},
@@ -165,13 +162,11 @@ func TestAccObservabilityOrganizationSettings_observabilityOrganizationSettingsB
 func testAccObservabilityOrganizationSettings_observabilityOrganizationSettingsBasicGlobalExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 data "google_observability_organization_settings" "settings_data" {
-  provider = "google-beta"
   organization = "%{org_id}"
   location     = "global"
 }
 
 resource "google_observability_organization_settings" "primary_global" {
-  provider = "google-beta"
   location                 = "global"
   organization             = "%{org_id}"
   default_storage_location = "us"

@@ -71,7 +71,7 @@ func TestAccObservabilityFolderSettings_observabilityFolderSettingsBasicExample(
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		ExternalProviders: map[string]resource.ExternalProvider{
 			"time": {},
 		},
@@ -98,7 +98,6 @@ func TestAccObservabilityFolderSettings_observabilityFolderSettingsBasicExample(
 func testAccObservabilityFolderSettings_observabilityFolderSettingsBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_folder" "test_folder" {
-  provider            = "google-beta"
   display_name        = "tf-test-%{random_suffix}"
   parent              = "organizations/%{org_id}"
   deletion_protection = false
@@ -111,7 +110,6 @@ resource "time_sleep" "wait_for_settings_propagation" {
 }
 
 data "google_observability_folder_settings" "settings_data" {
-  provider   = "google-beta"
   folder     = google_folder.test_folder.folder_id
   location   = "us"
   depends_on = [time_sleep.wait_for_settings_propagation]
@@ -124,7 +122,6 @@ resource "time_sleep" "wait_for_sa_propagation" {
 }
 
 resource "google_kms_crypto_key_iam_member" "iam" {
-  provider      = "google-beta"
   crypto_key_id = "%{kms_key_name}"
   role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
   member        = "serviceAccount:${data.google_observability_folder_settings.settings_data.service_account_id}"
@@ -132,7 +129,6 @@ resource "google_kms_crypto_key_iam_member" "iam" {
 }
 
 resource "google_observability_folder_settings" "primary" {
-  provider     = "google-beta"
   location     = "us"
   folder       = google_folder.test_folder.folder_id
   kms_key_name = "%{kms_key_name}"
@@ -154,7 +150,7 @@ func TestAccObservabilityFolderSettings_observabilityFolderSettingsBasicGlobalEx
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		ExternalProviders: map[string]resource.ExternalProvider{
 			"time": {},
 		},
@@ -181,7 +177,6 @@ func TestAccObservabilityFolderSettings_observabilityFolderSettingsBasicGlobalEx
 func testAccObservabilityFolderSettings_observabilityFolderSettingsBasicGlobalExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_folder" "test_folder" {
-  provider            = "google-beta"
   display_name        = "tf-test-%{random_suffix}"
   parent              = "organizations/%{org_id}"
   deletion_protection = false
@@ -194,14 +189,12 @@ resource "time_sleep" "wait_for_folder" {
 }
 
 data "google_observability_folder_settings" "settings_data" {
-  provider   = "google-beta"
   folder     = google_folder.test_folder.folder_id
   location   = "global"
   depends_on = [time_sleep.wait_for_folder]
 }
 
 resource "google_observability_folder_settings" "primary_global" {
-  provider                 = "google-beta"
   location                 = "global"
   folder                   = google_folder.test_folder.folder_id
   default_storage_location = "us"
