@@ -1061,6 +1061,11 @@ func Provider() *schema.Provider {
 				Optional:     true,
 				ValidateFunc: ValidateCustomEndpoint,
 			},
+			"service_usage_v2_custom_endpoint": &schema.Schema{
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: ValidateCustomEndpoint,
+			},
 			"site_verification_custom_endpoint": &schema.Schema{
 				Type:         schema.TypeString,
 				Optional:     true,
