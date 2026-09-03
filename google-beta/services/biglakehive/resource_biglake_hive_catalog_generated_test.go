@@ -67,7 +67,7 @@ func TestAccBiglakeHiveHiveCatalog_biglakeHiveCatalogExample(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckBiglakeHiveHiveCatalogDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -96,7 +96,6 @@ resource "google_storage_bucket" "bucket_for_my_hive_catalog" {
   location      = "us-central1"
   force_destroy = true
   uniform_bucket_level_access = true
-  provider = google-beta
 }
 
 resource "google_biglake_hive_catalog" "my_hive_catalog" {
@@ -106,7 +105,6 @@ resource "google_biglake_hive_catalog" "my_hive_catalog" {
   depends_on = [
     google_storage_bucket.bucket_for_my_hive_catalog
   ]
-  provider = google-beta
 }
 `, context)
 }
@@ -123,7 +121,7 @@ func TestAccBiglakeHiveHiveCatalog_biglakeHiveCatalogFullExample(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckBiglakeHiveHiveCatalogDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -152,7 +150,6 @@ resource "google_storage_bucket" "bucket_for_my_hive_catalog" {
   location      = "us-central1"
   force_destroy = true
   uniform_bucket_level_access = true
-  provider = google-beta
 }
 
 resource "google_biglake_hive_catalog" "my_hive_catalog" {
@@ -163,7 +160,6 @@ resource "google_biglake_hive_catalog" "my_hive_catalog" {
   depends_on = [
     google_storage_bucket.bucket_for_my_hive_catalog
   ]
-  provider = google-beta
 }
 `, context)
 }
@@ -179,7 +175,7 @@ func testAccCheckBiglakeHiveHiveCatalogDestroyProducer(t *testing.T) func(s *ter
 			}
 
 			config := acctest.GoogleProviderConfig(t)
-			url, err := tpgresource.ReplaceVarsForTest(config, rs, transport_tpg.BaseUrl(biglakehive.Product, config)+"hive/v1beta/projects/{{project}}/catalogs/{{name}}")
+			url, err := tpgresource.ReplaceVarsForTest(config, rs, transport_tpg.BaseUrl(biglakehive.Product, config)+"hive/v1/projects/{{project}}/catalogs/{{name}}")
 			if err != nil {
 				return err
 			}

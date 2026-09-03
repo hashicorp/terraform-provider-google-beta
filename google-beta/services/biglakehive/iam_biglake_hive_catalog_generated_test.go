@@ -56,7 +56,7 @@ func TestAccBiglakeHiveHiveCatalogIamBindingGenerated(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccBiglakeHiveHiveCatalogIamBinding_basicGenerated(context),
@@ -98,7 +98,7 @@ func TestAccBiglakeHiveHiveCatalogIamMemberGenerated(t *testing.T) {
 			tfversion.RequireAbove(tfversion.Version1_12_0), // resource identity min version
 		},
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
 				// Test Iam Member creation (no update for member, no need to test)
@@ -132,7 +132,7 @@ func TestAccBiglakeHiveHiveCatalogIamPolicyGenerated(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccBiglakeHiveHiveCatalogIamPolicy_basicGenerated(context),
@@ -164,7 +164,6 @@ resource "google_storage_bucket" "bucket_for_my_hive_catalog" {
   location      = "us-central1"
   force_destroy = true
   uniform_bucket_level_access = true
-  provider = google-beta
 }
 
 resource "google_biglake_hive_catalog" "my_hive_catalog" {
@@ -174,11 +173,9 @@ resource "google_biglake_hive_catalog" "my_hive_catalog" {
   depends_on = [
     google_storage_bucket.bucket_for_my_hive_catalog
   ]
-  provider = google-beta
 }
 
 resource "google_biglake_hive_catalog_iam_member" "foo" {
-  provider = google-beta
   project = google_biglake_hive_catalog.my_hive_catalog.project
   name = google_biglake_hive_catalog.my_hive_catalog.name
   role = "%{role}"
@@ -194,7 +191,6 @@ resource "google_storage_bucket" "bucket_for_my_hive_catalog" {
   location      = "us-central1"
   force_destroy = true
   uniform_bucket_level_access = true
-  provider = google-beta
 }
 
 resource "google_biglake_hive_catalog" "my_hive_catalog" {
@@ -204,11 +200,9 @@ resource "google_biglake_hive_catalog" "my_hive_catalog" {
   depends_on = [
     google_storage_bucket.bucket_for_my_hive_catalog
   ]
-  provider = google-beta
 }
 
 data "google_iam_policy" "foo" {
-  provider = google-beta
   binding {
     role = "%{role}"
     members = ["user:admin@hashicorptest.com"]
@@ -216,14 +210,12 @@ data "google_iam_policy" "foo" {
 }
 
 resource "google_biglake_hive_catalog_iam_policy" "foo" {
-  provider = google-beta
   project = google_biglake_hive_catalog.my_hive_catalog.project
   name = google_biglake_hive_catalog.my_hive_catalog.name
   policy_data = data.google_iam_policy.foo.policy_data
 }
 
 data "google_biglake_hive_catalog_iam_policy" "foo" {
-  provider = google-beta
   project = google_biglake_hive_catalog.my_hive_catalog.project
   name = google_biglake_hive_catalog.my_hive_catalog.name
   depends_on = [
@@ -240,7 +232,6 @@ resource "google_storage_bucket" "bucket_for_my_hive_catalog" {
   location      = "us-central1"
   force_destroy = true
   uniform_bucket_level_access = true
-  provider = google-beta
 }
 
 resource "google_biglake_hive_catalog" "my_hive_catalog" {
@@ -250,15 +241,12 @@ resource "google_biglake_hive_catalog" "my_hive_catalog" {
   depends_on = [
     google_storage_bucket.bucket_for_my_hive_catalog
   ]
-  provider = google-beta
 }
 
 data "google_iam_policy" "foo" {
-  provider = google-beta
 }
 
 resource "google_biglake_hive_catalog_iam_policy" "foo" {
-  provider = google-beta
   project = google_biglake_hive_catalog.my_hive_catalog.project
   name = google_biglake_hive_catalog.my_hive_catalog.name
   policy_data = data.google_iam_policy.foo.policy_data
@@ -273,7 +261,6 @@ resource "google_storage_bucket" "bucket_for_my_hive_catalog" {
   location      = "us-central1"
   force_destroy = true
   uniform_bucket_level_access = true
-  provider = google-beta
 }
 
 resource "google_biglake_hive_catalog" "my_hive_catalog" {
@@ -283,11 +270,9 @@ resource "google_biglake_hive_catalog" "my_hive_catalog" {
   depends_on = [
     google_storage_bucket.bucket_for_my_hive_catalog
   ]
-  provider = google-beta
 }
 
 resource "google_biglake_hive_catalog_iam_binding" "foo" {
-  provider = google-beta
   project = google_biglake_hive_catalog.my_hive_catalog.project
   name = google_biglake_hive_catalog.my_hive_catalog.name
   role = "%{role}"
@@ -303,7 +288,6 @@ resource "google_storage_bucket" "bucket_for_my_hive_catalog" {
   location      = "us-central1"
   force_destroy = true
   uniform_bucket_level_access = true
-  provider = google-beta
 }
 
 resource "google_biglake_hive_catalog" "my_hive_catalog" {
@@ -313,11 +297,9 @@ resource "google_biglake_hive_catalog" "my_hive_catalog" {
   depends_on = [
     google_storage_bucket.bucket_for_my_hive_catalog
   ]
-  provider = google-beta
 }
 
 resource "google_biglake_hive_catalog_iam_binding" "foo" {
-  provider = google-beta
   project = google_biglake_hive_catalog.my_hive_catalog.project
   name = google_biglake_hive_catalog.my_hive_catalog.name
   role = "%{role}"

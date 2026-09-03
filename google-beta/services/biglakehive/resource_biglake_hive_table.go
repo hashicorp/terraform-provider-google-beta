@@ -501,7 +501,7 @@ func resourceBiglakeHiveHiveTableCreate(d *schema.ResourceData, meta interface{}
 		obj["viewExpandedText"] = viewExpandedTextProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"hive/v1beta/projects/{{project}}/catalogs/{{catalog}}/databases/{{database}}/tables?hiveTableId={{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"hive/v1/projects/{{project}}/catalogs/{{catalog}}/databases/{{database}}/tables?hiveTableId={{name}}")
 	if err != nil {
 		return err
 	}
@@ -536,7 +536,7 @@ func resourceBiglakeHiveHiveTableCreate(d *schema.ResourceData, meta interface{}
 	}
 
 	// Store the ID now
-	id, err := tpgresource.ReplaceVars(d, config, "hive/v1beta/projects/{{project}}/catalogs/{{catalog}}/databases/{{database}}/tables/{{name}}")
+	id, err := tpgresource.ReplaceVars(d, config, "hive/v1/projects/{{project}}/catalogs/{{catalog}}/databases/{{database}}/tables/{{name}}")
 	if err != nil {
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
@@ -580,7 +580,7 @@ func resourceBiglakeHiveHiveTableRead(d *schema.ResourceData, meta interface{}) 
 		return err
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"hive/v1beta/projects/{{project}}/catalogs/{{catalog}}/databases/{{database}}/tables/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"hive/v1/projects/{{project}}/catalogs/{{catalog}}/databases/{{database}}/tables/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -759,7 +759,7 @@ func resourceBiglakeHiveHiveTableUpdate(d *schema.ResourceData, meta interface{}
 		obj["viewExpandedText"] = viewExpandedTextProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"hive/v1beta/projects/{{project}}/catalogs/{{catalog}}/databases/{{database}}/tables/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"hive/v1/projects/{{project}}/catalogs/{{catalog}}/databases/{{database}}/tables/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -848,7 +848,7 @@ func resourceBiglakeHiveHiveTableDelete(d *schema.ResourceData, meta interface{}
 		return fmt.Errorf("Error fetching project for HiveTable: %s", err)
 	}
 	billingProject = project
-	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"hive/v1beta/projects/{{project}}/catalogs/{{catalog}}/databases/{{database}}/tables/{{name}}")
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"hive/v1/projects/{{project}}/catalogs/{{catalog}}/databases/{{database}}/tables/{{name}}")
 	if err != nil {
 		return err
 	}
@@ -884,7 +884,7 @@ func resourceBiglakeHiveHiveTableDelete(d *schema.ResourceData, meta interface{}
 func resourceBiglakeHiveHiveTableImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*transport_tpg.Config)
 	if err := tpgresource.ParseImportId([]string{
-		"^hive/v1beta/projects/(?P<project>[^/]+)/catalogs/(?P<catalog>[^/]+)/databases/(?P<database>[^/]+)/tables/(?P<name>[^/]+)$",
+		"^hive/v1/projects/(?P<project>[^/]+)/catalogs/(?P<catalog>[^/]+)/databases/(?P<database>[^/]+)/tables/(?P<name>[^/]+)$",
 		"^(?P<project>[^/]+)/(?P<catalog>[^/]+)/(?P<database>[^/]+)/(?P<name>[^/]+)$",
 		"^(?P<catalog>[^/]+)/(?P<database>[^/]+)/(?P<name>[^/]+)$",
 	}, d, config); err != nil {
@@ -892,7 +892,7 @@ func resourceBiglakeHiveHiveTableImport(d *schema.ResourceData, meta interface{}
 	}
 
 	// Replace import id for the resource id
-	id, err := tpgresource.ReplaceVars(d, config, "hive/v1beta/projects/{{project}}/catalogs/{{catalog}}/databases/{{database}}/tables/{{name}}")
+	id, err := tpgresource.ReplaceVars(d, config, "hive/v1/projects/{{project}}/catalogs/{{catalog}}/databases/{{database}}/tables/{{name}}")
 	if err != nil {
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}
