@@ -52,7 +52,7 @@ func init() {
 		Name:        "google_runtimeconfig_config_iam_member",
 		ProductName: "RuntimeConfig",
 		Type:        registry.SchemaTypeIAMResource,
-		Schema:      tpgiamresource.ResourceIamMember(RuntimeConfigConfigIamSchema, RuntimeConfigConfigIamUpdaterProducer, RuntimeConfigConfigIdParseFunc, tpgiamresource.IamWithParentResourceIdentity(RuntimeConfigConfigIamParentParentResourceIdentityParser)),
+		Schema:      NewRuntimeConfigConfigIamMemberResource(),
 	}.Register()
 	registry.Schema{
 		Name:        "google_runtimeconfig_config_iam_policy",
@@ -66,6 +66,18 @@ func init() {
 		Type:        registry.SchemaTypeIAMDataSource,
 		Schema:      tpgiamresource.DataSourceIamPolicy(RuntimeConfigConfigIamSchema, RuntimeConfigConfigIamUpdaterProducer),
 	}.Register()
+}
+
+// NewRuntimeConfigConfigIamMemberResource returns the google_runtimeconfig_config_iam_member
+// managed resource. It is shared by the managed resource registration and the
+// list resource, so both stay in sync.
+func NewRuntimeConfigConfigIamMemberResource() *schema.Resource {
+	return tpgiamresource.ResourceIamMember(
+		RuntimeConfigConfigIamSchema,
+		RuntimeConfigConfigIamUpdaterProducer,
+		RuntimeConfigConfigIdParseFunc,
+		tpgiamresource.IamWithParentResourceIdentity(RuntimeConfigConfigIamParentParentResourceIdentityParser),
+	)
 }
 
 var RuntimeConfigConfigIamSchema = map[string]*schema.Schema{

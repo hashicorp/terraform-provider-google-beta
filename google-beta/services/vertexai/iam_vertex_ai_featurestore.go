@@ -52,7 +52,7 @@ func init() {
 		Name:        "google_vertex_ai_featurestore_iam_member",
 		ProductName: "VertexAI",
 		Type:        registry.SchemaTypeIAMResource,
-		Schema:      tpgiamresource.ResourceIamMember(VertexAIFeaturestoreIamSchema, VertexAIFeaturestoreIamUpdaterProducer, VertexAIFeaturestoreIdParseFunc, tpgiamresource.IamWithParentResourceIdentity(VertexAIFeaturestoreIamParentParentResourceIdentityParser)),
+		Schema:      NewVertexAIFeaturestoreIamMemberResource(),
 	}.Register()
 	registry.Schema{
 		Name:        "google_vertex_ai_featurestore_iam_policy",
@@ -66,6 +66,18 @@ func init() {
 		Type:        registry.SchemaTypeIAMDataSource,
 		Schema:      tpgiamresource.DataSourceIamPolicy(VertexAIFeaturestoreIamSchema, VertexAIFeaturestoreIamUpdaterProducer),
 	}.Register()
+}
+
+// NewVertexAIFeaturestoreIamMemberResource returns the google_vertex_ai_featurestore_iam_member
+// managed resource. It is shared by the managed resource registration and the
+// list resource, so both stay in sync.
+func NewVertexAIFeaturestoreIamMemberResource() *schema.Resource {
+	return tpgiamresource.ResourceIamMember(
+		VertexAIFeaturestoreIamSchema,
+		VertexAIFeaturestoreIamUpdaterProducer,
+		VertexAIFeaturestoreIdParseFunc,
+		tpgiamresource.IamWithParentResourceIdentity(VertexAIFeaturestoreIamParentParentResourceIdentityParser),
+	)
 }
 
 var VertexAIFeaturestoreIamSchema = map[string]*schema.Schema{
