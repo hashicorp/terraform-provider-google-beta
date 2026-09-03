@@ -237,7 +237,7 @@ func testAccCheckComputeTargetPoolHealthCheck(targetPool, healthCheck string) re
 func testAccComputeTargetPool_basic(suffix string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
-  family  = "debian-11"
+  family  = "debian-13"
   project = "debian-cloud"
 }
 
@@ -297,7 +297,7 @@ resource "google_compute_instance" "foo" {
 
   boot_disk {
     initialize_params {
-      image = "debian-cloud/debian-11"
+      image = "debian-cloud/debian-13"
     }
   }
 
@@ -313,7 +313,7 @@ resource "google_compute_instance" "bar" {
 
   boot_disk {
     initialize_params {
-      image = "debian-cloud/debian-11"
+      image = "debian-cloud/debian-13"
     }
   }
 

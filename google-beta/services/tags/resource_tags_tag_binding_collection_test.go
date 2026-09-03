@@ -637,7 +637,7 @@ func testAccTagsTagBindingCollection_oob_config(context map[string]interface{}) 
 	return acctest.Nprintf(`
 data "google_compute_image" "my_image" {
   provider = google-beta
-  family   = "debian-11"
+  family   = "debian-13"
   project  = "debian-cloud"
 }
 
@@ -1123,7 +1123,7 @@ func testAccTagsTagBindingCollection_restorationConfig(context map[string]interf
 	return acctest.Nprintf(`
 data "google_compute_image" "my_image" {
   provider = google-beta
-  family   = "debian-11"
+  family   = "debian-13"
   project  = "debian-cloud"
 }
 
@@ -1225,7 +1225,7 @@ func testAccTagsTagBindingCollection_regional_basic(context map[string]interface
 	return acctest.Nprintf(`
 data "google_compute_image" "my_image" {
   provider = google-beta
-  family   = "debian-11"
+  family   = "debian-13"
   project  = "debian-cloud"
 }
 
@@ -1316,7 +1316,7 @@ func testAccTagsTagBindingCollection_forceNewConfig1(context map[string]interfac
 	return acctest.Nprintf(`
 data "google_compute_image" "my_image" {
   provider = google-beta
-  family   = "debian-11"
+  family   = "debian-13"
   project  = "debian-cloud"
 }
 
@@ -1378,7 +1378,7 @@ func testAccTagsTagBindingCollection_forceNewConfig2(context map[string]interfac
 	return acctest.Nprintf(`
 data "google_compute_image" "my_image" {
   provider = google-beta
-  family   = "debian-11"
+  family   = "debian-13"
   project  = "debian-cloud"
 }
 
@@ -1466,7 +1466,7 @@ func testAccTagsTagBindingCollection_regionalMismatchConfig(context map[string]i
 	return acctest.Nprintf(`
 data "google_compute_image" "my_image" {
   provider = google-beta
-  family   = "debian-11"
+  family   = "debian-13"
   project  = "debian-cloud"
 }
 
@@ -1722,7 +1722,7 @@ func testAccTagsTagBindingCollection_nonAuthoritativeConfig(context map[string]i
 	return acctest.Nprintf(`
 data "google_compute_image" "my_image" {
   provider = google-beta
-  family   = "debian-11"
+  family   = "debian-13"
   project  = "debian-cloud"
 }
 

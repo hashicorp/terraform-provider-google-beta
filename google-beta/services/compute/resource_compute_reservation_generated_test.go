@@ -182,7 +182,7 @@ func TestAccComputeReservation_reservationSourceInstanceTemplateExample(t *testi
 func testAccComputeReservation_reservationSourceInstanceTemplateExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 data "google_compute_image" "my_image" {
-  family  = "debian-11"
+  family  = "debian-13"
   project = "debian-cloud"
 }
 
@@ -264,7 +264,7 @@ func TestAccComputeReservation_reservationSharingPolicyExample(t *testing.T) {
 func testAccComputeReservation_reservationSharingPolicyExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 data "google_compute_image" "my_image" {
-  family = "debian-11"
+  family = "debian-13"
   project = "debian-cloud"
 }
 

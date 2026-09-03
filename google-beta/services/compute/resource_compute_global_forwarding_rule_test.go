@@ -855,7 +855,7 @@ resource "google_compute_url_map" "default" {
 }
 
 data "google_compute_image" "debian_image" {
-  family  = "debian-11"
+  family  = "debian-13"
   project = "debian-cloud"
 }
 
@@ -974,7 +974,7 @@ resource "google_compute_url_map" "default" {
 }
 
 data "google_compute_image" "debian_image" {
-  family  = "debian-11"
+  family  = "debian-13"
   project = "debian-cloud"
 }
 
