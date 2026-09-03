@@ -1498,7 +1498,7 @@ resource "google_compute_instance" "vm" {
   zone         = "us-central1-a"
   boot_disk {
     initialize_params {
-      image = "debian-cloud/debian-11"
+      image = "debian-cloud/debian-13"
     }
   }
   network_interface {
@@ -1553,7 +1553,7 @@ resource "google_compute_instance" "vm" {
   zone         = "us-central1-a"
   boot_disk {
     initialize_params {
-      image = "debian-cloud/debian-11"
+      image = "debian-cloud/debian-13"
     }
   }
   network_interface {
@@ -1744,7 +1744,7 @@ resource "google_compute_instance" "vm" {
   zone         = "us-central1-a"
   boot_disk {
     initialize_params {
-      image = "debian-cloud/debian-11"
+      image = "debian-cloud/debian-13"
     }
   }
   network_interface {

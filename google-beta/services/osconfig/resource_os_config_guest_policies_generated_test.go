@@ -94,7 +94,7 @@ func testAccOSConfigGuestPolicies_osConfigGuestPoliciesBasicExample(context map[
 	return acctest.Nprintf(`
 data "google_compute_image" "my_image" {
   provider = google-beta
-  family  = "debian-11"
+  family  = "debian-13"
   project = "debian-cloud"
 }
 

@@ -246,7 +246,7 @@ resource "google_compute_disk" "disk" {
   provider = google-beta
 
   name  = "%{disk_name}"
-  image = "debian-cloud/debian-11"
+  image = "debian-cloud/debian-13"
   size  = 10
   type  = "pd-ssd"
   zone  = "us-central1-c"
