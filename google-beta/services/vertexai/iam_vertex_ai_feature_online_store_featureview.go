@@ -52,7 +52,7 @@ func init() {
 		Name:        "google_vertex_ai_feature_online_store_featureview_iam_member",
 		ProductName: "VertexAI",
 		Type:        registry.SchemaTypeIAMResource,
-		Schema:      tpgiamresource.ResourceIamMember(VertexAIFeatureOnlineStoreFeatureviewIamSchema, VertexAIFeatureOnlineStoreFeatureviewIamUpdaterProducer, VertexAIFeatureOnlineStoreFeatureviewIdParseFunc, tpgiamresource.IamWithParentResourceIdentity(VertexAIFeatureOnlineStoreFeatureviewIamParentParentResourceIdentityParser)),
+		Schema:      NewVertexAIFeatureOnlineStoreFeatureviewIamMemberResource(),
 	}.Register()
 	registry.Schema{
 		Name:        "google_vertex_ai_feature_online_store_featureview_iam_policy",
@@ -66,6 +66,18 @@ func init() {
 		Type:        registry.SchemaTypeIAMDataSource,
 		Schema:      tpgiamresource.DataSourceIamPolicy(VertexAIFeatureOnlineStoreFeatureviewIamSchema, VertexAIFeatureOnlineStoreFeatureviewIamUpdaterProducer),
 	}.Register()
+}
+
+// NewVertexAIFeatureOnlineStoreFeatureviewIamMemberResource returns the google_vertex_ai_feature_online_store_featureview_iam_member
+// managed resource. It is shared by the managed resource registration and the
+// list resource, so both stay in sync.
+func NewVertexAIFeatureOnlineStoreFeatureviewIamMemberResource() *schema.Resource {
+	return tpgiamresource.ResourceIamMember(
+		VertexAIFeatureOnlineStoreFeatureviewIamSchema,
+		VertexAIFeatureOnlineStoreFeatureviewIamUpdaterProducer,
+		VertexAIFeatureOnlineStoreFeatureviewIdParseFunc,
+		tpgiamresource.IamWithParentResourceIdentity(VertexAIFeatureOnlineStoreFeatureviewIamParentParentResourceIdentityParser),
+	)
 }
 
 var VertexAIFeatureOnlineStoreFeatureviewIamSchema = map[string]*schema.Schema{
