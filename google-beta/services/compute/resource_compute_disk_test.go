@@ -222,8 +222,8 @@ func TestDiskImageDiffSuppress(t *testing.T) {
 			ExpectDiffSuppress: true,
 		},
 		"matching image debian arm64 self_link": {
-			Old:                "https://www.googleapis.com/compute/v1/projects/debian-cloud/global/images/debian-11-bullseye-arm64-v20220719",
-			New:                "debian-11-arm64",
+			Old:                "https://www.googleapis.com/compute/v1/projects/debian-cloud/global/images/debian-13-trixie-arm64-v20260827",
+			New:                "debian-13-arm64",
 			ExpectDiffSuppress: true,
 		},
 		"different architecture image opensuse arm64 self_link": {
@@ -247,8 +247,8 @@ func TestDiskImageDiffSuppress(t *testing.T) {
 			ExpectDiffSuppress: false,
 		},
 		"different architecture image debian arm64 self_link": {
-			Old:                "https://www.googleapis.com/compute/v1/projects/debian-cloud/global/images/debian-11-bullseye-arm64-v20220719",
-			New:                "debian-11",
+			Old:                "https://www.googleapis.com/compute/v1/projects/debian-cloud/global/images/debian-13-trixie-arm64-v20260827",
+			New:                "debian-13",
 			ExpectDiffSuppress: false,
 		},
 		"different architecture image opensuse arm64 family": {
@@ -272,8 +272,8 @@ func TestDiskImageDiffSuppress(t *testing.T) {
 			ExpectDiffSuppress: false,
 		},
 		"different architecture image debian arm64 family": {
-			Old:                "https://www.googleapis.com/compute/v1/projects/debian-cloud/global/images/debian-11-bullseye-v20220719",
-			New:                "debian-11-arm64",
+			Old:                "https://www.googleapis.com/compute/v1/projects/debian-cloud/global/images/debian-13-trixie-v20260827",
+			New:                "debian-13-arm64",
 			ExpectDiffSuppress: false,
 		},
 		// amd images
@@ -1318,7 +1318,7 @@ func TestAccComputeDisk_VSSWindows(t *testing.T) {
 func testAccComputeDisk_basic(diskName string, diskType string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
-  family  = "debian-11"
+  family  = "debian-13"
   project = "debian-cloud"
 }
 
@@ -1338,7 +1338,7 @@ resource "google_compute_disk" "foobar" {
 func testAccComputeDisk_updated(diskName string, diskType string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
-  family  = "debian-11"
+  family  = "debian-13"
   project = "debian-cloud"
 }
 
@@ -1359,7 +1359,7 @@ resource "google_compute_disk" "foobar" {
 func testAccComputeDisk_fromSnapshot(projectName, firstDiskName, snapshotName, diskName, ref_selector string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
-  family  = "debian-11"
+  family  = "debian-13"
   project = "debian-cloud"
 }
 
@@ -1392,7 +1392,7 @@ resource "google_compute_disk" "seconddisk" {
 func testAccComputeDisk_encryption(diskName string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
-  family  = "debian-11"
+  family  = "debian-13"
   project = "debian-cloud"
 }
 
@@ -1412,7 +1412,7 @@ resource "google_compute_disk" "foobar" {
 func testAccComputeDisk_encryptionKMS(diskName, kmsKey string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
-  family  = "debian-11"
+  family  = "debian-13"
   project = "debian-cloud"
 }
 
@@ -1433,7 +1433,7 @@ resource "google_compute_disk" "foobar" {
 func testAccComputeDisk_deleteDetach(instanceName, diskName string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
-  family  = "debian-11"
+  family  = "debian-13"
   project = "debian-cloud"
 }
 
@@ -1470,7 +1470,7 @@ resource "google_compute_instance" "bar" {
 func testAccComputeDisk_deleteDetachIGM(diskName, mgrName string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
-  family  = "debian-11"
+  family  = "debian-13"
   project = "debian-cloud"
 }
 
@@ -1581,7 +1581,7 @@ resource "google_compute_disk" "foobar" {
 func testAccComputeDisk_resourcePolicies(diskName, policyName string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
-  family  = "debian-11"
+  family  = "debian-13"
   project = "debian-cloud"
 }
 
@@ -1612,7 +1612,7 @@ resource "google_compute_disk" "foobar" {
 func testAccComputeDisk_updateResourcePolicies(diskName, policyName string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
-  family  = "debian-11"
+  family  = "debian-13"
   project = "debian-cloud"
 }
 
@@ -1643,7 +1643,7 @@ resource "google_compute_disk" "foobar" {
 func testAccComputeDisk_multiWriter(instance string, diskName string, enableMultiwriter bool) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
-  family  = "debian-11"
+  family  = "debian-13"
   project = "debian-cloud"
 }
 
@@ -1686,7 +1686,7 @@ resource "google_compute_instance" "foobar" {
 func testAccComputeDisk_diskClone(diskName, refSelector string) string {
 	return fmt.Sprintf(`
 	data "google_compute_image" "my_image" {
-		family  = "debian-11"
+		family  = "debian-13"
 		project = "debian-cloud"
 	}
 
@@ -1740,7 +1740,7 @@ func TestAccComputeDisk_encryptionWithRSAEncryptedKey(t *testing.T) {
 func testAccComputeDisk_encryptionWithRSAEncryptedKey(diskName string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
-  family  = "debian-11"
+  family  = "debian-13"
   project = "debian-cloud"
 }
 
@@ -1923,7 +1923,7 @@ provider "google" {
 }
 
 data "google_compute_image" "my_image" {
-  family  = "debian-11"
+  family  = "debian-13"
   project = "debian-cloud"
 }
 
@@ -1948,7 +1948,7 @@ provider "google" {
 }
 
 data "google_compute_image" "my_image" {
-  family  = "debian-11"
+  family  = "debian-13"
   project = "debian-cloud"
 }
 

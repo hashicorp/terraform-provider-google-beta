@@ -110,7 +110,7 @@ resource "google_compute_disk" "disk" {
   provider = google-beta
 
   name  = "tf-test-tpu-disk-%{random_suffix}"
-  image = "debian-cloud/debian-11"
+  image = "debian-cloud/debian-13"
   size  = 10
   type  = "pd-ssd"
   zone  = "us-central1-c"
@@ -165,7 +165,7 @@ resource "google_compute_disk" "disk" {
   provider = google-beta
 
   name  = "tf-test-tpu-disk-%{random_suffix}"
-  image = "debian-cloud/debian-11"
+  image = "debian-cloud/debian-13"
   size  = 10
   type  = "pd-ssd"
   zone  = "us-central1-c"
@@ -175,7 +175,7 @@ resource "google_compute_disk" "disk2" {
   provider = google-beta
 
   name  = "tf-test-tpu-disk2-%{random_suffix}"
-  image = "debian-cloud/debian-11"
+  image = "debian-cloud/debian-13"
   size  = 10
   type  = "pd-ssd"
   zone  = "us-central1-c"
