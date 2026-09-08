@@ -68,7 +68,7 @@ func TestAccComputeNetworkEdgeSecurityService_computeNetworkEdgeSecurityServiceB
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeNetworkEdgeSecurityServiceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -93,8 +93,6 @@ func TestAccComputeNetworkEdgeSecurityService_computeNetworkEdgeSecurityServiceB
 func testAccComputeNetworkEdgeSecurityService_computeNetworkEdgeSecurityServiceBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_network_edge_security_service" "default" {
-  provider     = google-beta  
-
   name         = "%{resource_name}"
   region       = "%{region}"
   description  = "My basic resource"
