@@ -1,7 +1,7 @@
 ## 8.2.0 (Unreleased)
 
 NOTES:
-* compute: migrate data_source_google_compute_subnetworks.go source to use direct HTTP rather than a client library ([#13067](https://github.com/hashicorp/terraform-provider-google-beta/pull/13067))
+* compute: migrate `google_compute_subnetworks` data source to use direct HTTP rather than a client library ([#13067](https://github.com/hashicorp/terraform-provider-google-beta/pull/13067))
 
 FEATURES:
 * **New List Resource:** `google_appengine_domain_mapping` ([#13055](https://github.com/hashicorp/terraform-provider-google-beta/pull/13055))
@@ -25,7 +25,7 @@ FEATURES:
 * **New List Resource:** `google_network_security_mirroring_endpoint_group_association` ([#13032](https://github.com/hashicorp/terraform-provider-google-beta/pull/13032))
 * **New List Resource:** `google_network_security_mirroring_endpoint_group` ([#13032](https://github.com/hashicorp/terraform-provider-google-beta/pull/13032))
 * **New List Resource:** `google_network_security_mirroring_endpoint` ([#13032](https://github.com/hashicorp/terraform-provider-google-beta/pull/13032))
-* **New List Resource:** `google_network_security_sac_realm` (beta) ([#13032](https://github.com/hashicorp/terraform-provider-google-beta/pull/13032))
+* **New List Resource:** `google_network_security_sac_realm` ([#13032](https://github.com/hashicorp/terraform-provider-google-beta/pull/13032))
 * **New List Resource:** `google_secret_manager_secret_iam_member` ([#13062](https://github.com/hashicorp/terraform-provider-google-beta/pull/13062))
 * **New List Resource:** `google_vertexai_dataset` ([#13037](https://github.com/hashicorp/terraform-provider-google-beta/pull/13037))
 * **New List Resource:** `google_vertexai_deployment_resource_pool` ([#13037](https://github.com/hashicorp/terraform-provider-google-beta/pull/13037))
@@ -46,7 +46,7 @@ FEATURES:
 IMPROVEMENTS:
 * apikeys: added `check_existing_usage` field and `FORCE` `deletion_policy` support to `google_apikeys_key` ([#13038](https://github.com/hashicorp/terraform-provider-google-beta/pull/13038))
 * apikeys: added `check_existing_usage` field and `FORCE` `deletion_policy` support to `google_apikeys_key` ([#13039](https://github.com/hashicorp/terraform-provider-google-beta/pull/13039))
-* appengine: added `vpc_access` field to `google_app_engine_standard_app_version` resource (beta) ([#13027](https://github.com/hashicorp/terraform-provider-google-beta/pull/13027))
+* appengine: added `vpc_access` field to `google_app_engine_standard_app_version` resource ([#13027](https://github.com/hashicorp/terraform-provider-google-beta/pull/13027))
 * ces: added `proactive_execution_enabled` field to `google_ces_guardrail` ([#13025](https://github.com/hashicorp/terraform-provider-google-beta/pull/13025))
 * cloudrunv2: supported explicitly disabling `cpu_utilization` and `concurrency_utilization` autoscaling thresholds with `0.0` in `google_cloud_run_v2_service` ([#13022](https://github.com/hashicorp/terraform-provider-google-beta/pull/13022))
 * compute: added `architecture` field to `google_compute_machine_types` data source ([#13052](https://github.com/hashicorp/terraform-provider-google-beta/pull/13052))
@@ -60,9 +60,8 @@ IMPROVEMENTS:
 BUG FIXES:
 * alloydb: fixed permadiff on `network_config` for `google_alloydb_instance` when `enable_public_ip` is set to `false` ([#13042](https://github.com/hashicorp/terraform-provider-google-beta/pull/13042))
 * apigee: fixed an issue where concurrently creating `google_apigee_endpoint_attachment`, `google_apigee_instance_attachment`, `google_apigee_envgroup_attachment`, `google_apigee_environment`, `google_apigee_envgroup` or `google_apigee_nat_address` resources could fail with a 400 error stating the resource is locked by another operation ([#13056](https://github.com/hashicorp/terraform-provider-google-beta/pull/13056))
-* colab: fixed an issue in `google_colab_schedule` where `notebookExecutionJob.workbench_runtime` could not be configured with an empty value ([#13057](https://github.com/hashicorp/terraform-provider-google-beta/pull/13057))
-* compute: fix permadiff regression when iap is omitted ([#13041](https://github.com/hashicorp/terraform-provider-google-beta/pull/13041))
-* compute: updated examples to use `debian-13` in place of `debian-11` ([#13061](https://github.com/hashicorp/terraform-provider-google-beta/pull/13061))
+* colab: fixed an issue in `google_colab_schedule` where `notebook_execution_job.workbench_runtime` could not be configured with an empty value ([#13057](https://github.com/hashicorp/terraform-provider-google-beta/pull/13057))
+* compute: fix permadiff regression on `google_compute_backend_service` when iap is omitted ([#13041](https://github.com/hashicorp/terraform-provider-google-beta/pull/13041))
 * dataproc: fixed schema validation error when configuring `disk_config` under `cluster_config.preemptible_worker_config` on `google_dataproc_cluster` ([#13043](https://github.com/hashicorp/terraform-provider-google-beta/pull/13043))
 * gkehub: fixed issue the prevented `workloadidentity` and `fleetobservability` fields being set to empty values in the `google_gke_hub_feature` resource ([#13035](https://github.com/hashicorp/terraform-provider-google-beta/pull/13035))
 * storage: fixed a bug in `data.google_storage_object_signed_url` where an `extension_headers` name that was not all lowercase had its value dropped from the signature ([#13028](https://github.com/hashicorp/terraform-provider-google-beta/pull/13028))
