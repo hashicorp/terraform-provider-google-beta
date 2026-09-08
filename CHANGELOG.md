@@ -43,7 +43,8 @@ FEATURES:
 * **New Resource:** `google_chronicle_case_close_definition` ([#13069](https://github.com/hashicorp/terraform-provider-google-beta/pull/13069))
 * **New Resource:** `google_observability_link` ([#13046](https://github.com/hashicorp/terraform-provider-google-beta/pull/13046))
 * **New Resource:** `google_service_usage_v2_consumer_policy` ([#13063](https://github.com/hashicorp/terraform-provider-google-beta/pull/13063))
-* **New Resource:** `google_storage_ftp_user`,  `google_storage_ftp_server` ([#13040](https://github.com/hashicorp/terraform-provider-google-beta/pull/13040))
+* **New Resource:** `google_storage_ftp_server` ([#13040](https://github.com/hashicorp/terraform-provider-google-beta/pull/13040))
+* **New Resource:** `google_storage_ftp_user` ([#13040](https://github.com/hashicorp/terraform-provider-google-beta/pull/13040))
 
 IMPROVEMENTS:
 * apikeys: added `check_existing_usage` field and `FORCE` `deletion_policy` support to `google_apikeys_key` ([#13038](https://github.com/hashicorp/terraform-provider-google-beta/pull/13038))
