@@ -47,10 +47,11 @@ func TestAccOSConfigV2PolicyOrchestratorForFolder_basic(t *testing.T) {
 				Config: testAccOSConfigV2PolicyOrchestratorForFolder_basic(context),
 			},
 			{
-				ResourceName:            "google_os_config_v2_policy_orchestrator_for_folder.policy_orchestrator_for_folder",
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"folder_id", "labels", "policy_orchestrator_id", "terraform_labels"},
+				ResourceName:      "google_os_config_v2_policy_orchestrator_for_folder.policy_orchestrator_for_folder",
+				ImportState:       true,
+				ImportStateVerify: true,
+				// orchestration_state contains dynamic status fields (e.g. performed_actions, progress) that advance asynchronously in the background as the orchestrator runs.
+				ImportStateVerifyIgnore: []string{"folder_id", "labels", "orchestration_state", "policy_orchestrator_id", "terraform_labels"},
 			},
 			{
 				Config: testAccOSConfigV2PolicyOrchestratorForFolder_update(context),
@@ -61,10 +62,11 @@ func TestAccOSConfigV2PolicyOrchestratorForFolder_basic(t *testing.T) {
 				},
 			},
 			{
-				ResourceName:            "google_os_config_v2_policy_orchestrator_for_folder.policy_orchestrator_for_folder",
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"folder_id", "labels", "policy_orchestrator_id", "terraform_labels"},
+				ResourceName:      "google_os_config_v2_policy_orchestrator_for_folder.policy_orchestrator_for_folder",
+				ImportState:       true,
+				ImportStateVerify: true,
+				// orchestration_state contains dynamic status fields (e.g. performed_actions, progress) that advance asynchronously in the background as the orchestrator runs.
+				ImportStateVerifyIgnore: []string{"folder_id", "labels", "orchestration_state", "policy_orchestrator_id", "terraform_labels"},
 			},
 		},
 	})
