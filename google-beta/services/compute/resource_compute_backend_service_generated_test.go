@@ -735,9 +735,13 @@ func TestAccComputeBackendService_backendServiceInFlightExample(t *testing.T) {
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"backend_service_name": "tf-test-backend-service" + randomSuffix,
-		"health_check_name":    "tf-test-health-check" + randomSuffix,
-		"random_suffix":        randomSuffix,
+		"backend_service_name":   "tf-test-backend-service" + randomSuffix,
+		"health_check_name":      "tf-test-health-check" + randomSuffix,
+		"igm_name":               "tf-test-instance-group-manager" + randomSuffix,
+		"instance_template_name": "tf-test-instance-template" + randomSuffix,
+		"network_name":           "tf-test-custom-vpc" + randomSuffix,
+		"subnetwork_name":        "tf-test-custom-subnet" + randomSuffix,
+		"random_suffix":          randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -768,13 +772,13 @@ func testAccComputeBackendService_backendServiceInFlightExample(context map[stri
 	return acctest.Nprintf(`
 resource "google_compute_network" "custom" {
   provider              = google-beta
-  name                    = "custom-vpc"
+  name                    = "%{network_name}"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "default" {
   provider              = google-beta
-  name          = "custom-subnet"
+  name          = "%{subnetwork_name}"
   ip_cidr_range = "10.0.0.0/24"
   region        = "us-central1"
   network       = google_compute_network.custom.id
@@ -782,7 +786,7 @@ resource "google_compute_subnetwork" "default" {
 
 resource "google_compute_instance_template" "default" {
   provider              = google-beta
-  name                  = "instance-template"
+  name                  = "%{instance_template_name}"
   machine_type          = "e2-micro"
 
   disk {
@@ -809,7 +813,7 @@ resource "google_compute_instance_template" "default" {
 
 resource "google_compute_region_instance_group_manager" "foobar" {
   provider              = google-beta
-  name               = "instance-group-manager"
+  name               = "%{igm_name}"
   base_instance_name = "vm"
   region             = "us-central1"
 

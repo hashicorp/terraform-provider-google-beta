@@ -2135,7 +2135,7 @@ data "google_compute_image" "my_image" {
 }
 
 resource "google_compute_instance_template" "igm-basic" {
-  name           = "igm-instance-template-%s"
+  name           = "tf-test-igm-instance-template-%s"
   machine_type   = "a4-highgpu-8g"
   can_ip_forward = false
   tags           = ["foo", "bar"]
@@ -2163,7 +2163,7 @@ resource "google_compute_instance_template" "igm-basic" {
 
 resource "google_compute_instance_group_manager" "igm-workload-policy" {
   description = "Terraform test instance group manager"
-  name        = "igm-basic-workload-policy-%s"
+  name        = "tf-test-igm-basic-workload-policy-%s"
 
   version {
     name              = "prod"
@@ -2193,7 +2193,7 @@ resource "google_compute_resource_policy" "workload_policy_error" {
 }
 
 resource "google_compute_instance_template" "igm-basic" {
-  name           = "igm-instance-template-%s"
+  name           = "tf-test-igm-instance-template-%s"
   machine_type   = "a4-highgpu-8g"
   can_ip_forward = false
   tags           = ["foo", "bar"]
@@ -2216,7 +2216,7 @@ resource "google_compute_instance_template" "igm-basic" {
 
 resource "google_compute_instance_group_manager" "igm-workload-policy" {
   description = "Terraform test instance group manager"
-  name        = "igm-basic-workload-policy-%s"
+  name        = "tf-test-igm-basic-workload-policy-%s"
 
   version {
     name              = "prod"
@@ -2259,7 +2259,7 @@ resource "google_compute_resource_policy" "workload_policy_2" {
 
 
 resource "google_compute_instance_template" "igm-basic" {
-  name           = "igm-instance-template-%s"
+  name           = "tf-test-igm-instance-template-%s"
   machine_type   = "a4-highgpu-8g"
   can_ip_forward = false
   tags           = ["foo", "bar"]
@@ -2287,7 +2287,7 @@ resource "google_compute_instance_template" "igm-basic" {
 
 resource "google_compute_instance_group_manager" "igm-workload-policy" {
   description = "Terraform test instance group manager"
-  name        = "igm-basic-workload-policy-%s"
+  name        = "tf-test-igm-basic-workload-policy-%s"
 
   version {
     name              = "prod"
@@ -2313,7 +2313,7 @@ data "google_compute_image" "my_image" {
 }
 
 resource "google_compute_instance_template" "igm-basic" {
-  name           = "igm-instance-template-%s"
+  name           = "tf-test-igm-instance-template-%s"
   machine_type   = "a4-highgpu-8g"
   can_ip_forward = false
   tags           = ["foo", "bar"]
@@ -2341,7 +2341,7 @@ resource "google_compute_instance_template" "igm-basic" {
 
 resource "google_compute_instance_group_manager" "igm-workload-policy" {
   description = "Terraform test instance group manager"
-  name        = "igm-basic-workload-policy-%s"
+  name        = "tf-test-igm-basic-workload-policy-%s"
 
   version {
     name              = "prod"

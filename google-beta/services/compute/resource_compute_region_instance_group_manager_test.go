@@ -2295,7 +2295,7 @@ data "google_compute_image" "my_image" {
 }
 
 resource "google_compute_resource_policy" "test-snapshot-policy" {
-  name    = "test-policy-%{random_suffix}"
+  name    = "tf-test-test-policy-%{random_suffix}"
   snapshot_schedule_policy {
     schedule {
       hourly_schedule {
@@ -2823,7 +2823,7 @@ resource "google_compute_resource_policy" "workload_policy_2" {
 
 
 resource "google_compute_instance_template" "igm-basic" {
-  name           = "igm-instance-template-%s"
+  name           = "tf-test-igm-instance-template-%s"
   machine_type   = "ct6e-standard-1t"
   can_ip_forward = false
   tags           = ["foo", "bar"]
@@ -2855,7 +2855,7 @@ resource "google_compute_instance_template" "igm-basic" {
 
 resource "google_compute_region_instance_group_manager" "igm-workload-policy" {
   description = "Terraform test instance group manager"
-  name        = "igm-basic-workload-policy-%s"
+  name        = "tf-test-igm-basic-workload-policy-%s"
 
   instance_lifecycle_policy {
     default_action_on_failure = "DO_NOTHING"
@@ -2898,7 +2898,7 @@ data "google_compute_image" "my_image" {
 }
 
 resource "google_compute_instance_template" "igm-basic" {
-  name           = "tmpl-%s"
+  name           = "tf-test-tmpl-%s"
   machine_type   = "e2-medium"
   can_ip_forward = false
   tags           = ["foo", "bar"]
@@ -2929,7 +2929,7 @@ resource "google_compute_instance_template" "igm-basic" {
 
 resource "google_compute_region_instance_group_manager" "igm-workload-policy" {
   description = "Terraform test instance group manager"
-  name        = "igm-basic-workload-policy-%s"
+  name        = "tf-test-igm-basic-workload-policy-%s"
 
   instance_lifecycle_policy {
     default_action_on_failure = "DO_NOTHING"

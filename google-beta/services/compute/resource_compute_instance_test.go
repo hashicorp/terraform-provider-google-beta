@@ -7280,13 +7280,13 @@ func testAccComputeInstance_resourceManagerTags(context map[string]interface{}) 
 	return acctest.Nprintf(`
 resource "google_tags_tag_key" "key" {
   parent = "projects/%{project}"
-  short_name = "foobarbaz%{random_suffix}"
+  short_name = "tf-test-foobarbaz%{random_suffix}"
   description = "For foo/bar resources."
 }
 
 resource "google_tags_tag_value" "value" {
   parent      = google_tags_tag_key.key.id
-  short_name  = "foo%{random_suffix}"
+  short_name  = "tf-test-foo%{random_suffix}"
   description = "For foo resources."
 }
 
@@ -7326,25 +7326,25 @@ func testAccComputeInstance_resourceManagerTagsUpdate(context map[string]interfa
 	return acctest.Nprintf(`
 resource "google_tags_tag_key" "key" {
   parent = "projects/%{project}"
-  short_name = "foobarbaz%{random_suffix}"
+  short_name = "tf-test-foobarbaz%{random_suffix}"
   description = "For foo/bar resources."
 }
 
 resource "google_tags_tag_value" "value" {
   parent      = google_tags_tag_key.key.id
-  short_name  = "foo%{random_suffix}"
+  short_name  = "tf-test-foo%{random_suffix}"
   description = "For foo resources."
 }
 
 resource "google_tags_tag_key" "key_new" {
   parent = "projects/%{project}"
-  short_name = "foobarbaznew%{random_suffix}"
+  short_name = "tf-test-foobarbaznew%{random_suffix}"
   description = "New key for foo/bar resources."
 }
 
 resource "google_tags_tag_value" "value_new" {
   parent      = google_tags_tag_key.key_new.id
-  short_name  = "foonew%{random_suffix}"
+  short_name  = "tf-test-foonew%{random_suffix}"
   description = "New value for foo resources."
 }
 
@@ -7389,7 +7389,7 @@ data "google_compute_image" "my_image" {
 }
 
 resource "google_compute_resource_policy" "test-snapshot-policy" {
-  name    = "test-policy-%{random_suffix}"
+  name    = "tf-test-test-policy-%{random_suffix}"
   snapshot_schedule_policy {
     schedule {
       hourly_schedule {
@@ -7401,7 +7401,7 @@ resource "google_compute_resource_policy" "test-snapshot-policy" {
 }
 
 resource "google_compute_resource_policy" "test-snapshot-policy2" {
-  name    = "test-policy2-%{random_suffix}"
+  name    = "tf-test-test-policy2-%{random_suffix}"
   snapshot_schedule_policy {
     schedule {
       hourly_schedule {
@@ -7439,7 +7439,7 @@ data "google_compute_image" "my_image" {
 }
 
 resource "google_compute_resource_policy" "test-snapshot-policy" {
-  name    = "test-policy-%{random_suffix}"
+  name    = "tf-test-test-policy-%{random_suffix}"
   snapshot_schedule_policy {
     schedule {
       hourly_schedule {
@@ -7451,7 +7451,7 @@ resource "google_compute_resource_policy" "test-snapshot-policy" {
 }
 
 resource "google_compute_resource_policy" "test-snapshot-policy2" {
-  name    = "test-policy2-%{random_suffix}"
+  name    = "tf-test-test-policy2-%{random_suffix}"
   snapshot_schedule_policy {
     schedule {
       hourly_schedule {
@@ -7489,7 +7489,7 @@ data "google_compute_image" "my_image" {
 }
 
 resource "google_compute_resource_policy" "test-snapshot-policy" {
-  name    = "test-policy-%{random_suffix}"
+  name    = "tf-test-test-policy-%{random_suffix}"
   snapshot_schedule_policy {
     schedule {
       hourly_schedule {
@@ -7501,7 +7501,7 @@ resource "google_compute_resource_policy" "test-snapshot-policy" {
 }
 
 resource "google_compute_resource_policy" "test-snapshot-policy2" {
-  name    = "test-policy2-%{random_suffix}"
+  name    = "tf-test-test-policy2-%{random_suffix}"
   snapshot_schedule_policy {
     schedule {
       hourly_schedule {
@@ -7539,7 +7539,7 @@ data "google_compute_image" "my_image" {
 }
 
 resource "google_compute_resource_policy" "test-snapshot-policy" {
-  name    = "test-policy-%{random_suffix}"
+  name    = "tf-test-test-policy-%{random_suffix}"
   snapshot_schedule_policy {
     schedule {
       hourly_schedule {
@@ -7551,7 +7551,7 @@ resource "google_compute_resource_policy" "test-snapshot-policy" {
 }
 
 resource "google_compute_resource_policy" "test-snapshot-policy2" {
-  name    = "test-policy2-%{random_suffix}"
+  name    = "tf-test-test-policy2-%{random_suffix}"
   snapshot_schedule_policy {
     schedule {
       hourly_schedule {
@@ -9738,7 +9738,7 @@ resource "google_compute_network" "inst-test-network" {
 }
 
 resource "google_compute_subnetwork" "inst-test-subnetwork" {
-  name          = "inst-test-subnetwork-%s"
+  name          = "tf-test-subnetwork-%s"
   ip_cidr_range = "10.0.0.0/16"
   region        = "us-central1"
   network       = google_compute_network.inst-test-network.self_link

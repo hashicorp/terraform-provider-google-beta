@@ -207,8 +207,8 @@ func TestAccComputeRegionBackendService_withConnectionDrainingAndUpdate(t *testi
 func TestAccComputeRegionBackendService_ilbUpdateBasic(t *testing.T) {
 	t.Parallel()
 
-	backendName := fmt.Sprintf("foo-%s", acctest.RandString(t, 10))
-	checkName := fmt.Sprintf("bar-%s", acctest.RandString(t, 10))
+	backendName := fmt.Sprintf("tf-test-foo-%s", acctest.RandString(t, 10))
+	checkName := fmt.Sprintf("tf-test-bar-%s", acctest.RandString(t, 10))
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -240,8 +240,8 @@ func TestAccComputeRegionBackendService_ilbUpdateFull(t *testing.T) {
 
 	randString := acctest.RandString(t, 10)
 
-	backendName := fmt.Sprintf("foo-%s", randString)
-	checkName := fmt.Sprintf("bar-%s", randString)
+	backendName := fmt.Sprintf("tf-test-foo-%s", randString)
+	checkName := fmt.Sprintf("tf-test-bar-%s", randString)
 	igName := fmt.Sprintf("tf-test-%s", randString)
 	instanceName := fmt.Sprintf("tf-test-%s", randString)
 
@@ -271,8 +271,8 @@ func TestAccComputeRegionBackendService_ilbUpdateFull(t *testing.T) {
 }
 
 func TestAccComputeRegionBackendService_withBackendAndIAP(t *testing.T) {
-	backendName := fmt.Sprintf("foo-%s", acctest.RandString(t, 10))
-	checkName := fmt.Sprintf("bar-%s", acctest.RandString(t, 10))
+	backendName := fmt.Sprintf("tf-test-foo-%s", acctest.RandString(t, 10))
+	checkName := fmt.Sprintf("tf-test-bar-%s", acctest.RandString(t, 10))
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -303,7 +303,7 @@ func TestAccComputeRegionBackendService_withBackendAndIAP(t *testing.T) {
 func TestAccComputeRegionBackendService_updateIAPEnabled(t *testing.T) {
 	t.Parallel()
 
-	serviceName := fmt.Sprintf("foo-%s", acctest.RandString(t, 10))
+	serviceName := fmt.Sprintf("tf-test-foo-%s", acctest.RandString(t, 10))
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -377,8 +377,8 @@ func TestAccComputeRegionBackendService_subsettingUpdate(t *testing.T) {
 
 	randString := acctest.RandString(t, 10)
 
-	backendName := fmt.Sprintf("foo-%s", randString)
-	checkName := fmt.Sprintf("bar-%s", randString)
+	backendName := fmt.Sprintf("tf-test-foo-%s", randString)
+	checkName := fmt.Sprintf("tf-test-bar-%s", randString)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
