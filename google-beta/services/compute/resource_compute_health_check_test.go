@@ -233,7 +233,7 @@ resource "google_compute_health_check" "foobar" {
   check_interval_sec  = 3
   description         = "Resource created for Terraform acceptance testing"
   healthy_threshold   = 3
-  name                = "health-test-%s"
+  name                = "%s"
   timeout_sec         = 2
   unhealthy_threshold = 3
   tcp_health_check {
@@ -248,7 +248,7 @@ func testAccComputeHealthCheck_tcp_update(hckName string) string {
 resource "google_compute_health_check" "foobar" {
   check_interval_sec  = 3
   healthy_threshold   = 10
-  name                = "health-test-%s"
+  name                = "%s"
   timeout_sec         = 2
   unhealthy_threshold = 10
   tcp_health_check {
@@ -264,7 +264,7 @@ resource "google_compute_health_check" "foobar" {
   check_interval_sec  = 3
   description         = "Resource created for Terraform acceptance testing"
   healthy_threshold   = 3
-  name                = "tf-test-health-test-%s"
+  name                = "%s"
   timeout_sec         = 2
   unhealthy_threshold = 3
   grpc_tls_health_check {
@@ -279,7 +279,7 @@ func testAccComputeHealthCheck_grpcWithTls_update(hckName string) string {
 resource "google_compute_health_check" "foobar" {
   check_interval_sec  = 3
   healthy_threshold   = 10
-  name                = "tf-test-health-test-%s"
+  name                = "%s"
   timeout_sec         = 2
   unhealthy_threshold = 10
   grpc_tls_health_check {
@@ -295,7 +295,7 @@ resource "google_compute_health_check" "foobar" {
   check_interval_sec  = 3
   description         = "Resource created for Terraform acceptance testing"
   healthy_threshold   = 3
-  name                = "health-test-%s"
+  name                = "%s"
   timeout_sec         = 2
   unhealthy_threshold = 3
   ssl_health_check {
@@ -311,7 +311,7 @@ resource "google_compute_health_check" "foobar" {
   check_interval_sec  = 3
   description         = "Resource created for Terraform acceptance testing"
   healthy_threshold   = 3
-  name                = "health-test-%s"
+  name                = "%s"
   timeout_sec         = 2
   unhealthy_threshold = 3
   ssl_health_check {
@@ -328,7 +328,7 @@ resource "google_compute_health_check" "foobar" {
   check_interval_sec  = 3
   description         = "Resource created for Terraform acceptance testing"
   healthy_threshold   = 3
-  name                = "health-test-%s"
+  name                = "%s"
   timeout_sec         = 2
   unhealthy_threshold = 3
   http_health_check {
@@ -344,7 +344,7 @@ resource "google_compute_health_check" "foobar" {
   check_interval_sec  = 3
   description         = "Resource created for Terraform acceptance testing"
   healthy_threshold   = 3
-  name                = "health-test-%s"
+  name                = "%s"
   timeout_sec         = 2
   unhealthy_threshold = 3
   http_health_check {
@@ -360,7 +360,7 @@ resource "google_compute_health_check" "foobar" {
   check_interval_sec  = 3
   description         = "Resource created for Terraform acceptance testing"
   healthy_threshold   = 3
-  name                = "health-test-%s"
+  name                = "%s"
   timeout_sec         = 2
   unhealthy_threshold = 3
   http_health_check {
@@ -377,7 +377,7 @@ resource "google_compute_health_check" "foobar" {
   check_interval_sec  = 3
   description         = "Resource created for Terraform acceptance testing"
   healthy_threshold   = 3
-  name                = "health-test-%s"
+  name                = "%s"
   timeout_sec         = 2
   unhealthy_threshold = 3
   https_health_check {
@@ -393,7 +393,7 @@ resource "google_compute_health_check" "foobar" {
   check_interval_sec  = 3
   description         = "Resource created for Terraform acceptance testing"
   healthy_threshold   = 3
-  name                = "health-test-%s"
+  name                = "%s"
   timeout_sec         = 2
   unhealthy_threshold = 3
   https_health_check {
@@ -409,7 +409,7 @@ resource "google_compute_health_check" "foobar" {
   check_interval_sec  = 3
   description         = "Resource created for Terraform acceptance testing"
   healthy_threshold   = 3
-  name                = "health-test-%s"
+  name                = "%s"
   timeout_sec         = 2
   unhealthy_threshold = 3
   http2_health_check {
