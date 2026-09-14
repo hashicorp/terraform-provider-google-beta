@@ -870,7 +870,7 @@ resource "google_vertex_ai_reasoning_engine" "primary" {
   context_spec {
     memory_bank_config {
       generation_config {
-        model = "projects/${data.google_project.project.project_id}/locations/us-central1/publishers/google/models/gemini-2.5-flash"
+        model = "projects/${data.google_project.project.project_id}/locations/us-central1/publishers/google/models/gemini-3.5-flash"
         generation_trigger_config {
           generation_rule {
             fixed_interval = "600s"
@@ -898,7 +898,7 @@ resource "google_vertex_ai_reasoning_engine" "primary" {
   context_spec {
     memory_bank_config {
       generation_config {
-        model = "projects/${data.google_project.project.project_id}/locations/us-central1/publishers/google/models/gemini-2.5-flash"
+        model = "projects/${data.google_project.project.project_id}/locations/us-central1/publishers/google/models/gemini-3.5-flash"
         generation_trigger_config {
           generation_rule {
             event_count         = 10
@@ -959,7 +959,7 @@ resource "google_vertex_ai_reasoning_engine" "primary" {
   context_spec {
     memory_bank_config {
       generation_config {
-        model = "projects/${data.google_project.project.project_id}/locations/us-central1/publishers/google/models/gemini-2.5-flash"
+        model = "projects/${data.google_project.project.project_id}/locations/us-central1/publishers/google/models/gemini-3.5-flash"
       }
       similarity_search_config {
         embedding_model = "projects/${data.google_project.project.project_id}/locations/us-central1/publishers/google/models/text-embedding-005"
@@ -1085,7 +1085,7 @@ resource "google_vertex_ai_reasoning_engine" "primary" {
   context_spec {
     memory_bank_config {
       generation_config {
-        model = "projects/${data.google_project.project.project_id}/locations/us-central1/publishers/google/models/gemini-2.5-flash"
+        model = "projects/${data.google_project.project.project_id}/locations/us-central1/publishers/google/models/gemini-3.5-flash"
       }
       similarity_search_config {
         embedding_model = "projects/${data.google_project.project.project_id}/locations/us-central1/publishers/google/models/text-embedding-005"
@@ -1741,7 +1741,7 @@ resource "google_vertex_ai_reasoning_engine" "reasoning_engine" {
         adk_config {
           json_config = jsonencode({
             name        = "finance_analyst_agent"
-            model       = "gemini-2.5-flash"
+            model       = "gemini-3.5-flash"
             description = "A financial analyst that can look up stock values and return them as tables."
             instruction = "You are a financial analyst. Output data in tables."
           })
@@ -1773,7 +1773,7 @@ resource "google_vertex_ai_reasoning_engine" "reasoning_engine" {
         adk_config {
           json_config = jsonencode({
             name        = "finance_analyst_agent_updated"
-            model       = "gemini-2.5-flash"
+            model       = "gemini-3.5-flash"
             description = "An updated financial analyst agent."
             instruction = "You are an updated financial analyst."
           })
