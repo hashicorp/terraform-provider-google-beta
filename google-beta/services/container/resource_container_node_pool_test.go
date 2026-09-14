@@ -512,7 +512,7 @@ resource "google_container_cluster" "cluster" {
   provider            = google.user-project-override
   name                = "%s"
   location            = "us-central1-a"
-  initial_node_count  = 3
+  initial_node_count  = 1
   deletion_protection = false
   network             = "%s"
   subnetwork          = "%s"
@@ -523,7 +523,7 @@ resource "google_container_node_pool" "np" {
   name               = "%s"
   location           = "us-central1-a"
   cluster            = google_container_cluster.cluster.name
-  initial_node_count = 3
+  initial_node_count = 1
 
   node_config {
     machine_type = "c3-standard-4"
@@ -548,7 +548,7 @@ resource "google_container_cluster" "cluster" {
   provider            = google.user-project-override
   name                = "%s"
   location            = "us-central1-a"
-  initial_node_count  = 3
+  initial_node_count  = 1
   deletion_protection = false
   network             = "%s"
   subnetwork          = "%s"
@@ -559,7 +559,7 @@ resource "google_container_node_pool" "np" {
   name               = "%s"
   location           = "us-central1-a"
   cluster            = google_container_cluster.cluster.name
-  initial_node_count = 3
+  initial_node_count = 1
 
   node_config {
     machine_type = "c3-standard-4"
@@ -585,7 +585,7 @@ resource "google_container_cluster" "cluster" {
   provider            = google.user-project-override
   name                = "%s"
   location            = "us-central1-a"
-  initial_node_count  = 3
+  initial_node_count  = 1
   deletion_protection = false
   network             = "%s"
   subnetwork          = "%s"
@@ -596,7 +596,7 @@ resource "google_container_node_pool" "np" {
   name               = "%s"
   location           = "us-central1-a"
   cluster            = google_container_cluster.cluster.name
-  initial_node_count = 3
+  initial_node_count = 1
 
   node_config {
     machine_type = "c3-standard-4"
@@ -620,7 +620,7 @@ resource "google_container_cluster" "cluster" {
   provider            = google.user-project-override
   name                = "%s"
   location            = "us-central1-a"
-  initial_node_count  = 3
+  initial_node_count  = 1
   deletion_protection = false
   network             = "%s"
   subnetwork          = "%s"
@@ -631,7 +631,7 @@ resource "google_container_node_pool" "np" {
   name               = "%s"
   location           = "us-central1-a"
   cluster            = google_container_cluster.cluster.name
-  initial_node_count = 3
+  initial_node_count = 1
 
   node_config {
   	machine_type = "c3-standard-4"
@@ -653,7 +653,7 @@ resource "google_container_cluster" "cluster" {
   provider            = google.user-project-override
   name                = "%s"
   location            = "us-central1-a"
-  initial_node_count  = 3
+  initial_node_count  = 1
   deletion_protection = false
   network             = "%s"
   subnetwork          = "%s"
@@ -664,7 +664,7 @@ resource "google_container_node_pool" "np" {
   name               = "%s"
   location           = "us-central1-a"
   cluster            = google_container_cluster.cluster.name
-  initial_node_count = 3
+  initial_node_count = 1
 
   node_config {
     machine_type = "c3-standard-4"
@@ -3317,7 +3317,7 @@ resource "google_container_cluster" "cluster" {
   provider           = google.user-project-override
   name               = "%s"
   location           = "us-central1-a"
-  initial_node_count = 3
+  initial_node_count = 1
   deletion_protection = false
   network    = "%s"
   subnetwork    = "%s"
@@ -3328,7 +3328,7 @@ resource "google_container_node_pool" "np" {
   name               = "%s"
   location           = "us-central1-a"
   cluster            = google_container_cluster.cluster.name
-  initial_node_count = 2
+  initial_node_count = 1
 }
 `, cluster, networkName, subnetworkName, np)
 }
@@ -3366,7 +3366,7 @@ resource "google_container_cluster" "cluster" {
   provider           = google.user-project-override
   name               = "%s"
   location           = "us-central1-a"
-  initial_node_count = 3
+  initial_node_count = 1
   deletion_protection = false
   network    = "%s"
   subnetwork    = "%s"
@@ -3376,7 +3376,7 @@ resource "google_container_node_pool" "np" {
   provider           = google.user-project-override
   name               = "%s"
   cluster            = google_container_cluster.cluster.id
-  initial_node_count = 2
+  initial_node_count = 1
 }
 `, cluster, networkName, subnetworkName, np)
 }
@@ -3468,7 +3468,7 @@ resource "google_compute_subnetwork" "container_subnetwork" {
 resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1-a"
-  initial_node_count = 3
+  initial_node_count = 1
 
   network    = google_compute_network.container_network.name
   subnetwork = google_compute_subnetwork.container_subnetwork.name
@@ -3493,7 +3493,7 @@ resource "google_container_node_pool" "np" {
   location           = "us-central1-a"
   cluster            = google_container_cluster.cluster.name
   max_pods_per_node  = 30
-  initial_node_count = 2
+  initial_node_count = 1
 }
 `, network, cluster, np)
 }
@@ -3503,7 +3503,7 @@ func testAccContainerNodePool_regionalClusters(cluster, np, networkName, subnetw
 resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1"
-  initial_node_count = 3
+  initial_node_count = 1
   deletion_protection = false
   network    = "%s"
   subnetwork    = "%s"
@@ -3513,7 +3513,7 @@ resource "google_container_node_pool" "np" {
   name               = "%s"
   cluster            = google_container_cluster.cluster.name
   location           = "us-central1"
-  initial_node_count = 2
+  initial_node_count = 1
 }
 `, cluster, networkName, subnetworkName, np)
 }
@@ -3523,7 +3523,7 @@ func testAccContainerNodePool_namePrefix(cluster, np, networkName, subnetworkNam
 resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1-a"
-  initial_node_count = 3
+  initial_node_count = 1
   deletion_protection = false
   network    = "%s"
   subnetwork    = "%s"
@@ -3533,7 +3533,7 @@ resource "google_container_node_pool" "np" {
   name_prefix        = "%s"
   location           = "us-central1-a"
   cluster            = google_container_cluster.cluster.name
-  initial_node_count = 2
+  initial_node_count = 1
 }
 `, cluster, networkName, subnetworkName, np)
 }
@@ -3543,7 +3543,7 @@ func testAccContainerNodePool_noName(cluster, networkName, subnetworkName string
 resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1-a"
-  initial_node_count = 3
+  initial_node_count = 1
   deletion_protection = false
   network    = "%s"
   subnetwork    = "%s"
@@ -3552,7 +3552,7 @@ resource "google_container_cluster" "cluster" {
 resource "google_container_node_pool" "np" {
   location           = "us-central1-a"
   cluster            = google_container_cluster.cluster.name
-  initial_node_count = 2
+  initial_node_count = 1
 }
 `, cluster, networkName, subnetworkName)
 }
@@ -3562,7 +3562,7 @@ func testAccContainerNodePool_regionalAutoscaling(cluster, np, networkName, subn
 resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1"
-  initial_node_count = 3
+  initial_node_count = 1
   deletion_protection = false
   network    = "%s"
   subnetwork    = "%s"
@@ -3572,7 +3572,7 @@ resource "google_container_node_pool" "np" {
   name               = "%s"
   location           = "us-central1"
   cluster            = google_container_cluster.cluster.name
-  initial_node_count = 2
+  initial_node_count = 1
   autoscaling {
     min_node_count = 1
     max_node_count = 3
@@ -3586,7 +3586,7 @@ func testAccContainerNodePool_totalSize(cluster, np, networkName, subnetworkName
 resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1"
-  initial_node_count = 3
+  initial_node_count = 1
 
   network       = "%s"
   subnetwork    = "%s"
@@ -3613,7 +3613,7 @@ func testAccContainerNodePool_updateTotalSize(cluster, np, networkName, subnetwo
 resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1"
-  initial_node_count = 3
+  initial_node_count = 1
 
   network       = "%s"
   subnetwork    = "%s"
@@ -3649,7 +3649,7 @@ resource "google_container_cluster" "cluster" {
   network       = "%s"
   subnetwork    = "%s"
 
-  initial_node_count = 3
+  initial_node_count = 1
   deletion_protection = false
 }
 
@@ -3668,7 +3668,7 @@ func testAccContainerNodePool_autoscaling(cluster, np, networkName, subnetworkNa
 resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1-a"
-  initial_node_count = 3
+  initial_node_count = 1
   deletion_protection = false
   network    = "%s"
   subnetwork    = "%s"
@@ -3678,7 +3678,7 @@ resource "google_container_node_pool" "np" {
   name               = "%s"
   location           = "us-central1-a"
   cluster            = google_container_cluster.cluster.name
-  initial_node_count = 2
+  initial_node_count = 1
   autoscaling {
     min_node_count = 1
     max_node_count = 3
@@ -3692,7 +3692,7 @@ func testAccContainerNodePool_updateAutoscaling(cluster, np, networkName, subnet
 resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1-a"
-  initial_node_count = 3
+  initial_node_count = 1
   deletion_protection = false
   network    = "%s"
   subnetwork    = "%s"
@@ -3702,7 +3702,7 @@ resource "google_container_node_pool" "np" {
   name               = "%s"
   location           = "us-central1-a"
   cluster            = google_container_cluster.cluster.name
-  initial_node_count = 2
+  initial_node_count = 1
   autoscaling {
     min_node_count = 0
     max_node_count = 5
@@ -3784,7 +3784,7 @@ resource "google_container_node_pool" "np_with_management" {
   %s
 
   node_config {
-    machine_type = "g1-small"
+    machine_type = "e2-micro"
     disk_size_gb = 15
     oauth_scopes = ["compute-rw", "storage-ro", "logging-write", "monitoring"]
   }
@@ -3918,7 +3918,7 @@ resource "google_container_cluster" "cluster" {
   provider           = google.user-project-override
   name               = "%s"
   location           = "us-central1-a"
-  initial_node_count = 3
+  initial_node_count = 1
   deletion_protection = false
   network    = "%s"
   subnetwork    = "%s"
@@ -3929,7 +3929,7 @@ resource "google_container_node_pool" "np" {
   name               = "%s"
   location           = "us-central1-a"
   cluster            = google_container_cluster.cluster.name
-  initial_node_count = 2
+  initial_node_count = 1
 
   node_config {
 	taint {
@@ -3954,7 +3954,7 @@ resource "google_container_cluster" "cluster" {
   provider           = google.user-project-override
   name               = "%s"
   location           = "us-central1-a"
-  initial_node_count = 3
+  initial_node_count = 1
   deletion_protection = false
   network    = "%s"
   subnetwork    = "%s"
@@ -3965,7 +3965,7 @@ resource "google_container_node_pool" "np" {
   name               = "%s"
   location           = "us-central1-a"
   cluster            = google_container_cluster.cluster.name
-  initial_node_count = 2
+  initial_node_count = 1
 
   node_config {
 	machine_type    = "n1-standard-1"  // can't be e2 because of local-ssd
@@ -5011,6 +5011,13 @@ resource "google_container_cluster" "cluster" {
 
   initial_node_count       = 1
   remove_default_node_pool = true
+  node_config {
+    machine_type = "e2-medium"
+  }
+
+  lifecycle {
+    ignore_changes = [node_config]
+  }
 }
 
 resource "google_container_node_pool" "np_with_gpudirect" {
@@ -5298,7 +5305,7 @@ func testAccContainerNodePool_EmptyGuestAccelerator(cluster, np, networkName, su
 resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1-f"
-  initial_node_count = 3
+  initial_node_count = 1
   deletion_protection = false
   network    = "%s"
   subnetwork    = "%s"
@@ -5326,7 +5333,7 @@ func testAccContainerNodePool_PartialEmptyGuestAccelerator(cluster, np, networkN
 resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1-f"
-  initial_node_count = 3
+  initial_node_count = 1
   deletion_protection = false
   network    = "%s"
   subnetwork    = "%s"
@@ -5359,7 +5366,7 @@ func testAccContainerNodePool_PartialEmptyGuestAccelerator2(cluster, np, network
 resource "google_container_cluster" "cluster" {
   name               = "%s"
   location           = "us-central1-f"
-  initial_node_count = 3
+  initial_node_count = 1
   deletion_protection = false
   network    = "%s"
   subnetwork    = "%s"
@@ -5407,7 +5414,7 @@ resource "google_container_node_pool" "np" {
   name               = "%s"
   location           = "us-central1-a"
   cluster            = google_container_cluster.cluster.name
-  initial_node_count = 2
+  initial_node_count = 1
   node_config {
     shielded_instance_config {
       enable_integrity_monitoring = true
@@ -5430,6 +5437,13 @@ resource "google_container_cluster" "cluster" {
   initial_node_count       = 1
   # Testing the node pool update, so don't need default-pool also.
   remove_default_node_pool = true
+  node_config {
+    machine_type = "e2-micro"
+  }
+
+  lifecycle {
+    ignore_changes = [node_config]
+  }
   min_master_version       = data.google_container_engine_versions.uscentral1a.release_channel_latest_version["STABLE"]
   network                  = "%s"
   subnetwork               = "%s"
@@ -5441,7 +5455,7 @@ resource "google_container_node_pool" "np1" {
   name               = "%s"
   location           = "us-central1-a"
   cluster            = google_container_cluster.cluster.name
-  initial_node_count = 2
+  initial_node_count = 1
   # Note: without version specified, this will likely get an older version than
   # the control plane, which helps when we then update in the next step.
 }
@@ -5450,7 +5464,7 @@ resource "google_container_node_pool" "np2" {
   name               = "%s"
   location           = "us-central1-a"
   cluster            = google_container_cluster.cluster.name
-  initial_node_count = 2
+  initial_node_count = 1
   # Note: without version specified, this will likely get an older version than
   # the control plane, which helps when we then update in the next step.
 }
@@ -5469,6 +5483,13 @@ resource "google_container_cluster" "cluster" {
   initial_node_count       = 1
   # Testing the node pool update, so don't need default-pool also.
   remove_default_node_pool = true
+  node_config {
+    machine_type = "e2-micro"
+  }
+
+  lifecycle {
+    ignore_changes = [node_config]
+  }
   min_master_version       = data.google_container_engine_versions.uscentral1a.release_channel_latest_version["STABLE"]
   network                  = "%s"
   subnetwork               = "%s"
@@ -5480,7 +5501,7 @@ resource "google_container_node_pool" "np1" {
   name               = "%s"
   location           = "us-central1-a"
   cluster            = google_container_cluster.cluster.name
-  initial_node_count = 2
+  initial_node_count = 1
   # Force an update by going to a different, but still compatible version.
   version            = data.google_container_engine_versions.uscentral1a.release_channel_default_version["STABLE"]
   # The node version must remain within one minor version of the cluster
@@ -5494,7 +5515,7 @@ resource "google_container_node_pool" "np2" {
   name               = "%s"
   location           = "us-central1-a"
   cluster            = google_container_cluster.cluster.name
-  initial_node_count = 2
+  initial_node_count = 1
   version            = data.google_container_engine_versions.uscentral1a.release_channel_default_version["STABLE"]
   # The node version must remain within one minor version of the cluster
   # control-plane version, and it must not exceed the control-planeversion
@@ -6278,6 +6299,13 @@ resource "google_container_cluster" "primary" {
   # node pool and immediately delete it.
   remove_default_node_pool = true
   initial_node_count       = 1
+  node_config {
+    machine_type = "e2-micro"
+  }
+
+  lifecycle {
+    ignore_changes = [node_config]
+  }
 
   deletion_protection = false
   network             = "%{network}"
@@ -6294,6 +6322,7 @@ resource "google_container_node_pool" "primary_nodes" {
   node_count = 1
 
   node_config {
+    machine_type = "e2-micro"
     disk_size_gb = 15
 
     resource_manager_tags = {
@@ -6324,6 +6353,13 @@ resource "google_container_cluster" "primary" {
   # node pool and immediately delete it.
   remove_default_node_pool = true
   initial_node_count       = 1
+  node_config {
+    machine_type = "e2-micro"
+  }
+
+  lifecycle {
+    ignore_changes = [node_config]
+  }
 
   deletion_protection = false
   network             = "%{network}"
@@ -6340,6 +6376,7 @@ resource "google_container_node_pool" "primary_nodes" {
   node_count = 1
 
   node_config {
+    machine_type = "e2-micro"
     disk_size_gb = 15
 
     resource_manager_tags = {
@@ -6371,6 +6408,13 @@ resource "google_container_cluster" "primary" {
   # node pool and immediately delete it.
   remove_default_node_pool = true
   initial_node_count       = 1
+  node_config {
+    machine_type = "e2-micro"
+  }
+
+  lifecycle {
+    ignore_changes = [node_config]
+  }
 
   deletion_protection = false
   network             = "%{network}"
@@ -6387,6 +6431,7 @@ resource "google_container_node_pool" "primary_nodes" {
   node_count = 1
 
   node_config {
+    machine_type = "e2-micro"
     disk_size_gb = 15
   }
 }
@@ -6822,7 +6867,7 @@ data "google_container_engine_versions" "central1a" {
 resource "google_container_cluster" "cluster" {
   name                = "%s"
   location            = "us-central1-a"
-  initial_node_count  = 3
+  initial_node_count  = 1
   deletion_protection = false
 
   min_master_version = data.google_container_engine_versions.central1a.release_channel_latest_version["RAPID"]
@@ -6837,7 +6882,7 @@ resource "google_container_node_pool" "np" {
   name               = "%s"
   location           = "us-central1-a"
   cluster            = google_container_cluster.cluster.name
-  initial_node_count = 2
+  initial_node_count = 1
 
   node_config {
     service_account = "default"
@@ -6968,7 +7013,7 @@ resource "google_container_cluster" "cluster" {
   provider            = google.user-project-override
   name                = "%[1]s"
   location            = "%[6]s"
-  initial_node_count  = 3
+  initial_node_count  = 1
   deletion_protection = false
   network             = "%[3]s"
   subnetwork          = "%[4]s"
@@ -6979,7 +7024,7 @@ resource "google_container_node_pool" "np" {
   name               = "%[1]s"
   location           = "%[6]s"
   cluster            = google_container_cluster.cluster.name
-  initial_node_count = 2
+  initial_node_count = 1
 
   node_config {
     machine_type  = "c3-standard-4"
@@ -6999,6 +7044,13 @@ resource "google_container_cluster" "primary" {
 
   remove_default_node_pool = true
   initial_node_count       = 1
+  node_config {
+    machine_type = "e2-medium"
+  }
+
+  lifecycle {
+    ignore_changes = [node_config]
+  }
 
   datapath_provider       = "ADVANCED_DATAPATH"
   ip_allocation_policy    {} 
@@ -7471,6 +7523,13 @@ resource "google_container_cluster" "cluster" {
   }
 
   remove_default_node_pool = true
+  node_config {
+    machine_type = "e2-micro"
+  }
+
+  lifecycle {
+    ignore_changes = [node_config]
+  }
 }
 
 resource "google_container_node_pool" "np" {
@@ -7482,7 +7541,7 @@ resource "google_container_node_pool" "np" {
 
   node_config {
     preemptible  = true
-    machine_type = "e2-medium"
+    machine_type = "e2-micro"
   }
 }
 `, suffix, suffix, clusterName, poolName, count, ignoreChanges)
