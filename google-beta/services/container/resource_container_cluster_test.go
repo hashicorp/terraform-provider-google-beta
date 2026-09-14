@@ -5017,6 +5017,12 @@ resource "google_container_cluster" "primary" {
   location           = "us-central1-a"
   initial_node_count = 1
   remove_default_node_pool = true
+  node_config {
+    machine_type = "e2-micro"
+  }
+  lifecycle {
+    ignore_changes = [node_config]
+  }
   network            = "%s"
   subnetwork         = "%s"
   deletion_protection = false
@@ -8218,7 +8224,7 @@ func testAccContainerCluster_network_tier_config(clusterName, networkName, subne
 resource "google_container_cluster" "primary" {
   name               = "%s"
   location           = "us-central1-a"
-  initial_node_count = 2
+  initial_node_count = 1
   dns_config {
     cluster_dns      = "CLOUD_DNS"
   }
@@ -8241,7 +8247,7 @@ func testAccContainerCluster_network_tier_config_none(clusterName, networkName, 
 resource "google_container_cluster" "primary" {
   name               = "%s"
   location           = "us-central1-a"
-  initial_node_count = 2
+  initial_node_count = 1
   dns_config {
     cluster_dns      = "CLOUD_DNS"
   }
@@ -8382,6 +8388,13 @@ resource "google_container_cluster" "primary" {
   initial_node_count = 1
 
   remove_default_node_pool = true
+  node_config {
+    machine_type = "e2-micro"
+  }
+
+  lifecycle {
+    ignore_changes = [node_config]
+  }
 
   node_locations = [
     "us-central1-b",
@@ -8419,6 +8432,13 @@ resource "google_container_cluster" "primary" {
   initial_node_count = 1
 
   remove_default_node_pool = true # Not worth updating
+  node_config {
+    machine_type = "e2-micro"
+  }
+
+  lifecycle {
+    ignore_changes = [node_config]
+  }
 
   node_locations = [
     "us-central1-f",
@@ -8628,7 +8648,7 @@ resource "google_pubsub_topic" "%s" {
 resource "google_container_cluster" "notification_config" {
   name               = "%s"
   location           = "us-central1-a"
-  initial_node_count = 3
+  initial_node_count = 1
   notification_config {
     pubsub {
       enabled = true
@@ -8648,7 +8668,7 @@ func testAccContainerCluster_disableNotificationConfig(clusterName, networkName,
 resource "google_container_cluster" "notification_config" {
   name               = "%s"
   location           = "us-central1-a"
-  initial_node_count = 3
+  initial_node_count = 1
   notification_config {
     pubsub {
       enabled = false
@@ -8673,7 +8693,7 @@ resource "google_pubsub_topic" "%s" {
 resource "google_container_cluster" "filtered_notification_config" {
   name               = "%s"
   location           = "us-central1-a"
-  initial_node_count = 3
+  initial_node_count = 1
   notification_config {
     pubsub {
       enabled = true
@@ -8702,7 +8722,7 @@ resource "google_pubsub_topic" "%s" {
 resource "google_container_cluster" "filtered_notification_config" {
   name               = "%s"
   location           = "us-central1-a"
-  initial_node_count = 3
+  initial_node_count = 1
   notification_config {
 	pubsub {
 	  enabled = true
@@ -8730,7 +8750,7 @@ resource "google_pubsub_topic" "%s" {
 resource "google_container_cluster" "filtered_notification_config" {
   name               = "%s"
   location           = "us-central1-a"
-  initial_node_count = 3
+  initial_node_count = 1
   notification_config {
     pubsub {
       enabled = true
@@ -8915,7 +8935,7 @@ resource "google_container_cluster" "confidential_nodes" {
     name               = "%s"
     initial_node_count = 1
     node_config {
-      machine_type = "e2-medium"
+      machine_type = "e2-micro"
     }
   }
 
@@ -8942,7 +8962,7 @@ resource "google_container_cluster" "confidential_nodes" {
     name               = "%s"
     initial_node_count = 1
     node_config {
-      machine_type = "e2-medium"
+      machine_type = "e2-micro"
     }
   }
 
@@ -8969,7 +8989,7 @@ resource "google_container_cluster" "confidential_nodes" {
     name = "%s"
     initial_node_count = 1
     node_config {
-      machine_type = "e2-medium"
+      machine_type = "e2-micro"
     }
   }
 
@@ -8995,7 +9015,7 @@ resource "google_container_cluster" "confidential_nodes" {
     name               = "%s"
     initial_node_count = 1
     node_config {
-      machine_type = "e2-medium"
+      machine_type = "e2-micro"
     }
   }
 
@@ -9023,7 +9043,7 @@ resource "google_container_cluster" "confidential_nodes" {
     name               = "%s"
     initial_node_count = 1
     node_config {
-      machine_type = "e2-medium"
+      machine_type = "e2-micro"
     }
   }
 
@@ -9045,6 +9065,13 @@ resource "google_container_cluster" "with_network_policy_enabled" {
   location                 = "us-central1-a"
   initial_node_count       = 1
   remove_default_node_pool = true
+  node_config {
+    machine_type = "e2-micro"
+  }
+
+  lifecycle {
+    ignore_changes = [node_config]
+  }
 
   network_policy {
     enabled  = true
@@ -9159,6 +9186,13 @@ resource "google_container_cluster" "with_network_policy_enabled" {
   location                 = "us-central1-a"
   initial_node_count       = 1
   remove_default_node_pool = true
+  node_config {
+    machine_type = "e2-micro"
+  }
+
+  lifecycle {
+    ignore_changes = [node_config]
+  }
 
   network    = "%s"
   subnetwork = "%s"
@@ -9175,6 +9209,13 @@ resource "google_container_cluster" "with_network_policy_enabled" {
   location                 = "us-central1-a"
   initial_node_count       = 1
   remove_default_node_pool = true
+  node_config {
+    machine_type = "e2-micro"
+  }
+
+  lifecycle {
+    ignore_changes = [node_config]
+  }
 
   network_policy {
     enabled = false
@@ -9194,6 +9235,13 @@ resource "google_container_cluster" "with_network_policy_enabled" {
   location                 = "us-central1-a"
   initial_node_count       = 1
   remove_default_node_pool = true
+  node_config {
+    machine_type = "e2-micro"
+  }
+
+  lifecycle {
+    ignore_changes = [node_config]
+  }
 
   network_policy {
     enabled = false
@@ -9780,7 +9828,7 @@ func testAccContainerCluster_withMasterAuthNoCert(clusterName, networkName, subn
 resource "google_container_cluster" "with_master_auth_no_cert" {
   name               = "%s"
   location           = "us-central1-a"
-  initial_node_count = 3
+  initial_node_count = 1
   master_auth {
     client_certificate_config {
       issue_client_certificate = false
@@ -10389,7 +10437,7 @@ resource "google_container_cluster" "with_node_config_scope_alias" {
   initial_node_count = 1
 
   node_config {
-    machine_type = "e2-medium"
+    machine_type = "e2-micro"
     disk_size_gb = 15
     oauth_scopes = ["compute-rw", "storage-ro", "logging-write", "monitoring"]
   }
@@ -10409,7 +10457,7 @@ resource "google_container_cluster" "with_node_config" {
   initial_node_count = 1
 
   node_config {
-    machine_type = "e2-medium"
+    machine_type = "e2-micro"
     disk_size_gb = 15
     disk_type    = "pd-ssd"
     oauth_scopes = [
@@ -11022,7 +11070,7 @@ resource "google_compute_http_health_check" "default" {
 resource "google_container_cluster" "primary" {
   name               = "%s"
   location           = "us-central1-a"
-  initial_node_count = 3
+  initial_node_count = 1
 
   node_locations = [
     "us-central1-b",
@@ -11053,7 +11101,7 @@ resource "google_container_cluster" "with_node_pool" {
 
   node_pool {
     name               = "%s"
-    initial_node_count = 2
+    initial_node_count = 1
   }
 
   network    = "%s"
@@ -11078,7 +11126,7 @@ resource "google_container_cluster" "with_node_pool" {
 
   node_pool {
     name               = "%s"
-    initial_node_count = 2
+    initial_node_count = 1
     version            = data.google_container_engine_versions.central1a.valid_node_versions[2]
   }
   network    = "%s"
@@ -11103,7 +11151,7 @@ resource "google_container_cluster" "with_node_pool" {
 
   node_pool {
     name               = "%s"
-    initial_node_count = 2
+    initial_node_count = 1
     version            = data.google_container_engine_versions.central1a.valid_node_versions[1]
   }
   network    = "%s"
@@ -11602,7 +11650,7 @@ resource "google_container_cluster" "with_node_pool" {
 
   node_pool {
     name               = "%s"
-    initial_node_count = 2
+    initial_node_count = 1
     autoscaling {
       min_node_count = 1
       max_node_count = 3
@@ -11624,7 +11672,7 @@ resource "google_container_cluster" "with_node_pool" {
 
   node_pool {
     name               = "%s"
-    initial_node_count = 2
+    initial_node_count = 1
     autoscaling {
       min_node_count = 1
       max_node_count = 5
@@ -12716,6 +12764,13 @@ resource "google_container_cluster" "with_workload_identity_config" {
     workload_pool = "${data.google_project.project.project_id}.svc.id.goog"
   }
   remove_default_node_pool = true
+  node_config {
+    machine_type = "e2-micro"
+  }
+
+  lifecycle {
+    ignore_changes = [node_config]
+  }
 
   network    = "%s"
   subnetwork = "%s"
@@ -12771,6 +12826,12 @@ resource "google_container_cluster" "with_workload_identity_config" {
   location                 = "us-central1-a"
   initial_node_count       = 1
   remove_default_node_pool = true
+  node_config {
+    machine_type = "e2-micro"
+  }
+  lifecycle {
+    ignore_changes = [node_config]
+  }
   %s
 
   network    = "%s"
@@ -12963,7 +13024,7 @@ resource "google_compute_subnetwork" "container_subnetwork" {
 resource "google_container_cluster" "with_flexible_cidr" {
   name               = "%s"
   location           = "us-central1-a"
-  initial_node_count = 3
+  initial_node_count = 1
 
   networking_mode = "VPC_NATIVE"
   network         = google_compute_network.container_network.name
@@ -13113,6 +13174,12 @@ resource "google_container_cluster" "with_mesh_certificates_config" {
   location                 = "us-central1-a"
   initial_node_count       = 1
   remove_default_node_pool = true
+  node_config {
+    machine_type = "e2-micro"
+  }
+  lifecycle {
+    ignore_changes = [node_config]
+  }
   workload_identity_config {
     workload_pool = "${data.google_project.project.project_id}.svc.id.goog"
   }
@@ -13138,6 +13205,12 @@ resource "google_container_cluster" "with_mesh_certificates_config" {
   location           = "us-central1-a"
   initial_node_count = 1
   remove_default_node_pool = true
+  node_config {
+    machine_type = "e2-micro"
+  }
+  lifecycle {
+    ignore_changes = [node_config]
+  }
   workload_identity_config {
     workload_pool = "${data.google_project.project.project_id}.svc.id.goog"
     }
@@ -18266,7 +18339,7 @@ resource "google_container_cluster" "cluster" {
   provider            = google.user-project-override
   name                = "%s"
   location            = "us-central1-a"
-  initial_node_count  = 3
+  initial_node_count  = 1
   deletion_protection = false
   network             = "%s"
   subnetwork          = "%s"
@@ -18294,7 +18367,7 @@ resource "google_container_cluster" "cluster" {
   provider            = google.user-project-override
   name                = "%s"
   location            = "us-central1-a"
-  initial_node_count  = 3
+  initial_node_count  = 1
   deletion_protection = false
   network             = "%s"
   subnetwork          = "%s"
@@ -19350,6 +19423,13 @@ resource "google_container_cluster" "primary" {
 
   # We must delete the default node pool to ensure we only have our standalone node pool
   remove_default_node_pool = true
+  node_config {
+    machine_type = "e2-micro"
+  }
+
+  lifecycle {
+    ignore_changes = [node_config]
+  }
 
   skip_node_pool_refresh = %t
 }
@@ -19362,7 +19442,7 @@ resource "google_container_node_pool" "extra" {
 
   node_config {
     preemptible  = true
-    machine_type = "e2-medium"
+    machine_type = "e2-micro"
   }
 }
 `, suffix, suffix, clusterName, skipRefresh, poolName)
