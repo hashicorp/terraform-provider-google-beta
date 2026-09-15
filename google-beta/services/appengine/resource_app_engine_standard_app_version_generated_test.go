@@ -198,7 +198,7 @@ func TestAccAppEngineStandardAppVersion_appEngineStandardAppVersionBundledServic
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"bucket_name":   "tf-test-tf-test-gae-bkt-bundled" + randomSuffix,
+		"bucket_name":   "tf-test-gae-bkt-bundled" + randomSuffix,
 		"project_id":    "tf-test-tf-test-project" + randomSuffix,
 		"sa_email":      "tf-test-gae-sa" + randomSuffix,
 		"service_id":    "tf-test-bundled-service" + randomSuffix,
@@ -305,7 +305,7 @@ func TestAccAppEngineStandardAppVersion_appEngineStandardAppVersionVpcAccessExam
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"bucket_name":   "tf-test-tf-test-gae-bkt-vpc-access" + randomSuffix,
+		"bucket_name":   "tf-test-gae-bkt-vpc-access" + randomSuffix,
 		"sa_email":      "tf-test-gae-sa" + randomSuffix,
 		"service_id":    "tf-test-vpc-service" + randomSuffix,
 		"random_suffix": randomSuffix,
@@ -359,13 +359,13 @@ resource "google_project_iam_member" "storage_viewer" {
 
 resource "google_compute_network" "custom" {
   provider                = google-beta
-  name                    = "custom-net-%{service_id}"
+  name                    = "%{service_id}-net"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "custom" {
   provider      = google-beta
-  name          = "custom-sub-%{service_id}"
+  name          = "%{service_id}-sub"
   ip_cidr_range = "10.0.0.0/24"
   region        = "us-central1"
   network       = google_compute_network.custom.id
