@@ -202,10 +202,10 @@ func TestAccComputeRoute_routeIlbVipExample(t *testing.T) {
 
 	context := map[string]interface{}{
 		"backend_name":         "tf-test-compute-backend" + randomSuffix,
-		"consumer_name":        "consumer" + randomSuffix,
+		"consumer_name":        "tf-test-cons" + randomSuffix,
 		"forwarding_rule_name": "tf-test-compute-forwarding-rule" + randomSuffix,
 		"health_check_name":    "tf-test-proxy-health-check" + randomSuffix,
-		"producer_name":        "producer" + randomSuffix,
+		"producer_name":        "tf-test-prod" + randomSuffix,
 		"route_name":           "tf-test-route-ilb" + randomSuffix,
 		"random_suffix":        randomSuffix,
 	}

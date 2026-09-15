@@ -67,7 +67,7 @@ func TestAccComputeNetworkFirewallPolicyRule_networkFirewallPolicyRuleExample(t 
 		"service_acct":  envvar.GetTestServiceAccountFromEnv(t),
 		"address_group": "tf-test-address-group" + randomSuffix,
 		"fw_policy":     "tf-test-fw-policy" + randomSuffix,
-		"network":       "network" + randomSuffix,
+		"network":       "tf-test-network" + randomSuffix,
 		"tag_key":       "tf-test-tag-key" + randomSuffix,
 		"tag_value":     "tf-test-tag-value" + randomSuffix,
 		"random_suffix": randomSuffix,
@@ -241,7 +241,7 @@ func TestAccComputeNetworkFirewallPolicyRule_networkFirewallPolicyRuleNetworkSco
 	context := map[string]interface{}{
 		"project_name":  envvar.GetTestProjectFromEnv(),
 		"fw_policy":     "tf-test-fw-policy" + randomSuffix,
-		"network":       "network" + randomSuffix,
+		"network":       "tf-test-network" + randomSuffix,
 		"random_suffix": randomSuffix,
 	}
 
@@ -380,7 +380,7 @@ func TestAccComputeNetworkFirewallPolicyRule_networkFirewallPolicyRuleNetworkCon
 	context := map[string]interface{}{
 		"project_name":  envvar.GetTestProjectFromEnv(),
 		"fw_policy":     "tf-test-fw-policy" + randomSuffix,
-		"network":       "network" + randomSuffix,
+		"network":       "tf-test-network" + randomSuffix,
 		"random_suffix": randomSuffix,
 	}
 
@@ -456,7 +456,7 @@ func TestAccComputeNetworkFirewallPolicyRule_networkFirewallPolicyRuleTargetType
 		"forwarding_rule": "tf-test-forwarding-rule" + randomSuffix,
 		"fw_policy":       "tf-test-fw-policy" + randomSuffix,
 		"hc":              "tf-test-health-check" + randomSuffix,
-		"network":         "network" + randomSuffix,
+		"network":         "tf-test-network" + randomSuffix,
 		"proxy_subnet":    "tf-test-proxy-subnet" + randomSuffix,
 		"target_proxy":    "tf-test-target-http-proxy" + randomSuffix,
 		"url_map":         "tf-test-url-map" + randomSuffix,

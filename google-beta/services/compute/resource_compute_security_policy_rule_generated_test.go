@@ -60,7 +60,7 @@ func TestAccComputeSecurityPolicyRule_securityPolicyRuleBasicExample(t *testing.
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"sec_policy_name": "policyruletest" + randomSuffix,
+		"sec_policy_name": "tf-test-policyruletest" + randomSuffix,
 		"random_suffix":   randomSuffix,
 	}
 
@@ -118,7 +118,7 @@ func TestAccComputeSecurityPolicyRule_securityPolicyRuleDefaultRuleExample(t *te
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"sec_policy_name": "policyruletest" + randomSuffix,
+		"sec_policy_name": "tf-test-policyruletest" + randomSuffix,
 		"random_suffix":   randomSuffix,
 	}
 
@@ -189,7 +189,7 @@ func TestAccComputeSecurityPolicyRule_securityPolicyRuleMultipleRulesExample(t *
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"sec_policy_name": "policywithmultiplerules" + randomSuffix,
+		"sec_policy_name": "tf-test-policywithmultiplerules" + randomSuffix,
 		"random_suffix":   randomSuffix,
 	}
 
@@ -261,7 +261,7 @@ func TestAccComputeSecurityPolicyRule_securityPolicyRuleAdvancedFeaturesExample(
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"sec_policy_name": "policyruletest" + randomSuffix,
+		"sec_policy_name": "tf-test-policyruletest" + randomSuffix,
 		"random_suffix":   randomSuffix,
 	}
 
@@ -336,10 +336,10 @@ func TestAccComputeSecurityPolicyRule_securityPolicyRuleWithBodyExcludeExample(t
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"backend_name":      "backendpolicy" + randomSuffix,
+		"backend_name":      "tf-test-backendpolicy" + randomSuffix,
 		"health_check_name": "tf-test-test-health-check" + randomSuffix,
 		"network_name":      "tf-test-test-network" + randomSuffix,
-		"sec_policy_name":   "policyruletest" + randomSuffix,
+		"sec_policy_name":   "tf-test-policyruletest" + randomSuffix,
 		"subnetwork_name":   "tf-test-test-subnet" + randomSuffix,
 		"random_suffix":     randomSuffix,
 	}

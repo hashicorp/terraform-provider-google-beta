@@ -795,7 +795,7 @@ func TestAccComputeForwardingRule_forwardingRuleL3DefaultExample(t *testing.T) {
 	context := map[string]interface{}{
 		"forwarding_rule_name": "tf-test-l3-forwarding-rule" + randomSuffix,
 		"health_check_name":    "tf-test-health-check" + randomSuffix,
-		"service_name":         "service" + randomSuffix,
+		"service_name":         "tf-test-service" + randomSuffix,
 		"random_suffix":        randomSuffix,
 	}
 
