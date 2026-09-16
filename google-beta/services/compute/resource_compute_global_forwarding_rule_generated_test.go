@@ -500,7 +500,7 @@ resource "google_compute_target_http_proxy" "default" {
 }
 
 resource "google_compute_url_map" "default" {
-  name            = "url-map-%{http_proxy_name}"
+  name            = "%{http_proxy_name}-url-map"
   description     = "a description"
   default_service = google_compute_backend_service.default.id
 
@@ -530,7 +530,7 @@ resource "google_compute_backend_service" "default" {
 }
 
 resource "google_compute_health_check" "default" {
-  name               = "check-%{backend_service_name}"
+  name               = "%{backend_service_name}-check"
   check_interval_sec = 1
   timeout_sec        = 1
   http_health_check {
@@ -605,7 +605,7 @@ resource "google_compute_target_http_proxy" "default" {
 
 resource "google_compute_url_map" "default" {
   provider        = google-beta
-  name            = "url-map-%{http_proxy_name}"
+  name            = "%{http_proxy_name}-url-map"
   description     = "a description"
   default_service = google_compute_backend_service.default.id
 
@@ -663,7 +663,7 @@ resource "google_compute_instance_group_manager" "igm" {
 
 resource "google_compute_instance_template" "instance_template" {
   provider     = google-beta
-  name         = "template-%{backend_service_name}"
+  name         = "%{backend_service_name}-template"
   machine_type = "e2-medium"
 
   network_interface {
@@ -679,7 +679,7 @@ resource "google_compute_instance_template" "instance_template" {
 
 resource "google_compute_health_check" "default" {
   provider           = google-beta
-  name               = "check-%{backend_service_name}"
+  name               = "%{backend_service_name}-check"
   check_interval_sec = 1
   timeout_sec        = 1
 
@@ -743,7 +743,7 @@ resource "google_compute_target_http_proxy" "default" {
 }
 
 resource "google_compute_url_map" "default" {
-  name            = "url-map-%{http_proxy_name}"
+  name            = "%{http_proxy_name}-url-map"
   description     = "a description"
   default_service = google_compute_backend_service.default.id
 
@@ -914,7 +914,7 @@ resource "google_compute_health_check" "default" {
 }
 
 resource "google_compute_url_map" "default" {
-  name            = "url-map-%{http_proxy_name}"
+  name            = "%{http_proxy_name}-url-map"
   description     = "a description"
   default_service = google_compute_backend_service.default.id
 
