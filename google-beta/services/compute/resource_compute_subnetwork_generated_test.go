@@ -508,9 +508,10 @@ func TestAccComputeSubnetwork_subnetworkReservedInternalRangeExample(t *testing.
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"network_name":    "tf-test-network-reserved-internal-range" + randomSuffix,
-		"subnetwork_name": "tf-test-subnetwork-reserved-internal-range" + randomSuffix,
-		"random_suffix":   randomSuffix,
+		"internal_range_name": "tf-test-reserved" + randomSuffix,
+		"network_name":        "tf-test-network-reserved-internal-range" + randomSuffix,
+		"subnetwork_name":     "tf-test-subnetwork-reserved-internal-range" + randomSuffix,
+		"random_suffix":       randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -555,7 +556,7 @@ resource "google_compute_network" "default" {
 
 resource "google_network_connectivity_internal_range" "reserved" {
   provider          = google-beta
-  name              = "reserved"
+  name              = "%{internal_range_name}"
   network           = google_compute_network.default.id
   usage             = "FOR_VPC"
   peering           = "FOR_SELF"
