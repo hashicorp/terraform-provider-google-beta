@@ -665,6 +665,14 @@ var schemaNodePool = map[string]*schema.Schema{
 								ForceNew:    true,
 								Description: `Name of the subnetwork where the additional interface belongs.`,
 							},
+							"stack_type": {
+								Type:         schema.TypeString,
+								Optional:     true,
+								Computed:     true,
+								ForceNew:     true,
+								ValidateFunc: validation.StringInSlice([]string{"IPV4", "IPV4_IPV6", "IPV6"}, false),
+								Description:  `The IP stack type of the additional node interface. Possible values are IPV4, IPV4_IPV6 and IPV6. If unset, the value is inferred from the additional subnetwork.`,
+							},
 						},
 					},
 				},
@@ -1676,6 +1684,7 @@ func flattenAdditionalNodeNetworkConfig(c []*container.AdditionalNodeNetworkConf
 		result = append(result, map[string]interface{}{
 			"network":    nodeNetworkConfig.Network,
 			"subnetwork": nodeNetworkConfig.Subnetwork,
+			"stack_type": nodeNetworkConfig.StackType,
 		})
 	}
 	return result
@@ -1733,6 +1742,7 @@ func expandNodeNetworkConfig(v interface{}) *container.NodeNetworkConfig {
 			networkConfig := &container.AdditionalNodeNetworkConfig{
 				Network:    data["network"].(string),
 				Subnetwork: data["subnetwork"].(string),
+				StackType:  data["stack_type"].(string),
 			}
 			nodeNetworkConfigs = append(nodeNetworkConfigs, networkConfig)
 		}
