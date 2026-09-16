@@ -576,7 +576,7 @@ resource "google_compute_region_backend_service" "backend" {
 }
 resource "google_compute_region_health_check" "hc" {
   provider           = google-beta
-  name               = "check-%{backend_name}"
+  name               = "%{backend_name}-check"
   check_interval_sec = 1
   timeout_sec        = 1
   region             = "us-central1"
@@ -718,7 +718,7 @@ resource "google_compute_region_backend_service" "backend" {
   health_checks         = [google_compute_health_check.hc.id]
 }
 resource "google_compute_health_check" "hc" {
-  name               = "check-%{backend_name}"
+  name               = "%{backend_name}-check"
   check_interval_sec = 1
   timeout_sec        = 1
   tcp_health_check {
@@ -912,7 +912,7 @@ resource "google_compute_region_backend_service" "backend" {
 }
 
 resource "google_compute_health_check" "hc" {
-  name               = "check-%{backend_name}"
+  name               = "%{backend_name}-check"
   check_interval_sec = 1
   timeout_sec        = 1
 
@@ -1049,7 +1049,7 @@ resource "google_compute_region_instance_group_manager" "rigm" {
 
 resource "google_compute_instance_template" "instance_template" {
   provider     = google-beta
-  name         = "template-%{region_backend_service_name}"
+  name         = "%{region_backend_service_name}-template"
   machine_type = "e2-medium"
 
   network_interface {
@@ -1285,7 +1285,7 @@ resource "google_compute_region_instance_group_manager" "rigm" {
 
 resource "google_compute_instance_template" "instance_template" {
   provider     = google-beta
-  name         = "template-%{region_backend_service_name}"
+  name         = "%{region_backend_service_name}-template"
   machine_type = "e2-medium"
 
   network_interface {
@@ -1820,7 +1820,7 @@ resource "google_compute_region_backend_service" "backend" {
 }
 
 resource "google_compute_health_check" "hc" {
-  name               = "check-%{backend_name}"
+  name               = "%{backend_name}-check"
   check_interval_sec = 1
   timeout_sec        = 1
 
