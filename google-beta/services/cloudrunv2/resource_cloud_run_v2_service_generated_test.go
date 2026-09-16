@@ -1285,7 +1285,7 @@ func testAccCloudRunV2Service_cloudrunv2ServiceZipDeployExample(context map[stri
 	return acctest.Nprintf(`
 resource "google_storage_bucket" "sourcebucket" {
   provider = google-beta
-  name     = "${data.google_project.project.project_id}-tf-test-gcf-source%{random_suffix}"  # Every bucket name must be globally unique
+  name     = "tf-test-gcf-source%{random_suffix}-${data.google_project.project.project_id}"  # Every bucket name must be globally unique
   location = "US"
   uniform_bucket_level_access = true
 }
