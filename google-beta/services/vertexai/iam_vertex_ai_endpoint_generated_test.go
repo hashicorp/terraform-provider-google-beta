@@ -51,6 +51,7 @@ func TestAccVertexAIEndpointIamBindingGenerated(t *testing.T) {
 	context := map[string]interface{}{
 		"random_suffix": randomSuffix,
 		"role":          "roles/viewer",
+		"endpoint_name": "tf-test-endpoint-name" + randomSuffix,
 		"network_name":  "tf-test-psc-network" + randomSuffix,
 	}
 
@@ -89,6 +90,7 @@ func TestAccVertexAIEndpointIamMemberGenerated(t *testing.T) {
 	context := map[string]interface{}{
 		"random_suffix": randomSuffix,
 		"role":          "roles/viewer",
+		"endpoint_name": "tf-test-endpoint-name" + randomSuffix,
 		"network_name":  "tf-test-psc-network" + randomSuffix,
 	}
 
@@ -125,6 +127,7 @@ func TestAccVertexAIEndpointIamPolicyGenerated(t *testing.T) {
 	context := map[string]interface{}{
 		"random_suffix": randomSuffix,
 		"role":          "roles/viewer",
+		"endpoint_name": "tf-test-endpoint-name" + randomSuffix,
 		"network_name":  "tf-test-psc-network" + randomSuffix,
 	}
 
@@ -162,7 +165,7 @@ resource "google_compute_network" "default" {
 }
 
 resource "google_vertex_ai_endpoint" "endpoint" {
-  name         = "endpoint-name%{random_suffix}"
+  name         = "%{endpoint_name}"
   display_name = "sample-endpoint"
   description  = "A sample vertex endpoint"
   location     = "us-central1"
@@ -202,7 +205,7 @@ resource "google_compute_network" "default" {
 }
 
 resource "google_vertex_ai_endpoint" "endpoint" {
-  name         = "endpoint-name%{random_suffix}"
+  name         = "%{endpoint_name}"
   display_name = "sample-endpoint"
   description  = "A sample vertex endpoint"
   location     = "us-central1"
@@ -257,7 +260,7 @@ resource "google_compute_network" "default" {
 }
 
 resource "google_vertex_ai_endpoint" "endpoint" {
-  name         = "endpoint-name%{random_suffix}"
+  name         = "%{endpoint_name}"
   display_name = "sample-endpoint"
   description  = "A sample vertex endpoint"
   location     = "us-central1"
@@ -299,7 +302,7 @@ resource "google_compute_network" "default" {
 }
 
 resource "google_vertex_ai_endpoint" "endpoint" {
-  name         = "endpoint-name%{random_suffix}"
+  name         = "%{endpoint_name}"
   display_name = "sample-endpoint"
   description  = "A sample vertex endpoint"
   location     = "us-central1"
@@ -339,7 +342,7 @@ resource "google_compute_network" "default" {
 }
 
 resource "google_vertex_ai_endpoint" "endpoint" {
-  name         = "endpoint-name%{random_suffix}"
+  name         = "%{endpoint_name}"
   display_name = "sample-endpoint"
   description  = "A sample vertex endpoint"
   location     = "us-central1"
