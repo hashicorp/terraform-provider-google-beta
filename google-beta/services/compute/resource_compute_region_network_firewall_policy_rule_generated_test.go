@@ -463,10 +463,12 @@ func TestAccComputeRegionNetworkFirewallPolicyRule_firewallPolicyRuleTargetTypeI
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"org_id":        envvar.GetTestOrgFromEnv(t),
-		"folder":        "folder" + randomSuffix,
-		"fw_policy":     "tf-test-fw-policy" + randomSuffix,
-		"random_suffix": randomSuffix,
+		"org_id":                     envvar.GetTestOrgFromEnv(t),
+		"folder":                     "folder" + randomSuffix,
+		"fw_policy_association_name": "tf-test-fw-policy-assoc" + randomSuffix,
+		"fw_policy_name":             "tf-test-simple-fw-policy" + randomSuffix,
+		"network_name":               "tf-test-fw-policy-net" + randomSuffix,
+		"random_suffix":              randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -497,19 +499,19 @@ func testAccComputeRegionNetworkFirewallPolicyRule_firewallPolicyRuleTargetTypeI
 	return acctest.Nprintf(`
 resource "google_compute_network" "net" {
   provider                = google-beta
-  name                    = "test-net"
+  name                    = "%{network_name}"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_region_network_firewall_policy" "fw_policy" {
   provider = google-beta
-  name     = "simple-fw-policy"
+  name     = "%{fw_policy_name}"
   region   = "us-central1"
 }
 
 resource "google_compute_region_network_firewall_policy_association" "assoc" {
   provider          = google-beta
-  name              = "fw-policy-assoc"
+  name              = "%{fw_policy_association_name}"
   region            = "us-central1"
   firewall_policy   = google_compute_region_network_firewall_policy.fw_policy.id
   attachment_target = google_compute_network.net.self_link
