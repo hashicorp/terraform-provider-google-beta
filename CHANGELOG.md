@@ -1,4 +1,49 @@
-## 8.3.0 (Unreleased)
+## 8.4.0 (Unreleased)
+
+## 8.3.0 (September 15, 2026)
+
+FEATURES:
+* **New Data Source:** `google_compute_service_attachments` ([#13086](https://github.com/hashicorp/terraform-provider-google-beta/pull/13086))
+* **New List Resource:** `google_firebase_android_app` ([#13102](https://github.com/hashicorp/terraform-provider-google-beta/pull/13102))
+* **New List Resource:** `google_firebase_apple_app` ([#13102](https://github.com/hashicorp/terraform-provider-google-beta/pull/13102))
+* **New List Resource:** `google_firebase_web_app` ([#13102](https://github.com/hashicorp/terraform-provider-google-beta/pull/13102))
+* **New List Resource:** `google_pubsub_topic_iam_member` ([#13093](https://github.com/hashicorp/terraform-provider-google-beta/pull/13093))
+* **New Resource:** `google_chronicle_case_close_definition` ([#13069](https://github.com/hashicorp/terraform-provider-google-beta/pull/13069))
+* **New Resource:** `google_chronicle_case_stage_definition` ([#13105](https://github.com/hashicorp/terraform-provider-google-beta/pull/13105))
+* **New Resource:** `google_chronicle_case_tag_definition` ([#13074](https://github.com/hashicorp/terraform-provider-google-beta/pull/13074))
+* **New Resource:** `google_data_loss_prevention_content_policy` ([#13121](https://github.com/hashicorp/terraform-provider-google-beta/pull/13121))
+* **New Resource:** `google_gemini_gda_observability_setting_binding` ([#13112](https://github.com/hashicorp/terraform-provider-google-beta/pull/13112))
+* **New Resource:** `google_gemini_gda_observability_setting` ([#13112](https://github.com/hashicorp/terraform-provider-google-beta/pull/13112))
+* **New Resource:** `google_parameter_manager_template` ([#13098](https://github.com/hashicorp/terraform-provider-google-beta/pull/13098))
+* **New Resource:** `google_vertex_ai_rag_corpus` ([#13085](https://github.com/hashicorp/terraform-provider-google-beta/pull/13085))
+
+IMPROVEMENTS:
+* accesscontextmanager: added `etag` field to `google_access_context_manager_service_perimeter` ([#13095](https://github.com/hashicorp/terraform-provider-google-beta/pull/13095))
+* alloydb: added `ALLOYDB_IAM_GROUP` as a possible value for `user_type` in `google_alloydb_user` ([#13104](https://github.com/hashicorp/terraform-provider-google-beta/pull/13104))
+* bigquerydatatransfer: added output fields to `google_bigquery_data_transfer_data_source_enrollment` ([#13101](https://github.com/hashicorp/terraform-provider-google-beta/pull/13101))
+* ces: added `channel_profile.whatsapp_config` field to `google_ces_deployment` ([#13107](https://github.com/hashicorp/terraform-provider-google-beta/pull/13107))
+* ces: added `evaluation_metrics_thresholds.golden_evaluation_metrics_thresholds.tool_matching_settings.extra_tool_call_behavior` field to `google_ces_app` ([#13080](https://github.com/hashicorp/terraform-provider-google-beta/pull/13080))
+* ces: added `evaluation_metrics_thresholds.golden_evaluation_metrics_thresholds.turn_level_metrics_thresholds.semantic_similarity_channel` field to `google_ces_app` ([#13077](https://github.com/hashicorp/terraform-provider-google-beta/pull/13077))
+* ces: added `evaluation_metrics_thresholds.golden_hallucination_metric_behavior` and `evaluation_metrics_thresholds.scenario_hallucination_metric_behavior` fields to `google_ces_app` and `google_ces_app_version` ([#13072](https://github.com/hashicorp/terraform-provider-google-beta/pull/13072))
+* ces: added `locked` and `default_channel_profile.web_widget_config.security_settings` fields to `google_ces_app` ([#13073](https://github.com/hashicorp/terraform-provider-google-beta/pull/13073))
+* ces: added `logging_settings.metric_analysis_settings` field to `google_ces_app` ([#13070](https://github.com/hashicorp/terraform-provider-google-beta/pull/13070))
+* ces: added `mcp_toolset.tool_overrides` field to `google_ces_toolset` ([#13117](https://github.com/hashicorp/terraform-provider-google-beta/pull/13117))
+* ces: added `transfer_rules` field to `google_ces_agent` ([#13096](https://github.com/hashicorp/terraform-provider-google-beta/pull/13096))
+* chronicle: added `base64_image`, `dynamic_parameters`, `instance_uri`, and `weight` fields to `google_chronicle_environment` ([#13099](https://github.com/hashicorp/terraform-provider-google-beta/pull/13099))
+* cloudsecuritycompliance: added `parameter_spec.sub_parameters.sub_parameters` and nested `oneof_value` fields to `google_cloud_security_compliance_cloud_control` ([#13123](https://github.com/hashicorp/terraform-provider-google-beta/pull/13123))
+* dataplex: added `data_documentation_spec.sql_dialect` field to `google_dataplex_datascan` ([#13111](https://github.com/hashicorp/terraform-provider-google-beta/pull/13111))
+* dataproc: added `instance_flexibility_policy` to `master_config`, `worker_config`, and `secondary_worker_config` in `google_dataproc_workflow_template` ([#13113](https://github.com/hashicorp/terraform-provider-google-beta/pull/13113))
+* gkehub: added `default_cluster_config.compliance_posture_config` and `labels` to `google_gke_hub_fleet` ([#13078](https://github.com/hashicorp/terraform-provider-google-beta/pull/13078))
+* managedkafka: added `public_cluster_config`, `public_cluster_details`, and `bootstrap_address` fields to `google_managed_kafka_cluster` resource ([#13103](https://github.com/hashicorp/terraform-provider-google-beta/pull/13103))
+* parametermanager: added `tags` field to `google_parameter_manager_parameter` and `google_parameter_manager_regional_parameter` to allow setting tags for parameters at creation time ([#13124](https://github.com/hashicorp/terraform-provider-google-beta/pull/13124))
+
+BUG FIXES:
+* accesscontextmanager: fixed bug in `google_access_context_manager_service_perimeter` where changes to the status / spec fields could cause updates to related ingress/egress policies even if those fields weren't specified on `google_access_context_manager_service_perimeter` ([#13095](https://github.com/hashicorp/terraform-provider-google-beta/pull/13095))
+* accesscontextmanager: fixed sending of `etag` on update requests for `google_access_context_manager_service_perimeter_egress_policy` and `google_access_context_manager_service_perimeter_ingress_policy` to prevent concurrent requests from impacting each other ([#13095](https://github.com/hashicorp/terraform-provider-google-beta/pull/13095))
+* biglakeiceberg: fixed an issue where creating a partitioned `google_biglake_iceberg_table` failed due to missing `field-id` ([#13120](https://github.com/hashicorp/terraform-provider-google-beta/pull/13120))
+* compute: fixed a bug where an explicitly configured `advanced_machine_features.performance_monitoring_unit = "STANDARD"` was dropped on creation for `google_compute_instance`, `google_compute_instance_template`, and `google_compute_region_instance_template` ([#13127](https://github.com/hashicorp/terraform-provider-google-beta/pull/13127))
+* config: fixed diff when `artifacts_gcs_bucket` is not specified on `google_config_deployment` ([#13092](https://github.com/hashicorp/terraform-provider-google-beta/pull/13092))
+* provider: added validation to reject more than one `external_credentials` or `batching` block, matching the existing SDK behavior ([#13100](https://github.com/hashicorp/terraform-provider-google-beta/pull/13100))
 
 ## 8.2.0 (September 8, 2026)
 
