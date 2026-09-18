@@ -455,6 +455,7 @@ func TestAccComputeNetworkFirewallPolicyRule_networkFirewallPolicyRuleTargetType
 		"backend_subnet":  "tf-test-backend-subnet" + randomSuffix,
 		"forwarding_rule": "tf-test-forwarding-rule" + randomSuffix,
 		"fw_policy":       "tf-test-fw-policy" + randomSuffix,
+		"global_assoc":    "tf-test-global-policy-assoc" + randomSuffix,
 		"hc":              "tf-test-health-check" + randomSuffix,
 		"network":         "tf-test-network" + randomSuffix,
 		"proxy_subnet":    "tf-test-proxy-subnet" + randomSuffix,
@@ -592,7 +593,7 @@ resource "google_compute_network_firewall_policy_rule" "primary" {
 
 resource "google_compute_network_firewall_policy_association" "global_assoc" {
   provider          = google-beta
-  name              = "global-policy-assoc-%{random_suffix}"
+  name              = "%{global_assoc}"
   firewall_policy   = google_compute_network_firewall_policy.fw_policy.id
   attachment_target = google_compute_network.net.id
 }
