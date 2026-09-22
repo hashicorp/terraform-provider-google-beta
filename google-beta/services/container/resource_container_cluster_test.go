@@ -66,7 +66,7 @@ func TestAccContainerCluster_basic(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
@@ -82,14 +82,14 @@ func TestAccContainerCluster_basic(t *testing.T) {
 			},
 			{
 				ResourceName:            "google_container_cluster.primary",
-				ImportStateId:           fmt.Sprintf("us-central1-a/%s", clusterName),
+				ImportStateId:           fmt.Sprintf("us-east1-b/%s", clusterName),
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"deletion_protection"},
 			},
 			{
 				ResourceName:            "google_container_cluster.primary",
-				ImportStateId:           fmt.Sprintf("%s/us-central1-a/%s", envvar.GetTestProjectFromEnv(), clusterName),
+				ImportStateId:           fmt.Sprintf("%s/us-east1-b/%s", envvar.GetTestProjectFromEnv(), clusterName),
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"deletion_protection"},
@@ -111,7 +111,7 @@ func TestAccContainerCluster_basic_noCpaUpgrade(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
@@ -146,7 +146,7 @@ func TestAccContainerCluster_resourceManagerTags(t *testing.T) {
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", randomSuffix)
 
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	bootstrapGkeTagManagerServiceAgents(t)
 	acctest.VcrTest(t, resource.TestCase{
@@ -171,7 +171,7 @@ func TestAccContainerCluster_resourceManagerTags(t *testing.T) {
 			},
 			{
 				ResourceName:            "google_container_cluster.primary",
-				ImportStateId:           fmt.Sprintf("us-central1-a/%s", clusterName),
+				ImportStateId:           fmt.Sprintf("us-east1-b/%s", clusterName),
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"min_master_version", "deletion_protection"},
@@ -190,7 +190,7 @@ func TestAccContainerCluster_resourceManagerTags(t *testing.T) {
 			},
 			{
 				ResourceName:            "google_container_cluster.primary",
-				ImportStateId:           fmt.Sprintf("us-central1-a/%s", clusterName),
+				ImportStateId:           fmt.Sprintf("us-east1-b/%s", clusterName),
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"min_master_version", "deletion_protection"},
@@ -204,7 +204,7 @@ func TestAccContainerCluster_networkingModeRoutes(t *testing.T) {
 
 	// separate shared network name because test requests a specific CIDR
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster-moderoutes")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster-moderoutes", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster-moderoutes", networkName, "us-east1", "10.80.0.0/20")
 	firstClusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	secondClusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	acctest.VcrTest(t, resource.TestCase{
@@ -239,7 +239,7 @@ func TestAccContainerCluster_misc(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -277,7 +277,7 @@ func TestAccContainerCluster_withAddons(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 	pid := envvar.GetTestProjectFromEnv()
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -312,7 +312,7 @@ func TestAccContainerCluster_agentSandbox(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -351,7 +351,7 @@ func testAccContainerCluster_agentSandbox(clusterName, networkName, subnetworkNa
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   network            = "%s"
   subnetwork         = "%s"
@@ -371,7 +371,7 @@ func TestAccContainerCluster_withDeletionProtection(t *testing.T) {
 	t.Parallel()
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -409,7 +409,7 @@ func TestAccContainerCluster_withNotificationConfig(t *testing.T) {
 	topic := fmt.Sprintf("tf-test-topic-%s", acctest.RandString(t, 10))
 	newTopic := fmt.Sprintf("tf-test-topic-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -463,7 +463,7 @@ func TestAccContainerCluster_withFilteredNotificationConfig(t *testing.T) {
 	topic := fmt.Sprintf("tf-test-topic-%s", acctest.RandString(t, 10))
 	newTopic := fmt.Sprintf("tf-test-topic-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -568,7 +568,7 @@ func TestAccContainerCluster_withLocalSsdEncryptionMode(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 	npName := fmt.Sprintf("tf-test-node-pool-%s", acctest.RandString(t, 10))
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -594,7 +594,7 @@ func TestAccContainerCluster_withMaxRunDuration(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 	npName := fmt.Sprintf("tf-test-node-pool-%s", acctest.RandString(t, 10))
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -638,7 +638,7 @@ func TestAccContainerCluster_withFlexStart(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 	npName := fmt.Sprintf("tf-test-node-pool-%s", acctest.RandString(t, 10))
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -649,7 +649,7 @@ func TestAccContainerCluster_withFlexStart(t *testing.T) {
 			{
 				Config: testAccContainerCluster_withFlexStart(clusterName, npName, networkName, subnetworkName),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("google_container_cluster.flex_start", "node_pool.0.node_config.0.machine_type", "n1-standard-1"),
+					resource.TestCheckResourceAttr("google_container_cluster.flex_start", "node_pool.0.node_config.0.machine_type", "n4-standard-2"),
 					resource.TestCheckResourceAttr("google_container_cluster.flex_start",
 						"node_pool.0.node_config.0.reservation_affinity.0.consume_reservation_type", "NO_RESERVATION"),
 					resource.TestCheckResourceAttr("google_container_cluster.flex_start", "node_pool.0.node_config.0.flex_start", "true"),
@@ -671,7 +671,7 @@ func TestAccContainerCluster_withILBSubsetting(t *testing.T) {
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	npName := fmt.Sprintf("tf-test-cluster-nodepool-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -715,7 +715,7 @@ func TestAccContainerCluster_omittedILBSubsetting(t *testing.T) {
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	npName := fmt.Sprintf("tf-test-cluster-nodepool-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -759,7 +759,7 @@ func TestAccContainerCluster_disableL4LbFirewallReconciliation(t *testing.T) {
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	npName := fmt.Sprintf("tf-test-cluster-nodepool-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -825,7 +825,7 @@ func TestAccContainerCluster_inTransitEncryptionConfig(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
@@ -864,7 +864,7 @@ func TestAccContainerCluster_networkPerformanceConfig(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
@@ -935,7 +935,7 @@ func TestAccContainerCluster_withAdditiveVPC(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -960,7 +960,7 @@ func TestAccContainerCluster_withMasterAuthConfig_NoCert(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -988,7 +988,7 @@ func TestAccContainerCluster_withAuthenticatorGroupsConfig(t *testing.T) {
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	orgDomain := envvar.GetTestOrgDomainFromEnv(t)
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
@@ -1085,7 +1085,7 @@ func TestAccContainerCluster_withPodAutoscaling(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -1120,7 +1120,7 @@ func testAccContainerCluster_podAutoscalingConfig(clusterName string, networkNam
 	return fmt.Sprintf(`
 resource "google_container_cluster" "pod_autoscaling_config" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   network 		     = "%s"
   subnetwork		 = "%s"
@@ -1149,7 +1149,7 @@ resource "google_compute_subnetwork" "container_subnetwork" {
   name                     = google_compute_network.container_network.name
   network                  = google_compute_network.container_network.name
   ip_cidr_range            = "10.0.36.0/24"
-  region                   = "us-central1"
+  region                   = "us-east1"
   private_ip_google_access = true
 
   secondary_ip_range {
@@ -1177,7 +1177,7 @@ resource "google_compute_subnetwork" "container_subnetwork" {
 
 resource "google_container_cluster" "cluster" {
   name               = "%s"
-  location           = "us-central1"
+  location           = "us-east1"
   initial_node_count = 1
 
   network    = google_compute_network.container_network.name
@@ -1200,7 +1200,7 @@ func testAccContainerCluster_withAdditiveVPC(clusterName, networkName, subnetwor
 	return fmt.Sprintf(`
 resource "google_container_cluster" "cluster" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   network    = "%s"
@@ -1219,7 +1219,7 @@ resource "google_container_cluster" "cluster" {
 func testAccContainerCluster_withFQDNNetworkPolicy(clusterName string, enabled bool) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "uscentral1a" {
-  location = "us-central1-a"
+  location = "us-east1-b"
 }
 
 resource "google_compute_network" "container_network" {
@@ -1231,7 +1231,7 @@ resource "google_compute_subnetwork" "container_subnetwork" {
   name                     = google_compute_network.container_network.name
   network                  = google_compute_network.container_network.name
   ip_cidr_range            = "10.0.36.0/24"
-  region                   = "us-central1"
+  region                   = "us-east1"
   private_ip_google_access = true
 
   secondary_ip_range {
@@ -1259,7 +1259,7 @@ resource "google_compute_subnetwork" "container_subnetwork" {
 
 resource "google_container_cluster" "cluster" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   min_master_version = data.google_container_engine_versions.uscentral1a.release_channel_latest_version["STABLE"]
   initial_node_count = 1
 
@@ -1282,7 +1282,7 @@ func TestAccContainerCluster_withNetworkPolicyEnabled(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -1354,7 +1354,7 @@ func TestAccContainerCluster_withReleaseChannelEnabled(t *testing.T) {
 	t.Parallel()
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -1366,7 +1366,7 @@ func TestAccContainerCluster_withReleaseChannelEnabled(t *testing.T) {
 			},
 			{
 				ResourceName:            "google_container_cluster.with_release_channel",
-				ImportStateIdPrefix:     "us-central1-a/",
+				ImportStateIdPrefix:     "us-east1-b/",
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"min_master_version", "deletion_protection"},
@@ -1376,7 +1376,7 @@ func TestAccContainerCluster_withReleaseChannelEnabled(t *testing.T) {
 			},
 			{
 				ResourceName:            "google_container_cluster.with_release_channel",
-				ImportStateIdPrefix:     "us-central1-a/",
+				ImportStateIdPrefix:     "us-east1-b/",
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"min_master_version", "deletion_protection"},
@@ -1389,7 +1389,7 @@ func TestAccContainerCluster_withReleaseChannelEnabledDefaultVersion(t *testing.
 	t.Parallel()
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -1401,7 +1401,7 @@ func TestAccContainerCluster_withReleaseChannelEnabledDefaultVersion(t *testing.
 			},
 			{
 				ResourceName:            "google_container_cluster.with_release_channel",
-				ImportStateIdPrefix:     "us-central1-a/",
+				ImportStateIdPrefix:     "us-east1-b/",
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"min_master_version", "deletion_protection"},
@@ -1411,7 +1411,7 @@ func TestAccContainerCluster_withReleaseChannelEnabledDefaultVersion(t *testing.
 			},
 			{
 				ResourceName:            "google_container_cluster.with_release_channel",
-				ImportStateIdPrefix:     "us-central1-a/",
+				ImportStateIdPrefix:     "us-east1-b/",
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"min_master_version", "deletion_protection"},
@@ -1421,7 +1421,7 @@ func TestAccContainerCluster_withReleaseChannelEnabledDefaultVersion(t *testing.
 			},
 			{
 				ResourceName:            "google_container_cluster.with_release_channel",
-				ImportStateIdPrefix:     "us-central1-a/",
+				ImportStateIdPrefix:     "us-east1-b/",
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"min_master_version", "deletion_protection"},
@@ -1431,7 +1431,7 @@ func TestAccContainerCluster_withReleaseChannelEnabledDefaultVersion(t *testing.
 			},
 			{
 				ResourceName:            "google_container_cluster.with_release_channel",
-				ImportStateIdPrefix:     "us-central1-a/",
+				ImportStateIdPrefix:     "us-east1-b/",
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"min_master_version", "deletion_protection"},
@@ -1441,7 +1441,7 @@ func TestAccContainerCluster_withReleaseChannelEnabledDefaultVersion(t *testing.
 			},
 			{
 				ResourceName:            "google_container_cluster.with_release_channel",
-				ImportStateIdPrefix:     "us-central1-a/",
+				ImportStateIdPrefix:     "us-east1-b/",
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"min_master_version", "deletion_protection"},
@@ -1456,7 +1456,7 @@ func TestAccContainerCluster_withInvalidReleaseChannel(t *testing.T) {
 	t.Parallel()
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -1475,7 +1475,7 @@ func TestAccContainerCluster_withAcceleratedGkeAutoUpgradeConfig(t *testing.T) {
 	t.Parallel()
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -1487,7 +1487,7 @@ func TestAccContainerCluster_withAcceleratedGkeAutoUpgradeConfig(t *testing.T) {
 			},
 			{
 				ResourceName:            "google_container_cluster.with_gke_auto_upgrade_config",
-				ImportStateIdPrefix:     "us-central1-a/",
+				ImportStateIdPrefix:     "us-east1-b/",
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"min_master_version", "deletion_protection"},
@@ -1500,7 +1500,7 @@ func TestAccContainerCluster_withTelemetryEnabled(t *testing.T) {
 	t.Parallel()
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -1512,7 +1512,7 @@ func TestAccContainerCluster_withTelemetryEnabled(t *testing.T) {
 			},
 			{
 				ResourceName:            "google_container_cluster.with_cluster_telemetry",
-				ImportStateIdPrefix:     "us-central1-a/",
+				ImportStateIdPrefix:     "us-east1-b/",
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"min_master_version", "deletion_protection"},
@@ -1522,7 +1522,7 @@ func TestAccContainerCluster_withTelemetryEnabled(t *testing.T) {
 			},
 			{
 				ResourceName:            "google_container_cluster.with_cluster_telemetry",
-				ImportStateIdPrefix:     "us-central1-a/",
+				ImportStateIdPrefix:     "us-east1-b/",
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"min_master_version", "deletion_protection"},
@@ -1532,7 +1532,7 @@ func TestAccContainerCluster_withTelemetryEnabled(t *testing.T) {
 			},
 			{
 				ResourceName:            "google_container_cluster.with_cluster_telemetry",
-				ImportStateIdPrefix:     "us-central1-a/",
+				ImportStateIdPrefix:     "us-east1-b/",
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"min_master_version", "deletion_protection"},
@@ -1545,7 +1545,7 @@ func TestAccContainerCluster_withManagedOpenTelemetryConfig(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -1611,13 +1611,13 @@ func TestAccContainerCluster_withManagedOpenTelemetryConfig(t *testing.T) {
 func testAccContainerCluster_withManagedOpenTelemetryConfig(clusterName, networkName, subnetworkName, scope string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "uscentral1a" {
-  location       = "us-central1-a"
+  location       = "us-east1-b"
   version_prefix = "1.34."
 }
 
 resource "google_container_cluster" "with_managed_opentelemetry" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   network            = "%s"
   subnetwork         = "%s"
@@ -1636,7 +1636,7 @@ func TestAccContainerCluster_withManagedMLDiagnosticsConfig(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -1689,13 +1689,13 @@ func TestAccContainerCluster_withManagedMLDiagnosticsConfig(t *testing.T) {
 func testAccContainerCluster_withManagedMLDiagnosticsConfig(clusterName, networkName, subnetworkName string, enabled bool) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "uscentral1a" {
-  location       = "us-central1-a"
+  location       = "us-east1-b"
   version_prefix = "1.35."
 }
 
 resource "google_container_cluster" "managed_ml_diagnostics" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   network            = "%s"
   subnetwork         = "%s"
@@ -1713,13 +1713,13 @@ resource "google_container_cluster" "managed_ml_diagnostics" {
 func testAccContainerCluster_withoutManagedMLDiagnosticsConfig(clusterName, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "uscentral1a" {
-  location       = "us-central1-a"
+  location       = "us-east1-b"
   version_prefix = "1.35."
 }
 
 resource "google_container_cluster" "managed_ml_diagnostics" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   network            = "%s"
   subnetwork         = "%s"
@@ -1735,7 +1735,7 @@ func TestAccContainerCluster_withMasterAuthorizedNetworksConfig(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -1804,7 +1804,7 @@ func TestAccContainerCluster_withGcpPublicCidrsAccessEnabledToggle(t *testing.T)
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -1852,12 +1852,12 @@ func testAccContainerCluster_withGcpPublicCidrsAccessEnabled(clusterName string,
 
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "uscentral1a" {
-  location = "us-central1-a"
+  location = "us-east1-b"
 }
 
 resource "google_container_cluster" "with_gcp_public_cidrs_access_enabled" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   min_master_version = data.google_container_engine_versions.uscentral1a.release_channel_latest_version["STABLE"]
   initial_node_count = 1
 
@@ -1876,12 +1876,12 @@ func testAccContainerCluster_withoutGcpPublicCidrsAccessEnabled(clusterName, net
 
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "uscentral1a" {
-  location = "us-central1-a"
+  location = "us-east1-b"
 }
 
 resource "google_container_cluster" "with_gcp_public_cidrs_access_enabled" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   min_master_version = data.google_container_engine_versions.uscentral1a.release_channel_latest_version["STABLE"]
   initial_node_count = 1
 
@@ -1898,7 +1898,7 @@ func TestAccContainerCluster_withAuthorizedNetworkPrivateEnforcementToggle(t *te
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -1939,7 +1939,7 @@ func testAccContainerCluster_withAuthorizedNetworkPrivateEnforcementToggle(clust
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   deletion_protection = false
 
@@ -1958,7 +1958,7 @@ func TestAccContainerCluster_regional(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-regional-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -1984,7 +1984,7 @@ func TestAccContainerCluster_regionalWithNodePool(t *testing.T) {
 	clusterName := fmt.Sprintf("tf-test-cluster-regional-%s", acctest.RandString(t, 10))
 	npName := fmt.Sprintf("tf-test-cluster-nodepool-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -2011,7 +2011,7 @@ func TestAccContainerCluster_regionalWithNodeLocations(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -2077,7 +2077,7 @@ func TestAccContainerCluster_nodePoolWithUpgradeSettings(t *testing.T) {
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	npName := fmt.Sprintf("tf-test-np-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -2138,7 +2138,7 @@ func testAccContainerCluster_nodePoolWithUpgradeSettings(cluster, np, network, s
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
 	name               = "%s"
-	location           = "us-central1-f"
+	location           = "us-east1-b"
 	network            = "%s"
 	subnetwork         = "%s"
 	deletion_protection = false
@@ -2194,7 +2194,7 @@ func TestAccContainerCluster_withPrivateClusterConfigGlobalAccessEnabledOnly(t *
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -2228,7 +2228,7 @@ func TestAccContainerCluster_withIntraNodeVisibility(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -2268,7 +2268,7 @@ func TestAccContainerCluster_withVersion(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -2293,7 +2293,7 @@ func TestAccContainerCluster_updateVersion(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -2327,7 +2327,7 @@ func TestAccContainerCluster_withNodeConfig(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -2371,7 +2371,7 @@ func TestAccContainerCluster_withNodeConfigLinuxNodeConfig(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -2521,7 +2521,7 @@ func TestAccContainerCluster_withKubeletConfig(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -2583,7 +2583,7 @@ func TestAccContainerCluster_withKubeletConfigShutdownGracePeriod(t *testing.T) 
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -2616,7 +2616,7 @@ func TestAccContainerCluster_withInlineNodePoolShutdownGracePeriod(t *testing.T)
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -2650,7 +2650,7 @@ func TestAccContainerCluster_withNodeConfigFastSocket(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -2703,7 +2703,7 @@ func TestAccContainerCluster_withNodeConfigGcfsConfig(t *testing.T) {
 	t.Parallel()
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -2746,7 +2746,7 @@ func TestAccContainerCluster_withNodeConfigKubeletConfigSettingsUpdates(t *testi
 	t.Parallel()
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -2804,7 +2804,7 @@ func TestAccContainerCluster_withNodeConfigKubeletConfigSettingsInNodePool(t *te
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	nodePoolName := fmt.Sprintf("tf-test-nodepool-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -2829,7 +2829,7 @@ func TestAccContainerCluster_withInsecureKubeletReadonlyPortEnabledInNodePool(t 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	nodePoolName := fmt.Sprintf("tf-test-nodepool-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -2855,7 +2855,7 @@ func TestAccContainerCluster_withInsecureKubeletReadonlyPortEnabledDefaultsUpdat
 	t.Parallel()
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -2927,7 +2927,7 @@ func TestAccContainerCluster_withLoggingVariantInNodeConfig(t *testing.T) {
 	t.Parallel()
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -2952,7 +2952,7 @@ func TestAccContainerCluster_withLoggingVariantInNodePool(t *testing.T) {
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	nodePoolName := fmt.Sprintf("tf-test-nodepool-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -2976,7 +2976,7 @@ func TestAccContainerCluster_withLoggingVariantUpdates(t *testing.T) {
 	t.Parallel()
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -3019,7 +3019,7 @@ func TestAccContainerCluster_withAdvancedMachineFeaturesInNodePool(t *testing.T)
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	nodePoolName := fmt.Sprintf("tf-test-nodepool-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -3043,7 +3043,7 @@ func TestAccContainerCluster_withNodePoolDefaults(t *testing.T) {
 	t.Parallel()
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
@@ -3058,7 +3058,7 @@ func TestAccContainerCluster_withNodePoolDefaults(t *testing.T) {
 			},
 			{
 				ResourceName:            "google_container_cluster.primary",
-				ImportStateId:           fmt.Sprintf("us-central1-a/%s", clusterName),
+				ImportStateId:           fmt.Sprintf("us-east1-b/%s", clusterName),
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"deletion_protection"},
@@ -3102,7 +3102,7 @@ func TestAccContainerCluster_withNodeConfigScopeAlias(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -3127,7 +3127,7 @@ func TestAccContainerCluster_withNodeConfigShieldedInstanceConfig(t *testing.T) 
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -3152,7 +3152,7 @@ func TestAccContainerCluster_withNodeConfigReservationAffinity(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -3184,7 +3184,7 @@ func TestAccContainerCluster_withNodeConfigReservationAffinitySpecific(t *testin
 	reservationName := fmt.Sprintf("tf-test-reservation-%s", acctest.RandString(t, 10))
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -3222,7 +3222,7 @@ func TestAccContainerCluster_withNodeConfigReservationAffinityAnyReservationThen
 	reservationName := fmt.Sprintf("tf-test-reservation-%s", acctest.RandString(t, 10))
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -3253,7 +3253,7 @@ func TestAccContainerCluster_withNodeConfigNodeImageConfig(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -3273,7 +3273,7 @@ func TestAccContainerCluster_withWorkloadMetadataConfig(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -3325,7 +3325,7 @@ func TestAccContainerCluster_withSandboxConfig(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -3382,7 +3382,7 @@ func TestAccContainerCluster_withSandboxConfigType(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -3406,9 +3406,9 @@ func TestAccContainerCluster_withBootDiskKmsKey(t *testing.T) {
 	t.Parallel()
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
-	bootstrapped := kms.BootstrapKMSKeyInLocation(t, "us-central1")
+	bootstrapped := kms.BootstrapKMSKeyInLocation(t, "us-east1")
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	resourcemanager.BootstrapIamMembers(t, []resourcemanager.IamMember{
 		{
@@ -3470,7 +3470,7 @@ func TestAccContainerCluster_backend(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -3496,7 +3496,7 @@ func TestAccContainerCluster_withNodePoolBasic(t *testing.T) {
 	clusterName := fmt.Sprintf("tf-test-cluster-nodepool-%s", acctest.RandString(t, 10))
 	npName := fmt.Sprintf("tf-test-cluster-nodepool-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -3522,7 +3522,7 @@ func TestAccContainerCluster_withNodePoolUpdateVersion(t *testing.T) {
 	clusterName := fmt.Sprintf("tf-test-cluster-nodepool-%s", acctest.RandString(t, 10))
 	npName := fmt.Sprintf("tf-test-cluster-nodepool-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -3557,7 +3557,7 @@ func TestAccContainerCluster_withNodePoolResize(t *testing.T) {
 	clusterName := fmt.Sprintf("tf-test-cluster-nodepool-%s", acctest.RandString(t, 10))
 	npName := fmt.Sprintf("tf-test-cluster-nodepool-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -3598,7 +3598,7 @@ func TestAccContainerCluster_withNodePoolAutoscaling(t *testing.T) {
 	clusterName := fmt.Sprintf("tf-test-cluster-nodepool-%s", acctest.RandString(t, 10))
 	npName := fmt.Sprintf("tf-test-cluster-nodepool-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -3654,7 +3654,7 @@ func TestAccContainerCluster_withNodePoolCIA(t *testing.T) {
 	clusterName := fmt.Sprintf("tf-test-cluster-nodepool-%s", acctest.RandString(t, 10))
 	npName := fmt.Sprintf("tf-test-cluster-nodepool-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -3719,7 +3719,7 @@ func TestAccContainerCluster_withNodePoolNamePrefix(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 	npNamePrefix := "tf-test-np-"
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -3745,7 +3745,7 @@ func TestAccContainerCluster_withNodePoolMultiple(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 	npNamePrefix := "tf-test-np-"
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -3772,7 +3772,7 @@ func TestAccContainerCluster_withNodePoolConflictingNameFields(t *testing.T) {
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	npPrefix := "tf-test-np"
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -3793,7 +3793,7 @@ func TestAccContainerCluster_withNodePoolNodeConfig(t *testing.T) {
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	np := fmt.Sprintf("tf-test-np-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -3819,7 +3819,7 @@ func TestAccContainerCluster_withNodePoolNodeDrainConfig(t *testing.T) {
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	np := fmt.Sprintf("tf-test-np-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -3857,7 +3857,7 @@ func TestAccContainerCluster_withNodePoolMaintenancePolicy(t *testing.T) {
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	np := fmt.Sprintf("tf-test-np-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -3887,7 +3887,7 @@ func TestAccContainerCluster_withClusterDisruptionBudget(t *testing.T) {
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	resourceName := "google_container_cluster.with_cluster_disruption_budget"
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -3913,7 +3913,7 @@ func TestAccContainerCluster_withDailyMaintenanceWindow(t *testing.T) {
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	resourceName := "google_container_cluster.with_maintenance_window"
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -3955,7 +3955,7 @@ func TestAccContainerCluster_withRecurringTimeWindow(t *testing.T) {
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	resourceName := "google_container_cluster.with_recurring_maintenance_window"
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -3973,7 +3973,7 @@ func TestAccContainerCluster_withRecurringTimeWindow(t *testing.T) {
 			},
 			{
 				ResourceName:            resourceName,
-				ImportStateIdPrefix:     "us-central1-a/",
+				ImportStateIdPrefix:     "us-east1-b/",
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"deletion_protection"},
@@ -3991,7 +3991,7 @@ func TestAccContainerCluster_withRecurringTimeWindow(t *testing.T) {
 			},
 			{
 				ResourceName:        resourceName,
-				ImportStateIdPrefix: "us-central1-a/",
+				ImportStateIdPrefix: "us-east1-b/",
 				ImportState:         true,
 				ImportStateVerify:   true,
 				// maintenance_policy.# = 0 is equivalent to no maintenance policy at all,
@@ -4007,7 +4007,7 @@ func TestAccContainerCluster_withRecurringMaintenanceWindow(t *testing.T) {
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	resourceName := "google_container_cluster.with_recurring_maintenance_window"
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -4025,7 +4025,7 @@ func TestAccContainerCluster_withRecurringMaintenanceWindow(t *testing.T) {
 			},
 			{
 				ResourceName:            resourceName,
-				ImportStateIdPrefix:     "us-central1-a/",
+				ImportStateIdPrefix:     "us-east1-b/",
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"deletion_protection"},
@@ -4043,7 +4043,7 @@ func TestAccContainerCluster_withRecurringMaintenanceWindow(t *testing.T) {
 			},
 			{
 				ResourceName:            resourceName,
-				ImportStateIdPrefix:     "us-central1-a/",
+				ImportStateIdPrefix:     "us-east1-b/",
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"deletion_protection"},
@@ -4057,7 +4057,7 @@ func TestAccContainerCluster_withMaintenanceExclusionWindow(t *testing.T) {
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	resourceName := "google_container_cluster.with_maintenance_exclusion_window"
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -4069,7 +4069,7 @@ func TestAccContainerCluster_withMaintenanceExclusionWindow(t *testing.T) {
 			},
 			{
 				ResourceName:            resourceName,
-				ImportStateIdPrefix:     "us-central1-a/",
+				ImportStateIdPrefix:     "us-east1-b/",
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"deletion_protection"},
@@ -4079,7 +4079,7 @@ func TestAccContainerCluster_withMaintenanceExclusionWindow(t *testing.T) {
 			},
 			{
 				ResourceName:            resourceName,
-				ImportStateIdPrefix:     "us-central1-a/",
+				ImportStateIdPrefix:     "us-east1-b/",
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"deletion_protection"},
@@ -4093,7 +4093,7 @@ func TestAccContainerCluster_withMaintenanceExclusionOptions(t *testing.T) {
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	resourceName := "google_container_cluster.with_maintenance_exclusion_options"
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -4112,7 +4112,7 @@ func TestAccContainerCluster_withMaintenanceExclusionOptions(t *testing.T) {
 			},
 			{
 				ResourceName:            resourceName,
-				ImportStateIdPrefix:     "us-central1-a/",
+				ImportStateIdPrefix:     "us-east1-b/",
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"deletion_protection"},
@@ -4126,7 +4126,7 @@ func TestAccContainerCluster_withMaintenanceExclusionOptions_untilEndOfSupport(t
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	resourceName := "google_container_cluster.with_maintenance_exclusion_options"
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -4143,7 +4143,7 @@ func TestAccContainerCluster_withMaintenanceExclusionOptions_untilEndOfSupport(t
 			},
 			{
 				ResourceName:            resourceName,
-				ImportStateIdPrefix:     "us-central1-a/",
+				ImportStateIdPrefix:     "us-east1-b/",
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"deletion_protection"},
@@ -4157,7 +4157,7 @@ func TestAccContainerCluster_deleteMaintenanceExclusionOptions(t *testing.T) {
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	resourceName := "google_container_cluster.with_maintenance_exclusion_options"
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -4176,7 +4176,7 @@ func TestAccContainerCluster_deleteMaintenanceExclusionOptions(t *testing.T) {
 			},
 			{
 				ResourceName:            resourceName,
-				ImportStateIdPrefix:     "us-central1-a/",
+				ImportStateIdPrefix:     "us-east1-b/",
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"deletion_protection"},
@@ -4193,7 +4193,7 @@ func TestAccContainerCluster_deleteMaintenanceExclusionOptions(t *testing.T) {
 			},
 			{
 				ResourceName:            resourceName,
-				ImportStateIdPrefix:     "us-central1-a/",
+				ImportStateIdPrefix:     "us-east1-b/",
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"deletion_protection"},
@@ -4207,7 +4207,7 @@ func TestAccContainerCluster_deleteMaintenanceExclusionOptions_untilEndOfSupport
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	resourceName := "google_container_cluster.with_maintenance_exclusion_options"
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -4224,7 +4224,7 @@ func TestAccContainerCluster_deleteMaintenanceExclusionOptions_untilEndOfSupport
 			},
 			{
 				ResourceName:            resourceName,
-				ImportStateIdPrefix:     "us-central1-a/",
+				ImportStateIdPrefix:     "us-east1-b/",
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"deletion_protection"},
@@ -4241,7 +4241,7 @@ func TestAccContainerCluster_deleteMaintenanceExclusionOptions_untilEndOfSupport
 			},
 			{
 				ResourceName:            resourceName,
-				ImportStateIdPrefix:     "us-central1-a/",
+				ImportStateIdPrefix:     "us-east1-b/",
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"deletion_protection"},
@@ -4255,7 +4255,7 @@ func TestAccContainerCluster_updateMaintenanceExclusionOptions(t *testing.T) {
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	resourceName := "google_container_cluster.with_maintenance_exclusion_options"
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	// step1: create a new cluster and initialize the maintenceExclusion without exclusion scopes,
 	// step2: add exclusion scopes to the maintenancePolicy,
@@ -4277,7 +4277,7 @@ func TestAccContainerCluster_updateMaintenanceExclusionOptions(t *testing.T) {
 			},
 			{
 				ResourceName:            resourceName,
-				ImportStateIdPrefix:     "us-central1-a/",
+				ImportStateIdPrefix:     "us-east1-b/",
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"deletion_protection"},
@@ -4294,7 +4294,7 @@ func TestAccContainerCluster_updateMaintenanceExclusionOptions(t *testing.T) {
 			},
 			{
 				ResourceName:            resourceName,
-				ImportStateIdPrefix:     "us-central1-a/",
+				ImportStateIdPrefix:     "us-east1-b/",
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"deletion_protection"},
@@ -4311,7 +4311,7 @@ func TestAccContainerCluster_updateMaintenanceExclusionOptions(t *testing.T) {
 			},
 			{
 				ResourceName:            resourceName,
-				ImportStateIdPrefix:     "us-central1-a/",
+				ImportStateIdPrefix:     "us-east1-b/",
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"deletion_protection"},
@@ -4325,7 +4325,7 @@ func TestAccContainerCluster_updateMaintenanceExclusionOptions_untilEndOfSupport
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	resourceName := "google_container_cluster.with_maintenance_exclusion_options"
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	// step1: create a new cluster and initialize the maintenceExclusion without exclusion scopes,
 	// step2: add exclusion scopes to the maintenancePolicy,
@@ -4347,7 +4347,7 @@ func TestAccContainerCluster_updateMaintenanceExclusionOptions_untilEndOfSupport
 			},
 			{
 				ResourceName:            resourceName,
-				ImportStateIdPrefix:     "us-central1-a/",
+				ImportStateIdPrefix:     "us-east1-b/",
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"deletion_protection"},
@@ -4362,7 +4362,7 @@ func TestAccContainerCluster_updateMaintenanceExclusionOptions_untilEndOfSupport
 			},
 			{
 				ResourceName:            resourceName,
-				ImportStateIdPrefix:     "us-central1-a/",
+				ImportStateIdPrefix:     "us-east1-b/",
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"deletion_protection"},
@@ -4377,7 +4377,7 @@ func TestAccContainerCluster_updateMaintenanceExclusionOptions_untilEndOfSupport
 			},
 			{
 				ResourceName:            resourceName,
-				ImportStateIdPrefix:     "us-central1-a/",
+				ImportStateIdPrefix:     "us-east1-b/",
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"deletion_protection"},
@@ -4391,7 +4391,7 @@ func TestAccContainerCluster_deleteExclusionWindow(t *testing.T) {
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	resourceName := "google_container_cluster.with_maintenance_exclusion_window"
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -4403,7 +4403,7 @@ func TestAccContainerCluster_deleteExclusionWindow(t *testing.T) {
 			},
 			{
 				ResourceName:            resourceName,
-				ImportStateIdPrefix:     "us-central1-a/",
+				ImportStateIdPrefix:     "us-east1-b/",
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"deletion_protection"},
@@ -4413,7 +4413,7 @@ func TestAccContainerCluster_deleteExclusionWindow(t *testing.T) {
 			},
 			{
 				ResourceName:            resourceName,
-				ImportStateIdPrefix:     "us-central1-a/",
+				ImportStateIdPrefix:     "us-east1-b/",
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"deletion_protection"},
@@ -4423,7 +4423,7 @@ func TestAccContainerCluster_deleteExclusionWindow(t *testing.T) {
 			},
 			{
 				ResourceName:            resourceName,
-				ImportStateIdPrefix:     "us-central1-a/",
+				ImportStateIdPrefix:     "us-east1-b/",
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"deletion_protection"},
@@ -4602,7 +4602,7 @@ func TestAccContainerCluster_nodeAutoprovisioning(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -4682,7 +4682,7 @@ func TestAccContainerCluster_nodeAutoprovisioningDefaults(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 	includeMinCpuPlatform := true
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -4735,7 +4735,7 @@ func TestAccContainerCluster_autoprovisioningDefaultsUpgradeSettings(t *testing.
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -4773,7 +4773,7 @@ func TestAccContainerCluster_nodeAutoprovisioningNetworkTags(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -4802,7 +4802,7 @@ func TestAccContainerCluster_withDefaultComputeClassEnabled(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -4842,7 +4842,7 @@ func TestAccContainerCluster_withAutopilotDefaultComputeClassEnabled(t *testing.
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -4880,9 +4880,9 @@ func TestAccContainerCluster_withAutopilotDefaultComputeClassEnabled(t *testing.
 func testAccContainerCluster_withDefaultComputeClassEnabled(clusterName, networkName, subnetworkName string, enabled, autopilot bool) string {
 	var location string
 	if autopilot {
-		location = "us-central1"
+		location = "us-east1"
 	} else {
-		location = "us-central1-a"
+		location = "us-east1-b"
 	}
 	res := fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
@@ -4930,7 +4930,7 @@ func TestAccContainerCluster_withAutopilotClusterPolicy(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -5014,11 +5014,11 @@ func testAccContainerCluster_withAutopilotClusterPolicy(clusterName, networkName
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   remove_default_node_pool = true
   node_config {
-    machine_type = "e2-micro"
+    machine_type = "n4-standard-2"
   }
   lifecycle {
     ignore_changes = [node_config]
@@ -5042,7 +5042,7 @@ func TestAccContainerCluster_withShieldedNodes(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -5084,7 +5084,7 @@ func TestAccContainerCluster_withAutopilot(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerCluster_withAutopilot(pid, containerNetName, clusterName, "us-central1", true, false, ""),
+				Config: testAccContainerCluster_withAutopilot(pid, containerNetName, clusterName, "us-east1", true, false, ""),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_cluster.with_autopilot", "networking_mode", "VPC_NATIVE"),
 				),
@@ -5113,7 +5113,7 @@ func TestAccContainerClusterCustomServiceAccount_withAutopilot(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerCluster_withAutopilot(pid, containerNetName, clusterName, "us-central1", true, false, serviceAccountName),
+				Config: testAccContainerCluster_withAutopilot(pid, containerNetName, clusterName, "us-east1", true, false, serviceAccountName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_cluster.with_autopilot",
 						"cluster_autoscaling.0.enabled", "true"),
@@ -5147,7 +5147,7 @@ func TestAccContainerCluster_errorAutopilotLocation(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config:      testAccContainerCluster_withAutopilot(pid, containerNetName, clusterName, "us-central1-a", true, false, ""),
+				Config:      testAccContainerCluster_withAutopilot(pid, containerNetName, clusterName, "us-east1-b", true, false, ""),
 				ExpectError: regexp.MustCompile(`Autopilot clusters must be regional clusters.`),
 			},
 		},
@@ -5167,7 +5167,7 @@ func TestAccContainerCluster_withAutopilotNetworkTags(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerCluster_withAutopilot(pid, containerNetName, clusterName, "us-central1", true, true, ""),
+				Config: testAccContainerCluster_withAutopilot(pid, containerNetName, clusterName, "us-east1", true, true, ""),
 			},
 			{
 				ResourceName:            "google_container_cluster.with_autopilot",
@@ -5185,7 +5185,7 @@ func TestAccContainerCluster_withAutopilotKubeletConfig(t *testing.T) {
 	randomSuffix := acctest.RandString(t, 10)
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", randomSuffix)
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -5235,7 +5235,7 @@ func TestAccContainerCluster_withAutopilot_withNodePoolAutoConfig(t *testing.T) 
 	randomSuffix := acctest.RandString(t, 10)
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", randomSuffix)
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -5261,7 +5261,7 @@ func TestAccContainerCluster_withStandard_withNodePoolDefaults(t *testing.T) {
 	randomSuffix := acctest.RandString(t, 10)
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", randomSuffix)
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -5332,6 +5332,9 @@ func TestAccContainerCluster_withAutopilotResourceManagerTags(t *testing.T) {
 			},
 			{
 				Config: testAccContainerCluster_withAutopilotResourceManagerTagsUpdate2(pid, clusterName, clusterNetName, clusterSubnetName, randomSuffix),
+				Check: resource.ComposeTestCheckFunc(
+					acctest.SleepInSecondsForTest(30),
+				),
 			},
 			{
 				ResourceName:            "google_container_cluster.with_autopilot",
@@ -5348,7 +5351,7 @@ func TestAccContainerCluster_withWorkloadIdentityConfig(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 	pid := envvar.GetTestProjectFromEnv()
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -5393,7 +5396,7 @@ func TestAccContainerCluster_withWorkloadIdentityConfigAutopilot(t *testing.T) {
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	pid := envvar.GetTestProjectFromEnv()
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -5418,7 +5421,7 @@ func TestAccContainerCluster_withSecretManagerConfig(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 	pid := envvar.GetTestProjectFromEnv()
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -5479,7 +5482,7 @@ func TestAccContainerCluster_withSecretSyncConfig(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 	pid := envvar.GetTestProjectFromEnv()
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -5549,7 +5552,7 @@ func TestAccContainerCluster_withLoggingConfig(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 	minVersion := "1.36"
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -5641,7 +5644,7 @@ func TestAccContainerCluster_withMonitoringConfig(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
@@ -5762,7 +5765,7 @@ func TestAccContainerCluster_withSoleTenantGroup(t *testing.T) {
 
 	resourceName := fmt.Sprintf("tf-test-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
@@ -5785,7 +5788,7 @@ func TestAccContainerCluster_withAutoscalingProfile(t *testing.T) {
 	t.Parallel()
 	clusterName := fmt.Sprintf("cluster-test-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -5797,7 +5800,7 @@ func TestAccContainerCluster_withAutoscalingProfile(t *testing.T) {
 			},
 			{
 				ResourceName:            "google_container_cluster.autoscaling_with_profile",
-				ImportStateIdPrefix:     "us-central1-a/",
+				ImportStateIdPrefix:     "us-east1-b/",
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"deletion_protection"},
@@ -5807,7 +5810,7 @@ func TestAccContainerCluster_withAutoscalingProfile(t *testing.T) {
 			},
 			{
 				ResourceName:            "google_container_cluster.autoscaling_with_profile",
-				ImportStateIdPrefix:     "us-central1-a/",
+				ImportStateIdPrefix:     "us-east1-b/",
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"deletion_protection"},
@@ -5822,7 +5825,7 @@ func TestAccContainerCluster_withInvalidAutoscalingProfile(t *testing.T) {
 	t.Parallel()
 	clusterName := fmt.Sprintf("cluster-test-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -5861,7 +5864,7 @@ func TestAccContainerCluster_sharedVpc(t *testing.T) {
 			},
 			{
 				ResourceName:            "google_container_cluster.shared_vpc_cluster",
-				ImportStateId:           fmt.Sprintf("%s-service/us-central1-a/%s", projectName, clusterName),
+				ImportStateId:           fmt.Sprintf("%s-service/us-east1-b/%s", projectName, clusterName),
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"deletion_protection"},
@@ -5875,7 +5878,7 @@ func TestAccContainerCluster_withBinaryAuthorizationEnabledBool(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -5909,7 +5912,7 @@ func TestAccContainerCluster_withBinaryAuthorizationEvaluationModeAutopilot(t *t
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -5943,7 +5946,7 @@ func TestAccContainerCluster_withBinaryAuthorizationEvaluationModeClassic(t *tes
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -6001,7 +6004,7 @@ func TestAccContainerCluster_nodeAutoprovisioningDefaultsDiskSizeGb(t *testing.T
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 	includeDiskSizeGb := true
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -6036,7 +6039,7 @@ func TestAccContainerCluster_nodeAutoprovisioningDefaultsDiskType(t *testing.T) 
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 	includeDiskType := true
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -6071,7 +6074,7 @@ func TestAccContainerCluster_nodeAutoprovisioningDefaultsImageType(t *testing.T)
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 	includeImageType := true
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -6105,9 +6108,9 @@ func TestAccContainerCluster_nodeAutoprovisioningDefaultsBootDiskKmsKey(t *testi
 	t.Parallel()
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
-	bootstrapped := kms.BootstrapKMSKeyInLocation(t, "us-central1")
+	bootstrapped := kms.BootstrapKMSKeyInLocation(t, "us-east1")
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	resourcemanager.BootstrapIamMembers(t, []resourcemanager.IamMember{
 		{
@@ -6143,7 +6146,7 @@ func TestAccContainerCluster_nodeAutoprovisioningDefaultsShieldedInstance(t *tes
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -6168,7 +6171,7 @@ func TestAccContainerCluster_autoprovisioningDefaultsManagement(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -6202,7 +6205,7 @@ func TestAccContainerCluster_autoprovisioningLocations(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -6210,16 +6213,16 @@ func TestAccContainerCluster_autoprovisioningLocations(t *testing.T) {
 		CheckDestroy:             testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccContainerCluster_autoprovisioningLocations(clusterName, networkName, subnetworkName, []string{"us-central1-a", "us-central1-f"}),
+				Config: testAccContainerCluster_autoprovisioningLocations(clusterName, networkName, subnetworkName, []string{"us-east1-b", "us-east1-d"}),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_cluster.with_autoprovisioning_locations",
 						"cluster_autoscaling.0.enabled", "true"),
 
 					resource.TestCheckResourceAttr("google_container_cluster.with_autoprovisioning_locations",
-						"cluster_autoscaling.0.auto_provisioning_locations.0", "us-central1-a"),
+						"cluster_autoscaling.0.auto_provisioning_locations.0", "us-east1-b"),
 
 					resource.TestCheckResourceAttr("google_container_cluster.with_autoprovisioning_locations",
-						"cluster_autoscaling.0.auto_provisioning_locations.1", "us-central1-f"),
+						"cluster_autoscaling.0.auto_provisioning_locations.1", "us-east1-d"),
 				),
 			},
 			{
@@ -6229,16 +6232,16 @@ func TestAccContainerCluster_autoprovisioningLocations(t *testing.T) {
 				ImportStateVerifyIgnore: []string{"min_master_version", "deletion_protection"},
 			},
 			{
-				Config: testAccContainerCluster_autoprovisioningLocations(clusterName, networkName, subnetworkName, []string{"us-central1-b", "us-central1-c"}),
+				Config: testAccContainerCluster_autoprovisioningLocations(clusterName, networkName, subnetworkName, []string{"us-east1-c", "us-east1-d"}),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_cluster.with_autoprovisioning_locations",
 						"cluster_autoscaling.0.enabled", "true"),
 
 					resource.TestCheckResourceAttr("google_container_cluster.with_autoprovisioning_locations",
-						"cluster_autoscaling.0.auto_provisioning_locations.0", "us-central1-b"),
+						"cluster_autoscaling.0.auto_provisioning_locations.0", "us-east1-c"),
 
 					resource.TestCheckResourceAttr("google_container_cluster.with_autoprovisioning_locations",
-						"cluster_autoscaling.0.auto_provisioning_locations.1", "us-central1-c"),
+						"cluster_autoscaling.0.auto_provisioning_locations.1", "us-east1-d"),
 				),
 			},
 			{
@@ -6348,7 +6351,7 @@ func TestAccContainerCluster_withExternalIpsConfig(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 	pid := envvar.GetTestProjectFromEnv()
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -6383,7 +6386,7 @@ func TestAccContainerCluster_withMeshCertificatesConfig(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 	pid := envvar.GetTestProjectFromEnv()
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -6427,7 +6430,7 @@ func TestAccContainerCluster_withCostManagementConfig(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 	pid := envvar.GetTestProjectFromEnv()
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -6462,14 +6465,14 @@ func TestAccContainerCluster_withDatabaseEncryption(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	// Use the bootstrapped KMS key so we can avoid creating keys needlessly
 	// as they will pile up in the project because they can not be completely
 	// deleted.  Also, we need to create the key in the same location as the
 	// cluster as GKE does not support the "global" location for KMS keys.
 	// See https://cloud.google.com/kubernetes-engine/docs/how-to/encrypting-secrets#creating_a_key
-	kmsData := kms.BootstrapKMSKeyInLocation(t, "us-central1")
+	kmsData := kms.BootstrapKMSKeyInLocation(t, "us-east1")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -6504,7 +6507,7 @@ func TestAccContainerCluster_withAdvancedDatapath(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -6567,6 +6570,12 @@ resource "google_container_cluster" "primary" {
   datapath_provider = "ADVANCED_DATAPATH"
   dataplane_optimization_mode = "SCALE_OPTIMIZED"
 
+  addons_config {
+    dns_cache_config {
+      enabled = false
+    }
+  }
+
   ip_allocation_policy {
     cluster_ipv4_cidr_block  = "/14"
     services_ipv4_cidr_block = "/20"
@@ -6584,7 +6593,7 @@ func TestAccContainerCluster_enableCiliumPolicies(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -6679,7 +6688,7 @@ func TestAccContainerCluster_withResourceUsageExportConfig(t *testing.T) {
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", suffix)
 	datesetId := fmt.Sprintf("tf_test_cluster_resource_usage_%s", suffix)
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -6750,7 +6759,7 @@ func TestAccContainerCluster_withEnableKubernetesAlpha(t *testing.T) {
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	npName := fmt.Sprintf("tf-test-np-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -6775,7 +6784,7 @@ func TestAccContainerCluster_withEnableKubernetesBetaAPIs(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -6800,7 +6809,7 @@ func TestAccContainerCluster_withEnableKubernetesBetaAPIsOnExistingCluster(t *te
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -6834,7 +6843,7 @@ func TestAccContainerCluster_withIncompatibleMasterVersionNodeVersion(t *testing
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -6856,7 +6865,7 @@ func TestAccContainerCluster_withDNSConfig(t *testing.T) {
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	domainName := fmt.Sprintf("tf-test-domain-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
@@ -6888,7 +6897,7 @@ func TestAccContainerCluster_withGatewayApiConfig(t *testing.T) {
 	t.Parallel()
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
@@ -6953,7 +6962,7 @@ func TestAccContainerCluster_withProtectConfig(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -6987,7 +6996,7 @@ func TestAccContainerCluster_withSecurityPostureConfig(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -7048,7 +7057,7 @@ func TestAccContainerCluster_withFleetConfig(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 	projectID := envvar.GetTestProjectFromEnv()
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -7144,7 +7153,7 @@ func TestAccContainerCluster_withWorkloadALTSConfigAutopilot(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 	pid := envvar.GetTestProjectFromEnv()
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -7173,7 +7182,7 @@ func testAccContainerCluster_withFleetConfig(name, projectID, networkName, subne
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   fleet {
@@ -7192,7 +7201,7 @@ func testAccContainerCluster_DisableFleet(resource_name, networkName, subnetwork
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   network    = "%s"
@@ -7207,7 +7216,7 @@ func testAccContainerCluster_WithEmptyFleetProject(resource_name, networkName, s
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   fleet {
@@ -7225,7 +7234,7 @@ func testAccContainerCluster_withFleetConfigLightweightMembership(name, projectI
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   fleet {
@@ -7245,7 +7254,7 @@ func testAccContainerCluster_withIncompatibleMasterVersionNodeVersion(name, netw
 	return fmt.Sprintf(`
 resource "google_container_cluster" "gke_cluster" {
   name     = "%s"
-  location = "us-central1"
+  location = "us-east1"
 
   network    = "%s"
   subnetwork = "%s"
@@ -7261,7 +7270,7 @@ func testAccContainerCluster_SetSecurityPostureToStandard(resource_name, network
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_security_posture_config" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   security_posture_config {
     mode = "BASIC"
@@ -7278,7 +7287,7 @@ func testAccContainerCluster_SetSecurityPostureToEnterprise(resource_name, netwo
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_security_posture_config" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   security_posture_config {
     mode = "ENTERPRISE"
@@ -7295,7 +7304,7 @@ func testAccContainerCluster_SetWorkloadVulnerabilityToStandard(resource_name, n
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_security_posture_config" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   security_posture_config {
     vulnerability_mode = "VULNERABILITY_BASIC"
@@ -7312,7 +7321,7 @@ func testAccContainerCluster_SetWorkloadVulnerabilityToEnterprise(resource_name,
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_security_posture_config" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   security_posture_config {
     vulnerability_mode = "VULNERABILITY_ENTERPRISE"
@@ -7329,7 +7338,7 @@ func testAccContainerCluster_DisableALL(resource_name, networkName, subnetworkNa
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_security_posture_config" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   security_posture_config {
     mode               = "DISABLED"
@@ -7349,12 +7358,12 @@ func TestAccContainerCluster_WithCPAFeatures(t *testing.T) {
 	suffix := acctest.RandString(t, 10)
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", suffix)
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	// Bootstrap KMS keys and needed IAM role.
-	diskKey := kms.BootstrapKMSKeyWithPurposeInLocationAndName(t, "ENCRYPT_DECRYPT", "us-central1", "control-plane-disk-encryption")
-	signingKey := kms.BootstrapKMSKeyWithPurposeInLocationAndName(t, "ASYMMETRIC_SIGN", "us-central1", "rs256-service-account-signing")
-	backupKey := kms.BootstrapKMSKeyWithPurposeInLocationAndName(t, "ENCRYPT_DECRYPT", "us-central1", "etcd-backups")
+	diskKey := kms.BootstrapKMSKeyWithPurposeInLocationAndName(t, "ENCRYPT_DECRYPT", "us-east1", "control-plane-disk-encryption")
+	signingKey := kms.BootstrapKMSKeyWithPurposeInLocationAndName(t, "ASYMMETRIC_SIGN", "us-east1", "rs256-service-account-signing")
+	backupKey := kms.BootstrapKMSKeyWithPurposeInLocationAndName(t, "ENCRYPT_DECRYPT", "us-east1", "etcd-backups")
 
 	// Here, we are granting the container engine service agent permissions on
 	// *ALL* Cloud KMS keys in the project.  A more realistic usage would be to
@@ -7422,31 +7431,31 @@ func testAccContainerCluster_EnableCPAFeatures(context map[string]interface{}) s
 	return acctest.Nprintf(`
 resource "google_privateca_ca_pool" "cluster_ca" {
   name = "tf-test-cluster-ca-%{random_suffix}"
-  location = "us-central1"
+  location = "us-east1"
   tier = "DEVOPS"
 }
 
 resource "google_privateca_ca_pool" "etcd_api_ca" {
   name = "tf-test-etcd-api-ca-%{random_suffix}"
-  location = "us-central1"
+  location = "us-east1"
   tier = "DEVOPS"
 }
 
 resource "google_privateca_ca_pool" "etcd_peer_ca" {
   name = "tf-test-etcd-peer-%{random_suffix}"
-  location = "us-central1"
+  location = "us-east1"
   tier = "DEVOPS"
 }
 
 resource "google_privateca_ca_pool" "aggregation_ca" {
   name = "tf-test-aggregation-ca-%{random_suffix}"
-  location = "us-central1"
+  location = "us-east1"
   tier = "DEVOPS"
 }
 
 resource "google_privateca_certificate_authority" "cluster_ca" {
   certificate_authority_id = "tf-test-my-authority"
-  location                 = "us-central1"
+  location                 = "us-east1"
   pool                     = google_privateca_ca_pool.cluster_ca.name
   type = "SELF_SIGNED"
   key_spec {
@@ -7491,7 +7500,7 @@ resource "google_privateca_certificate_authority" "cluster_ca" {
 
 resource "google_privateca_certificate_authority" "etcd_api_ca" {
   certificate_authority_id = "tf-test-my-authority"
-  location                 = "us-central1"
+  location                 = "us-east1"
   pool                     = google_privateca_ca_pool.etcd_api_ca.name
   type = "SELF_SIGNED"
   key_spec {
@@ -7535,7 +7544,7 @@ resource "google_privateca_certificate_authority" "etcd_api_ca" {
 
 resource "google_privateca_certificate_authority" "etcd_peer_ca" {
   certificate_authority_id = "tf-test-my-authority"
-  location                 = "us-central1"
+  location                 = "us-east1"
   pool                     = google_privateca_ca_pool.etcd_peer_ca.name
   type = "SELF_SIGNED"
   key_spec {
@@ -7579,7 +7588,7 @@ resource "google_privateca_certificate_authority" "etcd_peer_ca" {
 
 resource "google_privateca_certificate_authority" "aggregation_ca" {
   certificate_authority_id = "tf-test-my-authority"
-  location                 = "us-central1"
+  location                 = "us-east1"
   pool                     = google_privateca_ca_pool.aggregation_ca.name
   type = "SELF_SIGNED"
   key_spec {
@@ -7623,7 +7632,7 @@ resource "google_privateca_certificate_authority" "aggregation_ca" {
 
 resource "google_container_cluster" "with_cpa_features" {
   name               = "%{resource_name}"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   release_channel {
     channel = "RAPID"
@@ -7665,7 +7674,7 @@ func TestAccContainerCluster_kubeDns_minimal(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
@@ -7689,7 +7698,7 @@ func TestAccContainerCluster_autopilot_minimal(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
@@ -7713,7 +7722,7 @@ func TestAccContainerCluster_autopilot_withDNSConfig(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -7766,7 +7775,7 @@ func TestAccContainerCluster_autopilot_withAdditiveVPC(t *testing.T) {
 	domain := "additive.autopilot.example"
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -7830,7 +7839,7 @@ func TestAccContainerCluster_cloudDns_nil_scope(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -7870,7 +7879,7 @@ func TestAccContainerCluster_autopilot_withAdditiveVPCMutation(t *testing.T) {
 	domain := "additive-mutating.autopilot.example"
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -7924,7 +7933,7 @@ func TestAccContainerCluster_autopilot_net_admin(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -7967,7 +7976,7 @@ func TestAccContainerCluster_autopilot_privileged_admission(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -8133,7 +8142,7 @@ func TestAccContainerCluster_withCpuCfsQuotaPool(t *testing.T) {
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	npName := fmt.Sprintf("tf-test-cluster-nodepool-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -8168,7 +8177,7 @@ func TestAccContainerCluster_network_tier_config(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -8223,7 +8232,7 @@ func testAccContainerCluster_network_tier_config(clusterName, networkName, subne
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   dns_config {
     cluster_dns      = "CLOUD_DNS"
@@ -8246,7 +8255,7 @@ func testAccContainerCluster_network_tier_config_none(clusterName, networkName, 
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   dns_config {
     cluster_dns      = "CLOUD_DNS"
@@ -8311,7 +8320,7 @@ func testAccContainerCluster_basic(name, networkName, subnetworkName string) str
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   network            = "%s"
   subnetwork         = "%s"
@@ -8325,7 +8334,7 @@ func testAccContainerCluster_basicWithMinGKEVersion(name, networkName, subnetwor
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   network            = "%s"
   subnetwork         = "%s"
@@ -8343,7 +8352,7 @@ data "google_project" "project" {
 }
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   network            = "%s"
   subnetwork         = "%s"
@@ -8360,7 +8369,7 @@ func testAccContainerCluster_networkingModeRoutes(firstName, secondName, network
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
   name                = "%s"
-  location            = "us-central1-a"
+  location            = "us-east1-b"
   initial_node_count  = 1
   networking_mode     = "ROUTES"
   network             = "%s"
@@ -8370,7 +8379,7 @@ resource "google_container_cluster" "primary" {
 
 resource "google_container_cluster" "secondary" {
   name                = "%s"
-  location            = "us-central1-a"
+  location            = "us-east1-b"
   initial_node_count  = 1
   network             = "%s"
   subnetwork          = "%s"
@@ -8384,12 +8393,12 @@ func testAccContainerCluster_misc(name, networkName, subnetworkName string) stri
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   remove_default_node_pool = true
   node_config {
-    machine_type = "e2-micro"
+    machine_type = "n4-standard-2"
   }
 
   lifecycle {
@@ -8397,8 +8406,7 @@ resource "google_container_cluster" "primary" {
   }
 
   node_locations = [
-    "us-central1-b",
-    "us-central1-c",
+    "us-east1-c",
   ]
 
   enable_legacy_abac      = true
@@ -8428,12 +8436,12 @@ func testAccContainerCluster_misc_update(name, networkName, subnetworkName strin
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   remove_default_node_pool = true # Not worth updating
   node_config {
-    machine_type = "e2-micro"
+    machine_type = "n4-standard-2"
   }
 
   lifecycle {
@@ -8441,8 +8449,8 @@ resource "google_container_cluster" "primary" {
   }
 
   node_locations = [
-    "us-central1-f",
-    "us-central1-c",
+    "us-east1-c",
+    "us-east1-d",
   ]
 
   enable_legacy_abac      = false
@@ -8477,7 +8485,7 @@ data "google_project" "project" {
 
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   min_master_version = "latest"
@@ -8559,7 +8567,7 @@ data "google_project" "project" {
 
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   min_master_version = "latest"
@@ -8647,7 +8655,7 @@ resource "google_pubsub_topic" "%s" {
 
 resource "google_container_cluster" "notification_config" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   notification_config {
     pubsub {
@@ -8667,7 +8675,7 @@ func testAccContainerCluster_disableNotificationConfig(clusterName, networkName,
 	return fmt.Sprintf(`
 resource "google_container_cluster" "notification_config" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   notification_config {
     pubsub {
@@ -8692,7 +8700,7 @@ resource "google_pubsub_topic" "%s" {
 
 resource "google_container_cluster" "filtered_notification_config" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   notification_config {
     pubsub {
@@ -8721,7 +8729,7 @@ resource "google_pubsub_topic" "%s" {
 
 resource "google_container_cluster" "filtered_notification_config" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   notification_config {
 	pubsub {
@@ -8749,7 +8757,7 @@ resource "google_pubsub_topic" "%s" {
 
 resource "google_container_cluster" "filtered_notification_config" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   notification_config {
     pubsub {
@@ -8801,7 +8809,7 @@ func testAccContainerCluster_withLocalSsdEncryptionMode(clusterName, npName, net
 	return fmt.Sprintf(`
 resource "google_container_cluster" "local_ssd_encryption_mode" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   release_channel {
     channel = "RAPID"
   }
@@ -8827,7 +8835,7 @@ func testAccContainerCluster_disableMaxRunDuration(clusterName, npName, networkN
 	return fmt.Sprintf(`
 resource "google_container_cluster" "max_run_duration" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   release_channel {
     channel = "RAPID"
   }
@@ -8836,7 +8844,7 @@ resource "google_container_cluster" "max_run_duration" {
     name = "%s"
     initial_node_count = 1
     node_config {
-      machine_type = "n1-standard-2"
+      machine_type = "n4-standard-2"
     }
   }
 
@@ -8851,7 +8859,7 @@ func testAccContainerCluster_withMaxRunDuration(clusterName, npName, networkName
 	return fmt.Sprintf(`
 resource "google_container_cluster" "max_run_duration" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   release_channel {
     channel = "RAPID"
   }
@@ -8860,7 +8868,7 @@ resource "google_container_cluster" "max_run_duration" {
     name = "%s"
     initial_node_count = 1
     node_config {
-      machine_type = "n1-standard-2"
+      machine_type = "n4-standard-2"
 	  max_run_duration = "%s"
     }
   }
@@ -8875,14 +8883,14 @@ resource "google_container_cluster" "max_run_duration" {
 func testAccContainerCluster_withFlexStart(clusterName, npName, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "uscentral1a" {
-  location = "us-central1-a"
+  location = "us-east1-b"
 }
 
 resource "google_container_cluster" "flex_start" {
   min_master_version = data.google_container_engine_versions.uscentral1a.release_channel_latest_version["RAPID"]
 
   name                = "%s"
-  location            = "us-central1-a"
+  location            = "us-east1-b"
 
   release_channel {
     channel = "RAPID"
@@ -8898,7 +8906,7 @@ resource "google_container_cluster" "flex_start" {
 	}
 
     node_config {
-      machine_type = "n1-standard-1"
+      machine_type = "n4-standard-2"
 	  flex_start = true
 	  max_run_duration = "604800s"
 	  
@@ -8926,7 +8934,7 @@ func testAccContainerCluster_withILBSubSetting(clusterName, npName, networkName,
 	return fmt.Sprintf(`
 resource "google_container_cluster" "confidential_nodes" {
   name     = "%s"
-  location = "us-central1-a"
+  location = "us-east1-b"
   release_channel {
     channel = "RAPID"
   }
@@ -8935,7 +8943,7 @@ resource "google_container_cluster" "confidential_nodes" {
     name               = "%s"
     initial_node_count = 1
     node_config {
-      machine_type = "e2-micro"
+      machine_type = "n4-standard-2"
     }
   }
 
@@ -8953,7 +8961,7 @@ func testAccContainerCluster_omittedILBSubSetting(clusterName, npName, networkNa
 	return fmt.Sprintf(`
 resource "google_container_cluster" "confidential_nodes" {
   name     = "%s"
-  location = "us-central1-a"
+  location = "us-east1-b"
   release_channel {
     channel = "RAPID"
   }
@@ -8962,7 +8970,7 @@ resource "google_container_cluster" "confidential_nodes" {
     name               = "%s"
     initial_node_count = 1
     node_config {
-      machine_type = "e2-micro"
+      machine_type = "n4-standard-2"
     }
   }
 
@@ -8980,7 +8988,7 @@ func testAccContainerCluster_disableILBSubSetting(clusterName, npName, networkNa
 	return fmt.Sprintf(`
 resource "google_container_cluster" "confidential_nodes" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   release_channel {
     channel = "RAPID"
   }
@@ -8989,7 +8997,7 @@ resource "google_container_cluster" "confidential_nodes" {
     name = "%s"
     initial_node_count = 1
     node_config {
-      machine_type = "e2-micro"
+      machine_type = "n4-standard-2"
     }
   }
 
@@ -9006,7 +9014,7 @@ func testAccContainerCluster_disableL4LbFirewallReconciliation(clusterName, npNa
 	return fmt.Sprintf(`
 resource "google_container_cluster" "confidential_nodes" {
   name     = "%s"
-  location = "us-central1-a"
+  location = "us-east1-b"
   release_channel {
     channel = "RAPID"
   }
@@ -9015,7 +9023,7 @@ resource "google_container_cluster" "confidential_nodes" {
     name               = "%s"
     initial_node_count = 1
     node_config {
-      machine_type = "e2-micro"
+      machine_type = "n4-standard-2"
     }
   }
 
@@ -9034,7 +9042,7 @@ func testAccContainerCluster_enableL4LbFirewallReconciliation(clusterName, npNam
 	return fmt.Sprintf(`
 resource "google_container_cluster" "confidential_nodes" {
   name     = "%s"
-  location = "us-central1-a"
+  location = "us-east1-b"
   release_channel {
     channel = "RAPID"
   }
@@ -9043,7 +9051,7 @@ resource "google_container_cluster" "confidential_nodes" {
     name               = "%s"
     initial_node_count = 1
     node_config {
-      machine_type = "e2-micro"
+      machine_type = "n4-standard-2"
     }
   }
 
@@ -9062,11 +9070,11 @@ func testAccContainerCluster_withNetworkPolicyEnabled(clusterName, networkName, 
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_network_policy_enabled" {
   name                     = "%s"
-  location                 = "us-central1-a"
+  location                 = "us-east1-b"
   initial_node_count       = 1
   remove_default_node_pool = true
   node_config {
-    machine_type = "e2-micro"
+    machine_type = "n4-standard-2"
   }
 
   lifecycle {
@@ -9095,7 +9103,7 @@ func testAccContainerCluster_withDeletionProtection(clusterName, networkName, su
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   deletion_protection = %s
@@ -9109,7 +9117,7 @@ func testAccContainerCluster_withReleaseChannelEnabled(clusterName, channel, net
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_release_channel" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   release_channel {
@@ -9127,12 +9135,12 @@ func testAccContainerCluster_withReleaseChannelEnabledDefaultVersion(clusterName
 	return fmt.Sprintf(`
 
 data "google_container_engine_versions" "central1a" {
-  location = "us-central1-a"
+  location = "us-east1-b"
 }
 
 resource "google_container_cluster" "with_release_channel" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   min_master_version = data.google_container_engine_versions.central1a.release_channel_default_version["%s"]
   network            = "%s"
@@ -9147,7 +9155,7 @@ func testAccContainerCluster_withGkeAutoUpgradeConfig(clusterName, patchMode, ne
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_gke_auto_upgrade_config" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   gke_auto_upgrade_config {
@@ -9165,7 +9173,7 @@ func testAccContainerCluster_withTelemetryEnabled(clusterName, telemetryType, ne
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_cluster_telemetry" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   cluster_telemetry {
@@ -9183,11 +9191,11 @@ func testAccContainerCluster_removeNetworkPolicy(clusterName, networkName, subne
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_network_policy_enabled" {
   name                     = "%s"
-  location                 = "us-central1-a"
+  location                 = "us-east1-b"
   initial_node_count       = 1
   remove_default_node_pool = true
   node_config {
-    machine_type = "e2-micro"
+    machine_type = "n4-standard-2"
   }
 
   lifecycle {
@@ -9206,11 +9214,11 @@ func testAccContainerCluster_withNetworkPolicyDisabled(clusterName, networkName,
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_network_policy_enabled" {
   name                     = "%s"
-  location                 = "us-central1-a"
+  location                 = "us-east1-b"
   initial_node_count       = 1
   remove_default_node_pool = true
   node_config {
-    machine_type = "e2-micro"
+    machine_type = "n4-standard-2"
   }
 
   lifecycle {
@@ -9232,11 +9240,11 @@ func testAccContainerCluster_withNetworkPolicyConfigDisabled(clusterName, networ
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_network_policy_enabled" {
   name                     = "%s"
-  location                 = "us-central1-a"
+  location                 = "us-east1-b"
   initial_node_count       = 1
   remove_default_node_pool = true
   node_config {
-    machine_type = "e2-micro"
+    machine_type = "n4-standard-2"
   }
 
   lifecycle {
@@ -9264,7 +9272,7 @@ func testAccContainerCluster_withAuthenticatorGroupsConfigUpdate(name, orgDomain
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   authenticator_groups_config {
@@ -9282,7 +9290,7 @@ func testAccContainerCluster_withAuthenticatorGroupsConfigUpdate2(name, networkN
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   authenticator_groups_config {
@@ -9314,7 +9322,7 @@ func testAccContainerCluster_withMasterAuthorizedNetworksConfig(clusterName, net
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_master_authorized_networks" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   master_authorized_networks_config {
@@ -9333,7 +9341,7 @@ func testAccContainerCluster_removeMasterAuthorizedNetworksConfig(clusterName, n
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_master_authorized_networks" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   network    = "%s"
@@ -9348,7 +9356,7 @@ func testAccContainerCluster_regional(clusterName, networkName, subnetworkName s
 	return fmt.Sprintf(`
 resource "google_container_cluster" "regional" {
   name               = "%s"
-  location           = "us-central1"
+  location           = "us-east1"
   initial_node_count = 1
 
   network    = "%s"
@@ -9394,7 +9402,7 @@ func TestAccContainerCluster_withPrivateEndpointSubnetwork(t *testing.T) {
 func testAccContainerCluster_withPrivateEndpointSubnetwork(containerNetName, clusterName, s1Name, s1Cidr, s2Name, s2Cidr string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "uscentral1a" {
-  location = "us-central1-a"
+  location = "us-east1-b"
 }
 
 resource "google_compute_network" "container_network" {
@@ -9406,7 +9414,7 @@ resource "google_compute_subnetwork" "container_subnetwork1" {
   name                     = "%s"
   network                  = google_compute_network.container_network.name
   ip_cidr_range            = "%s"
-  region                   = "us-central1"
+  region                   = "us-east1"
   private_ip_google_access = true
 }
 
@@ -9414,13 +9422,13 @@ resource "google_compute_subnetwork" "container_subnetwork2" {
   name                     = "%s"
   network                  = google_compute_network.container_network.name
   ip_cidr_range            = "%s"
-  region                   = "us-central1"
+  region                   = "us-east1"
   private_ip_google_access = true
 }
 
 resource "google_container_cluster" "with_private_endpoint_subnetwork" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   min_master_version = data.google_container_engine_versions.uscentral1a.release_channel_latest_version["STABLE"]
   initial_node_count = 1
 
@@ -9472,7 +9480,7 @@ resource "google_compute_subnetwork" "container_subnetwork" {
   name                     = google_compute_network.container_network.name
   network                  = google_compute_network.container_network.name
   ip_cidr_range            = "10.0.36.0/24"
-  region                   = "us-central1"
+  region                   = "us-east1"
   private_ip_google_access = true
 
   secondary_ip_range {
@@ -9488,7 +9496,7 @@ resource "google_compute_subnetwork" "container_subnetwork" {
 
 resource "google_container_cluster" "with_private_endpoint_subnetwork" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   networking_mode    = "VPC_NATIVE"
 
@@ -9539,7 +9547,7 @@ func TestAccContainerCluster_withCidrBlockWithoutPrivateEndpointSubnetwork(t *te
 func testAccContainerCluster_withCidrBlockWithoutPrivateEndpointSubnetwork(containerNetName, clusterName string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "uscentral1a" {
-  location = "us-central1-a"
+  location = "us-east1-b"
 }
 
 resource "google_compute_network" "container_network" {
@@ -9551,13 +9559,17 @@ resource "google_compute_subnetwork" "container_subnetwork" {
   name                     = google_compute_network.container_network.name
   network                  = google_compute_network.container_network.name
   ip_cidr_range            = "10.0.36.0/24"
+  region                   = "us-east1"
 }
 
 resource "google_container_cluster" "with_private_flexible_cluster" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   min_master_version = data.google_container_engine_versions.uscentral1a.release_channel_latest_version["STABLE"]
   initial_node_count = 1
+  node_config {
+    machine_type = "n4-standard-2"
+  }
 
   networking_mode = "VPC_NATIVE"
   network    = google_compute_network.container_network.name
@@ -9577,7 +9589,7 @@ func TestAccContainerCluster_withEnablePrivateEndpointToggle(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -9613,12 +9625,12 @@ func TestAccContainerCluster_withEnablePrivateEndpointToggle(t *testing.T) {
 func testAccContainerCluster_withEnablePrivateEndpoint(clusterName, flag, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "uscentral1a" {
-  location = "us-central1-a"
+  location = "us-east1-b"
 }
 
 resource "google_container_cluster" "with_enable_private_endpoint" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   min_master_version = data.google_container_engine_versions.uscentral1a.release_channel_latest_version["STABLE"]
   initial_node_count = 1
 
@@ -9641,7 +9653,7 @@ func testAccContainerCluster_regionalWithNodePool(cluster, nodePool, networkName
 	return fmt.Sprintf(`
 resource "google_container_cluster" "regional" {
   name     = "%s"
-  location = "us-central1"
+  location = "us-east1"
 
   node_pool {
     name = "%s"
@@ -9660,12 +9672,12 @@ func testAccContainerCluster_regionalNodeLocations(clusterName, networkName, sub
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_node_locations" {
   name               = "%s"
-  location           = "us-central1"
+  location           = "us-east1"
   initial_node_count = 1
 
   node_locations = [
-    "us-central1-f",
-    "us-central1-c",
+    "us-east1-b",
+    "us-east1-d",
   ]
   network    = "%s"
   subnetwork = "%s"
@@ -9679,12 +9691,12 @@ func testAccContainerCluster_regionalUpdateNodeLocations(clusterName, networkNam
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_node_locations" {
   name               = "%s"
-  location           = "us-central1"
+  location           = "us-east1"
   initial_node_count = 1
 
   node_locations = [
-    "us-central1-f",
-    "us-central1-b",
+    "us-east1-b",
+    "us-east1-c",
   ]
   network    = "%s"
   subnetwork = "%s"
@@ -9704,7 +9716,7 @@ resource "google_compute_network" "container_network" {
 resource "google_compute_subnetwork" "container_subnetwork" {
   name    = google_compute_network.container_network.name
   network = google_compute_network.container_network.name
-  region  = "us-central1"
+  region  = "us-east1"
 
   ip_cidr_range            = "10.0.35.0/24"
   private_ip_google_access = true
@@ -9722,7 +9734,7 @@ resource "google_compute_subnetwork" "container_subnetwork" {
 
 resource "google_container_cluster" "with_tpu" {
   name               = "%s"
-  location           = "us-central1-b"
+  location           = "us-east1-c"
   initial_node_count = 1
 
   enable_tpu = true
@@ -9753,7 +9765,7 @@ func testAccContainerCluster_withIntraNodeVisibility(clusterName, networkName, s
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_intranode_visibility" {
   name                        = "%s"
-  location                    = "us-central1-a"
+  location                    = "us-east1-b"
   initial_node_count          = 1
   enable_intranode_visibility = true
 
@@ -9769,7 +9781,7 @@ func testAccContainerCluster_updateIntraNodeVisibility(clusterName, networkName,
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_intranode_visibility" {
   name                        = "%s"
-  location                    = "us-central1-a"
+  location                    = "us-east1-b"
   initial_node_count          = 1
   enable_intranode_visibility = false
   private_ipv6_google_access  = "PRIVATE_IPV6_GOOGLE_ACCESS_BIDIRECTIONAL"
@@ -9785,12 +9797,12 @@ resource "google_container_cluster" "with_intranode_visibility" {
 func testAccContainerCluster_withVersion(clusterName, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "central1a" {
-  location = "us-central1-a"
+  location = "us-east1-b"
 }
 
 resource "google_container_cluster" "with_version" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   min_master_version = data.google_container_engine_versions.central1a.latest_master_version
   initial_node_count = 1
 
@@ -9805,12 +9817,12 @@ resource "google_container_cluster" "with_version" {
 func testAccContainerCluster_withLowerVersion(clusterName, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "central1a" {
-  location = "us-central1-a"
+  location = "us-east1-b"
 }
 
 resource "google_container_cluster" "with_version" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   min_master_version = data.google_container_engine_versions.central1a.release_channel_default_version["STABLE"]
   node_version       = data.google_container_engine_versions.central1a.release_channel_default_version["STABLE"]
   initial_node_count = 1
@@ -9827,7 +9839,7 @@ func testAccContainerCluster_withMasterAuthNoCert(clusterName, networkName, subn
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_master_auth_no_cert" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   master_auth {
     client_certificate_config {
@@ -9845,12 +9857,12 @@ resource "google_container_cluster" "with_master_auth_no_cert" {
 func testAccContainerCluster_updateVersion(clusterName, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "central1a" {
-  location = "us-central1-a"
+  location = "us-east1-b"
 }
 
 resource "google_container_cluster" "with_version" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   min_master_version = data.google_container_engine_versions.central1a.release_channel_latest_version["STABLE"]
   node_version       = data.google_container_engine_versions.central1a.release_channel_latest_version["STABLE"]
   initial_node_count = 1
@@ -9867,7 +9879,7 @@ func testAccContainerCluster_withNodeConfig(clusterName, networkName, subnetwork
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_node_config" {
   name               = "%s"
-  location           = "us-central1-f"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   node_config {
@@ -9920,10 +9932,11 @@ func testAccContainerCluster_withNodeConfigFastSocket(clusterName, networkName, 
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_fast_socket" {
   name               = "%s"
-  location           = "us-central1-f"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   node_config {
+    machine_type = "n4-standard-2"
     gvnic {
       enabled = true
     }
@@ -9943,7 +9956,7 @@ func testAccContainerCluster_withNodeConfigGcfsConfig(clusterName, networkName, 
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_node_config_gcfs_config" {
   name               = "%s"
-  location           = "us-central1-f"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   node_config {
@@ -9963,7 +9976,7 @@ func testAccContainerCluster_withNodeConfigKubeletConfigSettingsBaseline(cluster
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_node_config_kubelet_config_settings" {
   name               = "%s"
-  location           = "us-central1-f"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   node_config {
@@ -10014,7 +10027,7 @@ func testAccContainerCluster_withNodeConfigKubeletConfigSettingsUpdates(clusterN
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_node_config_kubelet_config_settings" {
   name               = "%s"
-  location           = "us-central1-f"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   node_config {
@@ -10067,24 +10080,24 @@ resource "google_container_cluster" "with_node_config_kubelet_config_settings" {
 func testAccContainerCluster_withNodeConfigKubeletConfigSettingsInNodePool(clusterName, nodePoolName, networkName, subnetworkName, thpDefrag, thpEnabled string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "central1f" {
-  location = "us-central1-f"
+  location = "us-east1-b"
 }
 resource "google_compute_node_template" "soletenant-tmpl" {
   name      = "%s"
-  region    = "us-central1"
+  region    = "us-east1"
   node_type = "n1-node-96-624"
   cpu_overcommit_type = "ENABLED"
 }
 resource "google_compute_node_group" "group" {
   name        = "%s"
-  zone        = "us-central1-f"
+  zone        = "us-east1-b"
   description = "example google_compute_node_group for Terraform Google Provider"
   initial_size	= 1
   node_template = google_compute_node_template.soletenant-tmpl.id
 }
 resource "google_container_cluster" "with_node_config_kubelet_config_settings_in_node_pool" {
   name     = "%s"
-  location = "us-central1-f"
+  location = "us-east1-b"
   min_master_version = data.google_container_engine_versions.central1f.latest_master_version
 
   node_pool {
@@ -10152,7 +10165,7 @@ func testAccContainerCluster_withInsecureKubeletReadonlyPortEnabledInNodePool(cl
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_insecure_kubelet_readonly_port_enabled_in_node_pool" {
   name     = "%s"
-  location = "us-central1-f"
+  location = "us-east1-b"
 
   node_pool {
     name               = "%s"
@@ -10176,7 +10189,7 @@ func testAccContainerCluster_withInsecureKubeletReadonlyPortEnabledDefaultsUpdat
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_insecure_kubelet_readonly_port_enabled_node_pool_update" {
   name               = "%s"
-  location           = "us-central1-f"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   network    = "%s"
@@ -10191,7 +10204,7 @@ func testAccContainerCluster_withInsecureKubeletReadonlyPortEnabledDefaultsUpdat
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_insecure_kubelet_readonly_port_enabled_node_pool_update" {
   name               = "%s"
-  location           = "us-central1-f"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   node_pool_defaults {
@@ -10211,7 +10224,7 @@ func testAccContainerCluster_withLoggingVariantInNodeConfig(clusterName, logging
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_logging_variant_in_node_config" {
   name               = "%s"
-  location           = "us-central1-f"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   node_config {
@@ -10229,7 +10242,7 @@ func testAccContainerCluster_withLoggingVariantInNodePool(clusterName, nodePoolN
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_logging_variant_in_node_pool" {
   name     = "%s"
-  location = "us-central1-f"
+  location = "us-east1-b"
 
   node_pool {
     name               = "%s"
@@ -10250,7 +10263,7 @@ func testAccContainerCluster_withLoggingVariantNodePoolDefault(clusterName, logg
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_logging_variant_node_pool_default" {
   name               = "%s"
-  location           = "us-central1-f"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   node_pool_defaults {
@@ -10270,7 +10283,7 @@ func testAccContainerCluster_withAdvancedMachineFeaturesInNodePool(clusterName, 
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_advanced_machine_features_in_node_pool" {
   name     = "%s"
-  location = "us-central1-f"
+  location = "us-east1-b"
 
   node_pool {
     name               = "%s"
@@ -10295,7 +10308,7 @@ func testAccContainerCluster_withNodePoolDefaults(clusterName, enabled, networkN
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_node_pool_defaults" {
   name               = "%s"
-  location           = "us-central1-f"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   node_pool_defaults {
@@ -10317,7 +10330,7 @@ func testAccContainerCluster_withNodeConfigUpdate(clusterName, networkName, subn
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_node_config" {
   name               = "%s"
-  location           = "us-central1-f"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   node_config {
@@ -10403,11 +10416,11 @@ func testAccContainerCluster_withNodeConfigLinuxNodeConfig(clusterName, networkN
 
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "central1a" {
-  location = "us-central1-a"
+  location = "us-east1-b"
 }
 resource "google_container_cluster" "with_linux_node_config" {
   name               = "%s"
-  location           = "us-central1-f"
+  location           = "us-east1-b"
   initial_node_count = 1
   min_master_version = data.google_container_engine_versions.central1a.release_channel_latest_version["RAPID"]
 
@@ -10433,11 +10446,11 @@ func testAccContainerCluster_withNodeConfigScopeAlias(clusterName, networkName, 
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_node_config_scope_alias" {
   name               = "%s"
-  location           = "us-central1-f"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   node_config {
-    machine_type = "e2-micro"
+    machine_type = "n4-standard-2"
     disk_size_gb = 15
     oauth_scopes = ["compute-rw", "storage-ro", "logging-write", "monitoring"]
   }
@@ -10453,13 +10466,13 @@ func testAccContainerCluster_withNodeConfigShieldedInstanceConfig(clusterName, n
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_node_config" {
   name               = "%s"
-  location           = "us-central1-f"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   node_config {
-    machine_type = "e2-micro"
+    machine_type = "n4-standard-2"
     disk_size_gb = 15
-    disk_type    = "pd-ssd"
+    disk_type    = "hyperdisk-balanced"
     oauth_scopes = [
       "https://www.googleapis.com/auth/monitoring",
       "https://www.googleapis.com/auth/compute",
@@ -10497,13 +10510,13 @@ func testAccContainerCluster_withNodeConfigReservationAffinity(clusterName, netw
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_node_config" {
   name               = "%s"
-  location           = "us-central1-f"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   node_config {
-    machine_type = "e2-medium"
+    machine_type = "n4-standard-2"
     disk_size_gb = 15
-    disk_type    = "pd-ssd"
+    disk_type    = "hyperdisk-balanced"
     oauth_scopes = [
       "https://www.googleapis.com/auth/monitoring",
       "https://www.googleapis.com/auth/compute",
@@ -10551,12 +10564,12 @@ resource "google_project_service" "container" {
 
 resource "google_compute_reservation" "gce_reservation" {
   name = "%s"
-  zone = "us-central1-f"
+  zone = "us-east1-b"
 
   specific_reservation {
     count = 1
     instance_properties {
-      machine_type     = "n1-standard-1"
+      machine_type     = "c3-standard-4"
     }
   }
 
@@ -10566,13 +10579,13 @@ resource "google_compute_reservation" "gce_reservation" {
 
 resource "google_container_cluster" "with_node_config" {
   name               = "%s"
-  location           = "us-central1-f"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   node_config {
-    machine_type = "n1-standard-1"
+    machine_type = "c3-standard-4"
     disk_size_gb = 15
-    disk_type    = "pd-ssd"
+    disk_type    = "hyperdisk-balanced"
     oauth_scopes = [
       "https://www.googleapis.com/auth/monitoring",
       "https://www.googleapis.com/auth/compute",
@@ -10624,12 +10637,12 @@ resource "google_project_service" "container" {
 
 resource "google_compute_reservation" "gce_reservation" {
   name = "%s"
-  zone = "us-central1-f"
+  zone = "us-east1-b"
 
   specific_reservation {
     count = 1
     instance_properties {
-      machine_type     = "n1-standard-1"
+      machine_type     = "c3-standard-4"
     }
   }
 
@@ -10639,13 +10652,13 @@ resource "google_compute_reservation" "gce_reservation" {
 
 resource "google_container_cluster" "with_node_config" {
   name               = "%s"
-  location           = "us-central1-f"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   node_config {
-    machine_type = "n1-standard-1"
+    machine_type = "c3-standard-4"
     disk_size_gb = 15
-    disk_type    = "pd-ssd"
+    disk_type    = "hyperdisk-balanced"
     oauth_scopes = [
       "https://www.googleapis.com/auth/monitoring",
       "https://www.googleapis.com/auth/compute",
@@ -10683,7 +10696,7 @@ func testAccContainerCluster_withNodeConfigNodeImageConfig(clusterName, networkN
 
 resource "google_container_cluster" "with_node_image_config" {
   name               = "%s"
-  location           = "us-central1-f"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   node_config {
@@ -10708,14 +10721,14 @@ resource "google_container_cluster" "with_node_image_config" {
 func testAccContainerCluster_withWorkloadMetadataConfig(clusterName, workloadMetadataConfigMode, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "central1a" {
-  location = "us-central1-a"
+  location = "us-east1-b"
 }
 
 data "google_project" "project" {}
 
 resource "google_container_cluster" "with_workload_metadata_config" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   min_master_version = data.google_container_engine_versions.central1a.latest_master_version
 
@@ -10744,17 +10757,17 @@ resource "google_container_cluster" "with_workload_metadata_config" {
 func testAccContainerCluster_withSandboxConfig(clusterName, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "central1a" {
-  location = "us-central1-a"
+  location = "us-east1-b"
 }
 
 resource "google_container_cluster" "with_sandbox_config" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   min_master_version = data.google_container_engine_versions.central1a.latest_master_version
 
   node_config {
-    machine_type = "n1-standard-1" // can't be e2 because of gvisor
+    machine_type = "n4-standard-2" // can't be e2 because of gvisor
     oauth_scopes = [
       "https://www.googleapis.com/auth/logging.write",
       "https://www.googleapis.com/auth/monitoring",
@@ -10787,17 +10800,17 @@ resource "google_container_cluster" "with_sandbox_config" {
 func testAccContainerCluster_withSandboxConfig_changeLabels(clusterName, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "central1a" {
-  location = "us-central1-a"
+  location = "us-east1-b"
 }
 
 resource "google_container_cluster" "with_sandbox_config" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   min_master_version = data.google_container_engine_versions.central1a.latest_master_version
 
   node_config {
-    machine_type = "n1-standard-1" // can't be e2 because of gvisor
+    machine_type = "n4-standard-2" // can't be e2 because of gvisor
     oauth_scopes = [
       "https://www.googleapis.com/auth/logging.write",
       "https://www.googleapis.com/auth/monitoring",
@@ -10831,17 +10844,17 @@ resource "google_container_cluster" "with_sandbox_config" {
 func testAccContainerCluster_withSandboxConfigType(clusterName, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "central1a" {
-  location = "us-central1-a"
+  location = "us-east1-b"
 }
 
 resource "google_container_cluster" "with_sandbox_config" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   min_master_version = data.google_container_engine_versions.central1a.latest_master_version
 
   node_config {
-    machine_type = "n1-standard-1" // can't be e2 because of gvisor
+    machine_type = "n4-standard-2" // can't be e2 because of gvisor
     oauth_scopes = [
       "https://www.googleapis.com/auth/logging.write",
       "https://www.googleapis.com/auth/monitoring",
@@ -10874,17 +10887,17 @@ resource "google_container_cluster" "with_sandbox_config" {
 func testAccContainerCluster_withSandboxConfigType_changeLabels(clusterName, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "central1a" {
-  location = "us-central1-a"
+  location = "us-east1-b"
 }
 
 resource "google_container_cluster" "with_sandbox_config" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   min_master_version = data.google_container_engine_versions.central1a.latest_master_version
 
   node_config {
-    machine_type = "n1-standard-1" // can't be e2 because of gvisor
+    machine_type = "n4-standard-2" // can't be e2 because of gvisor
     oauth_scopes = [
       "https://www.googleapis.com/auth/logging.write",
       "https://www.googleapis.com/auth/monitoring",
@@ -10919,7 +10932,7 @@ func testAccContainerCluster_withBootDiskKmsKey(clusterName, kmsKeyName, network
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_boot_disk_kms_key" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   release_channel {
     channel = "RAPID"
@@ -10950,7 +10963,7 @@ resource "google_compute_network" "container_network" {
 
 resource "google_container_cluster" "with_net_ref_by_url" {
   name               = "%s-url"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   network = google_compute_network.container_network.self_link
@@ -10960,7 +10973,7 @@ resource "google_container_cluster" "with_net_ref_by_url" {
 
 resource "google_container_cluster" "with_net_ref_by_name" {
   name               = "%s-name"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   network = google_compute_network.container_network.name
@@ -10974,7 +10987,7 @@ func testAccContainerCluster_autoprovisioningDefaultsManagement(clusterName, net
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_autoprovisioning_management" {
   name               = "%s"
-  location           = "us-central1-f"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   cluster_autoscaling {
@@ -11020,7 +11033,7 @@ func testAccContainerCluster_autoprovisioningLocations(clusterName, networkName,
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_autoprovisioning_locations" {
   name               = "%s"
-  location           = "us-central1-f"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   cluster_autoscaling {
@@ -11069,12 +11082,12 @@ resource "google_compute_http_health_check" "default" {
 
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   node_locations = [
-    "us-central1-b",
-    "us-central1-c",
+    "us-east1-c",
+    "us-east1-d",
   ]
 
   node_config {
@@ -11097,7 +11110,7 @@ func testAccContainerCluster_withNodePoolBasic(cluster, nodePool, networkName, s
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_node_pool" {
   name     = "%s"
-  location = "us-central1-a"
+  location = "us-east1-b"
 
   node_pool {
     name               = "%s"
@@ -11115,12 +11128,12 @@ resource "google_container_cluster" "with_node_pool" {
 func testAccContainerCluster_withNodePoolLowerVersion(cluster, nodePool, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "central1a" {
-  location = "us-central1-a"
+  location = "us-east1-b"
 }
 
 resource "google_container_cluster" "with_node_pool" {
   name     = "%s"
-  location = "us-central1-a"
+  location = "us-east1-b"
 
   min_master_version = data.google_container_engine_versions.central1a.latest_master_version
 
@@ -11140,12 +11153,12 @@ resource "google_container_cluster" "with_node_pool" {
 func testAccContainerCluster_withNodePoolUpdateVersion(cluster, nodePool, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "central1a" {
-  location = "us-central1-a"
+  location = "us-east1-b"
 }
 
 resource "google_container_cluster" "with_node_pool" {
   name     = "%s"
-  location = "us-central1-a"
+  location = "us-east1-b"
 
   min_master_version = data.google_container_engine_versions.central1a.latest_master_version
 
@@ -11166,11 +11179,11 @@ func testAccContainerCluster_withNodePoolNodeLocations(cluster, nodePool, networ
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_node_pool" {
   name     = "%s"
-  location = "us-central1-a"
+  location = "us-east1-b"
 
   node_locations = [
-    "us-central1-b",
-    "us-central1-c",
+    "us-east1-c",
+    "us-east1-d",
   ]
 
   node_pool {
@@ -11189,11 +11202,11 @@ func testAccContainerCluster_withNodePoolResize(cluster, nodePool, networkName, 
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_node_pool" {
   name     = "%s"
-  location = "us-central1-a"
+  location = "us-east1-b"
 
   node_locations = [
-    "us-central1-b",
-    "us-central1-c",
+    "us-east1-c",
+    "us-east1-d",
   ]
 
   node_pool {
@@ -11212,7 +11225,7 @@ func testAccContainerCluster_withAutoscalingProfile(cluster, autoscalingProfile,
 	config := fmt.Sprintf(`
 resource "google_container_cluster" "autoscaling_with_profile" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   cluster_autoscaling {
@@ -11231,12 +11244,12 @@ resource "google_container_cluster" "autoscaling_with_profile" {
 func testAccContainerCluster_autoprovisioning(cluster, networkName, subnetworkName string, autoprovisioning, withNetworkTag, withLimits bool) string {
 	config := fmt.Sprintf(`
 data "google_container_engine_versions" "central1a" {
-  location = "us-central1-a"
+  location = "us-east1-b"
 }
 
 resource "google_container_cluster" "with_autoprovisioning" {
   name                = "%s"
-  location            = "us-central1-a"
+  location            = "us-east1-b"
   min_master_version  = data.google_container_engine_versions.central1a.latest_master_version
   initial_node_count  = 1
 
@@ -11287,12 +11300,12 @@ resource "google_container_cluster" "with_autoprovisioning" {
 func testAccContainerCluster_autoprovisioningDefaults(cluster, networkName, subnetworkName string, monitoringWrite bool) string {
 	config := fmt.Sprintf(`
 data "google_container_engine_versions" "central1a" {
-  location = "us-central1-a"
+  location = "us-east1-b"
 }
 
 resource "google_container_cluster" "with_autoprovisioning" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   min_master_version = data.google_container_engine_versions.central1a.latest_master_version
   initial_node_count = 1
 
@@ -11341,12 +11354,12 @@ func testAccContainerCluster_autoprovisioningDefaultsMinCpuPlatform(cluster, net
 
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "central1a" {
-  location = "us-central1-a"
+  location = "us-east1-b"
 }
 
 resource "google_container_cluster" "with_autoprovisioning" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   network    = "%s"
   subnetwork    = "%s"
@@ -11391,7 +11404,7 @@ func testAccContainerCluster_autoprovisioningDefaultsUpgradeSettings(clusterName
 	return fmt.Sprintf(`
     resource "google_container_cluster" "with_autoprovisioning_upgrade_settings" {
       name               = "%s"
-      location           = "us-central1-f"
+      location           = "us-east1-b"
       initial_node_count = 1
 
       cluster_autoscaling {
@@ -11428,7 +11441,7 @@ func testAccContainerCluster_autoprovisioningDefaultsUpgradeSettingsWithBlueGree
 	return fmt.Sprintf(`
       resource "google_container_cluster" "with_autoprovisioning_upgrade_settings" {
         name               = "%s"
-        location           = "us-central1-f"
+        location           = "us-east1-b"
         initial_node_count = 1
 
         cluster_autoscaling {
@@ -11473,11 +11486,11 @@ func testAccContainerCluster_autoprovisioningDefaultsDiskSizeGb(cluster, network
 
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "central1a" {
-  location = "us-central1-a"
+  location = "us-east1-b"
 }
 resource "google_container_cluster" "with_autoprovisioning" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   min_master_version = data.google_container_engine_versions.central1a.latest_master_version
   cluster_autoscaling {
@@ -11510,11 +11523,11 @@ func testAccContainerCluster_autoprovisioningDefaultsDiskType(cluster, networkNa
 
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "central1a" {
-  location = "us-central1-a"
+  location = "us-east1-b"
 }
 resource "google_container_cluster" "with_autoprovisioning" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   min_master_version = data.google_container_engine_versions.central1a.latest_master_version
   cluster_autoscaling {
@@ -11547,11 +11560,11 @@ func testAccContainerCluster_autoprovisioningDefaultsImageType(cluster, networkN
 
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "central1a" {
-  location = "us-central1-a"
+  location = "us-east1-b"
 }
 resource "google_container_cluster" "with_autoprovisioning" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   min_master_version = data.google_container_engine_versions.central1a.latest_master_version
   cluster_autoscaling {
@@ -11580,7 +11593,7 @@ func testAccContainerCluster_autoprovisioningDefaultsBootDiskKmsKey(clusterName,
 	return fmt.Sprintf(`
 resource "google_container_cluster" "nap_boot_disk_kms_key" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   release_channel {
     channel = "RAPID"
@@ -11610,11 +11623,11 @@ resource "google_container_cluster" "nap_boot_disk_kms_key" {
 func testAccContainerCluster_autoprovisioningDefaultsShieldedInstance(cluster, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "central1a" {
-  location = "us-central1-a"
+  location = "us-east1-b"
 }
 resource "google_container_cluster" "nap_shielded_instance" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   min_master_version = data.google_container_engine_versions.central1a.latest_master_version
   cluster_autoscaling {
@@ -11646,7 +11659,7 @@ func testAccContainerCluster_withNodePoolAutoscaling(cluster, np, networkName, s
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_node_pool" {
   name     = "%s"
-  location = "us-central1-a"
+  location = "us-east1-b"
 
   node_pool {
     name               = "%s"
@@ -11668,7 +11681,7 @@ func testAccContainerCluster_withNodePoolUpdateAutoscaling(cluster, np, networkN
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_node_pool" {
   name     = "%s"
-  location = "us-central1-a"
+  location = "us-east1-b"
 
   node_pool {
     name               = "%s"
@@ -11689,12 +11702,12 @@ resource "google_container_cluster" "with_node_pool" {
 func testAccContainerRegionalCluster_withNodePoolCIA(cluster, np, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "uscentral1a" {
-  location = "us-central1-a"
+  location = "us-east1-b"
 }
 
 resource "google_container_cluster" "with_node_pool" {
   name               = "%s"
-  location           = "us-central1"
+  location           = "us-east1"
   min_master_version = data.google_container_engine_versions.uscentral1a.release_channel_latest_version["STABLE"]
 
   node_pool {
@@ -11717,12 +11730,12 @@ resource "google_container_cluster" "with_node_pool" {
 func testAccContainerRegionalClusterUpdate_withNodePoolCIA(cluster, np, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "uscentral1a" {
-  location = "us-central1-a"
+  location = "us-east1-b"
 }
 
 resource "google_container_cluster" "with_node_pool" {
   name               = "%s"
-  location           = "us-central1"
+  location           = "us-east1"
   min_master_version = data.google_container_engine_versions.uscentral1a.release_channel_latest_version["STABLE"]
 
   node_pool {
@@ -11745,12 +11758,12 @@ resource "google_container_cluster" "with_node_pool" {
 func testAccContainerRegionalCluster_withNodePoolBasic(cluster, nodePool, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "uscentral1a" {
-  location = "us-central1-a"
+  location = "us-east1-b"
 }
 
 resource "google_container_cluster" "with_node_pool" {
   name               = "%s"
-  location           = "us-central1"
+  location           = "us-east1"
   min_master_version = data.google_container_engine_versions.uscentral1a.release_channel_latest_version["STABLE"]
 
   node_pool {
@@ -11769,7 +11782,7 @@ func testAccContainerCluster_withNodePoolNamePrefix(cluster, npPrefix, networkNa
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_node_pool_name_prefix" {
   name     = "%s"
-  location = "us-central1-a"
+  location = "us-east1-b"
 
   node_pool {
     name_prefix = "%s"
@@ -11787,7 +11800,7 @@ func testAccContainerCluster_withNodePoolMultiple(cluster, npPrefix, networkName
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_node_pool_multiple" {
   name     = "%s"
-  location = "us-central1-a"
+  location = "us-east1-b"
 
   node_pool {
     name       = "%s-one"
@@ -11810,7 +11823,7 @@ func testAccContainerCluster_withNodePoolConflictingNameFields(cluster, networkN
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_node_pool_multiple" {
   name     = "%s"
-  location = "us-central1-a"
+  location = "us-east1-b"
 
   network    = "%s"
   subnetwork = "%s"
@@ -11830,7 +11843,7 @@ func testAccContainerCluster_withNodePoolNodeConfig(cluster, np, networkName, su
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_node_pool_node_config" {
   name     = "%s"
-  location = "us-central1-a"
+  location = "us-east1-b"
   node_pool {
     name       = "%s"
     node_count = 2
@@ -11867,12 +11880,12 @@ resource "google_container_cluster" "with_node_pool_node_config" {
 func testAccContainerCluster_withNodePoolNodeDrainConfig(cluster, np, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "central1a" {
-  location = "us-central1-a"
+  location = "us-east1-b"
 }
 
 resource "google_container_cluster" "with_node_pool_node_drain_config" {
   name     = "%s"
-  location = "us-central1-a"
+  location = "us-east1-b"
   min_master_version = data.google_container_engine_versions.central1a.latest_master_version
   node_pool {
     name       = "%s"
@@ -11892,12 +11905,12 @@ resource "google_container_cluster" "with_node_pool_node_drain_config" {
 func testAccContainerCluster_withPrivateNodePoolNodeDrainConfig(cluster, np, networkName, subnetworkName, privateName, privateVal string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "central1a" {
-  location = "us-central1-a"
+  location = "us-east1-b"
 }
 
 resource "google_container_cluster" "with_node_pool_node_drain_config" {
   name     = "%s"
-  location = "us-central1-a"
+  location = "us-east1-b"
   min_master_version = data.google_container_engine_versions.central1a.latest_master_version
   node_pool {
     name       = "%s"
@@ -11917,12 +11930,12 @@ resource "google_container_cluster" "with_node_pool_node_drain_config" {
 func testAccContainerCluster_withNodePoolMaintenancyPolicy(cluster, np, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "central1a" {
-  location = "us-central1-a"
+  location = "us-east1-b"
 }
 
 resource "google_container_cluster" "with_node_pool_maintenance_policy" {
   name     = "%s"
-  location = "us-central1-a"
+  location = "us-east1-b"
   min_master_version = data.google_container_engine_versions.central1a.latest_master_version
   node_pool {
     name       = "%s"
@@ -11945,7 +11958,7 @@ func testAccContainerCluster_withClusterDisruptionBudget(clusterName, interval, 
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_cluster_disruption_budget" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   maintenance_policy {
@@ -11979,7 +11992,7 @@ func testAccContainerCluster_withDailyMaintenanceWindow(clusterName, startTime, 
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_maintenance_window" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   %s
 
@@ -12007,7 +12020,7 @@ func testAccContainerCluster_withRecurringTimeWindow(clusterName, startTime, end
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_recurring_maintenance_window" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   %s
 
@@ -12053,7 +12066,7 @@ func testAccContainerCluster_withRecurringMaintenanceWindow(clusterName string, 
 	return fmt.Sprintf(`
 		resource "google_container_cluster" "with_recurring_maintenance_window" {
 		  name               = "%s"
-		  location           = "us-central1-a"
+		  location           = "us-east1-b"
 		  initial_node_count = 1
 		  %s
 		  network    = "%s"
@@ -12070,7 +12083,7 @@ func testAccContainerCluster_withExclusion_RecurringMaintenanceWindow(clusterNam
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_maintenance_exclusion_window" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   maintenance_policy {
@@ -12103,8 +12116,11 @@ func testAccContainerCluster_withExclusionOptions_RecurringMaintenanceWindow(ccl
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_maintenance_exclusion_options" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
+  node_config {
+    machine_type = "n4-standard-2"
+  }
 
   maintenance_policy {
     recurring_window {
@@ -12142,8 +12158,11 @@ func testAccContainerCluster_withExclusionOptions_RecurringMaintenanceWindow_unt
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_maintenance_exclusion_options" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
+  node_config {
+    machine_type = "n4-standard-2"
+  }
 
   maintenance_policy {
     recurring_window {
@@ -12181,8 +12200,11 @@ func testAccContainerCluster_NoExclusionOptions_RecurringMaintenanceWindow(cclus
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_maintenance_exclusion_options" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
+  node_config {
+    machine_type = "n4-standard-2"
+  }
 
   maintenance_policy {
     recurring_window {
@@ -12214,8 +12236,11 @@ func testAccContainerCluster_updateExclusionOptions_RecurringMaintenanceWindow(c
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_maintenance_exclusion_options" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
+  node_config {
+    machine_type = "n4-standard-2"
+  }
 
   maintenance_policy {
     recurring_window {
@@ -12253,8 +12278,11 @@ func testAccContainerCluster_updateExclusionOptions_RecurringMaintenanceWindow_u
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_maintenance_exclusion_options" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
+  node_config {
+    machine_type = "n4-standard-2"
+  }
 
   maintenance_policy {
     recurring_window {
@@ -12292,7 +12320,7 @@ func testAccContainerCluster_withExclusion_NoMaintenanceWindow(clusterName strin
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_maintenance_exclusion_window" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   maintenance_policy {
@@ -12315,7 +12343,7 @@ func testAccContainerCluster_withExclusion_DailyMaintenanceWindow(clusterName, w
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_maintenance_exclusion_window" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   maintenance_policy {
@@ -12346,7 +12374,7 @@ resource "google_compute_network" "container_network" {
 resource "google_compute_subnetwork" "container_subnetwork" {
   name    = google_compute_network.container_network.name
   network = google_compute_network.container_network.name
-  region  = "us-central1"
+  region  = "us-east1"
 
   ip_cidr_range = "10.0.0.0/24"
 
@@ -12362,7 +12390,7 @@ resource "google_compute_subnetwork" "container_subnetwork" {
 
 resource "google_container_cluster" "with_ip_allocation_policy" {
   name     = "%s"
-  location = "us-central1-a"
+  location = "us-east1-b"
 
   network    = google_compute_network.container_network.name
   subnetwork = google_compute_subnetwork.container_subnetwork.name
@@ -12388,14 +12416,14 @@ resource "google_compute_network" "container_network" {
 resource "google_compute_subnetwork" "container_subnetwork" {
   name    = google_compute_network.container_network.name
   network = google_compute_network.container_network.name
-  region  = "us-central1"
+  region  = "us-east1"
 
   ip_cidr_range = "10.2.0.0/16"
 }
 
 resource "google_container_cluster" "with_ip_allocation_policy" {
   name       = "%s"
-  location   = "us-central1-a"
+  location   = "us-east1-b"
   network    = google_compute_network.container_network.name
   subnetwork = google_compute_subnetwork.container_subnetwork.name
 
@@ -12421,14 +12449,14 @@ resource "google_compute_network" "container_network" {
 resource "google_compute_subnetwork" "container_subnetwork" {
   name    = google_compute_network.container_network.name
   network = google_compute_network.container_network.name
-  region  = "us-central1"
+  region  = "us-east1"
 
   ip_cidr_range = "10.2.0.0/16"
 }
 
 resource "google_container_cluster" "with_ip_allocation_policy" {
   name       = "%s"
-  location   = "us-central1-a"
+  location   = "us-east1-b"
   network    = google_compute_network.container_network.name
   subnetwork = google_compute_subnetwork.container_subnetwork.name
 
@@ -12454,7 +12482,7 @@ resource "google_compute_network" "container_network" {
 resource "google_compute_subnetwork" "container_subnetwork" {
   name    = google_compute_network.container_network.name
   network = google_compute_network.container_network.name
-  region  = "us-central1"
+  region  = "us-east1"
 
   ip_cidr_range    = "10.2.0.0/16"
   stack_type       = "IPV4_IPV6"
@@ -12463,7 +12491,7 @@ resource "google_compute_subnetwork" "container_subnetwork" {
 
 resource "google_container_cluster" "with_stack_type" {
   name       = "%s"
-  location   = "us-central1-a"
+  location   = "us-east1-b"
   network    = google_compute_network.container_network.name
   subnetwork = google_compute_subnetwork.container_subnetwork.name
 
@@ -12491,14 +12519,14 @@ resource "google_compute_network" "container_network" {
 resource "google_compute_subnetwork" "container_subnetwork" {
   name    = google_compute_network.container_network.name
   network = google_compute_network.container_network.name
-  region  = "us-central1"
+  region  = "us-east1"
 
   ip_cidr_range = "10.2.0.0/16"
 }
 
 resource "google_container_cluster" "with_stack_type" {
   name       = "%s"
-  location   = "us-central1-a"
+  location   = "us-east1-b"
   network    = google_compute_network.container_network.name
   subnetwork = google_compute_subnetwork.container_subnetwork.name
 
@@ -12525,14 +12553,14 @@ resource "google_compute_network" "container_network" {
 resource "google_compute_subnetwork" "container_subnetwork" {
   name    = google_compute_network.container_network.name
   network = google_compute_network.container_network.name
-  region  = "us-central1"
+  region  = "us-east1"
 
   ip_cidr_range = "10.0.0.0/16"
 }
 
 resource "google_container_cluster" "with_pco_disabled" {
   name       = "%s"
-  location   = "us-central1-a"
+  location   = "us-east1-b"
   network    = google_compute_network.container_network.name
   subnetwork = google_compute_subnetwork.container_subnetwork.name
 
@@ -12566,7 +12594,7 @@ resource "google_bigquery_dataset" "default" {
 resource "google_container_cluster" "with_resource_usage_export_config" {
   provider           = google.user-project-override
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   resource_usage_export_config {
     enable_network_egress_metering = true
@@ -12593,7 +12621,7 @@ resource "google_bigquery_dataset" "default" {
 
 resource "google_container_cluster" "with_resource_usage_export_config" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   network    = "%s"
@@ -12615,7 +12643,7 @@ resource "google_compute_subnetwork" "container_subnetwork" {
   name                     = google_compute_network.container_network.name
   network                  = google_compute_network.container_network.name
   ip_cidr_range            = "10.0.36.0/24"
-  region                   = "us-central1"
+  region                   = "us-east1"
   private_ip_google_access = true
 
   secondary_ip_range {
@@ -12667,7 +12695,7 @@ resource "google_compute_subnetwork" "container_subnetwork" {
   name                     = google_compute_network.container_network.name
   network                  = google_compute_network.container_network.name
   ip_cidr_range            = "10.0.36.0/24"
-  region                   = "us-central1"
+  region                   = "us-east1"
   private_ip_google_access = true
 
   secondary_ip_range {
@@ -12683,7 +12711,7 @@ resource "google_compute_subnetwork" "container_subnetwork" {
 
 resource "google_container_cluster" "with_private_cluster" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   networking_mode = "VPC_NATIVE"
@@ -12716,7 +12744,7 @@ func testAccContainerCluster_withPrivateClusterConfigGlobalAccessEnabledOnly(clu
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_private_cluster" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   private_cluster_config {
     enable_private_endpoint = false
@@ -12736,7 +12764,7 @@ func testAccContainerCluster_withShieldedNodes(clusterName, networkName, subnetw
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_shielded_nodes" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   enable_shielded_nodes = %v
@@ -12757,7 +12785,7 @@ data "google_project" "project" {
 
 resource "google_container_cluster" "with_workload_identity_config" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   workload_identity_config {
@@ -12765,7 +12793,7 @@ resource "google_container_cluster" "with_workload_identity_config" {
   }
   remove_default_node_pool = true
   node_config {
-    machine_type = "e2-micro"
+    machine_type = "n4-standard-2"
   }
 
   lifecycle {
@@ -12788,7 +12816,7 @@ data "google_project" "project" {
 
 resource "google_container_cluster" "with_workload_identity_config" {
   name               = "%s"
-  location           = "us-central1"
+  location           = "us-east1"
   initial_node_count = 1
 
   workload_identity_config {
@@ -12823,11 +12851,11 @@ data "google_project" "project" {
 
 resource "google_container_cluster" "with_workload_identity_config" {
   name                     = "%s"
-  location                 = "us-central1-a"
+  location                 = "us-east1-b"
   initial_node_count       = 1
   remove_default_node_pool = true
   node_config {
-    machine_type = "e2-micro"
+    machine_type = "n4-standard-2"
   }
   lifecycle {
     ignore_changes = [node_config]
@@ -12917,7 +12945,7 @@ resource "google_compute_network" "shared_network" {
 resource "google_compute_subnetwork" "shared_subnetwork" {
   name          = "tf-test-%s"
   ip_cidr_range = "10.0.0.0/16"
-  region        = "us-central1"
+  region        = "us-east1"
   network       = google_compute_network.shared_network.self_link
   project       = google_compute_shared_vpc_host_project.host_project.project
 
@@ -12934,7 +12962,7 @@ resource "google_compute_subnetwork" "shared_subnetwork" {
 
 resource "google_container_cluster" "shared_vpc_cluster" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   project            = google_compute_shared_vpc_service_project.service_project.service_project
 
@@ -12961,7 +12989,7 @@ func testAccContainerCluster_withBinaryAuthorizationEnabledBool(clusterName, net
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_binary_authorization_enabled_bool" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   binary_authorization {
@@ -12979,7 +13007,7 @@ func testAccContainerCluster_withBinaryAuthorizationEvaluationMode(clusterName s
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_binary_authorization_evaluation_mode" {
   name               = "%s"
-  location           = "us-central1"
+  location           = "us-east1"
   initial_node_count = 1
   ip_allocation_policy {
   }
@@ -13007,7 +13035,7 @@ resource "google_compute_subnetwork" "container_subnetwork" {
   name                     = google_compute_network.container_network.name
   network                  = google_compute_network.container_network.name
   ip_cidr_range            = "10.0.35.0/24"
-  region                   = "us-central1"
+  region                   = "us-east1"
   private_ip_google_access = true
 
   secondary_ip_range {
@@ -13023,7 +13051,7 @@ resource "google_compute_subnetwork" "container_subnetwork" {
 
 resource "google_container_cluster" "with_flexible_cidr" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   networking_mode = "VPC_NATIVE"
@@ -13061,11 +13089,12 @@ resource "google_compute_subnetwork" "container_subnetwork" {
   name          = google_compute_network.container_network.name
   network       = google_compute_network.container_network.name
   ip_cidr_range = "10.128.0.0/9"
+  region        = "us-east1"
 }
 
 resource "google_container_cluster" "cidr_error_preempt" {
   name     = "%s"
-  location = "us-central1-a"
+  location = "us-east1-b"
 
   networking_mode = "VPC_NATIVE"
   network    = google_compute_network.container_network.name
@@ -13088,7 +13117,7 @@ func testAccContainerCluster_withCIDROverlap(initConfig, secondCluster string) s
 
 resource "google_container_cluster" "cidr_error_overlap" {
   name     = "%s"
-  location = "us-central1-a"
+  location = "us-east1-b"
 
   network    = google_compute_network.container_network.name
   subnetwork = google_compute_subnetwork.container_subnetwork.name
@@ -13111,7 +13140,7 @@ func testAccContainerCluster_withCIDROverlapWithTimeout(initConfig, secondCluste
 
 resource "google_container_cluster" "cidr_error_overlap" {
   name     = "%s"
-  location = "us-central1-a"
+  location = "us-east1-b"
 
   network    = google_compute_network.container_network.name
   subnetwork = google_compute_subnetwork.container_subnetwork.name
@@ -13150,7 +13179,7 @@ data "google_project" "project" {
 
 resource "google_container_cluster" "with_external_ips_config" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   service_external_ips_config {
     enabled = %v
@@ -13171,11 +13200,11 @@ data "google_project" "project" {
 
 resource "google_container_cluster" "with_mesh_certificates_config" {
   name                     = "%s"
-  location                 = "us-central1-a"
+  location                 = "us-east1-b"
   initial_node_count       = 1
   remove_default_node_pool = true
   node_config {
-    machine_type = "e2-micro"
+    machine_type = "n4-standard-2"
   }
   lifecycle {
     ignore_changes = [node_config]
@@ -13202,11 +13231,11 @@ data "google_project" "project" {
 
 resource "google_container_cluster" "with_mesh_certificates_config" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   remove_default_node_pool = true
   node_config {
-    machine_type = "e2-micro"
+    machine_type = "n4-standard-2"
   }
   lifecycle {
     ignore_changes = [node_config]
@@ -13233,7 +13262,7 @@ data "google_project" "project" {
 
 resource "google_container_cluster" "with_cost_management_config" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   cost_management_config {
     enabled = %v
@@ -13263,7 +13292,7 @@ data "google_kms_key_ring_iam_policy" "test_key_ring_iam_policy" {
 
 resource "google_container_cluster" "primary" {
   name               = "%[3]s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   database_encryption {
@@ -13282,7 +13311,7 @@ func testAccContainerCluster_withDatapathProvider(clusterName, datapathProvider,
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   ip_allocation_policy {
   }
@@ -13311,7 +13340,7 @@ func testAccContainerCluster_enableCiliumPolicies(clusterName, networkName, subn
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   ip_allocation_policy {
   }
@@ -13342,7 +13371,7 @@ resource "google_compute_subnetwork" "container_subnetwork" {
   name                     = "%[3]s"
   network                  = google_compute_network.container_network.name
   ip_cidr_range            = "10.0.36.0/24"
-  region                   = "us-central1"
+  region                   = "us-east1"
   private_ip_google_access = true
 
   secondary_ip_range {
@@ -13358,7 +13387,7 @@ resource "google_compute_subnetwork" "container_subnetwork" {
 
 resource "google_container_cluster" "with_autopilot" {
   name = "%[1]s"
-  location = "us-central1"
+  location = "us-east1"
   enable_autopilot = true
 
   release_channel {
@@ -13400,7 +13429,7 @@ resource "google_compute_subnetwork" "container_subnetwork" {
   name                     = "%[3]s"
   network                  = google_compute_network.container_network.name
   ip_cidr_range            = "10.0.36.0/24"
-  region                   = "us-central1"
+  region                   = "us-east1"
   private_ip_google_access = true
 
   secondary_ip_range {
@@ -13416,7 +13445,7 @@ resource "google_compute_subnetwork" "container_subnetwork" {
 
 resource "google_container_cluster" "with_autopilot" {
   name = "%[1]s"
-  location = "us-central1"
+  location = "us-east1"
   enable_autopilot = true
 
   release_channel {
@@ -13459,7 +13488,7 @@ resource "google_compute_subnetwork" "container_subnetwork" {
   name                     = google_compute_network.container_network.name
   network                  = google_compute_network.container_network.name
   ip_cidr_range            = "10.0.36.0/24"
-  region                   = "us-central1"
+  region                   = "us-east1"
   private_ip_google_access = true
 
   secondary_ip_range {
@@ -13475,7 +13504,7 @@ resource "google_compute_subnetwork" "container_subnetwork" {
 
 resource "google_container_cluster" "with_private_cluster" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   networking_mode = "VPC_NATIVE"
@@ -13501,7 +13530,7 @@ func testAccContainerCluster_withEnableKubernetesAlpha(cluster, np, networkName,
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
   name                    = "%s"
-  location                = "us-central1-a"
+  location                = "us-east1-b"
   enable_kubernetes_alpha = true
 
   node_pool {
@@ -13523,12 +13552,12 @@ resource "google_container_cluster" "primary" {
 func testAccContainerCluster_withoutEnableKubernetesBetaAPIs(clusterName, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "central1a" {
-  location = "us-central1-a"
+  location = "us-east1-b"
 }
 
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   min_master_version = data.google_container_engine_versions.central1a.release_channel_latest_version["STABLE"]
   initial_node_count = 1
 
@@ -13543,12 +13572,12 @@ resource "google_container_cluster" "primary" {
 func testAccContainerCluster_withEnableKubernetesBetaAPIs(cluster, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "uscentral1a" {
-  location = "us-central1-a"
+  location = "us-east1-b"
 }
 
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   min_master_version = data.google_container_engine_versions.uscentral1a.release_channel_latest_version["STABLE"]
   initial_node_count = 1
 
@@ -13616,7 +13645,7 @@ resource "google_compute_subnetwork" "container_subnetwork" {
   name                     = google_compute_network.container_network.name
   network                  = google_compute_network.container_network.name
   ip_cidr_range            = "10.0.36.0/24"
-  region                   = "us-central1"
+  region                   = "us-east1"
   private_ip_google_access = true
 
   secondary_ip_range {
@@ -13631,7 +13660,7 @@ resource "google_compute_subnetwork" "container_subnetwork" {
 }
 
 data "google_container_engine_versions" "central1a" {
-  location = "us-central1-a"
+  location = "us-east1-b"
 }
 
 resource "google_container_cluster" "with_autopilot" {
@@ -13678,7 +13707,7 @@ func testAccContainerCluster_withDNSConfig(clusterName, clusterDns, clusterDnsDo
 	config := fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   network    = "%s"
   subnetwork = "%s"
@@ -13706,12 +13735,12 @@ resource "google_container_cluster" "primary" {
 func testAccContainerCluster_withGatewayApiConfig(clusterName, gatewayApiChannel, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "uscentral1a" {
-  location = "us-central1-a"
+  location = "us-east1-b"
 }
 
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-f"
+  location           = "us-east1-b"
   initial_node_count = 1
   min_master_version = data.google_container_engine_versions.uscentral1a.release_channel_latest_version["STABLE"]
   gateway_api_config {
@@ -13731,7 +13760,7 @@ data "google_project" "project" {
 }
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   secret_manager_config {
     enabled = true
@@ -13757,7 +13786,7 @@ data "google_project" "project" {
 }
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   secret_manager_config {
     enabled = true
@@ -13783,7 +13812,7 @@ data "google_project" "project" {
 }
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   secret_manager_config {
     enabled = true
@@ -13809,7 +13838,7 @@ data "google_project" "project" {
 }
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   secret_manager_config {
@@ -13832,7 +13861,7 @@ data "google_project" "project" {
 }
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   network            = "%s"
   subnetwork         = "%s"
@@ -13852,7 +13881,7 @@ data "google_project" "project" {
 }
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   secret_sync_config {
     enabled = true
@@ -13878,7 +13907,7 @@ data "google_project" "project" {
 }
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   secret_sync_config {
     enabled = true
@@ -13904,7 +13933,7 @@ data "google_project" "project" {
 }
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   secret_sync_config {
     enabled = true
@@ -13930,7 +13959,7 @@ data "google_project" "project" {
 }
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   secret_sync_config {
@@ -13950,7 +13979,7 @@ func testAccContainerCluster_withLoggingConfigEnabled(name, networkName, subnetw
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   logging_config {
     enable_components = [ "SYSTEM_COMPONENTS" ]
@@ -13970,7 +13999,7 @@ func testAccContainerCluster_withLoggingConfigDisabled(name, networkName, subnet
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   logging_config {
     enable_components = []
@@ -13987,7 +14016,7 @@ func testAccContainerCluster_withLoggingConfigUpdated(name, networkName, subnetw
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   // TODO(b/479239870): Re-add "KCP_VPA" 
   // to enable_components once the GKE API feature is fully rolled out to production and
@@ -14009,12 +14038,12 @@ resource "google_container_cluster" "primary" {
 func testAccContainerCluster_withMonitoringConfigEnabled(name, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "uscentral1a" {
-  location = "us-central1-a"
+  location = "us-east1-b"
 }
 
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   monitoring_config {
       enable_components = [ "SYSTEM_COMPONENTS", "APISERVER", "CONTROLLER_MANAGER", "SCHEDULER" ]
@@ -14030,7 +14059,7 @@ func testAccContainerCluster_withMonitoringConfigDisabled(name, networkName, sub
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   monitoring_config {
     enable_components = []
@@ -14046,7 +14075,7 @@ func testAccContainerCluster_withMonitoringConfigUpdated(name, networkName, subn
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   monitoring_config {
     enable_components = ["SYSTEM_COMPONENTS", "APISERVER", "CONTROLLER_MANAGER"]
@@ -14062,7 +14091,7 @@ func testAccContainerCluster_withMonitoringConfigPrometheusUpdated(name, network
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   monitoring_config {
     enable_components = ["SYSTEM_COMPONENTS", "APISERVER", "CONTROLLER_MANAGER", "SCHEDULER"]
@@ -14081,7 +14110,7 @@ func testAccContainerCluster_withMonitoringConfigPrometheusOnly(name, networkNam
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   monitoring_config {
     enable_components = []
@@ -14100,7 +14129,7 @@ func testAccContainerCluster_withMonitoringConfigPrometheusOnly2(name, networkNa
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   monitoring_config {
     managed_prometheus {
@@ -14118,7 +14147,7 @@ func testAccContainerCluster_withMonitoringConfigScopeAll(name, networkName, sub
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   monitoring_config {
     managed_prometheus {
@@ -14139,7 +14168,7 @@ func testAccContainerCluster_withMonitoringConfigScopeNone(name, networkName, su
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   monitoring_config {
     managed_prometheus {
@@ -14167,7 +14196,7 @@ resource "google_compute_subnetwork" "container_subnetwork" {
   name                     = google_compute_network.container_network.name
   network                  = google_compute_network.container_network.name
   ip_cidr_range            = "10.0.36.0/24"
-  region                   = "us-central1"
+  region                   = "us-east1"
   private_ip_google_access = true
 
   secondary_ip_range {
@@ -14183,7 +14212,7 @@ resource "google_compute_subnetwork" "container_subnetwork" {
 
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   datapath_provider  = "ADVANCED_DATAPATH"
 
@@ -14217,7 +14246,7 @@ resource "google_compute_subnetwork" "container_subnetwork" {
   name                     = google_compute_network.container_network.name
   network                  = google_compute_network.container_network.name
   ip_cidr_range            = "10.0.36.0/24"
-  region                   = "us-central1"
+  region                   = "us-east1"
   private_ip_google_access = true
 
   secondary_ip_range {
@@ -14233,7 +14262,7 @@ resource "google_compute_subnetwork" "container_subnetwork" {
 
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   datapath_provider  = "ADVANCED_DATAPATH"
 
@@ -14260,14 +14289,14 @@ func testAccContainerCluster_withSoleTenantGroup(name, networkName, subnetworkNa
 	return fmt.Sprintf(`
 resource "google_compute_node_template" "soletenant-tmpl" {
   name      = "%s"
-  region    = "us-central1"
+  region    = "us-east1"
   node_type = "n1-node-96-624"
   cpu_overcommit_type = "ENABLED"
 }
 
 resource "google_compute_node_group" "group" {
   name        = "%s"
-  zone        = "us-central1-f"
+  zone        = "us-east1-b"
   description = "example google_compute_node_group for Terraform Google Provider"
 
   initial_size	= 1
@@ -14276,7 +14305,7 @@ resource "google_compute_node_group" "group" {
 
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-f"
+  location           = "us-east1-b"
   initial_node_count = 1
   node_config {
     machine_type = "n1-standard-1" // can't be e2 because of local-ssd
@@ -14311,7 +14340,7 @@ resource "google_compute_subnetwork" "container_subnetwork" {
   name                     = google_compute_network.container_network.name
   network                  = google_compute_network.container_network.name
   ip_cidr_range            = "10.0.36.0/24"
-  region                   = "us-central1"
+  region                   = "us-east1"
   private_ip_google_access = true
 
   secondary_ip_range {
@@ -14327,7 +14356,7 @@ resource "google_compute_subnetwork" "container_subnetwork" {
 
 resource "google_container_cluster" "with_tpu_config" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
 
 
@@ -14361,7 +14390,7 @@ func testAccContainerCluster_withProtectConfig(name, networkName, subnetworkName
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   protect_config {
@@ -14382,7 +14411,7 @@ func testAccContainerCluster_withProtectConfigUpdated(name, networkName, subnetw
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   protect_config {
@@ -14403,7 +14432,7 @@ func testAccContainerCluster_autopilot_minimal(name, networkName, subnetworkName
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
   name                = "%s"
-  location            = "us-central1"
+  location            = "us-east1"
   enable_autopilot    = true
   deletion_protection = false
   network    = "%s"
@@ -14415,7 +14444,7 @@ func testAccContainerCluster_withAdvancedDNSConfig(name, networkName, subnetwork
 	config := fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
   name                = "%s"
-  location            = "us-central1"
+  location            = "us-east1"
   network    = "%s"
   subnetwork = "%s"
   deletion_protection = false
@@ -14461,7 +14490,7 @@ func testAccContainerCluster_autopilot_net_admin(name, networkName, subnetworkNa
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
   name             = "%s"
-  location         = "us-central1"
+  location         = "us-east1"
 
   network          = "%s"
   subnetwork       = "%s"
@@ -14482,15 +14511,22 @@ func testAccContainerCluster_autopilot_privileged_admission(name, networkName, s
 	}
 
 	return fmt.Sprintf(`
+data "google_container_engine_versions" "versions" {
+  location = "us-east1"
+}
+
 resource "google_container_cluster" "primary" {
   name             = "%s"
-  location         = "us-central1"
+  location         = "us-east1"
   network          = "%s"
   subnetwork       = "%s"
   enable_autopilot = true
   %s
   deletion_protection = false
-  min_master_version = "1.35.1-gke.1396002"
+  release_channel {
+    channel = "RAPID"
+  }
+  min_master_version = data.google_container_engine_versions.versions.release_channel_latest_version["RAPID"]
 }
 `, name, networkName, subnetworkName, part)
 }
@@ -14500,7 +14536,7 @@ func TestAccContainerCluster_customPlacementPolicy(t *testing.T) {
 
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 	np := fmt.Sprintf("tf-test-nodepool-%s", acctest.RandString(t, 10))
 	policy := fmt.Sprintf("tf-test-policy-%s", acctest.RandString(t, 10))
 
@@ -14531,7 +14567,7 @@ func testAccContainerCluster_customPlacementPolicy(cluster, np, policyName, netw
 	return fmt.Sprintf(`
 resource "google_compute_resource_policy" "policy" {
   name   = "%s"
-  region = "us-central1"
+  region = "us-east1"
   group_placement_policy {
     collocation = "COLLOCATED"
   }
@@ -14539,7 +14575,7 @@ resource "google_compute_resource_policy" "policy" {
 
 resource "google_container_cluster" "cluster" {
   name     = "%s"
-  location = "us-central1-a"
+  location = "us-east1-b"
 
   node_pool {
     name               = "%s"
@@ -14586,7 +14622,7 @@ func testAccContainerCluster_additional_pod_ranges_config(name string, nameCount
 	  ip_cidr_range = "10.10.0.0/16"
 	  name          = "%s"
 	  network       = google_compute_network.main.self_link
-	  region        = "us-central1"
+	  region        = "us-east1"
 
 	  secondary_ip_range {
 	    range_name    = "gke-autopilot-services"
@@ -14609,7 +14645,7 @@ func testAccContainerCluster_additional_pod_ranges_config(name string, nameCount
 	}
 	resource "google_container_cluster" "primary" {
 	  name     = "%s"
-	  location = "us-central1"
+	  location = "us-east1"
 
 	  enable_autopilot = true
 
@@ -14648,9 +14684,9 @@ func TestAccContainerCluster_withConfidentialBootDisk(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	npName := fmt.Sprintf("tf-test-node-pool-%s", acctest.RandString(t, 10))
-	bootstrapped := kms.BootstrapKMSKeyInLocation(t, "us-central1")
+	bootstrapped := kms.BootstrapKMSKeyInLocation(t, "us-east1")
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	resourcemanager.BootstrapIamMembers(t, []resourcemanager.IamMember{
 		{
@@ -14681,7 +14717,7 @@ func testAccContainerCluster_withConfidentialBootDisk(clusterName, npName, kmsKe
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_confidential_boot_disk" {
   name     = "%s"
-  location = "us-central1-a"
+  location = "us-east1-b"
   confidential_nodes {
     enabled = true
   }
@@ -14714,9 +14750,9 @@ func TestAccContainerCluster_withConfidentialBootDiskNodeConfig(t *testing.T) {
 	t.Parallel()
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
-	bootstrapped := kms.BootstrapKMSKeyInLocation(t, "us-central1")
+	bootstrapped := kms.BootstrapKMSKeyInLocation(t, "us-east1")
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	resourcemanager.BootstrapIamMembers(t, []resourcemanager.IamMember{
 		{
@@ -14747,7 +14783,7 @@ func testAccContainerCluster_withConfidentialBootDiskNodeConfig(clusterName, kms
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_confidential_boot_disk_node_config" {
   name     = "%s"
-  location = "us-central1-a"
+  location = "us-east1-b"
   confidential_nodes {
     enabled = true
   }
@@ -14779,7 +14815,7 @@ func TestAccContainerCluster_withoutConfidentialBootDisk(t *testing.T) {
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	npName := fmt.Sprintf("tf-test-cluster-nodepool-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -14802,7 +14838,7 @@ func testAccContainerCluster_withoutConfidentialBootDisk(clusterName, npName, ne
 	return fmt.Sprintf(`
 resource "google_container_cluster" "without_confidential_boot_disk" {
   name     = "%s"
-  location = "us-central1-a"
+  location = "us-east1-b"
   release_channel {
     channel = "RAPID"
   }
@@ -14814,9 +14850,9 @@ resource "google_container_cluster" "without_confidential_boot_disk" {
         "https://www.googleapis.com/auth/cloud-platform",
       ]
       image_type                  = "COS_CONTAINERD"
-      machine_type                = "n2-standard-2"
+      machine_type                = "n4-standard-2"
       enable_confidential_storage = false
-      disk_type                   = "pd-balanced"
+      disk_type                   = "hyperdisk-balanced"
     }
   }
   network    = "%s"
@@ -14844,12 +14880,12 @@ resource "google_compute_subnetwork" "subnet" {
   name          = "%s"
   network       = google_compute_network.network.id
   ip_cidr_range = "9.12.22.0/24"
-  region        = "us-central1"
+  region        = "us-east1"
 }
 resource "google_container_cluster" "with_workload_alts_config" {
   provider           = google-beta
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   network            = google_compute_network.network.name
   subnetwork         = google_compute_subnetwork.subnet.name
@@ -14873,7 +14909,7 @@ data "google_project" "project" {
 resource "google_container_cluster" "with_workload_alts_config" {
   provider = google-beta
   name               = "%s"
-  location           = "us-central1"
+  location           = "us-east1"
   initial_node_count = 1
   workload_alts_config {
     enable_alts = %v
@@ -14893,7 +14929,7 @@ func testAccContainerCluster_withAutopilotKubeletConfigBaseline(name, networkNam
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_autopilot_kubelet_config" {
   name                = "%s"
-  location            = "us-central1"
+  location            = "us-east1"
   initial_node_count  = 1
   enable_autopilot    = true
   deletion_protection = false
@@ -14907,7 +14943,7 @@ func testAccContainerCluster_withAutopilotKubeletConfigUpdates(name, networkName
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_autopilot_kubelet_config" {
   name               = "%s"
-  location           = "us-central1"
+  location           = "us-east1"
   initial_node_count = 1
 
   network    = "%s"
@@ -14929,7 +14965,7 @@ func testAccContainerCluster_withAutopilot_withNodePoolDefaults(name, networkNam
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
   name             = "%s"
-  location         = "us-central1"
+  location         = "us-east1"
   enable_autopilot = true
 
 	node_pool_defaults {
@@ -14947,12 +14983,12 @@ resource "google_container_cluster" "primary" {
 func testAccContainerCluster_withAutopilot_withNodePoolAutoConfig(name, networkName, subnetworkName string, insecureKubeletReadonlyPortEnabled string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "uscentral1a" {
-  location = "us-central1-a"
+  location = "us-east1-b"
 }
 
 resource "google_container_cluster" "primary" {
   name             = "%s"
-  location         = "us-central1"
+  location         = "us-east1"
   enable_autopilot = true
 	min_master_version = data.google_container_engine_versions.uscentral1a.release_channel_latest_version["RAPID"]
 
@@ -14982,7 +15018,7 @@ func testAccContainerCluster_withStandard_withNodePoolDefaults(name, networkName
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
   name             = "%s"
-  location         = "us-central1-a"
+  location         = "us-east1-b"
 	initial_node_count = 1
 
   node_pool_defaults {
@@ -15038,12 +15074,12 @@ resource "google_tags_tag_value" "value2" {
 }
 
 data "google_container_engine_versions" "uscentral1a" {
-  location = "us-central1-a"
+  location = "us-east1-b"
 }
 
 resource "google_container_cluster" "primary" {
   name               = "%[3]s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   min_master_version = data.google_container_engine_versions.uscentral1a.release_channel_latest_version["STABLE"]
   initial_node_count = 1
 
@@ -15116,7 +15152,7 @@ resource "google_compute_subnetwork" "container_subnetwork" {
   name                     = "%[5]s"
   network                  = google_compute_network.container_network.name
   ip_cidr_range            = "10.0.36.0/24"
-  region                   = "us-central1"
+  region                   = "us-east1"
   private_ip_google_access = true
 
   secondary_ip_range {
@@ -15131,12 +15167,12 @@ resource "google_compute_subnetwork" "container_subnetwork" {
 }
 
 data "google_container_engine_versions" "uscentral1a" {
-  location = "us-central1-a"
+  location = "us-east1-b"
 }
 
 resource "google_container_cluster" "with_autopilot" {
   name               = "%[3]s"
-  location           = "us-central1"
+  location           = "us-east1"
   min_master_version = data.google_container_engine_versions.uscentral1a.release_channel_latest_version["REGULAR"]
   enable_autopilot   = true
 
@@ -15220,7 +15256,7 @@ resource "google_compute_subnetwork" "container_subnetwork" {
   name                     = "%[5]s"
   network                  = google_compute_network.container_network.name
   ip_cidr_range            = "10.0.36.0/24"
-  region                   = "us-central1"
+  region                   = "us-east1"
   private_ip_google_access = true
 
   secondary_ip_range {
@@ -15235,12 +15271,12 @@ resource "google_compute_subnetwork" "container_subnetwork" {
 }
 
 data "google_container_engine_versions" "uscentral1a" {
-  location = "us-central1-a"
+  location = "us-east1-b"
 }
 
 resource "google_container_cluster" "with_autopilot" {
   name               = "%[3]s"
-  location           = "us-central1"
+  location           = "us-east1"
   min_master_version = data.google_container_engine_versions.uscentral1a.release_channel_latest_version["REGULAR"]
   enable_autopilot   = true
 
@@ -15325,7 +15361,7 @@ resource "google_compute_subnetwork" "container_subnetwork" {
   name                     = "%[5]s"
   network                  = google_compute_network.container_network.name
   ip_cidr_range            = "10.0.36.0/24"
-  region                   = "us-central1"
+  region                   = "us-east1"
   private_ip_google_access = true
 
   secondary_ip_range {
@@ -15340,12 +15376,12 @@ resource "google_compute_subnetwork" "container_subnetwork" {
 }
 
 data "google_container_engine_versions" "uscentral1a" {
-  location = "us-central1-a"
+  location = "us-east1-b"
 }
 
 resource "google_container_cluster" "with_autopilot" {
   name               = "%[3]s"
-  location           = "us-central1"
+  location           = "us-east1"
   min_master_version = data.google_container_engine_versions.uscentral1a.release_channel_latest_version["REGULAR"]
   enable_autopilot   = true
 
@@ -15365,6 +15401,11 @@ resource "google_container_cluster" "with_autopilot" {
   vertical_pod_autoscaling {
     enabled = true
   }
+
+  depends_on = [
+    google_tags_tag_value.value1,
+    google_tags_tag_value.value2,
+  ]
 }
 `, projectID, randomSuffix, clusterName, networkName, subnetworkName)
 }
@@ -15377,7 +15418,7 @@ func TestAccContainerCluster_privateRegistry(t *testing.T) {
 	nodePoolName := fmt.Sprintf("tf-test-nodepool-%s", acctest.RandString(t, 10))
 	secretID := fmt.Sprintf("tf-test-secret-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
@@ -15499,7 +15540,7 @@ resource "google_secret_manager_secret" "secret_basic" {
   replication {
     user_managed {
       replicas {
-        location = "us-central1"
+        location = "us-east1"
       }
     }
   }
@@ -15519,7 +15560,7 @@ resource "google_secret_manager_secret_iam_member" "secret_iam" {
 
 resource "google_container_cluster" "primary" {
   name                = "%s"
-  location            = "us-central1-a"
+  location            = "us-east1-b"
   initial_node_count  = 1
   deletion_protection = false
   network             = "%s"
@@ -15559,7 +15600,7 @@ func testAccContainerCluster_privateRegistryDisabled(clusterName, networkName, s
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   node_config {
@@ -15594,7 +15635,7 @@ resource "google_secret_manager_secret" "secret_basic" {
   replication {
     user_managed {
       replicas {
-        location = "us-central1"
+        location = "us-east1"
       }
     }
   }
@@ -15612,7 +15653,7 @@ resource "google_secret_manager_secret_iam_member" "secret_iam" {
 }
 resource "google_container_cluster" "primary" {
   name     = "%s"
-  location = "us-central1-a"
+  location = "us-east1-b"
 
   node_pool {
     name               = "%s"
@@ -15651,7 +15692,7 @@ resource "google_secret_manager_secret" "secret_basic" {
   replication {
     user_managed {
       replicas {
-        location = "us-central1"
+        location = "us-east1"
       }
     }
   }
@@ -15669,7 +15710,7 @@ resource "google_secret_manager_secret_iam_member" "secret_iam" {
 }
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   node_config {
@@ -15704,7 +15745,7 @@ func TestAccContainerCluster_registryHosts(t *testing.T) {
 	nodePoolName := fmt.Sprintf("tf-test-nodepool-%s", acctest.RandString(t, 10))
 	secretID := fmt.Sprintf("tf-test-secret-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
@@ -15801,7 +15842,7 @@ func testAccContainerCluster_registryHosts(secretID, clusterName, networkName, s
 data "google_project" "test_project" {}
 
 data "google_container_engine_versions" "central1a" {
-  location = "us-central1-a"
+  location = "us-east1-b"
 }
 
 resource "google_secret_manager_secret" "secret_basic" {
@@ -15809,7 +15850,7 @@ resource "google_secret_manager_secret" "secret_basic" {
   replication {
     user_managed {
       replicas {
-        location = "us-central1"
+        location = "us-east1"
       }
     }
   }
@@ -15829,7 +15870,7 @@ resource "google_secret_manager_secret_iam_member" "secret_iam" {
 
 resource "google_container_cluster" "primary" {
   name                = "%s"
-  location            = "us-central1-a"
+  location            = "us-east1-b"
   initial_node_count  = 1
   deletion_protection = false
   network             = "%s"
@@ -15872,7 +15913,7 @@ func testAccContainerCluster_withNodePoolRegistryHosts(secretID, clusterName, no
 data "google_project" "test_project" {}
 
 data "google_container_engine_versions" "central1a" {
-  location = "us-central1-a"
+  location = "us-east1-b"
 }
 
 resource "google_secret_manager_secret" "secret_basic" {
@@ -15880,7 +15921,7 @@ resource "google_secret_manager_secret" "secret_basic" {
   replication {
     user_managed {
       replicas {
-        location = "us-central1"
+        location = "us-east1"
       }
     }
   }
@@ -15898,7 +15939,7 @@ resource "google_secret_manager_secret_iam_member" "secret_iam" {
 }
 resource "google_container_cluster" "primary" {
   name     = "%s"
-  location = "us-central1-a"
+  location = "us-east1-b"
   min_master_version = data.google_container_engine_versions.central1a.latest_master_version
 
   node_pool {
@@ -15949,7 +15990,7 @@ func testAccContainerCluster_withNodeConfigRegistryHosts(secretID, clusterName, 
 data "google_project" "test_project" {}
 
 data "google_container_engine_versions" "central1a" {
-  location = "us-central1-a"
+  location = "us-east1-b"
 }
 
 resource "google_secret_manager_secret" "secret_basic" {
@@ -15957,7 +15998,7 @@ resource "google_secret_manager_secret" "secret_basic" {
   replication {
     user_managed {
       replicas {
-        location = "us-central1"
+        location = "us-east1"
       }
     }
   }
@@ -15975,7 +16016,7 @@ resource "google_secret_manager_secret_iam_member" "secret_iam" {
 }
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   min_master_version = data.google_container_engine_versions.central1a.latest_master_version
 
@@ -16024,7 +16065,7 @@ func TestAccContainerCluster_writableCgroups(t *testing.T) {
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	nodePoolName := fmt.Sprintf("tf-test-nodepool-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -16089,12 +16130,12 @@ func TestAccContainerCluster_writableCgroups(t *testing.T) {
 func testAccContainerCluster_writableCgroupsEnabled(clusterName, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "central1a" {
-  location = "us-central1-a"
+  location = "us-east1-b"
 }
 
 resource "google_container_cluster" "primary" {
   name                = "%s"
-  location            = "us-central1-a"
+  location            = "us-east1-b"
   initial_node_count  = 1
   min_master_version  = data.google_container_engine_versions.central1a.release_channel_latest_version["RAPID"]
   network             = "%s"
@@ -16117,12 +16158,12 @@ resource "google_container_cluster" "primary" {
 func testAccContainerCluster_writableCgroupsDisabled(clusterName, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "central1a" {
-  location = "us-central1-a"
+  location = "us-east1-b"
 }
 
 resource "google_container_cluster" "primary" {
   name                = "%s"
-  location            = "us-central1-a"
+  location            = "us-east1-b"
   initial_node_count  = 1
   min_master_version  = data.google_container_engine_versions.central1a.release_channel_latest_version["RAPID"]
   network             = "%s"
@@ -16145,12 +16186,12 @@ resource "google_container_cluster" "primary" {
 func testAccContainerCluster_withNodePoolWritableCgroups(clusterName, nodePoolName, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "central1a" {
-  location = "us-central1-a"
+  location = "us-east1-b"
 }
 
 resource "google_container_cluster" "primary" {
   name                = "%s"
-  location            = "us-central1-a"
+  location            = "us-east1-b"
   min_master_version  = data.google_container_engine_versions.central1a.release_channel_latest_version["RAPID"]
   network             = "%s"
   subnetwork          = "%s"
@@ -16180,7 +16221,7 @@ func TestAccContainerCluster_withProviderDefaultLabels(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -16275,7 +16316,7 @@ provider "google" {
 
 resource "google_container_cluster" "primary" {
   name     = "%s"
-  location = "us-central1-a"
+  location = "us-east1-b"
 
   initial_node_count = 1
   resource_labels = {
@@ -16299,7 +16340,7 @@ provider "google" {
 
 resource "google_container_cluster" "primary" {
   name     = "%s"
-  location = "us-central1-a"
+  location = "us-east1-b"
 
   initial_node_count = 1
   resource_labels = {
@@ -16325,7 +16366,7 @@ provider "google" {
 
 resource "google_container_cluster" "primary" {
   name     = "%s"
-  location = "us-central1-a"
+  location = "us-east1-b"
 
   initial_node_count = 1
 
@@ -16343,10 +16384,10 @@ func TestAccContainerCluster_storagePoolsWithNodePool(t *testing.T) {
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	np := fmt.Sprintf("tf-test-nodepool-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
-	location := envvar.GetTestZoneFromEnv()
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
+	location := "us-east1-b"
 
-	storagePoolResourceName := tpgcompute.BootstrapComputeStoragePool(t, "basic-1", "hyperdisk-balanced")
+	storagePoolResourceName := tpgcompute.BootstrapComputeStoragePoolInZone(t, "basic-1", "hyperdisk-balanced", location)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -16399,10 +16440,10 @@ func TestAccContainerCluster_storagePoolsWithNodeConfig(t *testing.T) {
 
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
-	location := envvar.GetTestZoneFromEnv()
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
+	location := "us-east1-b"
 
-	storagePoolResourceName := tpgcompute.BootstrapComputeStoragePool(t, "basic-1", "hyperdisk-balanced")
+	storagePoolResourceName := tpgcompute.BootstrapComputeStoragePoolInZone(t, "basic-1", "hyperdisk-balanced", location)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -16486,7 +16527,7 @@ func TestAccContainerCluster_withAutopilotGcpFilestoreCsiDriver(t *testing.T) {
 	randomSuffix := acctest.RandString(t, 10)
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", randomSuffix)
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -16525,7 +16566,7 @@ func testAccContainerCluster_withAutopilotGcpFilestoreCsiDriverDefault(name, net
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_autopilot_gcp_filestore" {
   name                = "%s"
-  location            = "us-central1"
+  location            = "us-east1"
   enable_autopilot    = true
   deletion_protection = false
 
@@ -16539,7 +16580,7 @@ func testAccContainerCluster_withAutopilotGcpFilestoreCsiDriverUpdated(name, net
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_autopilot_gcp_filestore" {
   name                = "%s"
-  location            = "us-central1"
+  location            = "us-east1"
   enable_autopilot    = true
   deletion_protection = false
 
@@ -16560,7 +16601,7 @@ func TestAccContainerCluster_withDnsEndpoint(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -16615,7 +16656,7 @@ func testAccContainerCluster_withDnsEndpoint(name, networkName, subnetworkName s
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
   name                = "%s"
-  location            = "us-central1-a"
+  location            = "us-east1-b"
   initial_node_count  = 1
   network    = "%s"
   subnetwork = "%s"
@@ -16635,7 +16676,7 @@ func TestAccContainerCluster_withDnsEndpointAndEnableK8sTokensViaDns(t *testing.
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -16674,7 +16715,7 @@ func testAccContainerCluster_withDnsEndpointAndEnablek8sTokensViaDns(name, netwo
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
   name                = "%s"
-  location            = "us-central1-a"
+  location            = "us-east1-b"
   initial_node_count  = 1
   network    = "%s"
   subnetwork = "%s"
@@ -16693,7 +16734,7 @@ func TestAccContainerCluster_withDnsEndpointAndEnableK8sCertsViaDns(t *testing.T
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -16732,7 +16773,7 @@ func testAccContainerCluster_withDnsEndpointAndEnablek8sCertsViaDns(name, networ
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
   name                = "%s"
-  location            = "us-central1-a"
+  location            = "us-east1-b"
   initial_node_count  = 1
   network    = "%s"
   subnetwork = "%s"
@@ -16751,7 +16792,7 @@ func TestAccContainerCluster_withCgroupMode(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -16780,7 +16821,7 @@ func TestAccContainerCluster_withCgroupModeUpdate(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -16835,7 +16876,7 @@ func TestAccContainerCluster_withEnterpriseConfig(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 	pid := envvar.GetTestProjectFromEnv()
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -16882,7 +16923,7 @@ data "google_project" "project" {
 
 resource "google_container_cluster" "with_enterprise_config" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   enterprise_config {
     desired_tier = "%s"
@@ -16903,7 +16944,7 @@ data "google_project" "project" {
 
 resource "google_container_cluster" "with_enterprise_config" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   network    = "%s"
   subnetwork = "%s"
@@ -16918,7 +16959,7 @@ func TestAccContainerCluster_disableControlPlaneIP(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -16965,7 +17006,7 @@ func testAccContainerCluster_ControlPlaneIPdisabled(clusterName, networkName, su
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   network            = "%s"
   subnetwork         = "%s"
@@ -16988,7 +17029,7 @@ func testAccContainerCluster_ControlPlaneIPdisabledWithPrivateClusterConfig(clus
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   network            = "%s"
   subnetwork         = "%s"
@@ -17079,12 +17120,12 @@ resource "google_compute_subnetwork" "default" {
   name          = "%s"
   network       = google_compute_network.default.name
   ip_cidr_range = "10.9.0.0/16"
-  region        = "us-central1"
+  region        = "us-east1"
 }
 
 resource "google_container_cluster" "primary" {
   name                 = "%s"
-  location             = "us-central1-a"
+  location             = "us-east1-b"
   initial_node_count   = 1
   network              = google_compute_network.default.name
   subnetwork           = google_compute_subnetwork.default.name
@@ -17104,7 +17145,7 @@ func testAccContainerCluster_inTransitEncryptionConfig(name, networkName, subnet
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
   name                         = "%s"
-  location                     = "us-central1-a"
+  location                     = "us-east1-b"
   initial_node_count           = 1
   network                      = "%s"
   subnetwork                   = "%s"
@@ -17119,14 +17160,14 @@ func testAccContainerCluster_networkPerformanceConfig(name, networkName, subnetw
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
   name                         = "%s"
-  location                     = "us-central1-a"
+  location                     = "us-east1-b"
   initial_node_count           = 1
   network                      = "%s"
   subnetwork                   = "%s"
   deletion_protection          = false
 
   node_config {
-	machine_type = "n2-standard-32"
+	machine_type = "c4-standard-48"
 	gvnic {
       enabled = true
 	}
@@ -17150,15 +17191,16 @@ func bootstrapAdditionalIpRangesNetworkConfig(t *testing.T, name string, additio
 	// We create our network to ensure no range collisions.
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, fmt.Sprintf("%s-network", name))
 	mainSubnet := tpgcompute.BootstrapSubnetWithOverrides(t, fmt.Sprintf("%s-subnet-main", name), networkName, map[string]interface{}{
-		"ipCidrRange": "10.2.0.0/24",
+		"region":      "us-east1",
+		"ipCidrRange": "10.12.0.0/24",
 		"secondaryIpRanges": []map[string]interface{}{
 			{
 				"rangeName":   "pods",
-				"ipCidrRange": "10.3.0.0/16",
+				"ipCidrRange": "10.13.0.0/16",
 			},
 			{
 				"rangeName":   "services",
-				"ipCidrRange": "10.4.0.0/16",
+				"ipCidrRange": "10.14.0.0/16",
 			},
 		},
 	})
@@ -17177,7 +17219,7 @@ func bootstrapAdditionalIpRangesNetworkConfig(t *testing.T, name string, additio
 			rangeName := fmt.Sprintf("range-%d", cumulativeRangeIndex)
 			r := map[string]interface{}{
 				"rangeName":   rangeName,
-				"ipCidrRange": fmt.Sprintf("10.0.%d.0/24", cumulativeRangeIndex),
+				"ipCidrRange": fmt.Sprintf("10.10.%d.0/24", cumulativeRangeIndex),
 			}
 			rangeNames = append(rangeNames, rangeName)
 			ranges = append(ranges, r)
@@ -17185,7 +17227,8 @@ func bootstrapAdditionalIpRangesNetworkConfig(t *testing.T, name string, additio
 		}
 
 		subnetOverrides := map[string]interface{}{
-			"ipCidrRange":       fmt.Sprintf("10.1.%d.0/24", subnetIndex),
+			"region":            "us-east1",
+			"ipCidrRange":       fmt.Sprintf("10.11.%d.0/24", subnetIndex),
 			"secondaryIpRanges": ranges,
 		}
 
@@ -17314,7 +17357,7 @@ func TestAccContainerCluster_auto_ipam_config_enabled(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -17365,7 +17408,7 @@ func testAccContainerCluster_auto_ipam_config_enabled(clusterName, networkName, 
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   network            = "%s"
   subnetwork         = "%s"
@@ -17386,7 +17429,7 @@ func TestAccContainerCluster_auto_ipam_config_none(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -17410,7 +17453,7 @@ func testAccContainerCluster_auto_ipam_config_none(clusterName, networkName, sub
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   network            = "%s"
@@ -17426,7 +17469,7 @@ func TestAccContainerCluster_withAnonymousAuthenticationConfig(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -17486,12 +17529,19 @@ func testAccContainerCluster_additional_ip_ranges_config(clusterName string, net
 	}
 
 	return fmt.Sprintf(`
+	provider "google" {
+	  region = "us-east1"
+	}
+
 	resource "google_container_cluster" "primary" {
 	  name     = "%s"
-	  location = "us-central1-a"
+	  location = "us-east1-b"
 	  network    = "%s"
 	  subnetwork = "%s"
           initial_node_count = 1
+          node_config {
+            machine_type = "n4-standard-2"
+          }
 
 	  ip_allocation_policy {
 	    cluster_secondary_range_name  = "pods"
@@ -17526,13 +17576,13 @@ func TestAccContainerCluster_WithCPAFeaturesUpdate(t *testing.T) {
 	suffix := acctest.RandString(t, 10)
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", suffix)
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	// Bootstrap KMS keys and needed IAM role.
-	diskKey := kms.BootstrapKMSKeyWithPurposeInLocationAndName(t, "ENCRYPT_DECRYPT", "us-central1", "control-plane-disk-encryption")
-	signingKey1 := kms.BootstrapKMSKeyWithPurposeInLocationAndName(t, "ASYMMETRIC_SIGN", "us-central1", "rs256-service-account-signing-1")
-	signingKey2 := kms.BootstrapKMSKeyWithPurposeInLocationAndName(t, "ASYMMETRIC_SIGN", "us-central1", "rs256-service-account-signing-2")
-	backupKey := kms.BootstrapKMSKeyWithPurposeInLocationAndName(t, "ENCRYPT_DECRYPT", "us-central1", "etcd-backups")
+	diskKey := kms.BootstrapKMSKeyWithPurposeInLocationAndName(t, "ENCRYPT_DECRYPT", "us-east1", "control-plane-disk-encryption")
+	signingKey1 := kms.BootstrapKMSKeyWithPurposeInLocationAndName(t, "ASYMMETRIC_SIGN", "us-east1", "rs256-service-account-signing-1")
+	signingKey2 := kms.BootstrapKMSKeyWithPurposeInLocationAndName(t, "ASYMMETRIC_SIGN", "us-east1", "rs256-service-account-signing-2")
+	backupKey := kms.BootstrapKMSKeyWithPurposeInLocationAndName(t, "ENCRYPT_DECRYPT", "us-east1", "etcd-backups")
 
 	// Here, we are granting the container engine service agent permissions on
 	// *ALL* Cloud KMS keys in the project.  A more realistic usage would be to
@@ -17634,7 +17684,7 @@ func testAccContainerCluster_EnableCPAFeaturesWithSAkeys(context map[string]inte
 	return acctest.Nprintf(`
 		resource "google_container_cluster" "with_cpa_features" {
 			name               = "%{resource_name}"
-			location           = "us-central1-a"
+			location           = "us-east1-b"
 			initial_node_count = 1
 			release_channel {
 				channel = "RAPID"
@@ -17659,7 +17709,7 @@ func TestAccContainerCluster_RbacBindingConfig(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -17702,7 +17752,7 @@ func testAccContainerCluster_RbacBindingConfig(clusterName, networkName, subnetw
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
 
   network    = "%s"
@@ -17723,7 +17773,7 @@ func TestAccContainerCluster_withKubeletResourceManagerConfig(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -17784,7 +17834,7 @@ func testAccContainerCluster_withKubeletConfig(clusterName, networkName, subnetw
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_kubelet_config" {
   name               = %q
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   network            = %q
   subnetwork         = %q
@@ -17811,7 +17861,7 @@ func testAccContainerCluster_withKubeletConfigShutdownGracePeriod(clusterName, n
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_kubelet_config_shutdown" {
   name               = %q
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   network            = %q
   subnetwork         = %q
@@ -17833,7 +17883,7 @@ func testAccContainerCluster_withInlineNodePoolShutdownGracePeriod(clusterName, 
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   deletion_protection = false
   network    = "%s"
   subnetwork    = "%s"
@@ -17857,7 +17907,7 @@ func testAccContainerCluster_withCpuCfsQuotaPool(clusterName, npName, networkNam
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_kubelet_config" {
   name               = %q
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   network            = %q
   subnetwork         = %q
   deletion_protection = false
@@ -17889,7 +17939,7 @@ func testAccContainerCluster_withCpuCfsQuotaPool2(clusterName, npName, networkNa
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_kubelet_config" {
   name               = %q
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   network            = %q
   subnetwork         = %q
   deletion_protection = false
@@ -17921,7 +17971,7 @@ func testAccContainerCluster_nodePool_acceleratorNetworkProfile(clusterName stri
 	return fmt.Sprintf(`
 resource "google_container_cluster" "primary" {
   name     = "%s"
-  location = "us-central1-c"
+  location = "us-east1-d"
 
   datapath_provider       = "ADVANCED_DATAPATH"
   ip_allocation_policy    {}
@@ -17940,9 +17990,10 @@ resource "google_container_cluster" "primary" {
       max_node_count = 1
     }
     node_config {
-      machine_type = "a3-edgegpu-8g"
+      machine_type = "a4-highgpu-8g"
+      flex_start   = true
       guest_accelerator {
-        type  = "nvidia-h100-80gb"
+        type  = "nvidia-b200"
         count = 8
         gpu_driver_installation_config {
           gpu_driver_version = "LATEST"
@@ -17954,7 +18005,7 @@ resource "google_container_cluster" "primary" {
         consume_reservation_type = "NO_RESERVATION"
       }
       ephemeral_storage_local_ssd_config {
-        local_ssd_count = 16
+        local_ssd_count = 32
       }
       oauth_scopes = [ "https://www.googleapis.com/auth/cloud-platform" ]
     }
@@ -17984,7 +18035,7 @@ func TestAccContainerCluster_nodePool_acceleratorNetworkProfile(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", clusterName),
 					resource.TestCheckResourceAttr(resourceName, "node_pool.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "node_pool.0.name", "anp-pool"),
-					resource.TestCheckResourceAttr(resourceName, "node_pool.0.node_config.0.machine_type", "a3-edgegpu-8g"),
+					resource.TestCheckResourceAttr(resourceName, "node_pool.0.node_config.0.machine_type", "a4-highgpu-8g"),
 					resource.TestCheckResourceAttr(resourceName, "node_pool.0.network_config.0.accelerator_network_profile", "auto"),
 					resource.TestCheckResourceAttrSet(resourceName, "node_pool.0.network_config.0.additional_node_network_configs.0.network"),
 					resource.TestCheckResourceAttrSet(resourceName, "node_pool.0.network_config.0.additional_node_network_configs.0.subnetwork"),
@@ -18011,7 +18062,7 @@ resource "google_compute_subnetwork" "main_subnet" {
   name                     = "%[1]s-main-subnet"
   network                  = google_compute_network.main_net.name
   ip_cidr_range            = "10.0.0.0/24"
-  region                   = "us-central1"
+  region                   = "us-east1"
   private_ip_google_access = true
 }
 
@@ -18025,13 +18076,13 @@ resource "google_compute_subnetwork" "add_subnet" {
   name                     = "%[1]s-add-subnet"
   network                  = google_compute_network.add_net.name
   ip_cidr_range            = "10.1.0.0/24"
-  region                   = "us-central1"
+  region                   = "us-east1"
   private_ip_google_access = true
 }
 
 resource "google_container_cluster" "primary" {
   name     = "%[1]s"
-  location = "us-central1-c"
+  location = "us-east1-d"
   
   network    = google_compute_network.main_net.name
   subnetwork = google_compute_subnetwork.main_subnet.name
@@ -18058,10 +18109,11 @@ resource "google_container_cluster" "primary" {
     }
     
 	node_config {
-		machine_type = "a3-edgegpu-8g"
+		machine_type = "a4-highgpu-8g"
+		flex_start   = true
 		oauth_scopes = [ "https://www.googleapis.com/auth/cloud-platform" ]
 		guest_accelerator {
-			type = "nvidia-h100-80gb"
+			type = "nvidia-b200"
 			count = 8
 			gpu_driver_installation_config {
 				gpu_driver_version = "LATEST"
@@ -18072,7 +18124,7 @@ resource "google_container_cluster" "primary" {
 		consume_reservation_type = "NO_RESERVATION"
 		}
 		ephemeral_storage_local_ssd_config {
-		local_ssd_count = 16
+		local_ssd_count = 32
 		}
 	}
 
@@ -18098,13 +18150,13 @@ resource "google_compute_subnetwork" "main_subnet" {
   name                     = "%[1]s-main-subnet"
   network                  = google_compute_network.main_net.name
   ip_cidr_range            = "10.0.0.0/24"
-  region                   = "us-central1"
+  region                   = "us-east1"
   private_ip_google_access = true
 }
 
 resource "google_container_cluster" "primary" {
   name     = "%[1]s"
-  location = "us-central1-c"
+  location = "us-east1-d"
   
   network    = google_compute_network.main_net.name
   subnetwork = google_compute_subnetwork.main_subnet.name
@@ -18131,10 +18183,11 @@ resource "google_container_cluster" "primary" {
     }
     
 	node_config {
-		machine_type = "a3-edgegpu-8g"
+		machine_type = "a4-highgpu-8g"
+		flex_start   = true
 		oauth_scopes = [ "https://www.googleapis.com/auth/cloud-platform" ]
 		guest_accelerator {
-			type = "nvidia-h100-80gb"
+			type = "nvidia-b200"
 			count = 8
 			gpu_driver_installation_config {
 				gpu_driver_version = "LATEST"
@@ -18145,7 +18198,7 @@ resource "google_container_cluster" "primary" {
 		consume_reservation_type = "NO_RESERVATION"
 		}
 		ephemeral_storage_local_ssd_config {
-		local_ssd_count = 16
+		local_ssd_count = 32
 		}
 	}
 
@@ -18166,13 +18219,13 @@ resource "google_compute_subnetwork" "main_subnet" {
   name                     = "%[1]s-main-subnet"
   network                  = google_compute_network.main_net.name
   ip_cidr_range            = "10.0.0.0/24"
-  region                   = "us-central1"
+  region                   = "us-east1"
   private_ip_google_access = true
 }
 
 resource "google_container_cluster" "primary" {
   name     = "%[1]s"
-  location = "us-central1-c"
+  location = "us-east1-d"
   
   network    = google_compute_network.main_net.name
   subnetwork = google_compute_subnetwork.main_subnet.name
@@ -18197,10 +18250,11 @@ resource "google_container_cluster" "primary" {
     }
     
 	node_config {
-		machine_type = "a3-edgegpu-8g"
+		machine_type = "a4-highgpu-8g"
+		flex_start   = true
 		oauth_scopes = [ "https://www.googleapis.com/auth/cloud-platform" ]
 		guest_accelerator {
-			type = "nvidia-h100-80gb"
+			type = "nvidia-b200"
 			count = 8
 			gpu_driver_installation_config {
 				gpu_driver_version = "LATEST"
@@ -18211,7 +18265,7 @@ resource "google_container_cluster" "primary" {
 		consume_reservation_type = "NO_RESERVATION"
 		}
 		ephemeral_storage_local_ssd_config {
-		local_ssd_count = 16
+		local_ssd_count = 32
 		}
 	}
 	
@@ -18300,7 +18354,7 @@ func TestAccContainerCluster_withClusterBootDisk(t *testing.T) {
 
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -18338,7 +18392,7 @@ provider "google" {
 resource "google_container_cluster" "cluster" {
   provider            = google.user-project-override
   name                = "%s"
-  location            = "us-central1-a"
+  location            = "us-east1-b"
   initial_node_count  = 1
   deletion_protection = false
   network             = "%s"
@@ -18366,7 +18420,7 @@ provider "google" {
 resource "google_container_cluster" "cluster" {
   provider            = google.user-project-override
   name                = "%s"
-  location            = "us-central1-a"
+  location            = "us-east1-b"
   initial_node_count  = 1
   deletion_protection = false
   network             = "%s"
@@ -18447,7 +18501,7 @@ resource "google_compute_subnetwork" "container_subnetwork" {
   name                     = "%s-subnet-1"
   network                  = google_compute_network.container_network.name
   ip_cidr_range            = "10.0.36.0/24"
-  region                   = "us-central1"
+  region                   = "us-east1"
   private_ip_google_access = true
 
   secondary_ip_range {
@@ -18472,14 +18526,14 @@ resource "google_compute_subnetwork" "subnet1" {
   name                     = "%s-subnet-2"
   network                  = google_compute_network.addn_net_1.name
   ip_cidr_range            = "10.0.37.0/24"
-  region                   = "us-central1"
+  region                   = "us-east1"
 }
 
 resource "google_compute_subnetwork" "subnet2" {
   name                     = "%s-subnet-3"
   network                  = google_compute_network.addn_net_2.name
   ip_cidr_range            = "10.0.38.0/24"
-  region                   = "us-central1"
+  region                   = "us-east1"
 
   secondary_ip_range {
     range_name    = "pod"
@@ -18489,7 +18543,7 @@ resource "google_compute_subnetwork" "subnet2" {
 
 resource "google_container_cluster" "cluster" {
   name               = "%s"
-  location           = "us-central1"
+  location           = "us-east1"
   initial_node_count = 1
 
   network    = google_compute_network.container_network.name
@@ -18512,7 +18566,7 @@ resource "google_container_cluster" "cluster" {
 
 resource "google_container_node_pool" "with_multi_nic" {
   name               = "%s-mutli-nic"
-  location           = "us-central1"
+  location           = "us-east1"
   cluster            = google_container_cluster.cluster.name
   node_count = 1
   network_config {
@@ -18534,7 +18588,7 @@ resource "google_container_node_pool" "with_multi_nic" {
     }
   }
   node_config {
-    machine_type = "n2-standard-8"
+    machine_type = "n4-standard-8"
 	oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform",
     ]
@@ -18566,7 +18620,7 @@ resource "google_compute_subnetwork" "container_subnetwork" {
   name                     = "%s-subnet-1"
   network                  = google_compute_network.container_network.name
   ip_cidr_range            = "10.0.36.0/24"
-  region                   = "us-central1"
+  region                   = "us-east1"
   private_ip_google_access = true
 
   secondary_ip_range {
@@ -18591,14 +18645,14 @@ resource "google_compute_subnetwork" "subnet1" {
   name                     = "%s-subnet-2"
   network                  = google_compute_network.addn_net_1.name
   ip_cidr_range            = "10.0.37.0/24"
-  region                   = "us-central1"
+  region                   = "us-east1"
 }
 
 resource "google_compute_subnetwork" "subnet2" {
   name                     = "%s-subnet-3"
   network                  = google_compute_network.addn_net_2.name
   ip_cidr_range            = "10.0.38.0/24"
-  region                   = "us-central1"
+  region                   = "us-east1"
 
   secondary_ip_range {
     range_name    = "pod"
@@ -18608,7 +18662,7 @@ resource "google_compute_subnetwork" "subnet2" {
 
 resource "google_container_cluster" "cluster" {
   name               = "%s"
-  location           = "us-central1"
+  location           = "us-east1"
   initial_node_count = 1
 
   network    = google_compute_network.container_network.name
@@ -18695,12 +18749,19 @@ func testAccContainerCluster_custom_subnet(clusterName string, networkName strin
 	// to use the specified subnet works. If no subnet was specified, multi subnet cluster
 	// logic would select the subnet with least pod utilization.
 	return fmt.Sprintf(`
+	provider "google" {
+	  region = "us-east1"
+	}
+
 	resource "google_container_cluster" "primary" {
 	  name     = "%s"
-	  location = "us-central1-a"
+	  location = "us-east1-b"
 	  network    = "%s"
 	  subnetwork = "%s"
           initial_node_count = 1
+          node_config {
+            machine_type = "n4-standard-2"
+          }
 
 	  ip_allocation_policy {
 	    cluster_secondary_range_name  = "pods"
@@ -18714,9 +18775,12 @@ func testAccContainerCluster_custom_subnet(clusterName string, networkName strin
 	resource "google_container_node_pool" "np" {
 	  name     = "custom-node-pool"
 	  cluster  = google_container_cluster.primary.id
-	  location = "us-central1-a"
+	  location = "us-east1-b"
 	  node_count = 2
   	  max_pods_per_node = 30
+	  node_config {
+	    machine_type = "n4-standard-2"
+	  }
 
 	  network_config {
   	    subnetwork = "%s"
@@ -18726,9 +18790,12 @@ func testAccContainerCluster_custom_subnet(clusterName string, networkName strin
 	resource "google_container_node_pool" "np1" {
 	  name     = "custom-node-pool1"
 	  cluster  = google_container_cluster.primary.id
-	  location = "us-central1-a"
+	  location = "us-east1-b"
 	  node_count = 2
   	  max_pods_per_node = 30
+	  node_config {
+	    machine_type = "n4-standard-2"
+	  }
 
 	  network_config {
   	    subnetwork = "%s"
@@ -18743,7 +18810,7 @@ func TestAccContainerCluster_withNodeCreationConfig(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -18784,7 +18851,7 @@ func TestAccContainerCluster_withCustomNodeInitGcs(t *testing.T) {
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	bucketName := fmt.Sprintf("tf-test-bucket-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -18814,7 +18881,7 @@ func TestAccContainerCluster_withCustomNodeInitSecret(t *testing.T) {
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	secretId := fmt.Sprintf("tf-test-secret-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -18847,7 +18914,7 @@ func TestAccContainerCluster_withCustomNodeInitInline(t *testing.T) {
 	bucketName := fmt.Sprintf("tf-test-bucket-%s", acctest.RandString(t, 10))
 	secretId := fmt.Sprintf("tf-test-secret-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -18894,7 +18961,7 @@ resource "google_container_cluster" "primary" {
 func testAccContainerCluster_withCustomNodeInitGcs(cluster, bucket, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "central1a" {
-  location = "us-central1-a"
+  location = "us-east1-b"
 }
 
 resource "google_storage_bucket" "bucket" {
@@ -18911,7 +18978,7 @@ resource "google_storage_bucket_object" "script" {
 
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   min_master_version = data.google_container_engine_versions.central1a.latest_master_version
   deletion_protection = false
@@ -18939,7 +19006,7 @@ resource "google_container_cluster" "primary" {
 func testAccContainerCluster_withCustomNodeInitSecret(cluster, secretId, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "central1a" {
-  location = "us-central1-a"
+  location = "us-east1-b"
 }
 
 data "google_project" "project" {}
@@ -18971,7 +19038,7 @@ resource "time_sleep" "wait_60_seconds" {
 
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   min_master_version = data.google_container_engine_versions.central1a.latest_master_version
   deletion_protection = false
@@ -19002,7 +19069,7 @@ resource "google_container_cluster" "primary" {
 func testAccContainerCluster_withCustomNodeInitInline(cluster, bucket, secretId, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "central1a" {
-  location = "us-central1-a"
+  location = "us-east1-b"
 }
 
 data "google_project" "project" {}
@@ -19046,7 +19113,7 @@ resource "time_sleep" "wait_60_seconds" {
 
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   min_master_version = data.google_container_engine_versions.central1a.latest_master_version
   deletion_protection = false
   network    = "%s"
@@ -19101,7 +19168,7 @@ func TestAccContainerCluster_withSlurmOperatorConfig(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-slurm-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -19152,7 +19219,7 @@ func testAccContainerCluster_switchSlurmOperator(clusterName, networkName, subne
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_slurm_config" {
   name                = "%s"
-  location            = "us-central1-a"
+  location            = "us-east1-b"
   initial_node_count  = 1
   network             = "%s"
   subnetwork          = "%s"
@@ -19172,7 +19239,7 @@ func TestAccContainerCluster_withTaintConfig(t *testing.T) {
 
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 	importIgnore := []string{"min_master_version", "deletion_protection"}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -19264,12 +19331,12 @@ func TestAccContainerCluster_skipNodePoolRefresh(t *testing.T) {
 func testAccContainerCluster_withTaintConfig(cluster, networkName, subnetworkName, behavior string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "central1a" {
-  location = "us-central1-a"
+  location = "us-east1-b"
 }
 
 resource "google_container_cluster" "cluster" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   initial_node_count = 1
   min_master_version  = data.google_container_engine_versions.central1a.release_channel_latest_version["RAPID"]
 
@@ -19277,7 +19344,7 @@ resource "google_container_cluster" "cluster" {
   subnetwork         = "%s"
 
   node_config {
-    machine_type = "t2a-standard-2"
+    machine_type = "n4a-standard-2"
     taint_config {
       architecture_taint_behavior = "%s"
     }
@@ -19293,7 +19360,7 @@ func TestAccContainerCluster_withNodePoolTaintConfig(t *testing.T) {
 
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 	importIgnore := []string{"min_master_version", "deletion_protection"}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -19327,7 +19394,7 @@ func TestAccContainerCluster_withNodePoolTaintConfig_none(t *testing.T) {
 
 	cluster := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 	importIgnore := []string{"min_master_version", "deletion_protection"}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -19356,12 +19423,12 @@ func TestAccContainerCluster_withNodePoolTaintConfig_none(t *testing.T) {
 func testAccContainerCluster_withNodePoolTaintConfig(cluster, networkName, subnetworkName, behavior string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "central1a" {
-  location = "us-central1-a"
+  location = "us-east1-b"
 }
 
 resource "google_container_cluster" "cluster" {
   name               = "%s"
-  location           = "us-central1-a"
+  location           = "us-east1-b"
   min_master_version = data.google_container_engine_versions.central1a.release_channel_latest_version["RAPID"]
 
   network    = "%s"
@@ -19394,7 +19461,7 @@ resource "google_compute_network" "custom" {
 resource "google_compute_subnetwork" "custom" {
   name          = "tf-test-subnet-%s"
   ip_cidr_range = "10.0.0.0/16"
-  region        = "us-central1"
+  region        = "us-east1"
   network       = google_compute_network.custom.id
 
   secondary_ip_range {
@@ -19410,7 +19477,7 @@ resource "google_compute_subnetwork" "custom" {
 
 resource "google_container_cluster" "primary" {
   name                = "%s"
-  location            = "us-central1-a"
+  location            = "us-east1-b"
   initial_node_count  = 1
   network             = google_compute_network.custom.id
   subnetwork          = google_compute_subnetwork.custom.id
@@ -19424,7 +19491,7 @@ resource "google_container_cluster" "primary" {
   # We must delete the default node pool to ensure we only have our standalone node pool
   remove_default_node_pool = true
   node_config {
-    machine_type = "e2-micro"
+    machine_type = "n4-standard-2"
   }
 
   lifecycle {
@@ -19436,13 +19503,13 @@ resource "google_container_cluster" "primary" {
 
 resource "google_container_node_pool" "extra" {
   name       = "%s"
-  location   = "us-central1-a"
+  location   = "us-east1-b"
   cluster    = google_container_cluster.primary.name
   node_count = 1
 
   node_config {
     preemptible  = true
-    machine_type = "e2-micro"
+    machine_type = "n4-standard-2"
   }
 }
 `, suffix, suffix, clusterName, skipRefresh, poolName)
@@ -19452,7 +19519,7 @@ func TestAccContainerCluster_desiredEmulatedVersion(t *testing.T) {
 	t.Parallel()
 	clusterName := fmt.Sprintf("tf-test-cluster-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -19546,7 +19613,7 @@ func testAccCheckContainerClusterEmulatedVersion(t *testing.T, resourceName stri
 func testAccContainerCluster_desiredEmulatedVersionBase(clusterName, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "central1" {
-  location = "us-central1"
+  location = "us-east1"
 }
 
 locals {
@@ -19559,18 +19626,18 @@ locals {
 }
 
 data "google_container_engine_versions" "base" {
-  location       = "us-central1"
+  location       = "us-east1"
   version_prefix = "1.${local.base_minor}."
 }
 
 data "google_container_engine_versions" "target" {
-  location       = "us-central1"
+  location       = "us-east1"
   version_prefix = "1.${local.target_minor}."
 }
 
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1"
+  location           = "us-east1"
   initial_node_count = 1
 
   release_channel {
@@ -19583,7 +19650,7 @@ resource "google_container_cluster" "primary" {
   subnetwork = "%s"
 
   node_config {
-    machine_type = "e2-standard-2"
+    machine_type = "n4-standard-2"
   }
 }
 `, clusterName, networkName, subnetworkName)
@@ -19592,7 +19659,7 @@ resource "google_container_cluster" "primary" {
 func testAccContainerCluster_desiredEmulatedVersionSoak(clusterName, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "central1" {
-  location = "us-central1"
+  location = "us-east1"
 }
 
 locals {
@@ -19605,18 +19672,18 @@ locals {
 }
 
 data "google_container_engine_versions" "base" {
-  location       = "us-central1"
+  location       = "us-east1"
   version_prefix = "1.${local.base_minor}."
 }
 
 data "google_container_engine_versions" "target" {
-  location       = "us-central1"
+  location       = "us-east1"
   version_prefix = "1.${local.target_minor}."
 }
 
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1"
+  location           = "us-east1"
   initial_node_count = 1
 
   release_channel {
@@ -19633,7 +19700,7 @@ resource "google_container_cluster" "primary" {
   }
 
   node_config {
-    machine_type = "e2-standard-2"
+    machine_type = "n4-standard-2"
   }
 }
 `, clusterName, networkName, subnetworkName)
@@ -19642,7 +19709,7 @@ resource "google_container_cluster" "primary" {
 func testAccContainerCluster_desiredEmulatedVersionComplete(clusterName, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "central1" {
-  location = "us-central1"
+  location = "us-east1"
 }
 
 locals {
@@ -19655,18 +19722,18 @@ locals {
 }
 
 data "google_container_engine_versions" "base" {
-  location       = "us-central1"
+  location       = "us-east1"
   version_prefix = "1.${local.base_minor}."
 }
 
 data "google_container_engine_versions" "target" {
-  location       = "us-central1"
+  location       = "us-east1"
   version_prefix = "1.${local.target_minor}."
 }
 
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1"
+  location           = "us-east1"
   initial_node_count = 1
 
   release_channel {
@@ -19685,7 +19752,7 @@ resource "google_container_cluster" "primary" {
   desired_emulated_version = regex("^[0-9]+\\.[0-9]+", data.google_container_engine_versions.target.latest_master_version)
 
   node_config {
-    machine_type = "e2-standard-2"
+    machine_type = "n4-standard-2"
   }
 }
 `, clusterName, networkName, subnetworkName)
@@ -19695,7 +19762,7 @@ func TestAccContainerCluster_desiredEmulatedVersionAutopilot(t *testing.T) {
 	t.Parallel()
 	clusterName := fmt.Sprintf("tf-test-cluster-auto-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -19758,7 +19825,7 @@ func TestAccContainerCluster_desiredEmulatedVersionAutopilot(t *testing.T) {
 func testAccContainerCluster_desiredEmulatedVersionAutopilotBase(clusterName, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "central1" {
-  location = "us-central1"
+  location = "us-east1"
 }
 
 locals {
@@ -19771,18 +19838,18 @@ locals {
 }
 
 data "google_container_engine_versions" "base" {
-  location       = "us-central1"
+  location       = "us-east1"
   version_prefix = "1.${local.base_minor}."
 }
 
 data "google_container_engine_versions" "target" {
-  location       = "us-central1"
+  location       = "us-east1"
   version_prefix = "1.${local.target_minor}."
 }
 
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1"
+  location           = "us-east1"
   enable_autopilot   = true
   min_master_version = data.google_container_engine_versions.base.latest_master_version
   deletion_protection = false
@@ -19800,7 +19867,7 @@ resource "google_container_cluster" "primary" {
 func testAccContainerCluster_desiredEmulatedVersionAutopilotSoak(clusterName, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "central1" {
-  location = "us-central1"
+  location = "us-east1"
 }
 
 locals {
@@ -19813,18 +19880,18 @@ locals {
 }
 
 data "google_container_engine_versions" "base" {
-  location       = "us-central1"
+  location       = "us-east1"
   version_prefix = "1.${local.base_minor}."
 }
 
 data "google_container_engine_versions" "target" {
-  location       = "us-central1"
+  location       = "us-east1"
   version_prefix = "1.${local.target_minor}."
 }
 
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1"
+  location           = "us-east1"
   enable_autopilot   = true
   min_master_version = data.google_container_engine_versions.target.latest_master_version
   deletion_protection = false
@@ -19846,7 +19913,7 @@ resource "google_container_cluster" "primary" {
 func testAccContainerCluster_desiredEmulatedVersionAutopilotComplete(clusterName, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "central1" {
-  location = "us-central1"
+  location = "us-east1"
 }
 
 locals {
@@ -19859,18 +19926,18 @@ locals {
 }
 
 data "google_container_engine_versions" "base" {
-  location       = "us-central1"
+  location       = "us-east1"
   version_prefix = "1.${local.base_minor}."
 }
 
 data "google_container_engine_versions" "target" {
-  location       = "us-central1"
+  location       = "us-east1"
   version_prefix = "1.${local.target_minor}."
 }
 
 resource "google_container_cluster" "primary" {
   name               = "%s"
-  location           = "us-central1"
+  location           = "us-east1"
   enable_autopilot   = true
   min_master_version = data.google_container_engine_versions.target.latest_master_version
   deletion_protection = false
@@ -19896,7 +19963,7 @@ func TestAccContainerCluster_withNodeReadinessConfig(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-nrc-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -19947,7 +20014,7 @@ func testAccContainerCluster_switchNodeReadinessConfig(clusterName, networkName,
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_nrc_config" {
   name                = "%s"
-  location            = "us-central1-a"
+  location            = "us-east1-b"
   initial_node_count  = 1
   network             = "%s"
   subnetwork          = "%s"
@@ -19967,7 +20034,7 @@ func TestAccContainerCluster_withHighScaleCheckpointingConfig(t *testing.T) {
 
 	clusterName := fmt.Sprintf("tf-test-hsc-%s", acctest.RandString(t, 10))
 	networkName := tpgcompute.BootstrapSharedTestNetwork(t, "gke-cluster")
-	subnetworkName := tpgcompute.BootstrapSubnet(t, "gke-cluster", networkName)
+	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -20002,7 +20069,7 @@ data "google_project" "project" {}
 
 resource "google_container_cluster" "with_hsc_config" {
   name                = "%s"
-  location            = "us-central1-a"
+  location            = "us-east1-b"
   initial_node_count  = 1
   network             = "%s"
   subnetwork          = "%s"
@@ -20057,7 +20124,7 @@ func TestAccContainerCluster_nodePoolAdditionalNodeNetworkConfigsStackType(t *te
 func testAccContainerCluster_nodePoolAdditionalNodeNetworkConfigsStackType(clusterName, npName string) string {
 	return fmt.Sprintf(`
 data "google_container_engine_versions" "central1c" {
-  location = "us-central1-c"
+  location = "us-east1-d"
 }
 
 resource "google_compute_network" "main_net" {
@@ -20069,7 +20136,7 @@ resource "google_compute_subnetwork" "main_subnet" {
   name          = "%[1]s-main-subnet"
   network       = google_compute_network.main_net.name
   ip_cidr_range = "10.0.0.0/24"
-  region        = "us-central1"
+  region        = "us-east1"
 }
 
 resource "google_compute_network" "add_net" {
@@ -20081,14 +20148,14 @@ resource "google_compute_network" "add_net" {
 resource "google_compute_subnetwork" "add_subnet" {
   name             = "%[1]s-add-subnet"
   network          = google_compute_network.add_net.name
-  region           = "us-central1"
+  region           = "us-east1"
   stack_type       = "IPV6_ONLY"
   ipv6_access_type = "EXTERNAL"
 }
 
 resource "google_container_cluster" "cluster" {
   name     = "%[1]s"
-  location = "us-central1-c"
+  location = "us-east1-d"
 
   # additional_node_network_configs.stack_type is only honoured by GKE 1.36+;
   # older masters silently ignore it and fall back to IPv4.
@@ -20110,7 +20177,7 @@ resource "google_container_cluster" "cluster" {
     node_count = 1
 
     node_config {
-      machine_type = "e2-standard-4"
+      machine_type = "n4-standard-4"
       oauth_scopes = ["https://www.googleapis.com/auth/cloud-platform"]
     }
 
