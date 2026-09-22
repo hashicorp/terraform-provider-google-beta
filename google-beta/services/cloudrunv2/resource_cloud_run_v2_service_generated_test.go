@@ -146,7 +146,7 @@ func TestAccCloudRunV2Service_cloudrunv2ServiceScalingControlsExample(t *testing
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckCloudRunV2ServiceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -211,12 +211,10 @@ func TestAccCloudRunV2Service_cloudrunv2ServiceScalingControlsExample(t *testing
 func testAccCloudRunV2Service_cloudrunv2ServiceScalingControlsExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_cloud_run_v2_service" "default" {
-  provider = google-beta
   name     = "%{cloud_run_service_name}"
   location = "us-central1"
   deletion_protection = false
   ingress = "INGRESS_TRAFFIC_ALL"
-  launch_stage = "BETA"
 
   template {
     scaling {
