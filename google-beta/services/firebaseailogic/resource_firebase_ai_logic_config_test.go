@@ -29,7 +29,6 @@ import (
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
-	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/apikeys"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebase"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebaseailogic"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager"
@@ -71,39 +70,38 @@ func TestAccFirebaseAILogicConfig_firebaseailogicConfigUpdate(t *testing.T) {
 		CheckDestroy: testAccCheckFirebaseAILogicConfigDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccFirebaseAILogicConfig_firebaseailogicConfigUpdateExample(context, "key1", 0.5, "ALL", ""),
+				Config: testAccFirebaseAILogicConfig_firebaseailogicConfigUpdateExample(context, 0.5, "ALL", ""),
 			},
 			{
 				ResourceName:            "google_firebase_ai_logic_config.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"generative_language_config.0.api_key", "generative_language_config.0.api_key_wo", "location"},
+				ImportStateVerifyIgnore: []string{"location"},
 			},
 			{
-				Config: testAccFirebaseAILogicConfig_firebaseailogicConfigUpdateExample(context, "key2", 1.0, "NONE", "traffic_filter {\n\t\ttemplate_only = true\n\t}"),
-			},
-			{
-				ResourceName:            "google_firebase_ai_logic_config.default",
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"generative_language_config.0.api_key", "generative_language_config.0.api_key_wo", "location"},
-			},
-			{
-				Config: testAccFirebaseAILogicConfig_firebaseailogicConfigUpdateExample(context, "key3", 1.0, "ALL", "traffic_filter {\n\t\ttemplate_only = false\n\t}"),
+				Config: testAccFirebaseAILogicConfig_firebaseailogicConfigUpdateExample(context, 1.0, "NONE", "traffic_filter {\n\t\ttemplate_only = true\n\t}"),
 			},
 			{
 				ResourceName:            "google_firebase_ai_logic_config.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"generative_language_config.0.api_key", "generative_language_config.0.api_key_wo", "location"},
+				ImportStateVerifyIgnore: []string{"location"},
+			},
+			{
+				Config: testAccFirebaseAILogicConfig_firebaseailogicConfigUpdateExample(context, 1.0, "ALL", "traffic_filter {\n\t\ttemplate_only = false\n\t}"),
+			},
+			{
+				ResourceName:            "google_firebase_ai_logic_config.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"location"},
 			},
 		},
 	})
 }
 
 func testAccFirebaseAILogicConfig_firebaseailogicConfigUpdateExample(
-	context map[string]interface{}, apiKeyId string, samplingRate float32, telemetryMode string, trafficFilterBlock string) string {
-	context["api_key_id"] = apiKeyId
+	context map[string]interface{}, samplingRate float32, telemetryMode string, trafficFilterBlock string) string {
 	context["sampling_rate"] = samplingRate
 	context["telemetry_mode"] = telemetryMode
 	context["traffic_filter_block"] = trafficFilterBlock
@@ -139,20 +137,6 @@ resource "google_project_service" "ailogic" {
   service = "firebasevertexai.googleapis.com"
 }
 
-resource "google_apikeys_key" "gemini" {
-  provider  = google-beta
-  project  = google_project.project.project_id
-
-  name         = "tf-test-%{api_key_id}-%{random_suffix}"
-  display_name = "Gemini Developer API key"
-
-  restrictions {
-    api_targets {
-      service = "generativelanguage.googleapis.com"
-    }
-  }
-}
-
 # It takes a while for permissions to propagate
 # If your Terraform setup has a retry mechanism, this wait is unnecessary
 resource "time_sleep" "wait_30s" {
@@ -168,10 +152,6 @@ resource "google_firebase_ai_logic_config" "default" {
   provider  = google-beta
   project   = google_firebase_project.default.project
   location  = "global"
-
-  generative_language_config {
-    api_key = google_apikeys_key.gemini.key_string
-  }
 
   telemetry_config {
     mode = "%{telemetry_mode}"
