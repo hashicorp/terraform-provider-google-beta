@@ -31,7 +31,7 @@ import (
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
-func TestAccHealthcareHl7V2StoreIdParsing(t *testing.T) {
+func TestHealthcareHl7V2StoreIdParsing(t *testing.T) {
 	t.Parallel()
 
 	cases := map[string]struct {
