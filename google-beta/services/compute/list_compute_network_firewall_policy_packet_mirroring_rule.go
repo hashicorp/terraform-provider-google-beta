@@ -180,6 +180,16 @@ func ListComputeNetworkFirewallPolicyPacketMirroringRules(config *transport_tpg.
 			if err = ResourceComputeNetworkFirewallPolicyPacketMirroringRuleFlatten(d, config, res, config, project, userAgent, billingProject, url, headers); err != nil {
 				return err
 			}
+			if firewallPolicy != "" {
+				if err := d.Set("firewall_policy", firewallPolicy); err != nil {
+					return fmt.Errorf("error setting firewall_policy: %w", err)
+				}
+			}
+			if project != "" {
+				if err := d.Set("project", project); err != nil {
+					return fmt.Errorf("error setting project: %w", err)
+				}
+			}
 			id, err := tpgresource.ReplaceVarsForId(d, config, "projects/{{project}}/global/firewallPolicies/{{firewall_policy}}/packetMirroringRules/{{priority}}")
 			if err != nil {
 				return fmt.Errorf("error constructing id: %w", err)
