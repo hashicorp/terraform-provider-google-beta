@@ -138,37 +138,32 @@ func ResourceFirebaseAILogicConfig() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"generative_language_config": {
-				Type:     schema.TypeList,
-				Optional: true,
+				Type:       schema.TypeList,
+				Optional:   true,
+				Deprecated: "`generative_language_config` is deprecated and will be removed in a future major release. Firebase AI Logic now uses a Google-managed service account to authenticate requests to the Gemini Developer API and no longer requires an API key.",
 				Description: `Configuration for using the Gemini Developer API via Firebase AI Logic.
 
-When using the Gemini Developer API via Firebase AI Logic, a separate Gemini
-API key is stored in this configuration *on the server* so that you do
-**not** add your Gemini API key directly into your app's codebase.`,
+Firebase AI Logic now uses a Google-managed service account to authenticate
+requests to the Gemini Developer API and no longer requires an API key.
+Values provided here may be silently ignored on input, and may be omitted in
+responses.`,
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"api_key": {
-							Type:     schema.TypeString,
-							Optional: true,
-							Description: `The value of the API key. The API key must have
-'generativelanguage.googleapis.com' in its "API restrictions" allowlist.
-Note that this API is sometimes called the *Generative Language API* in
-the Google Cloud console.
-
-Do **not** add this Gemini API key into your app's codebase`,
+							Type:       schema.TypeString,
+							Optional:   true,
+							Deprecated: "`generative_language_config.api_key` is deprecated and will be removed in a future major release. Firebase AI Logic now uses a Google-managed service account to authenticate requests to the Gemini Developer API and no longer requires an API key.",
+							Description: `The value of the API key. Firebase AI Logic no longer requires API key
+material; values provided here may be silently ignored on input.`,
 							Sensitive:     true,
 							ConflictsWith: []string{"generative_language_config.0.api_key_wo"},
 						},
 						"api_key_wo": {
 							Type:     schema.TypeString,
 							Optional: true,
-							Description: `The value of the API key. The API key must have
-'generativelanguage.googleapis.com' in its "API restrictions" allowlist.
-Note that this API is sometimes called the *Generative Language API* in
-the Google Cloud console.
-
-Do **not** add this Gemini API key into your app's codebase`,
+							Description: `The value of the API key. Firebase AI Logic no longer requires API key
+material; values provided here may be silently ignored on input.`,
 							WriteOnly:     true,
 							ConflictsWith: []string{"generative_language_config.0.api_key"},
 							RequiredWith:  []string{"generative_language_config.0.api_key_wo_version"},

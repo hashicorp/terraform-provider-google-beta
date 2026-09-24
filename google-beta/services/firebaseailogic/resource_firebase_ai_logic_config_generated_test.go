@@ -31,7 +31,6 @@ import (
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
-	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/apikeys"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebase"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/firebaseailogic"
 	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager"
@@ -157,7 +156,6 @@ func TestAccFirebaseAILogicConfig_firebaseailogicConfigFullExample(t *testing.T)
 	context := map[string]interface{}{
 		"billing_account": envvar.GetTestBillingAccountFromEnv(t),
 		"org_id":          envvar.GetTestOrgFromEnv(t),
-		"api_key_id":      "tf-test-gemini-api-key" + randomSuffix,
 		"project_id":      "full" + randomSuffix,
 		"random_suffix":   randomSuffix,
 	}
@@ -221,20 +219,6 @@ resource "google_project_service" "ailogic" {
   service = "firebasevertexai.googleapis.com"
 }
 
-resource "google_apikeys_key" "gemini" {
-  provider  = google-beta
-  project  = google_project.project.project_id
-
-  name         = "%{api_key_id}"
-  display_name = "Gemini Developer API key"
-
-  restrictions {
-    api_targets {
-      service = "generativelanguage.googleapis.com"
-    }
-  }
-}
-
 # It takes a while for permissions to propagate
 # If your Terraform setup has a retry mechanism, this wait is unnecessary
 resource "time_sleep" "wait_30s" {
@@ -250,10 +234,6 @@ resource "google_firebase_ai_logic_config" "default" {
   provider  = google-beta
   project   = google_firebase_project.default.project
   location  = "global"
-
-  generative_language_config {
-    api_key = google_apikeys_key.gemini.key_string
-  }
 
   telemetry_config {
     mode = "ALL"
