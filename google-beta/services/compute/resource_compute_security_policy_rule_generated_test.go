@@ -484,6 +484,64 @@ resource "google_compute_security_policy_rule" "policy_rule_one" {
 `, context)
 }
 
+func TestAccComputeSecurityPolicyRule_securityPolicyRuleRequestBodyExpressionExample(t *testing.T) {
+	t.Parallel()
+
+	randomSuffix := acctest.RandString(t, 10)
+
+	context := map[string]interface{}{
+		"sec_policy_name": "tf-test-policyruletest" + randomSuffix,
+		"random_suffix":   randomSuffix,
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckComputeSecurityPolicyRuleDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeSecurityPolicyRule_securityPolicyRuleRequestBodyExpressionExample(context),
+			},
+			{
+				ResourceName:            "google_compute_security_policy_rule.policy_rule",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"security_policy"},
+			},
+			{
+				ResourceName:       "google_compute_security_policy_rule.policy_rule",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
+		},
+	})
+}
+
+func testAccComputeSecurityPolicyRule_securityPolicyRuleRequestBodyExpressionExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_compute_security_policy" "default" {
+  provider    = google-beta
+  name        = "%{sec_policy_name}"
+  description = "basic global security policy"
+  type        = "CLOUD_ARMOR"
+}
+
+resource "google_compute_security_policy_rule" "policy_rule" {
+  provider        = google-beta
+  security_policy = google_compute_security_policy.default.name
+  description     = "Deny requests containing specific body string"
+  action          = "deny(403)"
+  priority        = 1000
+  match {
+    expr {
+      expression = "request.body.contains('my-match-string')"
+    }
+  }
+}
+`, context)
+}
+
 func testAccCheckComputeSecurityPolicyRuleDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		for name, rs := range s.RootModule().Resources {

@@ -314,7 +314,7 @@ If the rule does not evaluate preconfigured WAF rules, i.e., if evaluatePreconfi
 									"request_body": {
 										Type:        schema.TypeList,
 										Optional:    true,
-										Description: `A list of request body fields to be excluded from inspection during\npreconfigured WAF evaluation.`,
+										Description: `A list of request body fields to be excluded from inspection during preconfigured WAF evaluation.`,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"operator": {
