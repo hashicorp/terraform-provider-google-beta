@@ -384,7 +384,7 @@ func TestAccNetworkServicesTlsRoute_networkServicesTlsRouteTargetTcpProxyBasicEx
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckNetworkServicesTlsRouteDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -409,7 +409,6 @@ func TestAccNetworkServicesTlsRoute_networkServicesTlsRouteTargetTcpProxyBasicEx
 func testAccNetworkServicesTlsRoute_networkServicesTlsRouteTargetTcpProxyBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_backend_service" "default" {
-  provider              = google-beta
   name                  = "%{backend_service_name}"
   load_balancing_scheme = "INTERNAL_MANAGED"
   protocol              = "TCP"
@@ -417,7 +416,6 @@ resource "google_compute_backend_service" "default" {
 }
 
 resource "google_compute_health_check" "default" {
-  provider = google-beta
   name     = "%{health_check_name}"
 
   https_health_check {
@@ -426,13 +424,11 @@ resource "google_compute_health_check" "default" {
 }
 
 resource "google_compute_target_tcp_proxy" "default" {
-  provider              = google-beta
   name                  = "%{target_tcp_proxy_name}"
   load_balancing_scheme = "INTERNAL_MANAGED"
 }
 
 resource "google_network_services_tls_route" "default" {
-  provider = google-beta
   name     = "%{resource_name}"
 
   target_proxies = [

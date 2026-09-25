@@ -154,7 +154,7 @@ character, which cannot be a dash.`,
 				Optional:         true,
 				DiffSuppressFunc: tpgresource.CompareSelfLinkOrResourceName,
 				Description: `A reference to the BackendService resource. This field is optional when
-the loadBalancingScheme (available in beta) is set to INTERNAL_MANAGED.`,
+the loadBalancingScheme is set to INTERNAL_MANAGED.`,
 				AtLeastOneOf: []string{"backend_service", "load_balancing_scheme"},
 			},
 			"description": {

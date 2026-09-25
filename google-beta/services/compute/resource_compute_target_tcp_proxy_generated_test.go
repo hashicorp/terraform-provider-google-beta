@@ -94,77 +94,12 @@ func TestAccComputeTargetTcpProxy_targetTcpProxyBasicExample(t *testing.T) {
 func testAccComputeTargetTcpProxy_targetTcpProxyBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_target_tcp_proxy" "default" {
-  name            = "%{target_tcp_proxy_name}"
-  backend_service = google_compute_backend_service.default.id
-}
-
-resource "google_compute_backend_service" "default" {
-  name        = "%{backend_service_name}"
-  protocol    = "TCP"
-  timeout_sec = 10
-
-  health_checks = [google_compute_health_check.default.id]
-}
-
-resource "google_compute_health_check" "default" {
-  name               = "%{health_check_name}"
-  timeout_sec        = 1
-  check_interval_sec = 1
-
-  tcp_health_check {
-    port = "443"
-  }
-}
-`, context)
-}
-
-func TestAccComputeTargetTcpProxy_targetTcpProxyBasicBetaExample(t *testing.T) {
-	t.Parallel()
-
-	randomSuffix := acctest.RandString(t, 10)
-
-	context := map[string]interface{}{
-		"backend_service_name":  "tf-test-backend-service" + randomSuffix,
-		"health_check_name":     "tf-test-health-check" + randomSuffix,
-		"target_tcp_proxy_name": "tf-test-test-proxy" + randomSuffix,
-		"random_suffix":         randomSuffix,
-	}
-
-	acctest.VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
-		CheckDestroy:             testAccCheckComputeTargetTcpProxyDestroyProducer(t),
-		Steps: []resource.TestStep{
-			{
-				Config: testAccComputeTargetTcpProxy_targetTcpProxyBasicBetaExample(context),
-			},
-			{
-				ResourceName:            "google_compute_target_tcp_proxy.default",
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"backend_service"},
-			},
-			{
-				ResourceName:       "google_compute_target_tcp_proxy.default",
-				RefreshState:       true,
-				ExpectNonEmptyPlan: true,
-				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
-			},
-		},
-	})
-}
-
-func testAccComputeTargetTcpProxy_targetTcpProxyBasicBetaExample(context map[string]interface{}) string {
-	return acctest.Nprintf(`
-resource "google_compute_target_tcp_proxy" "default" {
-  provider              = google-beta
   name                  = "%{target_tcp_proxy_name}"
   load_balancing_scheme = "EXTERNAL_MANAGED"
   backend_service       = google_compute_backend_service.default.id
 }
 
 resource "google_compute_backend_service" "default" {
-  provider              = google-beta
   name                  = "%{backend_service_name}"
   load_balancing_scheme = "EXTERNAL_MANAGED"
   protocol              = "TCP"
@@ -174,7 +109,6 @@ resource "google_compute_backend_service" "default" {
 }
 
 resource "google_compute_health_check" "default" {
-  provider           = google-beta
   name               = "%{health_check_name}"
   timeout_sec        = 1
   check_interval_sec = 1
@@ -198,7 +132,7 @@ func TestAccComputeTargetTcpProxy_targetTcpProxyBackendlessExample(t *testing.T)
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeTargetTcpProxyDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -223,7 +157,6 @@ func TestAccComputeTargetTcpProxy_targetTcpProxyBackendlessExample(t *testing.T)
 func testAccComputeTargetTcpProxy_targetTcpProxyBackendlessExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_target_tcp_proxy" "default" {
-  provider              = google-beta
   name                  = "%{target_tcp_proxy_name}"
   load_balancing_scheme = "INTERNAL_MANAGED"
 }
@@ -245,7 +178,7 @@ func TestAccComputeTargetTcpProxy_targetTcpProxyTlsRouteExample(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeTargetTcpProxyDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -270,13 +203,11 @@ func TestAccComputeTargetTcpProxy_targetTcpProxyTlsRouteExample(t *testing.T) {
 func testAccComputeTargetTcpProxy_targetTcpProxyTlsRouteExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_target_tcp_proxy" "default" {
-  provider              = google-beta
   name                  = "%{target_tcp_proxy_name}"
   load_balancing_scheme = "INTERNAL_MANAGED"
 }
 
 resource "google_compute_backend_service" "default" {
-  provider              = google-beta
   name                  = "%{backend_service_name}"
   load_balancing_scheme = "INTERNAL_MANAGED"
   protocol              = "TCP"
@@ -284,7 +215,6 @@ resource "google_compute_backend_service" "default" {
 }
 
 resource "google_compute_health_check" "default" {
-  provider = google-beta
   name     = "%{health_check_name}"
 
   https_health_check {
@@ -293,7 +223,6 @@ resource "google_compute_health_check" "default" {
 }
 
 resource "google_network_services_tls_route" "default" {
-  provider = google-beta
   name     = "%{tls_route_name}"
 
   target_proxies = [
