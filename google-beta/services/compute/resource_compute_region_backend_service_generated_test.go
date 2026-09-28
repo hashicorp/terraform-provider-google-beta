@@ -583,6 +583,133 @@ resource "google_compute_subnetwork" "default" {
 `, context)
 }
 
+func TestAccComputeRegionBackendService_regionBackendServiceInFlightExample(t *testing.T) {
+	t.Parallel()
+
+	randomSuffix := acctest.RandString(t, 10)
+
+	context := map[string]interface{}{
+		"health_check_name":           "tf-test-rbs-health-check" + randomSuffix,
+		"igm_name":                    "tf-test-instance-group-manager" + randomSuffix,
+		"instance_template_name":      "tf-test-instance-template" + randomSuffix,
+		"network_name":                "tf-test-custom-vpc" + randomSuffix,
+		"region_backend_service_name": "tf-test-region-service" + randomSuffix,
+		"subnetwork_name":             "tf-test-custom-subnet" + randomSuffix,
+		"random_suffix":               randomSuffix,
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckComputeRegionBackendServiceDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeRegionBackendService_regionBackendServiceInFlightExample(context),
+			},
+			{
+				ResourceName:            "google_compute_region_backend_service.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"iap.0.oauth2_client_secret", "network", "params", "region"},
+			},
+			{
+				ResourceName:       "google_compute_region_backend_service.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
+		},
+	})
+}
+
+func testAccComputeRegionBackendService_regionBackendServiceInFlightExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_compute_network" "custom" {
+  provider                = google-beta
+  name                    = "%{network_name}"
+  auto_create_subnetworks = false
+}
+
+resource "google_compute_subnetwork" "default" {
+  provider      = google-beta
+  name          = "%{subnetwork_name}"
+  ip_cidr_range = "10.0.0.0/24"
+  region        = "us-central1"
+  network       = google_compute_network.custom.id
+}
+
+resource "google_compute_instance_template" "default" {
+  provider     = google-beta
+  name         = "%{instance_template_name}"
+  machine_type = "e2-micro"
+
+  disk {
+    source_image = "debian-cloud/debian-13"
+    auto_delete  = true
+    boot         = true
+  }
+
+  network_interface {
+    network    = google_compute_network.custom.id
+    subnetwork = google_compute_subnetwork.default.id
+  }
+
+  metadata = {
+    startup-script = <<-EOT
+      #!/bin/bash
+      echo "Hello World from MIG VM" > /var/www/html/index.html
+      apt-get update -y
+      apt-get install -y apache2
+      systemctl start apache2
+    EOT
+  }
+}
+
+resource "google_compute_region_instance_group_manager" "foobar" {
+  provider           = google-beta
+  name               = "%{igm_name}"
+  base_instance_name = "vm"
+  region             = "us-central1"
+
+  version {
+    instance_template = google_compute_instance_template.default.id
+  }
+
+  target_size = 1
+}
+
+resource "google_compute_region_backend_service" "default" {
+  provider              = google-beta
+  name                  = "%{region_backend_service_name}"
+  region                = "us-central1"
+  description           = "Hello World 1234"
+  port_name             = "http"
+  protocol              = "HTTP"
+  load_balancing_scheme = "EXTERNAL_MANAGED"
+
+  backend {
+    group                               = google_compute_region_instance_group_manager.foobar.instance_group
+    balancing_mode                      = "IN_FLIGHT"
+    capacity_scaler                     = 1.0
+    max_in_flight_requests_per_instance = 100
+    traffic_duration                    = "LONG"
+  }
+
+  health_checks = [google_compute_region_health_check.default.self_link]
+}
+
+resource "google_compute_region_health_check" "default" {
+  provider = google-beta
+  name     = "%{health_check_name}"
+  region   = "us-central1"
+
+  http_health_check {
+    port = 80
+  }
+}
+`, context)
+}
+
 func TestAccComputeRegionBackendService_regionBackendServiceConnectionTrackingExample(t *testing.T) {
 	t.Parallel()
 
