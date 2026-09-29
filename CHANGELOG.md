@@ -2,6 +2,7 @@
 
 NOTES:
 * compute: migrated the VPN tunnel lookup in `google_compute_router_interface` to use direct HTTP rather than a client library ([#13202](https://github.com/hashicorp/terraform-provider-google-beta/pull/13202))
+
 DEPRECATIONS:
 * firebaseailogic: deprecated `generative_language_config` and `generative_language_config.api_key` in `google_firebase_ai_logic_config` resource ([#13237](https://github.com/hashicorp/terraform-provider-google-beta/pull/13237))
 * networkservices: `egress_network_config.dns_peering_config.domain` field in `google_network_services_agent_connectivity_template` is deprecated. Use `egress_network_config.dns_peering_config.domains` ([#13232](https://github.com/hashicorp/terraform-provider-google-beta/pull/13232))
@@ -18,17 +19,16 @@ IMPROVEMENTS:
 * bigqueryconnection: added `password_wo` write-only field and `password_wo_version` field in `google_bigquery_connection` resource ([#13227](https://github.com/hashicorp/terraform-provider-google-beta/pull/13227))
 * ces: added `proactive_execution_enabled` field to callbacks in `google_ces_agent` resource ([#13238](https://github.com/hashicorp/terraform-provider-google-beta/pull/13238))
 * ces: added `proactive_execution_enabled` output fields to snapshot.agents callbacks in `google_ces_app_version` resource ([#13238](https://github.com/hashicorp/terraform-provider-google-beta/pull/13238))
-* ces: added `remote_a2a_agent` field to `google_ces_agent` ([#13200](https://github.com/hashicorp/terraform-provider-google-beta/pull/13200))
+* ces: added `remote_a2a_agent` field to `google_ces_agent` resource ([#13200](https://github.com/hashicorp/terraform-provider-google-beta/pull/13200))
 * chronicle: added `parallel_instance` field to `google_chronicle_environment` resource ([#13204](https://github.com/hashicorp/terraform-provider-google-beta/pull/13204))
 * cloudrunv2: added `ssh_enabled` field to `google_cloud_run_v2_service` resource ([#13229](https://github.com/hashicorp/terraform-provider-google-beta/pull/13229))
-
-* compute: add `rsa_encryption_wo` and `raw_key_wo` fields to `google_compute_disk` resource ([#13208](https://github.com/hashicorp/terraform-provider-google-beta/pull/13208))
-* compute: add `rsa_encryption_wo` and `raw_key_wo` fields to `google_compute_region_disk` resource ([#13208](https://github.com/hashicorp/terraform-provider-google-beta/pull/13208))
-* compute: added `nat_ips_per_endpoint` field to `google_compute_service_attachment` ([#13230](https://github.com/hashicorp/terraform-provider-google-beta/pull/13230))
+* compute: added `rsa_encryption_wo` and `raw_key_wo` fields to `google_compute_disk` resource ([#13208](https://github.com/hashicorp/terraform-provider-google-beta/pull/13208))
+* compute: added `rsa_encryption_wo` and `raw_key_wo` fields to `google_compute_region_disk` resource ([#13208](https://github.com/hashicorp/terraform-provider-google-beta/pull/13208))
+* compute: added `nat_ips_per_endpoint` field to `google_compute_service_attachment` resource ([#13230](https://github.com/hashicorp/terraform-provider-google-beta/pull/13230))
 * dlp: added `inspect_config` subfields (`custom_info_types`, `min_likelihood_per_info_type.info_type.sensitivity_score`, and `rule_set.rules.adjustment_rule`) to `google_data_loss_prevention_content_policy` resource ([#13219](https://github.com/hashicorp/terraform-provider-google-beta/pull/13219))
 * networkservices: added `domains` field to `egress_network_config.dns_peering_config` in `google_network_services_agent_connectivity_template` resource ([#13232](https://github.com/hashicorp/terraform-provider-google-beta/pull/13232))
 * networkservices: added `tls_config` field to `google_network_services_agent_connectivity_template` resource ([#13233](https://github.com/hashicorp/terraform-provider-google-beta/pull/13233))
-* parametermanager: added `data_crc32c` field to `google_parameter_manager_parameter_version` and `google_parameter_manager_regional_parameter_version` resource ([#13239](https://github.com/hashicorp/terraform-provider-google-beta/pull/13239))
+* parametermanager: added `data_crc32c` field to `google_parameter_manager_parameter_version` and `google_parameter_manager_regional_parameter_version` resources ([#13239](https://github.com/hashicorp/terraform-provider-google-beta/pull/13239))
 * secretmanager: added `secret_data_wo` and `secret_data_wo_version` write-only fields to `google_secret_manager_regional_secret_version` resource ([#13234](https://github.com/hashicorp/terraform-provider-google-beta/pull/13234))
 * sql: `google_sql_database_instance` now performs an in-place storage shrink when `disk_size` is reduced with `disk_autoresize` disabled, instead of forcing instance recreation ([#13221](https://github.com/hashicorp/terraform-provider-google-beta/pull/13221))
 * sql: added `encryption_confidential_mode` to `google_sql_database_instance` resource ([#13210](https://github.com/hashicorp/terraform-provider-google-beta/pull/13210))
