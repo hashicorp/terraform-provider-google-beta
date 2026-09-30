@@ -95,9 +95,10 @@ func TestAccComputeRegionTargetTcpProxy_regionTargetTcpProxyBasicExample(t *test
 func testAccComputeRegionTargetTcpProxy_regionTargetTcpProxyBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_region_target_tcp_proxy" "default" {
-  name            = "%{region_target_tcp_proxy_name}"
-  region          = "%{region}"
-  backend_service = google_compute_region_backend_service.default.id
+  name                  = "%{region_target_tcp_proxy_name}"
+  region                = "%{region}"
+  load_balancing_scheme = "EXTERNAL_MANAGED"
+  backend_service       = google_compute_region_backend_service.default.id
 }
 
 resource "google_compute_region_backend_service" "default" {
@@ -107,82 +108,12 @@ resource "google_compute_region_backend_service" "default" {
   region      = "%{region}"
 
   health_checks         = [google_compute_region_health_check.default.id]
-  load_balancing_scheme = "INTERNAL_MANAGED"
+  load_balancing_scheme = "EXTERNAL_MANAGED"
 }
 
 resource "google_compute_region_health_check" "default" {
   name               = "%{health_check_name}"
   region             = "%{region}"
-  timeout_sec        = 1
-  check_interval_sec = 1
-  tcp_health_check {
-    port = "80"
-  }
-}
-`, context)
-}
-
-func TestAccComputeRegionTargetTcpProxy_regionTargetTcpProxyBasicBetaExample(t *testing.T) {
-	t.Parallel()
-
-	randomSuffix := acctest.RandString(t, 10)
-
-	context := map[string]interface{}{
-		"health_check_name":            "tf-test-health-check" + randomSuffix,
-		"region_backend_service_name":  "tf-test-backend-service" + randomSuffix,
-		"region_target_tcp_proxy_name": "tf-test-test-proxy" + randomSuffix,
-		"random_suffix":                randomSuffix,
-	}
-
-	acctest.VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
-		CheckDestroy:             testAccCheckComputeRegionTargetTcpProxyDestroyProducer(t),
-		Steps: []resource.TestStep{
-			{
-				Config: testAccComputeRegionTargetTcpProxy_regionTargetTcpProxyBasicBetaExample(context),
-			},
-			{
-				ResourceName:            "google_compute_region_target_tcp_proxy.default",
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"backend_service", "region"},
-			},
-			{
-				ResourceName:       "google_compute_region_target_tcp_proxy.default",
-				RefreshState:       true,
-				ExpectNonEmptyPlan: true,
-				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
-			},
-		},
-	})
-}
-
-func testAccComputeRegionTargetTcpProxy_regionTargetTcpProxyBasicBetaExample(context map[string]interface{}) string {
-	return acctest.Nprintf(`
-resource "google_compute_region_target_tcp_proxy" "default" {
-  provider              = google-beta
-  name                  = "%{region_target_tcp_proxy_name}"
-  region                = "europe-west4"
-  load_balancing_scheme = "EXTERNAL_MANAGED"
-  backend_service       = google_compute_region_backend_service.default.id
-}
-
-resource "google_compute_region_backend_service" "default" {
-  provider    = google-beta
-  name        = "%{region_backend_service_name}"
-  protocol    = "TCP"
-  timeout_sec = 10
-  region      = "europe-west4"
-
-  health_checks         = [google_compute_region_health_check.default.id]
-  load_balancing_scheme = "EXTERNAL_MANAGED"
-}
-
-resource "google_compute_region_health_check" "default" {
-  provider           = google-beta
-  name               = "%{health_check_name}"
-  region             = "europe-west4"
   timeout_sec        = 1
   check_interval_sec = 1
   tcp_health_check {
@@ -204,7 +135,7 @@ func TestAccComputeRegionTargetTcpProxy_regionTargetTcpProxyBackendlessExample(t
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeRegionTargetTcpProxyDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -229,7 +160,6 @@ func TestAccComputeRegionTargetTcpProxy_regionTargetTcpProxyBackendlessExample(t
 func testAccComputeRegionTargetTcpProxy_regionTargetTcpProxyBackendlessExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_region_target_tcp_proxy" "default" {
-  provider              = google-beta
   name                  = "%{region_target_tcp_proxy_name}"
   region                = "europe-west4"
   load_balancing_scheme = "INTERNAL_MANAGED"
@@ -252,7 +182,7 @@ func TestAccComputeRegionTargetTcpProxy_regionTargetTcpProxyTlsRouteExample(t *t
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeRegionTargetTcpProxyDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -277,14 +207,12 @@ func TestAccComputeRegionTargetTcpProxy_regionTargetTcpProxyTlsRouteExample(t *t
 func testAccComputeRegionTargetTcpProxy_regionTargetTcpProxyTlsRouteExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_region_target_tcp_proxy" "default" {
-  provider              = google-beta
   name                  = "%{region_target_tcp_proxy_name}"
   region                = "europe-west4"
   load_balancing_scheme = "EXTERNAL_MANAGED"
 }
 
 resource "google_compute_region_backend_service" "default" {
-  provider    = google-beta
   name        = "%{region_backend_service_name}"
   protocol    = "TCP"
   timeout_sec = 10
@@ -295,7 +223,6 @@ resource "google_compute_region_backend_service" "default" {
 }
 
 resource "google_compute_region_health_check" "default" {
-  provider           = google-beta
   name               = "%{health_check_name}"
   region             = "europe-west4"
   timeout_sec        = 1
@@ -306,7 +233,6 @@ resource "google_compute_region_health_check" "default" {
 }
 
 resource "google_network_services_tls_route" "default" {
-  provider = google-beta
   name     = "%{tls_route_name}"
   location = "europe-west4"
 
