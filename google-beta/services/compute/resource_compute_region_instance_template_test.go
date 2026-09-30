@@ -2022,7 +2022,8 @@ resource "google_compute_region_instance_template" "foobar" {
   }
 
   network_interface {
-	network_attachment = "%{network_attachment}"
+	network_attachment    = "%{network_attachment}"
+	enable_vpc_scoped_dns = true
   }
 }
 `, context)
