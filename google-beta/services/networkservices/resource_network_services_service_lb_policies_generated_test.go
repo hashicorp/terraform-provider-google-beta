@@ -245,6 +245,77 @@ resource "google_compute_backend_service" "default" {
 `, context)
 }
 
+func TestAccNetworkServicesServiceLbPolicies_networkServicesServiceLbPoliciesRegionalExample(t *testing.T) {
+	t.Parallel()
+
+	randomSuffix := acctest.RandString(t, 10)
+
+	context := map[string]interface{}{
+		"backend_name":  "tf-test-my-regional-lb-backend" + randomSuffix,
+		"resource_name": "tf-test-my-regional-lb-policy" + randomSuffix,
+		"random_suffix": randomSuffix,
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckNetworkServicesServiceLbPoliciesDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccNetworkServicesServiceLbPolicies_networkServicesServiceLbPoliciesRegionalExample(context),
+			},
+			{
+				ResourceName:            "google_network_services_service_lb_policies.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"labels", "location", "name", "terraform_labels"},
+			},
+			{
+				ResourceName:       "google_network_services_service_lb_policies.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
+		},
+	})
+}
+
+func testAccNetworkServicesServiceLbPolicies_networkServicesServiceLbPoliciesRegionalExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_network_services_service_lb_policies" "default" {
+  provider = google-beta
+
+  name                     = "%{resource_name}"
+  location                 = "us-central1"
+  description              = "my regional service lb policy"
+  load_balancing_algorithm = "SPRAY_TO_REGION"
+
+  auto_capacity_drain {
+    enable = true
+  }
+
+  failover_config {
+    failover_health_threshold = 70
+  }
+
+  labels = {
+    foo = "bar"
+  }
+}
+
+resource "google_compute_region_backend_service" "default" {
+  provider = google-beta
+
+  name                  = "%{backend_name}"
+  region                = "us-central1"
+  description           = "my regional backend service"
+  load_balancing_scheme = "INTERNAL_MANAGED"
+  protocol              = "HTTP"
+  service_lb_policy     = "//networkservices.googleapis.com/${google_network_services_service_lb_policies.default.id}"
+}
+`, context)
+}
+
 func testAccCheckNetworkServicesServiceLbPoliciesDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		for name, rs := range s.RootModule().Resources {

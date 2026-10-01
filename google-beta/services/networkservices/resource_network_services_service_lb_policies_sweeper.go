@@ -39,6 +39,11 @@ func init() {
 		ListAndAction:  listAndActionNetworkServicesServiceLbPolicies,
 		DeleteFunction: testSweepNetworkServicesServiceLbPolicies,
 	}
+	// Add dependencies
+	s.Dependencies = []string{
+		"google_compute_backend_service",
+		"google_compute_region_backend_service",
+	}
 
 	// Register the sweeper
 	sweeper.AddTestSweepers(s)
@@ -58,9 +63,11 @@ func listAndActionNetworkServicesServiceLbPolicies(action sweeper.ResourceAction
 	t := &testing.T{}
 	billingId := envvar.GetTestBillingAccountFromEnv(t)
 	// Build URL substitution maps individually to ensure proper formatting
-	intermediateValues := make([]map[string]string, 1)
+	intermediateValues := make([]map[string]string, 2)
 	intermediateValues[0] = map[string]string{}
 	intermediateValues[0]["region"] = "global"
+	intermediateValues[1] = map[string]string{}
+	intermediateValues[1]["region"] = "us-central1"
 
 	// Create configs from intermediate values
 	for _, values := range intermediateValues {
