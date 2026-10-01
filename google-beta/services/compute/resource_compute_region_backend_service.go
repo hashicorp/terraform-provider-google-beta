@@ -1319,6 +1319,13 @@ If it is not provided, the provider region is used.`,
 				DiffSuppressFunc: tpgresource.CompareSelfLinkOrResourceName,
 				Description:      `The security policy associated with this backend service.`,
 			},
+			"service_lb_policy": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Description: `URL to networkservices.ServiceLbPolicy resource.
+Can only be set if load balancing scheme is EXTERNAL_MANAGED or INTERNAL_MANAGED.
+The service lb policy must be regional and in the same region as the backend service.`,
+			},
 			"session_affinity": {
 				Type:         schema.TypeString,
 				Computed:     true,
@@ -1923,6 +1930,12 @@ func resourceComputeRegionBackendServiceCreate(d *schema.ResourceData, meta inte
 	} else if v, ok := d.GetOkExists("params"); !tpgresource.IsEmptyValue(reflect.ValueOf(paramsProp)) && (ok || !reflect.DeepEqual(v, paramsProp)) {
 		obj["params"] = paramsProp
 	}
+	serviceLbPolicyProp, err := expandComputeRegionBackendServiceServiceLbPolicy(d.Get("service_lb_policy"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("service_lb_policy"); !tpgresource.IsEmptyValue(reflect.ValueOf(serviceLbPolicyProp)) && (ok || !reflect.DeepEqual(v, serviceLbPolicyProp)) {
+		obj["serviceLbPolicy"] = serviceLbPolicyProp
+	}
 	tlsSettingsProp, err := expandComputeRegionBackendServiceTlsSettings(d.Get("tls_settings"), d, config)
 	if err != nil {
 		return err
@@ -2391,6 +2404,12 @@ func resourceComputeRegionBackendServiceUpdate(d *schema.ResourceData, meta inte
 		return err
 	} else if v, ok := d.GetOkExists("params"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, paramsProp)) {
 		obj["params"] = paramsProp
+	}
+	serviceLbPolicyProp, err := expandComputeRegionBackendServiceServiceLbPolicy(d.Get("service_lb_policy"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("service_lb_policy"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, serviceLbPolicyProp)) {
+		obj["serviceLbPolicy"] = serviceLbPolicyProp
 	}
 	tlsSettingsProp, err := expandComputeRegionBackendServiceTlsSettings(d.Get("tls_settings"), d, config)
 	if err != nil {
@@ -4218,6 +4237,10 @@ func flattenComputeRegionBackendServiceHaPolicyLeaderNetworkEndpointInstance(v i
 	return v
 }
 
+func flattenComputeRegionBackendServiceServiceLbPolicy(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenComputeRegionBackendServiceTlsSettings(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
@@ -6019,6 +6042,10 @@ func expandComputeRegionBackendServiceParamsResourceManagerTags(v interface{}, d
 	return m, nil
 }
 
+func expandComputeRegionBackendServiceServiceLbPolicy(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
 func expandComputeRegionBackendServiceTlsSettings(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	if v == nil {
 		return nil, nil
@@ -6313,6 +6340,9 @@ func ResourceComputeRegionBackendServiceFlatten(d *schema.ResourceData, meta int
 		return fmt.Errorf("Error reading RegionBackendService: %s", err)
 	}
 	if err = d.Set("ha_policy", flattenComputeRegionBackendServiceHaPolicy(res["haPolicy"], d, config)); err != nil {
+		return fmt.Errorf("Error reading RegionBackendService: %s", err)
+	}
+	if err = d.Set("service_lb_policy", flattenComputeRegionBackendServiceServiceLbPolicy(res["serviceLbPolicy"], d, config)); err != nil {
 		return fmt.Errorf("Error reading RegionBackendService: %s", err)
 	}
 	if err = d.Set("tls_settings", flattenComputeRegionBackendServiceTlsSettings(res["tlsSettings"], d, config)); err != nil {
