@@ -1,0 +1,19 @@
+# Copyright IBM Corp. 2014, 2026
+# SPDX-License-Identifier: MPL-2.0
+resource: google_compute_organization_snapshot_recycle_bin_policy
+generation_type: mmv1
+source_file: products/compute/OrganizationSnapshotRecycleBinPolicy.yaml
+api_service_name: compute.googleapis.com
+api_version: beta
+api_resource_type_kind: OrganizationSnapshotRecycleBinPolicy
+fields:
+    - field: organization
+      provider_only: true
+    - api_field: rules.key
+      field: rules.name
+    - api_field: rules.value.standardSnapshots.retentionDurationDays
+      field: rules.standard_snapshots.retention_duration_days
+    - api_field: systemRules.key
+      field: system_rules.name
+    - api_field: systemRules.value.standardSnapshots.retentionDurationDays
+      field: system_rules.standard_snapshots.retention_duration_days
