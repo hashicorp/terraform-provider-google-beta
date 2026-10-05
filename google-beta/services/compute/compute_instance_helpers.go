@@ -260,7 +260,6 @@ func expandScheduling(v interface{}) (map[string]interface{}, error) {
 	if v, ok := original["skip_guest_os_shutdown"]; ok {
 		result["skipGuestOsShutdown"] = v.(bool)
 	}
-
 	if v, ok := original["preemption_notice_duration"]; ok {
 		transformedPreemptionNoticeDuration, err := expandComputePreemptionNoticeDuration(v)
 		if err != nil {
