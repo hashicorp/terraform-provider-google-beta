@@ -277,7 +277,6 @@ https://cloud.google.com/iam/docs/conditions-overview#attributes.`,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{},
 							},
-							ConflictsWith: []string{},
 						},
 						"unstructured": {
 							Type:        schema.TypeList,
@@ -287,7 +286,6 @@ https://cloud.google.com/iam/docs/conditions-overview#attributes.`,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{},
 							},
-							ConflictsWith: []string{},
 						},
 					},
 				},
