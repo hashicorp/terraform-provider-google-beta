@@ -45,6 +45,7 @@ fields:
     - api_field: defaultRouteAction.corsPolicy.disabled
     - api_field: defaultRouteAction.corsPolicy.exposeHeaders
     - api_field: defaultRouteAction.corsPolicy.maxAge
+    - api_field: defaultRouteAction.dynamicCompressionPolicy.compressionMode
     - api_field: defaultRouteAction.faultInjectionPolicy.abort.httpStatus
     - api_field: defaultRouteAction.faultInjectionPolicy.abort.percentage
     - api_field: defaultRouteAction.faultInjectionPolicy.delay.fixedDelay.nanos
@@ -166,6 +167,8 @@ fields:
       field: path_matcher.default_route_action.cors_policy.expose_headers
     - api_field: pathMatchers.defaultRouteAction.corsPolicy.maxAge
       field: path_matcher.default_route_action.cors_policy.max_age
+    - api_field: pathMatchers.defaultRouteAction.dynamicCompressionPolicy.compressionMode
+      field: path_matcher.default_route_action.dynamic_compression_policy.compression_mode
     - api_field: pathMatchers.defaultRouteAction.faultInjectionPolicy.abort.httpStatus
       field: path_matcher.default_route_action.fault_injection_policy.abort.http_status
     - api_field: pathMatchers.defaultRouteAction.faultInjectionPolicy.abort.percentage
@@ -324,6 +327,8 @@ fields:
       field: path_matcher.path_rule.route_action.cors_policy.expose_headers
     - api_field: pathMatchers.pathRules.routeAction.corsPolicy.maxAge
       field: path_matcher.path_rule.route_action.cors_policy.max_age
+    - api_field: pathMatchers.pathRules.routeAction.dynamicCompressionPolicy.compressionMode
+      field: path_matcher.path_rule.route_action.dynamic_compression_policy.compression_mode
     - api_field: pathMatchers.pathRules.routeAction.faultInjectionPolicy.abort.httpStatus
       field: path_matcher.path_rule.route_action.fault_injection_policy.abort.http_status
     - api_field: pathMatchers.pathRules.routeAction.faultInjectionPolicy.abort.percentage
@@ -532,6 +537,8 @@ fields:
       field: path_matcher.route_rules.route_action.cors_policy.expose_headers
     - api_field: pathMatchers.routeRules.routeAction.corsPolicy.maxAge
       field: path_matcher.route_rules.route_action.cors_policy.max_age
+    - api_field: pathMatchers.routeRules.routeAction.dynamicCompressionPolicy.compressionMode
+      field: path_matcher.route_rules.route_action.dynamic_compression_policy.compression_mode
     - api_field: pathMatchers.routeRules.routeAction.faultInjectionPolicy.abort.httpStatus
       field: path_matcher.route_rules.route_action.fault_injection_policy.abort.http_status
     - api_field: pathMatchers.routeRules.routeAction.faultInjectionPolicy.abort.percentage
