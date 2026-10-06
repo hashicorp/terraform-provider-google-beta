@@ -1354,6 +1354,207 @@ resource "google_compute_health_check" "default" {
 `, context)
 }
 
+func TestAccComputeUrlMap_urlMapDynamicCompressionPolicyBasicExample(t *testing.T) {
+	t.Parallel()
+
+	randomSuffix := acctest.RandString(t, 10)
+
+	context := map[string]interface{}{
+		"backend_service_name": "tf-test-home" + randomSuffix,
+		"health_check_name":    "tf-test-health-check" + randomSuffix,
+		"url_map_name":         "tf-test-urlmap" + randomSuffix,
+		"random_suffix":        randomSuffix,
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckComputeUrlMapDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeUrlMap_urlMapDynamicCompressionPolicyBasicExample(context),
+			},
+			{
+				ResourceName:            "google_compute_url_map.urlmap",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"default_route_action.0.cache_policy.0.client_ttl.0.nanos", "default_route_action.0.cache_policy.0.default_ttl.0.nanos", "default_route_action.0.cache_policy.0.max_ttl.0.nanos", "default_route_action.0.cache_policy.0.serve_while_stale.0.nanos", "default_service"},
+			},
+			{
+				ResourceName:       "google_compute_url_map.urlmap",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
+		},
+	})
+}
+
+func testAccComputeUrlMap_urlMapDynamicCompressionPolicyBasicExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_compute_url_map" "urlmap" {
+  provider = google-beta
+  name     = "%{url_map_name}"
+
+  default_service = google_compute_backend_service.default.id
+
+  default_route_action {
+    dynamic_compression_policy {
+      compression_mode = "AUTOMATIC"
+    }
+  }
+}
+
+resource "google_compute_backend_service" "default" {
+  provider = google-beta
+  name     = "%{backend_service_name}"
+
+  protocol = "HTTP"
+  # Mandatory scheme for dynamic_compression_policy
+  load_balancing_scheme = "EXTERNAL_MANAGED"
+  health_checks         = [google_compute_health_check.default.id]
+}
+
+resource "google_compute_health_check" "default" {
+  provider = google-beta
+  name     = "%{health_check_name}"
+  http_health_check {
+    port = 80
+  }
+}
+`, context)
+}
+
+func TestAccComputeUrlMap_urlMapDynamicCompressionPolicyMultiLevelExample(t *testing.T) {
+	t.Parallel()
+
+	randomSuffix := acctest.RandString(t, 10)
+
+	context := map[string]interface{}{
+		"backend_service_name": "tf-test-home" + randomSuffix,
+		"health_check_name":    "tf-test-health-check" + randomSuffix,
+		"url_map_name":         "tf-test-urlmap" + randomSuffix,
+		"random_suffix":        randomSuffix,
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckComputeUrlMapDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeUrlMap_urlMapDynamicCompressionPolicyMultiLevelExample(context),
+			},
+			{
+				ResourceName:            "google_compute_url_map.urlmap",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"default_route_action.0.cache_policy.0.client_ttl.0.nanos", "default_route_action.0.cache_policy.0.default_ttl.0.nanos", "default_route_action.0.cache_policy.0.max_ttl.0.nanos", "default_route_action.0.cache_policy.0.serve_while_stale.0.nanos", "default_service"},
+			},
+			{
+				ResourceName:       "google_compute_url_map.urlmap",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
+		},
+	})
+}
+
+func testAccComputeUrlMap_urlMapDynamicCompressionPolicyMultiLevelExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_compute_url_map" "urlmap" {
+  provider = google-beta
+  name     = "%{url_map_name}"
+
+  default_service = google_compute_backend_service.default.id
+
+  # Level 1: Top-level default_route_action
+  default_route_action {
+    dynamic_compression_policy {
+      compression_mode = "AUTOMATIC"
+    }
+  }
+
+  host_rule {
+    hosts        = ["example.com"]
+    path_matcher = "main-matcher"
+  }
+
+  host_rule {
+    hosts        = ["api.example.com"]
+    path_matcher = "api-matcher"
+  }
+
+  path_matcher {
+    name            = "main-matcher"
+    default_service = google_compute_backend_service.default.id
+
+    # Level 2: PathMatcher-level default_route_action
+    default_route_action {
+      dynamic_compression_policy {
+        compression_mode = "DISABLED"
+      }
+    }
+
+    # Level 3: PathRule route_action
+    path_rule {
+      paths   = ["/static/*"]
+      service = google_compute_backend_service.default.id
+      route_action {
+        dynamic_compression_policy {
+          compression_mode = "AUTOMATIC"
+        }
+      }
+    }
+  }
+
+  path_matcher {
+    name            = "api-matcher"
+    default_service = google_compute_backend_service.default.id
+
+    default_route_action {
+      dynamic_compression_policy {
+        compression_mode = "AUTOMATIC"
+      }
+    }
+
+    # Level 4: RouteRule route_action
+    route_rules {
+      priority = 1
+      match_rules {
+        prefix_match = "/api/v1"
+      }
+      service = google_compute_backend_service.default.id
+      route_action {
+        dynamic_compression_policy {
+          compression_mode = "DISABLED"
+        }
+      }
+    }
+  }
+}
+
+resource "google_compute_backend_service" "default" {
+  provider = google-beta
+  name     = "%{backend_service_name}"
+
+  protocol = "HTTP"
+  # Mandatory scheme for dynamic_compression_policy
+  load_balancing_scheme = "EXTERNAL_MANAGED"
+  health_checks         = [google_compute_health_check.default.id]
+}
+
+resource "google_compute_health_check" "default" {
+  provider = google-beta
+  name     = "%{health_check_name}"
+  http_health_check {
+    port = 80
+  }
+}
+`, context)
+}
+
 func TestAccComputeUrlMap_urlMapPathRuleMirrorPercentExample(t *testing.T) {
 	t.Parallel()
 
