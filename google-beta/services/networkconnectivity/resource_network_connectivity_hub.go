@@ -138,6 +138,28 @@ func ResourceNetworkConnectivityHub() *schema.Resource {
 				Optional:    true,
 				Description: `Whether Private Service Connect transitivity is enabled for the hub. If true, Private Service Connect endpoints in VPC spokes attached to the hub are made accessible to other VPC spokes attached to the hub. The default value is false.`,
 			},
+			"export_psc_config": {
+				Type:     schema.TypeList,
+				Computed: true,
+				Optional: true,
+				Description: `Config for more granular control of Private Service Connect transitivity. Only takes effect when 'export_psc' is true.
+If 'export_psc' is true, at least one of 'published_services_and_regional_google_apis' and 'global_google_apis' must be true.`,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"global_google_apis": {
+							Type:        schema.TypeBool,
+							Optional:    true,
+							Description: `Whether Private Service Connect endpoints for global Google APIs are propagated. The default value is false.`,
+						},
+						"published_services_and_regional_google_apis": {
+							Type:        schema.TypeBool,
+							Optional:    true,
+							Description: `Whether Private Service Connect endpoints for published services (regional ILBs) and regional Google APIs are propagated.`,
+						},
+					},
+				},
+			},
 			"labels": {
 				Type:     schema.TypeMap,
 				Optional: true,
@@ -271,6 +293,12 @@ func resourceNetworkConnectivityHubCreate(d *schema.ResourceData, meta interface
 		return err
 	} else if v, ok := d.GetOkExists("export_psc"); !tpgresource.IsEmptyValue(reflect.ValueOf(exportPscProp)) && (ok || !reflect.DeepEqual(v, exportPscProp)) {
 		obj["exportPsc"] = exportPscProp
+	}
+	exportPscConfigProp, err := expandNetworkConnectivityHubExportPscConfig(d.Get("export_psc_config"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("export_psc_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(exportPscConfigProp)) && (ok || !reflect.DeepEqual(v, exportPscConfigProp)) {
+		obj["exportPscConfig"] = exportPscConfigProp
 	}
 	effectiveLabelsProp, err := expandNetworkConnectivityHubEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
@@ -441,6 +469,12 @@ func resourceNetworkConnectivityHubUpdate(d *schema.ResourceData, meta interface
 	} else if v, ok := d.GetOkExists("export_psc"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, exportPscProp)) {
 		obj["exportPsc"] = exportPscProp
 	}
+	exportPscConfigProp, err := expandNetworkConnectivityHubExportPscConfig(d.Get("export_psc_config"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("export_psc_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, exportPscConfigProp)) {
+		obj["exportPscConfig"] = exportPscConfigProp
+	}
 	effectiveLabelsProp, err := expandNetworkConnectivityHubEffectiveLabels(d.Get("effective_labels"), d, config)
 	if err != nil {
 		return err
@@ -463,6 +497,10 @@ func resourceNetworkConnectivityHubUpdate(d *schema.ResourceData, meta interface
 
 	if d.HasChange("export_psc") {
 		updateMask = append(updateMask, "exportPsc")
+	}
+
+	if d.HasChange("export_psc_config") {
+		updateMask = append(updateMask, "exportPscConfig")
 	}
 
 	if d.HasChange("effective_labels") {
@@ -670,6 +708,29 @@ func flattenNetworkConnectivityHubExportPsc(v interface{}, d *schema.ResourceDat
 	return v
 }
 
+func flattenNetworkConnectivityHubExportPscConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["published_services_and_regional_google_apis"] =
+		flattenNetworkConnectivityHubExportPscConfigPublishedServicesAndRegionalGoogleApis(original["publishedServicesAndRegionalGoogleApis"], d, config)
+	transformed["global_google_apis"] =
+		flattenNetworkConnectivityHubExportPscConfigGlobalGoogleApis(original["globalGoogleApis"], d, config)
+	return []interface{}{transformed}
+}
+func flattenNetworkConnectivityHubExportPscConfigPublishedServicesAndRegionalGoogleApis(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenNetworkConnectivityHubExportPscConfigGlobalGoogleApis(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenNetworkConnectivityHubTerraformLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
@@ -706,6 +767,43 @@ func expandNetworkConnectivityHubPolicyMode(v interface{}, d tpgresource.Terrafo
 }
 
 func expandNetworkConnectivityHubExportPsc(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandNetworkConnectivityHubExportPscConfig(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedPublishedServicesAndRegionalGoogleApis, err := expandNetworkConnectivityHubExportPscConfigPublishedServicesAndRegionalGoogleApis(original["published_services_and_regional_google_apis"], d, config)
+	if err != nil {
+		return nil, err
+	} else {
+		transformed["publishedServicesAndRegionalGoogleApis"] = transformedPublishedServicesAndRegionalGoogleApis
+	}
+
+	transformedGlobalGoogleApis, err := expandNetworkConnectivityHubExportPscConfigGlobalGoogleApis(original["global_google_apis"], d, config)
+	if err != nil {
+		return nil, err
+	} else {
+		transformed["globalGoogleApis"] = transformedGlobalGoogleApis
+	}
+
+	return transformed, nil
+}
+
+func expandNetworkConnectivityHubExportPscConfigPublishedServicesAndRegionalGoogleApis(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandNetworkConnectivityHubExportPscConfigGlobalGoogleApis(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
@@ -754,6 +852,9 @@ func ResourceNetworkConnectivityHubFlatten(d *schema.ResourceData, meta interfac
 		return fmt.Errorf("Error reading Hub: %s", err)
 	}
 	if err = d.Set("export_psc", flattenNetworkConnectivityHubExportPsc(res["exportPsc"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Hub: %s", err)
+	}
+	if err = d.Set("export_psc_config", flattenNetworkConnectivityHubExportPscConfig(res["exportPscConfig"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Hub: %s", err)
 	}
 	if err = d.Set("terraform_labels", flattenNetworkConnectivityHubTerraformLabels(res["labels"], d, config)); err != nil {
