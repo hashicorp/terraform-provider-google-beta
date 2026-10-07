@@ -1,4 +1,49 @@
-## 8.6.0 (Unreleased)
+## 8.7.0 (Unreleased)
+
+## 8.6.0 (October 06, 2026)
+
+FEATURES:
+* **New Data Source:** `google_iam_workload_identity_pool_jwks` ([#13246](https://github.com/hashicorp/terraform-provider-google-beta/pull/13246))
+* **New List Resource:** `google_gkebackup_backup_channel` ([#13241](https://github.com/hashicorp/terraform-provider-google-beta/pull/13241))
+* **New List Resource:** `google_gkebackup_backup_plan` ([#13241](https://github.com/hashicorp/terraform-provider-google-beta/pull/13241))
+* **New List Resource:** `google_gkebackup_restore_channel` ([#13241](https://github.com/hashicorp/terraform-provider-google-beta/pull/13241))
+* **New List Resource:** `google_gkebackup_restore_plan` ([#13241](https://github.com/hashicorp/terraform-provider-google-beta/pull/13241))
+* **New List Resource:** `google_storage_bucket_iam_member` ([#13240](https://github.com/hashicorp/terraform-provider-google-beta/pull/13240))
+* **New Resource:** `google_dialogflow_tool` ([#13266](https://github.com/hashicorp/terraform-provider-google-beta/pull/13266))
+
+IMPROVEMENTS:
+* agenticapplications: added `mcp_data_sources.api_key_header`, `web_search_config.disabled`, and `artifacts_config.visualization_options.visualization_mode` fields to `google_agentic_applications_analyst_agent_persona` resource ([#13251](https://github.com/hashicorp/terraform-provider-google-beta/pull/13251))
+* agentregistry: made `source` optional in `google_agent_registry_binding` ([#13254](https://github.com/hashicorp/terraform-provider-google-beta/pull/13254))
+* appengine: added `oauth2_client_secret` write-only field and `oauth2_client_secret_wo_version` field in `google_app_engine_application` resource ([#13252](https://github.com/hashicorp/terraform-provider-google-beta/pull/13252))
+* ces: added `audio_processing_config.synthesize_speech_configs.model` and `audio_processing_config.synthesize_speech_configs.instruction` fields to `google_ces_app` resource ([#13264](https://github.com/hashicorp/terraform-provider-google-beta/pull/13264))
+* compute: added `IN_FLIGHT` to `balancing_mode` on `google_compute_region_backend_service` resource ([#13250](https://github.com/hashicorp/terraform-provider-google-beta/pull/13250))
+* compute: added `network_interface.enable_vpc_scoped_dns` field to `google_compute_instance`, `google_compute_instance_template`, and `google_compute_region_instance_template` resources ([#13268](https://github.com/hashicorp/terraform-provider-google-beta/pull/13268))
+* compute: added `path_matcher.route_rules.route_action.url_rewrite.regex_rewrite` field to `google_compute_region_url_map` resource ([#13265](https://github.com/hashicorp/terraform-provider-google-beta/pull/13265))
+* compute: added `path_matcher.route_rules.route_action.url_rewrite.regex_rewrite` field to `google_compute_url_map` resource ([#13267](https://github.com/hashicorp/terraform-provider-google-beta/pull/13267))
+* compute: added `request_body` field  to `google_compute_region_security_policy_rules` resource ([#13247](https://github.com/hashicorp/terraform-provider-google-beta/pull/13247))
+* compute: added `request_body` field  to `google_compute_region_security_policy` resource ([#13247](https://github.com/hashicorp/terraform-provider-google-beta/pull/13247))
+* compute: added `request_body` field  to `google_compute_security_policy` resource ([#13247](https://github.com/hashicorp/terraform-provider-google-beta/pull/13247))
+* compute: added `service_lb_policy` field to `google_compute_region_backend_service` resource ([#13274](https://github.com/hashicorp/terraform-provider-google-beta/pull/13274))
+* compute: added `tls_settings.identity` field to `google_compute_backend_service` and `google_compute_region_backend_service` resources ([#13260](https://github.com/hashicorp/terraform-provider-google-beta/pull/13260))
+* compute: added `loadBalancingScheme` field  to `google_compute_target_tcp_proxy` resource ([#13245](https://github.com/hashicorp/terraform-provider-google-beta/pull/13245))
+* compute: added `load_balancing_scheme` field  to `google_compute_region_target_tcp_proxy` resource ([#13261](https://github.com/hashicorp/terraform-provider-google-beta/pull/13261))
+* compute: made `disk_encryption_key.kms_key_self_link` updatable in place in `google_compute_disk` ([#13273](https://github.com/hashicorp/terraform-provider-google-beta/pull/13273))
+* compute: supported in-place updates for `external_ipv6_prefix` in `google_compute_subnetwork` ([#13253](https://github.com/hashicorp/terraform-provider-google-beta/pull/13253))
+* databasemigrationservice: added `reserved_public_ip_config` field to `google_database_migration_service_private_connection` ([#13259](https://github.com/hashicorp/terraform-provider-google-beta/pull/13259))
+* discoveryengine: added `procurement_contact_emails` field to `google_discovery_engine_search_engine` resource ([#13258](https://github.com/hashicorp/terraform-provider-google-beta/pull/13258))
+* iam3: added `target.resource` field to `google_iam_projects_policy_binding`, `google_iam_folders_policy_binding`, and `google_iam_organizations_policy_binding` resources ([#13270](https://github.com/hashicorp/terraform-provider-google-beta/pull/13270))
+* lustre: added `target_version`, `available_version`, and `effective_version` fields to `google_lustre_instance` resource ([#13275](https://github.com/hashicorp/terraform-provider-google-beta/pull/13275))
+* managedkafka: added `kafka_version` field to `google_managed_kafka_cluster` ([#13256](https://github.com/hashicorp/terraform-provider-google-beta/pull/13256))
+* networksecurity: added `primary_ip_ranges` field to `google_network_security_ull_mirroring_collector_rule` resource ([#13255](https://github.com/hashicorp/terraform-provider-google-beta/pull/13255))
+* networksecurity: added `wildfire_analysis_profile` field to `google_network_security_security_profile` resource ([#13263](https://github.com/hashicorp/terraform-provider-google-beta/pull/13263))
+* oracledatabase: added `properties.exascale_config` field to `google_oracle_database_cloud_exadata_infrastructure` resource ([#13272](https://github.com/hashicorp/terraform-provider-google-beta/pull/13272))
+* oracledatabase: added `total_vm_storage_size_gb` field to `google_oracle_database_cloud_exadata_infrastructure_exascale_config` resource ([#13272](https://github.com/hashicorp/terraform-provider-google-beta/pull/13272))
+* parametermanager: added `data_crc32c` field to `google_parameter_manager_parameter_version` and `google_parameter_manager_regional_parameter_version` resources ([#13239](https://github.com/hashicorp/terraform-provider-google-beta/pull/13239))
+* securesourcemanager: added `service_account_auth` field to `google_secure_source_manager_hook` resource ([#13269](https://github.com/hashicorp/terraform-provider-google-beta/pull/13269))
+
+BUG FIXES:
+* servicedirectory: prevented recreation of `google_service_directory_endpoint` when the network project ID is canonicalized to a project number ([#13242](https://github.com/hashicorp/terraform-provider-google-beta/pull/13242))
+* storage: fixed an inconsistent final plan issue for `content` field ([#13249](https://github.com/hashicorp/terraform-provider-google-beta/pull/13249))
 
 ## 8.5.0 (September 29, 2026)
 
