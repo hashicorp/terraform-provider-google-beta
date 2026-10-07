@@ -27,6 +27,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
@@ -867,6 +868,115 @@ resource "google_cloud_run_v2_job" "default" {
         accelerator = "nvidia-l4"
       }
       gpu_zonal_redundancy_disabled = true
+    }
+  }
+}
+`, context)
+}
+
+func TestAccCloudRunV2Job_cloudrunv2JobAgentIdentityExample(t *testing.T) {
+	t.Parallel()
+
+	randomSuffix := acctest.RandString(t, 10)
+
+	context := map[string]interface{}{
+		"cloud_run_job_name": "tf-test-cloudrun-job" + randomSuffix,
+		"random_suffix":      randomSuffix,
+	}
+
+	context_1 := map[string]interface{}{
+		"cloud_run_job_name": "tf-test-cloudrun-job" + randomSuffix,
+		"random_suffix":      randomSuffix,
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckCloudRunV2JobDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudRunV2Job_cloudrunv2JobAgentIdentityExample(context),
+			},
+			{
+				ResourceName:            "google_cloud_run_v2_job.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"annotations", "deletion_protection", "labels", "location", "name", "tags", "terraform_labels"},
+			},
+			{
+				ResourceName:       "google_cloud_run_v2_job.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
+			{
+				Config: testAccCloudRunV2Job_cloudrunv2JobAgentIdentityUpdateExample(context_1),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_cloud_run_v2_job.default", plancheck.ResourceActionUpdate),
+					},
+				},
+			},
+			{
+				ResourceName:            "google_cloud_run_v2_job.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"annotations", "deletion_protection", "labels", "location", "name", "tags", "terraform_labels"},
+			},
+			{
+				ResourceName:       "google_cloud_run_v2_job.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
+		},
+	})
+}
+
+func testAccCloudRunV2Job_cloudrunv2JobAgentIdentityExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_cloud_run_v2_job" "default" {
+  provider = google-beta
+  name     = "%{cloud_run_job_name}"
+  location = "us-central1"
+  deletion_protection = false
+
+  functional_type = "FUNCTIONAL_TYPE_AGENT"
+
+  template {
+    template {
+      containers {
+        image = "us-docker.pkg.dev/cloudrun/container/job"
+      }
+      workload_identity_config {
+        identity_type                = "IDENTITY_TYPE_AGENT_IDENTITY"
+        identity_certificate_enabled = true
+      }
+    }
+  }
+}
+`, context)
+}
+
+func testAccCloudRunV2Job_cloudrunv2JobAgentIdentityUpdateExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_cloud_run_v2_job" "default" {
+  provider = google-beta
+  name     = "%{cloud_run_job_name}"
+  location = "us-central1"
+  deletion_protection = false
+
+  functional_type = "FUNCTIONAL_TYPE_AGENT"
+
+  template {
+    template {
+      containers {
+        image = "us-docker.pkg.dev/cloudrun/container/job"
+      }
+      workload_identity_config {
+        identity_type                = "IDENTITY_TYPE_AGENT_IDENTITY"
+        identity_certificate_enabled = false
+      }
     }
   }
 }

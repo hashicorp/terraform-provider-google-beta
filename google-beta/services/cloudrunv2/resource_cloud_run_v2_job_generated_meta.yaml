@@ -33,6 +33,7 @@ fields:
     - api_field: etag
     - api_field: executionCount
     - api_field: expireTime
+    - api_field: functionalType
     - api_field: generation
     - api_field: labels
     - api_field: lastModifier
@@ -109,6 +110,9 @@ fields:
     - api_field: template.template.vpcAccess.networkInterfaces.network
     - api_field: template.template.vpcAccess.networkInterfaces.subnetwork
     - api_field: template.template.vpcAccess.networkInterfaces.tags
+    - api_field: template.template.workloadIdentityConfig.identity
+    - api_field: template.template.workloadIdentityConfig.identityCertificateEnabled
+    - api_field: template.template.workloadIdentityConfig.identityType
     - api_field: terminalCondition.executionReason
     - api_field: terminalCondition.lastTransitionTime
     - api_field: terminalCondition.message
