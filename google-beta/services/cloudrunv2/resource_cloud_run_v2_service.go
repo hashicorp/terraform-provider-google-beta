@@ -1112,10 +1112,11 @@ subnetwork with the same name with the network will be used.`,
 							},
 						},
 						"workload_identity_config": {
-							Type:        schema.TypeList,
-							Optional:    true,
-							Description: `Workload identity settings for this Revision.`,
-							MaxItems:    1,
+							Type:     schema.TypeList,
+							Optional: true,
+							Description: `The Revision's workload identity settings. Used to assign an
+[Agent Platform](https://cloud.google.com/run/docs/ai/agent-platform-features) identity to the workload.`,
+							MaxItems: 1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"identity": {
@@ -1124,15 +1125,18 @@ subnetwork with the same name with the network will be used.`,
 										Description: `The Revision's SPIFFE workload identity. Enables provisioning of SPIFFE workload certificates.`,
 									},
 									"identity_certificate_enabled": {
-										Type:        schema.TypeBool,
-										Optional:    true,
-										Description: `Controls whether an instance receives a MWLID certificate.`,
+										Type:     schema.TypeBool,
+										Optional: true,
+										Description: `Controls whether an instance receives a managed workload identity (MWLID) certificate.
+Defaults to true when 'identity_type' is 'IDENTITY_TYPE_AGENT_IDENTITY'.`,
 									},
 									"identity_type": {
 										Type:         schema.TypeString,
 										Optional:     true,
 										ValidateFunc: verify.ValidateEnum([]string{"IDENTITY_TYPE_SERVICE_ACCOUNT", "IDENTITY_TYPE_WORKLOAD_IDENTITY", "IDENTITY_TYPE_AGENT_IDENTITY", ""}),
-										Description:  `The type of identity to use. Possible values: ["IDENTITY_TYPE_SERVICE_ACCOUNT", "IDENTITY_TYPE_WORKLOAD_IDENTITY", "IDENTITY_TYPE_AGENT_IDENTITY"]`,
+										Description: `The type of identity to use. 'IDENTITY_TYPE_AGENT_IDENTITY' assigns a system-managed agent identity and
+is required when the Service's 'functional_type' is 'FUNCTIONAL_TYPE_AGENT'. Once set, this field
+cannot be changed or unset. Possible values: ["IDENTITY_TYPE_SERVICE_ACCOUNT", "IDENTITY_TYPE_WORKLOAD_IDENTITY", "IDENTITY_TYPE_AGENT_IDENTITY"]`,
 									},
 								},
 							},
@@ -1263,6 +1267,18 @@ For more information, see https://cloud.google.com/run/docs/configuring/custom-a
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: `User-provided description of the Service. This field currently has a 512-character limit.`,
+			},
+			"functional_type": {
+				Type:         schema.TypeString,
+				Computed:     true,
+				Optional:     true,
+				ValidateFunc: verify.ValidateEnum([]string{"FUNCTIONAL_TYPE_AGENT", "FUNCTIONAL_TYPE_MCP_SERVER", ""}),
+				Description: `The functional type of the Service. Declares the primary purpose of the workload so that it can be
+registered with [Agent Platform](https://cloud.google.com/run/docs/ai/agent-platform-features).
+Once set, this field cannot be changed or unset.
+
+A Service with 'FUNCTIONAL_TYPE_AGENT' must also set 'template.workload_identity_config.identity_type'
+to 'IDENTITY_TYPE_AGENT_IDENTITY'. Possible values: ["FUNCTIONAL_TYPE_AGENT", "FUNCTIONAL_TYPE_MCP_SERVER"]`,
 			},
 			"iap_enabled": {
 				Type:        schema.TypeBool,
@@ -1790,6 +1806,12 @@ func resourceCloudRunV2ServiceCreate(d *schema.ResourceData, meta interface{}) e
 	} else if v, ok := d.GetOkExists("launch_stage"); !tpgresource.IsEmptyValue(reflect.ValueOf(launchStageProp)) && (ok || !reflect.DeepEqual(v, launchStageProp)) {
 		obj["launchStage"] = launchStageProp
 	}
+	functionalTypeProp, err := expandCloudRunV2ServiceFunctionalType(d.Get("functional_type"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("functional_type"); !tpgresource.IsEmptyValue(reflect.ValueOf(functionalTypeProp)) && (ok || !reflect.DeepEqual(v, functionalTypeProp)) {
+		obj["functionalType"] = functionalTypeProp
+	}
 	binaryAuthorizationProp, err := expandCloudRunV2ServiceBinaryAuthorization(d.Get("binary_authorization"), d, config)
 	if err != nil {
 		return err
@@ -2118,6 +2140,12 @@ func resourceCloudRunV2ServiceUpdate(d *schema.ResourceData, meta interface{}) e
 	} else if v, ok := d.GetOkExists("launch_stage"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, launchStageProp)) {
 		obj["launchStage"] = launchStageProp
 	}
+	functionalTypeProp, err := expandCloudRunV2ServiceFunctionalType(d.Get("functional_type"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("functional_type"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, functionalTypeProp)) {
+		obj["functionalType"] = functionalTypeProp
+	}
 	binaryAuthorizationProp, err := expandCloudRunV2ServiceBinaryAuthorization(d.Get("binary_authorization"), d, config)
 	if err != nil {
 		return err
@@ -2407,6 +2435,10 @@ func flattenCloudRunV2ServiceIngress(v interface{}, d *schema.ResourceData, conf
 }
 
 func flattenCloudRunV2ServiceLaunchStage(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenCloudRunV2ServiceFunctionalType(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -4436,6 +4468,10 @@ func expandCloudRunV2ServiceIngress(v interface{}, d tpgresource.TerraformResour
 }
 
 func expandCloudRunV2ServiceLaunchStage(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandCloudRunV2ServiceFunctionalType(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
@@ -6978,6 +7014,9 @@ func ResourceCloudRunV2ServiceFlatten(d *schema.ResourceData, meta interface{}, 
 		return fmt.Errorf("Error reading Service: %s", err)
 	}
 	if err = d.Set("launch_stage", flattenCloudRunV2ServiceLaunchStage(res["launchStage"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Service: %s", err)
+	}
+	if err = d.Set("functional_type", flattenCloudRunV2ServiceFunctionalType(res["functionalType"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Service: %s", err)
 	}
 	if err = d.Set("binary_authorization", flattenCloudRunV2ServiceBinaryAuthorization(res["binaryAuthorization"], d, config)); err != nil {
