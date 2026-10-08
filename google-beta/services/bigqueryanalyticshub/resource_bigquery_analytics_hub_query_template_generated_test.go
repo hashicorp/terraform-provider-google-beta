@@ -33,6 +33,8 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/envvar"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/bigqueryanalyticshub"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/services/kms"
+	_ "github.com/hashicorp/terraform-provider-google-beta/google-beta/services/resourcemanager"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 
@@ -150,6 +152,108 @@ resource "google_bigquery_analytics_hub_query_template" "querytemplate" {
     definition_body="%{query_template_id}() as (select * from %{table_name})"
   }
   submit=%{submit}
+}
+`, context)
+}
+
+func TestAccBigqueryAnalyticsHubQueryTemplate_bigqueryAnalyticshubQuerytemplateCmekExample(t *testing.T) {
+	t.Parallel()
+
+	randomSuffix := acctest.RandString(t, 10)
+
+	context := map[string]interface{}{
+		"data_exchange_id":  "tf_test_my_data_exchange" + randomSuffix,
+		"kms_key_name":      kms.BootstrapKMSKeyInLocation(t, "us").CryptoKey.Name,
+		"query_template_id": "tf_test_my_query_template" + randomSuffix,
+		"random_suffix":     randomSuffix,
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccCheckBigqueryAnalyticsHubQueryTemplateDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccBigqueryAnalyticsHubQueryTemplate_bigqueryAnalyticshubQuerytemplateCmekExample(context),
+			},
+			{
+				ResourceName:            "google_bigquery_analytics_hub_query_template.querytemplate",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"data_exchange_id", "deletion_policy", "location", "query_template_id", "submit"},
+			},
+			{
+				ResourceName:       "google_bigquery_analytics_hub_query_template.querytemplate",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
+		},
+	})
+}
+
+func testAccBigqueryAnalyticsHubQueryTemplate_bigqueryAnalyticshubQuerytemplateCmekExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+data "google_client_openid_userinfo" "me" {
+  provider = google-beta
+}
+
+resource "google_project_service_identity" "analyticshub_sa" {
+  provider = google-beta
+  service  = "analyticshub.googleapis.com"
+}
+
+resource "time_sleep" "wait_for_sa" {
+  create_duration = "30s"
+  depends_on      = [google_project_service_identity.analyticshub_sa]
+}
+
+resource "google_kms_crypto_key_iam_member" "crypto_key" {
+  provider      = google-beta
+  crypto_key_id = "%{kms_key_name}"
+  role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
+  member        = google_project_service_identity.analyticshub_sa.member
+  depends_on    = [time_sleep.wait_for_sa]
+}
+
+resource "time_sleep" "wait_for_iam" {
+  create_duration = "30s"
+  depends_on      = [google_kms_crypto_key_iam_member.crypto_key]
+}
+
+resource "google_bigquery_analytics_hub_data_exchange" "querytemplate" {
+  provider         = google-beta
+  display_name     = "My Audience Data Exchange"
+  data_exchange_id = "%{data_exchange_id}"
+  description      = "example of query template with cmek"
+  location         = "us"
+  sharing_environment_config {
+    dcr_exchange_config {}
+  }
+}
+
+resource "google_bigquery_analytics_hub_query_template" "querytemplate" {
+  provider          = google-beta
+  location          = "us"
+  data_exchange_id  = google_bigquery_analytics_hub_data_exchange.querytemplate.data_exchange_id
+  query_template_id = "%{query_template_id}"
+  display_name      = "%{query_template_id}"
+  description       = "example of query template with cmek"
+  primary_contact   = data.google_client_openid_userinfo.me.email
+  documentation     = "This TVF takes a table t1 as input and returns all columns. Useful for basic data pass-through."
+  routine {
+    routine_type    = "TABLE_VALUED_FUNCTION"
+    definition_body = "%{query_template_id}() as (select * from t1)"
+  }
+  encryption_configuration {
+    kms_key_name = "%{kms_key_name}"
+  }
+  depends_on = [
+    time_sleep.wait_for_iam,
+  ]
 }
 `, context)
 }
