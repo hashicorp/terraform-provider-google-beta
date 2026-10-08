@@ -156,6 +156,9 @@ func resourceVertexAIModelGardenEnableModelCreate(d *schema.ResourceData, meta i
 	if err != nil {
 		return err
 	}
+	if strings.Contains(url, "{{region}}") {
+		return fmt.Errorf("failed to qualify endpoint for a resource with a regionalized endpoint %s", url)
+	}
 
 	log.Printf("[DEBUG] Creating new ModelGardenEnableModel: %#v", obj)
 	billingProject := ""
