@@ -246,6 +246,9 @@ func resourceVertexAiAadAgentAnomalyDetectionScopeCreate(d *schema.ResourceData,
 	if err != nil {
 		return err
 	}
+	if strings.Contains(url, "{{region}}") {
+		return fmt.Errorf("failed to qualify endpoint for a resource with a regionalized endpoint %s", url)
+	}
 
 	log.Printf("[DEBUG] Creating new AgentAnomalyDetectionScope: %#v", obj)
 	billingProject := ""
@@ -322,6 +325,9 @@ func resourceVertexAiAadAgentAnomalyDetectionScopePollRead(d *schema.ResourceDat
 		if err != nil {
 			return nil, err
 		}
+		if strings.Contains(url, "{{region}}") {
+			return nil, fmt.Errorf("failed to qualify endpoint for a resource with a regionalized endpoint %s", url)
+		}
 
 		billingProject := ""
 
@@ -365,6 +371,9 @@ func resourceVertexAiAadAgentAnomalyDetectionScopeRead(d *schema.ResourceData, m
 	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/{{region}}/agentAnomalyDetectionScopes/{{agent_anomaly_detection_scope_id}}")
 	if err != nil {
 		return err
+	}
+	if strings.Contains(url, "{{region}}") {
+		return fmt.Errorf("failed to qualify endpoint for a resource with a regionalized endpoint %s", url)
 	}
 
 	billingProject := ""
@@ -473,6 +482,9 @@ func resourceVertexAiAadAgentAnomalyDetectionScopeDelete(d *schema.ResourceData,
 	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/{{region}}/agentAnomalyDetectionScopes/{{agent_anomaly_detection_scope_id}}")
 	if err != nil {
 		return err
+	}
+	if strings.Contains(url, "{{region}}") {
+		return fmt.Errorf("failed to qualify endpoint for a resource with a regionalized endpoint %s", url)
 	}
 
 	var obj map[string]interface{}
