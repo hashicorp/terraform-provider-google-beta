@@ -83,7 +83,7 @@ func TestAccSaasRuntimeSaas_saasRuntimeSaasBasicExample(t *testing.T) {
 				ResourceName:            "google_saas_runtime_saas.example",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"annotations", "labels", "location", "saas_id", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"annotations", "etag", "labels", "location", "saas_id", "terraform_labels", "update_time"},
 			},
 			{
 				ResourceName:       "google_saas_runtime_saas.example",

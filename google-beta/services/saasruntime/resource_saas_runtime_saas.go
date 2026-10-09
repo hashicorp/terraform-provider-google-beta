@@ -365,6 +365,47 @@ func resourceSaasRuntimeSaasCreate(d *schema.ResourceData, meta interface{}) err
 	return resourceSaasRuntimeSaasRead(d, meta)
 }
 
+func resourceSaasRuntimeSaasPollRead(d *schema.ResourceData, meta interface{}) transport_tpg.PollReadFunc {
+	return func() (map[string]interface{}, error) {
+		config := meta.(*transport_tpg.Config)
+
+		url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/{{location}}/saas/{{saas_id}}")
+		if err != nil {
+			return nil, err
+		}
+
+		billingProject := ""
+
+		project, err := tpgresource.GetProject(d, config)
+		if err != nil {
+			return nil, fmt.Errorf("Error fetching project for Saas: %s", err)
+		}
+		billingProject = project
+
+		// err == nil indicates that the billing_project value was found
+		if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
+			billingProject = bp
+		}
+
+		userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
+		if err != nil {
+			return nil, err
+		}
+
+		res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
+			Config:    config,
+			Method:    "GET",
+			Project:   billingProject,
+			RawURL:    url,
+			UserAgent: userAgent,
+		})
+		if err != nil {
+			return res, err
+		}
+		return res, nil
+	}
+}
+
 func resourceSaasRuntimeSaasRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
 	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
@@ -626,6 +667,11 @@ func resourceSaasRuntimeSaasDelete(d *schema.ResourceData, meta interface{}) err
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "Saas")
+	}
+
+	err = transport_tpg.PollingWaitTime(resourceSaasRuntimeSaasPollRead(d, meta), transport_tpg.PollCheckForAbsence, "Deleting Saas", d.Timeout(schema.TimeoutCreate), 1)
+	if err != nil {
+		return fmt.Errorf("Error waiting to delete Saas: %s", err)
 	}
 
 	log.Printf("[DEBUG] Finished deleting Saas %q: %#v", d.Id(), res)
