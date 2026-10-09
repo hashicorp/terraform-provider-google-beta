@@ -48,10 +48,12 @@ func TestAccSaasRuntimeSaas_update(t *testing.T) {
 				Config: testAccSaasRuntimeSaas_basic(context),
 			},
 			{
-				ResourceName:            "google_saas_runtime_saas.example",
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"annotations", "labels", "location", "saas_id", "terraform_labels"},
+				ResourceName:      "google_saas_runtime_saas.example",
+				ImportState:       true,
+				ImportStateVerify: true,
+				// etag and update_time are refreshed by the service's asynchronous
+				// reconciliation after Create/Update returns.
+				ImportStateVerifyIgnore: []string{"annotations", "etag", "labels", "location", "saas_id", "terraform_labels", "update_time"},
 			},
 			{
 				Config: testAccSaasRuntimeSaas_update(context),
@@ -62,10 +64,12 @@ func TestAccSaasRuntimeSaas_update(t *testing.T) {
 				},
 			},
 			{
-				ResourceName:            "google_saas_runtime_saas.example",
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"annotations", "labels", "location", "saas_id", "terraform_labels"},
+				ResourceName:      "google_saas_runtime_saas.example",
+				ImportState:       true,
+				ImportStateVerify: true,
+				// etag and update_time are refreshed by the service's asynchronous
+				// reconciliation after Create/Update returns.
+				ImportStateVerifyIgnore: []string{"annotations", "etag", "labels", "location", "saas_id", "terraform_labels", "update_time"},
 			},
 		},
 	})
