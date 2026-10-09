@@ -263,6 +263,7 @@ func ResourceComputeSecurityPolicy() *schema.Resource {
 												"request_uri": resourceComputeSecurityPolicyRulePreconfiguredWafConfigExclusionFieldParamsSchema(
 													`Request URI from the request line to be excluded from inspection during preconfigured WAF evaluation. When specifying this field, the query or fragment part should be excluded.`,
 												),
+
 												"request_body": resourceComputeSecurityPolicyRulePreconfiguredWafConfigExclusionFieldParamsSchema(
 													`A list of request body fields to be excluded from inspection during\npreconfigured WAF evaluation.`,
 												),

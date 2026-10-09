@@ -261,7 +261,7 @@ func TestAccComputeRegionSecurityPolicy_regionSecurityPolicyWithBodyExcludeExamp
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeRegionSecurityPolicyDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -281,13 +281,11 @@ func testAccComputeRegionSecurityPolicy_regionSecurityPolicyWithBodyExcludeExamp
 	return acctest.Nprintf(`
 
 resource "google_compute_network" "default" {
-  provider                = google-beta
   name                    = "%{network_name}"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "default" {
-  provider      = google-beta
   name          = "%{network_name}-subnet"
   region        = "us-west2"
   network       = google_compute_network.default.id
@@ -295,9 +293,8 @@ resource "google_compute_subnetwork" "default" {
 }
 
 resource "google_compute_region_health_check" "default" {
-  provider = google-beta
-  name     = "%{health_check_name}"
-	region   = "us-west2"
+  name   = "%{health_check_name}"
+  region = "us-west2"
 
   http_health_check {
     port = 80
@@ -305,7 +302,6 @@ resource "google_compute_region_health_check" "default" {
 }
 
 resource "google_compute_region_security_policy" "policy_rule_one" {
-  provider    = google-beta
   name        = "%{sec_policy_name}"
   description = "regional security policy with body inspection"
   region      = "us-west2"
@@ -354,12 +350,11 @@ resource "google_compute_region_security_policy" "policy_rule_one" {
 }
 
 resource "google_compute_instance_template" "default" {
-  provider     = google-beta
   name         = "%{backend_name}"
   machine_type = "e2-micro"
 
   disk {
-    source_image = "projects/debian-cloud/global/images/family/debian-11"
+    source_image = "projects/debian-cloud/global/images/family/debian-13"
     auto_delete  = true
     boot         = true
   }
@@ -371,7 +366,6 @@ resource "google_compute_instance_template" "default" {
 }
 
 resource "google_compute_region_instance_group_manager" "default" {
-  provider           = google-beta
   name               = "%{backend_name}"
   region             = "us-west2"
   base_instance_name = "backend"
@@ -384,7 +378,6 @@ resource "google_compute_region_instance_group_manager" "default" {
 }
 
 resource "google_compute_region_backend_service" "default" {
-  provider              = google-beta
   name                  = "%{backend_name}"
   region                = "us-west2"
   protocol              = "HTTP"
@@ -394,7 +387,7 @@ resource "google_compute_region_backend_service" "default" {
   health_checks = [google_compute_region_health_check.default.id]
 
   backend {
-    group = google_compute_region_instance_group_manager.default.instance_group
+    group           = google_compute_region_instance_group_manager.default.instance_group
     capacity_scaler = 1.0
   }
 
@@ -415,7 +408,7 @@ func TestAccComputeRegionSecurityPolicy_regionSecurityPolicyRequestBodyExpressio
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeRegionSecurityPolicyDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -434,7 +427,6 @@ func TestAccComputeRegionSecurityPolicy_regionSecurityPolicyRequestBodyExpressio
 func testAccComputeRegionSecurityPolicy_regionSecurityPolicyRequestBodyExpressionExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_region_security_policy" "policy_rule" {
-  provider    = google-beta
   name        = "%{sec_policy_name}"
   description = "Policy with Request Body inspection"
   region      = "us-west2"

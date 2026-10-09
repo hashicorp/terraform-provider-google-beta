@@ -346,7 +346,7 @@ func TestAccComputeSecurityPolicyRule_securityPolicyRuleWithBodyExcludeExample(t
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeSecurityPolicyRuleDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -372,13 +372,11 @@ func testAccComputeSecurityPolicyRule_securityPolicyRuleWithBodyExcludeExample(c
 	return acctest.Nprintf(`
 
 resource "google_compute_network" "default" {
-  provider                = google-beta
   name                    = "%{network_name}"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "default" {
-  provider      = google-beta
   name          = "%{subnetwork_name}"
   region        = "us-west2"
   network       = google_compute_network.default.id
@@ -386,8 +384,7 @@ resource "google_compute_subnetwork" "default" {
 }
 
 resource "google_compute_health_check" "default" {
-  provider = google-beta
-  name     = "%{health_check_name}"
+  name = "%{health_check_name}"
 
   http_health_check {
     port = 80
@@ -395,7 +392,6 @@ resource "google_compute_health_check" "default" {
 }
 
 resource "google_compute_security_policy" "default" {
-  provider    = google-beta
   name        = "%{sec_policy_name}"
   description = "global security policy with body inspection"
   type        = "CLOUD_ARMOR"
@@ -407,7 +403,6 @@ resource "google_compute_security_policy" "default" {
 }
 
 resource "google_compute_instance_template" "default" {
-  provider     = google-beta
   name         = "%{backend_name}"
   machine_type = "e2-micro"
 
@@ -424,7 +419,6 @@ resource "google_compute_instance_template" "default" {
 }
 
 resource "google_compute_instance_group_manager" "default" {
-  provider           = google-beta
   name               = "%{backend_name}"
   base_instance_name = "backend"
   zone               = "us-west2-a"
@@ -437,7 +431,6 @@ resource "google_compute_instance_group_manager" "default" {
 }
 
 resource "google_compute_backend_service" "default" {
-  provider              = google-beta
   name                  = "%{backend_name}"
   protocol              = "HTTP"
   load_balancing_scheme = "EXTERNAL_MANAGED"
@@ -453,7 +446,6 @@ resource "google_compute_backend_service" "default" {
 }
 
 resource "google_compute_security_policy_rule" "policy_rule_one" {
-  provider        = google-beta
   security_policy = google_compute_security_policy.default.name
   description     = "waf body rule"
   action          = "deny(403)"
@@ -496,7 +488,7 @@ func TestAccComputeSecurityPolicyRule_securityPolicyRuleRequestBodyExpressionExa
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeSecurityPolicyRuleDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -521,14 +513,12 @@ func TestAccComputeSecurityPolicyRule_securityPolicyRuleRequestBodyExpressionExa
 func testAccComputeSecurityPolicyRule_securityPolicyRuleRequestBodyExpressionExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_security_policy" "default" {
-  provider    = google-beta
   name        = "%{sec_policy_name}"
   description = "basic global security policy"
   type        = "CLOUD_ARMOR"
 }
 
 resource "google_compute_security_policy_rule" "policy_rule" {
-  provider        = google-beta
   security_policy = google_compute_security_policy.default.name
   description     = "Deny requests containing specific body string"
   action          = "deny(403)"
