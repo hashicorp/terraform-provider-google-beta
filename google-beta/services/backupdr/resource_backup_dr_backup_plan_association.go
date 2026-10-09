@@ -173,6 +173,11 @@ Note:
 				Description: `The resource type of workload on which backupplan is applied.
 Examples include, "compute.googleapis.com/Instance", "compute.googleapis.com/Disk", "compute.googleapis.com/RegionDisk", and "file.googleapis.com/Instance"`,
 			},
+			"auto_protection_policy_binding": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: `The resource name of the auto protection policy binding that manages this backup plan association, if any.`,
+			},
 			"create_time": {
 				Type:        schema.TypeString,
 				Computed:    true,
@@ -689,6 +694,10 @@ func flattenBackupDRBackupPlanAssociationDataSource(v interface{}, d *schema.Res
 	return v
 }
 
+func flattenBackupDRBackupPlanAssociationAutoProtectionPolicyBinding(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenBackupDRBackupPlanAssociationRulesConfigInfo(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
@@ -777,6 +786,9 @@ func ResourceBackupDRBackupPlanAssociationFlatten(d *schema.ResourceData, meta i
 		return fmt.Errorf("Error reading BackupPlanAssociation: %s", err)
 	}
 	if err = d.Set("data_source", flattenBackupDRBackupPlanAssociationDataSource(res["dataSource"], d, config)); err != nil {
+		return fmt.Errorf("Error reading BackupPlanAssociation: %s", err)
+	}
+	if err = d.Set("auto_protection_policy_binding", flattenBackupDRBackupPlanAssociationAutoProtectionPolicyBinding(res["autoProtectionPolicyBinding"], d, config)); err != nil {
 		return fmt.Errorf("Error reading BackupPlanAssociation: %s", err)
 	}
 	if err = d.Set("rules_config_info", flattenBackupDRBackupPlanAssociationRulesConfigInfo(res["rulesConfigInfo"], d, config)); err != nil {
