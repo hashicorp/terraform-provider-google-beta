@@ -9,6 +9,7 @@ api_resource_type_kind: ConsumerPolicy
 fields:
     - field: check_usage_on_remove
       provider_only: true
+    - api_field: enableRules.catalogs
     - api_field: enableRules.services
     - api_field: etag
     - field: name

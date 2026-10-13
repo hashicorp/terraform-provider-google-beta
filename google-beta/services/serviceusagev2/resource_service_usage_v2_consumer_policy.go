@@ -59,9 +59,7 @@ import "errors"
 type ApiError = string
 
 const (
-	ApiErrorSuConflictingConcurrentModification   = "SU_CONFLICTING_CONCURRENT_MODIFICATION"
-	ApiErrorCommonSuServicesHaveUsage             = "COMMON_SU_SERVICES_HAVE_USAGE"
-	ApiErrorCommonSuServicesHaveHierarchicalUsage = "COMMON_SU_SERVICES_HAVE_HIERARCHICAL_USAGE"
+	ApiErrorSuConflictingConcurrentModification = "SU_CONFLICTING_CONCURRENT_MODIFICATION"
 )
 
 type ImpactType = string
@@ -79,9 +77,15 @@ type ProposedPolicy struct {
 	EnableRules []map[string][]string `json:"enableRules"`
 }
 
-func NewAnalysisRequest(name string, services []string) map[string]any {
+func NewAnalysisRequest(name string, services []string, catalogs []string) map[string]any {
+	rule := map[string][]string{
+		"services": services,
+	}
+	if len(catalogs) > 0 {
+		rule["catalogs"] = catalogs
+	}
 	enableRules := []map[string][]string{
-		{"services": services},
+		rule,
 	}
 	return map[string]any{
 		"proposedPolicy": ProposedPolicy{Name: name, EnableRules: enableRules},
@@ -105,8 +109,6 @@ type AnalysisReportDetails struct {
 type AnalysisResponse struct {
 	Analysis []AnalysisReportDetails
 }
-
-var servicesRegexp = regexp.MustCompile(`([^(\s|,)]+\.googleapis\.com)`)
 
 func parseObject(obj any, resp interface{}) error {
 	b, err := json.Marshal(obj)
@@ -146,8 +148,30 @@ func getServices(rules interface{}) []string {
 	return output
 }
 
+func getCatalogs(rules interface{}) []string {
+	var output []string
+	for _, enableRules := range rules.([]interface{}) {
+		if enableRules == nil {
+			continue
+		}
+		if catalogs, ok := enableRules.(map[string]interface{})["catalogs"]; ok {
+			if catalogsSet, ok := catalogs.(*schema.Set); ok {
+				for _, catalog := range catalogsSet.List() {
+					output = append(output, catalog.(string))
+				}
+			} else if catalogsSlice, ok := catalogs.([]interface{}); ok {
+				for _, catalog := range catalogsSlice {
+					output = append(output, catalog.(string))
+				}
+			}
+		}
+	}
+	return output
+}
+
 func isCommonOpError(err error, apiError ApiError) (bool, string) {
-	if opError, ok := errors.Unwrap(err).(*tpgresource.CommonOpError); ok {
+	var opError *tpgresource.CommonOpError
+	if errors.As(err, &opError) {
 		for _, detail := range opError.Details {
 			errInfo := make(map[string]interface{})
 			if err := json.Unmarshal(detail, &errInfo); err != nil {
@@ -162,17 +186,8 @@ func isCommonOpError(err error, apiError ApiError) (bool, string) {
 }
 
 func isTimeoutError(err error) bool {
-	_, ok := errors.Unwrap(err).(*retry.TimeoutError)
-	return ok
-}
-
-func getServicesFromString(msg string) []string {
-	return servicesRegexp.FindAllString(msg, -1)
-}
-
-func getErrorMessageForServicesInUse(msg string) string {
-	services := getServicesFromString(msg)
-	return fmt.Sprintf("The service{s} %v has been used in the last 30 days or was enabled in the past 3 days. If you still wish to remove the service{s}, please set the check_usage_on_remove flag to false to proceed.", strings.Join(services, ", "))
+	var timeoutErr *retry.TimeoutError
+	return errors.As(err, &timeoutErr)
 }
 
 var (
@@ -259,6 +274,15 @@ func ResourceServiceUsageV2ConsumerPolicy() *schema.Resource {
 				Description: `The consumer policy rule that defines enabled services. The structure is documented below.`,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"catalogs": {
+							Type:        schema.TypeSet,
+							Optional:    true,
+							Description: `List of service catalog names to be enabled in the format of catalogs/<catalog_name>, for example catalogs/default-cloud-services.`,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+							Set: schema.HashString,
+						},
 						"services": {
 							Type:        schema.TypeSet,
 							Optional:    true,
@@ -296,7 +320,8 @@ Used internally during updates.`,
 			"check_usage_on_remove": {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Description: `(Optional) Default value is false. If true, the usage of the service to be removed will be checked. If the service has been used within the past 30 days or was enabled in the last 3 days, an error will be thrown.`,
+				Deprecated:  "`check_usage_on_remove` is deprecated and will be removed in a future major release.",
+				Description: `(Optional) Default value is false. This field is deprecated and has no effect.`,
 				Default:     false,
 			},
 
@@ -354,13 +379,14 @@ func resourceServiceUsageV2ConsumerPolicyCreate(d *schema.ResourceData, meta int
 	headers := make(http.Header)
 	newRules := d.Get("enable_rules")
 	newServices := getServices(newRules)
+	newCatalogs := getCatalogs(newRules)
 
 	// check dependencies if the "respect_dependencies" flag is enabled
 	validateDependenciesEnabled := d.Get("validate_dependencies").(bool)
 
 	if validateDependenciesEnabled {
 		name := fmt.Sprintf("%s/consumerPolicies/%s", d.Get("parent"), d.Get("name"))
-		analysisRequest := NewAnalysisRequest(name, newServices)
+		analysisRequest := NewAnalysisRequest(name, newServices, newCatalogs)
 		req := transport_tpg.SendRequestOptions{
 			Config:    config,
 			Method:    "POST",
@@ -401,15 +427,13 @@ func resourceServiceUsageV2ConsumerPolicyCreate(d *schema.ResourceData, meta int
 				}
 			}
 			if sb.Len() > 0 {
-				return fmt.Errorf("There are additional services for which all necessary dependencies haven't been added. Please add these missing dependencies:\n%s", sb.String())
+				return fmt.Errorf("There are additional services for which all necessary dependencies haven't been added. Please add these missing dependencies:\n%s\nTo skip dependency validation, set validate_dependencies to false.", sb.String())
 			}
 		}
 	}
 
-	if !d.Get("check_usage_on_remove").(bool) {
-		if url, err = transport_tpg.AddQueryParams(url, map[string]string{"force": "true"}); err != nil {
-			return err
-		}
+	if url, err = transport_tpg.AddQueryParams(url, map[string]string{"force": "true"}); err != nil {
+		return err
 	}
 
 	log.Printf("[DEBUG] Update policy request: %v", obj)
@@ -611,13 +635,14 @@ func resourceServiceUsageV2ConsumerPolicyUpdate(d *schema.ResourceData, meta int
 
 	newRules := d.Get("enable_rules")
 	newServices := getServices(newRules)
+	newCatalogs := getCatalogs(newRules)
 
 	// check dependencies if the "respect_dependencies" flag is enabled
 	validateDependenciesEnabled := d.Get("validate_dependencies").(bool)
 
 	if validateDependenciesEnabled {
 		name := fmt.Sprintf("%s/consumerPolicies/%s", d.Get("parent"), d.Get("name"))
-		analysisRequest := NewAnalysisRequest(name, newServices)
+		analysisRequest := NewAnalysisRequest(name, newServices, newCatalogs)
 		req := transport_tpg.SendRequestOptions{
 			Config:    config,
 			Method:    "POST",
@@ -658,15 +683,13 @@ func resourceServiceUsageV2ConsumerPolicyUpdate(d *schema.ResourceData, meta int
 				}
 			}
 			if sb.Len() > 0 {
-				return fmt.Errorf("There are additional services for which all necessary dependencies haven't been added. Please add these missing dependencies:\n%s", sb.String())
+				return fmt.Errorf("There are additional services for which all necessary dependencies haven't been added. Please add these missing dependencies:\n%s\nTo skip dependency validation, set validate_dependencies to false.", sb.String())
 			}
 		}
 	}
 
-	if !d.Get("check_usage_on_remove").(bool) {
-		if url, err = transport_tpg.AddQueryParams(url, map[string]string{"force": "true"}); err != nil {
-			return err
-		}
+	if url, err = transport_tpg.AddQueryParams(url, map[string]string{"force": "true"}); err != nil {
+		return err
 	}
 
 	log.Printf("[DEBUG] Update policy request: %v", obj)
@@ -698,6 +721,7 @@ func resourceServiceUsageV2ConsumerPolicyUpdate(d *schema.ResourceData, meta int
 		d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
+		err = resourceServiceUsageV2ConsumerPolicyPostUpdateFailure(d, meta, err)
 		return err
 	}
 
@@ -735,13 +759,14 @@ func resourceServiceUsageV2ConsumerPolicyDelete(d *schema.ResourceData, meta int
 	headers := make(http.Header)
 	newRules := d.Get("enable_rules")
 	newServices := getServices(newRules)
+	newCatalogs := getCatalogs(newRules)
 
 	// check dependencies if the "respect_dependencies" flag is enabled
 	validateDependenciesEnabled := d.Get("validate_dependencies").(bool)
 
 	if validateDependenciesEnabled {
 		name := fmt.Sprintf("%s/consumerPolicies/%s", d.Get("parent"), d.Get("name"))
-		analysisRequest := NewAnalysisRequest(name, newServices)
+		analysisRequest := NewAnalysisRequest(name, newServices, newCatalogs)
 		req := transport_tpg.SendRequestOptions{
 			Config:    config,
 			Method:    "POST",
@@ -782,15 +807,13 @@ func resourceServiceUsageV2ConsumerPolicyDelete(d *schema.ResourceData, meta int
 				}
 			}
 			if sb.Len() > 0 {
-				return fmt.Errorf("There are additional services for which all necessary dependencies haven't been added. Please add these missing dependencies:\n%s", sb.String())
+				return fmt.Errorf("There are additional services for which all necessary dependencies haven't been added. Please add these missing dependencies:\n%s\nTo skip dependency validation, set validate_dependencies to false.", sb.String())
 			}
 		}
 	}
 
-	if !d.Get("check_usage_on_remove").(bool) {
-		if url, err = transport_tpg.AddQueryParams(url, map[string]string{"force": "true"}); err != nil {
-			return err
-		}
+	if url, err = transport_tpg.AddQueryParams(url, map[string]string{"force": "true"}); err != nil {
+		return err
 	}
 
 	log.Printf("[DEBUG] Update policy request: %v", obj)
@@ -815,6 +838,7 @@ func resourceServiceUsageV2ConsumerPolicyDelete(d *schema.ResourceData, meta int
 		d.Timeout(schema.TimeoutDelete))
 
 	if err != nil {
+		err = resourceServiceUsageV2ConsumerPolicyPostDeleteFailure(d, meta, err)
 		return err
 	}
 
@@ -850,7 +874,7 @@ func resourceServiceUsageV2ConsumerPolicyImport(d *schema.ResourceData, meta int
 
 func flattenServiceUsageV2ConsumerPolicyEnableRules(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
-		return v
+		return []interface{}{map[string]interface{}{}}
 	}
 	l := v.([]interface{})
 	transformed := make([]interface{}, 0, len(l))
@@ -863,11 +887,23 @@ func flattenServiceUsageV2ConsumerPolicyEnableRules(v interface{}, d *schema.Res
 		}
 		transformed = append(transformed, map[string]interface{}{
 			"services": flattenServiceUsageV2ConsumerPolicyEnableRulesServices(original["services"], d, config),
+			"catalogs": flattenServiceUsageV2ConsumerPolicyEnableRulesCatalogs(original["catalogs"], d, config),
 		})
+	}
+	if len(transformed) == 0 {
+		return []interface{}{map[string]interface{}{}}
 	}
 	return transformed
 }
+
 func flattenServiceUsageV2ConsumerPolicyEnableRulesServices(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+	return schema.NewSet(schema.HashString, v.([]interface{}))
+}
+
+func flattenServiceUsageV2ConsumerPolicyEnableRulesCatalogs(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
 	}
@@ -898,6 +934,13 @@ func expandServiceUsageV2ConsumerPolicyEnableRules(v interface{}, d tpgresource.
 			transformed["services"] = transformedServices
 		}
 
+		transformedCatalogs, err := expandServiceUsageV2ConsumerPolicyEnableRulesCatalogs(original["catalogs"], d, config)
+		if err != nil {
+			return nil, err
+		} else {
+			transformed["catalogs"] = transformedCatalogs
+		}
+
 		req = append(req, transformed)
 	}
 	return req, nil
@@ -908,16 +951,34 @@ func expandServiceUsageV2ConsumerPolicyEnableRulesServices(v interface{}, d tpgr
 	return v, nil
 }
 
+func expandServiceUsageV2ConsumerPolicyEnableRulesCatalogs(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	v = v.(*schema.Set).List()
+	return v, nil
+}
+
 func expandServiceUsageV2ConsumerPolicyEtag(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
 func resourceServiceUsageV2ConsumerPolicyPostCreateFailure(d *schema.ResourceData, meta interface{}, err error) error {
 	log.Printf("[DEBUG] Error before post_create_failure hook: %v", err)
-	// Post-create failure QoL log hints
-	log.Printf("[WARN] Service Usage Policy creation failed.")
-	log.Printf("[WARN] Hint 1: If due to concurrent modification (SU_CONFLICTING_CONCURRENT_MODIFICATION), re-sync and retry.")
-	log.Printf("[WARN] Hint 2: If due to active service usage (COMMON_SU_SERVICES_HAVE_USAGE), set check_usage_on_remove to false.")
+	if ok, _ := isCommonOpError(err, ApiErrorSuConflictingConcurrentModification); ok || isTimeoutError(err) {
+		return fmt.Errorf("The consumer policy might have been changed from other toolings. Please try again: %w", err)
+	}
+	return err
+}
+func resourceServiceUsageV2ConsumerPolicyPostUpdateFailure(d *schema.ResourceData, meta interface{}, err error) error {
+	log.Printf("[DEBUG] Error before post_update_failure hook: %v", err)
+	if ok, _ := isCommonOpError(err, ApiErrorSuConflictingConcurrentModification); ok || isTimeoutError(err) {
+		return fmt.Errorf("The consumer policy might have been changed from other toolings. Please try again: %w", err)
+	}
+	return err
+}
+func resourceServiceUsageV2ConsumerPolicyPostDeleteFailure(d *schema.ResourceData, meta interface{}, err error) error {
+	log.Printf("[DEBUG] Error before post_delete_failure hook: %v", err)
+	if ok, _ := isCommonOpError(err, ApiErrorSuConflictingConcurrentModification); ok || isTimeoutError(err) {
+		return fmt.Errorf("The consumer policy might have been changed from other toolings. Please try again: %w", err)
+	}
 	return err
 }
 
