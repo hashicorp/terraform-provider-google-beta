@@ -1,0 +1,101 @@
+# Copyright IBM Corp. 2014, 2026
+# SPDX-License-Identifier: MPL-2.0
+resource: google_vertex_ai_model_development_cluster
+generation_type: mmv1
+source_file: products/vertexai/ModelDevelopmentCluster.yaml
+api_service_name: aiplatform.googleapis.com
+api_version: v1beta1
+api_resource_type_kind: ModelDevelopmentCluster
+autogen_status: true
+autogen_version: 2
+fields:
+    - api_field: clusterEvents.eventMessage
+    - api_field: clusterEvents.eventTime
+    - api_field: clusterEvents.eventType
+    - api_field: clusterStatus.detail
+    - api_field: clusterStatus.error.code
+    - api_field: clusterStatus.error.details
+    - api_field: clusterStatus.error.message
+    - api_field: clusterStatus.nodesStatus.createTime
+    - api_field: clusterStatus.nodesStatus.detail
+    - api_field: clusterStatus.nodesStatus.instanceId
+    - api_field: clusterStatus.nodesStatus.instanceName
+    - api_field: clusterStatus.nodesStatus.lastUpdateTime
+    - api_field: clusterStatus.nodesStatus.nodePoolId
+    - api_field: clusterStatus.nodesStatus.nodePoolType
+    - api_field: clusterStatus.nodesStatus.nodeState
+    - api_field: clusterStatus.nodesStatus.physicalHost.blockId
+    - api_field: clusterStatus.nodesStatus.physicalHost.clusterName
+    - api_field: clusterStatus.nodesStatus.physicalHost.hostId
+    - api_field: clusterStatus.nodesStatus.physicalHost.subblockId
+    - api_field: clusterStatus.state
+    - api_field: createTime
+    - api_field: displayName
+    - field: effective_labels
+      provider_only: true
+    - api_field: labels
+    - api_field: lustreExportConfig.daysOfWeek
+    - api_field: lustreExportConfig.destinationBucket
+    - api_field: lustreExportConfig.lustres
+    - api_field: lustreExportConfig.startTime.hours
+    - api_field: lustreExportConfig.startTime.minutes
+    - field: model_development_cluster_id
+      provider_only: true
+    - api_field: name
+    - api_field: network.network
+    - api_field: network.subnetwork
+    - api_field: nodePools.bootDisk.bootDiskSizeGb
+    - api_field: nodePools.bootDisk.bootDiskType
+    - api_field: nodePools.effectiveFlexStartMaxDuration
+    - api_field: nodePools.enablePublicIps
+    - api_field: nodePools.filestores
+    - api_field: nodePools.flexStartMaxDuration
+    - api_field: nodePools.id
+    - api_field: nodePools.labels
+    - api_field: nodePools.lustres
+    - api_field: nodePools.machineSpec.machineType
+    - api_field: nodePools.machineSpec.reservationAffinity.reservationAffinityType
+    - api_field: nodePools.machineSpec.reservationAffinity.values
+    - api_field: nodePools.nodeImage
+    - api_field: nodePools.provisioningModel
+    - api_field: nodePools.scalingSpec.maxNodeCount
+    - api_field: nodePools.scalingSpec.minNodeCount
+    - api_field: nodePools.startupScript
+    - api_field: nodePools.zone
+    - api_field: orchestratorSpec.slurmSpec.config
+    - api_field: orchestratorSpec.slurmSpec.defaultPartitionId
+    - api_field: orchestratorSpec.slurmSpec.epilogBashScripts
+    - api_field: orchestratorSpec.slurmSpec.homeDirectoryStorage
+    - api_field: orchestratorSpec.slurmSpec.loginNodePoolId
+    - api_field: orchestratorSpec.slurmSpec.nodeSets.config
+    - api_field: orchestratorSpec.slurmSpec.nodeSets.nodePoolId
+    - api_field: orchestratorSpec.slurmSpec.partitions.config
+    - api_field: orchestratorSpec.slurmSpec.partitions.id
+    - api_field: orchestratorSpec.slurmSpec.partitions.nodePoolIds
+    - api_field: orchestratorSpec.slurmSpec.prologBashScripts
+    - field: region
+      provider_only: true
+    - api_field: runtime.trainingServices.createTime
+    - api_field: runtime.trainingServices.deploymentSpec.workerNodeCount
+    - api_field: runtime.trainingServices.deploymentSpec.workerNodePoolId
+    - api_field: runtime.trainingServices.gcsBucket
+    - api_field: runtime.trainingServices.imageUri
+    - api_field: runtime.trainingServices.name
+    - api_field: runtime.trainingServices.serviceStatus.detail
+    - api_field: runtime.trainingServices.serviceStatus.endpoints
+    - api_field: runtime.trainingServices.serviceStatus.state
+    - api_field: runtime.trainingServices.updateTime
+    - api_field: runtime.xmanager.apiEndpoint
+    - api_field: runtime.xmanager.error.code
+    - api_field: runtime.xmanager.error.details
+    - api_field: runtime.xmanager.error.message
+    - api_field: runtime.xmanager.instanceId
+    - api_field: runtime.xmanager.state
+    - api_field: runtime.xmanager.uiEndpoint
+    - api_field: runtimeSpec.serviceAccount
+    - api_field: startTime
+    - field: terraform_labels
+      provider_only: true
+    - api_field: updateTime
+    - field: deletion_policy
+      provider_only: true
