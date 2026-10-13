@@ -264,6 +264,52 @@ constraint.`,
 					},
 				},
 			},
+			"application_template_component": {
+				Type:     schema.TypeList,
+				Computed: true,
+				Description: `Reference to a component and revision in a composite Application Design
+Center ApplicationTemplate. Set by the service on Releases created by an
+ApplicationTemplate import.`,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"component": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: `Name of the component in the composite ApplicationTemplate.`,
+						},
+						"composite_ref": {
+							Type:        schema.TypeList,
+							Computed:    true,
+							Description: `Reference to the composite ApplicationTemplate.`,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"application_template": {
+										Type:        schema.TypeString,
+										Computed:    true,
+										Description: `Reference to the ApplicationTemplate resource.`,
+									},
+									"revision": {
+										Type:        schema.TypeString,
+										Computed:    true,
+										Description: `Revision of the ApplicationTemplate.`,
+									},
+									"sync_operation": {
+										Type:        schema.TypeString,
+										Computed:    true,
+										Description: `Reference to the ongoing import and replication operation. Opaque for external usage.`,
+									},
+								},
+							},
+						},
+						"revision": {
+							Type:     schema.TypeString,
+							Computed: true,
+							Description: `Revision of the component. If the component does not have a revision,
+this is the revision of the composite ApplicationTemplate.`,
+						},
+					},
+				},
+			},
 			"create_time": {
 				Type:        schema.TypeString,
 				Computed:    true,
@@ -832,6 +878,60 @@ func flattenSaasRuntimeReleaseAnnotations(v interface{}, d *schema.ResourceData,
 	return transformed
 }
 
+func flattenSaasRuntimeReleaseApplicationTemplateComponent(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["composite_ref"] =
+		flattenSaasRuntimeReleaseApplicationTemplateComponentCompositeRef(original["compositeRef"], d, config)
+	transformed["component"] =
+		flattenSaasRuntimeReleaseApplicationTemplateComponentComponent(original["component"], d, config)
+	transformed["revision"] =
+		flattenSaasRuntimeReleaseApplicationTemplateComponentRevision(original["revision"], d, config)
+	return []interface{}{transformed}
+}
+func flattenSaasRuntimeReleaseApplicationTemplateComponentCompositeRef(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["application_template"] =
+		flattenSaasRuntimeReleaseApplicationTemplateComponentCompositeRefApplicationTemplate(original["applicationTemplate"], d, config)
+	transformed["revision"] =
+		flattenSaasRuntimeReleaseApplicationTemplateComponentCompositeRefRevision(original["revision"], d, config)
+	transformed["sync_operation"] =
+		flattenSaasRuntimeReleaseApplicationTemplateComponentCompositeRefSyncOperation(original["syncOperation"], d, config)
+	return []interface{}{transformed}
+}
+func flattenSaasRuntimeReleaseApplicationTemplateComponentCompositeRefApplicationTemplate(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenSaasRuntimeReleaseApplicationTemplateComponentCompositeRefRevision(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenSaasRuntimeReleaseApplicationTemplateComponentCompositeRefSyncOperation(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenSaasRuntimeReleaseApplicationTemplateComponentComponent(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenSaasRuntimeReleaseApplicationTemplateComponentRevision(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenSaasRuntimeReleaseBlueprint(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return nil
@@ -1194,6 +1294,9 @@ func ResourceSaasRuntimeReleaseFlatten(d *schema.ResourceData, meta interface{},
 	var err error
 
 	if err = d.Set("annotations", flattenSaasRuntimeReleaseAnnotations(res["annotations"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Release: %s", err)
+	}
+	if err = d.Set("application_template_component", flattenSaasRuntimeReleaseApplicationTemplateComponent(res["applicationTemplateComponent"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Release: %s", err)
 	}
 	if err = d.Set("blueprint", flattenSaasRuntimeReleaseBlueprint(res["blueprint"], d, config)); err != nil {
