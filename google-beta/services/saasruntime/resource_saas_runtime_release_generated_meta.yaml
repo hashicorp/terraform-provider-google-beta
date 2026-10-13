@@ -10,6 +10,11 @@ autogen_status: true
 autogen_version: 1
 fields:
     - api_field: annotations
+    - api_field: applicationTemplateComponent.component
+    - api_field: applicationTemplateComponent.compositeRef.applicationTemplate
+    - api_field: applicationTemplateComponent.compositeRef.revision
+    - api_field: applicationTemplateComponent.compositeRef.syncOperation
+    - api_field: applicationTemplateComponent.revision
     - api_field: blueprint.engine
     - api_field: blueprint.package
     - api_field: blueprint.version
