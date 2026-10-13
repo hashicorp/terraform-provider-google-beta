@@ -2211,6 +2211,7 @@ func ResourceContainerCluster() *schema.Resource {
 					},
 				},
 			},
+
 			"managed_opentelemetry_config": {
 				Type:        schema.TypeList,
 				Optional:    true,
@@ -2222,8 +2223,8 @@ func ResourceContainerCluster() *schema.Resource {
 						"scope": {
 							Type:             schema.TypeString,
 							Optional:         true,
-							Description:      "The scope of the Managed OpenTelemetry pipeline. Available options include SCOPE_UNSPECIFIED, NONE, and COLLECTION_AND_INSTRUMENTATION_COMPONENTS.",
-							ValidateFunc:     validation.StringInSlice([]string{"SCOPE_UNSPECIFIED", "NONE", "COLLECTION_AND_INSTRUMENTATION_COMPONENTS"}, false),
+							Computed:         true,
+							Description:      "The scope of the Managed OpenTelemetry pipeline. Available options include NONE and COLLECTION_AND_INSTRUMENTATION_COMPONENTS. See https://cloud.google.com/kubernetes-engine/docs/reference/rest/v1/projects.locations.clusters#managedopentelemetryconfig for more information. To disable the feature, explicitly set this to NONE.",
 							DiffSuppressFunc: tpgresource.EmptyOrDefaultStringSuppress("SCOPE_UNSPECIFIED"),
 						},
 					},
@@ -6737,10 +6738,20 @@ func flattenManagedMachineLearningDiagnosticsConfig(c *container.ManagedMachineL
 		},
 	}
 }
+
 func expandManagedOpenTelemetryConfig(configured interface{}) *container.ManagedOpenTelemetryConfig {
 	l := configured.([]interface{})
-	if len(l) == 0 || l[0] == nil {
+	if len(l) == 0 {
 		return nil
+	}
+	// l[0] is nil when the block is present but its scope is empty after diff
+	// suppression: `scope = "SCOPE_UNSPECIFIED"` on Create, or `{}` /
+	// `scope = "SCOPE_UNSPECIFIED"` when the state has no block. Return an empty
+	// struct, sent as `{}`, so the server applies its default scope (currently
+	// SCOPE_UNSPECIFIED). Returning nil would omit the field, causing a permadiff
+	// on Create and an empty-update 400 on Update.
+	if l[0] == nil {
+		return &container.ManagedOpenTelemetryConfig{}
 	}
 	config := l[0].(map[string]interface{})
 	return &container.ManagedOpenTelemetryConfig{
