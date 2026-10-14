@@ -168,6 +168,16 @@ More info: https://kubernetes.io/docs/user-guide/annotations
 Please refer to the field 'effective_annotations' for all of the annotations present on the resource.`,
 				Elem: &schema.Schema{Type: schema.TypeString},
 			},
+			"application": {
+				Type:     schema.TypeString,
+				Computed: true,
+				Optional: true,
+				Description: `Reference to the App Hub Application this Unit belongs to, in the format
+'projects/{project}/locations/{location}/applications/{application}'.
+All resources deployed in this Unit are associated with the specified
+Application. If empty, the service sets it during any UnitOperation
+when the UnitKind has 'app_params.group' and App Hub is enabled.`,
+			},
 			"labels": {
 				Type:     schema.TypeMap,
 				Optional: true,
@@ -502,6 +512,12 @@ func resourceSaasRuntimeUnitCreate(d *schema.ResourceData, meta interface{}) err
 	}
 
 	obj := make(map[string]interface{})
+	applicationProp, err := expandSaasRuntimeUnitApplication(d.Get("application"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("application"); !tpgresource.IsEmptyValue(reflect.ValueOf(applicationProp)) && (ok || !reflect.DeepEqual(v, applicationProp)) {
+		obj["application"] = applicationProp
+	}
 	maintenanceProp, err := expandSaasRuntimeUnitMaintenance(d.Get("maintenance"), d, config)
 	if err != nil {
 		return err
@@ -744,6 +760,12 @@ func resourceSaasRuntimeUnitUpdate(d *schema.ResourceData, meta interface{}) err
 	billingProject = project
 
 	obj := make(map[string]interface{})
+	applicationProp, err := expandSaasRuntimeUnitApplication(d.Get("application"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("application"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, applicationProp)) {
+		obj["application"] = applicationProp
+	}
 	maintenanceProp, err := expandSaasRuntimeUnitMaintenance(d.Get("maintenance"), d, config)
 	if err != nil {
 		return err
@@ -783,6 +805,10 @@ func resourceSaasRuntimeUnitUpdate(d *schema.ResourceData, meta interface{}) err
 	log.Printf("[DEBUG] Updating Unit %q: %#v", d.Id(), obj)
 	headers := make(http.Header)
 	updateMask := []string{}
+
+	if d.HasChange("application") {
+		updateMask = append(updateMask, "application")
+	}
 
 	if d.HasChange("maintenance") {
 		updateMask = append(updateMask, "maintenance")
@@ -926,6 +952,10 @@ func flattenSaasRuntimeUnitAnnotations(v interface{}, d *schema.ResourceData, co
 	}
 
 	return transformed
+}
+
+func flattenSaasRuntimeUnitApplication(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
 }
 
 func flattenSaasRuntimeUnitConditions(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -1204,6 +1234,10 @@ func flattenSaasRuntimeUnitEffectiveLabels(v interface{}, d *schema.ResourceData
 	return v
 }
 
+func expandSaasRuntimeUnitApplication(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
 func expandSaasRuntimeUnitMaintenance(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	if v == nil {
 		return nil, nil
@@ -1268,6 +1302,9 @@ func ResourceSaasRuntimeUnitFlatten(d *schema.ResourceData, meta interface{}, re
 	var err error
 
 	if err = d.Set("annotations", flattenSaasRuntimeUnitAnnotations(res["annotations"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Unit: %s", err)
+	}
+	if err = d.Set("application", flattenSaasRuntimeUnitApplication(res["application"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Unit: %s", err)
 	}
 	if err = d.Set("conditions", flattenSaasRuntimeUnitConditions(res["conditions"], d, config)); err != nil {

@@ -10,6 +10,7 @@ autogen_status: true
 autogen_version: 1
 fields:
     - api_field: annotations
+    - api_field: application
     - api_field: conditions.lastTransitionTime
     - api_field: conditions.message
     - api_field: conditions.reason
