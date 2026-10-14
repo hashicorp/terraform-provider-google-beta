@@ -792,7 +792,7 @@ func schemaNodeConfig() *schema.Schema {
 								Optional:         true,
 								DiffSuppressFunc: sandboxTypeDiffSuppress,
 								Description:      `Type of the sandbox to use for the node (e.g. 'GVISOR').`,
-								ValidateFunc:     validation.StringInSlice([]string{"GVISOR"}, false),
+								ValidateFunc:     validation.StringInSlice([]string{"GVISOR", "MICROVM"}, false),
 							},
 						},
 					},
