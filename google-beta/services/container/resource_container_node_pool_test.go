@@ -112,6 +112,11 @@ func TestAccContainerNodePool_resourceManagerTags(t *testing.T) {
 			},
 			{
 				Config: testAccContainerNodePool_resourceManagerTagsUpdate1(context),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.primary_nodes", plancheck.ResourceActionUpdate),
+					},
+				},
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet("google_container_node_pool.primary_nodes", "node_config.0.resource_manager_tags.%"),
 				),
@@ -124,6 +129,11 @@ func TestAccContainerNodePool_resourceManagerTags(t *testing.T) {
 			},
 			{
 				Config: testAccContainerNodePool_resourceManagerTagsUpdate2(context),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.primary_nodes", plancheck.ResourceActionUpdate),
+					},
+				},
 			},
 			{
 				ResourceName:            "google_container_node_pool.primary_nodes",
@@ -312,6 +322,11 @@ func TestAccContainerNodePool_withLoggingVariantUpdates(t *testing.T) {
 			},
 			{
 				Config: testAccContainerNodePool_withLoggingVariant(cluster, nodePool, "MAX_THROUGHPUT", networkName, subnetworkName),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.with_logging_variant", plancheck.ResourceActionUpdate),
+					},
+				},
 			},
 			{
 				ResourceName:      "google_container_node_pool.with_logging_variant",
@@ -320,6 +335,11 @@ func TestAccContainerNodePool_withLoggingVariantUpdates(t *testing.T) {
 			},
 			{
 				Config: testAccContainerNodePool_withLoggingVariant(cluster, nodePool, "DEFAULT", networkName, subnetworkName),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.with_logging_variant", plancheck.ResourceActionUpdate),
+					},
+				},
 			},
 			{
 				ResourceName:      "google_container_node_pool.with_logging_variant",
@@ -356,6 +376,11 @@ func TestAccContainerNodePool_withNodeConfig(t *testing.T) {
 			},
 			{
 				Config: testAccContainerNodePool_withNodeConfigUpdate(cluster, nodePool, networkName, subnetworkName),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.np_with_node_config", plancheck.ResourceActionUpdate),
+					},
+				},
 			},
 			{
 				ResourceName:      "google_container_node_pool.np_with_node_config",
@@ -392,6 +417,11 @@ func TestAccContainerNodePool_withNodeConfigWithBootDiskConfig(t *testing.T) {
 			},
 			{
 				Config: testAccContainerNodePool_withBootDiskUpdate(cluster, nodePool, networkName, subnetworkName),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.np", plancheck.ResourceActionUpdate),
+					},
+				},
 			},
 			{
 				ResourceName:      "google_container_node_pool.np",
@@ -425,6 +455,11 @@ func TestAccContainerNodePool_withNodeConfigWithBootDiskConfigChangeType(t *test
 			},
 			{
 				Config: testAccContainerNodePool_withBootDiskTypeChangeUpdate(cluster, nodePool, networkName, subnetworkName),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.np", plancheck.ResourceActionUpdate),
+					},
+				},
 			},
 			{
 				ResourceName:      "google_container_node_pool.np",
@@ -458,6 +493,11 @@ func TestAccContainerNodePool_withNodeConfigWithBootDiskConfigChangeTypeLegacy(t
 			},
 			{
 				Config: testAccContainerNodePool_withLegacyBootDiskTypeSize(cluster, nodePool, networkName, subnetworkName),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.np", plancheck.ResourceActionUpdate),
+					},
+				},
 			},
 			{
 				ResourceName:      "google_container_node_pool.np",
@@ -492,6 +532,11 @@ func TestAccContainerNodePool_withLegacyNodeConfigAndBootDiskUpdate(t *testing.T
 			},
 			{
 				Config: testAccContainerNodePool_withLegacyBootDiskTypeSizeUpdateNew(cluster, nodePool, networkName, subnetworkName),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.np", plancheck.ResourceActionUpdate),
+					},
+				},
 			},
 			{
 				ResourceName:      "google_container_node_pool.np",
@@ -700,6 +745,11 @@ func TestAccContainerNodePool_withTaintsUpdate(t *testing.T) {
 			},
 			{
 				Config: testAccContainerNodePool_withTaintsUpdate(cluster, nodePool, networkName, subnetworkName),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.np", plancheck.ResourceActionUpdate),
+					},
+				},
 			},
 			{
 				ResourceName:      "google_container_node_pool.np",
@@ -736,6 +786,11 @@ func TestAccContainerNodePool_withMachineAndDiskUpdate(t *testing.T) {
 			},
 			{
 				Config: testAccContainerNodePool_withMachineAndDiskUpdate(cluster, nodePool, networkName, subnetworkName),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.np", plancheck.ResourceActionUpdate),
+					},
+				},
 			},
 			{
 				ResourceName:      "google_container_node_pool.np",
@@ -878,6 +933,11 @@ func TestAccContainerNodePool_withWorkloadIdentityConfig(t *testing.T) {
 			},
 			{
 				Config: testAccContainerNodePool_withWorkloadMetadataConfig_gkeMetadata(pid, cluster, np, networkName, subnetworkName),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.with_workload_metadata_config", plancheck.ResourceActionUpdate),
+					},
+				},
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_node_pool.with_workload_metadata_config",
 						"node_config.0.workload_metadata_config.0.mode", "GKE_METADATA"),
@@ -1139,6 +1199,11 @@ func TestAccContainerNodePool_withLinuxNodeConfig(t *testing.T) {
 			},
 			{
 				Config: testAccContainerNodePool_withLinuxNodeConfig(cluster, np, "1000 20000 100000", networkName, subnetworkName),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.with_linux_node_config", plancheck.ResourceActionUpdate),
+					},
+				},
 			},
 			{
 				ResourceName:      "google_container_node_pool.with_linux_node_config",
@@ -1148,6 +1213,11 @@ func TestAccContainerNodePool_withLinuxNodeConfig(t *testing.T) {
 			// Perform an update.
 			{
 				Config: testAccContainerNodePool_withLinuxNodeConfig(cluster, np, "1000 20000 200000", networkName, subnetworkName),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.with_linux_node_config", plancheck.ResourceActionUpdate),
+					},
+				},
 			},
 			{
 				ResourceName:      "google_container_node_pool.with_linux_node_config",
@@ -1186,6 +1256,11 @@ func TestAccContainerNodePool_withSwapConfig_bootDisk(t *testing.T) {
 			// Test disable encryption
 			{
 				Config: testAccContainerNodePool_withSwapConfig(cluster, np, networkName, subnetworkName, "encryption_disabled_false", ""),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.with_swap_config", plancheck.ResourceActionUpdate),
+					},
+				},
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_node_pool.with_swap_config", "node_config.0.linux_node_config.0.swap_config.0.encryption_config.0.disabled", "false"),
 					resource.TestCheckResourceAttr("google_container_node_pool.with_swap_config", "node_config.0.linux_node_config.0.swap_config.0.enabled", "true"),
@@ -1199,6 +1274,11 @@ func TestAccContainerNodePool_withSwapConfig_bootDisk(t *testing.T) {
 			// Test disable swap
 			{
 				Config: testAccContainerNodePool_withSwapConfig(cluster, np, networkName, subnetworkName, "disabled", ""),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.with_swap_config", plancheck.ResourceActionUpdate),
+					},
+				},
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_node_pool.with_swap_config", "node_config.0.linux_node_config.0.swap_config.0.enabled", "false"),
 				),
@@ -1358,6 +1438,11 @@ func TestAccContainerNodePool_withCgroupMode(t *testing.T) {
 			// Perform an update.
 			{
 				Config: testAccContainerNodePool_withCgroupMode(cluster, np, "CGROUP_MODE_UNSPECIFIED", networkName, subnetworkName),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.np", plancheck.ResourceActionUpdate),
+					},
+				},
 			},
 			{
 				ResourceName:      "google_container_node_pool.np",
@@ -1392,6 +1477,11 @@ func TestAccContainerNodePool_withHugepageConfig(t *testing.T) {
 			// Perform an update.
 			{
 				Config: testAccContainerNodePool_withHugepageConfig(cluster, np, networkName, subnetworkName, 2),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.np", plancheck.ResourceActionUpdate),
+					},
+				},
 			},
 			{
 				ResourceName:      "google_container_node_pool.np",
@@ -1426,6 +1516,11 @@ func TestAccContainerNodePool_withNodeKernelModuleLoading(t *testing.T) {
 			// Perform an update.
 			{
 				Config: testAccContainerNodePool_withNodeKernelModuleLoading(cluster, np, "CGROUP_MODE_UNSPECIFIED", "POLICY_UNSPECIFIED", networkName, subnetworkName),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.np", plancheck.ResourceActionUpdate),
+					},
+				},
 			},
 			{
 				ResourceName:      "google_container_node_pool.np",
@@ -1472,6 +1567,11 @@ func TestAccContainerNodePool_withNetworkConfig(t *testing.T) {
 			// edit the updateable network config
 			{
 				Config: testAccContainerNodePool_withNetworkConfig(cluster, np, network, "TIER_UNSPECIFIED"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.with_tier1_net", plancheck.ResourceActionUpdate),
+					},
+				},
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_node_pool.with_tier1_net", "network_config.0.network_performance_config.#", "1"),
 					resource.TestCheckResourceAttr("google_container_node_pool.with_tier1_net", "network_config.0.network_performance_config.0.total_egress_bandwidth_tier", "TIER_UNSPECIFIED"),
@@ -1504,6 +1604,11 @@ func TestAccContainerNodePool_withEnablePrivateNodesToggle(t *testing.T) {
 			},
 			{
 				Config: testAccContainerNodePool_withEnablePrivateNodesToggle(cluster, np, network, "false"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.with_enable_private_nodes", plancheck.ResourceActionUpdate),
+					},
+				},
 			},
 			{
 				ResourceName:            "google_container_node_pool.with_enable_private_nodes",
@@ -1630,6 +1735,11 @@ func TestAccContainerNodePool_withUpgradeSettings(t *testing.T) {
 			},
 			{
 				Config: testAccContainerNodePool_withUpgradeSettings(cluster, np, networkName, subnetworkName, 2, 1, "SURGE", "", "", 0, 0.0, "", ""),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.with_upgrade_settings", plancheck.ResourceActionUpdate),
+					},
+				},
 			},
 			{
 				ResourceName:      "google_container_node_pool.with_upgrade_settings",
@@ -1638,6 +1748,11 @@ func TestAccContainerNodePool_withUpgradeSettings(t *testing.T) {
 			},
 			{
 				Config: testAccContainerNodePool_withUpgradeSettings(cluster, np, networkName, subnetworkName, 1, 1, "SURGE", "", "", 0, 0.0, "", ""),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.with_upgrade_settings", plancheck.ResourceActionUpdate),
+					},
+				},
 			},
 			{
 				ResourceName:      "google_container_node_pool.with_upgrade_settings",
@@ -1646,6 +1761,11 @@ func TestAccContainerNodePool_withUpgradeSettings(t *testing.T) {
 			},
 			{
 				Config: testAccContainerNodePool_withUpgradeSettings(cluster, np, networkName, subnetworkName, 0, 0, "BLUE_GREEN", "STANDARD", "100s", 1, 0.0, "0s", ""),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.with_upgrade_settings", plancheck.ResourceActionUpdate),
+					},
+				},
 			},
 			{
 				ResourceName:      "google_container_node_pool.with_upgrade_settings",
@@ -1654,6 +1774,11 @@ func TestAccContainerNodePool_withUpgradeSettings(t *testing.T) {
 			},
 			{
 				Config: testAccContainerNodePool_withUpgradeSettings(cluster, np, networkName, subnetworkName, 0, 0, "BLUE_GREEN", "STANDARD", "100s", 0, 0.5, "1s", ""),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.with_upgrade_settings", plancheck.ResourceActionUpdate),
+					},
+				},
 			},
 			{
 				ResourceName:      "google_container_node_pool.with_upgrade_settings",
@@ -1662,6 +1787,11 @@ func TestAccContainerNodePool_withUpgradeSettings(t *testing.T) {
 			},
 			{
 				Config: testAccContainerNodePool_withUpgradeSettings(cluster, np, networkName, subnetworkName, 0, 0, "BLUE_GREEN", "AUTOSCALED", "0s", 0, 0.0, "", ""),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.with_upgrade_settings", plancheck.ResourceActionUpdate),
+					},
+				},
 			},
 			{
 				ResourceName:      "google_container_node_pool.with_upgrade_settings",
@@ -1670,6 +1800,11 @@ func TestAccContainerNodePool_withUpgradeSettings(t *testing.T) {
 			},
 			{
 				Config: testAccContainerNodePool_withUpgradeSettings(cluster, np, networkName, subnetworkName, 0, 0, "BLUE_GREEN", "AUTOSCALED", "0s", 0, 0.0, "", "100s"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.with_upgrade_settings", plancheck.ResourceActionUpdate),
+					},
+				},
 			},
 			{
 				ResourceName:      "google_container_node_pool.with_upgrade_settings",
@@ -1768,6 +1903,11 @@ func TestAccContainerNodePool_withManagement(t *testing.T) {
 			},
 			{
 				Config: testAccContainerNodePool_withManagement(cluster, nodePool, management, networkName, subnetworkName),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.np_with_management", plancheck.ResourceActionUpdate),
+					},
+				},
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(
 						"google_container_node_pool.np_with_management", "management.#", "1"),
@@ -1848,6 +1988,11 @@ func TestAccContainerNodePool_withMaintenancePolicy(t *testing.T) {
 			},
 			{
 				Config: testAccContainerNodePool_withMaintenancePolicy(cluster, nodePool, networkName, subnetworkName, false),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.np_with_maintenance_policy", plancheck.ResourceActionUpdate),
+					},
+				},
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_node_pool.np_with_maintenance_policy", "maintenance_policy.0.exclusion_until_end_of_support.0.enabled", "false"),
 				),
@@ -1855,6 +2000,11 @@ func TestAccContainerNodePool_withMaintenancePolicy(t *testing.T) {
 			// Step 3: Update to re-enable maintenance exclusion
 			{
 				Config: testAccContainerNodePool_withMaintenancePolicy(cluster, nodePool, networkName, subnetworkName, true),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.np_with_maintenance_policy", plancheck.ResourceActionUpdate),
+					},
+				},
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_node_pool.np_with_maintenance_policy", "maintenance_policy.0.exclusion_until_end_of_support.0.enabled", "true"),
 				),
@@ -1889,6 +2039,11 @@ func TestAccContainerNodePool_withAccurateTimeConfig(t *testing.T) {
 			},
 			{
 				Config: testAccContainerNodePool_withAccurateTimeConfig(cluster, nodePool, networkName, subnetworkName, false),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.np_with_time_config", plancheck.ResourceActionUpdate),
+					},
+				},
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_node_pool.np_with_time_config", "node_config.0.linux_node_config.0.accurate_time_config.0.enable_ptp_kvm_time_sync", "false"),
 				),
@@ -1955,6 +2110,11 @@ func TestAccContainerNodePool_regionalAutoscaling(t *testing.T) {
 			},
 			{
 				Config: testAccContainerNodePool_updateAutoscaling(cluster, np, networkName, subnetworkName),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.np", plancheck.ResourceActionReplace),
+					},
+				},
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_node_pool.np", "autoscaling.0.min_node_count", "0"),
 					resource.TestCheckResourceAttr("google_container_node_pool.np", "autoscaling.0.max_node_count", "5"),
@@ -1967,6 +2127,11 @@ func TestAccContainerNodePool_regionalAutoscaling(t *testing.T) {
 			},
 			{
 				Config: testAccContainerNodePool_basic(cluster, np, networkName, subnetworkName),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.np", plancheck.ResourceActionUpdate),
+					},
+				},
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckNoResourceAttr("google_container_node_pool.np", "autoscaling.0.min_node_count"),
 					resource.TestCheckNoResourceAttr("google_container_node_pool.np", "autoscaling.0.max_node_count"),
@@ -2013,6 +2178,11 @@ func TestAccContainerNodePool_totalSize(t *testing.T) {
 			},
 			{
 				Config: testAccContainerNodePool_updateTotalSize(cluster, np, networkName, subnetworkName),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.np", plancheck.ResourceActionUpdate),
+					},
+				},
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_node_pool.np", "autoscaling.0.total_min_node_count", "2"),
 					resource.TestCheckResourceAttr("google_container_node_pool.np", "autoscaling.0.total_max_node_count", "22"),
@@ -2026,6 +2196,11 @@ func TestAccContainerNodePool_totalSize(t *testing.T) {
 			},
 			{
 				Config: testAccContainerNodePool_basicTotalSize(cluster, np, networkName, subnetworkName),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.np", plancheck.ResourceActionUpdate),
+					},
+				},
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckNoResourceAttr("google_container_node_pool.np", "autoscaling.0.min_node_count"),
 					resource.TestCheckNoResourceAttr("google_container_node_pool.np", "autoscaling.0.max_node_count"),
@@ -2070,6 +2245,11 @@ func TestAccContainerNodePool_autoscaling(t *testing.T) {
 			},
 			{
 				Config: testAccContainerNodePool_updateAutoscaling(cluster, np, networkName, subnetworkName),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.np", plancheck.ResourceActionUpdate),
+					},
+				},
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_node_pool.np", "autoscaling.0.min_node_count", "0"),
 					resource.TestCheckResourceAttr("google_container_node_pool.np", "autoscaling.0.max_node_count", "5"),
@@ -2082,6 +2262,11 @@ func TestAccContainerNodePool_autoscaling(t *testing.T) {
 			},
 			{
 				Config: testAccContainerNodePool_basic(cluster, np, networkName, subnetworkName),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.np", plancheck.ResourceActionUpdate),
+					},
+				},
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckNoResourceAttr("google_container_node_pool.np", "autoscaling.0.min_node_count"),
 					resource.TestCheckNoResourceAttr("google_container_node_pool.np", "autoscaling.0.max_node_count"),
@@ -2125,6 +2310,11 @@ func TestAccContainerNodePool_resize(t *testing.T) {
 			},
 			{
 				Config: testAccContainerNodePool_resize(cluster, np, networkName, subnetworkName),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.np", plancheck.ResourceActionUpdate),
+					},
+				},
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_node_pool.np", "node_count", "3"),
 				),
@@ -2160,6 +2350,11 @@ func TestAccContainerNodePool_version(t *testing.T) {
 			},
 			{
 				Config: testAccContainerNodePool_updateVersion(cluster, np, networkName, subnetworkName),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.np", plancheck.ResourceActionUpdate),
+					},
+				},
 			},
 			{
 				ResourceName:      "google_container_node_pool.np",
@@ -2168,6 +2363,11 @@ func TestAccContainerNodePool_version(t *testing.T) {
 			},
 			{
 				Config: testAccContainerNodePool_version(cluster, np, networkName, subnetworkName),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.np", plancheck.ResourceActionUpdate),
+					},
+				},
 			},
 			{
 				ResourceName:      "google_container_node_pool.np",
@@ -2228,6 +2428,11 @@ func TestAccContainerNodePool_EmptyGuestAccelerator(t *testing.T) {
 			{
 				// Test alternative way to specify an empty node pool
 				Config: testAccContainerNodePool_PartialEmptyGuestAccelerator(cluster, np, networkName, subnetworkName, 1),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.np", plancheck.ResourceActionReplace),
+					},
+				},
 			},
 			{
 				ResourceName:      "google_container_node_pool.np",
@@ -2766,6 +2971,11 @@ func TestAccContainerNodePool_gcfsConfig(t *testing.T) {
 			},
 			{
 				Config: testAccContainerNodePool_gcfsConfig(cluster, np, networkName, subnetworkName, false),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.np", plancheck.ResourceActionUpdate),
+					},
+				},
 			},
 			{
 				ResourceName:      "google_container_node_pool.np",
@@ -2827,6 +3037,11 @@ func TestAccContainerNodePool_gvnic(t *testing.T) {
 			},
 			{
 				Config: testAccContainerNodePool_gvnic(cluster, np, networkName, subnetworkName, false),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.np", plancheck.ResourceActionUpdate),
+					},
+				},
 			},
 			{
 				ResourceName:      "google_container_node_pool.np",
@@ -2835,6 +3050,11 @@ func TestAccContainerNodePool_gvnic(t *testing.T) {
 			},
 			{
 				Config: testAccContainerNodePool_gvnic(cluster, np, networkName, subnetworkName, true),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.np", plancheck.ResourceActionUpdate),
+					},
+				},
 			},
 			{
 				ResourceName:      "google_container_node_pool.np",
@@ -2900,6 +3120,11 @@ func TestAccContainerNodePool_fastSocket(t *testing.T) {
 			},
 			{
 				Config: testAccContainerNodePool_fastSocket(cluster, np, networkName, subnetworkName, false),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.np", plancheck.ResourceActionUpdate),
+					},
+				},
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_node_pool.np",
 						"node_config.0.fast_socket.0.enabled", "false"),
@@ -4236,6 +4461,7 @@ resource "google_container_node_pool" "with_workload_metadata_config" {
   cluster            = google_container_cluster.cluster.name
   initial_node_count = 1
   node_config {
+    spot         = true
     oauth_scopes = [
       "https://www.googleapis.com/auth/logging.write",
       "https://www.googleapis.com/auth/monitoring",
@@ -5727,6 +5953,11 @@ func TestAccContainerNodePool_withConfidentialNodes(t *testing.T) {
 			},
 			{
 				Config: testAccContainerNodePool_withConfidentialNodes(clusterName, np, networkName, subnetworkName, true, "", "n2d-standard-2"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.np", plancheck.ResourceActionUpdate),
+					},
+				},
 			},
 			{
 				ResourceName:      "google_container_node_pool.np",
@@ -5735,6 +5966,11 @@ func TestAccContainerNodePool_withConfidentialNodes(t *testing.T) {
 			},
 			{
 				Config: testAccContainerNodePool_withConfidentialNodes(clusterName, np, networkName, subnetworkName, false, "SEV", "n2d-standard-2"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.np", plancheck.ResourceActionUpdate),
+					},
+				},
 			},
 			{
 				ResourceName:      "google_container_node_pool.np",
@@ -5742,6 +5978,11 @@ func TestAccContainerNodePool_withConfidentialNodes(t *testing.T) {
 				ImportStateVerify: true,
 			}, {
 				Config: testAccContainerNodePool_withConfidentialNodes(clusterName, np, networkName, subnetworkName, false, "SEV_SNP", "n2d-standard-2"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.np", plancheck.ResourceActionReplace),
+					},
+				},
 			},
 			{
 				ResourceName:      "google_container_node_pool.np",
@@ -5749,6 +5990,11 @@ func TestAccContainerNodePool_withConfidentialNodes(t *testing.T) {
 				ImportStateVerify: true,
 			}, {
 				Config: testAccContainerNodePool_withConfidentialNodes(clusterName, np, networkName, subnetworkName, false, "TDX", "c3-standard-4"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.np", plancheck.ResourceActionReplace),
+					},
+				},
 			},
 			{
 				ResourceName:      "google_container_node_pool.np",
@@ -5872,6 +6118,11 @@ func TestAccContainerNodePool_withMaxRunDuration(t *testing.T) {
 			},
 			{
 				Config: testAccContainerNodePool_withMaxRunDuration(clusterName, np, networkName, subnetworkName, "1800s"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.np", plancheck.ResourceActionReplace),
+					},
+				},
 			},
 			{
 				ResourceName:      "google_container_node_pool.np",
@@ -5880,6 +6131,11 @@ func TestAccContainerNodePool_withMaxRunDuration(t *testing.T) {
 			},
 			{
 				Config: testAccContainerNodePool_disableMaxRunDuration(clusterName, np, networkName, subnetworkName),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.np", plancheck.ResourceActionReplace),
+					},
+				},
 			},
 			{
 				ResourceName:      "google_container_node_pool.np",
@@ -7110,6 +7366,11 @@ func TestAccContainerNodePool_withMachineDiskStoragePoolsUpdate(t *testing.T) {
 			},
 			{
 				Config: testAccContainerNodePool_withDiskMachineAndStoragePoolUpdate(cluster, nodePool, networkName, subnetworkName, storagePoolResourceName, location),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.np", plancheck.ResourceActionUpdate),
+					},
+				},
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_node_pool.np", "node_config.0.storage_pools.0", storagePoolResourceName),
 				),
@@ -7145,7 +7406,7 @@ resource "google_container_cluster" "cluster" {
 
 resource "google_container_node_pool" "np" {
   provider           = google.user-project-override
-  name               = "%[1]s"
+  name               = "%[2]s"
   location           = "%[6]s"
   cluster            = google_container_cluster.cluster.name
   initial_node_count = 1
@@ -7506,6 +7767,11 @@ func TestAccContainerNodePool_ignoreNodeCountChanges(t *testing.T) {
 				// Step 3: Flip ignore_node_count_changes to false and set node_count = 3 (matching GKE cloud state).
 				// This registers the flag update and aligns HCL with the actual GKE size.
 				Config: testAccContainerNodePool_ignoreNodeCountChanges(suffix, clusterName, poolName, 3, false),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.np", plancheck.ResourceActionUpdate),
+					},
+				},
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_node_pool.np", "node_count", "3"),
 				),
@@ -7514,6 +7780,11 @@ func TestAccContainerNodePool_ignoreNodeCountChanges(t *testing.T) {
 				// Step 4: Now that drift detection is active (flag is false in state), set node_count = 2.
 				// This detects the difference (3 -> 2) and resizes the GKE Node Pool back to 2.
 				Config: testAccContainerNodePool_ignoreNodeCountChanges(suffix, clusterName, poolName, 2, false),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.np", plancheck.ResourceActionUpdate),
+					},
+				},
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_node_pool.np", "node_count", "2"),
 				),
@@ -7639,6 +7910,11 @@ func TestAccContainerNodePool_withTaintConfig(t *testing.T) {
 			},
 			{
 				Config: testAccContainerNodePool_withTaintConfig(cluster, np, networkName, subnetworkName, "NONE"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.np", plancheck.ResourceActionUpdate),
+					},
+				},
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_node_pool.np", "node_config.0.taint_config.0.architecture_taint_behavior", "NONE"),
 					resource.TestCheckResourceAttr("google_container_node_pool.np", "node_config.0.effective_taints.#", "0"),
@@ -7652,6 +7928,11 @@ func TestAccContainerNodePool_withTaintConfig(t *testing.T) {
 			},
 			{
 				Config: testAccContainerNodePool_withTaintConfig(cluster, np, networkName, subnetworkName, "ARM"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.np", plancheck.ResourceActionUpdate),
+					},
+				},
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_node_pool.np", "node_config.0.taint_config.0.architecture_taint_behavior", "ARM"),
 					resource.TestCheckResourceAttr("google_container_node_pool.np", "node_config.0.effective_taints.#", "1"),
@@ -8028,6 +8309,11 @@ func TestAccContainerNodePool_bestEffortProvisioning(t *testing.T) {
 				// The API omits bestEffortProvisioning when disabled, so an explicit
 				// `enabled = false` is only kept in state from config and isn't imported.
 				Config: testAccContainerNodePool_bestEffortProvisioning(clusterName, poolName, networkName, subnetworkName, false, 0),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.np", plancheck.ResourceActionReplace),
+					},
+				},
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_node_pool.np", "best_effort_provisioning.0.enabled", "false"),
 					resource.TestCheckResourceAttr("google_container_node_pool.np", "best_effort_provisioning.0.min_provision_nodes", "0"),
@@ -8035,6 +8321,11 @@ func TestAccContainerNodePool_bestEffortProvisioning(t *testing.T) {
 			},
 			{
 				Config: testAccContainerNodePool_bestEffortProvisioningRemoved(clusterName, poolName, networkName, subnetworkName),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_container_node_pool.np", plancheck.ResourceActionReplace),
+					},
+				},
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_container_node_pool.np", "best_effort_provisioning.#", "0"),
 				),
