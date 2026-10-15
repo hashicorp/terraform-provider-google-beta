@@ -115,7 +115,6 @@ resource "google_managed_kafka_cluster" "example" {
   labels = {
     key = "value"
   }
-  kafka_version = "3.7.x"
 }
 
 data "google_project" "project" {
