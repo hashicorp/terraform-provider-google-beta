@@ -54,6 +54,23 @@ import (
 	"google.golang.org/api/googleapi"
 )
 
+// IsSaasRuntimeSaasImportRunningError retries requests that the service rejects
+// because an application template import is running. A PATCH on a FAILED Saas
+// (even labels-only) restarts the import, and the service then rejects
+// template/revision updates and DELETE until the import reaches ACTIVE or
+// FAILED. Both rejections are HTTP 400, so match on the message.
+func IsSaasRuntimeSaasImportRunningError(err error) (bool, string) {
+	if err == nil {
+		return false, ""
+	}
+	msg := err.Error()
+	if strings.Contains(msg, "because it is in RUNNING state") ||
+		strings.Contains(msg, "Cannot update application template or revision when state is RUNNING") {
+		return true, "waiting for Saas application template import to finish"
+	}
+	return false, ""
+}
+
 var (
 	_ = bytes.Clone
 	_ = context.WithCancel
@@ -107,9 +124,9 @@ func ResourceSaasRuntimeSaas() *schema.Resource {
 		},
 
 		Timeouts: &schema.ResourceTimeout{
-			Create: schema.DefaultTimeout(20 * time.Minute),
-			Update: schema.DefaultTimeout(20 * time.Minute),
-			Delete: schema.DefaultTimeout(20 * time.Minute),
+			Create: schema.DefaultTimeout(30 * time.Minute),
+			Update: schema.DefaultTimeout(30 * time.Minute),
+			Delete: schema.DefaultTimeout(30 * time.Minute),
 		},
 
 		CustomizeDiff: customdiff.All(
@@ -168,6 +185,60 @@ More info: https://kubernetes.io/docs/user-guide/annotations
 Please refer to the field 'effective_annotations' for all of the annotations present on the resource.`,
 				Elem: &schema.Schema{Type: schema.TypeString},
 			},
+			"application_template": {
+				Type:     schema.TypeList,
+				Optional: true,
+				Description: `Reference to a composite Application Design Center ApplicationTemplate.
+When 'revision' is set, the service imports the template components into
+equivalent UnitKind, Release and Blueprint resources. Create waits for
+the import to finish. Update waits when the template changes or when the
+Saas was failed, running, or not yet started. Both fail if 'state'
+becomes 'STATE_FAILED'.
+
+* The import creates UnitKinds (named 'u-<rootModuleId>-<6 chars>') and
+  their Releases, and copies the Saas, the UnitKinds and the Releases to
+  'global' and to the other 'locations'. Terraform doesn't manage or
+  delete any of them, including when this field changes. Before
+  destroying or replacing the Saas (including 'terraform apply -replace'
+  and recreating a tainted Saas), delete the imported UnitKinds and
+  Releases in every location: the API rejects the deletion of a Saas
+  that still has UnitKinds.
+* After a failed import, fix the template and change 'revision'. Any
+  apply that changes a failed Saas restarts the import, and the provider
+  waits for the restarted import to finish or fail again.
+* While an import is running, the provider retries template or revision
+  updates and DELETE until it finishes, within the resource timeouts.
+* Don't create Terraform-managed UnitKinds whose
+  'application_template_component' matches a component of this
+  template: the import adopts them and overwrites their fields.
+* Set this field only on the source-region Saas, not on the copies in
+  'global' or other 'locations'.`,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"application_template": {
+							Type:     schema.TypeString,
+							Required: true,
+							Description: `Reference to the ApplicationTemplate resource, in the format
+'projects/{project}/locations/{location}/spaces/{space}/applicationTemplates/{applicationTemplate}'.`,
+						},
+						"revision": {
+							Type:     schema.TypeString,
+							Optional: true,
+							Description: `Revision of the ApplicationTemplate to import, as a full resource name
+prefixed by 'application_template':
+'projects/{project}/locations/{location}/spaces/{space}/applicationTemplates/{applicationTemplate}/revisions/{revision}'.
+Changes to the revision trigger a new import. If empty, the service
+stores 'application_template' but doesn't import it.`,
+						},
+						"sync_operation": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: `Reference to the ongoing import and replication operation. Opaque for external usage.`,
+						},
+					},
+				},
+			},
 			"labels": {
 				Type:     schema.TypeMap,
 				Optional: true,
@@ -193,6 +264,54 @@ list to generate a rollout plan.`,
 					},
 				},
 			},
+			"blueprint_repo": {
+				Type:     schema.TypeString,
+				Computed: true,
+				Description: `Name of the repository in Artifact Registry for system-generated
+Blueprints, for example the Blueprints of imported ApplicationTemplates.`,
+			},
+			"conditions": {
+				Type:     schema.TypeList,
+				Computed: true,
+				Description: `A set of conditions which indicate the various conditions this resource can
+have.`,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"last_transition_time": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: `Last time the condition transited from one status to another.`,
+						},
+						"message": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: `Human readable message indicating details about the last transition.`,
+						},
+						"reason": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: `Brief reason for the condition's last transition.`,
+						},
+						"status": {
+							Type:     schema.TypeString,
+							Computed: true,
+							Description: `Status of the condition.
+Possible values:
+STATUS_UNKNOWN
+STATUS_TRUE
+STATUS_FALSE`,
+						},
+						"type": {
+							Type:     schema.TypeString,
+							Computed: true,
+							Description: `Type of the condition.
+Possible values:
+TYPE_READY
+TYPE_SYNCHRONIZED`,
+						},
+					},
+				},
+			},
 			"create_time": {
 				Type:        schema.TypeString,
 				Computed:    true,
@@ -210,6 +329,25 @@ list to generate a rollout plan.`,
 				Description: `All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.`,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
+			"error": {
+				Type:        schema.TypeList,
+				Computed:    true,
+				Description: `If the state is 'STATE_FAILED', the corresponding error code and message.`,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"code": {
+							Type:        schema.TypeInt,
+							Computed:    true,
+							Description: `The status code, which should be an enum value of google.rpc.Code.`,
+						},
+						"message": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: `A developer-facing error message.`,
+						},
+					},
+				},
+			},
 			"etag": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -224,6 +362,18 @@ and server agree on the ordering of a resource being written.`,
 scheme:
 
 "projects/{project}/locations/{location}/saas/{saas}"`,
+			},
+			"state": {
+				Type:     schema.TypeString,
+				Computed: true,
+				Description: `State of the Saas. It is always 'STATE_ACTIVE' if
+'application_template.revision' is empty.
+Possible values:
+STATE_UNSPECIFIED
+STATE_TYPE_UNSPECIFIED
+STATE_ACTIVE
+STATE_RUNNING
+STATE_FAILED`,
 			},
 			"terraform_labels": {
 				Type:     schema.TypeMap,
@@ -279,6 +429,12 @@ func resourceSaasRuntimeSaasCreate(d *schema.ResourceData, meta interface{}) err
 	}
 
 	obj := make(map[string]interface{})
+	applicationTemplateProp, err := expandSaasRuntimeSaasApplicationTemplate(d.Get("application_template"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("application_template"); !tpgresource.IsEmptyValue(reflect.ValueOf(applicationTemplateProp)) && (ok || !reflect.DeepEqual(v, applicationTemplateProp)) {
+		obj["applicationTemplate"] = applicationTemplateProp
+	}
 	locationsProp, err := expandSaasRuntimeSaasLocations(d.Get("locations"), d, config)
 	if err != nil {
 		return err
@@ -319,14 +475,15 @@ func resourceSaasRuntimeSaasCreate(d *schema.ResourceData, meta interface{}) err
 
 	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
-		Config:    config,
-		Method:    "POST",
-		Project:   billingProject,
-		RawURL:    url,
-		UserAgent: userAgent,
-		Body:      obj,
-		Timeout:   d.Timeout(schema.TimeoutCreate),
-		Headers:   headers,
+		Config:               config,
+		Method:               "POST",
+		Project:              billingProject,
+		RawURL:               url,
+		UserAgent:            userAgent,
+		Body:                 obj,
+		Timeout:              d.Timeout(schema.TimeoutCreate),
+		Headers:              headers,
+		ErrorRetryPredicates: []transport_tpg.RetryErrorPredicateFunc{IsSaasRuntimeSaasImportRunningError},
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating Saas: %s", err)
@@ -338,6 +495,112 @@ func resourceSaasRuntimeSaasCreate(d *schema.ResourceData, meta interface{}) err
 		return fmt.Errorf("Error constructing id: %s", err)
 	}
 	d.SetId(id)
+
+	if v, ok := d.GetOk("application_template.0.revision"); ok && v.(string) != "" {
+		preState, _ := d.Get("state").(string)
+		preStateNotDone := false
+		switch preState {
+		case "STATE_FAILED", "STATE_RUNNING", "", "STATE_UNSPECIFIED", "STATE_TYPE_UNSPECIFIED":
+			preStateNotDone = true
+		}
+		if d.IsNewResource() || d.HasChange("application_template") || preStateNotDone {
+			timeout := d.Timeout(schema.TimeoutUpdate)
+			if d.IsNewResource() {
+				timeout = d.Timeout(schema.TimeoutCreate)
+			}
+			// A PATCH that doesn't change application_template on a FAILED Saas
+			// doesn't reset state: GET keeps returning the previous FAILED result
+			// until the service restarts the import a few seconds later. In that case
+			// treat FAILED as stale (pending) while no non-FAILED state has been seen
+			// and the TYPE_SYNCHRONIZED condition's lastTransitionTime equals the
+			// pre-update value (both empty counts as equal), for at most restartGrace.
+			// Both timestamps come from the server (no clock skew). A template change
+			// resets state synchronously, so FAILED is always fresh there. When the
+			// pre-update state was STATE_RUNNING or the zero value, any ACTIVE or
+			// FAILED result is fresh.
+			syncTransition := func(conds interface{}, key string) string {
+				list, _ := conds.([]interface{})
+				for _, c := range list {
+					if m, ok := c.(map[string]interface{}); ok && m["type"] == "TYPE_SYNCHRONIZED" {
+						t, _ := m[key].(string)
+						return t
+					}
+				}
+				return ""
+			}
+			checkStale := !d.IsNewResource() && preState == "STATE_FAILED" && !d.HasChange("application_template")
+			staleTransition := ""
+			if checkStale {
+				staleTransition = syncTransition(d.Get("conditions"), "last_transition_time")
+			}
+			const restartGrace = 2 * time.Minute
+			waitStart := time.Now()
+			sawNonFailed := false
+
+			log.Printf("[DEBUG] Waiting for Saas %q application template import to finish", d.Id())
+			err := transport_tpg.Retry(transport_tpg.RetryOptions{
+				Timeout:      timeout,
+				PollInterval: config.PollInterval,
+				RetryFunc: func() error {
+					url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/{{location}}/saas/{{saas_id}}")
+					if err != nil {
+						return err
+					}
+
+					res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
+						Config:    config,
+						Method:    "GET",
+						Project:   billingProject,
+						RawURL:    url,
+						UserAgent: userAgent,
+					})
+					if err != nil {
+						// SendRequest already retries transient errors. Return others (for
+						// example, 403 or 404) as is, so they fail the wait instead of being
+						// retried until the timeout.
+						return err
+					}
+
+					state, _ := res["state"].(string)
+					log.Printf("[DEBUG] Saas %q state: %q", d.Id(), state)
+					if state != "STATE_FAILED" {
+						sawNonFailed = true
+					}
+
+					switch state {
+					case "STATE_ACTIVE":
+						return nil
+					case "STATE_FAILED":
+						if checkStale && !sawNonFailed && time.Since(waitStart) < restartGrace &&
+							syncTransition(res["conditions"], "lastTransitionTime") == staleTransition {
+							return fmt.Errorf("Saas %q import is still pending (STATE_FAILED from before the update; waiting for the import to restart)", d.Id())
+						}
+						msg := ""
+						if e, ok := res["error"].(map[string]interface{}); ok {
+							msg, _ = e["message"].(string)
+						}
+						return fmt.Errorf("Saas %q application template import failed (STATE_FAILED): %s", d.Id(), msg)
+					case "", "STATE_UNSPECIFIED", "STATE_TYPE_UNSPECIFIED", "STATE_RUNNING":
+						return fmt.Errorf("Saas %q import is still pending (state %q)", d.Id(), state)
+					default:
+						return fmt.Errorf("Saas %q has unexpected state: %s", d.Id(), state)
+					}
+				},
+				ErrorRetryPredicates: []transport_tpg.RetryErrorPredicateFunc{
+					func(err error) (bool, string) {
+						if strings.Contains(err.Error(), "import is still pending") {
+							return true, "retry pending import"
+						}
+						return false, ""
+					},
+				},
+			})
+
+			if err != nil {
+				return fmt.Errorf("Error waiting for Saas application template import: %s", err)
+			}
+		}
+	}
 
 	log.Printf("[DEBUG] Finished creating Saas %q: %#v", d.Id(), res)
 
@@ -393,11 +656,12 @@ func resourceSaasRuntimeSaasPollRead(d *schema.ResourceData, meta interface{}) t
 		}
 
 		res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
-			Config:    config,
-			Method:    "GET",
-			Project:   billingProject,
-			RawURL:    url,
-			UserAgent: userAgent,
+			Config:               config,
+			Method:               "GET",
+			Project:              billingProject,
+			RawURL:               url,
+			UserAgent:            userAgent,
+			ErrorRetryPredicates: []transport_tpg.RetryErrorPredicateFunc{IsSaasRuntimeSaasImportRunningError},
 		})
 		if err != nil {
 			return res, err
@@ -433,12 +697,13 @@ func resourceSaasRuntimeSaasRead(d *schema.ResourceData, meta interface{}) error
 
 	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
-		Config:    config,
-		Method:    "GET",
-		Project:   billingProject,
-		RawURL:    url,
-		UserAgent: userAgent,
-		Headers:   headers,
+		Config:               config,
+		Method:               "GET",
+		Project:              billingProject,
+		RawURL:               url,
+		UserAgent:            userAgent,
+		Headers:              headers,
+		ErrorRetryPredicates: []transport_tpg.RetryErrorPredicateFunc{IsSaasRuntimeSaasImportRunningError},
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("SaasRuntimeSaas %q", d.Id()))
@@ -544,6 +809,12 @@ func resourceSaasRuntimeSaasUpdate(d *schema.ResourceData, meta interface{}) err
 	billingProject = project
 
 	obj := make(map[string]interface{})
+	applicationTemplateProp, err := expandSaasRuntimeSaasApplicationTemplate(d.Get("application_template"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("application_template"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, applicationTemplateProp)) {
+		obj["applicationTemplate"] = applicationTemplateProp
+	}
 	locationsProp, err := expandSaasRuntimeSaasLocations(d.Get("locations"), d, config)
 	if err != nil {
 		return err
@@ -572,6 +843,10 @@ func resourceSaasRuntimeSaasUpdate(d *schema.ResourceData, meta interface{}) err
 	headers := make(http.Header)
 	updateMask := []string{}
 
+	if d.HasChange("application_template") {
+		updateMask = append(updateMask, "applicationTemplate")
+	}
+
 	if d.HasChange("locations") {
 		updateMask = append(updateMask, "locations")
 	}
@@ -598,14 +873,15 @@ func resourceSaasRuntimeSaasUpdate(d *schema.ResourceData, meta interface{}) err
 	// if updateMask is empty we are not updating anything so skip the post
 	if len(updateMask) > 0 {
 		res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
-			Config:    config,
-			Method:    "PATCH",
-			Project:   billingProject,
-			RawURL:    url,
-			UserAgent: userAgent,
-			Body:      obj,
-			Timeout:   d.Timeout(schema.TimeoutUpdate),
-			Headers:   headers,
+			Config:               config,
+			Method:               "PATCH",
+			Project:              billingProject,
+			RawURL:               url,
+			UserAgent:            userAgent,
+			Body:                 obj,
+			Timeout:              d.Timeout(schema.TimeoutUpdate),
+			Headers:              headers,
+			ErrorRetryPredicates: []transport_tpg.RetryErrorPredicateFunc{IsSaasRuntimeSaasImportRunningError},
 		})
 
 		if err != nil {
@@ -616,6 +892,111 @@ func resourceSaasRuntimeSaasUpdate(d *schema.ResourceData, meta interface{}) err
 
 	}
 
+	if v, ok := d.GetOk("application_template.0.revision"); ok && v.(string) != "" {
+		preState, _ := d.Get("state").(string)
+		preStateNotDone := false
+		switch preState {
+		case "STATE_FAILED", "STATE_RUNNING", "", "STATE_UNSPECIFIED", "STATE_TYPE_UNSPECIFIED":
+			preStateNotDone = true
+		}
+		if d.IsNewResource() || d.HasChange("application_template") || preStateNotDone {
+			timeout := d.Timeout(schema.TimeoutUpdate)
+			if d.IsNewResource() {
+				timeout = d.Timeout(schema.TimeoutCreate)
+			}
+			// A PATCH that doesn't change application_template on a FAILED Saas
+			// doesn't reset state: GET keeps returning the previous FAILED result
+			// until the service restarts the import a few seconds later. In that case
+			// treat FAILED as stale (pending) while no non-FAILED state has been seen
+			// and the TYPE_SYNCHRONIZED condition's lastTransitionTime equals the
+			// pre-update value (both empty counts as equal), for at most restartGrace.
+			// Both timestamps come from the server (no clock skew). A template change
+			// resets state synchronously, so FAILED is always fresh there. When the
+			// pre-update state was STATE_RUNNING or the zero value, any ACTIVE or
+			// FAILED result is fresh.
+			syncTransition := func(conds interface{}, key string) string {
+				list, _ := conds.([]interface{})
+				for _, c := range list {
+					if m, ok := c.(map[string]interface{}); ok && m["type"] == "TYPE_SYNCHRONIZED" {
+						t, _ := m[key].(string)
+						return t
+					}
+				}
+				return ""
+			}
+			checkStale := !d.IsNewResource() && preState == "STATE_FAILED" && !d.HasChange("application_template")
+			staleTransition := ""
+			if checkStale {
+				staleTransition = syncTransition(d.Get("conditions"), "last_transition_time")
+			}
+			const restartGrace = 2 * time.Minute
+			waitStart := time.Now()
+			sawNonFailed := false
+
+			log.Printf("[DEBUG] Waiting for Saas %q application template import to finish", d.Id())
+			err := transport_tpg.Retry(transport_tpg.RetryOptions{
+				Timeout:      timeout,
+				PollInterval: config.PollInterval,
+				RetryFunc: func() error {
+					url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/{{location}}/saas/{{saas_id}}")
+					if err != nil {
+						return err
+					}
+
+					res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
+						Config:    config,
+						Method:    "GET",
+						Project:   billingProject,
+						RawURL:    url,
+						UserAgent: userAgent,
+					})
+					if err != nil {
+						// SendRequest already retries transient errors. Return others (for
+						// example, 403 or 404) as is, so they fail the wait instead of being
+						// retried until the timeout.
+						return err
+					}
+
+					state, _ := res["state"].(string)
+					log.Printf("[DEBUG] Saas %q state: %q", d.Id(), state)
+					if state != "STATE_FAILED" {
+						sawNonFailed = true
+					}
+
+					switch state {
+					case "STATE_ACTIVE":
+						return nil
+					case "STATE_FAILED":
+						if checkStale && !sawNonFailed && time.Since(waitStart) < restartGrace &&
+							syncTransition(res["conditions"], "lastTransitionTime") == staleTransition {
+							return fmt.Errorf("Saas %q import is still pending (STATE_FAILED from before the update; waiting for the import to restart)", d.Id())
+						}
+						msg := ""
+						if e, ok := res["error"].(map[string]interface{}); ok {
+							msg, _ = e["message"].(string)
+						}
+						return fmt.Errorf("Saas %q application template import failed (STATE_FAILED): %s", d.Id(), msg)
+					case "", "STATE_UNSPECIFIED", "STATE_TYPE_UNSPECIFIED", "STATE_RUNNING":
+						return fmt.Errorf("Saas %q import is still pending (state %q)", d.Id(), state)
+					default:
+						return fmt.Errorf("Saas %q has unexpected state: %s", d.Id(), state)
+					}
+				},
+				ErrorRetryPredicates: []transport_tpg.RetryErrorPredicateFunc{
+					func(err error) (bool, string) {
+						if strings.Contains(err.Error(), "import is still pending") {
+							return true, "retry pending import"
+						}
+						return false, ""
+					},
+				},
+			})
+
+			if err != nil {
+				return fmt.Errorf("Error waiting for Saas application template import: %s", err)
+			}
+		}
+	}
 	return resourceSaasRuntimeSaasRead(d, meta)
 }
 
@@ -656,14 +1037,15 @@ func resourceSaasRuntimeSaasDelete(d *schema.ResourceData, meta interface{}) err
 
 	log.Printf("[DEBUG] Deleting Saas %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
-		Config:    config,
-		Method:    "DELETE",
-		Project:   billingProject,
-		RawURL:    url,
-		UserAgent: userAgent,
-		Body:      obj,
-		Timeout:   d.Timeout(schema.TimeoutDelete),
-		Headers:   headers,
+		Config:               config,
+		Method:               "DELETE",
+		Project:              billingProject,
+		RawURL:               url,
+		UserAgent:            userAgent,
+		Body:                 obj,
+		Timeout:              d.Timeout(schema.TimeoutDelete),
+		Headers:              headers,
+		ErrorRetryPredicates: []transport_tpg.RetryErrorPredicateFunc{IsSaasRuntimeSaasImportRunningError},
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "Saas")
@@ -713,7 +1095,119 @@ func flattenSaasRuntimeSaasAnnotations(v interface{}, d *schema.ResourceData, co
 	return transformed
 }
 
+func flattenSaasRuntimeSaasApplicationTemplate(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["application_template"] =
+		flattenSaasRuntimeSaasApplicationTemplateApplicationTemplate(original["applicationTemplate"], d, config)
+	transformed["revision"] =
+		flattenSaasRuntimeSaasApplicationTemplateRevision(original["revision"], d, config)
+	transformed["sync_operation"] =
+		flattenSaasRuntimeSaasApplicationTemplateSyncOperation(original["syncOperation"], d, config)
+	return []interface{}{transformed}
+}
+func flattenSaasRuntimeSaasApplicationTemplateApplicationTemplate(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenSaasRuntimeSaasApplicationTemplateRevision(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenSaasRuntimeSaasApplicationTemplateSyncOperation(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenSaasRuntimeSaasBlueprintRepo(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenSaasRuntimeSaasConditions(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+	l := v.([]interface{})
+	transformed := make([]interface{}, 0, len(l))
+	for i, raw := range l {
+		_ = i
+		original := raw.(map[string]interface{})
+		if len(original) < 1 {
+			// Do not include empty json objects coming back from the api
+			continue
+		}
+		transformed = append(transformed, map[string]interface{}{
+			"last_transition_time": flattenSaasRuntimeSaasConditionsLastTransitionTime(original["lastTransitionTime"], d, config),
+			"message":              flattenSaasRuntimeSaasConditionsMessage(original["message"], d, config),
+			"reason":               flattenSaasRuntimeSaasConditionsReason(original["reason"], d, config),
+			"status":               flattenSaasRuntimeSaasConditionsStatus(original["status"], d, config),
+			"type":                 flattenSaasRuntimeSaasConditionsType(original["type"], d, config),
+		})
+	}
+	return transformed
+}
+func flattenSaasRuntimeSaasConditionsLastTransitionTime(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenSaasRuntimeSaasConditionsMessage(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenSaasRuntimeSaasConditionsReason(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenSaasRuntimeSaasConditionsStatus(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenSaasRuntimeSaasConditionsType(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenSaasRuntimeSaasCreateTime(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenSaasRuntimeSaasError(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["code"] =
+		flattenSaasRuntimeSaasErrorCode(original["code"], d, config)
+	transformed["message"] =
+		flattenSaasRuntimeSaasErrorMessage(original["message"], d, config)
+	return []interface{}{transformed}
+}
+func flattenSaasRuntimeSaasErrorCode(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	// Handles the string fixed64 format
+	if strVal, ok := v.(string); ok {
+		if intVal, err := tpgresource.StringToFixed64(strVal); err == nil {
+			return intVal
+		}
+	}
+
+	// number values are represented as float64
+	if floatVal, ok := v.(float64); ok {
+		intVal := int(floatVal)
+		return intVal
+	}
+
+	return v // let terraform core handle it otherwise
+}
+
+func flattenSaasRuntimeSaasErrorMessage(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -763,6 +1257,10 @@ func flattenSaasRuntimeSaasName(v interface{}, d *schema.ResourceData, config *t
 	return v
 }
 
+func flattenSaasRuntimeSaasState(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenSaasRuntimeSaasUid(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
@@ -792,6 +1290,54 @@ func flattenSaasRuntimeSaasTerraformLabels(v interface{}, d *schema.ResourceData
 
 func flattenSaasRuntimeSaasEffectiveLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
+}
+
+func expandSaasRuntimeSaasApplicationTemplate(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedApplicationTemplate, err := expandSaasRuntimeSaasApplicationTemplateApplicationTemplate(original["application_template"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedApplicationTemplate); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["applicationTemplate"] = transformedApplicationTemplate
+	}
+
+	transformedRevision, err := expandSaasRuntimeSaasApplicationTemplateRevision(original["revision"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedRevision); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["revision"] = transformedRevision
+	}
+
+	transformedSyncOperation, err := expandSaasRuntimeSaasApplicationTemplateSyncOperation(original["sync_operation"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedSyncOperation); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["syncOperation"] = transformedSyncOperation
+	}
+
+	return transformed, nil
+}
+
+func expandSaasRuntimeSaasApplicationTemplateApplicationTemplate(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandSaasRuntimeSaasApplicationTemplateRevision(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandSaasRuntimeSaasApplicationTemplateSyncOperation(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
 }
 
 func expandSaasRuntimeSaasLocations(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
@@ -851,7 +1397,19 @@ func ResourceSaasRuntimeSaasFlatten(d *schema.ResourceData, meta interface{}, re
 	if err = d.Set("annotations", flattenSaasRuntimeSaasAnnotations(res["annotations"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Saas: %s", err)
 	}
+	if err = d.Set("application_template", flattenSaasRuntimeSaasApplicationTemplate(res["applicationTemplate"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Saas: %s", err)
+	}
+	if err = d.Set("blueprint_repo", flattenSaasRuntimeSaasBlueprintRepo(res["blueprintRepo"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Saas: %s", err)
+	}
+	if err = d.Set("conditions", flattenSaasRuntimeSaasConditions(res["conditions"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Saas: %s", err)
+	}
 	if err = d.Set("create_time", flattenSaasRuntimeSaasCreateTime(res["createTime"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Saas: %s", err)
+	}
+	if err = d.Set("error", flattenSaasRuntimeSaasError(res["error"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Saas: %s", err)
 	}
 	if err = d.Set("etag", flattenSaasRuntimeSaasEtag(res["etag"], d, config)); err != nil {
@@ -864,6 +1422,9 @@ func ResourceSaasRuntimeSaasFlatten(d *schema.ResourceData, meta interface{}, re
 		return fmt.Errorf("Error reading Saas: %s", err)
 	}
 	if err = d.Set("name", flattenSaasRuntimeSaasName(res["name"], d, config)); err != nil {
+		return fmt.Errorf("Error reading Saas: %s", err)
+	}
+	if err = d.Set("state", flattenSaasRuntimeSaasState(res["state"], d, config)); err != nil {
 		return fmt.Errorf("Error reading Saas: %s", err)
 	}
 	if err = d.Set("uid", flattenSaasRuntimeSaasUid(res["uid"], d, config)); err != nil {

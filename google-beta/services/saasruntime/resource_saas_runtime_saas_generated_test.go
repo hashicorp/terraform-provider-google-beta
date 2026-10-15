@@ -83,7 +83,7 @@ func TestAccSaasRuntimeSaas_saasRuntimeSaasBasicExample(t *testing.T) {
 				ResourceName:            "google_saas_runtime_saas.example",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"annotations", "etag", "labels", "location", "saas_id", "terraform_labels", "update_time"},
+				ImportStateVerifyIgnore: []string{"annotations", "blueprint_repo", "conditions", "etag", "labels", "location", "saas_id", "state", "terraform_labels", "update_time"},
 			},
 			{
 				ResourceName:       "google_saas_runtime_saas.example",
@@ -135,11 +135,12 @@ func testAccCheckSaasRuntimeSaasDestroyProducer(t *testing.T) func(s *terraform.
 			}
 
 			_, err = transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
-				Config:    config,
-				Method:    "GET",
-				Project:   billingProject,
-				RawURL:    url,
-				UserAgent: config.UserAgent,
+				Config:               config,
+				Method:               "GET",
+				Project:              billingProject,
+				RawURL:               url,
+				UserAgent:            config.UserAgent,
+				ErrorRetryPredicates: []transport_tpg.RetryErrorPredicateFunc{saasruntime.IsSaasRuntimeSaasImportRunningError},
 			})
 			if err == nil {
 				return fmt.Errorf("SaasRuntimeSaas still exists at %s", url)

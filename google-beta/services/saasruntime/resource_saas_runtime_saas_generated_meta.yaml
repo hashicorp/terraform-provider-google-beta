@@ -10,11 +10,22 @@ autogen_status: true
 autogen_version: 1
 fields:
     - api_field: annotations
+    - api_field: applicationTemplate.applicationTemplate
+    - api_field: applicationTemplate.revision
+    - api_field: applicationTemplate.syncOperation
+    - api_field: blueprintRepo
+    - api_field: conditions.lastTransitionTime
+    - api_field: conditions.message
+    - api_field: conditions.reason
+    - api_field: conditions.status
+    - api_field: conditions.type
     - api_field: createTime
     - field: effective_annotations
       provider_only: true
     - field: effective_labels
       provider_only: true
+    - api_field: error.code
+    - api_field: error.message
     - api_field: etag
     - api_field: labels
     - field: location
@@ -23,6 +34,7 @@ fields:
     - api_field: name
     - field: saas_id
       provider_only: true
+    - api_field: state
     - field: terraform_labels
       provider_only: true
     - api_field: uid
