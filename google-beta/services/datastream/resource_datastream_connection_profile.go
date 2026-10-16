@@ -316,6 +316,7 @@ secretManagerStoredPassword.`,
 							Optional: true,
 							Description: `A reference to a Secret Manager resource name storing the MongoDB
 connection password. Mutually exclusive with password.`,
+							Sensitive: true,
 						},
 						"srv_connection_format": {
 							Type:     schema.TypeList,
@@ -2050,11 +2051,11 @@ func flattenDatastreamConnectionProfileMongodbProfileUsername(v interface{}, d *
 }
 
 func flattenDatastreamConnectionProfileMongodbProfilePassword(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
-	return v
+	return d.Get("mongodb_profile.0.password")
 }
 
 func flattenDatastreamConnectionProfileMongodbProfileSecretManagerStoredPassword(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
-	return v
+	return d.Get("mongodb_profile.0.secret_manager_stored_password")
 }
 
 func flattenDatastreamConnectionProfileMongodbProfileSslConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
