@@ -765,7 +765,7 @@ func TestAccComputeSubnetwork_subnetworkWithInternalSubnetModePdpExample(t *test
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"ip_collection_url": "projects/tf-static-byoip/regions/us-central1/publicDelegatedPrefixes/internal-ipv6-subnet-mode-test-sub-pdp",
+		"ip_collection_url": "projects/tf-static-byoip/regions/us-central1/publicDelegatedPrefixes/terraform-v6-internal-sub-pdp",
 		"network_name":      "tf-test-network-byoipv6-internal" + randomSuffix,
 		"subnetwork_name":   "tf-test-internal-subnet-mode-pdp-subnet" + randomSuffix,
 		"random_suffix":     randomSuffix,
@@ -819,8 +819,8 @@ func TestAccComputeSubnetwork_subnetworkWithInternalSubnetModePdpExplicitIpPrefi
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"internal_ipv6_prefix": fmt.Sprintf("2001:db8:1:%d::/64", acctest.RandIntRange(t, 0, 9999)),
-		"ip_collection_url":    "projects/tf-static-byoip/regions/us-central1/publicDelegatedPrefixes/internal-ipv6-subnet-mode-test-sub-pdp-explicit-prefix",
+		"internal_ipv6_prefix": fmt.Sprintf("2600:1904:9:%x::/64", acctest.RandIntRange(t, 16, 95)),
+		"ip_collection_url":    "projects/tf-static-byoip/regions/us-central1/publicDelegatedPrefixes/terraform-v6-internal-sub-pdp",
 		"network_name":         "tf-test-network-byoipv6-internal-prefix" + randomSuffix,
 		"subnetwork_name":      "tf-test-subnet-mode-pdp-subnet-internal-prefix" + randomSuffix,
 		"random_suffix":        randomSuffix,
@@ -927,12 +927,11 @@ func TestAccComputeSubnetwork_subnetworkWithSecondaryIpv6RangeExample(t *testing
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"network_name":    "tf-test-network-with-secondary-ranges" + randomSuffix,
-		"pap_name":        "tf-test-pap-for-secondary-ranges" + randomSuffix,
-		"pdp_name":        "tf-test-pdp-for-secondary-ranges" + randomSuffix,
-		"sub_pdp_name":    "tf-test-sub-pdp-for-secondary-ranges" + randomSuffix,
-		"subnetwork_name": "tf-test-subnet-with-secondary-ranges" + randomSuffix,
-		"random_suffix":   randomSuffix,
+		"ip_collection_url":   "projects/tf-static-byoip/regions/us-central1/publicDelegatedPrefixes/terraform-v6-internal-sub-pdp",
+		"network_name":        "tf-test-network-with-secondary-ranges" + randomSuffix,
+		"secondary_ipv6_cidr": fmt.Sprintf("2600:1904:9:%x::/64", acctest.RandIntRange(t, 96, 175)),
+		"subnetwork_name":     "tf-test-subnet-with-secondary-ranges" + randomSuffix,
+		"random_suffix":       randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -977,50 +976,22 @@ resource "google_compute_subnetwork" "subnetwork_with_secondary_ipv6_range" {
   secondary_ip_range {
     range_name    = "v6-byogua-auto"
     ip_version    = "IPV6"
-    ip_collection = google_compute_public_delegated_prefix.ipv6_sub_pdp.self_link
+    ip_collection = "%{ip_collection_url}"
   }
 
   secondary_ip_range {
     range_name    = "v6-byogua-manual"
     ip_version    = "IPV6"
-    ip_collection = google_compute_public_delegated_prefix.ipv6_sub_pdp.self_link
-    ip_cidr_range = "2001:db8:0:2::/64"
+    ip_collection = "%{ip_collection_url}"
+    ip_cidr_range = "%{secondary_ipv6_cidr}"
   }
 }
 
 resource "google_compute_network" "custom-test" {
-  provider                = google-beta
-  name                    = "%{network_name}"
-  auto_create_subnetworks = false
+  provider                 = google-beta
+  name                     = "%{network_name}"
+  auto_create_subnetworks  = false
   enable_ula_internal_ipv6 = true
-}
-
-resource "google_compute_public_advertised_prefix" "ipv6_pap" {
-  provider         = google-beta
-  name             = "%{pap_name}"
-  ip_cidr_range    = "2001:db8::/40"
-  pdp_scope        = "REGIONAL"
-  ipv6_access_type = "INTERNAL"
-  description      = "GOOGLE_INTERNAL_TEST_PREFIX"
-}
-
-resource "google_compute_public_delegated_prefix" "ipv6_pdp" {
-  provider         = google-beta
-  name             = "%{pdp_name}"
-  region           = "us-central1"
-  description      = "PDP in internal subnet mode"
-  ip_cidr_range    = "2001:db8::/48"
-  parent_prefix    = google_compute_public_advertised_prefix.ipv6_pap.id
-  mode             = "DELEGATION"
-}
-
-resource "google_compute_public_delegated_prefix" "ipv6_sub_pdp" {
-  provider      = google-beta
-  name          = "%{sub_pdp_name}"
-  region        = "us-central1"
-  ip_cidr_range = "2001:db8::/56"
-  parent_prefix = google_compute_public_delegated_prefix.ipv6_pdp.id
-  mode          = "INTERNAL_IPV6_SUBNETWORK_CREATION"
 }
 `, context)
 }
