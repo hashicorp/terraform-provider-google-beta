@@ -248,7 +248,6 @@ func resourceVertexAIModelGardenEnableModelCreate(d *schema.ResourceData, meta i
 
 func resourceVertexAIModelGardenEnableModelRead(d *schema.ResourceData, meta interface{}) error {
 	// This resource could not be read from the API.
-	return nil
 
 	return nil
 }
