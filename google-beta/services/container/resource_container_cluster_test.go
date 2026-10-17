@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"regexp"
 	"testing"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
@@ -5929,7 +5930,7 @@ func TestAccContainerCluster_withAutopilotResourceManagerTags(t *testing.T) {
 					// Small sleep, to avoid case where cluster is ready but underlying GCE
 					// resources apparently aren't.
 					// b/390456348
-					acctest.SleepInSecondsForTest(30),
+					acctest.SleepTestCheckFunc(30*time.Second),
 					resource.TestCheckResourceAttrSet("google_container_cluster.with_autopilot", "node_pool_auto_config.0.resource_manager_tags.%"),
 				),
 			},
@@ -5947,7 +5948,7 @@ func TestAccContainerCluster_withAutopilotResourceManagerTags(t *testing.T) {
 					},
 				},
 				Check: resource.ComposeTestCheckFunc(
-					acctest.SleepInSecondsForTest(30),
+					acctest.SleepTestCheckFunc(30 * time.Second),
 				),
 			},
 			{
