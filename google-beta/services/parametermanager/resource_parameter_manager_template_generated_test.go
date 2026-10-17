@@ -61,7 +61,7 @@ func TestAccParameterManagerTemplate_templateConfigBasicExample(t *testing.T) {
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"template_id":   "template" + randomSuffix,
+		"template_id":   "tf-test-template" + randomSuffix,
 		"random_suffix": randomSuffix,
 	}
 
@@ -104,7 +104,7 @@ func TestAccParameterManagerTemplate_templateWithFormatExample(t *testing.T) {
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"template_id":   "template" + randomSuffix,
+		"template_id":   "tf-test-template" + randomSuffix,
 		"random_suffix": randomSuffix,
 	}
 
@@ -148,12 +148,12 @@ func TestAccParameterManagerTemplate_templateWithLabelsExample(t *testing.T) {
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"template_id":   "template" + randomSuffix,
+		"template_id":   "tf-test-template" + randomSuffix,
 		"random_suffix": randomSuffix,
 	}
 
 	context_1 := map[string]interface{}{
-		"template_id":   "template" + randomSuffix,
+		"template_id":   "tf-test-template" + randomSuffix,
 		"random_suffix": randomSuffix,
 	}
 
