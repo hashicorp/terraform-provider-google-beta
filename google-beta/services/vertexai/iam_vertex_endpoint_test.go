@@ -138,28 +138,6 @@ resource "google_vertex_ai_endpoint" "endpoint" {
   labels       = {
     label-one = "value-one"
   }
-  network      = "projects/${data.google_project.project.number}/global/networks/${google_compute_network.vertex_network.name}"
-  depends_on   = [
-    google_service_networking_connection.vertex_vpc_connection
-  ]
-}
-
-resource "google_service_networking_connection" "vertex_vpc_connection" {
-  network                 = google_compute_network.vertex_network.id
-  service                 = "servicenetworking.googleapis.com"
-  reserved_peering_ranges = [google_compute_global_address.vertex_range.name]
-}
-
-resource "google_compute_global_address" "vertex_range" {
-  name          = "tf-test-address-name%{random_suffix}"
-  purpose       = "VPC_PEERING"
-  address_type  = "INTERNAL"
-  prefix_length = 24
-  network       = google_compute_network.vertex_network.id
-}
-
-resource "google_compute_network" "vertex_network" {
-  name       = "tf-test-network-name%{random_suffix}"
 }
 
 data "google_project" "project" {}
@@ -185,28 +163,6 @@ resource "google_vertex_ai_endpoint" "endpoint" {
   labels       = {
     label-one = "value-one"
   }
-  network      = "projects/${data.google_project.project.number}/global/networks/${google_compute_network.vertex_network.name}"
-  depends_on   = [
-    google_service_networking_connection.vertex_vpc_connection
-  ]
-}
-
-resource "google_service_networking_connection" "vertex_vpc_connection" {
-  network                 = google_compute_network.vertex_network.id
-  service                 = "servicenetworking.googleapis.com"
-  reserved_peering_ranges = [google_compute_global_address.vertex_range.name]
-}
-
-resource "google_compute_global_address" "vertex_range" {
-  name          = "tf-test-address-name%{random_suffix}"
-  purpose       = "VPC_PEERING"
-  address_type  = "INTERNAL"
-  prefix_length = 24
-  network       = google_compute_network.vertex_network.id
-}
-
-resource "google_compute_network" "vertex_network" {
-  name       = "tf-test-network-name%{random_suffix}"
 }
 
 data "google_project" "project" {}
@@ -247,28 +203,6 @@ resource "google_vertex_ai_endpoint" "endpoint" {
   labels       = {
     label-one = "value-one"
   }
-  network      = "projects/${data.google_project.project.number}/global/networks/${google_compute_network.vertex_network.name}"
-  depends_on   = [
-    google_service_networking_connection.vertex_vpc_connection
-  ]
-}
-
-resource "google_service_networking_connection" "vertex_vpc_connection" {
-  network                 = google_compute_network.vertex_network.id
-  service                 = "servicenetworking.googleapis.com"
-  reserved_peering_ranges = [google_compute_global_address.vertex_range.name]
-}
-
-resource "google_compute_global_address" "vertex_range" {
-  name          = "tf-test-address-name%{random_suffix}"
-  purpose       = "VPC_PEERING"
-  address_type  = "INTERNAL"
-  prefix_length = 24
-  network       = google_compute_network.vertex_network.id
-}
-
-resource "google_compute_network" "vertex_network" {
-  name       = "tf-test-network-name%{random_suffix}"
 }
 
 data "google_project" "project" {}
@@ -296,28 +230,6 @@ resource "google_vertex_ai_endpoint" "endpoint" {
   labels       = {
     label-one = "value-one"
   }
-  network      = "projects/${data.google_project.project.number}/global/networks/${google_compute_network.vertex_network.name}"
-  depends_on   = [
-    google_service_networking_connection.vertex_vpc_connection
-  ]
-}
-
-resource "google_service_networking_connection" "vertex_vpc_connection" {
-  network                 = google_compute_network.vertex_network.id
-  service                 = "servicenetworking.googleapis.com"
-  reserved_peering_ranges = [google_compute_global_address.vertex_range.name]
-}
-
-resource "google_compute_global_address" "vertex_range" {
-  name          = "tf-test-address-name%{random_suffix}"
-  purpose       = "VPC_PEERING"
-  address_type  = "INTERNAL"
-  prefix_length = 24
-  network       = google_compute_network.vertex_network.id
-}
-
-resource "google_compute_network" "vertex_network" {
-  name       = "tf-test-network-name%{random_suffix}"
 }
 
 data "google_project" "project" {}
@@ -343,28 +255,6 @@ resource "google_vertex_ai_endpoint" "endpoint" {
   labels       = {
     label-one = "value-one"
   }
-  network      = "projects/${data.google_project.project.number}/global/networks/${google_compute_network.vertex_network.name}"
-  depends_on   = [
-    google_service_networking_connection.vertex_vpc_connection
-  ]
-}
-
-resource "google_service_networking_connection" "vertex_vpc_connection" {
-  network                 = google_compute_network.vertex_network.id
-  service                 = "servicenetworking.googleapis.com"
-  reserved_peering_ranges = [google_compute_global_address.vertex_range.name]
-}
-
-resource "google_compute_global_address" "vertex_range" {
-  name          = "tf-test-address-name%{random_suffix}"
-  purpose       = "VPC_PEERING"
-  address_type  = "INTERNAL"
-  prefix_length = 24
-  network       = google_compute_network.vertex_network.id
-}
-
-resource "google_compute_network" "vertex_network" {
-  name       = "tf-test-network-name%{random_suffix}"
 }
 
 data "google_project" "project" {}
