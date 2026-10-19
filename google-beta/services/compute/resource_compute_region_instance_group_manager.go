@@ -19,6 +19,7 @@ package compute
 import (
 	"fmt"
 	"log"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -151,6 +152,7 @@ When set to "FORCE", deleting the resource is allowed, and graceful shutdown is 
 										},
 										Description: `Full machine-type names, e.g. "n1-standard-16"`,
 									},
+
 									"min_cpu_platform": {
 										Type:        schema.TypeString,
 										Optional:    true,
@@ -1718,6 +1720,7 @@ func expandInstanceSelections(instanceSelections []any) (map[string]interface{},
 	instanceSelectionsMap := make(map[string]interface{})
 	for _, instanceSelectionRaw := range instanceSelections {
 		instanceSelectionData := instanceSelectionRaw.(map[string]any)
+
 		disks, err := expandInstanceSelectionDisks(instanceSelectionData["disks"].([]any))
 		if err != nil {
 			return nil, err
@@ -1739,6 +1742,7 @@ func expandInstanceSelections(instanceSelections []any) (map[string]interface{},
 	}
 	return instanceSelectionsMap, nil
 }
+
 func expandInstanceSelectionDisks(disks []any) ([]interface{}, error) {
 	attachedDisks := make([]interface{}, 0, len(disks))
 	for _, diskRaw := range disks {
@@ -1921,8 +1925,7 @@ func expandInstanceSelectionDisks(disks []any) ([]interface{}, error) {
 				for _, feature := range v.([]any) {
 					features = append(features, map[string]interface{}{"type": feature.(string)})
 				}
-				initializeParams["guestOsFeatures"] = features
-				hasInitializeParams = true
+				disk["guestOsFeatures"] = features
 			}
 
 			if v, exists := diskData["resource_policies"]; exists && len(v.([]any)) > 0 {
@@ -2008,14 +2011,17 @@ func flattenInstanceSelections(instanceSelectionsRaw interface{}) []map[string]a
 		}
 		instanceSelectionData := make(map[string]any)
 		instanceSelectionData["name"] = instanceSelectionName
-		instanceSelectionData["rank"] = getInt(instanceSelection["rank"])
+		instanceSelectionData["rank"] = int(getInt(instanceSelection["rank"]))
 		instanceSelectionData["machine_types"] = instanceSelection["machineTypes"]
-		instanceSelectionData["min_cpu_platform"] = instanceSelection["minCpuPlatform"]
+		if v, ok := instanceSelection["minCpuPlatform"].(string); ok && v != "" {
+			instanceSelectionData["min_cpu_platform"] = v
+		}
 		instanceSelectionData["disks"] = flattenInstanceSelectionDisks(instanceSelection["disks"])
 		instanceSelectionsMap = append(instanceSelectionsMap, instanceSelectionData)
 	}
 	return instanceSelectionsMap
 }
+
 func flattenInstanceSelectionDisks(disksRaw interface{}) []map[string]any {
 	flattenedDisks := make([]map[string]any, 0)
 	disks, ok := disksRaw.([]interface{})
@@ -2029,27 +2035,58 @@ func flattenInstanceSelectionDisks(disksRaw interface{}) []map[string]any {
 		}
 		diskData := make(map[string]any)
 
-		diskData["auto_delete"] = disk["autoDelete"]
-		diskData["boot"] = disk["boot"]
-		diskData["device_name"] = disk["deviceName"]
-		diskData["interface"] = disk["interface"]
-		diskData["mode"] = disk["mode"]
-		diskData["type"] = disk["type"]
-		diskData["architecture"] = disk["architecture"]
+		if autoDelete, ok := disk["autoDelete"].(bool); ok {
+			diskData["auto_delete"] = autoDelete
+		} else {
+			diskData["auto_delete"] = true
+		}
+		if boot, ok := disk["boot"].(bool); ok {
+			diskData["boot"] = boot
+		} else {
+			diskData["boot"] = false
+		}
+		if v, ok := disk["deviceName"].(string); ok && v != "" {
+			diskData["device_name"] = v
+		}
+		if v, ok := disk["interface"].(string); ok && v != "" {
+			diskData["interface"] = v
+		}
+		if v, ok := disk["mode"].(string); ok && v != "" {
+			diskData["mode"] = v
+		}
+		if v, ok := disk["type"].(string); ok && v != "" {
+			diskData["type"] = v
+		}
+		if v, ok := disk["architecture"].(string); ok && v != "" {
+			diskData["architecture"] = v
+		}
 
-		if v := getInt(disk["diskSizeGb"]); v != 0 {
+		if v := int(getInt(disk["diskSizeGb"])); v != 0 {
 			diskData["disk_size_gb"] = v
 		}
 
+		var guestOsRaw []interface{}
+		if g, ok := disk["guestOsFeatures"].([]interface{}); ok && g != nil {
+			guestOsRaw = g
+		}
+
 		if encKey, ok := disk["diskEncryptionKey"].(map[string]interface{}); ok && encKey != nil {
-			encryption := make([]map[string]any, 1)
-			encryption[0] = map[string]any{
-				"raw_key":                 encKey["rawKey"],
-				"rsa_encrypted_key":       encKey["rsaEncryptedKey"],
-				"kms_key_self_link":       encKey["kmsKeyName"],
-				"kms_key_service_account": encKey["kmsKeyServiceAccount"],
+			kMap := map[string]any{}
+			if v, ok := encKey["rawKey"].(string); ok && v != "" {
+				kMap["raw_key"] = v
 			}
-			diskData["disk_encryption_key"] = encryption
+			if v, ok := encKey["rsaEncryptedKey"].(string); ok && v != "" {
+				kMap["rsa_encrypted_key"] = v
+			}
+			if v, ok := encKey["kmsKeyName"].(string); ok && v != "" {
+				kMap["kms_key_self_link"] = v
+			}
+			if v, ok := encKey["kmsKeyServiceAccount"].(string); ok && v != "" {
+				kMap["kms_key_service_account"] = v
+			}
+			if len(kMap) > 0 {
+				diskData["disk_encryption_key"] = []map[string]any{kMap}
+			}
 		}
 
 		if source, ok := disk["source"].(string); ok && source != "" {
@@ -2058,29 +2095,39 @@ func flattenInstanceSelectionDisks(disksRaw interface{}) []map[string]any {
 			if v, ok := initParams["diskName"].(string); ok && v != "" {
 				diskData["disk_name"] = v
 			}
-			if v := getInt(initParams["diskSizeGb"]); v != 0 {
+			if v := int(getInt(initParams["diskSizeGb"])); v != 0 {
 				diskData["disk_size_gb"] = v
 			}
 			if v, ok := initParams["diskType"].(string); ok && v != "" {
 				diskData["disk_type"] = v
 			}
-			if v := getInt(initParams["provisionedIops"]); v != 0 {
+			if v := int(getInt(initParams["provisionedIops"])); v != 0 {
 				diskData["provisioned_iops"] = v
 			}
-			if v := getInt(initParams["provisionedThroughput"]); v != 0 {
+			if v := int(getInt(initParams["provisionedThroughput"])); v != 0 {
 				diskData["provisioned_throughput"] = v
 			}
 			if rmTagsRaw, ok := initParams["resourceManagerTags"].(map[string]interface{}); ok && rmTagsRaw != nil {
-				rmTags := make([]any, 0, len(rmTagsRaw))
-				for k, v := range rmTagsRaw {
-					rmTags = append(rmTags, map[string]any{"key": k, "value": v})
+				keys := make([]string, 0, len(rmTagsRaw))
+				for k := range rmTagsRaw {
+					keys = append(keys, k)
+				}
+				sort.Strings(keys)
+				rmTags := make([]any, 0, len(keys))
+				for _, k := range keys {
+					rmTags = append(rmTags, map[string]any{"key": k, "value": rmTagsRaw[k]})
 				}
 				diskData["resource_manager_tags"] = rmTags
 			}
 			if labelsRaw, ok := initParams["labels"].(map[string]interface{}); ok && labelsRaw != nil {
-				labels := make([]any, 0, len(labelsRaw))
-				for k, v := range labelsRaw {
-					labels = append(labels, map[string]any{"key": k, "value": v})
+				keys := make([]string, 0, len(labelsRaw))
+				for k := range labelsRaw {
+					keys = append(keys, k)
+				}
+				sort.Strings(keys)
+				labels := make([]any, 0, len(keys))
+				for _, k := range keys {
+					labels = append(labels, map[string]any{"key": k, "value": labelsRaw[k]})
 				}
 				diskData["labels"] = labels
 			}
@@ -2091,40 +2138,61 @@ func flattenInstanceSelectionDisks(disksRaw interface{}) []map[string]any {
 				diskData["source_image"] = v
 			}
 			if encKey, ok := initParams["sourceImageEncryptionKey"].(map[string]interface{}); ok && encKey != nil {
-				encryption := make([]map[string]any, 1)
-				encryption[0] = map[string]any{
-					"raw_key":                 encKey["rawKey"],
-					"rsa_encrypted_key":       encKey["rsaEncryptedKey"],
-					"kms_key_service_account": encKey["kmsKeyServiceAccount"],
-					"kms_key_self_link":       encKey["kmsKeyName"],
+				kMap := map[string]any{}
+				if v, ok := encKey["rawKey"].(string); ok && v != "" {
+					kMap["raw_key"] = v
 				}
-				diskData["source_image_encryption_key"] = encryption
+				if v, ok := encKey["rsaEncryptedKey"].(string); ok && v != "" {
+					kMap["rsa_encrypted_key"] = v
+				}
+				if v, ok := encKey["kmsKeyServiceAccount"].(string); ok && v != "" {
+					kMap["kms_key_service_account"] = v
+				}
+				if v, ok := encKey["kmsKeyName"].(string); ok && v != "" {
+					kMap["kms_key_self_link"] = v
+				}
+				if len(kMap) > 0 {
+					diskData["source_image_encryption_key"] = []map[string]any{kMap}
+				}
 			}
 			if v, ok := initParams["sourceSnapshot"].(string); ok && v != "" {
 				diskData["source_snapshot"] = v
 			}
 			if encKey, ok := initParams["sourceSnapshotEncryptionKey"].(map[string]interface{}); ok && encKey != nil {
-				encryption := make([]map[string]any, 1)
-				encryption[0] = map[string]any{
-					"raw_key":                 encKey["rawKey"],
-					"rsa_encrypted_key":       encKey["rsaEncryptedKey"],
-					"kms_key_service_account": encKey["kmsKeyServiceAccount"],
-					"kms_key_self_link":       encKey["kmsKeyName"],
+				kMap := map[string]any{}
+				if v, ok := encKey["rawKey"].(string); ok && v != "" {
+					kMap["raw_key"] = v
 				}
-				diskData["source_snapshot_encryption_key"] = encryption
+				if v, ok := encKey["rsaEncryptedKey"].(string); ok && v != "" {
+					kMap["rsa_encrypted_key"] = v
+				}
+				if v, ok := encKey["kmsKeyServiceAccount"].(string); ok && v != "" {
+					kMap["kms_key_service_account"] = v
+				}
+				if v, ok := encKey["kmsKeyName"].(string); ok && v != "" {
+					kMap["kms_key_self_link"] = v
+				}
+				if len(kMap) > 0 {
+					diskData["source_snapshot_encryption_key"] = []map[string]any{kMap}
+				}
 			}
 			if v, ok := initParams["architecture"].(string); ok && v != "" {
 				diskData["architecture"] = v
 			}
-			if guestOsRaw, ok := initParams["guestOsFeatures"].([]interface{}); ok && guestOsRaw != nil {
-				features := make([]any, 0, len(guestOsRaw))
-				for _, featureRaw := range guestOsRaw {
-					if feature, ok := featureRaw.(map[string]interface{}); ok {
-						features = append(features, feature["type"])
-					}
+			if guestOsRaw == nil {
+				if g, ok := initParams["guestOsFeatures"].([]interface{}); ok && g != nil {
+					guestOsRaw = g
 				}
-				diskData["guest_os_features"] = features
 			}
+		}
+		if guestOsRaw != nil {
+			features := make([]any, 0, len(guestOsRaw))
+			for _, featureRaw := range guestOsRaw {
+				if feature, ok := featureRaw.(map[string]interface{}); ok {
+					features = append(features, feature["type"])
+				}
+			}
+			diskData["guest_os_features"] = features
 		}
 		flattenedDisks = append(flattenedDisks, diskData)
 	}
