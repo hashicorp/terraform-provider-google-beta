@@ -152,7 +152,7 @@ func ResourceNetworkSecuritySecurityProfile() *schema.Resource {
 				Required:     true,
 				ForceNew:     true,
 				ValidateFunc: verify.ValidateEnum([]string{"THREAT_PREVENTION", "URL_FILTERING", "CUSTOM_MIRRORING", "CUSTOM_INTERCEPT", "WILDFIRE_ANALYSIS"}),
-				Description:  `The type of security profile. 'WILDFIRE_ANALYSIS' is beta-only. Possible values: ["THREAT_PREVENTION", "URL_FILTERING", "CUSTOM_MIRRORING", "CUSTOM_INTERCEPT", "WILDFIRE_ANALYSIS"]`,
+				Description:  `The type of security profile. Possible values: ["THREAT_PREVENTION", "URL_FILTERING", "CUSTOM_MIRRORING", "CUSTOM_INTERCEPT", "WILDFIRE_ANALYSIS"]`,
 			},
 			"custom_intercept_profile": {
 				Type:     schema.TypeList,
@@ -2517,7 +2517,6 @@ func expandNetworkSecuritySecurityProfileEffectiveLabels(v interface{}, d tpgres
 }
 
 func resourceNetworkSecuritySecurityProfileDecoder(d *schema.ResourceData, meta interface{}, res map[string]interface{}) (map[string]interface{}, error) {
-
 	// Once a wildfireAnalysisProfile has been set, the API keeps returning it
 	// (with only default values, e.g. {"wildfireRealtimeLookup": false}) even
 	// after it is cleared. If it carries no data and the user hasn't configured

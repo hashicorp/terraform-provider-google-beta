@@ -484,7 +484,7 @@ func TestAccNetworkSecuritySecurityProfile_networkSecuritySecurityProfileWildfir
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckNetworkSecuritySecurityProfileDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -569,7 +569,6 @@ func TestAccNetworkSecuritySecurityProfile_networkSecuritySecurityProfileWildfir
 func testAccNetworkSecuritySecurityProfile_networkSecuritySecurityProfileWildfireExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_network_security_security_profile" "default" {
-  provider    = google-beta
   name        = "%{resource_name}"
   parent      = "projects/%{project}"
   description = "my description"
@@ -640,7 +639,6 @@ resource "google_network_security_security_profile" "default" {
 func testAccNetworkSecuritySecurityProfile_networkSecuritySecurityProfileWildfireUpdateExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_network_security_security_profile" "default" {
-  provider    = google-beta
   name        = "%{resource_name}"
   parent      = "projects/%{project}"
   description = "my updated description"
@@ -700,7 +698,6 @@ resource "google_network_security_security_profile" "default" {
 func testAccNetworkSecuritySecurityProfile_networkSecuritySecurityProfileWildfireRemoveBlocksExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_network_security_security_profile" "default" {
-  provider    = google-beta
   name        = "%{resource_name}"
   parent      = "projects/%{project}"
   description = "my updated description"
@@ -716,7 +713,6 @@ resource "google_network_security_security_profile" "default" {
 func testAccNetworkSecuritySecurityProfile_networkSecuritySecurityProfileWildfireRemoveProfileExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_network_security_security_profile" "default" {
-  provider    = google-beta
   name        = "%{resource_name}"
   parent      = "projects/%{project}"
   description = "my description"
@@ -738,7 +734,7 @@ func TestAccNetworkSecuritySecurityProfile_networkSecuritySecurityProfileWildfir
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckNetworkSecuritySecurityProfileDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -763,7 +759,6 @@ func TestAccNetworkSecuritySecurityProfile_networkSecuritySecurityProfileWildfir
 func testAccNetworkSecuritySecurityProfile_networkSecuritySecurityProfileWildfireMinimalExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_network_security_security_profile" "default" {
-  provider    = google-beta
   name        = "%{resource_name}"
   parent      = "projects/%{project}"
   description = "my description"
