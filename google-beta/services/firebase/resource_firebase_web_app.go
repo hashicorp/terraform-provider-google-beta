@@ -560,7 +560,7 @@ func resourceFirebaseWebAppDelete(d *schema.ResourceData, meta interface{}) erro
 
 	// This is useful if the Delete operation returns before the Get operation
 	// during post-test destroy shows the completed state of the resource.
-	time.Sleep(5 * time.Second)
+	time.Sleep(5 * config.SleepUnit)
 
 	return nil
 }
