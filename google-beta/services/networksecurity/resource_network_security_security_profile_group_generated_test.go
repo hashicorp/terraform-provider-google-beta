@@ -379,7 +379,7 @@ func TestAccNetworkSecuritySecurityProfileGroup_networkSecuritySecurityProfileGr
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckNetworkSecuritySecurityProfileGroupDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -444,7 +444,6 @@ func TestAccNetworkSecuritySecurityProfileGroup_networkSecuritySecurityProfileGr
 func testAccNetworkSecuritySecurityProfileGroup_networkSecuritySecurityProfileGroupWildfireExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_network_security_security_profile_group" "default" {
-  provider                  = google-beta
   name                      = "%{security_profile_group_name}"
   parent                    = "projects/%{project}"
   description               = "my description"
@@ -457,7 +456,6 @@ resource "google_network_security_security_profile_group" "default" {
 }
 
 resource "google_network_security_security_profile" "threat_prevention_profile" {
-  provider = google-beta
   name     = "%{threat_prevention_profile_name}"
   type     = "THREAT_PREVENTION"
   parent   = "projects/%{project}"
@@ -465,7 +463,6 @@ resource "google_network_security_security_profile" "threat_prevention_profile" 
 }
 
 resource "google_network_security_security_profile" "wildfire_profile" {
-  provider = google-beta
   name     = "%{wildfire_profile_name}"
   type     = "WILDFIRE_ANALYSIS"
   parent   = "projects/%{project}"
@@ -486,7 +483,6 @@ resource "google_network_security_security_profile" "wildfire_profile" {
 func testAccNetworkSecuritySecurityProfileGroup_networkSecuritySecurityProfileGroupWildfireUpdateExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_network_security_security_profile_group" "default" {
-  provider                  = google-beta
   name                      = "%{security_profile_group_name}"
   parent                    = "projects/%{project}"
   description               = "my updated description"
@@ -499,7 +495,6 @@ resource "google_network_security_security_profile_group" "default" {
 }
 
 resource "google_network_security_security_profile" "threat_prevention_profile" {
-  provider = google-beta
   name     = "%{threat_prevention_profile_name}"
   type     = "THREAT_PREVENTION"
   parent   = "projects/%{project}"
@@ -507,7 +502,6 @@ resource "google_network_security_security_profile" "threat_prevention_profile" 
 }
 
 resource "google_network_security_security_profile" "wildfire_profile" {
-  provider = google-beta
   name     = "%{wildfire_profile_name}"
   type     = "WILDFIRE_ANALYSIS"
   parent   = "projects/%{project}"
@@ -524,7 +518,6 @@ resource "google_network_security_security_profile" "wildfire_profile" {
 }
 
 resource "google_network_security_security_profile" "wildfire_profile_updated" {
-  provider = google-beta
   name     = "%{wildfire_profile_updated_name}"
   type     = "WILDFIRE_ANALYSIS"
   parent   = "projects/%{project}"
@@ -548,7 +541,6 @@ resource "google_network_security_security_profile" "wildfire_profile_updated" {
 func testAccNetworkSecuritySecurityProfileGroup_networkSecuritySecurityProfileGroupWildfireRemoveExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_network_security_security_profile_group" "default" {
-  provider                  = google-beta
   name                      = "%{security_profile_group_name}"
   parent                    = "projects/%{project}"
   description               = "my updated description"
@@ -560,7 +552,6 @@ resource "google_network_security_security_profile_group" "default" {
 }
 
 resource "google_network_security_security_profile" "threat_prevention_profile" {
-  provider = google-beta
   name     = "%{threat_prevention_profile_name}"
   type     = "THREAT_PREVENTION"
   parent   = "projects/%{project}"
@@ -568,7 +559,6 @@ resource "google_network_security_security_profile" "threat_prevention_profile" 
 }
 
 resource "google_network_security_security_profile" "wildfire_profile" {
-  provider = google-beta
   name     = "%{wildfire_profile_name}"
   type     = "WILDFIRE_ANALYSIS"
   parent   = "projects/%{project}"
@@ -585,7 +575,6 @@ resource "google_network_security_security_profile" "wildfire_profile" {
 }
 
 resource "google_network_security_security_profile" "wildfire_profile_updated" {
-  provider = google-beta
   name     = "%{wildfire_profile_updated_name}"
   type     = "WILDFIRE_ANALYSIS"
   parent   = "projects/%{project}"
