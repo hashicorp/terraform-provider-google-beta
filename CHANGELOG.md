@@ -4,6 +4,7 @@ DEPRECATIONS:
 * serviceusagev2: deprecated `check_usage_on_remove` field on `google_service_usage_v2_consumer_policy` resource ([#13346](https://github.com/hashicorp/terraform-provider-google-beta/pull/13346))
 
 FEATURES:
+* **New Data Source:** `google_cloud_run_v2_instance_iam_policy` ([#13357](https://github.com/hashicorp/terraform-provider-google-beta/pull/13357))
 * **New Data Source:** `google_storage_control_project_feature_config` ([#13324](https://github.com/hashicorp/terraform-provider-google-beta/pull/13324))
 * **New Resource:** `google_cloud_run_v2_instance` ([#13357](https://github.com/hashicorp/terraform-provider-google-beta/pull/13357))
 * **New Resource:** `google_cloud_run_v2_instance_iam_binding` ([#13357](https://github.com/hashicorp/terraform-provider-google-beta/pull/13357))
@@ -62,7 +63,6 @@ IMPROVEMENTS:
 
 BUG FIXES:
 * compute: fixed an issue causing `google_compute_region_backend_service` update to fail when `params.resource_manager_tags` is set ([#13342](https://github.com/hashicorp/terraform-provider-google-beta/pull/13342))
-* compute: fixed an issue where removing `security_policy` from an external UDP `google_compute_region_backend_service` failed ([#13373](https://github.com/hashicorp/terraform-provider-google-beta/pull/13373))
 * compute: fixed an issue where setting `security_policy` on `google_compute_region_backend_service` failed during creation when `protocol` was set to `UDP` ([#13347](https://github.com/hashicorp/terraform-provider-google-beta/pull/13347))
 * container: fixed a permadiff on `dns_config.cluster_dns` in `google_container_cluster` when omitted, set to `null`, or set to `PROVIDER_UNSPECIFIED` ([#13380](https://github.com/hashicorp/terraform-provider-google-beta/pull/13380))
 * container: fixed permadiff and update error on `google_container_cluster` when `managed_opentelemetry_config` is empty or `managed_opentelemetry_config.scope` is omitted ([#13337](https://github.com/hashicorp/terraform-provider-google-beta/pull/13337))
