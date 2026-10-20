@@ -215,7 +215,7 @@ func resourceKMSOrganizationKajPolicyConfigCreate(d *schema.ResourceData, meta i
 	// This is useful if the resource in question doesn't have a perfectly consistent API
 	// That is, the Operation for Create might return before the Get operation shows the
 	// completed state of the resource.
-	time.Sleep(1 * time.Minute)
+	time.Sleep(60 * config.SleepUnit)
 
 	log.Printf("[DEBUG] Finished creating OrganizationKajPolicyConfig %q: %#v", d.Id(), res)
 
@@ -348,7 +348,7 @@ func resourceKMSOrganizationKajPolicyConfigUpdate(d *schema.ResourceData, meta i
 	// This is useful if the resource in question doesn't have a perfectly consistent API
 	// That is, the Operation for Create might return before the Get operation shows the
 	// completed state of the resource.
-	time.Sleep(1 * time.Minute)
+	time.Sleep(60 * config.SleepUnit)
 	return resourceKMSOrganizationKajPolicyConfigRead(d, meta)
 }
 
