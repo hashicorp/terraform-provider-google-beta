@@ -67,7 +67,7 @@ func TestAccNetworkServicesServiceLbPolicies_networkServicesServiceLbPoliciesBas
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckNetworkServicesServiceLbPoliciesDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -92,8 +92,6 @@ func TestAccNetworkServicesServiceLbPolicies_networkServicesServiceLbPoliciesBas
 func testAccNetworkServicesServiceLbPolicies_networkServicesServiceLbPoliciesBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_network_services_service_lb_policies" "default" {
-  provider = google-beta
-  
   name        = "%{resource_name}"
   location    = "global"
 }
@@ -113,7 +111,7 @@ func TestAccNetworkServicesServiceLbPolicies_networkServicesServiceLbPoliciesAdv
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckNetworkServicesServiceLbPoliciesDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -138,8 +136,6 @@ func TestAccNetworkServicesServiceLbPolicies_networkServicesServiceLbPoliciesAdv
 func testAccNetworkServicesServiceLbPolicies_networkServicesServiceLbPoliciesAdvancedExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_network_services_service_lb_policies" "default" {
-  provider = google-beta
-
   name                     = "%{resource_name}"
   location                 = "global"
   description              = "my description"
@@ -159,8 +155,6 @@ resource "google_network_services_service_lb_policies" "default" {
 }
 
 resource "google_compute_backend_service" "default" {
-  provider = google-beta
-  
 	name                  = "%{backend_name}"
 	description           = "my description"
 	load_balancing_scheme = "INTERNAL_SELF_MANAGED"
