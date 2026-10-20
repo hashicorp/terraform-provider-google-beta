@@ -1213,7 +1213,7 @@ func TestAccComputeRegionUrlMap_regionUrlMapDefaultMirrorPercentExample(t *testi
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeRegionUrlMapDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -1238,7 +1238,6 @@ func TestAccComputeRegionUrlMap_regionUrlMapDefaultMirrorPercentExample(t *testi
 func testAccComputeRegionUrlMap_regionUrlMapDefaultMirrorPercentExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_region_url_map" "regionurlmap" {
-  provider    = google-beta
   region      = "us-central1"
   name        = "%{region_url_map_name}"
   description = "Test for default route action mirror percent"
@@ -1264,7 +1263,6 @@ resource "google_compute_region_url_map" "regionurlmap" {
 }
 
 resource "google_compute_region_backend_service" "home" {
-  provider    = google-beta
   region      = "us-central1"
   name        = "%{home_backend_service_name}"
   port_name   = "http"
@@ -1276,7 +1274,6 @@ resource "google_compute_region_backend_service" "home" {
 }
 
 resource "google_compute_region_backend_service" "mirror" {
-  provider    = google-beta
   region      = "us-central1"
   name        = "%{mirror_backend_service_name}"
   port_name   = "http"
@@ -1288,7 +1285,6 @@ resource "google_compute_region_backend_service" "mirror" {
 }
 
 resource "google_compute_region_health_check" "default" {
-  provider = google-beta
   region   = "us-central1"
   name     = "%{region_health_check_name}"
   http_health_check {
@@ -1313,7 +1309,7 @@ func TestAccComputeRegionUrlMap_regionUrlMapPathMatcherDefaultMirrorPercentExamp
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeRegionUrlMapDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -1338,7 +1334,6 @@ func TestAccComputeRegionUrlMap_regionUrlMapPathMatcherDefaultMirrorPercentExamp
 func testAccComputeRegionUrlMap_regionUrlMapPathMatcherDefaultMirrorPercentExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_region_url_map" "regionurlmap" {
-  provider    = google-beta
   region      = "us-central1"
   name        = "%{region_url_map_name}"
   description = "Test for default route action mirror percent"
@@ -1364,7 +1359,6 @@ resource "google_compute_region_url_map" "regionurlmap" {
 }
 
 resource "google_compute_region_backend_service" "home" {
-  provider    = google-beta
   region      = "us-central1"
   name        = "%{home_backend_service_name}"
   port_name   = "http"
@@ -1376,7 +1370,6 @@ resource "google_compute_region_backend_service" "home" {
 }
 
 resource "google_compute_region_backend_service" "mirror" {
-  provider    = google-beta
   region      = "us-central1"
   name        = "%{mirror_backend_service_name}"
   port_name   = "http"
@@ -1388,7 +1381,6 @@ resource "google_compute_region_backend_service" "mirror" {
 }
 
 resource "google_compute_region_health_check" "default" {
-  provider = google-beta
   region   = "us-central1"
   name     = "%{region_health_check_name}"
   http_health_check {
@@ -1413,7 +1405,7 @@ func TestAccComputeRegionUrlMap_regionUrlMapPathRuleMirrorPercentExample(t *test
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeRegionUrlMapDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -1438,7 +1430,6 @@ func TestAccComputeRegionUrlMap_regionUrlMapPathRuleMirrorPercentExample(t *test
 func testAccComputeRegionUrlMap_regionUrlMapPathRuleMirrorPercentExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_region_url_map" "regionurlmap" {
-  provider    = google-beta
   region      = "us-central1"
   name        = "%{region_url_map_name}"
   description = "Test for path matcher default route action mirror percent"
@@ -1464,7 +1455,6 @@ resource "google_compute_region_url_map" "regionurlmap" {
 }
 
 resource "google_compute_region_backend_service" "home" {
-  provider    = google-beta
   region      = "us-central1"
   name        = "%{home_backend_service_name}"
   port_name   = "http"
@@ -1476,7 +1466,6 @@ resource "google_compute_region_backend_service" "home" {
 }
 
 resource "google_compute_region_backend_service" "mirror" {
-  provider    = google-beta
   region      = "us-central1"
   name        = "%{mirror_backend_service_name}"
   port_name   = "http"
@@ -1488,7 +1477,6 @@ resource "google_compute_region_backend_service" "mirror" {
 }
 
 resource "google_compute_region_health_check" "default" {
-  provider = google-beta 
   region   = "us-central1"
   name     = "%{region_health_check_name}"
   http_health_check {
@@ -1513,7 +1501,7 @@ func TestAccComputeRegionUrlMap_regionUrlMapRouteRuleMirrorPercentExample(t *tes
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeRegionUrlMapDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -1538,7 +1526,6 @@ func TestAccComputeRegionUrlMap_regionUrlMapRouteRuleMirrorPercentExample(t *tes
 func testAccComputeRegionUrlMap_regionUrlMapRouteRuleMirrorPercentExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_region_url_map" "regionurlmap" {
-  provider    = google-beta
   region      = "us-central1"
   name        = "%{region_url_map_name}"
   description = "Test for path rule route action mirror percent"
@@ -1568,7 +1555,6 @@ resource "google_compute_region_url_map" "regionurlmap" {
 }
 
 resource "google_compute_region_backend_service" "home" {
-  provider    = google-beta
   region      = "us-central1"
   name        = "%{home_backend_service_name}"
   port_name   = "http"
@@ -1580,7 +1566,6 @@ resource "google_compute_region_backend_service" "home" {
 }
 
 resource "google_compute_region_backend_service" "mirror" {
-  provider    = google-beta
   region      = "us-central1"
   name        = "%{mirror_backend_service_name}"
   port_name   = "http"
@@ -1592,7 +1577,6 @@ resource "google_compute_region_backend_service" "mirror" {
 }
 
 resource "google_compute_region_health_check" "default" {
-  provider = google-beta
   region   = "us-central1"
   name     = "%{region_health_check_name}"
   http_health_check {
