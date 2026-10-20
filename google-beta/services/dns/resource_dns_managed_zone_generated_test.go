@@ -745,7 +745,7 @@ func TestAccDNSManagedZone_dnsManagedZoneServiceDirectoryExample(t *testing.T) {
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"network_name":  "network" + randomSuffix,
+		"network_name":  "tf-test-network" + randomSuffix,
 		"zone_name":     "tf-test-peering-zone" + randomSuffix,
 		"random_suffix": randomSuffix,
 	}
