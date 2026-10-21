@@ -8084,7 +8084,7 @@ func TestAccContainerCluster_withScheduleUpgradeConfig(t *testing.T) {
 	subnetworkName := tpgcompute.BootstrapSubnetInRegion(t, "gke-cluster", networkName, "us-east1", "10.79.0.0/20")
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckContainerClusterDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -15936,7 +15936,6 @@ resource "google_container_cluster" "with_workload_alts_config" {
 func testAccContainerCluster_withScheduleUpgradeConfig(networkName, subnetworkName, name string, enable bool) string {
 	return fmt.Sprintf(`
 resource "google_container_cluster" "with_schedule_upgrade_config" {
-  provider           = google-beta
   name               = "%s"
   location           = "us-east1-b"
   initial_node_count = 1
