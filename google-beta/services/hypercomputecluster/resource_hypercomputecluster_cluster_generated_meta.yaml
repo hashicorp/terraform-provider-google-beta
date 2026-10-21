@@ -17,16 +17,24 @@ fields:
       field: compute_resources.config.new_flex_start_instances.machine_type
     - api_field: computeResources.value.config.newFlexStartInstances.maxDuration
       field: compute_resources.config.new_flex_start_instances.max_duration
+    - api_field: computeResources.value.config.newFlexStartInstances.networkTags
+      field: compute_resources.config.new_flex_start_instances.network_tags
     - api_field: computeResources.value.config.newFlexStartInstances.zone
       field: compute_resources.config.new_flex_start_instances.zone
     - api_field: computeResources.value.config.newOnDemandInstances.machineType
       field: compute_resources.config.new_on_demand_instances.machine_type
+    - api_field: computeResources.value.config.newOnDemandInstances.networkTags
+      field: compute_resources.config.new_on_demand_instances.network_tags
     - api_field: computeResources.value.config.newOnDemandInstances.zone
       field: compute_resources.config.new_on_demand_instances.zone
+    - api_field: computeResources.value.config.newReservedInstances.networkTags
+      field: compute_resources.config.new_reserved_instances.network_tags
     - api_field: computeResources.value.config.newReservedInstances.reservation
       field: compute_resources.config.new_reserved_instances.reservation
     - api_field: computeResources.value.config.newSpotInstances.machineType
       field: compute_resources.config.new_spot_instances.machine_type
+    - api_field: computeResources.value.config.newSpotInstances.networkTags
+      field: compute_resources.config.new_spot_instances.network_tags
     - api_field: computeResources.value.config.newSpotInstances.terminationAction
       field: compute_resources.config.new_spot_instances.termination_action
     - api_field: computeResources.value.config.newSpotInstances.zone
@@ -63,6 +71,7 @@ fields:
     - api_field: orchestrator.slurm.loginNodes.instances.instance
     - api_field: orchestrator.slurm.loginNodes.labels
     - api_field: orchestrator.slurm.loginNodes.machineType
+    - api_field: orchestrator.slurm.loginNodes.networkTags
     - api_field: orchestrator.slurm.loginNodes.startupScript
     - api_field: orchestrator.slurm.loginNodes.storageConfigs.id
     - api_field: orchestrator.slurm.loginNodes.storageConfigs.localMount
@@ -91,6 +100,12 @@ fields:
       field: storage_resources.config.existing_filestore.filestore
     - api_field: storageResources.value.config.existingLustre.lustre
       field: storage_resources.config.existing_lustre.lustre
+    - api_field: storageResources.value.config.existingNfs.mountOptions
+      field: storage_resources.config.existing_nfs.mount_options
+    - api_field: storageResources.value.config.existingNfs.remoteMount
+      field: storage_resources.config.existing_nfs.remote_mount
+    - api_field: storageResources.value.config.existingNfs.serverIpAddress
+      field: storage_resources.config.existing_nfs.server_ip_address
     - api_field: storageResources.value.config.newBucket.autoclass.enabled
       field: storage_resources.config.new_bucket.autoclass.enabled
     - api_field: storageResources.value.config.newBucket.autoclass.terminalStorageClass
