@@ -544,9 +544,12 @@ Substitute '<language>' with 'python', 'java', 'php', 'ruby', 'go' or 'nodejs'.`
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"egress_setting": {
-							Type:        schema.TypeString,
-							Optional:    true,
-							Description: `The egress setting for the VPC Access, controlling what traffic is diverted through it.`,
+							Type:          schema.TypeString,
+							Computed:      true,
+							Optional:      true,
+							Deprecated:    "`egress_setting` is deprecated and will be removed in a future major release. Use `vpc_egress` instead.",
+							Description:   `The egress setting for the VPC Access, controlling what traffic is diverted through it.`,
+							ConflictsWith: []string{"vpc_access.0.vpc_egress"},
 						},
 						"network_interfaces": {
 							Type:        schema.TypeList,
@@ -556,15 +559,17 @@ Substitute '<language>' with 'python', 'java', 'php', 'ruby', 'go' or 'nodejs'.`
 								Schema: map[string]*schema.Schema{
 									"network": {
 										Type:             schema.TypeString,
+										Computed:         true,
 										Optional:         true,
 										DiffSuppressFunc: tpgresource.CompareSelfLinkOrResourceName,
-										Description:      `The name of the VPC network to which the version connects (e.g. 'projects/my-project/global/networks/default').`,
+										Description:      `The VPC network that the App Engine resource will be able to send traffic to. At least one of network or subnetwork must be specified. If both network and subnetwork are specified, the given VPC subnetwork must belong to the given VPC network. If network is not specified, it will be looked up from the subnetwork. Could be either a short name or a full path (e.g. 'default' or 'projects/my-project/global/networks/default').`,
 									},
 									"subnetwork": {
 										Type:             schema.TypeString,
+										Computed:         true,
 										Optional:         true,
 										DiffSuppressFunc: tpgresource.CompareSelfLinkOrResourceName,
-										Description:      `The name of the subnetwork to which the version connects (e.g. 'projects/my-project/regions/us-central1/subnetworks/default').`,
+										Description:      `The VPC subnetwork that the App Engine resource will get IPs from. At least one of network or subnetwork must be specified. If both network and subnetwork are specified, the given VPC subnetwork must belong to the given VPC network. If subnetwork is not specified, the subnetwork with the same name with the network will be used. Could be either a short name or a full path (e.g. 'default' or 'projects/my-project/regions/us-central1/subnetworks/default').`,
 									},
 									"tags": {
 										Type:        schema.TypeList,
@@ -576,6 +581,14 @@ Substitute '<language>' with 'python', 'java', 'php', 'ruby', 'go' or 'nodejs'.`
 									},
 								},
 							},
+						},
+						"vpc_egress": {
+							Type:          schema.TypeString,
+							Computed:      true,
+							Optional:      true,
+							ValidateFunc:  verify.ValidateEnum([]string{"ALL_TRAFFIC", "PRIVATE_IP_RANGES", ""}),
+							Description:   `The traffic egress setting for the VPC network interface, controlling what traffic is diverted through it. Possible values: ["ALL_TRAFFIC", "PRIVATE_IP_RANGES"]`,
+							ConflictsWith: []string{"vpc_access.0.egress_setting"},
 						},
 					},
 				},
@@ -1485,11 +1498,17 @@ func flattenAppEngineStandardAppVersionVpcAccess(v interface{}, d *schema.Resour
 	transformed := make(map[string]interface{})
 	transformed["egress_setting"] =
 		flattenAppEngineStandardAppVersionVpcAccessEgressSetting(original["vpcEgress"], d, config)
+	transformed["vpc_egress"] =
+		flattenAppEngineStandardAppVersionVpcAccessVpcEgress(original["vpcEgress"], d, config)
 	transformed["network_interfaces"] =
 		flattenAppEngineStandardAppVersionVpcAccessNetworkInterfaces(original["networkInterfaces"], d, config)
 	return []interface{}{transformed}
 }
 func flattenAppEngineStandardAppVersionVpcAccessEgressSetting(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenAppEngineStandardAppVersionVpcAccessVpcEgress(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -2250,6 +2269,13 @@ func expandAppEngineStandardAppVersionVpcAccess(v interface{}, d tpgresource.Ter
 		transformed["vpcEgress"] = transformedEgressSetting
 	}
 
+	transformedVpcEgress, err := expandAppEngineStandardAppVersionVpcAccessVpcEgress(original["vpc_egress"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedVpcEgress); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["vpcEgress"] = transformedVpcEgress
+	}
+
 	transformedNetworkInterfaces, err := expandAppEngineStandardAppVersionVpcAccessNetworkInterfaces(original["network_interfaces"], d, config)
 	if err != nil {
 		return nil, err
@@ -2261,6 +2287,23 @@ func expandAppEngineStandardAppVersionVpcAccess(v interface{}, d tpgresource.Ter
 }
 
 func expandAppEngineStandardAppVersionVpcAccessEgressSetting(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+// Both `egress_setting` (deprecated) and `vpc_egress` are Optional+Computed (`default_from_api: true`)
+// and flatten the same `vpcEgress` API field into state on Read, so both hold the same prior-state
+// value at the start of an Update. In `expandAppEngineStandardAppVersionVpcAccess`, `egress_setting`
+// is expanded before `vpc_egress`:
+//   - When transitioning from `vpc_egress` to `egress_setting`, omitting `vpc_egress` in HCL causes
+//     SDKv2 to retain its prior-state value in `v`. Checking `d.HasChange("vpc_access.0.egress_setting")`
+//     returns nil so the stale `vpc_egress` state value does not overwrite `egress_setting`.
+//   - When transitioning from `egress_setting` to `vpc_egress`, omitting `egress_setting` in HCL keeps
+//     its prior-state value (`HasChange == false`), so `vpc_egress` returns `v` and overwrites the
+//     stale `egress_setting` value.
+func expandAppEngineStandardAppVersionVpcAccessVpcEgress(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if d.HasChange("vpc_access.0.egress_setting") {
+		return nil, nil
+	}
 	return v, nil
 }
 
