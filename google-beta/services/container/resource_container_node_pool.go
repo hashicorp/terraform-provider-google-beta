@@ -1340,7 +1340,7 @@ func expandNodePool(d *schema.ResourceData, prefix string) (*container.NodePool,
 		}
 	}
 
-	if v, ok := d.GetOk(prefix + "management"); ok {
+	if v, ok := d.GetOk(prefix + "management"); ok && len(v.([]interface{})) > 0 && v.([]interface{})[0] != nil {
 		managementConfig := v.([]interface{})[0].(map[string]interface{})
 		np.Management = &container.NodeManagement{}
 
@@ -1353,7 +1353,7 @@ func expandNodePool(d *schema.ResourceData, prefix string) (*container.NodePool,
 		}
 	}
 
-	if v, ok := d.GetOk(prefix + "upgrade_settings"); ok {
+	if v, ok := d.GetOk(prefix + "upgrade_settings"); ok && len(v.([]interface{})) > 0 && v.([]interface{})[0] != nil {
 		upgradeSettingsConfig := v.([]interface{})[0].(map[string]interface{})
 		np.UpgradeSettings = &container.UpgradeSettings{}
 
@@ -1379,7 +1379,7 @@ func expandNodePool(d *schema.ResourceData, prefix string) (*container.NodePool,
 			}
 		}
 
-		if v, ok := upgradeSettingsConfig["blue_green_settings"]; ok && len(v.([]interface{})) > 0 {
+		if v, ok := upgradeSettingsConfig["blue_green_settings"]; ok && len(v.([]interface{})) > 0 && v.([]interface{})[0] != nil {
 			blueGreenSettingsConfig := v.([]interface{})[0].(map[string]interface{})
 			np.UpgradeSettings.BlueGreenSettings = &container.BlueGreenSettings{}
 
@@ -1397,7 +1397,7 @@ func expandNodePool(d *schema.ResourceData, prefix string) (*container.NodePool,
 				np.UpgradeSettings.BlueGreenSettings.NodePoolSoakDuration = v.(string)
 			}
 
-			if v, ok := blueGreenSettingsConfig["standard_rollout_policy"]; ok && len(v.([]interface{})) > 0 {
+			if v, ok := blueGreenSettingsConfig["standard_rollout_policy"]; ok && len(v.([]interface{})) > 0 && v.([]interface{})[0] != nil {
 				standardRolloutPolicyConfig := v.([]interface{})[0].(map[string]interface{})
 				standardRolloutPolicy := &container.StandardRolloutPolicy{}
 
@@ -1413,7 +1413,7 @@ func expandNodePool(d *schema.ResourceData, prefix string) (*container.NodePool,
 
 				np.UpgradeSettings.BlueGreenSettings.StandardRolloutPolicy = standardRolloutPolicy
 			}
-			if v, ok := blueGreenSettingsConfig["autoscaled_rollout_policy"]; ok && len(v.([]interface{})) > 0 {
+			if v, ok := blueGreenSettingsConfig["autoscaled_rollout_policy"]; ok && len(v.([]interface{})) > 0 && v.([]interface{})[0] != nil {
 				autoscaledRolloutPolicyConfig := v.([]interface{})[0].(map[string]interface{})
 				autoscaledRolloutPolicy := &container.AutoscaledRolloutPolicy{}
 
@@ -1425,7 +1425,7 @@ func expandNodePool(d *schema.ResourceData, prefix string) (*container.NodePool,
 		}
 	}
 
-	if v, ok := d.GetOk(prefix + "node_drain_config"); ok {
+	if v, ok := d.GetOk(prefix + "node_drain_config"); ok && len(v.([]interface{})) > 0 && v.([]interface{})[0] != nil {
 		nodeDrainConfig := v.([]interface{})[0].(map[string]interface{})
 		np.NodeDrainConfig = &container.NodeDrainConfig{}
 
@@ -1440,9 +1440,9 @@ func expandNodePool(d *schema.ResourceData, prefix string) (*container.NodePool,
 		}
 	}
 
-	if v, ok := d.GetOk(prefix + "maintenance_policy"); ok {
+	if v, ok := d.GetOk(prefix + "maintenance_policy"); ok && len(v.([]interface{})) > 0 && v.([]interface{})[0] != nil {
 		maintenancePolicy := v.([]interface{})[0].(map[string]interface{})
-		if v, ok := maintenancePolicy["exclusion_until_end_of_support"]; ok && len(v.([]interface{})) > 0 {
+		if v, ok := maintenancePolicy["exclusion_until_end_of_support"]; ok && len(v.([]interface{})) > 0 && v.([]interface{})[0] != nil {
 			np.MaintenancePolicy = &container.NodePoolMaintenancePolicy{
 				ExclusionUntilEndOfSupport: &container.ExclusionUntilEndOfSupport{},
 			}
@@ -1773,7 +1773,7 @@ func expandNodeNetworkConfig(v interface{}) *container.NodeNetworkConfig {
 
 	nnc := &container.NodeNetworkConfig{}
 
-	if len(networkNodeConfigs) == 0 {
+	if len(networkNodeConfigs) == 0 || networkNodeConfigs[0] == nil {
 		return nnc
 	}
 
@@ -1830,7 +1830,7 @@ func expandNodeNetworkConfig(v interface{}) *container.NodeNetworkConfig {
 
 	nnc.PodCidrOverprovisionConfig = expandPodCidrOverprovisionConfig(networkNodeConfig["pod_cidr_overprovision_config"])
 
-	if v, ok := networkNodeConfig["network_performance_config"]; ok && len(v.([]interface{})) > 0 {
+	if v, ok := networkNodeConfig["network_performance_config"]; ok && len(v.([]interface{})) > 0 && v.([]interface{})[0] != nil {
 		nnc.NetworkPerformanceConfig = &container.NetworkPerformanceConfig{}
 		network_performance_config := v.([]interface{})[0].(map[string]interface{})
 		if total_egress_bandwidth_tier, ok := network_performance_config["total_egress_bandwidth_tier"]; ok {
@@ -1866,7 +1866,7 @@ func nodePoolUpdate(d *schema.ResourceData, meta interface{}, nodePoolInfo *Node
 		update := &container.ClusterUpdate{
 			DesiredNodePoolId: name,
 		}
-		if v, ok := d.GetOk(prefix + "autoscaling"); ok {
+		if v, ok := d.GetOk(prefix + "autoscaling"); ok && len(v.([]interface{})) > 0 && v.([]interface{})[0] != nil {
 			autoscaling := v.([]interface{})[0].(map[string]interface{})
 			update.DesiredNodePoolAutoscaling = &container.NodePoolAutoscaling{
 				Enabled:           true,
@@ -1951,7 +1951,7 @@ func nodePoolUpdate(d *schema.ResourceData, meta interface{}, nodePoolInfo *Node
 
 	if d.HasChange(prefix + "management") {
 		management := &container.NodeManagement{}
-		if v, ok := d.GetOk(prefix + "management"); ok {
+		if v, ok := d.GetOk(prefix + "management"); ok && len(v.([]interface{})) > 0 && v.([]interface{})[0] != nil {
 			managementConfig := v.([]interface{})[0].(map[string]interface{})
 			management.AutoRepair = managementConfig["auto_repair"].(bool)
 			management.AutoUpgrade = managementConfig["auto_upgrade"].(bool)
@@ -2038,7 +2038,7 @@ func nodePoolUpdate(d *schema.ResourceData, meta interface{}, nodePoolInfo *Node
 
 	if d.HasChange(prefix + "upgrade_settings") {
 		upgradeSettings := &container.UpgradeSettings{}
-		if v, ok := d.GetOk(prefix + "upgrade_settings"); ok {
+		if v, ok := d.GetOk(prefix + "upgrade_settings"); ok && len(v.([]interface{})) > 0 && v.([]interface{})[0] != nil {
 			upgradeSettingsConfig := v.([]interface{})[0].(map[string]interface{})
 			upgradeSettings.Strategy = upgradeSettingsConfig["strategy"].(string)
 
@@ -2074,30 +2074,32 @@ func nodePoolUpdate(d *schema.ResourceData, meta interface{}, nodePoolInfo *Node
 				}
 
 				blueGreenSettings := &container.BlueGreenSettings{}
-				blueGreenSettingsConfig := upgradeSettingsConfig["blue_green_settings"].([]interface{})[0].(map[string]interface{})
-				blueGreenSettings.NodePoolSoakDuration = blueGreenSettingsConfig["node_pool_soak_duration"].(string)
+				if bgsList, ok := upgradeSettingsConfig["blue_green_settings"].([]interface{}); ok && len(bgsList) > 0 && bgsList[0] != nil {
+					blueGreenSettingsConfig := bgsList[0].(map[string]interface{})
+					blueGreenSettings.NodePoolSoakDuration = blueGreenSettingsConfig["node_pool_soak_duration"].(string)
 
-				if v, ok := blueGreenSettingsConfig["standard_rollout_policy"]; ok && len(v.([]interface{})) > 0 {
-					standardRolloutPolicy := &container.StandardRolloutPolicy{}
-					if standardRolloutPolicyConfig, ok := v.([]interface{})[0].(map[string]interface{}); ok {
-						standardRolloutPolicy.BatchSoakDuration = standardRolloutPolicyConfig["batch_soak_duration"].(string)
-						if v, ok := standardRolloutPolicyConfig["batch_node_count"]; ok {
-							standardRolloutPolicy.BatchNodeCount = int64(v.(int))
+					if v, ok := blueGreenSettingsConfig["standard_rollout_policy"]; ok && len(v.([]interface{})) > 0 {
+						standardRolloutPolicy := &container.StandardRolloutPolicy{}
+						if standardRolloutPolicyConfig, ok := v.([]interface{})[0].(map[string]interface{}); ok {
+							standardRolloutPolicy.BatchSoakDuration = standardRolloutPolicyConfig["batch_soak_duration"].(string)
+							if v, ok := standardRolloutPolicyConfig["batch_node_count"]; ok {
+								standardRolloutPolicy.BatchNodeCount = int64(v.(int))
+							}
+							if v, ok := standardRolloutPolicyConfig["batch_percentage"]; ok {
+								standardRolloutPolicy.BatchPercentage = v.(float64)
+							}
 						}
-						if v, ok := standardRolloutPolicyConfig["batch_percentage"]; ok {
-							standardRolloutPolicy.BatchPercentage = v.(float64)
-						}
+						blueGreenSettings.StandardRolloutPolicy = standardRolloutPolicy
 					}
-					blueGreenSettings.StandardRolloutPolicy = standardRolloutPolicy
-				}
-				if v, ok := blueGreenSettingsConfig["autoscaled_rollout_policy"]; ok && len(v.([]interface{})) > 0 {
-					autoscaledRolloutPolicy := &container.AutoscaledRolloutPolicy{}
-					if autoscaledRolloutPolicyConfig, ok := v.([]interface{})[0].(map[string]interface{}); ok {
-						if v, ok := autoscaledRolloutPolicyConfig["wait_for_drain_duration"]; ok {
-							autoscaledRolloutPolicy.WaitForDrainDuration = v.(string)
+					if v, ok := blueGreenSettingsConfig["autoscaled_rollout_policy"]; ok && len(v.([]interface{})) > 0 {
+						autoscaledRolloutPolicy := &container.AutoscaledRolloutPolicy{}
+						if autoscaledRolloutPolicyConfig, ok := v.([]interface{})[0].(map[string]interface{}); ok {
+							if v, ok := autoscaledRolloutPolicyConfig["wait_for_drain_duration"]; ok {
+								autoscaledRolloutPolicy.WaitForDrainDuration = v.(string)
+							}
 						}
+						blueGreenSettings.AutoscaledRolloutPolicy = autoscaledRolloutPolicy
 					}
-					blueGreenSettings.AutoscaledRolloutPolicy = autoscaledRolloutPolicy
 				}
 				upgradeSettings.BlueGreenSettings = blueGreenSettings
 			}
@@ -2160,7 +2162,7 @@ func nodePoolUpdate(d *schema.ResourceData, meta interface{}, nodePoolInfo *Node
 
 	if d.HasChange(prefix + "node_drain_config") {
 		nodeDrainConfig := &container.NodeDrainConfig{}
-		if v, ok := d.GetOk(prefix + "node_drain_config"); ok {
+		if v, ok := d.GetOk(prefix + "node_drain_config"); ok && len(v.([]interface{})) > 0 && v.([]interface{})[0] != nil {
 			nodeDrain := v.([]interface{})[0].(map[string]interface{})
 			if v, ok := nodeDrain["respect_pdb_during_node_pool_deletion"]; ok {
 				nodeDrainConfig.RespectPdbDuringNodePoolDeletion = v.(bool)
@@ -2205,12 +2207,12 @@ func nodePoolUpdate(d *schema.ResourceData, meta interface{}, nodePoolInfo *Node
 		req := &container.UpdateNodePoolRequest{
 			NodePoolId: name,
 		}
-		if v, ok := d.GetOk(prefix + "maintenance_policy"); ok && len(v.([]interface{})) > 0 {
+		if v, ok := d.GetOk(prefix + "maintenance_policy"); ok && len(v.([]interface{})) > 0 && v.([]interface{})[0] != nil {
 			req.MaintenancePolicy = &container.NodePoolMaintenancePolicy{
 				ExclusionUntilEndOfSupport: &container.ExclusionUntilEndOfSupport{},
 			}
 			maintenancePolicy := v.([]interface{})[0].(map[string]interface{})
-			if v, ok := maintenancePolicy["exclusion_until_end_of_support"]; ok && len(v.([]interface{})) > 0 {
+			if v, ok := maintenancePolicy["exclusion_until_end_of_support"]; ok && len(v.([]interface{})) > 0 && v.([]interface{})[0] != nil {
 				exclusionUntilEndOfSupport := v.([]interface{})[0].(map[string]interface{})
 				if v, ok := exclusionUntilEndOfSupport["enabled"]; ok {
 					req.MaintenancePolicy.ExclusionUntilEndOfSupport.Enabled = v.(bool)
