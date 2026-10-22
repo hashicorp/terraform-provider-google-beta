@@ -94,7 +94,7 @@ resource "google_compute_subnetwork" "default" {
   network                    = google_compute_network.default.id
   private_ipv6_google_access = "DISABLE_GOOGLE_ACCESS"
   purpose                    = "PRIVATE"
-  region                     = "southamerica-east1"
+  region                     = "us-central1"
   stack_type                 = "IPV4_ONLY"
 }
 
@@ -107,8 +107,8 @@ data "google_compute_image" "vmimage" {
 resource "google_compute_instance" "target-vm" {
   provider     = google-beta
   name         = "tf-test-up-pol-target-vm%{random_suffix}"
-  machine_type = "e2-medium"
-  zone         = "southamerica-east1-a"
+  machine_type = "e2-micro"
+  zone         = "us-central1-a"
 
   boot_disk {
     initialize_params {
@@ -126,7 +126,7 @@ resource "google_compute_instance" "target-vm" {
 
 resource "google_compute_region_security_policy" "policyddosprotection" {
   provider    = google-beta
-  region      = "southamerica-east1"
+  region      = "us-central1"
   name        = "tf-test-up-pol-policyddos%{random_suffix}"
   description = "ddos protection security policy to set target instance"
   type        = "CLOUD_ARMOR_NETWORK"
@@ -137,7 +137,7 @@ resource "google_compute_region_security_policy" "policyddosprotection" {
 
 resource "google_compute_network_edge_security_service" "edge_sec_service" {
   provider        = google-beta
-  region          = "southamerica-east1"
+  region          = "us-central1"
   name            = "tf-test-up-pol-edgesec%{random_suffix}"
   security_policy = google_compute_region_security_policy.policyddosprotection.self_link
 }
@@ -145,7 +145,7 @@ resource "google_compute_network_edge_security_service" "edge_sec_service" {
 resource "google_compute_region_security_policy" "regionsecuritypolicy1" {
   provider    = google-beta
   name        = "tf-test-up-pol-region-secpolicy1%{random_suffix}"
-  region      = "southamerica-east1"
+  region      = "us-central1"
   description = "basic security policy one for target instance"
   type        = "CLOUD_ARMOR_NETWORK"
   depends_on  = [google_compute_network_edge_security_service.edge_sec_service]
@@ -154,7 +154,7 @@ resource "google_compute_region_security_policy" "regionsecuritypolicy1" {
 resource "google_compute_region_security_policy" "regionsecuritypolicy2" {
   provider    = google-beta
   name        = "tf-test-up-pol-region-secpolicy2%{random_suffix}"
-  region      = "southamerica-east1"
+  region      = "us-central1"
   description = "basic security policy two for target instance"
   type        = "CLOUD_ARMOR_NETWORK"
   depends_on  = [google_compute_network_edge_security_service.edge_sec_service]
@@ -163,7 +163,7 @@ resource "google_compute_region_security_policy" "regionsecuritypolicy2" {
 resource "google_compute_target_instance" "default" {
   provider        = google-beta
   name            = "tf-test-up-pol-target-instance%{random_suffix}"
-  zone            = "southamerica-east1-a"
+  zone            = "us-central1-a"
   instance        = google_compute_instance.target-vm.id
   security_policy = %{policy_set}
   %{lifecycle_block}

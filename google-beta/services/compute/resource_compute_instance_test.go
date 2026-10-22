@@ -2142,7 +2142,7 @@ func TestAccComputeInstance_scheduling(t *testing.T) {
 						t, "google_compute_instance.foobar", &instance),
 				),
 			},
-			computeInstanceImportStep("us-central1-a", instanceName, []string{}),
+			computeInstanceImportStep("us-central1-f", instanceName, []string{}),
 			{
 				Config: testAccComputeInstance_schedulingUpdated(instanceName),
 				Check: resource.ComposeTestCheckFunc(
@@ -2150,7 +2150,7 @@ func TestAccComputeInstance_scheduling(t *testing.T) {
 						t, "google_compute_instance.foobar", &instance),
 				),
 			},
-			computeInstanceImportStep("us-central1-a", instanceName, []string{}),
+			computeInstanceImportStep("us-central1-f", instanceName, []string{}),
 		},
 	})
 }
@@ -2179,7 +2179,7 @@ func TestAccComputeInstance_schedulingTerminationTime(t *testing.T) {
 						t, "google_compute_instance.foobar", &instance),
 				),
 			},
-			computeInstanceImportStep("us-central1-a", instanceName, []string{"allow_stopping_for_update"}),
+			computeInstanceImportStep("us-central1-f", instanceName, []string{"allow_stopping_for_update"}),
 			{
 				Config: testAccComputeInstance_TerminationTime(instanceName, terminationTimeUpdated),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
@@ -2192,7 +2192,7 @@ func TestAccComputeInstance_schedulingTerminationTime(t *testing.T) {
 						t, "google_compute_instance.foobar", &instance),
 				),
 			},
-			computeInstanceImportStep("us-central1-a", instanceName, []string{"allow_stopping_for_update"}),
+			computeInstanceImportStep("us-central1-f", instanceName, []string{"allow_stopping_for_update"}),
 			{
 				Config: testAccComputeInstance_TerminationTimeDeleted(instanceName),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
@@ -2205,7 +2205,7 @@ func TestAccComputeInstance_schedulingTerminationTime(t *testing.T) {
 						t, "google_compute_instance.foobar", &instance),
 				),
 			},
-			computeInstanceImportStep("us-central1-a", instanceName, []string{"allow_stopping_for_update"}),
+			computeInstanceImportStep("us-central1-f", instanceName, []string{"allow_stopping_for_update"}),
 		},
 	})
 }
@@ -4068,7 +4068,7 @@ func TestAccComputeInstance_spotVM_update(t *testing.T) {
 		CheckDestroy:             testAccCheckComputeInstanceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccComputeInstance_scheduling(instanceName),
+				Config: testAccComputeInstance_schedulingInZone(instanceName, "us-central1-a"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
@@ -4261,7 +4261,7 @@ func TestAccComputeInstance_spotVM_maxRunDuration_update(t *testing.T) {
 		CheckDestroy:             testAccCheckComputeInstanceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccComputeInstance_scheduling(instanceName),
+				Config: testAccComputeInstance_schedulingInZone(instanceName, "us-central1-a"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
@@ -4326,7 +4326,7 @@ func TestAccComputeInstance_localSsdRecoveryTimeout_update(t *testing.T) {
 		CheckDestroy:             testAccCheckComputeInstanceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccComputeInstance_scheduling(instanceName),
+				Config: testAccComputeInstance_schedulingInZone(instanceName, "us-central1-a"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckComputeInstanceExists(
 						t, "google_compute_instance.foobar", &instance),
@@ -9510,6 +9510,10 @@ resource "google_compute_instance" "foobar" {
 }
 
 func testAccComputeInstance_scheduling(instance string) string {
+	return testAccComputeInstance_schedulingInZone(instance, "us-central1-f")
+}
+
+func testAccComputeInstance_schedulingInZone(instance, zone string) string {
 	return fmt.Sprintf(`
 data "google_compute_image" "my_image" {
   family  = "debian-13"
@@ -9518,8 +9522,8 @@ data "google_compute_image" "my_image" {
 
 resource "google_compute_instance" "foobar" {
   name         = "%s"
-  machine_type = "e2-medium"
-  zone         = "us-central1-a"
+  machine_type = "e2-micro"
+  zone         = "%s"
 
   boot_disk {
     initialize_params {
@@ -9535,7 +9539,7 @@ resource "google_compute_instance" "foobar" {
     automatic_restart = false
   }
 }
-`, instance)
+`, instance, zone)
 }
 
 func testAccComputeInstance_schedulingUpdated(instance string) string {
@@ -9547,8 +9551,8 @@ data "google_compute_image" "my_image" {
 
 resource "google_compute_instance" "foobar" {
   name         = "%s"
-  machine_type = "e2-medium"
-  zone         = "us-central1-a"
+  machine_type = "e2-micro"
+  zone         = "us-central1-f"
 
   boot_disk {
     initialize_params {
@@ -9577,8 +9581,8 @@ data "google_compute_image" "my_image" {
 
 resource "google_compute_instance" "foobar" {
   name         = "%s"
-  machine_type = "e2-medium"
-  zone         = "us-central1-a"
+  machine_type = "e2-micro"
+  zone         = "us-central1-f"
 
   boot_disk {
     initialize_params {
@@ -9611,8 +9615,8 @@ data "google_compute_image" "my_image" {
 
 resource "google_compute_instance" "foobar" {
   name         = "%s"
-  machine_type = "e2-medium"
-  zone         = "us-central1-a"
+  machine_type = "e2-micro"
+  zone         = "us-central1-f"
 
   boot_disk {
     initialize_params {
