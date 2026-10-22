@@ -117,7 +117,7 @@ resource "google_project_iam_member" "storage_viewer" {
 
 resource "google_app_engine_standard_app_version" "myapp_v1" {
   version_id = "v1"
-  service    = "myapp"
+  service    = "%{service_name}"
   runtime    = "nodejs22"
 
   entrypoint {
@@ -154,7 +154,7 @@ resource "google_app_engine_standard_app_version" "myapp_v1" {
 
 resource "google_app_engine_standard_app_version" "myapp_v2" {
   version_id      = "v2"
-  service         = "myapp"
+  service         = "%{service_name}"
   runtime         = "nodejs22"
   app_engine_apis = true
 
@@ -269,7 +269,7 @@ resource "google_storage_bucket_object" "main" {
 resource "google_app_engine_standard_app_version" "gae-std-app-ver-bundled" {
   version_id   = "v1"
   service      = "%{service_id}"
-  runtime      = "python310"
+  runtime      = "python312"
 
   deployment {
     files {
