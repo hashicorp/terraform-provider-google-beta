@@ -411,6 +411,11 @@ Updating 'source_snapshot' will update content in the ephemeral directory after 
 													ForceNew:    true,
 													Description: `Size of the boot disk in GB. The minimum boot disk size is '30' GB. Defaults to '50' GB.`,
 												},
+												"enable_automatic_failover": {
+													Type:        schema.TypeBool,
+													Optional:    true,
+													Description: `Indicates if this boost config is eligible for automatic failover when the service cannot provision the default VM type. Defaults to false.`,
+												},
 												"enable_nested_virtualization": {
 													Type:     schema.TypeBool,
 													Computed: true,
@@ -1762,6 +1767,7 @@ func flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigs(v interface
 			"boot_disk_size_gb":            flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigsBootDiskSizeGb(original["bootDiskSizeGb"], d, config),
 			"enable_nested_virtualization": flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigsEnableNestedVirtualization(original["enableNestedVirtualization"], d, config),
 			"pool_size":                    flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigsPoolSize(original["poolSize"], d, config),
+			"enable_automatic_failover":    flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigsEnableAutomaticFailover(original["enableAutomaticFailover"], d, config),
 			"accelerators":                 flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigsAccelerators(original["accelerators"], d, config),
 		})
 	}
@@ -1811,6 +1817,10 @@ func flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigsPoolSize(v i
 	}
 
 	return v // let terraform core handle it otherwise
+}
+
+func flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigsEnableAutomaticFailover(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
 }
 
 func flattenWorkstationsWorkstationConfigHostGceInstanceBoostConfigsAccelerators(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -2687,6 +2697,13 @@ func expandWorkstationsWorkstationConfigHostGceInstanceBoostConfigs(v interface{
 			transformed["poolSize"] = transformedPoolSize
 		}
 
+		transformedEnableAutomaticFailover, err := expandWorkstationsWorkstationConfigHostGceInstanceBoostConfigsEnableAutomaticFailover(original["enable_automatic_failover"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedEnableAutomaticFailover); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["enableAutomaticFailover"] = transformedEnableAutomaticFailover
+		}
+
 		transformedAccelerators, err := expandWorkstationsWorkstationConfigHostGceInstanceBoostConfigsAccelerators(original["accelerators"], d, config)
 		if err != nil {
 			return nil, err
@@ -2716,6 +2733,10 @@ func expandWorkstationsWorkstationConfigHostGceInstanceBoostConfigsEnableNestedV
 }
 
 func expandWorkstationsWorkstationConfigHostGceInstanceBoostConfigsPoolSize(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandWorkstationsWorkstationConfigHostGceInstanceBoostConfigsEnableAutomaticFailover(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
