@@ -27,6 +27,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/acctest"
@@ -807,6 +808,20 @@ func TestAccWorkstationsWorkstationConfig_workstationConfigBoostExample(t *testi
 		"random_suffix":            randomSuffix,
 	}
 
+	context_1 := map[string]interface{}{
+		"enable_automatic_failover": true,
+		"workstation_cluster_name":  "tf-test-workstation-cluster" + randomSuffix,
+		"workstation_config_name":   "tf-test-workstation-config" + randomSuffix,
+		"random_suffix":             randomSuffix,
+	}
+
+	context_2 := map[string]interface{}{
+		"enable_automatic_failover": false,
+		"workstation_cluster_name":  "tf-test-workstation-cluster" + randomSuffix,
+		"workstation_config_name":   "tf-test-workstation-config" + randomSuffix,
+		"random_suffix":             randomSuffix,
+	}
+
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
@@ -814,6 +829,46 @@ func TestAccWorkstationsWorkstationConfig_workstationConfigBoostExample(t *testi
 		Steps: []resource.TestStep{
 			{
 				Config: testAccWorkstationsWorkstationConfig_workstationConfigBoostExample(context),
+			},
+			{
+				ResourceName:            "google_workstations_workstation_config.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"annotations", "enable_audit_agent", "labels", "location", "terraform_labels", "workstation_cluster_id", "workstation_config_id"},
+			},
+			{
+				ResourceName:       "google_workstations_workstation_config.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
+			{
+				Config: testAccWorkstationsWorkstationConfig_workstationConfigBoostUpdateExample(context_1),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_workstations_workstation_config.default", plancheck.ResourceActionUpdate),
+					},
+				},
+			},
+			{
+				ResourceName:            "google_workstations_workstation_config.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"annotations", "enable_audit_agent", "labels", "location", "terraform_labels", "workstation_cluster_id", "workstation_config_id"},
+			},
+			{
+				ResourceName:       "google_workstations_workstation_config.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
+			{
+				Config: testAccWorkstationsWorkstationConfig_workstationConfigBoostUpdateExample(context_2),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_workstations_workstation_config.default", plancheck.ResourceActionUpdate),
+					},
+				},
 			},
 			{
 				ResourceName:            "google_workstations_workstation_config.default",
@@ -873,6 +928,67 @@ resource "google_workstations_workstation_config" "default" {
       boost_configs {
         id           = "boost-1"
         machine_type = "n1-standard-2"
+        accelerators {
+          type  = "nvidia-tesla-t4"
+          count = "1"
+        }
+      }
+      boost_configs {
+        id                           = "boost-2"
+        machine_type                 = "n1-standard-2"
+        pool_size                    = 2
+        boot_disk_size_gb            = 30
+        enable_nested_virtualization = true
+      }
+    }
+  }
+}
+`, context)
+}
+
+func testAccWorkstationsWorkstationConfig_workstationConfigBoostUpdateExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_compute_network" "default" {
+  name                    = "%{workstation_cluster_name}"
+  auto_create_subnetworks = false
+}
+
+resource "google_compute_subnetwork" "default" {
+  name          = "%{workstation_cluster_name}"
+  ip_cidr_range = "10.0.0.0/24"
+  region        = "us-central1"
+  network       = google_compute_network.default.name
+}
+
+resource "google_workstations_workstation_cluster" "default" {
+  workstation_cluster_id = "%{workstation_cluster_name}"
+  network                = google_compute_network.default.id
+  subnetwork             = google_compute_subnetwork.default.id
+  location               = "us-central1"
+  
+  labels = {
+    "label" = "key"
+  }
+
+  annotations = {
+    label-one = "value-one"
+  }
+}
+
+resource "google_workstations_workstation_config" "default" {
+  workstation_config_id  = "%{workstation_config_name}"
+  workstation_cluster_id = google_workstations_workstation_cluster.default.workstation_cluster_id
+  location               = "us-central1"
+
+  host {
+    gce_instance {
+      machine_type                = "e2-standard-4"
+      boot_disk_size_gb           = 35
+      disable_public_ip_addresses = true
+      boost_configs {
+        id                        = "boost-1"
+        machine_type              = "n1-standard-2"
+        enable_automatic_failover = %{enable_automatic_failover}
         accelerators {
           type  = "nvidia-tesla-t4"
           count = "1"
