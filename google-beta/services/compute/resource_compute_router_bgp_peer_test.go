@@ -833,6 +833,9 @@ func testAccComputeRouterPeerWithMd5AuthKey(routerName string) string {
       name = "%s-peer-key"
       key = "%s-peer-key-value"
     }
+    depends_on = [
+      google_compute_router_interface.foobar1
+    ]
   }
   
   resource "google_compute_router_peer" "foobar1" {
@@ -1096,6 +1099,9 @@ func testAccComputeRouterPeerWithMd5AuthKeyUpdate(routerName string) string {
       name = "%s-peer-key"
       key = "%s-peer-key-value"
     }
+    depends_on = [
+      google_compute_router_interface.foobar1
+    ]
   }
   
   resource "google_compute_router_peer" "foobar1" {
