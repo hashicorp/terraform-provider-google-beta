@@ -832,8 +832,6 @@ func resourceComputeFirewallPolicyRuleUpdate(d *schema.ResourceData, meta interf
 		d.Timeout(schema.TimeoutCreate))
 
 	if err != nil {
-		// The resource didn't actually create
-		d.SetId("")
 		return fmt.Errorf("Error waiting to update FirewallPolicyRule: %s", err)
 	}
 	return resourceComputeFirewallPolicyRuleRead(d, meta)
@@ -891,8 +889,6 @@ func resourceComputeFirewallPolicyRuleDelete(d *schema.ResourceData, meta interf
 		d.Timeout(schema.TimeoutCreate))
 
 	if err != nil {
-		// The resource didn't actually create
-		d.SetId("")
 		return fmt.Errorf("Error waiting to delete FirewallPolicyRule: %s", err)
 	}
 
