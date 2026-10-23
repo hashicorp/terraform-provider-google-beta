@@ -14308,30 +14308,37 @@ data "google_project" "project" {
 }
 
 resource "google_kms_key_ring_iam_member" "test_key_ring_iam_policy" {
-  key_ring_id = "%[1]s"
+  key_ring_id = "%s"
   role = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
   member = "serviceAccount:service-${data.google_project.project.number}@container-engine-robot.iam.gserviceaccount.com"
 }
 
 data "google_kms_key_ring_iam_policy" "test_key_ring_iam_policy" {
-  key_ring_id = "%[1]s"
+  key_ring_id = "%s"
 }
 
 resource "google_container_cluster" "primary" {
-  name               = "%[3]s"
+  name               = "%s"
   location           = "us-east1-b"
   initial_node_count = 1
 
   database_encryption {
     state    = "ENCRYPTED"
-    key_name = "%[2]s"
+    key_name = "%s"
   }
-  network    = "%[4]s"
-  subnetwork = "%[5]s"
+  network    = "%s"
+  subnetwork = "%s"
 
   deletion_protection = false
 }
-`, kmsData.KeyRing.Name, kmsData.CryptoKey.Name, clusterName, networkName, subnetworkName)
+`,
+		kmsData.KeyRing.Name,
+		kmsData.KeyRing.Name,
+		clusterName,
+		kmsData.CryptoKey.Name,
+		networkName,
+		subnetworkName,
+	)
 }
 
 func testAccContainerCluster_withDatapathProvider(clusterName, datapathProvider, networkName, subnetworkName string) string {
@@ -14390,12 +14397,12 @@ resource "google_container_cluster" "primary" {
 func testAccContainerCluster_enableCiliumPolicies_withAutopilot(clusterName, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 resource "google_compute_network" "container_network" {
-  name                    = "%[2]s"
+  name                    = "%s"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "container_subnetwork" {
-  name                     = "%[3]s"
+  name                     = "%s"
   network                  = google_compute_network.container_network.name
   ip_cidr_range            = "10.0.36.0/24"
   region                   = "us-east1"
@@ -14413,7 +14420,7 @@ resource "google_compute_subnetwork" "container_subnetwork" {
 }
 
 resource "google_container_cluster" "with_autopilot" {
-  name = "%[1]s"
+  name = "%s"
   location = "us-east1"
   enable_autopilot = true
 
@@ -14442,18 +14449,18 @@ resource "google_container_cluster" "with_autopilot" {
 
   deletion_protection = false
 }
-`, clusterName, networkName, subnetworkName)
+`, networkName, subnetworkName, clusterName)
 }
 
 func testAccContainerCluster_enableCiliumPolicies_withAutopilotUpdate(clusterName, networkName, subnetworkName string) string {
 	return fmt.Sprintf(`
 resource "google_compute_network" "container_network" {
-  name                    = "%[2]s"
+  name                    = "%s"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "container_subnetwork" {
-  name                     = "%[3]s"
+  name                     = "%s"
   network                  = google_compute_network.container_network.name
   ip_cidr_range            = "10.0.36.0/24"
   region                   = "us-east1"
@@ -14471,7 +14478,7 @@ resource "google_compute_subnetwork" "container_subnetwork" {
 }
 
 resource "google_container_cluster" "with_autopilot" {
-  name = "%[1]s"
+  name = "%s"
   location = "us-east1"
   enable_autopilot = true
 
@@ -14501,7 +14508,7 @@ resource "google_container_cluster" "with_autopilot" {
 
   deletion_protection = false
 }
-`, clusterName, networkName, subnetworkName)
+`, networkName, subnetworkName, clusterName)
 }
 
 func testAccContainerCluster_withMasterAuthorizedNetworksDisabled(containerNetName string, clusterName string) string {
@@ -14641,16 +14648,16 @@ func testAccContainerCluster_withAutopilot(projectID string, containerNetName st
 	if serviceAccount != "" {
 		serviceAccountConfig = fmt.Sprintf(`
 resource "google_service_account" "service_account" {
-  account_id   = "%[1]s"
-  project      = "%[2]s"
+  account_id   = "%s"
+  project      = "%s"
   display_name = "Service Account"
 }
 
 resource "google_project_iam_member" "project" {
-  project = "%[2]s"
+  project = "%s"
   role    = "roles/container.nodeServiceAccount"
-  member = "serviceAccount:%[1]s@%[2]s.iam.gserviceaccount.com"
-}`, serviceAccount, projectID)
+  member = "serviceAccount:%s@%s.iam.gserviceaccount.com"
+}`, serviceAccount, projectID, projectID, serviceAccount, projectID)
 
 		clusterAutoscaling = fmt.Sprintf(`
   cluster_autoscaling {
@@ -16065,39 +16072,39 @@ resource "google_container_cluster" "primary" {
 func testAccContainerCluster_resourceManagerTags(projectID, clusterName, networkName, subnetworkName, randomSuffix string, tagResourceNumber int) string {
 	return fmt.Sprintf(`
 data "google_project" "project" {
-  project_id = "%[1]s"
+  project_id = "%s"
 }
 
 resource "google_tags_tag_key" "key1" {
   parent      = data.google_project.project.id
-  short_name  = "tf-test-foobarbaz-%[2]s"
+  short_name  = "tf-test-foobarbaz-%s"
   description = "For foo/bar resources"
   purpose     = "GCE_FIREWALL"
   purpose_data = {
-    network = "%[1]s/%[4]s"
+    network = "%s/%s"
   }
 }
 
 resource "google_tags_tag_value" "value1" {
   parent      = google_tags_tag_key.key1.id
-  short_name  = "tf-test-foo-%[2]s"
+  short_name  = "tf-test-foo-%s"
   description = "For foo resources"
 }
 
 # To test updates: create two key / value sets, and swap them for the update
 resource "google_tags_tag_key" "key2" {
   parent      = data.google_project.project.id
-  short_name  = "tf-test-qux-%[2]s"
+  short_name  = "tf-test-qux-%s"
   description = "For qux resources"
   purpose     = "GCE_FIREWALL"
   purpose_data = {
-    network = "%[1]s/%[4]s"
+    network = "%s/%s"
   }
 }
 
 resource "google_tags_tag_value" "value2" {
   parent      = google_tags_tag_key.key2.id
-  short_name  = "tf-test-qux-%[2]s"
+  short_name  = "tf-test-qux-%s"
   description = "For qux resources"
 }
 
@@ -16106,7 +16113,7 @@ data "google_container_engine_versions" "uscentral1a" {
 }
 
 resource "google_container_cluster" "primary" {
-  name               = "%[3]s"
+  name               = "%s"
   location           = "us-east1-b"
   min_master_version = data.google_container_engine_versions.uscentral1a.release_channel_latest_version["STABLE"]
   initial_node_count = 1
@@ -16115,30 +16122,45 @@ resource "google_container_cluster" "primary" {
     disk_size_gb = 15
 
     resource_manager_tags = {
-      (google_tags_tag_key.key%[6]d.id) = google_tags_tag_value.value%[6]d.id
+      (google_tags_tag_key.key%d.id) = google_tags_tag_value.value%d.id
     }
   }
 
   deletion_protection = false
-  network             = "%[4]s"
-  subnetwork          = "%[5]s"
+  network             = "%s"
+  subnetwork          = "%s"
 }
-`, projectID, randomSuffix, clusterName, networkName, subnetworkName, tagResourceNumber)
+`,
+		projectID,
+		randomSuffix,
+		projectID,
+		networkName,
+		randomSuffix,
+		randomSuffix,
+		projectID,
+		networkName,
+		randomSuffix,
+		clusterName,
+		tagResourceNumber,
+		tagResourceNumber,
+		networkName,
+		subnetworkName,
+	)
 }
 
 func testAccContainerCluster_withAutopilotResourceManagerTags(projectID, clusterName, networkName, subnetworkName, randomSuffix string) string {
 	return fmt.Sprintf(`
 data "google_project" "project" {
-  project_id = "%[1]s"
+  project_id = "%s"
 }
 
 resource "google_tags_tag_key" "key1" {
-  parent      = "projects/%[1]s"
-  short_name  = "tf-test-foobarbaz1-%[2]s"
+  parent      = "projects/%s"
+  short_name  = "tf-test-foobarbaz1-%s"
   description = "For foo/bar1 resources"
   purpose     = "GCE_FIREWALL"
   purpose_data = {
-    network = "%[1]s/%[4]s"
+    network = "%s/%s"
   }
 
   depends_on = [google_compute_network.container_network]
@@ -16146,17 +16168,17 @@ resource "google_tags_tag_key" "key1" {
 
 resource "google_tags_tag_value" "value1" {
   parent      = google_tags_tag_key.key1.id
-  short_name  = "tf-test-foo1-%[2]s"
+  short_name  = "tf-test-foo1-%s"
   description = "For foo1 resources"
 }
 
 resource "google_tags_tag_key" "key2" {
-  parent      = "projects/%[1]s"
-  short_name  = "tf-test-foobarbaz2-%[2]s"
+  parent      = "projects/%s"
+  short_name  = "tf-test-foobarbaz2-%s"
   description = "For foo/bar2 resources"
   purpose     = "GCE_FIREWALL"
   purpose_data = {
-    network = "%[1]s/%[4]s"
+    network = "%s/%s"
   }
 
   depends_on = [
@@ -16167,17 +16189,17 @@ resource "google_tags_tag_key" "key2" {
 
 resource "google_tags_tag_value" "value2" {
   parent      = google_tags_tag_key.key2.id
-  short_name  = "tf-test-foo2-%[2]s"
+  short_name  = "tf-test-foo2-%s"
   description = "For foo2 resources"
 }
 
 resource "google_compute_network" "container_network" {
-  name                    = "%[4]s"
+  name                    = "%s"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "container_subnetwork" {
-  name                     = "%[5]s"
+  name                     = "%s"
   network                  = google_compute_network.container_network.name
   ip_cidr_range            = "10.0.36.0/24"
   region                   = "us-east1"
@@ -16199,7 +16221,7 @@ data "google_container_engine_versions" "uscentral1a" {
 }
 
 resource "google_container_cluster" "with_autopilot" {
-  name               = "%[3]s"
+  name               = "%s"
   location           = "us-east1"
   min_master_version = data.google_container_engine_versions.uscentral1a.release_channel_latest_version["REGULAR"]
   enable_autopilot   = true
@@ -16227,22 +16249,37 @@ resource "google_container_cluster" "with_autopilot" {
     enabled = true
   }
 }
-`, projectID, randomSuffix, clusterName, networkName, subnetworkName)
+`,
+		projectID,
+		projectID,
+		randomSuffix,
+		projectID,
+		networkName,
+		randomSuffix,
+		projectID,
+		randomSuffix,
+		projectID,
+		networkName,
+		randomSuffix,
+		networkName,
+		subnetworkName,
+		clusterName,
+	)
 }
 
 func testAccContainerCluster_withAutopilotResourceManagerTagsUpdate1(projectID, clusterName, networkName, subnetworkName, randomSuffix string) string {
 	return fmt.Sprintf(`
 data "google_project" "project" {
-  project_id = "%[1]s"
+  project_id = "%s"
 }
 
 resource "google_tags_tag_key" "key1" {
-  parent      = "projects/%[1]s"
-  short_name  = "tf-test-foobarbaz1-%[2]s"
+  parent      = "projects/%s"
+  short_name  = "tf-test-foobarbaz1-%s"
   description = "For foo/bar1 resources"
   purpose     = "GCE_FIREWALL"
   purpose_data = {
-    network = "%[1]s/%[4]s"
+    network = "%s/%s"
   }
 
   depends_on = [google_compute_network.container_network]
@@ -16250,17 +16287,17 @@ resource "google_tags_tag_key" "key1" {
 
 resource "google_tags_tag_value" "value1" {
   parent      = google_tags_tag_key.key1.id
-  short_name  = "tf-test-foo1-%[2]s"
+  short_name  = "tf-test-foo1-%s"
   description = "For foo1 resources"
 }
 
 resource "google_tags_tag_key" "key2" {
-  parent      = "projects/%[1]s"
-  short_name  = "tf-test-foobarbaz2-%[2]s"
+  parent      = "projects/%s"
+  short_name  = "tf-test-foobarbaz2-%s"
   description = "For foo/bar2 resources"
   purpose     = "GCE_FIREWALL"
   purpose_data = {
-    network = "%[1]s/%[4]s"
+    network = "%s/%s"
   }
 
   depends_on = [
@@ -16271,17 +16308,17 @@ resource "google_tags_tag_key" "key2" {
 
 resource "google_tags_tag_value" "value2" {
   parent      = google_tags_tag_key.key2.id
-  short_name  = "tf-test-foo2-%[2]s"
+  short_name  = "tf-test-foo2-%s"
   description = "For foo2 resources"
 }
 
 resource "google_compute_network" "container_network" {
-  name                    = "%[4]s"
+  name                    = "%s"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "container_subnetwork" {
-  name                     = "%[5]s"
+  name                     = "%s"
   network                  = google_compute_network.container_network.name
   ip_cidr_range            = "10.0.36.0/24"
   region                   = "us-east1"
@@ -16303,7 +16340,7 @@ data "google_container_engine_versions" "uscentral1a" {
 }
 
 resource "google_container_cluster" "with_autopilot" {
-  name               = "%[3]s"
+  name               = "%s"
   location           = "us-east1"
   min_master_version = data.google_container_engine_versions.uscentral1a.release_channel_latest_version["REGULAR"]
   enable_autopilot   = true
@@ -16332,22 +16369,37 @@ resource "google_container_cluster" "with_autopilot" {
     enabled = true
   }
 }
-`, projectID, randomSuffix, clusterName, networkName, subnetworkName)
+`,
+		projectID,
+		projectID,
+		randomSuffix,
+		projectID,
+		networkName,
+		randomSuffix,
+		projectID,
+		randomSuffix,
+		projectID,
+		networkName,
+		randomSuffix,
+		networkName,
+		subnetworkName,
+		clusterName,
+	)
 }
 
 func testAccContainerCluster_withAutopilotResourceManagerTagsUpdate2(projectID, clusterName, networkName, subnetworkName, randomSuffix string) string {
 	return fmt.Sprintf(`
 data "google_project" "project" {
-  project_id = "%[1]s"
+  project_id = "%s"
 }
 
 resource "google_tags_tag_key" "key1" {
-  parent      = "projects/%[1]s"
-  short_name  = "tf-test-foobarbaz1-%[2]s"
+  parent      = "projects/%s"
+  short_name  = "tf-test-foobarbaz1-%s"
   description = "For foo/bar1 resources"
   purpose     = "GCE_FIREWALL"
   purpose_data = {
-    network = "%[1]s/%[4]s"
+    network = "%s/%s"
   }
 
   depends_on = [google_compute_network.container_network]
@@ -16355,17 +16407,17 @@ resource "google_tags_tag_key" "key1" {
 
 resource "google_tags_tag_value" "value1" {
   parent      = google_tags_tag_key.key1.id
-  short_name  = "tf-test-foo1-%[2]s"
+  short_name  = "tf-test-foo1-%s"
   description = "For foo1 resources"
 }
 
 resource "google_tags_tag_key" "key2" {
-  parent      = "projects/%[1]s"
-  short_name  = "tf-test-foobarbaz2-%[2]s"
+  parent      = "projects/%s"
+  short_name  = "tf-test-foobarbaz2-%s"
   description = "For foo/bar2 resources"
   purpose     = "GCE_FIREWALL"
   purpose_data = {
-    network = "%[1]s/%[4]s"
+    network = "%s/%s"
   }
 
   depends_on = [
@@ -16376,17 +16428,17 @@ resource "google_tags_tag_key" "key2" {
 
 resource "google_tags_tag_value" "value2" {
   parent      = google_tags_tag_key.key2.id
-  short_name  = "tf-test-foo2-%[2]s"
+  short_name  = "tf-test-foo2-%s"
   description = "For foo2 resources"
 }
 
 resource "google_compute_network" "container_network" {
-  name                    = "%[4]s"
+  name                    = "%s"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "container_subnetwork" {
-  name                     = "%[5]s"
+  name                     = "%s"
   network                  = google_compute_network.container_network.name
   ip_cidr_range            = "10.0.36.0/24"
   region                   = "us-east1"
@@ -16408,7 +16460,7 @@ data "google_container_engine_versions" "uscentral1a" {
 }
 
 resource "google_container_cluster" "with_autopilot" {
-  name               = "%[3]s"
+  name               = "%s"
   location           = "us-east1"
   min_master_version = data.google_container_engine_versions.uscentral1a.release_channel_latest_version["REGULAR"]
   enable_autopilot   = true
@@ -16439,7 +16491,22 @@ resource "google_container_cluster" "with_autopilot" {
     google_tags_tag_value.value2,
   ]
 }
-`, projectID, randomSuffix, clusterName, networkName, subnetworkName)
+`,
+		projectID,
+		projectID,
+		randomSuffix,
+		projectID,
+		networkName,
+		randomSuffix,
+		projectID,
+		randomSuffix,
+		projectID,
+		networkName,
+		randomSuffix,
+		networkName,
+		subnetworkName,
+		clusterName,
+	)
 }
 
 func TestAccContainerCluster_privateRegistry(t *testing.T) {
@@ -18932,12 +18999,12 @@ resource "google_container_cluster" "with_kubelet_config" {
 func testAccContainerCluster_nodePool_additionalNodeNetworkConfigs_manual(clusterName string) string {
 	return fmt.Sprintf(`
 resource "google_compute_network" "main_net" {
-  name                    = "%[1]s-main-net"
+  name                    = "%s-main-net"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "main_subnet" {
-  name                     = "%[1]s-main-subnet"
+  name                     = "%s-main-subnet"
   network                  = google_compute_network.main_net.name
   ip_cidr_range            = "10.0.0.0/24"
   region                   = "us-east1"
@@ -18946,12 +19013,12 @@ resource "google_compute_subnetwork" "main_subnet" {
 
 // Secondary Network (Required for Manual Config)
 resource "google_compute_network" "add_net" {
-  name                    = "%[1]s-add-net"
+  name                    = "%s-add-net"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "add_subnet" {
-  name                     = "%[1]s-add-subnet"
+  name                     = "%s-add-subnet"
   network                  = google_compute_network.add_net.name
   ip_cidr_range            = "10.1.0.0/24"
   region                   = "us-east1"
@@ -18959,7 +19026,7 @@ resource "google_compute_subnetwork" "add_subnet" {
 }
 
 resource "google_container_cluster" "primary" {
-  name     = "%[1]s"
+  name     = "%s"
   location = "us-east1-d"
   
   network    = google_compute_network.main_net.name
@@ -19014,18 +19081,18 @@ resource "google_container_cluster" "primary" {
     }
   }
 }
-`, clusterName)
+`, clusterName, clusterName, clusterName, clusterName, clusterName)
 }
 
 func testAccContainerCluster_nodePool_acceleratorNetworkProfile_basic(clusterName string) string {
 	return fmt.Sprintf(`
 resource "google_compute_network" "main_net" {
-  name                    = "%[1]s-main-net"
+  name                    = "%s-main-net"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "main_subnet" {
-  name                     = "%[1]s-main-subnet"
+  name                     = "%s-main-subnet"
   network                  = google_compute_network.main_net.name
   ip_cidr_range            = "10.0.0.0/24"
   region                   = "us-east1"
@@ -19033,7 +19100,7 @@ resource "google_compute_subnetwork" "main_subnet" {
 }
 
 resource "google_container_cluster" "primary" {
-  name     = "%[1]s"
+  name     = "%s"
   location = "us-east1-d"
   
   network    = google_compute_network.main_net.name
@@ -19083,18 +19150,18 @@ resource "google_container_cluster" "primary" {
     // TEST CHANGE: Removing network_config entirely
   }
 }
-`, clusterName)
+`, clusterName, clusterName, clusterName)
 }
 
 func testAccContainerCluster_nodePool_acceleratorNetworkProfile_auto(clusterName string) string {
 	return fmt.Sprintf(`
 resource "google_compute_network" "main_net" {
-  name                    = "%[1]s-main-net"
+  name                    = "%s-main-net"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "main_subnet" {
-  name                     = "%[1]s-main-subnet"
+  name                     = "%s-main-subnet"
   network                  = google_compute_network.main_net.name
   ip_cidr_range            = "10.0.0.0/24"
   region                   = "us-east1"
@@ -19102,7 +19169,7 @@ resource "google_compute_subnetwork" "main_subnet" {
 }
 
 resource "google_container_cluster" "primary" {
-  name     = "%[1]s"
+  name     = "%s"
   location = "us-east1-d"
   
   network    = google_compute_network.main_net.name
@@ -19153,7 +19220,7 @@ resource "google_container_cluster" "primary" {
     }
   }
 }
-`, clusterName)
+`, clusterName, clusterName, clusterName)
 }
 
 func TestAccContainerCluster_nodePool_acceleratorNetworkProfile_Lifecycle(t *testing.T) {
@@ -21091,25 +21158,25 @@ data "google_container_engine_versions" "central1c" {
 }
 
 resource "google_compute_network" "main_net" {
-  name                    = "%[1]s-main-net"
+  name                    = "%s-main-net"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "main_subnet" {
-  name          = "%[1]s-main-subnet"
+  name          = "%s-main-subnet"
   network       = google_compute_network.main_net.name
   ip_cidr_range = "10.0.0.0/24"
   region        = "us-east1"
 }
 
 resource "google_compute_network" "add_net" {
-  name                     = "%[1]s-add-net"
+  name                     = "%s-add-net"
   auto_create_subnetworks  = false
   enable_ula_internal_ipv6 = true
 }
 
 resource "google_compute_subnetwork" "add_subnet" {
-  name             = "%[1]s-add-subnet"
+  name             = "%s-add-subnet"
   network          = google_compute_network.add_net.name
   region           = "us-east1"
   stack_type       = "IPV6_ONLY"
@@ -21117,7 +21184,7 @@ resource "google_compute_subnetwork" "add_subnet" {
 }
 
 resource "google_container_cluster" "cluster" {
-  name     = "%[1]s"
+  name     = "%s"
   location = "us-east1-d"
 
   # additional_node_network_configs.stack_type is only honoured by GKE 1.36+;
@@ -21136,7 +21203,7 @@ resource "google_container_cluster" "cluster" {
   }
 
   node_pool {
-    name       = "%[2]s"
+    name       = "%s"
     node_count = 1
 
     node_config {
@@ -21155,7 +21222,7 @@ resource "google_container_cluster" "cluster" {
 
   deletion_protection = false
 }
-`, clusterName, npName)
+`, clusterName, clusterName, clusterName, clusterName, clusterName, npName)
 }
 
 func testAccContainerCluster_bestEffortProvisioning(clusterName, npName, networkName, subnetworkName string, enabled bool, minProvisionNodes int) string {
