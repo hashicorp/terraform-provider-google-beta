@@ -1,4 +1,6 @@
-## 8.8.0 (Unreleased)
+## 8.8.1 (Unreleased)
+
+## 8.8.0 (October 20, 2026)
 
 DEPRECATIONS:
 * serviceusagev2: deprecated `check_usage_on_remove` field on `google_service_usage_v2_consumer_policy` resource ([#13346](https://github.com/hashicorp/terraform-provider-google-beta/pull/13346))
