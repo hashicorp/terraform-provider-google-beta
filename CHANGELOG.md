@@ -1,4 +1,9 @@
-## 8.8.0 (Unreleased)
+## 8.8.1 (Unreleased)
+
+NOTES:
+* Updated to Go 1.26.10 for security fixes to the crypto/x509 package described under https://github.com/golang/go/issues?q=milestone%3AGo1.26.10+label%3ACherryPickApproved 
+
+## 8.8.0 (October 20, 2026)
 
 DEPRECATIONS:
 * serviceusagev2: deprecated `check_usage_on_remove` field on `google_service_usage_v2_consumer_policy` resource ([#13346](https://github.com/hashicorp/terraform-provider-google-beta/pull/13346))
