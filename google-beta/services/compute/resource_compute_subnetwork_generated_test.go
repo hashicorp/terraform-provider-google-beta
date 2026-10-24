@@ -393,6 +393,59 @@ resource "google_compute_network" "custom-test" {
 `, context)
 }
 
+func TestAccComputeSubnetwork_subnetworkPurposeCustomHardwareLinkExample(t *testing.T) {
+	t.Parallel()
+
+	randomSuffix := acctest.RandString(t, 10)
+
+	context := map[string]interface{}{
+		"network_name":    "tf-test-subnet-purpose-chl-test-network" + randomSuffix,
+		"subnetwork_name": "tf-test-subnet-purpose-chl-test-subnetwork" + randomSuffix,
+		"random_suffix":   randomSuffix,
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckComputeSubnetworkDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccComputeSubnetwork_subnetworkPurposeCustomHardwareLinkExample(context),
+			},
+			{
+				ResourceName:            "google_compute_subnetwork.subnetwork-purpose-custom-hardware-link",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"network", "params", "region", "reserved_internal_range"},
+			},
+			{
+				ResourceName:       "google_compute_subnetwork.subnetwork-purpose-custom-hardware-link",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
+		},
+	})
+}
+
+func testAccComputeSubnetwork_subnetworkPurposeCustomHardwareLinkExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_compute_subnetwork" "subnetwork-purpose-custom-hardware-link" {
+  provider      = google-beta
+  name          = "%{subnetwork_name}"
+  region        = "us-central1"
+  ip_cidr_range = "192.168.2.0/24"
+  purpose       = "CUSTOM_HARDWARE_LINK"
+  network       = google_compute_network.custom-test.id
+}
+resource "google_compute_network" "custom-test" {
+  provider                = google-beta
+  name                    = "%{network_name}"
+  auto_create_subnetworks = false
+}
+`, context)
+}
+
 func TestAccComputeSubnetwork_subnetworkResolveSubnetMaskExample(t *testing.T) {
 	t.Parallel()
 
