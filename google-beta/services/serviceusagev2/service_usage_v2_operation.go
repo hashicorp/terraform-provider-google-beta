@@ -46,6 +46,7 @@ var (
 type ServiceUsageV2OperationWaiter struct {
 	Config    *transport_tpg.Config
 	UserAgent string
+	Project   string
 	tpgresource.CommonOperationWaiter
 }
 
@@ -59,15 +60,17 @@ func (w *ServiceUsageV2OperationWaiter) QueryOp() (interface{}, error) {
 	return transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    w.Config,
 		Method:    "GET",
+		Project:   w.Project,
 		RawURL:    url,
 		UserAgent: w.UserAgent,
 	})
 }
 
-func createServiceUsageV2Waiter(config *transport_tpg.Config, op map[string]interface{}, activity, userAgent string) (*ServiceUsageV2OperationWaiter, error) {
+func createServiceUsageV2Waiter(config *transport_tpg.Config, op map[string]interface{}, project, activity, userAgent string) (*ServiceUsageV2OperationWaiter, error) {
 	w := &ServiceUsageV2OperationWaiter{
 		Config:    config,
 		UserAgent: userAgent,
+		Project:   project,
 	}
 	if err := w.CommonOperationWaiter.SetOp(op); err != nil {
 		return nil, err
@@ -76,8 +79,8 @@ func createServiceUsageV2Waiter(config *transport_tpg.Config, op map[string]inte
 }
 
 // nolint: deadcode,unused
-func ServiceUsageV2OperationWaitTimeWithResponse(config *transport_tpg.Config, op map[string]interface{}, response *map[string]interface{}, activity, userAgent string, timeout time.Duration) error {
-	w, err := createServiceUsageV2Waiter(config, op, activity, userAgent)
+func ServiceUsageV2OperationWaitTimeWithResponse(config *transport_tpg.Config, op map[string]interface{}, response *map[string]interface{}, project, activity, userAgent string, timeout time.Duration) error {
+	w, err := createServiceUsageV2Waiter(config, op, project, activity, userAgent)
 	if err != nil {
 		return err
 	}
@@ -91,12 +94,12 @@ func ServiceUsageV2OperationWaitTimeWithResponse(config *transport_tpg.Config, o
 	return json.Unmarshal(rawResponse, response)
 }
 
-func ServiceUsageV2OperationWaitTime(config *transport_tpg.Config, op map[string]interface{}, activity, userAgent string, timeout time.Duration) error {
+func ServiceUsageV2OperationWaitTime(config *transport_tpg.Config, op map[string]interface{}, project, activity, userAgent string, timeout time.Duration) error {
 	if val, ok := op["name"]; !ok || val == "" {
 		// This was a synchronous call - there is no operation to wait for.
 		return nil
 	}
-	w, err := createServiceUsageV2Waiter(config, op, activity, userAgent)
+	w, err := createServiceUsageV2Waiter(config, op, project, activity, userAgent)
 	if err != nil {
 		// If w is nil, the op was synchronous.
 		return err

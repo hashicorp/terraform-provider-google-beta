@@ -77,6 +77,16 @@ type ProposedPolicy struct {
 	EnableRules []map[string][]string `json:"enableRules"`
 }
 
+func NewAnalysisRequestWithRules(name string, enableRules []map[string][]string) map[string]any {
+	if enableRules == nil {
+		enableRules = []map[string][]string{}
+	}
+	return map[string]any{
+		"proposedPolicy": ProposedPolicy{Name: name, EnableRules: enableRules},
+		"analysisTypes":  AnalysisTypeDependency,
+	}
+}
+
 func NewAnalysisRequest(name string, services []string, catalogs []string) map[string]any {
 	rule := map[string][]string{
 		"services": services,
@@ -87,9 +97,7 @@ func NewAnalysisRequest(name string, services []string, catalogs []string) map[s
 	enableRules := []map[string][]string{
 		rule,
 	}
-	return map[string]any{
-		"proposedPolicy": ProposedPolicy{Name: name, EnableRules: enableRules},
-		"analysisTypes":  AnalysisTypeDependency}
+	return NewAnalysisRequestWithRules(name, enableRules)
 }
 
 type AnalysisWarning struct {
@@ -189,6 +197,20 @@ func isTimeoutError(err error) bool {
 	var timeoutErr *retry.TimeoutError
 	return errors.As(err, &timeoutErr)
 }
+func transformServiceUsageV2ConsumerPolicyReadError(err error) error {
+	var gErr *googleapi.Error
+	if errors.As(err, &gErr) {
+		if gErr.Code == 400 && (strings.Contains(gErr.Message, "SU_INVALID_POLICY_NAME_FORMAT") || strings.Contains(gErr.Message, "must be default") || strings.Contains(gErr.Body, "SU_INVALID_POLICY_NAME_FORMAT")) {
+			// Reading a consumer policy with a non-default name returns 400 Bad Request
+			// (SU_INVALID_POLICY_NAME_FORMAT) rather than 404. Remap to 404 so
+			// HandleNotFoundError removes the invalid resource from state (d.SetId("")).
+			gErr.Code = 404
+		}
+		log.Printf("[DEBUG] Transformed ServiceUsageV2ConsumerPolicy read error")
+		return gErr
+	}
+	return err
+}
 
 var (
 	_ = bytes.Clone
@@ -272,6 +294,7 @@ func ResourceServiceUsageV2ConsumerPolicy() *schema.Resource {
 				Type:        schema.TypeList,
 				Required:    true,
 				Description: `The consumer policy rule that defines enabled services. The structure is documented below.`,
+				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"catalogs": {
@@ -286,7 +309,7 @@ func ResourceServiceUsageV2ConsumerPolicy() *schema.Resource {
 						"services": {
 							Type:        schema.TypeSet,
 							Optional:    true,
-							Description: `(Optional): List of service names to be enabled in the format of services/<service_name>`,
+							Description: `List of service names to be enabled in the format of services/<service_name>`,
 							Elem: &schema.Schema{
 								Type: schema.TypeString,
 							},
@@ -296,13 +319,16 @@ func ResourceServiceUsageV2ConsumerPolicy() *schema.Resource {
 				},
 			},
 			"name": {
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: `The name of the policy. Currently only the “default” policy name is supported.`,
+				Type:         schema.TypeString,
+				Required:     true,
+				ForceNew:     true,
+				ValidateFunc: validation.StringInSlice([]string{"default"}, false),
+				Description:  `The name of the policy. Currently only the “default” policy name is supported.`,
 			},
 			"parent": {
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 				Description: `The name of the parent. It can be a project, folder or organization in the format of  projects/<project_id or project_number>, folders/<folder_number> or organizations/<org_number> .`,
 			},
 			"etag": {
@@ -314,14 +340,14 @@ Used internally during updates.`,
 			"validate_dependencies": {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Description: `(Optional) Default value is true. If true, this flag enforces dependency management within the consumer policy. When adding a new service, it verifies that all its dependencies are already present/added in the policy. Conversely, when removing a service, it ensures that no other services within the policy depend on the service to be removed. If the validation fails, a comprehensive message will be presented, outlining the missing dependencies and providing instructions on how to address the issue.`,
+				Description: `Default value is true. If true, this flag enforces dependency management within the consumer policy. When adding a new service, it verifies that all its dependencies are already present/added in the policy. Conversely, when removing a service, it ensures that no other services within the policy depend on the service to be removed. If the validation fails, a comprehensive message will be presented, outlining the missing dependencies and providing instructions on how to address the issue.`,
 				Default:     true,
 			},
 			"check_usage_on_remove": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Deprecated:  "`check_usage_on_remove` is deprecated and will be removed in a future major release.",
-				Description: `(Optional) Default value is false. This field is deprecated and has no effect.`,
+				Description: `Default value is false. This field is deprecated and has no effect.`,
 				Default:     false,
 			},
 
@@ -343,6 +369,7 @@ When set to "DELETE", deleting the resource is allowed.
 }
 
 func resourceServiceUsageV2ConsumerPolicyCreate(d *schema.ResourceData, meta interface{}) error {
+	var project string
 	config := meta.(*transport_tpg.Config)
 	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
@@ -377,6 +404,11 @@ func resourceServiceUsageV2ConsumerPolicyCreate(d *schema.ResourceData, meta int
 	}
 
 	headers := make(http.Header)
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
+		billingProject = bp
+	}
+	project = billingProject
+
 	newRules := d.Get("enable_rules")
 	newServices := getServices(newRules)
 	newCatalogs := getCatalogs(newRules)
@@ -406,7 +438,7 @@ func resourceServiceUsageV2ConsumerPolicyCreate(d *schema.ResourceData, meta int
 		timeout := d.Timeout(schema.TimeoutCreate)
 		var opRes map[string]interface{}
 		err = ServiceUsageV2OperationWaitTimeWithResponse(
-			config, resp, &opRes, "Updating ConsumerPolicy", config.UserAgent, timeout)
+			config, resp, &opRes, billingProject, "Updating ConsumerPolicy", config.UserAgent, timeout)
 
 		if err != nil {
 			return err
@@ -459,7 +491,7 @@ func resourceServiceUsageV2ConsumerPolicyCreate(d *schema.ResourceData, meta int
 	d.SetId(id)
 
 	err = ServiceUsageV2OperationWaitTime(
-		config, res, "Creating ConsumerPolicy", userAgent,
+		config, res, project, "Creating ConsumerPolicy", userAgent,
 		d.Timeout(schema.TimeoutCreate))
 
 	if err != nil {
@@ -519,7 +551,7 @@ func resourceServiceUsageV2ConsumerPolicyRead(d *schema.ResourceData, meta inter
 		Headers:   headers,
 	})
 	if err != nil {
-		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("ServiceUsageV2ConsumerPolicy %q", d.Id()))
+		return transport_tpg.HandleNotFoundError(transformServiceUsageV2ConsumerPolicyReadError(err), d, fmt.Sprintf("ServiceUsageV2ConsumerPolicy %q", d.Id()))
 	}
 
 	log.Printf("[DEBUG] Finished reading ServiceUsageV2ConsumerPolicy %q: %#v", d.Id(), res)
@@ -587,7 +619,7 @@ func resourceServiceUsageV2ConsumerPolicyUpdate(d *schema.ResourceData, meta int
 		log.Print("[DEBUG] Only client-side changes detected. Cancelling update operation.")
 		return resourceServiceUsageV2ConsumerPolicyRead(d, meta)
 	}
-
+	var project string
 	config := meta.(*transport_tpg.Config)
 	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
@@ -633,6 +665,11 @@ func resourceServiceUsageV2ConsumerPolicyUpdate(d *schema.ResourceData, meta int
 	log.Printf("[DEBUG] Updating ConsumerPolicy %q: %#v", d.Id(), obj)
 	headers := make(http.Header)
 
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
+		billingProject = bp
+	}
+	project = billingProject
+
 	newRules := d.Get("enable_rules")
 	newServices := getServices(newRules)
 	newCatalogs := getCatalogs(newRules)
@@ -662,7 +699,7 @@ func resourceServiceUsageV2ConsumerPolicyUpdate(d *schema.ResourceData, meta int
 		timeout := d.Timeout(schema.TimeoutCreate)
 		var opRes map[string]interface{}
 		err = ServiceUsageV2OperationWaitTimeWithResponse(
-			config, resp, &opRes, "Updating ConsumerPolicy", config.UserAgent, timeout)
+			config, resp, &opRes, billingProject, "Updating ConsumerPolicy", config.UserAgent, timeout)
 
 		if err != nil {
 			return err
@@ -717,7 +754,7 @@ func resourceServiceUsageV2ConsumerPolicyUpdate(d *schema.ResourceData, meta int
 	}
 
 	err = ServiceUsageV2OperationWaitTime(
-		config, res, "Updating ConsumerPolicy", userAgent,
+		config, res, project, "Updating ConsumerPolicy", userAgent,
 		d.Timeout(schema.TimeoutUpdate))
 
 	if err != nil {
@@ -736,6 +773,7 @@ func resourceServiceUsageV2ConsumerPolicyDelete(d *schema.ResourceData, meta int
 		log.Printf("[DEBUG] deletion_policy set to \"ABANDON\", removing ConsumerPolicy %q from Terraform state without deletion", d.Id())
 		return nil
 	}
+	var project string
 	config := meta.(*transport_tpg.Config)
 	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
 	if err != nil {
@@ -757,23 +795,28 @@ func resourceServiceUsageV2ConsumerPolicyDelete(d *schema.ResourceData, meta int
 	}
 
 	headers := make(http.Header)
-	newRules := d.Get("enable_rules")
-	newServices := getServices(newRules)
-	newCatalogs := getCatalogs(newRules)
+	if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
+		billingProject = bp
+	}
+	project = billingProject
+
+	obj = map[string]interface{}{
+		"enableRules": []interface{}{},
+	}
 
 	// check dependencies if the "respect_dependencies" flag is enabled
 	validateDependenciesEnabled := d.Get("validate_dependencies").(bool)
 
 	if validateDependenciesEnabled {
 		name := fmt.Sprintf("%s/consumerPolicies/%s", d.Get("parent"), d.Get("name"))
-		analysisRequest := NewAnalysisRequest(name, newServices, newCatalogs)
+		analysisRequest := NewAnalysisRequestWithRules(name, []map[string][]string{})
 		req := transport_tpg.SendRequestOptions{
 			Config:    config,
 			Method:    "POST",
 			Project:   billingProject,
 			RawURL:    fmt.Sprintf("%s:analyze", url),
 			UserAgent: userAgent,
-			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Timeout:   d.Timeout(schema.TimeoutDelete),
 			Body:      analysisRequest,
 			Headers:   make(http.Header),
 		}
@@ -783,10 +826,10 @@ func resourceServiceUsageV2ConsumerPolicyDelete(d *schema.ResourceData, meta int
 			return err
 		}
 
-		timeout := d.Timeout(schema.TimeoutCreate)
+		timeout := d.Timeout(schema.TimeoutDelete)
 		var opRes map[string]interface{}
 		err = ServiceUsageV2OperationWaitTimeWithResponse(
-			config, resp, &opRes, "Updating ConsumerPolicy", config.UserAgent, timeout)
+			config, resp, &opRes, billingProject, "Deleting ConsumerPolicy", config.UserAgent, timeout)
 
 		if err != nil {
 			return err
@@ -816,7 +859,7 @@ func resourceServiceUsageV2ConsumerPolicyDelete(d *schema.ResourceData, meta int
 		return err
 	}
 
-	log.Printf("[DEBUG] Update policy request: %v", obj)
+	log.Printf("[DEBUG] Delete policy request: %v", obj)
 
 	log.Printf("[DEBUG] Deleting ConsumerPolicy %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
@@ -834,7 +877,7 @@ func resourceServiceUsageV2ConsumerPolicyDelete(d *schema.ResourceData, meta int
 	}
 
 	err = ServiceUsageV2OperationWaitTime(
-		config, res, "Deleting ConsumerPolicy", userAgent,
+		config, res, project, "Deleting ConsumerPolicy", userAgent,
 		d.Timeout(schema.TimeoutDelete))
 
 	if err != nil {
