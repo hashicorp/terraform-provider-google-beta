@@ -75,7 +75,7 @@ func TestAccSaasRuntimeRolloutKind_saasRuntimeRolloutKindBasicExample(t *testing
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckSaasRuntimeRolloutKindDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -100,7 +100,6 @@ func TestAccSaasRuntimeRolloutKind_saasRuntimeRolloutKindBasicExample(t *testing
 func testAccSaasRuntimeRolloutKind_saasRuntimeRolloutKindBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_saas_runtime_saas" "example_saas" {
-  provider = google-beta
   saas_id  = "%{saas_name}"
   location = "global"
 
@@ -110,14 +109,12 @@ resource "google_saas_runtime_saas" "example_saas" {
 }
 
 resource "google_saas_runtime_unit_kind" "example_unitkind" {
-  provider     = google-beta
   location     = "global"
   unit_kind_id = "%{unitkind_name}"
   saas         = google_saas_runtime_saas.example_saas.id
 }
 
 resource "google_saas_runtime_rollout_kind" "example" {
-  provider          = google-beta
   location          = "global"
   rollout_kind_id   = "%{rolloutkind_name}"
   unit_kind         = google_saas_runtime_unit_kind.example_unitkind.id
