@@ -86,7 +86,7 @@ func TestAccSaasRuntimeUnitOperation_saasRuntimeUnitOperationBasicExample(t *tes
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
 		CheckDestroy:             testAccCheckSaasRuntimeUnitOperationDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -116,6 +116,7 @@ locals {
 }
 
 resource "google_saas_runtime_saas" "example_saas" {
+  provider = google-beta
   saas_id  = "%{saas_name}"
   location = local.location
 
@@ -125,6 +126,7 @@ resource "google_saas_runtime_saas" "example_saas" {
 }
 
 resource "google_saas_runtime_unit_kind" "cluster_unit_kind" {
+  provider        = google-beta
   location        = local.location
   unit_kind_id    = "%{unitkind_name}"
   saas            = google_saas_runtime_saas.example_saas.id
@@ -132,6 +134,7 @@ resource "google_saas_runtime_unit_kind" "cluster_unit_kind" {
 }
 
 resource "google_saas_runtime_release" "example_release" {
+  provider   = google-beta
   location   = local.location
   release_id = "%{release_name}"
   unit_kind  = google_saas_runtime_unit_kind.cluster_unit_kind.id
@@ -141,12 +144,14 @@ resource "google_saas_runtime_release" "example_release" {
 }
 
 resource "google_saas_runtime_unit" "example_unit" {
+  provider  = google-beta
   location  = local.location
   unit_id   = "%{unit_name}"
   unit_kind = google_saas_runtime_unit_kind.cluster_unit_kind.id
 }
 
 resource "google_project" "tenant_project" {
+  provider        = google-beta
   project_id      = local.tenant_project_id
   name            = local.tenant_project_id
   billing_account = "%{billing_account}"
@@ -155,35 +160,41 @@ resource "google_project" "tenant_project" {
 }
 
 resource "google_project_service" "saas_services" {
+  provider                   = google-beta
   project                    = google_project.tenant_project.project_id
   service                    = "compute.googleapis.com"
   disable_dependent_services = true
 }
 
 resource "google_service_account" "actuation_service_account" {
+  provider     = google-beta
   account_id   = "%{actuation_service_account}"
   display_name = "SaaS Actuation Service Account"
 }
 
 resource "google_project_iam_member" "tenant_config_admin" {
+  provider = google-beta
   project  = google_project.tenant_project.project_id
   role     = "roles/config.admin"
   member   = "serviceAccount:${google_service_account.actuation_service_account.email}"
 }
 
 resource "google_project_iam_member" "tenant_storage_admin" {
+  provider = google-beta
   project  = google_project.tenant_project.project_id
   role     = "roles/storage.admin"
   member   = "serviceAccount:${google_service_account.actuation_service_account.email}"
 }
 
 resource "google_project_iam_member" "tenant_compute_admin" {
+  provider = google-beta
   project  = google_project.tenant_project.project_id
   role     = "roles/compute.admin"
   member   = "serviceAccount:${google_service_account.actuation_service_account.email}"
 }
 
 resource "google_service_account_iam_member" "actuation_token_creator" {
+  provider           = google-beta
   service_account_id = google_service_account.actuation_service_account.name
   role               = "roles/iam.serviceAccountTokenCreator"
   member             = "serviceAccount:service-%{project_number}@gcp-sa-saasservicemgmt.iam.gserviceaccount.com"
@@ -191,12 +202,14 @@ resource "google_service_account_iam_member" "actuation_token_creator" {
 
 # Infra Manager engine: actuation SA needs config.agent in the producer project.
 resource "google_project_iam_member" "producer_config_agent" {
+  provider = google-beta
   project  = "%{project}"
   role     = "roles/config.agent"
   member   = "serviceAccount:${google_service_account.actuation_service_account.email}"
 }
 
 resource "google_saas_runtime_unit_operation" "provision_unit_operation" {
+  provider          = google-beta
   depends_on        = [google_project_iam_member.tenant_config_admin, google_project_iam_member.tenant_storage_admin, google_project_iam_member.tenant_compute_admin, google_service_account_iam_member.actuation_token_creator, google_project_service.saas_services, google_project_iam_member.producer_config_agent]
   location          = local.location
   unit_operation_id = "%{provision_operation_name}"
@@ -240,6 +253,7 @@ resource "google_saas_runtime_unit_operation" "provision_unit_operation" {
 }
 
 resource "google_saas_runtime_unit_operation" "noop_upgrade_unit_operation" {
+  provider          = google-beta
   depends_on        = [google_saas_runtime_unit_operation.provision_unit_operation]
   location          = local.location
   unit_operation_id = "%{upgrade_operation_name}"
@@ -277,6 +291,7 @@ resource "google_saas_runtime_unit_operation" "noop_upgrade_unit_operation" {
 }
 
 resource "google_saas_runtime_unit_operation" "deprovision_operation" {
+  provider          = google-beta
   depends_on        = [google_saas_runtime_unit_operation.noop_upgrade_unit_operation]
   location          = local.location
   unit_operation_id = "%{deprovision_operation_name}"
