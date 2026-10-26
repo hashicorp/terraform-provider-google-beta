@@ -76,7 +76,7 @@ func TestAccSaasRuntimeUnit_saasRuntimeUnitBasicExample(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckSaasRuntimeUnitDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -86,7 +86,7 @@ func TestAccSaasRuntimeUnit_saasRuntimeUnitBasicExample(t *testing.T) {
 				ResourceName:            "google_saas_runtime_unit.example",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"annotations", "labels", "location", "terraform_labels", "unit_id"},
+				ImportStateVerifyIgnore: []string{"annotations", "conditions", "labels", "location", "state", "terraform_labels", "unit_id", "update_time"},
 			},
 			{
 				ResourceName:       "google_saas_runtime_unit.example",
@@ -101,7 +101,6 @@ func TestAccSaasRuntimeUnit_saasRuntimeUnitBasicExample(t *testing.T) {
 func testAccSaasRuntimeUnit_saasRuntimeUnitBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_saas_runtime_saas" "example_saas_regional" {
-  provider = google-beta
   saas_id  = "%{saas_name}"
   location = "us-central1"
 
@@ -111,14 +110,12 @@ resource "google_saas_runtime_saas" "example_saas_regional" {
 }
 
 resource "google_saas_runtime_unit_kind" "example_unit_kind" {
-  provider = google-beta
   location = "us-central1"
   unit_kind_id = "%{unitkind_name}"
   saas = google_saas_runtime_saas.example_saas_regional.id
 }
 
 resource "google_saas_runtime_unit" "example" {
-  provider = google-beta
   location = "us-central1"
   unit_id = "%{unit_name}"
   unit_kind = google_saas_runtime_unit_kind.example_unit_kind.id
