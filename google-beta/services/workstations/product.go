@@ -25,6 +25,8 @@ import (
 var Product = registry.Product{
 	Name:                 "workstations",
 	BaseUrl:              "https://workstations.googleapis.com/v1beta/",
+	RepUrl:               "https://workstations.{{location}}.rep.googleapis.com/v1beta/",
+	RepByDefault:         false,
 	CustomEndpointField:  "workstations_custom_endpoint",
 	CustomEndpointEnvVar: "GOOGLE_WORKSTATIONS_CUSTOM_ENDPOINT",
 }
