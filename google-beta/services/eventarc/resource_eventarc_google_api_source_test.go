@@ -210,6 +210,9 @@ resource "google_eventarc_google_api_source" "primary" {
   logging_config {
     log_severity = "DEBUG"
   }
+  organization_subscription {
+    enabled = true
+  }
 }
 `, context)
 }
@@ -363,6 +366,9 @@ resource "google_eventarc_google_api_source" "primary" {
   }
   logging_config {
     log_severity = "ALERT"
+  }
+  project_subscriptions {
+    list = ["projects/${google_project.project_update.number}"]
   }
   depends_on = [time_sleep.wait_propagate_iam_update]
 }
