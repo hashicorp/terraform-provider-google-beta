@@ -76,11 +76,11 @@ resource "google_tpu_v2_vm" "tpu" {
   provider = google-beta
 
   name        = "tf-test-tpu-%{random_suffix}"
-  zone        = "us-central1-c"
+  zone        = "us-east1-c"
   description = "Text description of the TPU."
 
-  runtime_version  = "tpu-vm-tf-2.13.0"
-  accelerator_type = "v2-8"
+  runtime_version  = "v2-alpha-tpuv5-lite"
+  accelerator_type = "v5litepod-1"
 
   scheduling_config {
     preemptible = true
@@ -112,8 +112,8 @@ resource "google_compute_disk" "disk" {
   name  = "tf-test-tpu-disk-%{random_suffix}"
   image = "debian-cloud/debian-13"
   size  = 10
-  type  = "pd-ssd"
-  zone  = "us-central1-c"
+  type  = "pd-balanced"
+  zone  = "us-east1-c"
 }
 `, context)
 }
@@ -126,11 +126,11 @@ resource "google_tpu_v2_vm" "tpu" {
   provider = google-beta
 
   name        = "tf-test-tpu-%{random_suffix}"
-  zone        = "us-central1-c"
+  zone        = "us-east1-c"
   description = "Text description of the TPU updated."
 
-  runtime_version  = "tpu-vm-tf-2.13.0"
-  accelerator_type = "v2-8"
+  runtime_version  = "v2-alpha-tpuv5-lite"
+  accelerator_type = "v5litepod-1"
 
   scheduling_config {
     preemptible = true
@@ -167,8 +167,8 @@ resource "google_compute_disk" "disk" {
   name  = "tf-test-tpu-disk-%{random_suffix}"
   image = "debian-cloud/debian-13"
   size  = 10
-  type  = "pd-ssd"
-  zone  = "us-central1-c"
+  type  = "pd-balanced"
+  zone  = "us-east1-c"
 }
 
 resource "google_compute_disk" "disk2" {
@@ -177,8 +177,8 @@ resource "google_compute_disk" "disk2" {
   name  = "tf-test-tpu-disk2-%{random_suffix}"
   image = "debian-cloud/debian-13"
   size  = 10
-  type  = "pd-ssd"
-  zone  = "us-central1-c"
+  type  = "pd-balanced"
+  zone  = "us-east1-c"
 }
 `, context)
 }
