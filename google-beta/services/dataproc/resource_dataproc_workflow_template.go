@@ -1098,6 +1098,15 @@ func DataprocWorkflowTemplatePlacementManagedClusterConfigSchema() *schema.Resou
 				Elem:        DataprocWorkflowTemplatePlacementManagedClusterConfigMasterConfigSchema(),
 			},
 
+			"master_flexible_config": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				ForceNew:    true,
+				Description: "Optional. The Compute Engine flexible config settings for the master instance in a cluster.",
+				MaxItems:    1,
+				Elem:        DataprocWorkflowTemplatePlacementManagedClusterConfigMasterFlexibleConfigSchema(),
+			},
+
 			"metastore_config": {
 				Type:        schema.TypeList,
 				Optional:    true,
@@ -1115,6 +1124,15 @@ func DataprocWorkflowTemplatePlacementManagedClusterConfigSchema() *schema.Resou
 				Description: "Optional. The Compute Engine config settings for additional worker instances in a cluster.",
 				MaxItems:    1,
 				Elem:        DataprocWorkflowTemplatePlacementManagedClusterConfigSecondaryWorkerConfigSchema(),
+			},
+
+			"secondary_worker_flexible_config": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				ForceNew:    true,
+				Description: "Optional. The Compute Engine flexible config settings for additional worker instances in a cluster.",
+				MaxItems:    1,
+				Elem:        DataprocWorkflowTemplatePlacementManagedClusterConfigSecondaryWorkerFlexibleConfigSchema(),
 			},
 
 			"security_config": {
@@ -1159,6 +1177,15 @@ func DataprocWorkflowTemplatePlacementManagedClusterConfigSchema() *schema.Resou
 				Description: "Optional. The Compute Engine config settings for worker instances in a cluster.",
 				MaxItems:    1,
 				Elem:        DataprocWorkflowTemplatePlacementManagedClusterConfigWorkerConfigSchema(),
+			},
+
+			"worker_flexible_config": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				ForceNew:    true,
+				Description: "Optional. The Compute Engine flexible config settings for worker instances in a cluster.",
+				MaxItems:    1,
+				Elem:        DataprocWorkflowTemplatePlacementManagedClusterConfigWorkerFlexibleConfigSchema(),
 			},
 		},
 	}
@@ -1229,6 +1256,15 @@ func DataprocWorkflowTemplatePlacementManagedClusterConfigGceClusterConfigSchema
 				ForceNew:    true,
 				Description: "The Compute Engine metadata entries to add to all instances (see [Project and instance metadata](https://cloud.google.com/compute/docs/storing-retrieving-metadata#project_and_instance_metadata)).",
 				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
+
+			"multi_zone_config": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				ForceNew:    true,
+				Description: "Optional. Multi-zone configuration for cluster instances.",
+				MaxItems:    1,
+				Elem:        DataprocWorkflowTemplatePlacementManagedClusterConfigGceClusterConfigMultiZoneConfigSchema(),
 			},
 
 			"network": {
@@ -1381,6 +1417,121 @@ func DataprocWorkflowTemplatePlacementManagedClusterConfigGceClusterConfigShield
 				Optional:    true,
 				ForceNew:    true,
 				Description: "Optional. Defines whether the instance have the vTPM enabled. Virtual Trusted Platform Module protects objects like keys, certificates and enables Measured Boot by performing the measurements needed to create a known good boot baseline, called the integrity policy baseline.",
+			},
+		},
+	}
+}
+
+func DataprocWorkflowTemplatePlacementManagedClusterConfigGceClusterConfigMultiZoneConfigSchema() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"target_shape": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				ForceNew:    true,
+				Description: "Optional. Specifies the target shape of the cluster. Possible values: TARGET_SHAPE_UNSPECIFIED, ANY",
+			},
+		},
+	}
+}
+
+func DataprocWorkflowTemplatePlacementManagedClusterConfigMasterFlexibleConfigSchema() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"boot_disk_size_gb": {
+				Type:        schema.TypeInt,
+				Optional:    true,
+				ForceNew:    true,
+				Description: "Optional. Size of the boot disk in GB for each instance in the instance group.",
+			},
+
+			"core_count": {
+				Type:        schema.TypeInt,
+				Optional:    true,
+				ForceNew:    true,
+				Description: "Optional. The core count for each instance in the instance group.",
+			},
+
+			"hardware_class": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				ForceNew:    true,
+				Description: "Optional. The hardware class of instances in the instance group. Possible values: HARDWARE_CLASS_UNSPECIFIED, STANDARD, PERFORMANCE",
+			},
+
+			"num_instances": {
+				Type:        schema.TypeInt,
+				Optional:    true,
+				ForceNew:    true,
+				Description: "Optional. Number of instances in the instance group.",
+			},
+		},
+	}
+}
+
+func DataprocWorkflowTemplatePlacementManagedClusterConfigWorkerFlexibleConfigSchema() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"boot_disk_size_gb": {
+				Type:        schema.TypeInt,
+				Optional:    true,
+				ForceNew:    true,
+				Description: "Optional. Size of the boot disk in GB for each instance in the instance group.",
+			},
+
+			"core_count": {
+				Type:        schema.TypeInt,
+				Optional:    true,
+				ForceNew:    true,
+				Description: "Optional. The core count for each instance in the instance group.",
+			},
+
+			"hardware_class": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				ForceNew:    true,
+				Description: "Optional. The hardware class of instances in the instance group. Possible values: HARDWARE_CLASS_UNSPECIFIED, STANDARD, PERFORMANCE",
+			},
+
+			"num_instances": {
+				Type:        schema.TypeInt,
+				Optional:    true,
+				ForceNew:    true,
+				Description: "Optional. Number of instances in the instance group.",
+			},
+		},
+	}
+}
+
+func DataprocWorkflowTemplatePlacementManagedClusterConfigSecondaryWorkerFlexibleConfigSchema() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"boot_disk_size_gb": {
+				Type:        schema.TypeInt,
+				Optional:    true,
+				ForceNew:    true,
+				Description: "Optional. Size of the boot disk in GB for each instance in the instance group.",
+			},
+
+			"core_count": {
+				Type:        schema.TypeInt,
+				Optional:    true,
+				ForceNew:    true,
+				Description: "Optional. The core count for each instance in the instance group.",
+			},
+
+			"hardware_class": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				ForceNew:    true,
+				Description: "Optional. The hardware class of instances in the instance group. Possible values: HARDWARE_CLASS_UNSPECIFIED, STANDARD, PERFORMANCE",
+			},
+
+			"num_instances": {
+				Type:        schema.TypeInt,
+				Optional:    true,
+				ForceNew:    true,
+				Description: "Optional. Number of instances in the instance group.",
 			},
 		},
 	}
@@ -3768,21 +3919,24 @@ func expandDataprocWorkflowTemplatePlacementManagedClusterConfig(o interface{}) 
 	}
 	obj := objArr[0].(map[string]interface{})
 	return &WorkflowTemplatePlacementManagedClusterConfig{
-		AutoscalingConfig:     expandDataprocWorkflowTemplatePlacementManagedClusterConfigAutoscalingConfig(obj["autoscaling_config"]),
-		EncryptionConfig:      expandDataprocWorkflowTemplatePlacementManagedClusterConfigEncryptionConfig(obj["encryption_config"]),
-		EndpointConfig:        expandDataprocWorkflowTemplatePlacementManagedClusterConfigEndpointConfig(obj["endpoint_config"]),
-		GceClusterConfig:      expandDataprocWorkflowTemplatePlacementManagedClusterConfigGceClusterConfig(obj["gce_cluster_config"]),
-		GkeClusterConfig:      expandDataprocWorkflowTemplatePlacementManagedClusterConfigGkeClusterConfig(obj["gke_cluster_config"]),
-		InitializationActions: expandDataprocWorkflowTemplatePlacementManagedClusterConfigInitializationActionsArray(obj["initialization_actions"]),
-		LifecycleConfig:       expandDataprocWorkflowTemplatePlacementManagedClusterConfigLifecycleConfig(obj["lifecycle_config"]),
-		MasterConfig:          expandDataprocWorkflowTemplatePlacementManagedClusterConfigMasterConfig(obj["master_config"]),
-		MetastoreConfig:       expandDataprocWorkflowTemplatePlacementManagedClusterConfigMetastoreConfig(obj["metastore_config"]),
-		SecondaryWorkerConfig: expandDataprocWorkflowTemplatePlacementManagedClusterConfigSecondaryWorkerConfig(obj["secondary_worker_config"]),
-		SecurityConfig:        expandDataprocWorkflowTemplatePlacementManagedClusterConfigSecurityConfig(obj["security_config"]),
-		SoftwareConfig:        expandDataprocWorkflowTemplatePlacementManagedClusterConfigSoftwareConfig(obj["software_config"]),
-		StagingBucket:         dcl.String(obj["staging_bucket"].(string)),
-		TempBucket:            dcl.String(obj["temp_bucket"].(string)),
-		WorkerConfig:          expandDataprocWorkflowTemplatePlacementManagedClusterConfigWorkerConfig(obj["worker_config"]),
+		AutoscalingConfig:             expandDataprocWorkflowTemplatePlacementManagedClusterConfigAutoscalingConfig(obj["autoscaling_config"]),
+		EncryptionConfig:              expandDataprocWorkflowTemplatePlacementManagedClusterConfigEncryptionConfig(obj["encryption_config"]),
+		EndpointConfig:                expandDataprocWorkflowTemplatePlacementManagedClusterConfigEndpointConfig(obj["endpoint_config"]),
+		GceClusterConfig:              expandDataprocWorkflowTemplatePlacementManagedClusterConfigGceClusterConfig(obj["gce_cluster_config"]),
+		GkeClusterConfig:              expandDataprocWorkflowTemplatePlacementManagedClusterConfigGkeClusterConfig(obj["gke_cluster_config"]),
+		InitializationActions:         expandDataprocWorkflowTemplatePlacementManagedClusterConfigInitializationActionsArray(obj["initialization_actions"]),
+		LifecycleConfig:               expandDataprocWorkflowTemplatePlacementManagedClusterConfigLifecycleConfig(obj["lifecycle_config"]),
+		MasterConfig:                  expandDataprocWorkflowTemplatePlacementManagedClusterConfigMasterConfig(obj["master_config"]),
+		MetastoreConfig:               expandDataprocWorkflowTemplatePlacementManagedClusterConfigMetastoreConfig(obj["metastore_config"]),
+		SecondaryWorkerConfig:         expandDataprocWorkflowTemplatePlacementManagedClusterConfigSecondaryWorkerConfig(obj["secondary_worker_config"]),
+		MasterFlexibleConfig:          expandDataprocWorkflowTemplatePlacementManagedClusterConfigMasterFlexibleConfig(obj["master_flexible_config"]),
+		WorkerFlexibleConfig:          expandDataprocWorkflowTemplatePlacementManagedClusterConfigWorkerFlexibleConfig(obj["worker_flexible_config"]),
+		SecondaryWorkerFlexibleConfig: expandDataprocWorkflowTemplatePlacementManagedClusterConfigSecondaryWorkerFlexibleConfig(obj["secondary_worker_flexible_config"]),
+		SecurityConfig:                expandDataprocWorkflowTemplatePlacementManagedClusterConfigSecurityConfig(obj["security_config"]),
+		SoftwareConfig:                expandDataprocWorkflowTemplatePlacementManagedClusterConfigSoftwareConfig(obj["software_config"]),
+		StagingBucket:                 dcl.String(obj["staging_bucket"].(string)),
+		TempBucket:                    dcl.String(obj["temp_bucket"].(string)),
+		WorkerConfig:                  expandDataprocWorkflowTemplatePlacementManagedClusterConfigWorkerConfig(obj["worker_config"]),
 	}
 }
 
@@ -3791,21 +3945,24 @@ func flattenDataprocWorkflowTemplatePlacementManagedClusterConfig(obj *WorkflowT
 		return nil
 	}
 	transformed := map[string]interface{}{
-		"autoscaling_config":      flattenDataprocWorkflowTemplatePlacementManagedClusterConfigAutoscalingConfig(obj.AutoscalingConfig),
-		"encryption_config":       flattenDataprocWorkflowTemplatePlacementManagedClusterConfigEncryptionConfig(obj.EncryptionConfig),
-		"endpoint_config":         flattenDataprocWorkflowTemplatePlacementManagedClusterConfigEndpointConfig(obj.EndpointConfig),
-		"gce_cluster_config":      flattenDataprocWorkflowTemplatePlacementManagedClusterConfigGceClusterConfig(obj.GceClusterConfig),
-		"gke_cluster_config":      flattenDataprocWorkflowTemplatePlacementManagedClusterConfigGkeClusterConfig(obj.GkeClusterConfig),
-		"initialization_actions":  flattenDataprocWorkflowTemplatePlacementManagedClusterConfigInitializationActionsArray(obj.InitializationActions),
-		"lifecycle_config":        flattenDataprocWorkflowTemplatePlacementManagedClusterConfigLifecycleConfig(obj.LifecycleConfig),
-		"master_config":           flattenDataprocWorkflowTemplatePlacementManagedClusterConfigMasterConfig(obj.MasterConfig),
-		"metastore_config":        flattenDataprocWorkflowTemplatePlacementManagedClusterConfigMetastoreConfig(obj.MetastoreConfig),
-		"secondary_worker_config": flattenDataprocWorkflowTemplatePlacementManagedClusterConfigSecondaryWorkerConfig(obj.SecondaryWorkerConfig),
-		"security_config":         flattenDataprocWorkflowTemplatePlacementManagedClusterConfigSecurityConfig(obj.SecurityConfig),
-		"software_config":         flattenDataprocWorkflowTemplatePlacementManagedClusterConfigSoftwareConfig(obj.SoftwareConfig),
-		"staging_bucket":          obj.StagingBucket,
-		"temp_bucket":             obj.TempBucket,
-		"worker_config":           flattenDataprocWorkflowTemplatePlacementManagedClusterConfigWorkerConfig(obj.WorkerConfig),
+		"autoscaling_config":               flattenDataprocWorkflowTemplatePlacementManagedClusterConfigAutoscalingConfig(obj.AutoscalingConfig),
+		"encryption_config":                flattenDataprocWorkflowTemplatePlacementManagedClusterConfigEncryptionConfig(obj.EncryptionConfig),
+		"endpoint_config":                  flattenDataprocWorkflowTemplatePlacementManagedClusterConfigEndpointConfig(obj.EndpointConfig),
+		"gce_cluster_config":               flattenDataprocWorkflowTemplatePlacementManagedClusterConfigGceClusterConfig(obj.GceClusterConfig),
+		"gke_cluster_config":               flattenDataprocWorkflowTemplatePlacementManagedClusterConfigGkeClusterConfig(obj.GkeClusterConfig),
+		"initialization_actions":           flattenDataprocWorkflowTemplatePlacementManagedClusterConfigInitializationActionsArray(obj.InitializationActions),
+		"lifecycle_config":                 flattenDataprocWorkflowTemplatePlacementManagedClusterConfigLifecycleConfig(obj.LifecycleConfig),
+		"master_config":                    flattenDataprocWorkflowTemplatePlacementManagedClusterConfigMasterConfig(obj.MasterConfig),
+		"master_flexible_config":           flattenDataprocWorkflowTemplatePlacementManagedClusterConfigMasterFlexibleConfig(obj.MasterFlexibleConfig),
+		"metastore_config":                 flattenDataprocWorkflowTemplatePlacementManagedClusterConfigMetastoreConfig(obj.MetastoreConfig),
+		"secondary_worker_config":          flattenDataprocWorkflowTemplatePlacementManagedClusterConfigSecondaryWorkerConfig(obj.SecondaryWorkerConfig),
+		"secondary_worker_flexible_config": flattenDataprocWorkflowTemplatePlacementManagedClusterConfigSecondaryWorkerFlexibleConfig(obj.SecondaryWorkerFlexibleConfig),
+		"security_config":                  flattenDataprocWorkflowTemplatePlacementManagedClusterConfigSecurityConfig(obj.SecurityConfig),
+		"software_config":                  flattenDataprocWorkflowTemplatePlacementManagedClusterConfigSoftwareConfig(obj.SoftwareConfig),
+		"staging_bucket":                   obj.StagingBucket,
+		"temp_bucket":                      obj.TempBucket,
+		"worker_config":                    flattenDataprocWorkflowTemplatePlacementManagedClusterConfigWorkerConfig(obj.WorkerConfig),
+		"worker_flexible_config":           flattenDataprocWorkflowTemplatePlacementManagedClusterConfigWorkerFlexibleConfig(obj.WorkerFlexibleConfig),
 	}
 
 	return []interface{}{transformed}
@@ -3903,6 +4060,7 @@ func expandDataprocWorkflowTemplatePlacementManagedClusterConfigGceClusterConfig
 	return &WorkflowTemplatePlacementManagedClusterConfigGceClusterConfig{
 		InternalIPOnly:          dcl.Bool(obj["internal_ip_only"].(bool)),
 		Metadata:                tpgresource.CheckStringMap(obj["metadata"]),
+		MultiZoneConfig:         expandDataprocWorkflowTemplatePlacementManagedClusterConfigGceClusterConfigMultiZoneConfig(obj["multi_zone_config"]),
 		Network:                 dcl.String(obj["network"].(string)),
 		NodeGroupAffinity:       expandDataprocWorkflowTemplatePlacementManagedClusterConfigGceClusterConfigNodeGroupAffinity(obj["node_group_affinity"]),
 		PrivateIPv6GoogleAccess: WorkflowTemplatePlacementManagedClusterConfigGceClusterConfigPrivateIPv6GoogleAccessEnumRef(obj["private_ipv6_google_access"].(string)),
@@ -3923,6 +4081,7 @@ func flattenDataprocWorkflowTemplatePlacementManagedClusterConfigGceClusterConfi
 	transformed := map[string]interface{}{
 		"internal_ip_only":           obj.InternalIPOnly,
 		"metadata":                   obj.Metadata,
+		"multi_zone_config":          flattenDataprocWorkflowTemplatePlacementManagedClusterConfigGceClusterConfigMultiZoneConfig(obj.MultiZoneConfig),
 		"network":                    obj.Network,
 		"node_group_affinity":        flattenDataprocWorkflowTemplatePlacementManagedClusterConfigGceClusterConfigNodeGroupAffinity(obj.NodeGroupAffinity),
 		"private_ipv6_google_access": obj.PrivateIPv6GoogleAccess,
@@ -4023,6 +4182,124 @@ func flattenDataprocWorkflowTemplatePlacementManagedClusterConfigGceClusterConfi
 
 	return []interface{}{transformed}
 
+}
+
+func expandDataprocWorkflowTemplatePlacementManagedClusterConfigGceClusterConfigMultiZoneConfig(o interface{}) *WorkflowTemplatePlacementManagedClusterConfigGceClusterConfigMultiZoneConfig {
+	if o == nil {
+		return EmptyWorkflowTemplatePlacementManagedClusterConfigGceClusterConfigMultiZoneConfig
+	}
+	objArr := o.([]interface{})
+	if len(objArr) == 0 || objArr[0] == nil {
+		return EmptyWorkflowTemplatePlacementManagedClusterConfigGceClusterConfigMultiZoneConfig
+	}
+	obj := objArr[0].(map[string]interface{})
+	return &WorkflowTemplatePlacementManagedClusterConfigGceClusterConfigMultiZoneConfig{
+		TargetShape: WorkflowTemplatePlacementManagedClusterConfigGceClusterConfigMultiZoneConfigTargetShapeEnumRef(obj["target_shape"].(string)),
+	}
+}
+
+func flattenDataprocWorkflowTemplatePlacementManagedClusterConfigGceClusterConfigMultiZoneConfig(obj *WorkflowTemplatePlacementManagedClusterConfigGceClusterConfigMultiZoneConfig) interface{} {
+	if obj == nil || obj.Empty() {
+		return nil
+	}
+	transformed := map[string]interface{}{
+		"target_shape": obj.TargetShape,
+	}
+
+	return []interface{}{transformed}
+}
+
+func expandDataprocWorkflowTemplatePlacementManagedClusterConfigMasterFlexibleConfig(o interface{}) *WorkflowTemplatePlacementManagedClusterConfigMasterFlexibleConfig {
+	if o == nil {
+		return EmptyWorkflowTemplatePlacementManagedClusterConfigMasterFlexibleConfig
+	}
+	objArr := o.([]interface{})
+	if len(objArr) == 0 || objArr[0] == nil {
+		return EmptyWorkflowTemplatePlacementManagedClusterConfigMasterFlexibleConfig
+	}
+	obj := objArr[0].(map[string]interface{})
+	return &WorkflowTemplatePlacementManagedClusterConfigMasterFlexibleConfig{
+		BootDiskSizeGb: dcl.Int64OrNil(int64(obj["boot_disk_size_gb"].(int))),
+		CoreCount:      dcl.Int64OrNil(int64(obj["core_count"].(int))),
+		HardwareClass:  WorkflowTemplatePlacementManagedClusterConfigMasterFlexibleConfigHardwareClassEnumRef(obj["hardware_class"].(string)),
+		NumInstances:   dcl.Int64OrNil(int64(obj["num_instances"].(int))),
+	}
+}
+
+func flattenDataprocWorkflowTemplatePlacementManagedClusterConfigMasterFlexibleConfig(obj *WorkflowTemplatePlacementManagedClusterConfigMasterFlexibleConfig) interface{} {
+	if obj == nil || obj.Empty() {
+		return nil
+	}
+	transformed := map[string]interface{}{
+		"boot_disk_size_gb": obj.BootDiskSizeGb,
+		"core_count":        obj.CoreCount,
+		"hardware_class":    obj.HardwareClass,
+		"num_instances":     obj.NumInstances,
+	}
+
+	return []interface{}{transformed}
+}
+
+func expandDataprocWorkflowTemplatePlacementManagedClusterConfigWorkerFlexibleConfig(o interface{}) *WorkflowTemplatePlacementManagedClusterConfigWorkerFlexibleConfig {
+	if o == nil {
+		return EmptyWorkflowTemplatePlacementManagedClusterConfigWorkerFlexibleConfig
+	}
+	objArr := o.([]interface{})
+	if len(objArr) == 0 || objArr[0] == nil {
+		return EmptyWorkflowTemplatePlacementManagedClusterConfigWorkerFlexibleConfig
+	}
+	obj := objArr[0].(map[string]interface{})
+	return &WorkflowTemplatePlacementManagedClusterConfigWorkerFlexibleConfig{
+		BootDiskSizeGb: dcl.Int64OrNil(int64(obj["boot_disk_size_gb"].(int))),
+		CoreCount:      dcl.Int64OrNil(int64(obj["core_count"].(int))),
+		HardwareClass:  WorkflowTemplatePlacementManagedClusterConfigWorkerFlexibleConfigHardwareClassEnumRef(obj["hardware_class"].(string)),
+		NumInstances:   dcl.Int64OrNil(int64(obj["num_instances"].(int))),
+	}
+}
+
+func flattenDataprocWorkflowTemplatePlacementManagedClusterConfigWorkerFlexibleConfig(obj *WorkflowTemplatePlacementManagedClusterConfigWorkerFlexibleConfig) interface{} {
+	if obj == nil || obj.Empty() {
+		return nil
+	}
+	transformed := map[string]interface{}{
+		"boot_disk_size_gb": obj.BootDiskSizeGb,
+		"core_count":        obj.CoreCount,
+		"hardware_class":    obj.HardwareClass,
+		"num_instances":     obj.NumInstances,
+	}
+
+	return []interface{}{transformed}
+}
+
+func expandDataprocWorkflowTemplatePlacementManagedClusterConfigSecondaryWorkerFlexibleConfig(o interface{}) *WorkflowTemplatePlacementManagedClusterConfigSecondaryWorkerFlexibleConfig {
+	if o == nil {
+		return EmptyWorkflowTemplatePlacementManagedClusterConfigSecondaryWorkerFlexibleConfig
+	}
+	objArr := o.([]interface{})
+	if len(objArr) == 0 || objArr[0] == nil {
+		return EmptyWorkflowTemplatePlacementManagedClusterConfigSecondaryWorkerFlexibleConfig
+	}
+	obj := objArr[0].(map[string]interface{})
+	return &WorkflowTemplatePlacementManagedClusterConfigSecondaryWorkerFlexibleConfig{
+		BootDiskSizeGb: dcl.Int64OrNil(int64(obj["boot_disk_size_gb"].(int))),
+		CoreCount:      dcl.Int64OrNil(int64(obj["core_count"].(int))),
+		HardwareClass:  WorkflowTemplatePlacementManagedClusterConfigSecondaryWorkerFlexibleConfigHardwareClassEnumRef(obj["hardware_class"].(string)),
+		NumInstances:   dcl.Int64OrNil(int64(obj["num_instances"].(int))),
+	}
+}
+
+func flattenDataprocWorkflowTemplatePlacementManagedClusterConfigSecondaryWorkerFlexibleConfig(obj *WorkflowTemplatePlacementManagedClusterConfigSecondaryWorkerFlexibleConfig) interface{} {
+	if obj == nil || obj.Empty() {
+		return nil
+	}
+	transformed := map[string]interface{}{
+		"boot_disk_size_gb": obj.BootDiskSizeGb,
+		"core_count":        obj.CoreCount,
+		"hardware_class":    obj.HardwareClass,
+		"num_instances":     obj.NumInstances,
+	}
+
+	return []interface{}{transformed}
 }
 
 func expandDataprocWorkflowTemplatePlacementManagedClusterConfigGkeClusterConfig(o interface{}) *WorkflowTemplatePlacementManagedClusterConfigGkeClusterConfig {
