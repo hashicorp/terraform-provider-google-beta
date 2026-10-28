@@ -2169,6 +2169,7 @@ func resourceSqlDatabaseInstanceCreate(d *schema.ResourceData, meta interface{})
 			return err
 		}
 	}
+
 	if d.HasChange("blue_green_deployment") {
 		if err := handleBlueGreenDeploymentUpdate(d, config, project, region, d.Timeout(schema.TimeoutCreate), userAgent); err != nil {
 			return err
@@ -2892,6 +2893,7 @@ func resourceSqlDatabaseInstanceUpdate(d *schema.ResourceData, meta interface{})
 			}
 		}
 	}
+
 	if !isBlueGreenSwitchover(d) {
 		var op *sqladmin.Operation
 		var instance *sqladmin.DatabaseInstance
@@ -3511,6 +3513,7 @@ func resourceSqlDatabaseInstanceDelete(d *schema.ResourceData, meta interface{})
 	if d.Get("deletion_protection").(bool) {
 		return fmt.Errorf("Error, failed to delete instance because deletion_protection is set to true. Set it to false to proceed with instance deletion")
 	}
+
 	if bgdStateMap := getExistingBgdStateMap(d); bgdStateMap != nil {
 		deploymentName, _ := bgdStateMap["deployment_name"].(string)
 		deleteOldSourceCfg, _ := bgdStateMap["delete_old_source_on_destroy"].(bool)
@@ -4403,6 +4406,7 @@ func normalizeDRReplicaName(drReplicaName, project string) string {
 	}
 	return fmt.Sprintf("%s:%s", project, drReplicaName)
 }
+
 func blueGreenDeploymentCustomizeDiff(_ context.Context, d *schema.ResourceDiff, meta interface{}) error {
 	if d.Id() != "" && d.HasChange("database_version") {
 		if _, n := d.GetChange("blue_green_deployment"); len(n.([]interface{})) > 0 && n.([]interface{})[0] != nil {
