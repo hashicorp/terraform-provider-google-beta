@@ -5295,6 +5295,7 @@ func TestAccSqlDatabaseInstance_editionUpdateForEnhancedBackupTierInstance(t *te
 		},
 	})
 }
+
 func TestAccSqlDatabaseInstance_blueGreenDeployment_mvuSwitchover(t *testing.T) {
 	t.Parallel()
 
@@ -11085,6 +11086,7 @@ resource "google_sql_database_instance" "instance" {
 }
 `, instanceName, enforce)
 }
+
 func testAccSqlDatabaseInstanceCaptureAttr(resourceName, attrName string, target *string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[resourceName]
