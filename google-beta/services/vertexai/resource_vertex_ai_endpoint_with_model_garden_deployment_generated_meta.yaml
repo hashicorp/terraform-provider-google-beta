@@ -11,6 +11,7 @@ autogen_version: 1
 fields:
     - api_field: deployConfig.dedicatedResources.autoscalingMetricSpecs.metricName
     - api_field: deployConfig.dedicatedResources.autoscalingMetricSpecs.target
+    - api_field: deployConfig.dedicatedResources.initialReplicaCount
     - api_field: deployConfig.dedicatedResources.machineSpec.acceleratorCount
     - api_field: deployConfig.dedicatedResources.machineSpec.acceleratorType
     - api_field: deployConfig.dedicatedResources.machineSpec.machineType
@@ -22,6 +23,8 @@ fields:
     - api_field: deployConfig.dedicatedResources.maxReplicaCount
     - api_field: deployConfig.dedicatedResources.minReplicaCount
     - api_field: deployConfig.dedicatedResources.requiredReplicaCount
+    - api_field: deployConfig.dedicatedResources.scaleToZeroSpec.idleScaledownPeriod
+    - api_field: deployConfig.dedicatedResources.scaleToZeroSpec.minScaleupPeriod
     - api_field: deployConfig.dedicatedResources.spot
     - api_field: deployConfig.fastTryoutEnabled
     - api_field: deployConfig.systemLabels
