@@ -61,9 +61,10 @@ func TestAccServiceUsageConsumerQuotaOverride_consumerQuotaOverrideExample(t *te
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"org_id":        envvar.GetTestOrgFromEnv(t),
-		"project_id":    "quota" + randomSuffix,
-		"random_suffix": randomSuffix,
+		"org_id":         envvar.GetTestOrgFromEnv(t),
+		"override_value": 95,
+		"project_id":     "quota" + randomSuffix,
+		"random_suffix":  randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -106,7 +107,7 @@ resource "google_service_usage_consumer_quota_override" "override" {
   service        = "servicemanagement.googleapis.com"
   metric         = urlencode("servicemanagement.googleapis.com/default_requests")
   limit          = urlencode("/min/project")
-  override_value = "95"
+  override_value = "%{override_value}"
   force          = true
 }
 `, context)
@@ -118,9 +119,10 @@ func TestAccServiceUsageConsumerQuotaOverride_consumerQuotaOverrideZeroValueExam
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"org_id":        envvar.GetTestOrgFromEnv(t),
-		"project_id":    "quota" + randomSuffix,
-		"random_suffix": randomSuffix,
+		"org_id":         envvar.GetTestOrgFromEnv(t),
+		"override_value": 0,
+		"project_id":     "quota" + randomSuffix,
+		"random_suffix":  randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -163,7 +165,7 @@ resource "google_service_usage_consumer_quota_override" "override" {
   service        = "servicemanagement.googleapis.com"
   metric         = urlencode("servicemanagement.googleapis.com/default_requests")
   limit          = urlencode("/min/project")
-  override_value = "0"
+  override_value = "%{override_value}"
   force          = true
 }
 `, context)

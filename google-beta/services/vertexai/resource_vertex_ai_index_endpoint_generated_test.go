@@ -144,8 +144,10 @@ func TestAccVertexAIIndexEndpoint_vertexAiIndexEndpointWithPscExample(t *testing
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"index_endpoint_display_name": "tf-test-sample-endpoint" + randomSuffix,
-		"random_suffix":               randomSuffix,
+		"enable_private_service_connect": true,
+		"index_endpoint_display_name":    "tf-test-sample-endpoint" + randomSuffix,
+		"project_allowlist":              "[data.google_project.project.name]",
+		"random_suffix":                  randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -183,10 +185,8 @@ resource "google_vertex_ai_index_endpoint" "index_endpoint" {
   }
 
   private_service_connect_config {
-    enable_private_service_connect = true
-    project_allowlist = [
-        data.google_project.project.name,
-    ]
+    enable_private_service_connect = %{enable_private_service_connect}
+    project_allowlist              = %{project_allowlist}
   }
 }
 
@@ -200,8 +200,10 @@ func TestAccVertexAIIndexEndpoint_vertexAiIndexEndpointWithFalsePscExample(t *te
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"index_endpoint_display_name": "tf-test-sample-endpoint" + randomSuffix,
-		"random_suffix":               randomSuffix,
+		"enable_private_service_connect": false,
+		"index_endpoint_display_name":    "tf-test-sample-endpoint" + randomSuffix,
+		"project_allowlist":              nil,
+		"random_suffix":                  randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -227,9 +229,12 @@ resource "google_vertex_ai_index_endpoint" "index_endpoint" {
   }
 
   private_service_connect_config {
-    enable_private_service_connect = false
+    enable_private_service_connect = %{enable_private_service_connect}
+    project_allowlist              = %{project_allowlist}
   }
 }
+
+data "google_project" "project" {}
 `, context)
 }
 
