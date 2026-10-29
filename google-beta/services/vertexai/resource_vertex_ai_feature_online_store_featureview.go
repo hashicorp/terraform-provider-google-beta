@@ -283,7 +283,6 @@ To explicitly set a timezone to the cron tab, apply a prefix in the cron tab: "C
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{},
 							},
-							ExactlyOneOf: []string{},
 						},
 						"crowding_column": {
 							Type:        schema.TypeString,
@@ -325,7 +324,6 @@ For details on allowed values, see the [API documentation](https://cloud.google.
 									},
 								},
 							},
-							ExactlyOneOf: []string{},
 						},
 					},
 				},

@@ -600,7 +600,6 @@ func ResourceVertexAIReasoningEngine() *schema.Resource {
 																		},
 																	},
 																},
-																ExactlyOneOf: []string{},
 															},
 														},
 													},
@@ -741,10 +740,9 @@ minute-level granularity.`,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"default_ttl": {
-													Type:         schema.TypeString,
-													Optional:     true,
-													Description:  `The default TTL duration of the memories in the Memory Bank.`,
-													ExactlyOneOf: []string{},
+													Type:        schema.TypeString,
+													Optional:    true,
+													Description: `The default TTL duration of the memories in the Memory Bank.`,
 												},
 												"granular_ttl_config": {
 													Type:        schema.TypeList,
