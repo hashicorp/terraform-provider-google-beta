@@ -86,6 +86,17 @@ func TestAccVertexAIModelDevelopmentCluster_vertexAiModelDevelopmentClusterBasic
 		"random_suffix":                randomSuffix,
 	}
 
+	context_2 := map[string]interface{}{
+		"data_filestore_name":          "tf-test-mdc-data" + randomSuffix,
+		"filestore_name":               "tf-test-mdc-home" + randomSuffix,
+		"firewall_name":                "tf-test-mdc-fw" + randomSuffix,
+		"model_development_cluster_id": "tfgen" + randomSuffix[:5],
+		"network_name":                 "tf-test-mdc-net" + randomSuffix,
+		"reservation_name":             "tf-test-mdc-res" + randomSuffix,
+		"subnetwork_name":              "tf-test-mdc-subnet" + randomSuffix,
+		"random_suffix":                randomSuffix,
+	}
+
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
@@ -126,6 +137,26 @@ func TestAccVertexAIModelDevelopmentCluster_vertexAiModelDevelopmentClusterBasic
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
+			{
+				Config: testAccVertexAIModelDevelopmentCluster_vertexAiModelDevelopmentClusterBasicExample(context_2),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_vertex_ai_model_development_cluster.default", plancheck.ResourceActionUpdate),
+					},
+				},
+			},
+			{
+				ResourceName:            "google_vertex_ai_model_development_cluster.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"labels", "model_development_cluster_id", "region", "terraform_labels"},
+			},
+			{
+				ResourceName:       "google_vertex_ai_model_development_cluster.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
@@ -146,7 +177,7 @@ resource "google_compute_subnetwork" "subnet" {
   provider                 = google-beta
   name                     = "%{subnetwork_name}"
   ip_cidr_range            = "10.0.0.0/24"
-  region                   = "us-central1"
+  region                   = "us-east4"
   network                  = google_compute_network.net.id
   private_ip_google_access = true
 }
@@ -174,7 +205,7 @@ resource "google_compute_firewall" "internal" {
 resource "google_filestore_instance" "home" {
   provider = google-beta
   name     = "%{filestore_name}"
-  location = "us-central1-b"
+  location = "us-east4-b"
   tier     = "BASIC_HDD"
 
   file_shares {
@@ -191,7 +222,7 @@ resource "google_filestore_instance" "home" {
 resource "google_filestore_instance" "data" {
   provider = google-beta
   name     = "%{data_filestore_name}"
-  location = "us-central1-b"
+  location = "us-east4-b"
   tier     = "BASIC_HDD"
 
   file_shares {
@@ -208,7 +239,7 @@ resource "google_filestore_instance" "data" {
 resource "google_compute_reservation" "res" {
   provider                      = google-beta
   name                          = "%{reservation_name}"
-  zone                          = "us-central1-b"
+  zone                          = "us-east4-b"
   specific_reservation_required = true
 
   specific_reservation {
@@ -221,7 +252,7 @@ resource "google_compute_reservation" "res" {
 
 resource "google_vertex_ai_model_development_cluster" "default" {
   provider                     = google-beta
-  region                       = "us-central1"
+  region                       = "us-east4"
   model_development_cluster_id = "%{model_development_cluster_id}"
   display_name                 = "tftest"
   deletion_policy              = "DELETE"
@@ -282,7 +313,7 @@ resource "google_vertex_ai_model_development_cluster" "default" {
 
   node_pools {
     id                 = "compute"
-    zone               = "us-central1-b"
+    zone               = "us-east4-b"
     provisioning_model = "ON_DEMAND"
     node_image         = "projects/clusterdirector-public-images/global/images/family/common-ubuntu-2204-amd64-nvidia-580-slurm-2505-v20251113"
     startup_script     = "#!/bin/bash\necho hello"
@@ -310,7 +341,7 @@ resource "google_vertex_ai_model_development_cluster" "default" {
 
   node_pools {
     id                      = "flexpool"
-    zone                    = "us-central1-b"
+    zone                    = "us-east4-b"
     provisioning_model      = "FLEX_START"
     flex_start_max_duration = "3600s"
     node_image              = "projects/clusterdirector-public-images/global/images/family/common-ubuntu-2204-amd64-nvidia-580-slurm-2505-v20251113"
@@ -339,7 +370,7 @@ resource "google_vertex_ai_model_development_cluster" "default" {
 
   node_pools {
     id                 = "login"
-    zone               = "us-central1-b"
+    zone               = "us-east4-b"
     provisioning_model = "ON_DEMAND"
     node_image         = "projects/clusterdirector-public-images/global/images/family/common-ubuntu-2204-amd64-nvidia-580-slurm-2505-v20251113"
     startup_script     = "#!/bin/bash\necho hello"
@@ -367,7 +398,7 @@ resource "google_vertex_ai_model_development_cluster" "default" {
 
   node_pools {
     id                 = "respool"
-    zone               = "us-central1-b"
+    zone               = "us-east4-b"
     provisioning_model = "RESERVATION"
     node_image         = "projects/clusterdirector-public-images/global/images/family/common-ubuntu-2204-amd64-nvidia-580-slurm-2505-v20251113"
     startup_script     = "#!/bin/bash\necho hello"
@@ -416,7 +447,7 @@ resource "google_compute_subnetwork" "subnet" {
   provider                 = google-beta
   name                     = "%{subnetwork_name}"
   ip_cidr_range            = "10.0.0.0/24"
-  region                   = "us-central1"
+  region                   = "us-east4"
   network                  = google_compute_network.net.id
   private_ip_google_access = true
 }
@@ -444,7 +475,7 @@ resource "google_compute_firewall" "internal" {
 resource "google_filestore_instance" "home" {
   provider = google-beta
   name     = "%{filestore_name}"
-  location = "us-central1-b"
+  location = "us-east4-b"
   tier     = "BASIC_HDD"
 
   file_shares {
@@ -461,7 +492,7 @@ resource "google_filestore_instance" "home" {
 resource "google_filestore_instance" "data" {
   provider = google-beta
   name     = "%{data_filestore_name}"
-  location = "us-central1-b"
+  location = "us-east4-b"
   tier     = "BASIC_HDD"
 
   file_shares {
@@ -478,7 +509,7 @@ resource "google_filestore_instance" "data" {
 resource "google_compute_reservation" "res" {
   provider                      = google-beta
   name                          = "%{reservation_name}"
-  zone                          = "us-central1-b"
+  zone                          = "us-east4-b"
   specific_reservation_required = true
 
   specific_reservation {
@@ -491,7 +522,7 @@ resource "google_compute_reservation" "res" {
 
 resource "google_vertex_ai_model_development_cluster" "default" {
   provider                     = google-beta
-  region                       = "us-central1"
+  region                       = "us-east4"
   model_development_cluster_id = "%{model_development_cluster_id}"
   display_name                 = "tftest-updated"
   deletion_policy              = "DELETE"
@@ -551,7 +582,7 @@ resource "google_vertex_ai_model_development_cluster" "default" {
 
       partitions {
         id            = "main"
-        node_pool_ids = ["compute", "respool"]
+        node_pool_ids = ["compute", "compute2", "respool"]
         config = {
           PriorityTier = "20"
         }
@@ -569,7 +600,7 @@ resource "google_vertex_ai_model_development_cluster" "default" {
 
   node_pools {
     id                 = "compute"
-    zone               = "us-central1-b"
+    zone               = "us-east4-b"
     provisioning_model = "ON_DEMAND"
     node_image         = "projects/clusterdirector-public-images/global/images/family/common-ubuntu-2204-amd64-nvidia-580-slurm-2505-v20251113"
     startup_script     = "#!/bin/bash\necho hello-updated"
@@ -597,8 +628,37 @@ resource "google_vertex_ai_model_development_cluster" "default" {
   }
 
   node_pools {
+    id                 = "compute2"
+    zone               = "us-east4-b"
+    provisioning_model = "ON_DEMAND"
+    node_image         = "projects/clusterdirector-public-images/global/images/family/common-ubuntu-2204-amd64-nvidia-580-slurm-2505-v20251113"
+    startup_script     = "#!/bin/bash\necho hello-updated"
+    enable_public_ips  = true
+    filestores         = [google_filestore_instance.data.id]
+
+    labels = {
+      pool = "compute2"
+      tier = "updated"
+    }
+
+    boot_disk {
+      boot_disk_size_gb = 100
+      boot_disk_type    = "pd-ssd"
+    }
+
+    machine_spec {
+      machine_type = "n2-standard-4"
+    }
+
+    scaling_spec {
+      min_node_count = 0
+      max_node_count = 1
+    }
+  }
+
+  node_pools {
     id                      = "flexpool"
-    zone                    = "us-central1-b"
+    zone                    = "us-east4-b"
     provisioning_model      = "FLEX_START"
     flex_start_max_duration = "7200s"
     node_image              = "projects/clusterdirector-public-images/global/images/family/common-ubuntu-2204-amd64-nvidia-580-slurm-2505-v20251113"
@@ -628,7 +688,7 @@ resource "google_vertex_ai_model_development_cluster" "default" {
 
   node_pools {
     id                 = "login"
-    zone               = "us-central1-b"
+    zone               = "us-east4-b"
     provisioning_model = "ON_DEMAND"
     node_image         = "projects/clusterdirector-public-images/global/images/family/common-ubuntu-2204-amd64-nvidia-580-slurm-2505-v20251113"
     startup_script     = "#!/bin/bash\necho hello-updated"
@@ -657,7 +717,7 @@ resource "google_vertex_ai_model_development_cluster" "default" {
 
   node_pools {
     id                 = "respool"
-    zone               = "us-central1-b"
+    zone               = "us-east4-b"
     provisioning_model = "RESERVATION"
     node_image         = "projects/clusterdirector-public-images/global/images/family/common-ubuntu-2204-amd64-nvidia-580-slurm-2505-v20251113"
     startup_script     = "#!/bin/bash\necho hello-updated"
