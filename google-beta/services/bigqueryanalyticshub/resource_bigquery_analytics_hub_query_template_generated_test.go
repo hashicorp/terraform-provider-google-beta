@@ -96,7 +96,7 @@ func TestAccBigqueryAnalyticsHubQueryTemplate_bigqueryAnalyticshubQuerytemplateB
 			},
 			{
 				ResourceName:       "google_bigquery_analytics_hub_query_template.querytemplate",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -116,7 +116,7 @@ func TestAccBigqueryAnalyticsHubQueryTemplate_bigqueryAnalyticshubQuerytemplateB
 			},
 			{
 				ResourceName:       "google_bigquery_analytics_hub_query_template.querytemplate",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -187,7 +187,7 @@ func TestAccBigqueryAnalyticsHubQueryTemplate_bigqueryAnalyticshubQuerytemplateC
 			},
 			{
 				ResourceName:       "google_bigquery_analytics_hub_query_template.querytemplate",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
