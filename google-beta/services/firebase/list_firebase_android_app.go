@@ -122,7 +122,7 @@ func ListFirebaseAndroidApps(config *transport_tpg.Config,
 		}
 	}
 
-	url, err := tpgresource.ReplaceVars(resourceData, config, "{{FirebaseBasePath}}projects/{{project}}/androidApps")
+	url, err := tpgresource.ReplaceVars(resourceData, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/androidApps")
 	if err != nil {
 		return err
 	}

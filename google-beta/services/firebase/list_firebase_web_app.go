@@ -122,7 +122,7 @@ func ListFirebaseWebApps(config *transport_tpg.Config,
 		}
 	}
 
-	url, err := tpgresource.ReplaceVars(resourceData, config, "{{FirebaseBasePath}}projects/{{project}}/webApps")
+	url, err := tpgresource.ReplaceVars(resourceData, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/webApps")
 	if err != nil {
 		return err
 	}

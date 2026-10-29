@@ -551,7 +551,7 @@ func resourceSaasRuntimeUnitOperationCreate(d *schema.ResourceData, meta interfa
 		err := transport_tpg.Retry(transport_tpg.RetryOptions{
 			Timeout: d.Timeout(schema.TimeoutCreate),
 			RetryFunc: func() error {
-				url, err := tpgresource.ReplaceVars(d, config, "{{SaasRuntimeBasePath}}projects/{{project}}/locations/{{location}}/unitOperations/{{unit_operation_id}}")
+				url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/{{location}}/unitOperations/{{unit_operation_id}}")
 				if err != nil {
 					return err
 				}

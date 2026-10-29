@@ -598,7 +598,7 @@ func resourceFirebaseAndroidAppDelete(d *schema.ResourceData, meta interface{}) 
 	}
 	billingProject = project
 
-	url, err := tpgresource.ReplaceVars(d, config, "{{FirebaseBasePath}}{{name}}:remove")
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"{{name}}:remove")
 	if err != nil {
 		return err
 	}

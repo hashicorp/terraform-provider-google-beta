@@ -275,7 +275,7 @@ func (u *VertexAIEndpointIamUpdater) SetResourceIamPolicy(policy *cloudresourcem
 }
 
 func (u *VertexAIEndpointIamUpdater) qualifyEndpointUrl(methodIdentifier string) (string, error) {
-	urlTemplate := fmt.Sprintf("{{VertexAIBasePath}}%s:%s", fmt.Sprintf("projects/%s/locations/%s/endpoints/%s", u.project, u.location, u.endpoint), methodIdentifier)
+	urlTemplate := fmt.Sprintf(transport_tpg.BaseUrl(Product, u.Config)+"%s:%s", fmt.Sprintf("projects/%s/locations/%s/endpoints/%s", u.project, u.location, u.endpoint), methodIdentifier)
 	url, err := tpgresource.ReplaceVars(u.d, u.Config, urlTemplate)
 	if err != nil {
 		return "", err

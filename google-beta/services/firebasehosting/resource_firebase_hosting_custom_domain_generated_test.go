@@ -272,7 +272,7 @@ func testAccCheckFirebaseHostingCustomDomainDestroyProducer(t *testing.T) func(s
 
 			config := acctest.GoogleProviderConfig(t)
 
-			url, err := tpgresource.ReplaceVarsForTest(config, rs, "{{FirebaseHostingBasePath}}projects/{{project}}/sites/{{site_id}}/customDomains/{{custom_domain}}")
+			url, err := tpgresource.ReplaceVarsForTest(config, rs, transport_tpg.BaseUrl(firebasehosting.Product, config)+"projects/{{project}}/sites/{{site_id}}/customDomains/{{custom_domain}}")
 			if err != nil {
 				return err
 			}

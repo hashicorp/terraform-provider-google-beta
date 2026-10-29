@@ -251,7 +251,7 @@ func (u *RuntimeConfigConfigIamUpdater) SetResourceIamPolicy(policy *cloudresour
 }
 
 func (u *RuntimeConfigConfigIamUpdater) qualifyConfigUrl(methodIdentifier string) (string, error) {
-	urlTemplate := fmt.Sprintf("{{RuntimeConfigBasePath}}%s:%s", fmt.Sprintf("projects/%s/configs/%s", u.project, u.config), methodIdentifier)
+	urlTemplate := fmt.Sprintf(transport_tpg.BaseUrl(Product, u.Config)+"%s:%s", fmt.Sprintf("projects/%s/configs/%s", u.project, u.config), methodIdentifier)
 	url, err := tpgresource.ReplaceVars(u.d, u.Config, urlTemplate)
 	if err != nil {
 		return "", err
