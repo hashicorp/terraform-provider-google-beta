@@ -61,13 +61,17 @@ func TestAccChronicleSoarDomain_chronicleSoardomainUpdateExample(t *testing.T) {
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"chronicle_id":  envvar.GetTestChronicleInstanceIdFromEnv(t),
-		"random_suffix": randomSuffix,
+		"chronicle_id":      envvar.GetTestChronicleInstanceIdFromEnv(t),
+		"display_name":      "test.com",
+		"environments_json": "[\\\"Default Environment\\\"]",
+		"random_suffix":     randomSuffix,
 	}
 
 	context_1 := map[string]interface{}{
-		"chronicle_id":  envvar.GetTestChronicleInstanceIdFromEnv(t),
-		"random_suffix": randomSuffix,
+		"chronicle_id":      envvar.GetTestChronicleInstanceIdFromEnv(t),
+		"display_name":      "test1.com",
+		"environments_json": "[\\\"*\\\"]",
+		"random_suffix":     randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -91,7 +95,7 @@ func TestAccChronicleSoarDomain_chronicleSoardomainUpdateExample(t *testing.T) {
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 			{
-				Config: testAccChronicleSoarDomain_chronicleSoardomainFullExample(context_1),
+				Config: testAccChronicleSoarDomain_chronicleSoardomainBasicExample(context_1),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
 						plancheck.ExpectResourceAction("google_chronicle_soar_domain.example", plancheck.ResourceActionUpdate),
@@ -121,21 +125,8 @@ resource "google_chronicle_soar_domain" "example" {
   location = "us"
   instance = "%{chronicle_id}"
   
-  display_name = "test.com"
-  environments_json = "[\"Default Environment\"]"
-}
-`, context)
-}
-
-func testAccChronicleSoarDomain_chronicleSoardomainFullExample(context map[string]interface{}) string {
-	return acctest.Nprintf(`
-resource "google_chronicle_soar_domain" "example" {
-  provider = google-beta
-  location = "us"
-  instance = "%{chronicle_id}"
-  
-  display_name = "test1.com"
-  environments_json = "[\"*\"]"
+  display_name = "%{display_name}"
+  environments_json = "%{environments_json}"
 }
 `, context)
 }
