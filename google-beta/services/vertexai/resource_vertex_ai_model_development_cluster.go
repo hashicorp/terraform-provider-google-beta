@@ -54,6 +54,191 @@ import (
 	"google.golang.org/api/googleapi"
 )
 
+func vertexAiModelDevelopmentClusterGkeVersionMatches(actual, target string) bool {
+	if actual == target {
+		return true
+	}
+	if actual == "" || target == "" {
+		return false
+	}
+
+	targetParts := strings.SplitN(target, "-", 2)
+	targetVer := targetParts[0]
+	hasTargetSuffix := len(targetParts) > 1
+	targetSuffix := ""
+	if hasTargetSuffix {
+		targetSuffix = targetParts[1]
+	}
+
+	targetDots := strings.Split(targetVer, ".")
+	if len(targetDots) < 2 {
+		return actual == target
+	}
+	targetMajor := targetDots[0]
+	targetMinor := targetDots[1]
+	hasTargetPatch := len(targetDots) >= 3
+	targetPatch := ""
+	if hasTargetPatch {
+		targetPatch = targetDots[2]
+	}
+
+	actualParts := strings.SplitN(actual, "-", 2)
+	actualVer := actualParts[0]
+	hasActualSuffix := len(actualParts) > 1
+	actualSuffix := ""
+	if hasActualSuffix {
+		actualSuffix = actualParts[1]
+	}
+
+	actualDots := strings.Split(actualVer, ".")
+	if len(actualDots) < 2 {
+		return actual == target
+	}
+	actualMajor := actualDots[0]
+	actualMinor := actualDots[1]
+	hasActualPatch := len(actualDots) >= 3
+	actualPatch := ""
+	if hasActualPatch {
+		actualPatch = actualDots[2]
+	}
+
+	if targetMajor != actualMajor || targetMinor != actualMinor {
+		return false
+	}
+
+	if hasTargetPatch {
+		if !hasActualPatch || targetPatch != actualPatch {
+			return false
+		}
+	}
+
+	if hasTargetSuffix {
+		if !hasActualSuffix || targetSuffix != actualSuffix {
+			return false
+		}
+	}
+
+	return true
+}
+
+func vertexAiModelDevelopmentClusterGkeVersionDiffSuppress(k, old, new string, d *schema.ResourceData) bool {
+	if new == "-" {
+		if strings.Contains(k, "node_pool_versions.") {
+			if old == "" || d == nil {
+				return false
+			}
+			oldCp, newCp := d.GetChange("orchestrator_spec.0.kubernetes_spec.0.control_plane_version")
+			oldCpStr, _ := oldCp.(string)
+			newCpStr, _ := newCp.(string)
+			if oldCpStr == "" {
+				return false
+			}
+			if newCpStr == "" || newCpStr == "-" || vertexAiModelDevelopmentClusterGkeVersionMatches(oldCpStr, newCpStr) {
+				return old == oldCpStr
+			}
+			return false
+		}
+		return old != ""
+	}
+	return vertexAiModelDevelopmentClusterGkeVersionMatches(old, new)
+}
+
+type vertexAiModelDevelopmentClusterGetter interface {
+	GetOk(string) (interface{}, bool)
+	GetRawConfig() cty.Value
+}
+
+func vertexAiModelDevelopmentClusterNodePoolVersionsConfigured(d vertexAiModelDevelopmentClusterGetter) bool {
+	if d == nil {
+		return false
+	}
+	rawConfig := d.GetRawConfig()
+	if rawConfig.IsNull() {
+		rawVersions, ok := d.GetOk("orchestrator_spec.0.kubernetes_spec.0.node_pool_versions")
+		if !ok {
+			return false
+		}
+		versionsMap, ok := rawVersions.(map[string]interface{})
+		return ok && len(versionsMap) > 0
+	}
+	npv, err := cty.GetAttrPath("orchestrator_spec").IndexInt(0).GetAttr("kubernetes_spec").IndexInt(0).GetAttr("node_pool_versions").Apply(rawConfig)
+	if err != nil || npv.IsNull() || !npv.IsKnown() {
+		return false
+	}
+	return npv.CanIterateElements() && npv.LengthInt() > 0
+}
+
+func validateVertexAIModelDevelopmentClusterNodePoolVersions(d vertexAiModelDevelopmentClusterGetter) error {
+	if !vertexAiModelDevelopmentClusterNodePoolVersionsConfigured(d) {
+		return nil
+	}
+	rawVersions, ok := d.GetOk("orchestrator_spec.0.kubernetes_spec.0.node_pool_versions")
+	if !ok {
+		return nil
+	}
+	versionsMap, ok := rawVersions.(map[string]interface{})
+	if !ok || len(versionsMap) == 0 {
+		return nil
+	}
+
+	poolIDSet := make(map[string]struct{})
+	if rawNodePools, ok := d.GetOk("node_pools"); ok {
+		if npList, ok := rawNodePools.([]interface{}); ok {
+			for _, item := range npList {
+				if npMap, ok := item.(map[string]interface{}); ok {
+					if id, ok := npMap["id"].(string); ok && id != "" {
+						poolIDSet[id] = struct{}{}
+					}
+				}
+			}
+		}
+	}
+
+	var unknownPools []string
+	for k := range versionsMap {
+		if _, exists := poolIDSet[k]; !exists {
+			unknownPools = append(unknownPools, k)
+		}
+	}
+	if len(unknownPools) > 0 {
+		sort.Strings(unknownPools)
+		return fmt.Errorf("orchestrator_spec.0.kubernetes_spec.0.node_pool_versions contains unknown node pool ID(s) not present in the cluster's node pools: %s", strings.Join(unknownPools, ", "))
+	}
+
+	var missingPools []string
+	for id := range poolIDSet {
+		if _, exists := versionsMap[id]; !exists {
+			missingPools = append(missingPools, id)
+		}
+	}
+	if len(missingPools) > 0 {
+		sort.Strings(missingPools)
+		return fmt.Errorf("orchestrator_spec.0.kubernetes_spec.0.node_pool_versions must include all node pool IDs in the cluster; missing: %s", strings.Join(missingPools, ", "))
+	}
+
+	return nil
+}
+
+func resourceVertexAIModelDevelopmentClusterCustomDiff(_ context.Context, diff *schema.ResourceDiff, meta interface{}) error {
+	if !vertexAiModelDevelopmentClusterNodePoolVersionsConfigured(diff) {
+		return nil
+	}
+	if !diff.NewValueKnown("orchestrator_spec.0.kubernetes_spec.0.node_pool_versions") ||
+		!diff.NewValueKnown("node_pools") {
+		return nil
+	}
+	if rawNodePools, ok := diff.GetOk("node_pools"); ok {
+		if npList, ok := rawNodePools.([]interface{}); ok {
+			for i := range npList {
+				if !diff.NewValueKnown(fmt.Sprintf("node_pools.%d.id", i)) {
+					return nil
+				}
+			}
+		}
+	}
+	return validateVertexAIModelDevelopmentClusterNodePoolVersions(diff)
+}
+
 var (
 	_ = bytes.Clone
 	_ = context.WithCancel
@@ -108,11 +293,12 @@ func ResourceVertexAIModelDevelopmentCluster() *schema.Resource {
 
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(120 * time.Minute),
-			Update: schema.DefaultTimeout(120 * time.Minute),
+			Update: schema.DefaultTimeout(240 * time.Minute),
 			Delete: schema.DefaultTimeout(120 * time.Minute),
 		},
 
 		CustomizeDiff: customdiff.All(
+			resourceVertexAIModelDevelopmentClusterCustomDiff,
 			tpgresource.SetLabelsDiff,
 			tpgresource.DefaultProviderProject,
 			tpgresource.DefaultProviderDeletionPolicy("DELETE"),
@@ -393,6 +579,69 @@ This field is only applicable when 'provisioning_model' is set to
 				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"kubernetes_spec": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							Description: `The GKE orchestrator related spec of the cluster.`,
+							MaxItems:    1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"control_plane_version": {
+										Type:             schema.TypeString,
+										Computed:         true,
+										Optional:         true,
+										DiffSuppressFunc: vertexAiModelDevelopmentClusterGkeVersionDiffSuppress,
+										Description: `The Kubernetes version of the GKE control plane.
+Accepted formats are minor version (for example, '"1.30"'), patch version
+(for example, '"1.30.5"'), full GKE release version (for example,
+'"1.30.5-gke.1014001"'), or '"-"' to use the service default version.
+Upgrades can advance at most one minor version at a time; downgrades are
+rejected.`,
+									},
+									"enable_ip_alias": {
+										Type:        schema.TypeBool,
+										Optional:    true,
+										ForceNew:    true,
+										Description: `Whether to enable IP alias.`,
+									},
+									"node_pool_ids": {
+										Type:     schema.TypeList,
+										Optional: true,
+										ForceNew: true,
+										Description: `IDs of the NodePools to be included in this GKE cluster. These IDs must
+correspond to NodePools defined in the 'node_pools' field.`,
+										Elem: &schema.Schema{
+											Type: schema.TypeString,
+										},
+									},
+									"node_pool_versions": {
+										Type:             schema.TypeMap,
+										Computed:         true,
+										Optional:         true,
+										DiffSuppressFunc: vertexAiModelDevelopmentClusterGkeVersionDiffSuppress,
+										Description: `The Kubernetes versions for specific node pools, keyed by node pool ID.
+When specified, all node pool IDs in the cluster must be included.
+Accepted formats are minor version (for example, '"1.30"'), patch version
+(for example, '"1.30.5"'), full GKE release version (for example,
+'"1.30.5-gke.1014001"'), or '"-"' to align with the control plane version.
+Node pools cannot be newer than the control plane or more than 2 minor
+versions behind it; upgrades can advance at most one minor version at a
+time and downgrades are rejected.`,
+										Elem: &schema.Schema{Type: schema.TypeString},
+									},
+									"public_access_endpoint_enabled": {
+										Type:     schema.TypeBool,
+										Optional: true,
+										ForceNew: true,
+										Description: `Whether the GKE cluster's control plane endpoint is publicly accessible.
+If true, the cluster is created with a public access endpoint (i.e. the
+private cluster configuration is disabled). If false or unset, the cluster
+is created with only private control plane access by default.`,
+									},
+								},
+							},
+							ConflictsWith: []string{"orchestrator_spec.0.slurm_spec"},
+						},
 						"slurm_spec": {
 							Type:        schema.TypeList,
 							Optional:    true,
@@ -546,6 +795,7 @@ cluster-scoped choice, so it belongs in 'SlurmSpec.default_partition_id'.`,
 									},
 								},
 							},
+							ConflictsWith: []string{"orchestrator_spec.0.kubernetes_spec"},
 						},
 					},
 				},
@@ -1176,6 +1426,19 @@ func resourceVertexAIModelDevelopmentClusterCreate(d *schema.ResourceData, meta 
 	}
 
 	headers := make(http.Header)
+	if err := validateVertexAIModelDevelopmentClusterNodePoolVersions(d); err != nil {
+		return err
+	}
+
+	// The Create API rejects controlPlaneVersion and nodePoolVersions on initial
+	// cluster creation; strip them from the POST body and apply them via a
+	// follow-up PATCH in post_create if configured.
+	if orch, ok := obj["orchestratorSpec"].(map[string]interface{}); ok {
+		if k8s, ok := orch["kubernetesSpec"].(map[string]interface{}); ok {
+			delete(k8s, "controlPlaneVersion")
+			delete(k8s, "nodePoolVersions")
+		}
+	}
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -1207,6 +1470,88 @@ func resourceVertexAIModelDevelopmentClusterCreate(d *schema.ResourceData, meta 
 		// The resource didn't actually create
 		d.SetId("")
 		return fmt.Errorf("Error waiting to create ModelDevelopmentCluster: %s", err)
+	}
+
+	var postCreateMask []string
+	k8sPatch := make(map[string]interface{})
+
+	cpVer, _ := d.Get("orchestrator_spec.0.kubernetes_spec.0.control_plane_version").(string)
+	if cpVer != "" && cpVer != "-" {
+		postCreateMask = append(postCreateMask, "orchestrator_spec.kubernetes_spec.control_plane_version")
+		k8sPatch["controlPlaneVersion"] = cpVer
+	}
+
+	if v, ok := d.GetOk("orchestrator_spec.0.kubernetes_spec.0.node_pool_versions"); ok {
+		if m, ok := v.(map[string]interface{}); ok && len(m) > 0 {
+			needsNodePoolPatch := len(postCreateMask) > 0
+			if !needsNodePoolPatch {
+				for _, rawVer := range m {
+					if ver, ok := rawVer.(string); ok && ver != "" && ver != "-" {
+						needsNodePoolPatch = true
+						break
+					}
+				}
+			}
+			if needsNodePoolPatch {
+				expanded, err := expandVertexAIModelDevelopmentClusterOrchestratorSpecKubernetesSpecNodePoolVersions(m, d, config)
+				if err != nil {
+					_ = resourceVertexAIModelDevelopmentClusterRead(d, meta)
+					return err
+				}
+				if expanded != nil {
+					postCreateMask = append(postCreateMask, "orchestrator_spec.kubernetes_spec.node_pool_versions")
+					k8sPatch["nodePoolVersions"] = expanded
+				}
+			}
+		}
+	}
+
+	if len(postCreateMask) > 0 {
+		patchObj := map[string]interface{}{
+			"orchestratorSpec": map[string]interface{}{
+				"kubernetesSpec": k8sPatch,
+			},
+		}
+		patchUrl, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/{{region}}/modelDevelopmentClusters/{{model_development_cluster_id}}")
+		if err != nil {
+			_ = resourceVertexAIModelDevelopmentClusterRead(d, meta)
+			return err
+		}
+		patchUrl, err = transport_tpg.AddQueryParams(patchUrl, map[string]string{"updateMask": strings.Join(postCreateMask, ",")})
+		if err != nil {
+			_ = resourceVertexAIModelDevelopmentClusterRead(d, meta)
+			return err
+		}
+		log.Printf("[DEBUG] Patching ModelDevelopmentCluster %q versions after creation: %#v", d.Id(), patchObj)
+		patchRes, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
+			Config:    config,
+			Method:    "PATCH",
+			Project:   billingProject,
+			RawURL:    patchUrl,
+			UserAgent: userAgent,
+			Body:      patchObj,
+			Timeout:   d.Timeout(schema.TimeoutCreate),
+			Headers:   headers,
+		})
+		// The cluster exists and is RUNNING here. Returning an error taints it, so tell the user how to
+		// keep it rather than let the next apply replace a healthy cluster.
+		versionErrHint := "The cluster was created at the service default version and is running, but Terraform " +
+			"marks it tainted and the next apply will replace it. To keep it, run `terraform untaint` on this " +
+			"resource and set control_plane_version and node_pool_versions to \"-\" or at most one minor version " +
+			"above the running version."
+		if err != nil {
+			log.Printf("[WARN] Applying versions to ModelDevelopmentCluster %q after creation failed: %s. %s", d.Id(), err, versionErrHint)
+			_ = resourceVertexAIModelDevelopmentClusterRead(d, meta)
+			return fmt.Errorf("Error patching ModelDevelopmentCluster %q versions after creation: %s. %s", d.Id(), err, versionErrHint)
+		}
+		err = VertexAIOperationWaitTime(
+			config, patchRes, project, tpgresource.LocationFromId(d.Id()), "Updating ModelDevelopmentCluster", userAgent,
+			d.Timeout(schema.TimeoutCreate))
+		if err != nil {
+			log.Printf("[WARN] Applying versions to ModelDevelopmentCluster %q after creation failed: %s. %s", d.Id(), err, versionErrHint)
+			_ = resourceVertexAIModelDevelopmentClusterRead(d, meta)
+			return fmt.Errorf("Error waiting to apply ModelDevelopmentCluster %q versions after creation: %s. %s", d.Id(), err, versionErrHint)
+		}
 	}
 
 	log.Printf("[DEBUG] Finished creating ModelDevelopmentCluster %q: %#v", d.Id(), res)
@@ -1460,6 +1805,55 @@ func resourceVertexAIModelDevelopmentClusterUpdate(d *schema.ResourceData, meta 
 	}
 	// updateMask is a URL parameter but not present in the schema, so ReplaceVars
 	// won't set it
+	url, err = transport_tpg.AddQueryParams(url, map[string]string{"updateMask": strings.Join(updateMask, ",")})
+	if err != nil {
+		return err
+	}
+
+	if err := validateVertexAIModelDevelopmentClusterNodePoolVersions(d); err != nil {
+		return err
+	}
+
+	isGke := false
+	if v, ok := d.Get("orchestrator_spec.0.kubernetes_spec").([]interface{}); ok && len(v) > 0 {
+		isGke = true
+	}
+
+	if isGke {
+		newMask := make([]string, 0, len(updateMask))
+		for _, mask := range updateMask {
+			if strings.HasPrefix(mask, "orchestrator_spec.slurm_spec.") {
+				continue
+			}
+			newMask = append(newMask, mask)
+		}
+		if d.HasChange("orchestrator_spec.0.kubernetes_spec.0.control_plane_version") {
+			if v, ok := d.GetOk("orchestrator_spec.0.kubernetes_spec.0.control_plane_version"); ok && v.(string) != "" {
+				newMask = append(newMask, "orchestrator_spec.kubernetes_spec.control_plane_version")
+			}
+		}
+		if vertexAiModelDevelopmentClusterNodePoolVersionsConfigured(d) && d.HasChange("orchestrator_spec.0.kubernetes_spec.0.node_pool_versions") {
+			if v, ok := d.GetOk("orchestrator_spec.0.kubernetes_spec.0.node_pool_versions"); ok {
+				if m, ok := v.(map[string]interface{}); ok && len(m) > 0 {
+					newMask = append(newMask, "orchestrator_spec.kubernetes_spec.node_pool_versions")
+				}
+			}
+		}
+		updateMask = newMask
+	}
+
+	hasOrchestratorMask := false
+	for _, m := range updateMask {
+		if strings.HasPrefix(m, "orchestrator_spec.") {
+			hasOrchestratorMask = true
+			break
+		}
+	}
+	if !hasOrchestratorMask {
+		delete(obj, "orchestratorSpec")
+	}
+
+	// AddQueryParams uses url.Values.Set, replacing the generated updateMask query parameter.
 	url, err = transport_tpg.AddQueryParams(url, map[string]string{"updateMask": strings.Join(updateMask, ",")})
 	if err != nil {
 		return err
@@ -2131,6 +2525,8 @@ func flattenVertexAIModelDevelopmentClusterOrchestratorSpec(v interface{}, d *sc
 	transformed := make(map[string]interface{})
 	transformed["slurm_spec"] =
 		flattenVertexAIModelDevelopmentClusterOrchestratorSpecSlurmSpec(original["slurmSpec"], d, config)
+	transformed["kubernetes_spec"] =
+		flattenVertexAIModelDevelopmentClusterOrchestratorSpecKubernetesSpec(original["kubernetesSpec"], d, config)
 	return []interface{}{transformed}
 }
 func flattenVertexAIModelDevelopmentClusterOrchestratorSpecSlurmSpec(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -2243,6 +2639,59 @@ func flattenVertexAIModelDevelopmentClusterOrchestratorSpecSlurmSpecPartitionsNo
 
 func flattenVertexAIModelDevelopmentClusterOrchestratorSpecSlurmSpecPrologBashScripts(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
+}
+
+func flattenVertexAIModelDevelopmentClusterOrchestratorSpecKubernetesSpec(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	transformed := make(map[string]interface{})
+	transformed["node_pool_ids"] =
+		flattenVertexAIModelDevelopmentClusterOrchestratorSpecKubernetesSpecNodePoolIds(original["nodePoolIds"], d, config)
+	transformed["enable_ip_alias"] =
+		flattenVertexAIModelDevelopmentClusterOrchestratorSpecKubernetesSpecEnableIpAlias(original["enableIpAlias"], d, config)
+	transformed["public_access_endpoint_enabled"] =
+		flattenVertexAIModelDevelopmentClusterOrchestratorSpecKubernetesSpecPublicAccessEndpointEnabled(original["publicAccessEndpointEnabled"], d, config)
+	transformed["control_plane_version"] =
+		flattenVertexAIModelDevelopmentClusterOrchestratorSpecKubernetesSpecControlPlaneVersion(original["controlPlaneVersion"], d, config)
+	transformed["node_pool_versions"] =
+		flattenVertexAIModelDevelopmentClusterOrchestratorSpecKubernetesSpecNodePoolVersions(original["nodePoolVersions"], d, config)
+	return []interface{}{transformed}
+}
+func flattenVertexAIModelDevelopmentClusterOrchestratorSpecKubernetesSpecNodePoolIds(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenVertexAIModelDevelopmentClusterOrchestratorSpecKubernetesSpecEnableIpAlias(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenVertexAIModelDevelopmentClusterOrchestratorSpecKubernetesSpecPublicAccessEndpointEnabled(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenVertexAIModelDevelopmentClusterOrchestratorSpecKubernetesSpecControlPlaneVersion(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenVertexAIModelDevelopmentClusterOrchestratorSpecKubernetesSpecNodePoolVersions(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	m, ok := v.(map[string]interface{})
+	if !ok {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	for k, val := range m {
+		if specMap, ok := val.(map[string]interface{}); ok {
+			if ver, ok := specMap["version"].(string); ok {
+				transformed[k] = ver
+			}
+		}
+	}
+	return transformed
 }
 
 func flattenVertexAIModelDevelopmentClusterRuntime(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -2956,9 +3405,15 @@ func expandVertexAIModelDevelopmentClusterOrchestratorSpec(v interface{}, d tpgr
 		transformed["slurmSpec"] = transformedSlurmSpec
 	}
 
+	transformedKubernetesSpec, err := expandVertexAIModelDevelopmentClusterOrchestratorSpecKubernetesSpec(original["kubernetes_spec"], d, config)
+	if err != nil {
+		return nil, err
+	} else if transformedKubernetesSpec != nil {
+		transformed["kubernetesSpec"] = transformedKubernetesSpec
+	}
+
 	return transformed, nil
 }
-
 func expandVertexAIModelDevelopmentClusterOrchestratorSpecSlurmSpec(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	if v == nil {
 		return nil, nil
@@ -3164,6 +3619,101 @@ func expandVertexAIModelDevelopmentClusterOrchestratorSpecSlurmSpecPartitionsNod
 
 func expandVertexAIModelDevelopmentClusterOrchestratorSpecSlurmSpecPrologBashScripts(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
+}
+
+func expandVertexAIModelDevelopmentClusterOrchestratorSpecKubernetesSpec(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
+	l := v.([]interface{})
+	if len(l) == 0 {
+		return nil, nil
+	}
+
+	if l[0] == nil {
+		transformed := make(map[string]interface{})
+		return transformed, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedNodePoolIds, err := expandVertexAIModelDevelopmentClusterOrchestratorSpecKubernetesSpecNodePoolIds(original["node_pool_ids"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedNodePoolIds); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["nodePoolIds"] = transformedNodePoolIds
+	}
+
+	transformedEnableIpAlias, err := expandVertexAIModelDevelopmentClusterOrchestratorSpecKubernetesSpecEnableIpAlias(original["enable_ip_alias"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedEnableIpAlias); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["enableIpAlias"] = transformedEnableIpAlias
+	}
+
+	transformedPublicAccessEndpointEnabled, err := expandVertexAIModelDevelopmentClusterOrchestratorSpecKubernetesSpecPublicAccessEndpointEnabled(original["public_access_endpoint_enabled"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedPublicAccessEndpointEnabled); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["publicAccessEndpointEnabled"] = transformedPublicAccessEndpointEnabled
+	}
+
+	transformedControlPlaneVersion, err := expandVertexAIModelDevelopmentClusterOrchestratorSpecKubernetesSpecControlPlaneVersion(original["control_plane_version"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedControlPlaneVersion); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["controlPlaneVersion"] = transformedControlPlaneVersion
+	}
+
+	transformedNodePoolVersions, err := expandVertexAIModelDevelopmentClusterOrchestratorSpecKubernetesSpecNodePoolVersions(original["node_pool_versions"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedNodePoolVersions); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["nodePoolVersions"] = transformedNodePoolVersions
+	}
+
+	return transformed, nil
+}
+
+func expandVertexAIModelDevelopmentClusterOrchestratorSpecKubernetesSpecNodePoolIds(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandVertexAIModelDevelopmentClusterOrchestratorSpecKubernetesSpecEnableIpAlias(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandVertexAIModelDevelopmentClusterOrchestratorSpecKubernetesSpecPublicAccessEndpointEnabled(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandVertexAIModelDevelopmentClusterOrchestratorSpecKubernetesSpecControlPlaneVersion(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandVertexAIModelDevelopmentClusterOrchestratorSpecKubernetesSpecNodePoolVersions(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if getter, ok := d.(vertexAiModelDevelopmentClusterGetter); ok && !vertexAiModelDevelopmentClusterNodePoolVersionsConfigured(getter) {
+		return nil, nil
+	}
+	if v == nil {
+		return nil, nil
+	}
+	if m, ok := v.(map[string]interface{}); ok {
+		if len(m) == 0 {
+			return nil, nil
+		}
+		transformed := make(map[string]interface{})
+		for k, val := range m {
+			if strVal, ok := val.(string); ok && strVal != "" {
+				transformed[k] = map[string]interface{}{
+					"version": strVal,
+				}
+			}
+		}
+		return transformed, nil
+	}
+	return nil, nil
 }
 
 func expandVertexAIModelDevelopmentClusterRuntimeSpec(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
