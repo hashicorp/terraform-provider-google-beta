@@ -190,7 +190,7 @@ func testAccCheckKMSAutokeyConfigDestroyProducer(t *testing.T) func(s *terraform
 
 			config := acctest.GoogleProviderConfig(t)
 
-			url, err := tpgresource.ReplaceVarsForTest(config, rs, "{{KMSBasePath}}folders/{{folder}}/autokeyConfig")
+			url, err := tpgresource.ReplaceVarsForTest(config, rs, transport_tpg.BaseUrl(kms.Product, config)+"folders/{{folder}}/autokeyConfig")
 			url = strings.Replace(url, "folders/folders/", "folders/", 1)
 			if err != nil {
 				return err

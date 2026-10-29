@@ -251,7 +251,7 @@ func (u *ApiGatewayApiIamUpdater) SetResourceIamPolicy(policy *cloudresourcemana
 }
 
 func (u *ApiGatewayApiIamUpdater) qualifyApiUrl(methodIdentifier string) (string, error) {
-	urlTemplate := fmt.Sprintf("{{ApiGatewayBasePath}}%s:%s", fmt.Sprintf("projects/%s/locations/global/apis/%s", u.project, u.api), methodIdentifier)
+	urlTemplate := fmt.Sprintf(transport_tpg.BaseUrl(Product, u.Config)+"%s:%s", fmt.Sprintf("projects/%s/locations/global/apis/%s", u.project, u.api), methodIdentifier)
 	url, err := tpgresource.ReplaceVars(u.d, u.Config, urlTemplate)
 	if err != nil {
 		return "", err

@@ -355,7 +355,7 @@ func resourceFirebaseHostingVersionCreate(d *schema.ResourceData, meta interface
 	obj = make(map[string]interface{})
 	obj["status"] = "FINALIZED"
 
-	url, err = tpgresource.ReplaceVars(d, config, "{{FirebaseHostingBasePath}}sites/{{site_id}}/versions/{{version_id}}")
+	url, err = tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"sites/{{site_id}}/versions/{{version_id}}")
 	if err != nil {
 		return err
 	}

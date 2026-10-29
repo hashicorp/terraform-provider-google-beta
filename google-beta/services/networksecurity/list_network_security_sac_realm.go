@@ -122,7 +122,7 @@ func ListNetworkSecuritySacRealms(config *transport_tpg.Config,
 		}
 	}
 
-	url, err := tpgresource.ReplaceVars(resourceData, config, "{{NetworkSecurityBasePath}}projects/{{project}}/locations/global/sacRealms")
+	url, err := tpgresource.ReplaceVars(resourceData, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/global/sacRealms")
 	if err != nil {
 		return err
 	}

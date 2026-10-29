@@ -275,7 +275,7 @@ func (u *VertexAIFeatureGroupIamUpdater) SetResourceIamPolicy(policy *cloudresou
 }
 
 func (u *VertexAIFeatureGroupIamUpdater) qualifyFeatureGroupUrl(methodIdentifier string) (string, error) {
-	urlTemplate := fmt.Sprintf("{{VertexAIBasePath}}%s:%s", fmt.Sprintf("projects/%s/locations/%s/featureGroups/%s", u.project, u.region, u.featureGroup), methodIdentifier)
+	urlTemplate := fmt.Sprintf(transport_tpg.BaseUrl(Product, u.Config)+"%s:%s", fmt.Sprintf("projects/%s/locations/%s/featureGroups/%s", u.project, u.region, u.featureGroup), methodIdentifier)
 	url, err := tpgresource.ReplaceVars(u.d, u.Config, urlTemplate)
 	if err != nil {
 		return "", err

@@ -233,7 +233,7 @@ func resourceFirebaseHostingSiteCreate(d *schema.ResourceData, meta interface{})
 
 	// Check if the Firebase hostng site already exits. Do an update if so.
 
-	getUrl, err := tpgresource.ReplaceVars(d, config, "{{FirebaseHostingBasePath}}projects/{{project}}/sites/{{site_id}}")
+	getUrl, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/sites/{{site_id}}")
 	if err != nil {
 		return err
 	}

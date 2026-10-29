@@ -232,7 +232,7 @@ func (u *VertexAIFeaturestoreEntitytypeIamUpdater) SetResourceIamPolicy(policy *
 }
 
 func (u *VertexAIFeaturestoreEntitytypeIamUpdater) qualifyFeaturestoreEntitytypeUrl(methodIdentifier string) (string, error) {
-	urlTemplate := fmt.Sprintf("{{VertexAIBasePath}}%s:%s", fmt.Sprintf("%s/entityTypes/%s", u.featurestore, u.entitytype), methodIdentifier)
+	urlTemplate := fmt.Sprintf(transport_tpg.BaseUrl(Product, u.Config)+"%s:%s", fmt.Sprintf("%s/entityTypes/%s", u.featurestore, u.entitytype), methodIdentifier)
 	url, err := tpgresource.ReplaceVars(u.d, u.Config, urlTemplate)
 	if err != nil {
 		return "", err

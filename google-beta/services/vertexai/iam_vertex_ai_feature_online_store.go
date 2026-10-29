@@ -275,7 +275,7 @@ func (u *VertexAIFeatureOnlineStoreIamUpdater) SetResourceIamPolicy(policy *clou
 }
 
 func (u *VertexAIFeatureOnlineStoreIamUpdater) qualifyFeatureOnlineStoreUrl(methodIdentifier string) (string, error) {
-	urlTemplate := fmt.Sprintf("{{VertexAIBasePath}}%s:%s", fmt.Sprintf("projects/%s/locations/%s/featureOnlineStores/%s", u.project, u.region, u.featureOnlineStore), methodIdentifier)
+	urlTemplate := fmt.Sprintf(transport_tpg.BaseUrl(Product, u.Config)+"%s:%s", fmt.Sprintf("projects/%s/locations/%s/featureOnlineStores/%s", u.project, u.region, u.featureOnlineStore), methodIdentifier)
 	url, err := tpgresource.ReplaceVars(u.d, u.Config, urlTemplate)
 	if err != nil {
 		return "", err

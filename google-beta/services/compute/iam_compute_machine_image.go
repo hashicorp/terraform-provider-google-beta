@@ -255,7 +255,7 @@ func (u *ComputeMachineImageIamUpdater) SetResourceIamPolicy(policy *cloudresour
 }
 
 func (u *ComputeMachineImageIamUpdater) qualifyMachineImageUrl(methodIdentifier string) (string, error) {
-	urlTemplate := fmt.Sprintf("{{ComputeBasePath}}%s/%s", fmt.Sprintf("projects/%s/global/machineImages/%s", u.project, u.machineImage), methodIdentifier)
+	urlTemplate := fmt.Sprintf(transport_tpg.BaseUrl(Product, u.Config)+"%s/%s", fmt.Sprintf("projects/%s/global/machineImages/%s", u.project, u.machineImage), methodIdentifier)
 	url, err := tpgresource.ReplaceVars(u.d, u.Config, urlTemplate)
 	if err != nil {
 		return "", err

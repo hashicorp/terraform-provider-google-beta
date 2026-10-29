@@ -171,7 +171,7 @@ func testAccCheckKMSProjectAutokeyConfigDestroyProducer(t *testing.T) func(s *te
 
 			config := acctest.GoogleProviderConfig(t)
 
-			url, err := tpgresource.ReplaceVarsForTest(config, rs, "{{KMSBasePath}}projects/{{project}}/autokeyConfig")
+			url, err := tpgresource.ReplaceVarsForTest(config, rs, transport_tpg.BaseUrl(kms.Product, config)+"projects/{{project}}/autokeyConfig")
 			if err != nil {
 				return err
 			}

@@ -6539,7 +6539,7 @@ func expandVertexAIReasoningEngineTrafficConfigTrafficSplitManualTargetsRuntimeR
 
 	// Keyword resolution for LATEST or PREVIOUS by querying live API runtimeRevisions
 	if s == "LATEST" || s == "PREVIOUS" {
-		url, err := tpgresource.ReplaceVars(d, config, "{{VertexAIBasePath}}projects/{{project}}/locations/{{region}}/reasoningEngines/{{name}}/runtimeRevisions")
+		url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/{{region}}/reasoningEngines/{{name}}/runtimeRevisions")
 		if err != nil || strings.Contains(url, "{{name}}") {
 			return nil, fmt.Errorf("cannot resolve keyword %q: reasoning engine resource name is not yet available (deploy using 'traffic_split_always_latest {}' first)", s)
 		}

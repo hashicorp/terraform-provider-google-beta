@@ -279,7 +279,7 @@ func (u *ComputeRegionBackendServiceIamUpdater) SetResourceIamPolicy(policy *clo
 }
 
 func (u *ComputeRegionBackendServiceIamUpdater) qualifyRegionBackendServiceUrl(methodIdentifier string) (string, error) {
-	urlTemplate := fmt.Sprintf("{{ComputeBasePath}}%s/%s", fmt.Sprintf("projects/%s/regions/%s/backendServices/%s", u.project, u.region, u.name), methodIdentifier)
+	urlTemplate := fmt.Sprintf(transport_tpg.BaseUrl(Product, u.Config)+"%s/%s", fmt.Sprintf("projects/%s/regions/%s/backendServices/%s", u.project, u.region, u.name), methodIdentifier)
 	url, err := tpgresource.ReplaceVars(u.d, u.Config, urlTemplate)
 	if err != nil {
 		return "", err
