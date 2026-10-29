@@ -880,13 +880,15 @@ func TestAccCloudRunV2Job_cloudrunv2JobAgentIdentityExample(t *testing.T) {
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"cloud_run_job_name": "tf-test-cloudrun-job" + randomSuffix,
-		"random_suffix":      randomSuffix,
+		"cloud_run_job_name":           "tf-test-cloudrun-job" + randomSuffix,
+		"identity_certificate_enabled": true,
+		"random_suffix":                randomSuffix,
 	}
 
 	context_1 := map[string]interface{}{
-		"cloud_run_job_name": "tf-test-cloudrun-job" + randomSuffix,
-		"random_suffix":      randomSuffix,
+		"cloud_run_job_name":           "tf-test-cloudrun-job" + randomSuffix,
+		"identity_certificate_enabled": false,
+		"random_suffix":                randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -910,7 +912,7 @@ func TestAccCloudRunV2Job_cloudrunv2JobAgentIdentityExample(t *testing.T) {
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 			{
-				Config: testAccCloudRunV2Job_cloudrunv2JobAgentIdentityUpdateExample(context_1),
+				Config: testAccCloudRunV2Job_cloudrunv2JobAgentIdentityExample(context_1),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
 						plancheck.ExpectResourceAction("google_cloud_run_v2_job.default", plancheck.ResourceActionUpdate),
@@ -950,32 +952,7 @@ resource "google_cloud_run_v2_job" "default" {
       }
       workload_identity_config {
         identity_type                = "IDENTITY_TYPE_AGENT_IDENTITY"
-        identity_certificate_enabled = true
-      }
-    }
-  }
-}
-`, context)
-}
-
-func testAccCloudRunV2Job_cloudrunv2JobAgentIdentityUpdateExample(context map[string]interface{}) string {
-	return acctest.Nprintf(`
-resource "google_cloud_run_v2_job" "default" {
-  provider = google-beta
-  name     = "%{cloud_run_job_name}"
-  location = "us-central1"
-  deletion_protection = false
-
-  functional_type = "FUNCTIONAL_TYPE_AGENT"
-
-  template {
-    template {
-      containers {
-        image = "us-docker.pkg.dev/cloudrun/container/job"
-      }
-      workload_identity_config {
-        identity_type                = "IDENTITY_TYPE_AGENT_IDENTITY"
-        identity_certificate_enabled = false
+        identity_certificate_enabled = %{identity_certificate_enabled}
       }
     }
   }
