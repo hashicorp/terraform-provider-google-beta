@@ -62,6 +62,11 @@ fields:
     - api_field: nodePools.scalingSpec.minNodeCount
     - api_field: nodePools.startupScript
     - api_field: nodePools.zone
+    - api_field: orchestratorSpec.kubernetesSpec.controlPlaneVersion
+    - api_field: orchestratorSpec.kubernetesSpec.enableIpAlias
+    - api_field: orchestratorSpec.kubernetesSpec.nodePoolIds
+    - api_field: orchestratorSpec.kubernetesSpec.nodePoolVersions
+    - api_field: orchestratorSpec.kubernetesSpec.publicAccessEndpointEnabled
     - api_field: orchestratorSpec.slurmSpec.config
     - api_field: orchestratorSpec.slurmSpec.defaultPartitionId
     - api_field: orchestratorSpec.slurmSpec.epilogBashScripts
