@@ -340,21 +340,24 @@ are '/^[a-z]([a-z0-9-]{0,8}[a-z0-9])?$/'. When using 'slurm_spec',
 hyphens are not allowed ('/^[a-z][a-z0-9]{0,9}$/').`,
 			},
 			"node_pools": {
-				Type:        schema.TypeList,
-				Required:    true,
-				Description: `The spec of the pools of different resources.`,
+				Type:     schema.TypeList,
+				Required: true,
+				Description: `The spec of the pools of different resources. Node pools can be added,
+removed, or reordered in place; changing some fields on an existing node
+pool may require replacing the node pool (validated server-side by the
+API).`,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"id": {
-							Type:        schema.TypeString,
-							Required:    true,
-							ForceNew:    true,
-							Description: `The unique ID referring to this node pool.`,
+							Type:     schema.TypeString,
+							Required: true,
+							Description: `The unique ID referring to this node pool. Cannot be modified in
+place on an existing node pool; changing 'id' updates the list of
+node pools by adding/removing pools (validated server-side).`,
 						},
 						"machine_spec": {
 							Type:        schema.TypeList,
 							Required:    true,
-							ForceNew:    true,
 							Description: `Specification of a single machine.`,
 							MaxItems:    1,
 							Elem: &schema.Resource{
@@ -362,7 +365,6 @@ hyphens are not allowed ('/^[a-z][a-z0-9]{0,9}$/').`,
 									"machine_type": {
 										Type:     schema.TypeString,
 										Required: true,
-										ForceNew: true,
 										Description: `The type of the machine.
 
 See the [list of machine types supported for
@@ -378,7 +380,6 @@ WorkerPoolSpec this field is required.`,
 									"reservation_affinity": {
 										Type:     schema.TypeList,
 										Optional: true,
-										ForceNew: true,
 										Description: `A ReservationAffinity can be used to configure a Vertex AI resource (e.g., a
 DeployedModel) to draw its Compute Engine resources from a Shared
 Reservation, or exclusively from on-demand capacity.`,
@@ -388,7 +389,6 @@ Reservation, or exclusively from on-demand capacity.`,
 												"reservation_affinity_type": {
 													Type:     schema.TypeString,
 													Required: true,
-													ForceNew: true,
 													Description: `Specifies the reservation affinity type.
 Possible values:
 NO_RESERVATION
@@ -398,7 +398,6 @@ SPECIFIC_RESERVATION`,
 												"values": {
 													Type:     schema.TypeList,
 													Optional: true,
-													ForceNew: true,
 													Description: `Corresponds to the label values of a reservation resource. This must be the
 resource name of the reservation, reservation block, or reservation sub-
 block.`,
@@ -499,7 +498,6 @@ In format of "projects//global/images/" or
 							Type:     schema.TypeString,
 							Computed: true,
 							Optional: true,
-							ForceNew: true,
 							Description: `Specifies the provisioning model for the node pool.
 
 Behavior for 'PROVISIONING_MODEL_UNSPECIFIED':
