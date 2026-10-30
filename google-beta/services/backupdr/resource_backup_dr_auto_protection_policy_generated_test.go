@@ -83,7 +83,7 @@ func TestAccBackupDRAutoProtectionPolicy_backupDrAutoProtectionPolicyBasicExampl
 			},
 			{
 				ResourceName:       "google_backup_dr_auto_protection_policy.my-auto-protection-policy",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -183,7 +183,7 @@ func TestAccBackupDRAutoProtectionPolicy_backupDrAutoProtectionPolicyUpdateExamp
 			},
 			{
 				ResourceName:       "google_backup_dr_auto_protection_policy.my-auto-protection-policy",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -203,7 +203,7 @@ func TestAccBackupDRAutoProtectionPolicy_backupDrAutoProtectionPolicyUpdateExamp
 			},
 			{
 				ResourceName:       "google_backup_dr_auto_protection_policy.my-auto-protection-policy",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
