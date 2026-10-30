@@ -266,6 +266,7 @@ fields:
     provider_only: true
   - api_field: 'workloadIdentityConfig.identity'
   - api_field: 'workloadIdentityConfig.identityCertificateEnabled'
+  - api_field: 'workloadIdentityConfig.identityType'
   - api_field: 'zone'
   - api_field: 'eraseWindowsVssSignature'
   - field: 'deletion_policy'

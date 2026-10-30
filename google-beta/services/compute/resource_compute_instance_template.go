@@ -1366,14 +1366,23 @@ be from 0 to 999,999,999 inclusive.`,
 						"identity": {
 							Type:        schema.TypeString,
 							Optional:    true,
+							Computed:    true,
 							ForceNew:    true,
 							Description: `Identity SPIFFE id.`,
 						},
 						"identity_certificate_enabled": {
 							Type:        schema.TypeBool,
 							Optional:    true,
+							Computed:    true,
 							ForceNew:    true,
 							Description: `Specifies whether identity certificates are enabled.`,
+						},
+						"identity_type": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Computed:    true,
+							ForceNew:    true,
+							Description: `The type of identity to use.`,
 						},
 					},
 				},
@@ -1779,6 +1788,9 @@ func resourceComputeInstanceTemplateCreate(d *schema.ResourceData, meta interfac
 		instanceProperties.WorkloadIdentityConfig = &compute.WorkloadIdentityConfig{
 			Identity:                   wic["identity"].(string),
 			IdentityCertificateEnabled: wic["identityCertificateEnabled"].(bool),
+		}
+		if v, ok := wic["identityType"]; ok {
+			instanceProperties.WorkloadIdentityConfig.IdentityType = v.(string)
 		}
 	}
 	if cic := expandConfidentialInstanceConfig(d); cic != nil {
