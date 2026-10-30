@@ -1327,6 +1327,19 @@ instance is running.`,
 				Computed:    true,
 				Description: `Time when the ModelDevelopmentCluster was most recently updated.`,
 			},
+			"update_mode": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: verify.ValidateEnum([]string{"USER_ONLY", "USER_AND_SERVICE", ""}),
+				Description: `Whether the service also refreshes service-managed fields (startup and
+prolog/epilog scripts, default node images) on update. 'USER_ONLY' applies
+only your changes; adding a node pool requires 'USER_AND_SERVICE'.
+Only applies to Slurm clusters ('orchestrator_spec.slurm_spec'); ignored
+for GKE clusters ('kubernetes_spec').
+Defaults to 'USER_AND_SERVICE'. Possible values are 'USER_ONLY' and
+'USER_AND_SERVICE'. Default value: "USER_AND_SERVICE" Possible values: ["USER_ONLY", "USER_AND_SERVICE"]`,
+				Default: "USER_AND_SERVICE",
+			},
 			"project": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -1510,7 +1523,7 @@ func resourceVertexAIModelDevelopmentClusterCreate(d *schema.ResourceData, meta 
 				"kubernetesSpec": k8sPatch,
 			},
 		}
-		patchUrl, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/{{region}}/modelDevelopmentClusters/{{model_development_cluster_id}}")
+		patchUrl, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/{{region}}/modelDevelopmentClusters/{{model_development_cluster_id}}?updateMode={{update_mode}}")
 		if err != nil {
 			_ = resourceVertexAIModelDevelopmentClusterRead(d, meta)
 			return err
@@ -1634,6 +1647,11 @@ func resourceVertexAIModelDevelopmentClusterRead(d *schema.ResourceData, meta in
 	}
 
 	// Explicitly set virtual fields to default values if unset
+	if _, ok := d.GetOkExists("update_mode"); !ok {
+		if err := d.Set("update_mode", "USER_AND_SERVICE"); err != nil {
+			return fmt.Errorf("Error setting update_mode: %s", err)
+		}
+	}
 	if _, ok := d.GetOkExists("deletion_policy"); !ok {
 		//prioritize config's value if present
 		if config.DeletionPolicy != "" {
@@ -1762,7 +1780,7 @@ func resourceVertexAIModelDevelopmentClusterUpdate(d *schema.ResourceData, meta 
 		obj["labels"] = effectiveLabelsProp
 	}
 
-	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/{{region}}/modelDevelopmentClusters/{{model_development_cluster_id}}")
+	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/{{region}}/modelDevelopmentClusters/{{model_development_cluster_id}}?updateMode={{update_mode}}")
 	if err != nil {
 		return err
 	}
@@ -1838,17 +1856,17 @@ func resourceVertexAIModelDevelopmentClusterUpdate(d *schema.ResourceData, meta 
 			}
 		}
 		updateMask = newMask
-	}
 
-	hasOrchestratorMask := false
-	for _, m := range updateMask {
-		if strings.HasPrefix(m, "orchestrator_spec.") {
-			hasOrchestratorMask = true
-			break
+		hasOrchestratorMask := false
+		for _, m := range updateMask {
+			if strings.HasPrefix(m, "orchestrator_spec.") {
+				hasOrchestratorMask = true
+				break
+			}
 		}
-	}
-	if !hasOrchestratorMask {
-		delete(obj, "orchestratorSpec")
+		if !hasOrchestratorMask {
+			delete(obj, "orchestratorSpec")
+		}
 	}
 
 	// AddQueryParams uses url.Values.Set, replacing the generated updateMask query parameter.
@@ -1979,6 +1997,11 @@ func resourceVertexAIModelDevelopmentClusterImport(d *schema.ResourceData, meta 
 		return nil, fmt.Errorf("Error constructing id: %s", err)
 	}
 	d.SetId(id)
+
+	// Explicitly set virtual fields to default values on import
+	if err := d.Set("update_mode", "USER_AND_SERVICE"); err != nil {
+		return nil, fmt.Errorf("Error setting update_mode: %s", err)
+	}
 
 	return []*schema.ResourceData{d}, nil
 }
