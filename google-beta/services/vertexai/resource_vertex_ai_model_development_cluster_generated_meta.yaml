@@ -101,6 +101,8 @@ fields:
     - api_field: startTime
     - field: terraform_labels
       provider_only: true
+    - field: update_mode
+      provider_only: true
     - api_field: updateTime
     - field: deletion_policy
       provider_only: true

@@ -77,16 +77,31 @@ func TestAccVertexAIModelDevelopmentCluster_vertexAiModelDevelopmentClusterBasic
 
 	context_1 := map[string]interface{}{
 		"data_filestore_name":          "tf-test-mdc-data" + randomSuffix,
+		"env":                          "prod",
 		"filestore_name":               "tf-test-mdc-home" + randomSuffix,
 		"firewall_name":                "tf-test-mdc-fw" + randomSuffix,
 		"model_development_cluster_id": "tfgen" + randomSuffix[:5],
 		"network_name":                 "tf-test-mdc-net" + randomSuffix,
 		"reservation_name":             "tf-test-mdc-res" + randomSuffix,
 		"subnetwork_name":              "tf-test-mdc-subnet" + randomSuffix,
+		"update_mode":                  "USER_AND_SERVICE",
 		"random_suffix":                randomSuffix,
 	}
 
 	context_2 := map[string]interface{}{
+		"data_filestore_name":          "tf-test-mdc-data" + randomSuffix,
+		"env":                          "prod-user-only",
+		"filestore_name":               "tf-test-mdc-home" + randomSuffix,
+		"firewall_name":                "tf-test-mdc-fw" + randomSuffix,
+		"model_development_cluster_id": "tfgen" + randomSuffix[:5],
+		"network_name":                 "tf-test-mdc-net" + randomSuffix,
+		"reservation_name":             "tf-test-mdc-res" + randomSuffix,
+		"subnetwork_name":              "tf-test-mdc-subnet" + randomSuffix,
+		"update_mode":                  "USER_ONLY",
+		"random_suffix":                randomSuffix,
+	}
+
+	context_3 := map[string]interface{}{
 		"data_filestore_name":          "tf-test-mdc-data" + randomSuffix,
 		"filestore_name":               "tf-test-mdc-home" + randomSuffix,
 		"firewall_name":                "tf-test-mdc-fw" + randomSuffix,
@@ -109,7 +124,7 @@ func TestAccVertexAIModelDevelopmentCluster_vertexAiModelDevelopmentClusterBasic
 				ResourceName:            "google_vertex_ai_model_development_cluster.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"labels", "model_development_cluster_id", "region", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"cluster_status", "labels", "model_development_cluster_id", "region", "terraform_labels", "update_time"},
 			},
 			{
 				ResourceName:       "google_vertex_ai_model_development_cluster.default",
@@ -129,7 +144,7 @@ func TestAccVertexAIModelDevelopmentCluster_vertexAiModelDevelopmentClusterBasic
 				ResourceName:            "google_vertex_ai_model_development_cluster.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"labels", "model_development_cluster_id", "region", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"cluster_status", "labels", "model_development_cluster_id", "region", "terraform_labels", "update_time"},
 			},
 			{
 				ResourceName:       "google_vertex_ai_model_development_cluster.default",
@@ -138,7 +153,7 @@ func TestAccVertexAIModelDevelopmentCluster_vertexAiModelDevelopmentClusterBasic
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
 			{
-				Config: testAccVertexAIModelDevelopmentCluster_vertexAiModelDevelopmentClusterBasicExample(context_2),
+				Config: testAccVertexAIModelDevelopmentCluster_vertexAiModelDevelopmentClusterUpdateExample(context_2),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
 						plancheck.ExpectResourceAction("google_vertex_ai_model_development_cluster.default", plancheck.ResourceActionUpdate),
@@ -149,7 +164,27 @@ func TestAccVertexAIModelDevelopmentCluster_vertexAiModelDevelopmentClusterBasic
 				ResourceName:            "google_vertex_ai_model_development_cluster.default",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"labels", "model_development_cluster_id", "region", "terraform_labels"},
+				ImportStateVerifyIgnore: []string{"cluster_status", "labels", "model_development_cluster_id", "region", "terraform_labels", "update_mode", "update_time"},
+			},
+			{
+				ResourceName:       "google_vertex_ai_model_development_cluster.default",
+				RefreshState:       true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
+			{
+				Config: testAccVertexAIModelDevelopmentCluster_vertexAiModelDevelopmentClusterBasicExample(context_3),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_vertex_ai_model_development_cluster.default", plancheck.ResourceActionUpdate),
+					},
+				},
+			},
+			{
+				ResourceName:            "google_vertex_ai_model_development_cluster.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"cluster_status", "labels", "model_development_cluster_id", "region", "terraform_labels", "update_time"},
 			},
 			{
 				ResourceName:       "google_vertex_ai_model_development_cluster.default",
@@ -256,6 +291,7 @@ resource "google_vertex_ai_model_development_cluster" "default" {
   model_development_cluster_id = "%{model_development_cluster_id}"
   display_name                 = "tftest"
   deletion_policy              = "DELETE"
+  update_mode                  = "USER_AND_SERVICE"
   depends_on                   = [google_compute_firewall.internal]
 
   labels = {
@@ -526,10 +562,11 @@ resource "google_vertex_ai_model_development_cluster" "default" {
   model_development_cluster_id = "%{model_development_cluster_id}"
   display_name                 = "tftest-updated"
   deletion_policy              = "DELETE"
+  update_mode                  = "%{update_mode}"
   depends_on                   = [google_compute_firewall.internal]
 
   labels = {
-    env  = "prod"
+    env  = "%{env}"
     team = "ml"
   }
 
