@@ -355,6 +355,7 @@ func FlattenWorkloadIdentityConfigHTTP(v interface{}) []map[string]interface{} {
 		{
 			"identity":                     config["identity"],
 			"identity_certificate_enabled": config["identityCertificateEnabled"],
+			"identity_type":                config["identityType"],
 		},
 	}
 }
