@@ -79,7 +79,7 @@ func TestAccFirebaseStorageDefaultBucket_firebasestorageDefaultBucketBasicExampl
 			},
 			{
 				ResourceName:       "google_firebase_storage_default_bucket.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
