@@ -89,7 +89,7 @@ func TestAccVertexAiAadAgentAnomalyDetectionScope_vertexAiAgentAnomalyDetectionS
 			},
 			{
 				ResourceName:       "google_vertex_ai_agent_anomaly_detection_scope.scope",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},

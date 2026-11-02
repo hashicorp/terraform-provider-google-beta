@@ -83,7 +83,7 @@ func TestAccTpuV2Vm_tpuV2VmBasicExample(t *testing.T) {
 			},
 			{
 				ResourceName:       "google_tpu_v2_vm.tpu",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -143,7 +143,7 @@ func TestAccTpuV2Vm_tpuV2VmFullExample(t *testing.T) {
 			},
 			{
 				ResourceName:       "google_tpu_v2_vm.tpu",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},

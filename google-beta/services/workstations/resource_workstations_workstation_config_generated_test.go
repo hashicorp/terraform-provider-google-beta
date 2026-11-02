@@ -141,7 +141,7 @@ func TestAccWorkstationsWorkstationConfig_workstationConfigBasicExample(t *testi
 			},
 			{
 				ResourceName:       "google_workstations_workstation_config.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -161,7 +161,7 @@ func TestAccWorkstationsWorkstationConfig_workstationConfigBasicExample(t *testi
 			},
 			{
 				ResourceName:       "google_workstations_workstation_config.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -181,7 +181,7 @@ func TestAccWorkstationsWorkstationConfig_workstationConfigBasicExample(t *testi
 			},
 			{
 				ResourceName:       "google_workstations_workstation_config.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -201,7 +201,7 @@ func TestAccWorkstationsWorkstationConfig_workstationConfigBasicExample(t *testi
 			},
 			{
 				ResourceName:       "google_workstations_workstation_config.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -221,7 +221,7 @@ func TestAccWorkstationsWorkstationConfig_workstationConfigBasicExample(t *testi
 			},
 			{
 				ResourceName:       "google_workstations_workstation_config.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -647,7 +647,7 @@ func TestAccWorkstationsWorkstationConfig_workstationConfigBoostExample(t *testi
 			},
 			{
 				ResourceName:       "google_workstations_workstation_config.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -667,7 +667,7 @@ func TestAccWorkstationsWorkstationConfig_workstationConfigBoostExample(t *testi
 			},
 			{
 				ResourceName:       "google_workstations_workstation_config.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -687,7 +687,7 @@ func TestAccWorkstationsWorkstationConfig_workstationConfigBoostExample(t *testi
 			},
 			{
 				ResourceName:       "google_workstations_workstation_config.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -707,7 +707,7 @@ func TestAccWorkstationsWorkstationConfig_workstationConfigBoostExample(t *testi
 			},
 			{
 				ResourceName:       "google_workstations_workstation_config.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -918,7 +918,7 @@ func TestAccWorkstationsWorkstationConfig_workstationConfigPersistentDirectories
 			},
 			{
 				ResourceName:       "google_workstations_workstation_config.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -938,7 +938,7 @@ func TestAccWorkstationsWorkstationConfig_workstationConfigPersistentDirectories
 			},
 			{
 				ResourceName:       "google_workstations_workstation_config.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -1222,7 +1222,7 @@ func TestAccWorkstationsWorkstationConfig_workstationConfigHyperdiskExample(t *t
 			},
 			{
 				ResourceName:       "google_workstations_workstation_config.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -1352,7 +1352,7 @@ func TestAccWorkstationsWorkstationConfig_workstationConfigEncryptionKeyExample(
 			},
 			{
 				ResourceName:       "google_workstations_workstation_config.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -1471,7 +1471,7 @@ func TestAccWorkstationsWorkstationConfig_workstationConfigIdleActionExample(t *
 			},
 			{
 				ResourceName:       "google_workstations_workstation_config.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -1491,7 +1491,7 @@ func TestAccWorkstationsWorkstationConfig_workstationConfigIdleActionExample(t *
 			},
 			{
 				ResourceName:       "google_workstations_workstation_config.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},

@@ -84,7 +84,7 @@ func TestAccTpuV2QueuedResource_tpuV2QueuedResourceBasicExample(t *testing.T) {
 			},
 			{
 				ResourceName:       "google_tpu_v2_queued_resource.qr",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -147,7 +147,7 @@ func TestAccTpuV2QueuedResource_tpuV2QueuedResourceFullExample(t *testing.T) {
 			},
 			{
 				ResourceName:       "google_tpu_v2_queued_resource.qr",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
