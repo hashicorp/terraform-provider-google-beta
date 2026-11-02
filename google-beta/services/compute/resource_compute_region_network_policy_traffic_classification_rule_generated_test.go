@@ -82,7 +82,7 @@ func TestAccComputeRegionNetworkPolicyTrafficClassificationRule_regionNetworkPol
 			},
 			{
 				ResourceName:       "google_compute_region_network_policy_traffic_classification_rule.primary",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},

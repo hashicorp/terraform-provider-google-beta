@@ -83,7 +83,7 @@ func TestAccComputeRegionBackendService_regionBackendServiceBasicExample(t *test
 			},
 			{
 				ResourceName:       "google_compute_region_backend_service.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -139,7 +139,7 @@ func TestAccComputeRegionBackendService_regionBackendServiceExternalIapExample(t
 			},
 			{
 				ResourceName:       "google_compute_region_backend_service.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -190,7 +190,7 @@ func TestAccComputeRegionBackendService_regionBackendServiceIlbRoundRobinExample
 			},
 			{
 				ResourceName:       "google_compute_region_backend_service.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -245,7 +245,7 @@ func TestAccComputeRegionBackendService_regionBackendServiceExternalExample(t *t
 			},
 			{
 				ResourceName:       "google_compute_region_backend_service.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -303,7 +303,7 @@ func TestAccComputeRegionBackendService_regionBackendServiceExternalWeightedExam
 			},
 			{
 				ResourceName:       "google_compute_region_backend_service.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -360,7 +360,7 @@ func TestAccComputeRegionBackendService_regionBackendServiceIlbRingHashExample(t
 			},
 			{
 				ResourceName:       "google_compute_region_backend_service.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -431,7 +431,7 @@ func TestAccComputeRegionBackendService_regionBackendServiceIlbStatefulSessionAf
 			},
 			{
 				ResourceName:       "google_compute_region_backend_service.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -500,7 +500,7 @@ func TestAccComputeRegionBackendService_regionBackendServiceBalancingModeExample
 			},
 			{
 				ResourceName:       "google_compute_region_backend_service.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -615,7 +615,7 @@ func TestAccComputeRegionBackendService_regionBackendServiceInFlightExample(t *t
 			},
 			{
 				ResourceName:       "google_compute_region_backend_service.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -738,7 +738,7 @@ func TestAccComputeRegionBackendService_regionBackendServiceConnectionTrackingEx
 			},
 			{
 				ResourceName:       "google_compute_region_backend_service.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -802,7 +802,7 @@ func TestAccComputeRegionBackendService_regionBackendServiceIpAddressSelectionPo
 			},
 			{
 				ResourceName:       "google_compute_region_backend_service.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -862,7 +862,7 @@ func TestAccComputeRegionBackendService_regionBackendServiceIlbCustomMetricsExam
 			},
 			{
 				ResourceName:       "google_compute_region_backend_service.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -947,7 +947,7 @@ func TestAccComputeRegionBackendService_regionBackendServiceDynamicForwardingExa
 			},
 			{
 				ResourceName:       "google_compute_region_backend_service.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -997,7 +997,7 @@ func TestAccComputeRegionBackendService_regionBackendServiceDynamicForwardingFor
 			},
 			{
 				ResourceName:       "google_compute_region_backend_service.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -1049,7 +1049,7 @@ func TestAccComputeRegionBackendService_regionBackendServiceDynamicForwardingFor
 			},
 			{
 				ResourceName:       "google_compute_region_backend_service.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -1102,7 +1102,7 @@ func TestAccComputeRegionBackendService_regionBackendServiceHaPolicyExample(t *t
 			},
 			{
 				ResourceName:       "google_compute_region_backend_service.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -1161,7 +1161,7 @@ func TestAccComputeRegionBackendService_regionBackendServiceHaPolicyManualLeader
 			},
 			{
 				ResourceName:       "google_compute_region_backend_service.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -1273,7 +1273,7 @@ func TestAccComputeRegionBackendService_regionBackendServiceTlsSettingsExample(t
 			},
 			{
 				ResourceName:       "google_compute_region_backend_service.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -1352,7 +1352,7 @@ func TestAccComputeRegionBackendService_regionBackendServiceIdentityExample(t *t
 			},
 			{
 				ResourceName:       "google_compute_region_backend_service.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -1372,7 +1372,7 @@ func TestAccComputeRegionBackendService_regionBackendServiceIdentityExample(t *t
 			},
 			{
 				ResourceName:       "google_compute_region_backend_service.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},

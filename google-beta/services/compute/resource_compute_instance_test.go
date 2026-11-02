@@ -453,7 +453,7 @@ func TestAccComputeInstance_importBlockWithResourceIdentity(t *testing.T) {
 			},
 			{
 				ResourceName:       "google_compute_instance.foobar",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
