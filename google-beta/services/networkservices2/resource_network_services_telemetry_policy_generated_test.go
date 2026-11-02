@@ -82,7 +82,7 @@ func TestAccNetworkServices2TelemetryPolicy_networkServicesTelemetryPolicyBasicE
 			},
 			{
 				ResourceName:       "google_network_services_telemetry_policy.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -142,7 +142,7 @@ func TestAccNetworkServices2TelemetryPolicy_networkServicesTelemetryPolicyFullEx
 			},
 			{
 				ResourceName:       "google_network_services_telemetry_policy.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -162,7 +162,7 @@ func TestAccNetworkServices2TelemetryPolicy_networkServicesTelemetryPolicyFullEx
 			},
 			{
 				ResourceName:       "google_network_services_telemetry_policy.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -284,7 +284,7 @@ func TestAccNetworkServices2TelemetryPolicy_networkServicesTelemetryPolicyGlobal
 			},
 			{
 				ResourceName:       "google_network_services_telemetry_policy.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
