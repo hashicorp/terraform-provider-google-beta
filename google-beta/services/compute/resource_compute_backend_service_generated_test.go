@@ -1308,6 +1308,7 @@ func TestAccComputeBackendService_backendServiceDynamicForwardingForwardProxyDir
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
+		"authentication_name":  "tf-test-authentication" + randomSuffix,
 		"backend_service_name": "tf-test-backend-service" + randomSuffix,
 		"random_suffix":        randomSuffix,
 	}
@@ -1349,6 +1350,15 @@ resource "google_compute_backend_service" "default" {
       proxy_mode = "DIRECT_FORWARDING"
     }
   }
+  tls_settings {
+    authentication_config = "//networksecurity.googleapis.com/${google_network_security_backend_authentication_config.default.id}"
+  }
+}
+
+resource "google_network_security_backend_authentication_config" "default" {
+  provider         = google-beta
+  name             = "%{authentication_name}"
+  well_known_roots = "PUBLIC_ROOTS"
 }
 `, context)
 }
