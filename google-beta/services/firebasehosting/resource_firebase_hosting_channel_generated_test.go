@@ -82,7 +82,7 @@ func TestAccFirebaseHostingChannel_firebasehostingChannelBasicExample(t *testing
 			},
 			{
 				ResourceName:       "google_firebase_hosting_channel.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -134,7 +134,7 @@ func TestAccFirebaseHostingChannel_firebasehostingChannelFullExample(t *testing.
 			},
 			{
 				ResourceName:       "google_firebase_hosting_channel.full",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},

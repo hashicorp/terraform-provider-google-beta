@@ -83,7 +83,7 @@ func TestAccFirebaseHostingVersion_firebasehostingVersionRedirectExample(t *test
 			},
 			{
 				ResourceName:       "google_firebase_hosting_version.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -146,7 +146,7 @@ func TestAccFirebaseHostingVersion_firebasehostingVersionHeadersExample(t *testi
 			},
 			{
 				ResourceName:       "google_firebase_hosting_version.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -211,7 +211,7 @@ func TestAccFirebaseHostingVersion_firebasehostingVersionHeadersRegexExample(t *
 			},
 			{
 				ResourceName:       "google_firebase_hosting_version.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -276,7 +276,7 @@ func TestAccFirebaseHostingVersion_firebasehostingVersionPathExample(t *testing.
 			},
 			{
 				ResourceName:       "google_firebase_hosting_version.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -340,7 +340,7 @@ func TestAccFirebaseHostingVersion_firebasehostingVersionCloudRunExample(t *test
 			},
 			{
 				ResourceName:       "google_firebase_hosting_version.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -425,7 +425,7 @@ func TestAccFirebaseHostingVersion_firebasehostingVersionCloudFunctionsExample(t
 			},
 			{
 				ResourceName:       "google_firebase_hosting_version.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},

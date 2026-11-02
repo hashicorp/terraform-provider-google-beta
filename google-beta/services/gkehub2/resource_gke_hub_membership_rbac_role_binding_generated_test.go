@@ -88,7 +88,7 @@ func TestAccGKEHub2MembershipRBACRoleBinding_gkehubMembershipRbacRoleBindingBasi
 			},
 			{
 				ResourceName:       "google_gke_hub_membership_rbac_role_binding.membership_rbac_role_binding",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},

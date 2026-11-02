@@ -83,7 +83,7 @@ func TestAccFirebaseHostingCustomDomain_firebasehostingCustomdomainBasicExample(
 			},
 			{
 				ResourceName:       "google_firebase_hosting_custom_domain.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -132,7 +132,7 @@ func TestAccFirebaseHostingCustomDomain_firebasehostingCustomdomainFullExample(t
 			},
 			{
 				ResourceName:       "google_firebase_hosting_custom_domain.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -193,7 +193,7 @@ func TestAccFirebaseHostingCustomDomain_firebasehostingCustomdomainCloudRunExamp
 			},
 			{
 				ResourceName:       "google_firebase_hosting_custom_domain.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
