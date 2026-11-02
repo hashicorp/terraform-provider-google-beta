@@ -88,7 +88,7 @@ func TestAccComputeRegionNetworkPolicy_regionNetworkPolicyUpdateExample(t *testi
 			},
 			{
 				ResourceName:       "google_compute_region_network_policy.policy",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -108,7 +108,7 @@ func TestAccComputeRegionNetworkPolicy_regionNetworkPolicyUpdateExample(t *testi
 			},
 			{
 				ResourceName:       "google_compute_region_network_policy.policy",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},

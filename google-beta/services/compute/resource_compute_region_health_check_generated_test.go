@@ -80,7 +80,7 @@ func TestAccComputeRegionHealthCheck_regionHealthCheckTcpExample(t *testing.T) {
 			},
 			{
 				ResourceName:       "google_compute_region_health_check.tcp-region-health-check",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -129,7 +129,7 @@ func TestAccComputeRegionHealthCheck_regionHealthCheckTcpFullExample(t *testing.
 			},
 			{
 				ResourceName:       "google_compute_region_health_check.tcp-region-health-check",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -185,7 +185,7 @@ func TestAccComputeRegionHealthCheck_regionHealthCheckSslExample(t *testing.T) {
 			},
 			{
 				ResourceName:       "google_compute_region_health_check.ssl-region-health-check",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -234,7 +234,7 @@ func TestAccComputeRegionHealthCheck_regionHealthCheckSslFullExample(t *testing.
 			},
 			{
 				ResourceName:       "google_compute_region_health_check.ssl-region-health-check",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -290,7 +290,7 @@ func TestAccComputeRegionHealthCheck_regionHealthCheckHttpExample(t *testing.T) 
 			},
 			{
 				ResourceName:       "google_compute_region_health_check.http-region-health-check",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -339,7 +339,7 @@ func TestAccComputeRegionHealthCheck_regionHealthCheckHttpLogsExample(t *testing
 			},
 			{
 				ResourceName:       "google_compute_region_health_check.http-region-health-check",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -394,7 +394,7 @@ func TestAccComputeRegionHealthCheck_regionHealthCheckHttpFullExample(t *testing
 			},
 			{
 				ResourceName:       "google_compute_region_health_check.http-region-health-check",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -451,7 +451,7 @@ func TestAccComputeRegionHealthCheck_regionHealthCheckHttpsExample(t *testing.T)
 			},
 			{
 				ResourceName:       "google_compute_region_health_check.https-region-health-check",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -500,7 +500,7 @@ func TestAccComputeRegionHealthCheck_regionHealthCheckHttpsFullExample(t *testin
 			},
 			{
 				ResourceName:       "google_compute_region_health_check.https-region-health-check",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -557,7 +557,7 @@ func TestAccComputeRegionHealthCheck_regionHealthCheckHttp2Example(t *testing.T)
 			},
 			{
 				ResourceName:       "google_compute_region_health_check.http2-region-health-check",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -606,7 +606,7 @@ func TestAccComputeRegionHealthCheck_regionHealthCheckHttp2FullExample(t *testin
 			},
 			{
 				ResourceName:       "google_compute_region_health_check.http2-region-health-check",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -663,7 +663,7 @@ func TestAccComputeRegionHealthCheck_regionHealthCheckGrpcExample(t *testing.T) 
 			},
 			{
 				ResourceName:       "google_compute_region_health_check.grpc-region-health-check",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -712,7 +712,7 @@ func TestAccComputeRegionHealthCheck_regionHealthCheckGrpcFullExample(t *testing
 			},
 			{
 				ResourceName:       "google_compute_region_health_check.grpc-region-health-check",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -763,7 +763,7 @@ func TestAccComputeRegionHealthCheck_regionHealthCheckGrpcWithTlsExample(t *test
 			},
 			{
 				ResourceName:       "google_compute_region_health_check.grpc-with-tls-region-health-check",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -812,7 +812,7 @@ func TestAccComputeRegionHealthCheck_regionHealthCheckGrpcWithTlsFullExample(t *
 			},
 			{
 				ResourceName:       "google_compute_region_health_check.grpc-with-tls-region-health-check",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},

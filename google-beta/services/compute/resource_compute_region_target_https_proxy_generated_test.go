@@ -87,7 +87,7 @@ func TestAccComputeRegionTargetHttpsProxy_regionTargetHttpsProxyBasicExample(t *
 			},
 			{
 				ResourceName:       "google_compute_region_target_https_proxy.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -184,7 +184,7 @@ func TestAccComputeRegionTargetHttpsProxy_regionTargetHttpsProxyHttpKeepAliveTim
 			},
 			{
 				ResourceName:       "google_compute_region_target_https_proxy.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -286,7 +286,7 @@ func TestAccComputeRegionTargetHttpsProxy_regionTargetHttpsProxyMtlsExample(t *t
 			},
 			{
 				ResourceName:       "google_compute_region_target_https_proxy.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -429,7 +429,7 @@ func TestAccComputeRegionTargetHttpsProxy_regionTargetHttpsProxyCertificateManag
 			},
 			{
 				ResourceName:       "google_compute_region_target_https_proxy.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},

@@ -87,7 +87,7 @@ func TestAccComputeTargetHttpsProxy_targetHttpsProxyBasicExample(t *testing.T) {
 			},
 			{
 				ResourceName:       "google_compute_target_https_proxy.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -180,7 +180,7 @@ func TestAccComputeTargetHttpsProxy_targetHttpsProxyHttpKeepAliveTimeoutExample(
 			},
 			{
 				ResourceName:       "google_compute_target_https_proxy.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -276,7 +276,7 @@ func TestAccComputeTargetHttpsProxy_targetHttpsProxyMtlsExample(t *testing.T) {
 			},
 			{
 				ResourceName:       "google_compute_target_https_proxy.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -410,7 +410,7 @@ func TestAccComputeTargetHttpsProxy_targetHttpsProxyCertificateManagerCertificat
 			},
 			{
 				ResourceName:       "google_compute_target_https_proxy.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -498,7 +498,7 @@ func TestAccComputeTargetHttpsProxy_targetHttpsProxyFingerprintExample(t *testin
 			},
 			{
 				ResourceName:       "google_compute_target_https_proxy.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},

@@ -84,7 +84,7 @@ func TestAccComputeMachineImage_machineImageBasicExample(t *testing.T) {
 			},
 			{
 				ResourceName:       "google_compute_machine_image.image",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -153,7 +153,7 @@ func TestAccComputeMachineImage_computeMachineImageKmsExample(t *testing.T) {
 			},
 			{
 				ResourceName:       "google_compute_machine_image.image",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -231,7 +231,7 @@ func TestAccComputeMachineImage_machineImageResourceManagerTagsExample(t *testin
 			},
 			{
 				ResourceName:       "google_compute_machine_image.image",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},

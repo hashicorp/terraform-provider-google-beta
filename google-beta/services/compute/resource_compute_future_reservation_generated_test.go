@@ -87,7 +87,7 @@ func TestAccComputeFutureReservation_futureReservationBasicExample(t *testing.T)
 			},
 			{
 				ResourceName:       "google_compute_future_reservation.gce_future_reservation",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -152,7 +152,7 @@ func TestAccComputeFutureReservation_futureReservationAggregateReservationExampl
 			},
 			{
 				ResourceName:       "google_compute_future_reservation.gce_future_reservation",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -226,7 +226,7 @@ func TestAccComputeFutureReservation_sharedFutureReservationExample(t *testing.T
 			},
 			{
 				ResourceName:       "google_compute_future_reservation.gce_future_reservation",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},

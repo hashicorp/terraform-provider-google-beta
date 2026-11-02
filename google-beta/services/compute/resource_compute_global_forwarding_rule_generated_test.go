@@ -89,7 +89,7 @@ func TestAccComputeGlobalForwardingRule_externalTcpProxyLbMigBackendExample(t *t
 			},
 			{
 				ResourceName:       "google_compute_global_forwarding_rule.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -281,7 +281,7 @@ func TestAccComputeGlobalForwardingRule_externalHttpLbMigBackendCustomHeaderExam
 			},
 			{
 				ResourceName:       "google_compute_global_forwarding_rule.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -477,7 +477,7 @@ func TestAccComputeGlobalForwardingRule_globalForwardingRuleHttpExample(t *testi
 			},
 			{
 				ResourceName:       "google_compute_global_forwarding_rule.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -570,7 +570,7 @@ func TestAccComputeGlobalForwardingRule_globalForwardingRuleInternalExample(t *t
 			},
 			{
 				ResourceName:       "google_compute_global_forwarding_rule.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -718,7 +718,7 @@ func TestAccComputeGlobalForwardingRule_globalForwardingRuleExternalManagedExamp
 			},
 			{
 				ResourceName:       "google_compute_global_forwarding_rule.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -810,7 +810,7 @@ func TestAccComputeGlobalForwardingRule_globalForwardingRuleHybridExample(t *tes
 			},
 			{
 				ResourceName:       "google_compute_global_forwarding_rule.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -991,7 +991,7 @@ func TestAccComputeGlobalForwardingRule_globalInternalHttpLbWithMigBackendExampl
 			},
 			{
 				ResourceName:       "google_compute_global_forwarding_rule.google_compute_forwarding_rule",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -1217,7 +1217,7 @@ func TestAccComputeGlobalForwardingRule_privateServiceConnectGoogleApisExample(t
 			},
 			{
 				ResourceName:       "google_compute_global_forwarding_rule.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -1300,7 +1300,7 @@ func TestAccComputeGlobalForwardingRule_privateServiceConnectGoogleApisNoAutomat
 			},
 			{
 				ResourceName:       "google_compute_global_forwarding_rule.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
