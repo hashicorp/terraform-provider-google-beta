@@ -82,7 +82,7 @@ func TestAccStorageControlProjectFeatureConfig_storageControlProjectFeatureConfi
 			},
 			{
 				ResourceName:       "google_storage_control_project_feature_config.example",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -140,7 +140,7 @@ func TestAccStorageControlProjectFeatureConfig_storageControlProjectFeatureConfi
 			},
 			{
 				ResourceName:       "google_storage_control_project_feature_config.example",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -160,7 +160,7 @@ func TestAccStorageControlProjectFeatureConfig_storageControlProjectFeatureConfi
 			},
 			{
 				ResourceName:       "google_storage_control_project_feature_config.example",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
