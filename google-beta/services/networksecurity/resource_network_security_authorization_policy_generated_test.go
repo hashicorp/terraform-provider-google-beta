@@ -80,7 +80,7 @@ func TestAccNetworkSecurityAuthorizationPolicy_networkSecurityAuthorizationPolic
 			},
 			{
 				ResourceName:       "google_network_security_authorization_policy.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -134,7 +134,7 @@ func TestAccNetworkSecurityAuthorizationPolicy_networkSecurityAuthorizationPolic
 			},
 			{
 				ResourceName:       "google_network_security_authorization_policy.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
