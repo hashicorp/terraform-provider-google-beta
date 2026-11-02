@@ -89,7 +89,7 @@ func TestAccOSConfigV2PolicyOrchestratorForFolder_osconfigv2PolicyOrchestratorFo
 			},
 			{
 				ResourceName:       "google_os_config_v2_policy_orchestrator_for_folder.policy_orchestrator_for_folder",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
