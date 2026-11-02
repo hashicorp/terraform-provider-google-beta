@@ -91,7 +91,7 @@ func TestAccSaasRuntimeUnitKind_saasRuntimeUnitKindBasicExample(t *testing.T) {
 			},
 			{
 				ResourceName:       "google_saas_runtime_unit_kind.example",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},

@@ -91,7 +91,7 @@ func TestAccSaasRuntimeRelease_saasRuntimeReleaseBasicExample(t *testing.T) {
 			},
 			{
 				ResourceName:       "google_saas_runtime_release.example",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},

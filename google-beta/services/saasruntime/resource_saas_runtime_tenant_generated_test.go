@@ -89,7 +89,7 @@ func TestAccSaasRuntimeTenant_saasRuntimeTenantBasicExample(t *testing.T) {
 			},
 			{
 				ResourceName:       "google_saas_runtime_tenant.example",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},

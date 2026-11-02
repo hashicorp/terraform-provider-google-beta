@@ -100,7 +100,7 @@ func TestAccSaasRuntimeUnitOperation_saasRuntimeUnitOperationBasicExample(t *tes
 			},
 			{
 				ResourceName:       "google_saas_runtime_unit_operation.provision_unit_operation",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
