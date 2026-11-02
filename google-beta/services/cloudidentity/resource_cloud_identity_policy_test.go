@@ -74,6 +74,12 @@ func TestAccCloudIdentityPolicy_cloudidentityPolicyBasic(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
+			{
+				ResourceName:       "google_cloud_identity_policy.primary",
+				ImportState:        true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }

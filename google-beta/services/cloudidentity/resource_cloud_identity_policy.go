@@ -556,6 +556,14 @@ func resourceCloudIdentityPolicyDelete(d *schema.ResourceData, meta interface{})
 }
 
 func resourceCloudIdentityPolicyImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	config := meta.(*transport_tpg.Config)
+
+	if d.Id() == "" {
+		if err := tpgresource.ParseImportId([]string{"(?P<name>.+)"}, d, config); err != nil {
+			return nil, err
+		}
+	}
+
 	// 1. Get the ID the user typed (e.g., "policies/12345" or just "12345")
 	id := d.Id()
 
