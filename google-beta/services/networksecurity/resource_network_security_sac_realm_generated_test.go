@@ -80,7 +80,7 @@ func TestAccNetworkSecuritySacRealm_sacRealmPrismaAccessExample(t *testing.T) {
 			},
 			{
 				ResourceName:       "google_network_security_sac_realm.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
