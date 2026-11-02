@@ -81,7 +81,7 @@ func TestAccSecurityScannerScanConfig_scanConfigBasicExample(t *testing.T) {
 			},
 			{
 				ResourceName:       "google_security_scanner_scan_config.scan-config",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -134,7 +134,7 @@ func TestAccSecurityScannerScanConfig_scanConfigIgnoreHttpStatusErrorsExample(t 
 			},
 			{
 				ResourceName:       "google_security_scanner_scan_config.scan-config",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -191,7 +191,7 @@ func TestAccSecurityScannerScanConfig_scanConfigStaticIpExample(t *testing.T) {
 			},
 			{
 				ResourceName:       "google_security_scanner_scan_config.scan-config",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},

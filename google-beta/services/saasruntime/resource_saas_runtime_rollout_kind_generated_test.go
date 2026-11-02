@@ -89,7 +89,7 @@ func TestAccSaasRuntimeRolloutKind_saasRuntimeRolloutKindBasicExample(t *testing
 			},
 			{
 				ResourceName:       "google_saas_runtime_rollout_kind.example",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
