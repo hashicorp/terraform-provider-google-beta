@@ -81,7 +81,7 @@ func TestAccFirebaseProject_firebaseProjectBasicExample(t *testing.T) {
 			},
 			{
 				ResourceName:       "google_firebase_project.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},

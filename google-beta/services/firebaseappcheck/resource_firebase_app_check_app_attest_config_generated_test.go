@@ -86,7 +86,7 @@ func TestAccFirebaseAppCheckAppAttestConfig_firebaseAppCheckAppAttestConfigMinim
 			},
 			{
 				ResourceName:       "google_firebase_app_check_app_attest_config.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -162,7 +162,7 @@ func TestAccFirebaseAppCheckAppAttestConfig_firebaseAppCheckAppAttestConfigFullE
 			},
 			{
 				ResourceName:       "google_firebase_app_check_app_attest_config.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},

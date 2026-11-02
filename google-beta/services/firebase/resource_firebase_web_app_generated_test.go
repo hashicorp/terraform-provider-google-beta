@@ -84,7 +84,7 @@ func TestAccFirebaseWebApp_firebaseWebAppBasicExample(t *testing.T) {
 			},
 			{
 				ResourceName:       "google_firebase_web_app.basic",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -157,7 +157,7 @@ func TestAccFirebaseWebApp_firebaseWebAppCustomApiKeyExample(t *testing.T) {
 			},
 			{
 				ResourceName:       "google_firebase_web_app.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},

@@ -87,7 +87,7 @@ func TestAccFirebaseAILogicConfig_firebaseailogicConfigBasicExample(t *testing.T
 			},
 			{
 				ResourceName:       "google_firebase_ai_logic_config.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -179,7 +179,7 @@ func TestAccFirebaseAILogicConfig_firebaseailogicConfigFullExample(t *testing.T)
 			},
 			{
 				ResourceName:       "google_firebase_ai_logic_config.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
