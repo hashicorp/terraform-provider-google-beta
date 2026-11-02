@@ -81,7 +81,7 @@ func TestAccNetworkServicesServiceLbPolicies_networkServicesServiceLbPoliciesBas
 			},
 			{
 				ResourceName:       "google_network_services_service_lb_policies.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -125,7 +125,7 @@ func TestAccNetworkServicesServiceLbPolicies_networkServicesServiceLbPoliciesAdv
 			},
 			{
 				ResourceName:       "google_network_services_service_lb_policies.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -191,7 +191,7 @@ func TestAccNetworkServicesServiceLbPolicies_networkServicesServiceLbPoliciesBet
 			},
 			{
 				ResourceName:       "google_network_services_service_lb_policies.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -266,7 +266,7 @@ func TestAccNetworkServicesServiceLbPolicies_networkServicesServiceLbPoliciesReg
 			},
 			{
 				ResourceName:       "google_network_services_service_lb_policies.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
