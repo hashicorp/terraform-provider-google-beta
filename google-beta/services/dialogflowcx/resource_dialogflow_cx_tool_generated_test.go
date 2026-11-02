@@ -84,7 +84,7 @@ func TestAccDialogflowCXTool_dialogflowcxToolOpenApiExample(t *testing.T) {
 			},
 			{
 				ResourceName:       "google_dialogflow_cx_tool.open_api_tool",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -202,7 +202,7 @@ func TestAccDialogflowCXTool_dialogflowcxToolDataStoreExample(t *testing.T) {
 			},
 			{
 				ResourceName:       "google_dialogflow_cx_tool.data_store_tool",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -282,7 +282,7 @@ func TestAccDialogflowCXTool_dialogflowcxToolFunctionExample(t *testing.T) {
 			},
 			{
 				ResourceName:       "google_dialogflow_cx_tool.function_tool",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -361,7 +361,7 @@ func TestAccDialogflowCXTool_dialogflowcxToolConnectorExample(t *testing.T) {
 			},
 			{
 				ResourceName:       "google_dialogflow_cx_tool.connector_tool",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},

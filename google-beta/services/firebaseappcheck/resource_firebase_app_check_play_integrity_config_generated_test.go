@@ -86,7 +86,7 @@ func TestAccFirebaseAppCheckPlayIntegrityConfig_firebaseAppCheckPlayIntegrityCon
 			},
 			{
 				ResourceName:       "google_firebase_app_check_play_integrity_config.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -170,7 +170,7 @@ func TestAccFirebaseAppCheckPlayIntegrityConfig_firebaseAppCheckPlayIntegrityCon
 			},
 			{
 				ResourceName:       "google_firebase_app_check_play_integrity_config.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},

@@ -87,7 +87,7 @@ func TestAccFirebaseAppCheckRecaptchaEnterpriseConfig_firebaseAppCheckRecaptchaE
 			},
 			{
 				ResourceName:       "google_firebase_app_check_recaptcha_enterprise_config.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
