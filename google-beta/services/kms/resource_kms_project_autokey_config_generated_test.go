@@ -86,7 +86,7 @@ func TestAccKMSProjectAutokeyConfig_kmsAutokeyConfigProjectExample(t *testing.T)
 			},
 			{
 				ResourceName:       "google_kms_project_autokey_config.example-autokeyconfig-project",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
