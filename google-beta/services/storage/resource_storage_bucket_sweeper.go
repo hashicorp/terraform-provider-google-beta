@@ -23,8 +23,8 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/gammazero/workerpool"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/sweeper"
+	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 )
 
@@ -99,7 +99,7 @@ func deleteObjects(config *transport_tpg.Config, bucket string) bool {
 		if len(res.Items) == 0 {
 			break
 		}
-		wp := workerpool.New(runtime.NumCPU() - 1)
+		wp := tpgresource.NewWorkerPool(runtime.NumCPU() - 1)
 
 		for _, object := range res.Items {
 			log.Printf("[DEBUG] Found %s", object.Name)
