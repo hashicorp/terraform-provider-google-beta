@@ -88,7 +88,7 @@ func TestAccApigeeEnvironmentKeyvaluemaps_apigeeEnvironmentKeyvaluemapsTestExamp
 			},
 			{
 				ResourceName:       "google_apigee_environment_keyvaluemaps.apigee_environment_keyvaluemaps",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -233,7 +233,7 @@ func TestAccApigeeEnvironmentKeyvaluemaps_apigeeEnvironmentKeyvaluemapsBetaTestE
 			},
 			{
 				ResourceName:       "google_apigee_environment_keyvaluemaps.apigee_environment_keyvaluemaps",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
