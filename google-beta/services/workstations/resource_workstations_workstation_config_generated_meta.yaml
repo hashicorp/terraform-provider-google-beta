@@ -46,6 +46,9 @@ fields:
     - api_field: host.gceInstance.boostConfigs.id
     - api_field: host.gceInstance.boostConfigs.machineType
     - api_field: host.gceInstance.boostConfigs.poolSize
+    - api_field: host.gceInstance.boostConfigs.reservationAffinity.consumeReservationType
+    - api_field: host.gceInstance.boostConfigs.reservationAffinity.key
+    - api_field: host.gceInstance.boostConfigs.reservationAffinity.values
     - api_field: host.gceInstance.bootDiskSizeGb
     - api_field: host.gceInstance.confidentialInstanceConfig.enableConfidentialCompute
     - api_field: host.gceInstance.disablePublicIpAddresses
@@ -54,6 +57,9 @@ fields:
     - api_field: host.gceInstance.instanceMetadata
     - api_field: host.gceInstance.machineType
     - api_field: host.gceInstance.poolSize
+    - api_field: host.gceInstance.reservationAffinity.consumeReservationType
+    - api_field: host.gceInstance.reservationAffinity.key
+    - api_field: host.gceInstance.reservationAffinity.values
     - api_field: host.gceInstance.serviceAccount
     - api_field: host.gceInstance.serviceAccountScopes
     - api_field: host.gceInstance.shieldedInstanceConfig.enableIntegrityMonitoring
