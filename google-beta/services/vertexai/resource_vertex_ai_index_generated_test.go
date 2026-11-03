@@ -87,7 +87,7 @@ func TestAccVertexAIIndex_vertexAiIndexExample(t *testing.T) {
 			},
 			{
 				ResourceName:       "google_vertex_ai_index.index",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -193,7 +193,7 @@ func TestAccVertexAIIndex_vertexAiIndexStreamingExample(t *testing.T) {
 			},
 			{
 				ResourceName:       "google_vertex_ai_index.index",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
