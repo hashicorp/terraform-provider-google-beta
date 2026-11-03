@@ -822,7 +822,7 @@ func resourceSaasRuntimeUnitOperationDelete(d *schema.ResourceData, meta interfa
 		return transport_tpg.HandleNotFoundError(err, d, "UnitOperation")
 	}
 
-	err = transport_tpg.PollingWaitTime(resourceSaasRuntimeUnitOperationPollRead(d, meta), transport_tpg.PollCheckForAbsence, "Deleting UnitOperation", d.Timeout(schema.TimeoutCreate), 1)
+	err = transport_tpg.PollingWaitTime(resourceSaasRuntimeUnitOperationPollRead(d, meta), transport_tpg.PollCheckForAbsence, "Deleting UnitOperation", d.Timeout(schema.TimeoutCreate), 1, config.SleepUnit)
 	if err != nil {
 		return fmt.Errorf("Error waiting to delete UnitOperation: %s", err)
 	}

@@ -302,7 +302,7 @@ func resourceComputeOrganizationSnapshotRecycleBinPolicyCreate(d *schema.Resourc
 			return transport_tpg.SuccessPollResult()
 		}
 		return transport_tpg.PendingStatusPollResult(status.(string))
-	}, "Waiting for OrganizationSnapshotRecycleBinPolicy operation", d.Timeout(schema.TimeoutCreate), 1)
+	}, "Waiting for OrganizationSnapshotRecycleBinPolicy operation", d.Timeout(schema.TimeoutCreate), 1, config.SleepUnit)
 
 	if err != nil {
 		return err
@@ -487,7 +487,7 @@ func resourceComputeOrganizationSnapshotRecycleBinPolicyUpdate(d *schema.Resourc
 			return transport_tpg.SuccessPollResult()
 		}
 		return transport_tpg.PendingStatusPollResult(status.(string))
-	}, "Waiting for OrganizationSnapshotRecycleBinPolicy operation", d.Timeout(schema.TimeoutCreate), 1)
+	}, "Waiting for OrganizationSnapshotRecycleBinPolicy operation", d.Timeout(schema.TimeoutCreate), 1, config.SleepUnit)
 
 	if err != nil {
 		return err
