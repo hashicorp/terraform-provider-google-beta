@@ -1543,6 +1543,219 @@ resource "google_workstations_workstation_config" "default" {
 `, context)
 }
 
+func TestAccWorkstationsWorkstationConfig_workstationConfigReservationAffinityExample(t *testing.T) {
+	t.Parallel()
+
+	randomSuffix := acctest.RandString(t, 10)
+
+	context := map[string]interface{}{
+		"reservation_name":         "tf-test-workstation-reservation" + randomSuffix,
+		"workstation_cluster_name": "tf-test-workstation-cluster" + randomSuffix,
+		"workstation_config_name":  "tf-test-workstation-config" + randomSuffix,
+		"random_suffix":            randomSuffix,
+	}
+
+	context_1 := map[string]interface{}{
+		"reservation_name":         "tf-test-workstation-reservation" + randomSuffix,
+		"workstation_cluster_name": "tf-test-workstation-cluster" + randomSuffix,
+		"workstation_config_name":  "tf-test-workstation-config" + randomSuffix,
+		"random_suffix":            randomSuffix,
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckWorkstationsWorkstationConfigDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccWorkstationsWorkstationConfig_workstationConfigReservationAffinityExample(context),
+			},
+			{
+				ResourceName:            "google_workstations_workstation_config.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"annotations", "enable_audit_agent", "labels", "location", "terraform_labels", "workstation_cluster_id", "workstation_config_id"},
+			},
+			{
+				ResourceName:       "google_workstations_workstation_config.default",
+				ImportState:        true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
+			{
+				Config: testAccWorkstationsWorkstationConfig_workstationConfigReservationAffinityUpdateExample(context_1),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_workstations_workstation_config.default", plancheck.ResourceActionUpdate),
+					},
+				},
+			},
+			{
+				ResourceName:            "google_workstations_workstation_config.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"annotations", "enable_audit_agent", "labels", "location", "terraform_labels", "workstation_cluster_id", "workstation_config_id"},
+			},
+			{
+				ResourceName:       "google_workstations_workstation_config.default",
+				ImportState:        true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
+		},
+	})
+}
+
+func testAccWorkstationsWorkstationConfig_workstationConfigReservationAffinityExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_compute_network" "default" {
+  provider                = google-beta
+  name                    = "%{workstation_cluster_name}"
+  auto_create_subnetworks = false
+}
+
+resource "google_compute_subnetwork" "default" {
+  provider      = google-beta
+  name          = "%{workstation_cluster_name}"
+  ip_cidr_range = "10.0.0.0/24"
+  region        = "us-east4"
+  network       = google_compute_network.default.name
+}
+
+resource "google_workstations_workstation_cluster" "default" {
+  provider               = google-beta
+  workstation_cluster_id = "%{workstation_cluster_name}"
+  network                = google_compute_network.default.id
+  subnetwork             = google_compute_subnetwork.default.id
+  location               = "us-east4"
+}
+
+resource "google_compute_reservation" "default" {
+  provider = google-beta
+  name     = "%{reservation_name}"
+  zone     = "us-east4-a"
+
+  specific_reservation {
+    count = 1
+
+    instance_properties {
+      machine_type = "e2-standard-4"
+    }
+  }
+
+  specific_reservation_required = true
+}
+
+resource "google_workstations_workstation_config" "default" {
+  provider               = google-beta
+  workstation_config_id  = "%{workstation_config_name}"
+  workstation_cluster_id = google_workstations_workstation_cluster.default.workstation_cluster_id
+  location               = "us-east4"
+
+  replica_zones = ["us-east4-a", "us-east4-b"]
+
+  host {
+    gce_instance {
+      machine_type                = "e2-standard-4"
+      boot_disk_size_gb           = 35
+      disable_public_ip_addresses = true
+
+      reservation_affinity {
+        consume_reservation_type = "SPECIFIC_RESERVATION"
+        key                      = "compute.googleapis.com/reservation-name"
+        values                   = [google_compute_reservation.default.name]
+      }
+
+      boost_configs {
+        id                = "boost-1"
+        machine_type      = "e2-standard-4"
+        boot_disk_size_gb = 35
+
+        reservation_affinity {
+          consume_reservation_type = "ANY_RESERVATION"
+        }
+      }
+    }
+  }
+}
+`, context)
+}
+
+func testAccWorkstationsWorkstationConfig_workstationConfigReservationAffinityUpdateExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_compute_network" "default" {
+  provider                = google-beta
+  name                    = "%{workstation_cluster_name}"
+  auto_create_subnetworks = false
+}
+
+resource "google_compute_subnetwork" "default" {
+  provider      = google-beta
+  name          = "%{workstation_cluster_name}"
+  ip_cidr_range = "10.0.0.0/24"
+  region        = "us-east4"
+  network       = google_compute_network.default.name
+}
+
+resource "google_workstations_workstation_cluster" "default" {
+  provider               = google-beta
+  workstation_cluster_id = "%{workstation_cluster_name}"
+  network                = google_compute_network.default.id
+  subnetwork             = google_compute_subnetwork.default.id
+  location               = "us-east4"
+}
+
+resource "google_compute_reservation" "default" {
+  provider = google-beta
+  name     = "%{reservation_name}"
+  zone     = "us-east4-a"
+
+  specific_reservation {
+    count = 1
+
+    instance_properties {
+      machine_type = "e2-standard-4"
+    }
+  }
+
+  specific_reservation_required = true
+}
+
+resource "google_workstations_workstation_config" "default" {
+  provider               = google-beta
+  workstation_config_id  = "%{workstation_config_name}"
+  workstation_cluster_id = google_workstations_workstation_cluster.default.workstation_cluster_id
+  location               = "us-east4"
+
+  replica_zones = ["us-east4-a", "us-east4-b"]
+
+  host {
+    gce_instance {
+      machine_type                = "e2-standard-4"
+      boot_disk_size_gb           = 35
+      disable_public_ip_addresses = true
+
+      reservation_affinity {
+        consume_reservation_type = "NO_RESERVATION"
+      }
+
+      boost_configs {
+        id                = "boost-1"
+        machine_type      = "e2-standard-4"
+        boot_disk_size_gb = 35
+
+        reservation_affinity {
+          consume_reservation_type = "SPECIFIC_RESERVATION"
+          key                      = "compute.googleapis.com/reservation-name"
+          values                   = [google_compute_reservation.default.name]
+        }
+      }
+    }
+  }
+}
+`, context)
+}
+
 func testAccCheckWorkstationsWorkstationConfigDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		for name, rs := range s.RootModule().Resources {
