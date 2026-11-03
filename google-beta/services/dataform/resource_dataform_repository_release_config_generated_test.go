@@ -86,7 +86,7 @@ func TestAccDataformRepositoryReleaseConfig_dataformRepositoryReleaseConfigExamp
 			},
 			{
 				ResourceName:       "google_dataform_repository_release_config.release",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -193,7 +193,7 @@ func TestAccDataformRepositoryReleaseConfig_dataformRepositoryReleaseConfigDisab
 			},
 			{
 				ResourceName:       "google_dataform_repository_release_config.release",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
