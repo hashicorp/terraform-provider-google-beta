@@ -109,65 +109,6 @@ resource "google_vertex_ai_feature_online_store" "feature_online_store" {
 `, context)
 }
 
-func TestAccVertexAIFeatureOnlineStore_vertexAiFeatureonlinestoreWithOptimizedExample(t *testing.T) {
-	t.Parallel()
-
-	randomSuffix := acctest.RandString(t, 10)
-
-	context := map[string]interface{}{
-		"name":          "tf_test_example_feature_online_store_optimized" + randomSuffix,
-		"random_suffix": randomSuffix,
-	}
-
-	acctest.VcrTest(t, resource.TestCase{
-		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
-		CheckDestroy:             testAccCheckVertexAIFeatureOnlineStoreDestroyProducer(t),
-		Steps: []resource.TestStep{
-			{
-				Config: testAccVertexAIFeatureOnlineStore_vertexAiFeatureonlinestoreWithOptimizedExample(context),
-			},
-			{
-				ResourceName:            "google_vertex_ai_feature_online_store.featureonlinestore",
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"etag", "force_destroy", "labels", "name", "region", "terraform_labels"},
-			},
-			{
-				ResourceName:       "google_vertex_ai_feature_online_store.featureonlinestore",
-				ImportState:        true,
-				ExpectNonEmptyPlan: true,
-				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
-			},
-		},
-	})
-}
-
-func testAccVertexAIFeatureOnlineStore_vertexAiFeatureonlinestoreWithOptimizedExample(context map[string]interface{}) string {
-	return acctest.Nprintf(`
-resource "google_vertex_ai_feature_online_store" "featureonlinestore" {
-  provider = google
-  name     = "%{name}"
-  labels = {
-    foo = "bar"
-  }
-  region = "us-central1"
-  optimized {}
-  dedicated_serving_endpoint {
-    private_service_connect_config {
-      enable_private_service_connect = true
-      project_allowlist              = [data.google_project.project.number]
-    }
-  }
-}
-
-data "google_project" "project" {
-  provider = google
-}
-
-`, context)
-}
-
 func TestAccVertexAIFeatureOnlineStore_vertexAiFeatureonlinestoreWithBetaFieldsBigtableExample(t *testing.T) {
 	acctest.SkipIfVcr(t)
 	t.Parallel()
