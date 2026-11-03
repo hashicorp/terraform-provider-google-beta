@@ -347,7 +347,7 @@ func TestAccAppEngineStandardAppVersion_appEngineStandardAppVersionVpcAccessExam
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckAppEngineStandardAppVersionDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -452,33 +452,28 @@ func TestAccAppEngineStandardAppVersion_appEngineStandardAppVersionVpcAccessExam
 func testAccAppEngineStandardAppVersion_appEngineStandardAppVersionVpcAccessExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_service_account" "service_account" {
-  provider     = google-beta
   account_id   = "%{sa_email}"
   display_name = "Test Service Account for GAE"
 }
 
 resource "google_project_iam_member" "gae_api" {
-  provider = google-beta
-  project  = google_service_account.service_account.project
-  role     = "roles/compute.networkUser"
-  member   = "serviceAccount:${google_service_account.service_account.email}"
+  project = google_service_account.service_account.project
+  role    = "roles/compute.networkUser"
+  member  = "serviceAccount:${google_service_account.service_account.email}"
 }
 
 resource "google_project_iam_member" "storage_viewer" {
-  provider = google-beta
-  project  = google_service_account.service_account.project
-  role     = "roles/storage.objectViewer"
-  member   = "serviceAccount:${google_service_account.service_account.email}"
+  project = google_service_account.service_account.project
+  role    = "roles/storage.objectViewer"
+  member  = "serviceAccount:${google_service_account.service_account.email}"
 }
 
 resource "google_compute_network" "custom" {
-  provider                = google-beta
   name                    = "%{service_id}-net"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "custom" {
-  provider      = google-beta
   name          = "%{service_id}-sub"
   ip_cidr_range = "10.0.0.0/24"
   region        = "us-central1"
@@ -486,31 +481,27 @@ resource "google_compute_subnetwork" "custom" {
 }
 
 resource "google_storage_bucket" "bucket" {
-  provider                    = google-beta
   name                        = "%{bucket_name}"
   location                    = "US"
   uniform_bucket_level_access = true
 }
 
 resource "google_storage_bucket_object" "requirements" {
-  provider = google-beta
-  name     = "requirements.txt"
-  bucket   = google_storage_bucket.bucket.name
-  source   = "./test-fixtures/hello-world-flask/requirements.txt"
+  name   = "requirements.txt"
+  bucket = google_storage_bucket.bucket.name
+  source = "./test-fixtures/hello-world-flask/requirements.txt"
 }
 
 resource "google_storage_bucket_object" "main" {
-  provider = google-beta
-  name     = "main.py"
-  bucket   = google_storage_bucket.bucket.name
-  source   = "./test-fixtures/hello-world-flask/main.py"
+  name   = "main.py"
+  bucket = google_storage_bucket.bucket.name
+  source = "./test-fixtures/hello-world-flask/main.py"
 }
 
 resource "google_app_engine_standard_app_version" "gae-std-app-ver-vpc-access" {
-  provider     = google-beta
-  version_id   = "v1"
-  service      = "%{service_id}"
-  runtime      = "python312"
+  version_id = "v1"
+  service    = "%{service_id}"
+  runtime    = "python312"
 
   vpc_access {
     vpc_egress = "%{vpc_egress}"
@@ -550,33 +541,28 @@ resource "google_app_engine_standard_app_version" "gae-std-app-ver-vpc-access" {
 func testAccAppEngineStandardAppVersion_appEngineStandardAppVersionVpcAccessEgressSettingExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_service_account" "service_account" {
-  provider     = google-beta
   account_id   = "%{sa_email}"
   display_name = "Test Service Account for GAE"
 }
 
 resource "google_project_iam_member" "gae_api" {
-  provider = google-beta
-  project  = google_service_account.service_account.project
-  role     = "roles/compute.networkUser"
-  member   = "serviceAccount:${google_service_account.service_account.email}"
+  project = google_service_account.service_account.project
+  role    = "roles/compute.networkUser"
+  member  = "serviceAccount:${google_service_account.service_account.email}"
 }
 
 resource "google_project_iam_member" "storage_viewer" {
-  provider = google-beta
-  project  = google_service_account.service_account.project
-  role     = "roles/storage.objectViewer"
-  member   = "serviceAccount:${google_service_account.service_account.email}"
+  project = google_service_account.service_account.project
+  role    = "roles/storage.objectViewer"
+  member  = "serviceAccount:${google_service_account.service_account.email}"
 }
 
 resource "google_compute_network" "custom" {
-  provider                = google-beta
   name                    = "%{service_id}-net"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "custom" {
-  provider      = google-beta
   name          = "%{service_id}-sub"
   ip_cidr_range = "10.0.0.0/24"
   region        = "us-central1"
@@ -584,31 +570,27 @@ resource "google_compute_subnetwork" "custom" {
 }
 
 resource "google_storage_bucket" "bucket" {
-  provider                    = google-beta
   name                        = "%{bucket_name}"
   location                    = "US"
   uniform_bucket_level_access = true
 }
 
 resource "google_storage_bucket_object" "requirements" {
-  provider = google-beta
-  name     = "requirements.txt"
-  bucket   = google_storage_bucket.bucket.name
-  source   = "./test-fixtures/hello-world-flask/requirements.txt"
+  name   = "requirements.txt"
+  bucket = google_storage_bucket.bucket.name
+  source = "./test-fixtures/hello-world-flask/requirements.txt"
 }
 
 resource "google_storage_bucket_object" "main" {
-  provider = google-beta
-  name     = "main.py"
-  bucket   = google_storage_bucket.bucket.name
-  source   = "./test-fixtures/hello-world-flask/main.py"
+  name   = "main.py"
+  bucket = google_storage_bucket.bucket.name
+  source = "./test-fixtures/hello-world-flask/main.py"
 }
 
 resource "google_app_engine_standard_app_version" "gae-std-app-ver-vpc-access" {
-  provider     = google-beta
-  version_id   = "v1"
-  service      = "%{service_id}"
-  runtime      = "python312"
+  version_id = "v1"
+  service    = "%{service_id}"
+  runtime    = "python312"
 
   vpc_access {
     egress_setting = "%{egress_setting}"
