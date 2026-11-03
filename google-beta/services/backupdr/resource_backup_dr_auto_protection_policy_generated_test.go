@@ -69,7 +69,7 @@ func TestAccBackupDRAutoProtectionPolicy_backupDrAutoProtectionPolicyBasicExampl
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckBackupDRAutoProtectionPolicyDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -94,14 +94,12 @@ func TestAccBackupDRAutoProtectionPolicy_backupDrAutoProtectionPolicyBasicExampl
 func testAccBackupDRAutoProtectionPolicy_backupDrAutoProtectionPolicyBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_backup_dr_backup_vault" "my_backup_vault" {
-  provider                                   = google-beta
   location                                   = "us-central1"
   backup_vault_id                            = "%{backup_vault_id}"
   backup_minimum_enforced_retention_duration = "100000s"
 }
 
 resource "google_backup_dr_backup_plan" "my_backup_plan" {
-  provider       = google-beta
   location       = "us-central1"
   backup_plan_id = "%{backup_plan_id}"
   resource_type  = "compute.googleapis.com/Instance"
@@ -125,7 +123,6 @@ resource "google_backup_dr_backup_plan" "my_backup_plan" {
 }
 
 resource "google_backup_dr_auto_protection_policy" "my-auto-protection-policy" {
-  provider                  = google-beta
   location                  = "us-central1"
   auto_protection_policy_id = "%{auto_protection_policy_id}"
 
@@ -169,7 +166,7 @@ func TestAccBackupDRAutoProtectionPolicy_backupDrAutoProtectionPolicyUpdateExamp
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckBackupDRAutoProtectionPolicyDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -214,14 +211,12 @@ func TestAccBackupDRAutoProtectionPolicy_backupDrAutoProtectionPolicyUpdateExamp
 func testAccBackupDRAutoProtectionPolicy_backupDrAutoProtectionPolicyFullExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_backup_dr_backup_vault" "my_backup_vault" {
-  provider                                   = google-beta
   location                                   = "us-central1"
   backup_vault_id                            = "%{backup_vault_id}"
   backup_minimum_enforced_retention_duration = "100000s"
 }
 
 resource "google_backup_dr_backup_plan" "instance_backup_plan" {
-  provider       = google-beta
   location       = "us-central1"
   backup_plan_id = "%{instance_backup_plan_id}"
   resource_type  = "compute.googleapis.com/Instance"
@@ -245,7 +240,6 @@ resource "google_backup_dr_backup_plan" "instance_backup_plan" {
 }
 
 resource "google_backup_dr_auto_protection_policy" "my-auto-protection-policy" {
-  provider                  = google-beta
   location                  = "us-central1"
   auto_protection_policy_id = "%{auto_protection_policy_id}"
   description               = "Protects production VMs."
@@ -270,14 +264,12 @@ resource "google_backup_dr_auto_protection_policy" "my-auto-protection-policy" {
 func testAccBackupDRAutoProtectionPolicy_backupDrAutoProtectionPolicyFullUpdateExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_backup_dr_backup_vault" "my_backup_vault" {
-  provider                                   = google-beta
   location                                   = "us-central1"
   backup_vault_id                            = "%{backup_vault_id}"
   backup_minimum_enforced_retention_duration = "100000s"
 }
 
 resource "google_backup_dr_backup_plan" "instance_backup_plan" {
-  provider       = google-beta
   location       = "us-central1"
   backup_plan_id = "%{instance_backup_plan_id}"
   resource_type  = "compute.googleapis.com/Instance"
@@ -301,7 +293,6 @@ resource "google_backup_dr_backup_plan" "instance_backup_plan" {
 }
 
 resource "google_backup_dr_backup_plan" "disk_backup_plan" {
-  provider       = google-beta
   location       = "us-central1"
   backup_plan_id = "%{disk_backup_plan_id}"
   resource_type  = "compute.googleapis.com/Disk"
@@ -325,7 +316,6 @@ resource "google_backup_dr_backup_plan" "disk_backup_plan" {
 }
 
 resource "google_backup_dr_auto_protection_policy" "my-auto-protection-policy" {
-  provider                  = google-beta
   location                  = "us-central1"
   auto_protection_policy_id = "%{auto_protection_policy_id}"
   description               = "Protects staging disks."
