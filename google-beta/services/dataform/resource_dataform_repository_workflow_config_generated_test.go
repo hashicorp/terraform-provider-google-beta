@@ -89,7 +89,7 @@ func TestAccDataformRepositoryWorkflowConfig_dataformRepositoryWorkflowConfigExa
 			},
 			{
 				ResourceName:       "google_dataform_repository_workflow_config.workflow",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -235,7 +235,7 @@ func TestAccDataformRepositoryWorkflowConfig_dataformRepositoryWorkflowConfigWit
 			},
 			{
 				ResourceName:       "google_dataform_repository_workflow_config.workflow",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},

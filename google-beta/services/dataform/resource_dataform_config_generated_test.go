@@ -88,7 +88,7 @@ func TestAccDataformConfig_dataformConfigWithKmsKeyExample(t *testing.T) {
 			},
 			{
 				ResourceName:       "google_dataform_config.config",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -213,7 +213,7 @@ func TestAccDataformConfig_dataformConfigWithoutKmsKeyExample(t *testing.T) {
 			},
 			{
 				ResourceName:       "google_dataform_config.config",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
