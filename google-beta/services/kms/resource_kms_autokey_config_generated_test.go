@@ -88,7 +88,7 @@ func TestAccKMSAutokeyConfig_kmsAutokeyConfigAllExample(t *testing.T) {
 			},
 			{
 				ResourceName:       "google_kms_autokey_config.example-autokeyconfig",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},

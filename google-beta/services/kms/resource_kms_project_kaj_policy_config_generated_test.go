@@ -84,7 +84,7 @@ func TestAccKMSProjectKajPolicyConfig_kmsProjectKajPolicyConfigBasicExample(t *t
 			},
 			{
 				ResourceName:       "google_kms_project_kaj_policy_config.example",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},

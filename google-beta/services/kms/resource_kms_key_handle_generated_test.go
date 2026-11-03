@@ -88,7 +88,7 @@ func TestAccKMSKeyHandle_kmsKeyHandleBasicExample(t *testing.T) {
 			},
 			{
 				ResourceName:       "google_kms_key_handle.example-keyhandle",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
