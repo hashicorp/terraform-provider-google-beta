@@ -82,7 +82,7 @@ func TestAccCESEvaluation_cesEvaluationBasicExample(t *testing.T) {
 			},
 			{
 				ResourceName:       "google_ces_evaluation.ces_evaluation_basic",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -145,7 +145,7 @@ func TestAccCESEvaluation_cesEvaluationFullExample(t *testing.T) {
 			},
 			{
 				ResourceName:       "google_ces_evaluation.ces_evaluation_full",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -441,7 +441,7 @@ func TestAccCESEvaluation_cesEvaluationToolsetExample(t *testing.T) {
 			},
 			{
 				ResourceName:       "google_ces_evaluation.ces_evaluation_toolset",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -571,7 +571,7 @@ func TestAccCESEvaluation_cesEvaluationScenarioFullExample(t *testing.T) {
 			},
 			{
 				ResourceName:       "google_ces_evaluation.ces_evaluation_scenario_full",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -727,7 +727,7 @@ func TestAccCESEvaluation_cesEvaluationScenarioToolsetExample(t *testing.T) {
 			},
 			{
 				ResourceName:       "google_ces_evaluation.ces_evaluation_scenario_toolset",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
