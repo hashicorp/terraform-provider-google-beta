@@ -128,7 +128,7 @@ func TestAccVertexAIModelDevelopmentCluster_vertexAiModelDevelopmentClusterBasic
 			},
 			{
 				ResourceName:       "google_vertex_ai_model_development_cluster.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -148,7 +148,7 @@ func TestAccVertexAIModelDevelopmentCluster_vertexAiModelDevelopmentClusterBasic
 			},
 			{
 				ResourceName:       "google_vertex_ai_model_development_cluster.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -168,7 +168,7 @@ func TestAccVertexAIModelDevelopmentCluster_vertexAiModelDevelopmentClusterBasic
 			},
 			{
 				ResourceName:       "google_vertex_ai_model_development_cluster.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -188,7 +188,7 @@ func TestAccVertexAIModelDevelopmentCluster_vertexAiModelDevelopmentClusterBasic
 			},
 			{
 				ResourceName:       "google_vertex_ai_model_development_cluster.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -847,7 +847,7 @@ func TestAccVertexAIModelDevelopmentCluster_vertexAiModelDevelopmentClusterGkeEx
 			},
 			{
 				ResourceName:       "google_vertex_ai_model_development_cluster.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -867,7 +867,7 @@ func TestAccVertexAIModelDevelopmentCluster_vertexAiModelDevelopmentClusterGkeEx
 			},
 			{
 				ResourceName:       "google_vertex_ai_model_development_cluster.default",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
