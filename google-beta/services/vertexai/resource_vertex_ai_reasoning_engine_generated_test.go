@@ -738,6 +738,10 @@ resource "google_vertex_ai_reasoning_engine" "reasoning_engine" {
                 role = "user"
                 parts {
                   text = "I like pepperoni pizza"
+                  speech_metadata {
+                    speaker = "Alice"
+                    style   = "cheerful"
+                  }
                 }
                 parts {
                   function_call {
