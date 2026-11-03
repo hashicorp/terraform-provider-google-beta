@@ -1051,7 +1051,7 @@ func resourceSaasRuntimeSaasDelete(d *schema.ResourceData, meta interface{}) err
 		return transport_tpg.HandleNotFoundError(err, d, "Saas")
 	}
 
-	err = transport_tpg.PollingWaitTime(resourceSaasRuntimeSaasPollRead(d, meta), transport_tpg.PollCheckForAbsence, "Deleting Saas", d.Timeout(schema.TimeoutCreate), 1)
+	err = transport_tpg.PollingWaitTime(resourceSaasRuntimeSaasPollRead(d, meta), transport_tpg.PollCheckForAbsence, "Deleting Saas", d.Timeout(schema.TimeoutCreate), 1, config.SleepUnit)
 	if err != nil {
 		return fmt.Errorf("Error waiting to delete Saas: %s", err)
 	}

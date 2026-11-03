@@ -286,7 +286,7 @@ func resourceVertexAiAadAgentAnomalyDetectionScopeCreate(d *schema.ResourceData,
 	}
 	d.SetId(id)
 
-	err = transport_tpg.PollingWaitTime(resourceVertexAiAadAgentAnomalyDetectionScopePollRead(d, meta), PollCheckForScopeActive, "Creating AgentAnomalyDetectionScope", d.Timeout(schema.TimeoutCreate), 1)
+	err = transport_tpg.PollingWaitTime(resourceVertexAiAadAgentAnomalyDetectionScopePollRead(d, meta), PollCheckForScopeActive, "Creating AgentAnomalyDetectionScope", d.Timeout(schema.TimeoutCreate), 1, config.SleepUnit)
 	if err != nil {
 		return fmt.Errorf("Error waiting to create AgentAnomalyDetectionScope: %s", err)
 	}
@@ -511,7 +511,7 @@ func resourceVertexAiAadAgentAnomalyDetectionScopeDelete(d *schema.ResourceData,
 		return transport_tpg.HandleNotFoundError(err, d, "AgentAnomalyDetectionScope")
 	}
 
-	err = transport_tpg.PollingWaitTime(resourceVertexAiAadAgentAnomalyDetectionScopePollRead(d, meta), PollCheckForScopeDeleted, "Deleting AgentAnomalyDetectionScope", d.Timeout(schema.TimeoutCreate), 1)
+	err = transport_tpg.PollingWaitTime(resourceVertexAiAadAgentAnomalyDetectionScopePollRead(d, meta), PollCheckForScopeDeleted, "Deleting AgentAnomalyDetectionScope", d.Timeout(schema.TimeoutCreate), 1, config.SleepUnit)
 	if err != nil {
 		return fmt.Errorf("Error waiting to delete AgentAnomalyDetectionScope: %s", err)
 	}
