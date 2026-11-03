@@ -80,7 +80,7 @@ func TestAccApiGatewayApi_apigatewayApiBasicExample(t *testing.T) {
 			},
 			{
 				ResourceName:       "google_api_gateway_api.api",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
@@ -123,7 +123,7 @@ func TestAccApiGatewayApi_apigatewayApiFullExample(t *testing.T) {
 			},
 			{
 				ResourceName:       "google_api_gateway_api.api",
-				RefreshState:       true,
+				ImportState:        true,
 				ExpectNonEmptyPlan: true,
 				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
 			},
