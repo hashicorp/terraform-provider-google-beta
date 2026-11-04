@@ -26,7 +26,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/hashicorp/errwrap"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
@@ -915,7 +914,7 @@ func resourceComputeSecurityPolicyCreate(d *schema.ResourceData, meta interface{
 		Body:      body,
 	})
 	if err != nil {
-		return errwrap.Wrapf("Error creating SecurityPolicy: {{err}}", err)
+		return fmt.Errorf("Error creating SecurityPolicy: %w", err)
 	}
 
 	id, err := tpgresource.ReplaceVars(d, config, "projects/{{project}}/global/securityPolicies/{{name}}")
@@ -1167,7 +1166,7 @@ func resourceComputeSecurityPolicyUpdate(d *schema.ResourceData, meta interface{
 			Body:      body,
 		})
 		if err != nil {
-			return errwrap.Wrapf(fmt.Sprintf("Error updating SecurityPolicy %q: {{err}}", sp), err)
+			return fmt.Errorf("Error updating SecurityPolicy %q: %w", sp, err)
 		}
 
 		err = ComputeOperationWaitTime(config, res, project, fmt.Sprintf("Updating SecurityPolicy %q", sp), userAgent, d.Timeout(schema.TimeoutUpdate))
@@ -1207,7 +1206,7 @@ func resourceComputeSecurityPolicyUpdate(d *schema.ResourceData, meta interface{
 					Body:      expandSecurityPolicyRule(rule),
 				})
 				if err != nil {
-					return errwrap.Wrapf(fmt.Sprintf("Error updating SecurityPolicy %q: {{err}}", sp), err)
+					return fmt.Errorf("Error updating SecurityPolicy %q: %w", sp, err)
 				}
 
 				err = ComputeOperationWaitTime(config, res, project, fmt.Sprintf("Updating SecurityPolicy %q", sp), userAgent, d.Timeout(schema.TimeoutUpdate))
@@ -1276,7 +1275,7 @@ func resourceComputeSecurityPolicyUpdate(d *schema.ResourceData, meta interface{
 					Body:      expandSecurityPolicyRule(rule),
 				})
 				if err != nil {
-					return errwrap.Wrapf(fmt.Sprintf("Error updating SecurityPolicy %q: {{err}}", sp), err)
+					return fmt.Errorf("Error updating SecurityPolicy %q: %w", sp, err)
 				}
 
 				err = ComputeOperationWaitTime(config, res, project, fmt.Sprintf("Updating SecurityPolicy %q", sp), userAgent, d.Timeout(schema.TimeoutUpdate))
@@ -1299,7 +1298,7 @@ func resourceComputeSecurityPolicyUpdate(d *schema.ResourceData, meta interface{
 					Body:      map[string]interface{}{},
 				})
 				if err != nil {
-					return errwrap.Wrapf(fmt.Sprintf("Error updating SecurityPolicy %q: {{err}}", sp), err)
+					return fmt.Errorf("Error updating SecurityPolicy %q: %w", sp, err)
 				}
 
 				err = ComputeOperationWaitTime(config, res, project, fmt.Sprintf("Updating SecurityPolicy %q", sp), userAgent, d.Timeout(schema.TimeoutUpdate))
@@ -1341,7 +1340,7 @@ func resourceComputeSecurityPolicyDelete(d *schema.ResourceData, meta interface{
 		UserAgent: userAgent,
 	})
 	if err != nil {
-		return errwrap.Wrapf("Error deleting SecurityPolicy: {{err}}", err)
+		return fmt.Errorf("Error deleting SecurityPolicy: %w", err)
 	}
 
 	err = ComputeOperationWaitTime(config, res, project, "Deleting SecurityPolicy", userAgent, d.Timeout(schema.TimeoutDelete))
