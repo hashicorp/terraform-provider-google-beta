@@ -255,6 +255,8 @@ resource "google_compute_region_security_policy_rule" "policy_rule" {
 `, context)
 }
 func TestAccComputeRegionSecurityPolicyRule_regionSecurityPolicyRuleNetworkMatchUpdate(t *testing.T) {
+	t.Parallel()
+
 	context := map[string]interface{}{
 		"random_suffix": acctest.RandString(t, 10),
 	}
