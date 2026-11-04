@@ -70,6 +70,8 @@ func TestAccComputeUrlMap_urlMapBucketAndServiceExample(t *testing.T) {
 		"random_suffix":              randomSuffix,
 	}
 
+	acctest.AssertRequestApiVersion(t, "projects/{{project}}/global/urlMaps", "2026-11-01")
+
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
@@ -185,6 +187,8 @@ func TestAccComputeUrlMap_urlMapTrafficDirectorRouteExample(t *testing.T) {
 		"url_map_name":              "tf-test-urlmap" + randomSuffix,
 		"random_suffix":             randomSuffix,
 	}
+
+	acctest.AssertRequestApiVersion(t, "projects/{{project}}/global/urlMaps", "2026-11-01")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -310,6 +314,8 @@ func TestAccComputeUrlMap_urlMapTrafficDirectorRoutePartialExample(t *testing.T)
 		"random_suffix":             randomSuffix,
 	}
 
+	acctest.AssertRequestApiVersion(t, "projects/{{project}}/global/urlMaps", "2026-11-01")
+
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
@@ -404,6 +410,8 @@ func TestAccComputeUrlMap_urlMapTrafficDirectorPathExample(t *testing.T) {
 		"url_map_name":              "tf-test-urlmap" + randomSuffix,
 		"random_suffix":             randomSuffix,
 	}
+
+	acctest.AssertRequestApiVersion(t, "projects/{{project}}/global/urlMaps", "2026-11-01")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -549,6 +557,8 @@ func TestAccComputeUrlMap_urlMapTrafficDirectorPathPartialExample(t *testing.T) 
 		"random_suffix":             randomSuffix,
 	}
 
+	acctest.AssertRequestApiVersion(t, "projects/{{project}}/global/urlMaps", "2026-11-01")
+
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
@@ -667,6 +677,8 @@ func TestAccComputeUrlMap_urlMapHeaderBasedRoutingExample(t *testing.T) {
 		"url_map_name":                   "tf-test-urlmap" + randomSuffix,
 		"random_suffix":                  randomSuffix,
 	}
+
+	acctest.AssertRequestApiVersion(t, "projects/{{project}}/global/urlMaps", "2026-11-01")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -788,6 +800,8 @@ func TestAccComputeUrlMap_urlMapParameterBasedRoutingExample(t *testing.T) {
 		"random_suffix":                  randomSuffix,
 	}
 
+	acctest.AssertRequestApiVersion(t, "projects/{{project}}/global/urlMaps", "2026-11-01")
+
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
@@ -907,6 +921,8 @@ func TestAccComputeUrlMap_urlMapDefaultMirrorPercentExample(t *testing.T) {
 		"random_suffix":               randomSuffix,
 	}
 
+	acctest.AssertRequestApiVersion(t, "projects/{{project}}/global/urlMaps", "2026-11-01")
+
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
@@ -999,6 +1015,8 @@ func TestAccComputeUrlMap_urlMapPathMatcherDefaultMirrorPercentExample(t *testin
 		"random_suffix":               randomSuffix,
 	}
 
+	acctest.AssertRequestApiVersion(t, "projects/{{project}}/global/urlMaps", "2026-11-01")
+
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
@@ -1090,6 +1108,8 @@ func TestAccComputeUrlMap_urlMapCachePolicyBasicExample(t *testing.T) {
 		"random_suffix":        randomSuffix,
 	}
 
+	acctest.AssertRequestApiVersion(t, "projects/{{project}}/global/urlMaps", "2026-11-01")
+
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
@@ -1172,6 +1192,8 @@ func TestAccComputeUrlMap_urlMapCachePolicyMultiLevelExample(t *testing.T) {
 		"url_map_name":         "tf-test-urlmap" + randomSuffix,
 		"random_suffix":        randomSuffix,
 	}
+
+	acctest.AssertRequestApiVersion(t, "projects/{{project}}/global/urlMaps", "2026-11-01")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -1359,6 +1381,8 @@ func TestAccComputeUrlMap_urlMapDynamicCompressionPolicyBasicExample(t *testing.
 		"random_suffix":        randomSuffix,
 	}
 
+	acctest.AssertRequestApiVersion(t, "projects/{{project}}/global/urlMaps", "2026-11-01")
+
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
@@ -1429,6 +1453,8 @@ func TestAccComputeUrlMap_urlMapDynamicCompressionPolicyMultiLevelExample(t *tes
 		"url_map_name":         "tf-test-urlmap" + randomSuffix,
 		"random_suffix":        randomSuffix,
 	}
+
+	acctest.AssertRequestApiVersion(t, "projects/{{project}}/global/urlMaps", "2026-11-01")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -1561,6 +1587,8 @@ func TestAccComputeUrlMap_urlMapPathRuleMirrorPercentExample(t *testing.T) {
 		"random_suffix":               randomSuffix,
 	}
 
+	acctest.AssertRequestApiVersion(t, "projects/{{project}}/global/urlMaps", "2026-11-01")
+
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
@@ -1652,6 +1680,8 @@ func TestAccComputeUrlMap_urlMapRouteRuleMirrorPercentExample(t *testing.T) {
 		"url_map_name":                "tf-test-urlmap" + randomSuffix,
 		"random_suffix":               randomSuffix,
 	}
+
+	acctest.AssertRequestApiVersion(t, "projects/{{project}}/global/urlMaps", "2026-11-01")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -1747,6 +1777,8 @@ func TestAccComputeUrlMap_urlMapTestHeadersExample(t *testing.T) {
 		"url_map_name":         "tf-test-urlmap" + randomSuffix,
 		"random_suffix":        randomSuffix,
 	}
+
+	acctest.AssertRequestApiVersion(t, "projects/{{project}}/global/urlMaps", "2026-11-01")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -1847,6 +1879,8 @@ func TestAccComputeUrlMap_urlMapTestExpectedOutputUrlExample(t *testing.T) {
 		"random_suffix":        randomSuffix,
 	}
 
+	acctest.AssertRequestApiVersion(t, "projects/{{project}}/global/urlMaps", "2026-11-01")
+
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
@@ -1940,6 +1974,8 @@ func TestAccComputeUrlMap_urlMapTestRedirectResponseCodeExample(t *testing.T) {
 		"url_map_name":         "tf-test-urlmap" + randomSuffix,
 		"random_suffix":        randomSuffix,
 	}
+
+	acctest.AssertRequestApiVersion(t, "projects/{{project}}/global/urlMaps", "2026-11-01")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -2058,6 +2094,8 @@ func TestAccComputeUrlMap_urlMapPathTemplateMatchExample(t *testing.T) {
 		"random_suffix":             randomSuffix,
 	}
 
+	acctest.AssertRequestApiVersion(t, "projects/{{project}}/global/urlMaps", "2026-11-01")
+
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
@@ -2175,6 +2213,8 @@ func TestAccComputeUrlMap_urlMapCustomErrorResponsePolicyExample(t *testing.T) {
 		"url_map_name":              "tf-test-urlmap" + randomSuffix,
 		"random_suffix":             randomSuffix,
 	}
+
+	acctest.AssertRequestApiVersion(t, "projects/{{project}}/global/urlMaps", "2026-11-01")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -2299,6 +2339,8 @@ func TestAccComputeUrlMap_urlMapHttpFilterConfigsExample(t *testing.T) {
 		"random_suffix":                  randomSuffix,
 	}
 
+	acctest.AssertRequestApiVersion(t, "projects/{{project}}/global/urlMaps", "2026-11-01")
+
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
@@ -2419,6 +2461,8 @@ func TestAccComputeUrlMap_urlMapHttpFilterMetadataExample(t *testing.T) {
 		"url_map_name":                   "tf-test-urlmap" + randomSuffix,
 		"random_suffix":                  randomSuffix,
 	}
+
+	acctest.AssertRequestApiVersion(t, "projects/{{project}}/global/urlMaps", "2026-11-01")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -2587,9 +2631,11 @@ func TestAccComputeUrlMap_urlMapImageOptimizationPolicyExample(t *testing.T) {
 		"random_suffix":            randomSuffix,
 	}
 
+	acctest.AssertRequestApiVersion(t, "projects/{{project}}/global/urlMaps", "2026-11-01")
+
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeUrlMapDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -2634,7 +2680,6 @@ func TestAccComputeUrlMap_urlMapImageOptimizationPolicyExample(t *testing.T) {
 func testAccComputeUrlMap_urlMapImageOptimizationPolicyExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_url_map" "urlmap" {
-  provider        = google-beta
   name            = "%{url_map_name}"
   description     = "a description"
   default_service = google_compute_backend_service.example.id
@@ -2698,7 +2743,6 @@ resource "google_compute_url_map" "urlmap" {
 }
 
 resource "google_compute_backend_service" "example" {
-  provider              = google-beta
   name                  = "%{backend_service_name}"
   port_name             = "http"
   protocol              = "HTTP"
@@ -2710,8 +2754,7 @@ resource "google_compute_backend_service" "example" {
 }
 
 resource "google_compute_health_check" "default" {
-  provider = google-beta
-  name     = "%{health_check_name}"
+  name = "%{health_check_name}"
   http_health_check {
     port = 80
   }
@@ -2742,11 +2785,12 @@ func testAccCheckComputeUrlMapDestroyProducer(t *testing.T) func(s *terraform.St
 			}
 
 			_, err = transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
-				Config:    config,
-				Method:    "GET",
-				Project:   billingProject,
-				RawURL:    url,
-				UserAgent: config.UserAgent,
+				Config:     config,
+				Method:     "GET",
+				Project:    billingProject,
+				RawURL:     url,
+				UserAgent:  config.UserAgent,
+				ApiVersion: "2026-11-01",
 			})
 			if err == nil {
 				return fmt.Errorf("ComputeUrlMap still exists at %s", url)
