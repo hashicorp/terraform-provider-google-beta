@@ -633,6 +633,47 @@ func resourceSaasRuntimeUnitKindCreate(d *schema.ResourceData, meta interface{})
 	return resourceSaasRuntimeUnitKindRead(d, meta)
 }
 
+func resourceSaasRuntimeUnitKindPollRead(d *schema.ResourceData, meta interface{}) transport_tpg.PollReadFunc {
+	return func() (map[string]interface{}, error) {
+		config := meta.(*transport_tpg.Config)
+
+		url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/{{location}}/unitKinds/{{unit_kind_id}}")
+		if err != nil {
+			return nil, err
+		}
+
+		billingProject := ""
+
+		project, err := tpgresource.GetProject(d, config)
+		if err != nil {
+			return nil, fmt.Errorf("Error fetching project for UnitKind: %s", err)
+		}
+		billingProject = project
+
+		// err == nil indicates that the billing_project value was found
+		if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
+			billingProject = bp
+		}
+
+		userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
+		if err != nil {
+			return nil, err
+		}
+
+		res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
+			Config:    config,
+			Method:    "GET",
+			Project:   billingProject,
+			RawURL:    url,
+			UserAgent: userAgent,
+		})
+		if err != nil {
+			return res, err
+		}
+		return res, nil
+	}
+}
+
 func resourceSaasRuntimeUnitKindRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
 	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
@@ -934,6 +975,11 @@ func resourceSaasRuntimeUnitKindDelete(d *schema.ResourceData, meta interface{})
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "UnitKind")
+	}
+
+	err = transport_tpg.PollingWaitTime(resourceSaasRuntimeUnitKindPollRead(d, meta), transport_tpg.PollCheckForAbsence, "Deleting UnitKind", d.Timeout(schema.TimeoutCreate), 1, config.SleepUnit)
+	if err != nil {
+		return fmt.Errorf("Error waiting to delete UnitKind: %s", err)
 	}
 
 	log.Printf("[DEBUG] Finished deleting UnitKind %q: %#v", d.Id(), res)

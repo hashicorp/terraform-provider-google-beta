@@ -104,16 +104,6 @@ resource "google_saas_runtime_unit_kind" "example" {
     alias     = "cluster"
   }
 }
-
-resource "google_saas_runtime_release" "example_release" {
-  provider          = google-beta
-  location          = "us-east1"
-  release_id        = "tf-test-example-release%{random_suffix}"
-  unit_kind         = google_saas_runtime_unit_kind.cluster_unit_kind.id
-  blueprint {
-    package = "us-central1-docker.pkg.dev/ci-test-project-188019/test-repo/tf-test-easysaas-alpha-image@sha256:16f50ddbcbc7926ad9d4f09fa6c37306b88ccc4d6370f627a4733b1ab0823680"
-  }
-}
 `, context)
 }
 
@@ -187,16 +177,6 @@ resource "google_saas_runtime_unit_kind" "example" {
   
   annotations = {
     "annotation-one": "bar"
-  }
-}
-
-resource "google_saas_runtime_release" "example_release" {
-  provider          = google-beta
-  location          = "us-east1"
-  release_id        = "tf-test-example-release%{random_suffix}"
-  unit_kind         = google_saas_runtime_unit_kind.cluster_unit_kind.id
-  blueprint {
-    package = "us-central1-docker.pkg.dev/ci-test-project-188019/test-repo/tf-test-easysaas-alpha-image@sha256:16f50ddbcbc7926ad9d4f09fa6c37306b88ccc4d6370f627a4733b1ab0823680"
   }
 }
 `, context)
