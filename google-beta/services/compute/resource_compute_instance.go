@@ -20,6 +20,7 @@ import (
 	"context"
 	"crypto/sha256"
 	"encoding/base64"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
@@ -37,7 +38,6 @@ import (
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/tpgresource"
 	transport_tpg "github.com/hashicorp/terraform-provider-google-beta/google-beta/transport"
 	"github.com/hashicorp/terraform-provider-google-beta/google-beta/verify"
-	"github.com/mitchellh/hashstructure"
 )
 
 func IpCidrRangeDiffSuppress(k, old, new string, d *schema.ResourceData) bool {
@@ -3609,17 +3609,18 @@ func resourceComputeInstanceUpdate(d *schema.ResourceData, meta interface{}) err
 		// Keep track of disks currently in state.
 		// Since changing any field within the disk needs to detach+reattach it,
 		// keep track of the hash of the full disk.
-		oDisks := map[uint64]string{}
+		oDisks := map[string]string{}
 		for _, disk := range o.([]interface{}) {
 			diskConfig := disk.(map[string]interface{})
 			computeDisk, err := expandAttachedDisk(diskConfig, d, config)
 			if err != nil {
 				return err
 			}
-			hash, err := hashstructure.Hash(computeDisk, nil)
+			hashBytes, err := json.Marshal(computeDisk)
 			if err != nil {
 				return err
 			}
+			hash := string(hashBytes)
 			computeDiskDeviceName, _ := computeDisk["deviceName"].(string)
 			if _, ok := currDisks[computeDiskDeviceName]; ok {
 				oDisks[hash] = computeDiskDeviceName
@@ -3630,7 +3631,7 @@ func resourceComputeInstanceUpdate(d *schema.ResourceData, meta interface{}) err
 		// Since changing any field within the disk needs to detach+reattach it,
 		// keep track of the hash of the full disk.
 		// If a disk with a certain hash is only in the new config, it should be attached.
-		nDisks := map[uint64]struct{}{}
+		nDisks := map[string]struct{}{}
 		var attach []map[string]interface{}
 		for _, disk := range n.([]interface{}) {
 			diskConfig := disk.(map[string]interface{})
@@ -3638,10 +3639,11 @@ func resourceComputeInstanceUpdate(d *schema.ResourceData, meta interface{}) err
 			if err != nil {
 				return err
 			}
-			hash, err := hashstructure.Hash(computeDisk, nil)
+			hashBytes, err := json.Marshal(computeDisk)
 			if err != nil {
 				return err
 			}
+			hash := string(hashBytes)
 			nDisks[hash] = struct{}{}
 
 			if _, ok := oDisks[hash]; !ok {
