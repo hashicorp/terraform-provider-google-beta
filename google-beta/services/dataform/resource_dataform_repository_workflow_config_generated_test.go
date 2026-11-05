@@ -75,7 +75,7 @@ func TestAccDataformRepositoryWorkflowConfig_dataformRepositoryWorkflowConfigExa
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckDataformRepositoryWorkflowConfigDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -100,12 +100,10 @@ func TestAccDataformRepositoryWorkflowConfig_dataformRepositoryWorkflowConfigExa
 func testAccDataformRepositoryWorkflowConfig_dataformRepositoryWorkflowConfigExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_sourcerepo_repository" "git_repository" {
-  provider = google-beta
   name     = "%{git_repository_name}"
 }
 
 resource "google_secret_manager_secret" "secret" {
-  provider  = google-beta
   secret_id = "%{secret_name}"
 
   replication {
@@ -114,14 +112,12 @@ resource "google_secret_manager_secret" "secret" {
 }
 
 resource "google_secret_manager_secret_version" "secret_version" {
-  provider = google-beta
   secret   = google_secret_manager_secret.secret.id
 
   secret_data = "%{data}"
 }
 
 resource "google_dataform_repository" "repository" {
-  provider = google-beta
   name     = "%{dataform_repository_name}"
   region   = "us-central1"
 
@@ -139,7 +135,6 @@ resource "google_dataform_repository" "repository" {
 }
 
 resource "google_dataform_repository_release_config" "release_config" {
-  provider = google-beta
 
   project    = google_dataform_repository.repository.project
   region     = google_dataform_repository.repository.region
@@ -165,13 +160,11 @@ resource "google_dataform_repository_release_config" "release_config" {
 }
 
 resource "google_service_account" "dataform_sa" {
-  provider     = google-beta
   account_id   = "%{service_account_name}"
   display_name = "Dataform Service Account"
 }
 
 resource "google_dataform_repository_workflow_config" "workflow" {
-  provider = google-beta
 
   project        = google_dataform_repository.repository.project
   region         = google_dataform_repository.repository.region
@@ -221,7 +214,7 @@ func TestAccDataformRepositoryWorkflowConfig_dataformRepositoryWorkflowConfigWit
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckDataformRepositoryWorkflowConfigDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -246,12 +239,10 @@ func TestAccDataformRepositoryWorkflowConfig_dataformRepositoryWorkflowConfigWit
 func testAccDataformRepositoryWorkflowConfig_dataformRepositoryWorkflowConfigWithDisabledExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_sourcerepo_repository" "git_repository" {
-  provider = google-beta
   name     = "%{git_repository_name}"
 }
 
 resource "google_secret_manager_secret" "secret" {
-  provider  = google-beta
   secret_id = "%{secret_name}"
 
   replication {
@@ -260,14 +251,12 @@ resource "google_secret_manager_secret" "secret" {
 }
 
 resource "google_secret_manager_secret_version" "secret_version" {
-  provider = google-beta
   secret   = google_secret_manager_secret.secret.id
 
   secret_data = "%{data}"
 }
 
 resource "google_dataform_repository" "repository" {
-  provider = google-beta
   name     = "%{dataform_repository_name}"
   region   = "us-central1"
 
@@ -285,7 +274,6 @@ resource "google_dataform_repository" "repository" {
 }
 
 resource "google_dataform_repository_release_config" "release_config" {
-  provider = google-beta
 
   project    = google_dataform_repository.repository.project
   region     = google_dataform_repository.repository.region
@@ -311,13 +299,11 @@ resource "google_dataform_repository_release_config" "release_config" {
 }
 
 resource "google_service_account" "dataform_sa" {
-  provider     = google-beta
   account_id   = "%{service_account_name}"
   display_name = "Dataform Service Account"
 }
 
 resource "google_dataform_repository_workflow_config" "workflow" {
-  provider = google-beta
 
   project        = google_dataform_repository.repository.project
   region         = google_dataform_repository.repository.region
