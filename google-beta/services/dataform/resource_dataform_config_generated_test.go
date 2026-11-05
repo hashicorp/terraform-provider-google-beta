@@ -62,20 +62,14 @@ func TestAccDataformConfig_dataformConfigWithKmsKeyExample(t *testing.T) {
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"billing_account": envvar.GetTestBillingAccountFromEnv(t),
-		"org_id":          envvar.GetTestOrgFromEnv(t),
 		"crypto_key_name": "tf-test-example-crypto-key-name" + randomSuffix,
 		"key_ring_name":   "tf-test-example-key-ring" + randomSuffix,
-		"project_name":    "tf-test-project-1" + randomSuffix,
 		"random_suffix":   randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
-		ExternalProviders: map[string]resource.ExternalProvider{
-			"time": {},
-		},
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDataformConfig_dataformConfigWithKmsKeyExample(context),
@@ -98,86 +92,34 @@ func TestAccDataformConfig_dataformConfigWithKmsKeyExample(t *testing.T) {
 
 func testAccDataformConfig_dataformConfigWithKmsKeyExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
-resource "google_project" "project" {
-  provider        = google-beta
-  name            = "%{project_name}"
-  project_id      = "%{project_name}"
-  org_id          = "%{org_id}"
-  billing_account = "%{billing_account}"
-  deletion_policy = "DELETE"
-}
-
-# Enable Cloud Key KMS API
-resource "google_project_service" "cloudkms_api" {
-  provider = google-beta
-  project  = google_project.project.project_id
-  service  = "cloudkms.googleapis.com"
-  disable_on_destroy = false
-}
-
-# Enable Dataform API
-resource "google_project_service" "dataform_api" {
-  provider           = google-beta
-  project            = google_project.project.project_id
-  service            = "dataform.googleapis.com"
-  disable_on_destroy = false
-  depends_on      = [
-    google_project_service.cloudkms_api
-  ]
-}
-
-# Add a sleep to wait for IAM propagation after API enablement
-resource "time_sleep" "wait_for_dataform_api" {
-  create_duration = "30s"
-  depends_on      = [
-    google_project_service.dataform_api
-  ]
-}
-
-# Retrieve the Dataform service identity
-resource "google_project_service_identity" "dataform_sa" {
-  provider = google-beta
-  project  = google_project.project.project_id
-  service  = "dataform.googleapis.com"
-  depends_on = [
-    time_sleep.wait_for_dataform_api
-  ]
+data "google_project" "project" {
 }
 
 resource "google_kms_key_ring" "keyring" {
-  provider   = google-beta
-  project    = google_project.project.project_id
-  name       = "%{key_ring_name}"
-  location   = "us-central1"
-  depends_on = [
-    time_sleep.wait_for_dataform_api
-  ]
+  name     = "%{key_ring_name}"
+  location = "us-east1"
 }
 
 resource "google_kms_crypto_key" "example_key" {
-  provider = google-beta
   name     = "%{crypto_key_name}"
   key_ring = google_kms_key_ring.keyring.id
 }
 
 # Grant the Encrypter/Decrypter role to the Dataform service agent on the KMS key
 resource "google_kms_crypto_key_iam_member" "crypto_key_binding" {
-  provider      = google-beta
   crypto_key_id = google_kms_crypto_key.example_key.id
   role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
-  member        = google_project_service_identity.dataform_sa.member
+  member        = "serviceAccount:service-${data.google_project.project.number}@gcp-sa-dataform.iam.gserviceaccount.com"
 }
 
 # Config with KMS key provided
 resource "google_dataform_config" "config" {
-  provider             = google-beta
-  region               = "us-central1"
+  region               = "us-east1"
   default_kms_key_name = google_kms_crypto_key.example_key.id
-  project              = google_project.project.project_id
 
   # Ensure IAM binding is created before the Dataform Config
   depends_on = [
-    google_kms_crypto_key_iam_member.crypto_key_binding,
+    google_kms_crypto_key_iam_member.crypto_key_binding
   ]
 }
 `, context)
@@ -189,18 +131,12 @@ func TestAccDataformConfig_dataformConfigWithoutKmsKeyExample(t *testing.T) {
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"billing_account": envvar.GetTestBillingAccountFromEnv(t),
-		"org_id":          envvar.GetTestOrgFromEnv(t),
-		"project_name":    "tf-test-project-1" + randomSuffix,
-		"random_suffix":   randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
-		ExternalProviders: map[string]resource.ExternalProvider{
-			"time": {},
-		},
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDataformConfig_dataformConfigWithoutKmsKeyExample(context),
@@ -223,41 +159,9 @@ func TestAccDataformConfig_dataformConfigWithoutKmsKeyExample(t *testing.T) {
 
 func testAccDataformConfig_dataformConfigWithoutKmsKeyExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
-resource "google_project" "project" {
-  provider        = google-beta
-  name            = "%{project_name}"
-  project_id      = "%{project_name}"
-  org_id          = "%{org_id}"
-  billing_account = "%{billing_account}"
-  deletion_policy = "DELETE"
-}
-
-# Enable Dataform API
-resource "google_project_service" "dataform_api" {
-  provider           = google-beta
-  project            = google_project.project.project_id
-  service            = "dataform.googleapis.com"
-  disable_on_destroy = false
-}
-
-# Add a sleep to wait for IAM propagation after API enablement
-resource "time_sleep" "wait_for_dataform_api" {
-  create_duration = "30s"
-  depends_on      = [
-    google_project_service.dataform_api
-  ]
-}
-
 # Config without KMS key provided
 resource "google_dataform_config" "config" {
-  provider = google-beta
-  region   = "us-central1"
-  project  = google_project.project.project_id
-
-  # Ensure IAM binding is created before the Dataform Config
-  depends_on = [
-    time_sleep.wait_for_dataform_api
-  ]
+  region = "us-west1"
 }
 `, context)
 }

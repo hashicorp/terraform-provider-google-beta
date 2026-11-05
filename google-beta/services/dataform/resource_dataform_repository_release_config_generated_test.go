@@ -72,7 +72,7 @@ func TestAccDataformRepositoryReleaseConfig_dataformRepositoryReleaseConfigExamp
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckDataformRepositoryReleaseConfigDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -97,12 +97,10 @@ func TestAccDataformRepositoryReleaseConfig_dataformRepositoryReleaseConfigExamp
 func testAccDataformRepositoryReleaseConfig_dataformRepositoryReleaseConfigExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_sourcerepo_repository" "git_repository" {
-  provider = google-beta
   name     = "%{git_repository_name}"
 }
 
 resource "google_secret_manager_secret" "secret" {
-  provider  = google-beta
   secret_id = "%{secret_name}"
 
   replication {
@@ -111,14 +109,12 @@ resource "google_secret_manager_secret" "secret" {
 }
 
 resource "google_secret_manager_secret_version" "secret_version" {
-  provider = google-beta
   secret   = google_secret_manager_secret.secret.id
 
   secret_data = "%{data}"
 }
 
 resource "google_dataform_repository" "repository" {
-  provider = google-beta
   name     = "%{dataform_repository_name}"
   region   = "us-central1"
 
@@ -136,7 +132,6 @@ resource "google_dataform_repository" "repository" {
 }
 
 resource "google_dataform_repository_release_config" "release" {
-  provider = google-beta
 
   project    = google_dataform_repository.repository.project
   region     = google_dataform_repository.repository.region
@@ -179,7 +174,7 @@ func TestAccDataformRepositoryReleaseConfig_dataformRepositoryReleaseConfigDisab
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckDataformRepositoryReleaseConfigDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -204,12 +199,10 @@ func TestAccDataformRepositoryReleaseConfig_dataformRepositoryReleaseConfigDisab
 func testAccDataformRepositoryReleaseConfig_dataformRepositoryReleaseConfigDisabledExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_sourcerepo_repository" "git_repository" {
-  provider = google-beta
   name     = "%{git_repository_name}"
 }
 
 resource "google_secret_manager_secret" "secret" {
-  provider  = google-beta
   secret_id = "%{secret_name}"
 
   replication {
@@ -218,14 +211,12 @@ resource "google_secret_manager_secret" "secret" {
 }
 
 resource "google_secret_manager_secret_version" "secret_version" {
-  provider = google-beta
   secret   = google_secret_manager_secret.secret.id
 
   secret_data = "%{data}"
 }
 
 resource "google_dataform_repository" "repository" {
-  provider = google-beta
   name     = "%{dataform_repository_name}"
   region   = "us-central1"
 
@@ -243,7 +234,6 @@ resource "google_dataform_repository" "repository" {
 }
 
 resource "google_dataform_repository_release_config" "release" {
-  provider = google-beta
 
   project    = google_dataform_repository.repository.project
   region     = google_dataform_repository.repository.region
