@@ -28,6 +28,8 @@ fields:
     - api_field: externalRuntimeOptions.maxBatchingRows
     - api_field: externalRuntimeOptions.runtimeConnection
     - api_field: externalRuntimeOptions.runtimeVersion
+    - api_field: externalRuntimeOptions.volumeMounts.mountPath
+    - api_field: externalRuntimeOptions.volumeMounts.sourcePath
     - api_field: importedLibraries
     - api_field: language
     - api_field: lastModifiedTime
