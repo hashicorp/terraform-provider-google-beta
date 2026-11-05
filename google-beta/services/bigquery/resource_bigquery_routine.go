@@ -285,6 +285,31 @@ to execute the code in the container. Format:
 							Optional:    true,
 							Description: `Language runtime version. Example: 'python-3.11'.`,
 						},
+						"volume_mounts": {
+							Type:     schema.TypeList,
+							Optional: true,
+							Description: `List of volume mounts for the Python UDF container that executes the
+managed function. When volume mounts are set, 'runtime_connection' must
+also be set.`,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"mount_path": {
+										Type:     schema.TypeString,
+										Required: true,
+										Description: `The absolute path within the container where the volume should be
+mounted. For example, '/mnt/data'.`,
+									},
+									"source_path": {
+										Type:     schema.TypeString,
+										Required: true,
+										Description: `The absolute path of the source to be mounted. Only Google Cloud
+Storage buckets or folders are currently supported. For example,
+'gs://bucket-xxx' for a Cloud Storage bucket, or
+'gs://bucket-xxx/folder1/folder2' for a Cloud Storage folder.`,
+									},
+								},
+							},
+						},
 					},
 				},
 			},
@@ -1330,6 +1355,8 @@ func flattenBigQueryRoutineExternalRuntimeOptions(v interface{}, d *schema.Resou
 		flattenBigQueryRoutineExternalRuntimeOptionsRuntimeVersion(original["runtimeVersion"], d, config)
 	transformed["container_request_concurrency"] =
 		flattenBigQueryRoutineExternalRuntimeOptionsContainerRequestConcurrency(original["containerRequestConcurrency"], d, config)
+	transformed["volume_mounts"] =
+		flattenBigQueryRoutineExternalRuntimeOptionsVolumeMounts(original["volumeMounts"], d, config)
 	return []interface{}{transformed}
 }
 func flattenBigQueryRoutineExternalRuntimeOptionsContainerMemory(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -1353,6 +1380,34 @@ func flattenBigQueryRoutineExternalRuntimeOptionsRuntimeVersion(v interface{}, d
 }
 
 func flattenBigQueryRoutineExternalRuntimeOptionsContainerRequestConcurrency(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenBigQueryRoutineExternalRuntimeOptionsVolumeMounts(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+	l := v.([]interface{})
+	transformed := make([]interface{}, 0, len(l))
+	for i, raw := range l {
+		_ = i
+		original := raw.(map[string]interface{})
+		if len(original) < 1 {
+			// Do not include empty json objects coming back from the api
+			continue
+		}
+		transformed = append(transformed, map[string]interface{}{
+			"source_path": flattenBigQueryRoutineExternalRuntimeOptionsVolumeMountsSourcePath(original["sourcePath"], d, config),
+			"mount_path":  flattenBigQueryRoutineExternalRuntimeOptionsVolumeMountsMountPath(original["mountPath"], d, config),
+		})
+	}
+	return transformed
+}
+func flattenBigQueryRoutineExternalRuntimeOptionsVolumeMountsSourcePath(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenBigQueryRoutineExternalRuntimeOptionsVolumeMountsMountPath(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -1859,6 +1914,13 @@ func expandBigQueryRoutineExternalRuntimeOptions(v interface{}, d tpgresource.Te
 		transformed["containerRequestConcurrency"] = transformedContainerRequestConcurrency
 	}
 
+	transformedVolumeMounts, err := expandBigQueryRoutineExternalRuntimeOptionsVolumeMounts(original["volume_mounts"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedVolumeMounts); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["volumeMounts"] = transformedVolumeMounts
+	}
+
 	return transformed, nil
 }
 
@@ -1883,6 +1945,46 @@ func expandBigQueryRoutineExternalRuntimeOptionsRuntimeVersion(v interface{}, d 
 }
 
 func expandBigQueryRoutineExternalRuntimeOptionsContainerRequestConcurrency(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandBigQueryRoutineExternalRuntimeOptionsVolumeMounts(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
+	l := v.([]interface{})
+	req := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		if raw == nil {
+			continue
+		}
+		original := raw.(map[string]interface{})
+		transformed := make(map[string]interface{})
+
+		transformedSourcePath, err := expandBigQueryRoutineExternalRuntimeOptionsVolumeMountsSourcePath(original["source_path"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedSourcePath); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["sourcePath"] = transformedSourcePath
+		}
+
+		transformedMountPath, err := expandBigQueryRoutineExternalRuntimeOptionsVolumeMountsMountPath(original["mount_path"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedMountPath); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["mountPath"] = transformedMountPath
+		}
+
+		req = append(req, transformed)
+	}
+	return req, nil
+}
+
+func expandBigQueryRoutineExternalRuntimeOptionsVolumeMountsSourcePath(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandBigQueryRoutineExternalRuntimeOptionsVolumeMountsMountPath(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
