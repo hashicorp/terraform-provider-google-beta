@@ -939,11 +939,11 @@ If OAuth client is not set, the Google-managed OAuth client is used.`,
 			"load_balancing_scheme": {
 				Type:         schema.TypeString,
 				Optional:     true,
-				ValidateFunc: verify.ValidateEnum([]string{"EXTERNAL", "INTERNAL_SELF_MANAGED", "INTERNAL_MANAGED", "EXTERNAL_MANAGED", ""}),
+				ValidateFunc: verify.ValidateEnum([]string{"EXTERNAL", "INTERNAL_SELF_MANAGED", "INTERNAL_MANAGED", "EXTERNAL_MANAGED", "EXTERNAL_PASSTHROUGH", ""}),
 				Description: `Indicates whether the backend service will be used with internal or
 external load balancing. A backend service created for one type of
 load balancing cannot be used with the other. For more information, refer to
-[Choosing a load balancer](https://cloud.google.com/load-balancing/docs/backend-service). Default value: "EXTERNAL_MANAGED" Possible values: ["EXTERNAL", "INTERNAL_SELF_MANAGED", "INTERNAL_MANAGED", "EXTERNAL_MANAGED"]`,
+[Choosing a load balancer](https://cloud.google.com/load-balancing/docs/backend-service). Default value: "EXTERNAL_MANAGED" Possible values: ["EXTERNAL", "INTERNAL_SELF_MANAGED", "INTERNAL_MANAGED", "EXTERNAL_MANAGED", "EXTERNAL_PASSTHROUGH"]`,
 				Default: "EXTERNAL_MANAGED",
 			},
 			"locality_lb_policies": {
@@ -2146,14 +2146,15 @@ func resourceComputeBackendServiceCreate(d *schema.ResourceData, meta interface{
 
 	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
-		Config:    config,
-		Method:    "POST",
-		Project:   billingProject,
-		RawURL:    url,
-		UserAgent: userAgent,
-		Body:      obj,
-		Timeout:   d.Timeout(schema.TimeoutCreate),
-		Headers:   headers,
+		Config:     config,
+		Method:     "POST",
+		Project:    billingProject,
+		RawURL:     url,
+		UserAgent:  userAgent,
+		Body:       obj,
+		Timeout:    d.Timeout(schema.TimeoutCreate),
+		Headers:    headers,
+		ApiVersion: "2026-11-01",
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating BackendService: %s", err)
@@ -2195,13 +2196,14 @@ func resourceComputeBackendServiceCreate(d *schema.ResourceData, meta interface{
 		}
 
 		res, err = transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
-			Config:    config,
-			Method:    "POST",
-			Project:   project,
-			RawURL:    sUrl,
-			UserAgent: userAgent,
-			Body:      sBody,
-			Headers:   headers,
+			Config:     config,
+			Method:     "POST",
+			Project:    project,
+			RawURL:     sUrl,
+			UserAgent:  userAgent,
+			Body:       sBody,
+			Headers:    headers,
+			ApiVersion: "2026-11-01",
 		})
 
 		if err != nil {
@@ -2232,13 +2234,14 @@ func resourceComputeBackendServiceCreate(d *schema.ResourceData, meta interface{
 		}
 
 		res, err = transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
-			Config:    config,
-			Method:    "POST",
-			Project:   project,
-			RawURL:    eUrl,
-			UserAgent: userAgent,
-			Body:      eBody,
-			Headers:   headers,
+			Config:     config,
+			Method:     "POST",
+			Project:    project,
+			RawURL:     eUrl,
+			UserAgent:  userAgent,
+			Body:       eBody,
+			Headers:    headers,
+			ApiVersion: "2026-11-01",
 		})
 		if err != nil {
 			return fmt.Errorf("Error setting Backend Service edge security policy: %w", err)
@@ -2298,12 +2301,13 @@ func resourceComputeBackendServiceRead(d *schema.ResourceData, meta interface{})
 
 	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
-		Config:    config,
-		Method:    "GET",
-		Project:   billingProject,
-		RawURL:    url,
-		UserAgent: userAgent,
-		Headers:   headers,
+		Config:     config,
+		Method:     "GET",
+		Project:    billingProject,
+		RawURL:     url,
+		UserAgent:  userAgent,
+		Headers:    headers,
+		ApiVersion: "2026-11-01",
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("ComputeBackendService %q", d.Id()))
@@ -2658,14 +2662,15 @@ func resourceComputeBackendServiceUpdate(d *schema.ResourceData, meta interface{
 	}
 
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
-		Config:    config,
-		Method:    "PUT",
-		Project:   billingProject,
-		RawURL:    url,
-		UserAgent: userAgent,
-		Body:      obj,
-		Timeout:   d.Timeout(schema.TimeoutUpdate),
-		Headers:   headers,
+		Config:     config,
+		Method:     "PUT",
+		Project:    billingProject,
+		RawURL:     url,
+		UserAgent:  userAgent,
+		Body:       obj,
+		Timeout:    d.Timeout(schema.TimeoutUpdate),
+		Headers:    headers,
+		ApiVersion: "2026-11-01",
 	})
 
 	if err != nil {
@@ -2701,13 +2706,14 @@ func resourceComputeBackendServiceUpdate(d *schema.ResourceData, meta interface{
 		}
 
 		res, err = transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
-			Config:    config,
-			Method:    "POST",
-			Project:   project,
-			RawURL:    sUrl,
-			UserAgent: userAgent,
-			Body:      sBody,
-			Headers:   headers,
+			Config:     config,
+			Method:     "POST",
+			Project:    project,
+			RawURL:     sUrl,
+			UserAgent:  userAgent,
+			Body:       sBody,
+			Headers:    headers,
+			ApiVersion: "2026-11-01",
 		})
 
 		if err != nil {
@@ -2738,13 +2744,14 @@ func resourceComputeBackendServiceUpdate(d *schema.ResourceData, meta interface{
 		}
 
 		res, err = transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
-			Config:    config,
-			Method:    "POST",
-			Project:   project,
-			RawURL:    eUrl,
-			UserAgent: userAgent,
-			Body:      eBody,
-			Headers:   headers,
+			Config:     config,
+			Method:     "POST",
+			Project:    project,
+			RawURL:     eUrl,
+			UserAgent:  userAgent,
+			Body:       eBody,
+			Headers:    headers,
+			ApiVersion: "2026-11-01",
 		})
 		if err != nil {
 			return fmt.Errorf("Error setting Backend Service edge security policy: %w", err)
@@ -2795,14 +2802,15 @@ func resourceComputeBackendServiceDelete(d *schema.ResourceData, meta interface{
 
 	log.Printf("[DEBUG] Deleting BackendService %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
-		Config:    config,
-		Method:    "DELETE",
-		Project:   billingProject,
-		RawURL:    url,
-		UserAgent: userAgent,
-		Body:      obj,
-		Timeout:   d.Timeout(schema.TimeoutDelete),
-		Headers:   headers,
+		Config:     config,
+		Method:     "DELETE",
+		Project:    billingProject,
+		RawURL:     url,
+		UserAgent:  userAgent,
+		Body:       obj,
+		Timeout:    d.Timeout(schema.TimeoutDelete),
+		Headers:    headers,
+		ApiVersion: "2026-11-01",
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "BackendService")
