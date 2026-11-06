@@ -77,7 +77,7 @@ func TestAccSaasRuntimeRelease_saasRuntimeReleaseBasicExample(t *testing.T) {
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckSaasRuntimeReleaseDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -102,7 +102,6 @@ func TestAccSaasRuntimeRelease_saasRuntimeReleaseBasicExample(t *testing.T) {
 func testAccSaasRuntimeRelease_saasRuntimeReleaseBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_saas_runtime_saas" "example_saas" {
-  provider = google-beta
   saas_id  = "%{saas_name}"
   location = "global"
 
@@ -112,14 +111,12 @@ resource "google_saas_runtime_saas" "example_saas" {
 }
 
 resource "google_saas_runtime_unit_kind" "example_unitkind" {
-  provider     = google-beta
   location     = "global"
   unit_kind_id = "%{unitkind_name}"
   saas         = google_saas_runtime_saas.example_saas.id
 }
 
 resource "google_saas_runtime_release" "example_previous" {
-  provider          = google-beta
   location          = "global"
   release_id        = "%{previous_release_name}"
   unit_kind         = google_saas_runtime_unit_kind.example_unitkind.id
@@ -129,7 +126,6 @@ resource "google_saas_runtime_release" "example_previous" {
 }
 
 resource "google_saas_runtime_release" "example" {
-  provider          = google-beta
   location          = "global"
   release_id        = "%{release_name}"
   unit_kind         = google_saas_runtime_unit_kind.example_unitkind.id
