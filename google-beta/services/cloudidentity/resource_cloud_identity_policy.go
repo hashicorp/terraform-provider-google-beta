@@ -170,10 +170,16 @@ func ResourceCloudIdentityPolicy() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"org_unit": {
-							Type:        schema.TypeString,
-							Required:    true,
-							ForceNew:    true,
-							Description: `The OrgUnit the query applies to.`,
+							Type:     schema.TypeString,
+							Required: true,
+							ForceNew: true,
+							Description: `The OrgUnit the query applies to, in the format 'orgUnits/{org_unit_id}'.
+'{org_unit_id}' is the obfuscated org unit ID, the same value the Admin SDK
+Directory API returns as 'orgUnitId' without its 'id:' prefix. Org unit paths
+and display names are not resolved and are rejected for most settings.
+For detector settings ('settings/detector.*'), the API ignores this value and
+always applies the policy to, and returns, the customer's root org unit, so any
+other value produces a diff; set it to the root org unit's ID.`,
 						},
 						"group": {
 							Type:        schema.TypeString,
@@ -556,32 +562,28 @@ func resourceCloudIdentityPolicyDelete(d *schema.ResourceData, meta interface{})
 func resourceCloudIdentityPolicyImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*transport_tpg.Config)
 
-	if d.Id() == "" {
-		if err := tpgresource.ParseImportId([]string{"(?P<name>.+)"}, d, config); err != nil {
-			return nil, err
+	if err := tpgresource.ParseImportId([]string{"(?P<name>.+)"}, d, config); err != nil {
+		return nil, err
+	}
+
+	name := d.Get("name").(string)
+
+	if !strings.HasPrefix(name, "policies/") {
+		name = fmt.Sprintf("policies/%s", name)
+	}
+
+	if err := d.Set("name", name); err != nil {
+		return nil, fmt.Errorf("Error setting name: %w", err)
+	}
+
+	if identity, err := d.Identity(); err == nil && identity != nil {
+		if err := identity.Set("name", name); err != nil {
+			return nil, fmt.Errorf("Error setting identity name: %w", err)
 		}
 	}
 
-	// 1. Get the ID the user typed (e.g., "policies/12345" or just "12345")
-	id := d.Id()
+	d.SetId(name)
 
-	// 2. Normalize: Ensure the ID strictly starts with "policies/"
-	// This protects against users (or tests) who might import just the number.
-	if !strings.HasPrefix(id, "policies/") {
-		id = fmt.Sprintf("policies/%s", id)
-	}
-
-	// 3. Set the corrected ID back into the Terraform state
-	d.SetId(id)
-
-	// 4. The 'Read' function uses name to build the URL.
-	// If we don't set this, the URL will be empty.
-	if err := d.Set("name", id); err != nil {
-		return nil, fmt.Errorf("Error setting name: %s", err)
-	}
-
-	// 5. Return success. Terraform will now call Read() automatically.
-	// Since d.Id() is now "policies/12345", the Read URL will be correct.
 	return []*schema.ResourceData{d}, nil
 }
 
@@ -666,6 +668,17 @@ func flattenCloudIdentityPolicySettingValueJson(v interface{}, d *schema.Resourc
 	}
 
 	// v should be a map[string]interface{} coming back from the API for google.protobuf.Struct.
+	if mapValue, ok := v.(map[string]interface{}); ok {
+		vCopy := make(map[string]interface{}, len(mapValue))
+		for key, value := range mapValue {
+			if key == "createTime" || key == "updateTime" || key == "ruleTypeMetadata" {
+				continue
+			}
+			vCopy[key] = value
+		}
+		v = vCopy
+	}
+
 	b, err := json.Marshal(v)
 	if err != nil {
 		// Flatten signature can't return an error; best effort fallback.
