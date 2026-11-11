@@ -9,7 +9,9 @@ api_resource_type_kind: AgentAnomalyDetectionScope
 fields:
     - field: agent_anomaly_detection_scope_id
       provider_only: true
+    - api_field: autoEnroll
     - api_field: displayName
+    - api_field: encryptionSpec.kmsKeyName
     - api_field: logBuckets
     - api_field: name
     - api_field: observabilityBuckets
