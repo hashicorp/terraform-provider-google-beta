@@ -70,6 +70,7 @@ fields:
     field: 'update_policy.max_unavailable_fixed'
   - api_field: 'updatePolicy.maxUnavailable.percent'
     field: 'update_policy.max_unavailable_percent'
+  - api_field: 'updatePolicy.allowedActions'
   - api_field: 'updatePolicy.minReadySec'
   - api_field: 'updatePolicy.minimalAction'
   - api_field: 'updatePolicy.mostDisruptiveAllowedAction'

@@ -260,6 +260,26 @@ func ResourceComputePerInstanceConfig() *schema.Resource {
 				DiffSuppressFunc: tpgresource.CompareSelfLinkOrResourceName,
 				Description:      `Zone where the containing instance group manager is located`,
 			},
+			"allowed_actions": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				Description: `[Beta](../guides/provider_versions.html.markdown) The list of allowed actions to perform on the instance during an update.
+'allowed_actions' is the only way to request 'RESTART_IN_PLACE'.
+Conflicts with 'minimal_action' and 'most_disruptive_allowed_action'.
+Possible values are:
+* REPLACE
+* RESTART
+* RESTART_IN_PLACE
+* REFRESH
+* NONE`,
+				MinItems: 1,
+				Elem: &schema.Schema{
+					Type:         schema.TypeString,
+					ValidateFunc: verify.ValidateEnum([]string{"REPLACE", "RESTART", "RESTART_IN_PLACE", "REFRESH", "NONE"}),
+				},
+				Set:           schema.HashString,
+				ConflictsWith: []string{"minimal_action", "most_disruptive_allowed_action"},
+			},
 			"minimal_action": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -269,7 +289,8 @@ Default is 'NONE'. Possible values are:
 * RESTART
 * REFRESH
 * NONE`,
-				Default: "NONE",
+				Default:       "NONE",
+				ConflictsWith: []string{"allowed_actions"},
 			},
 			"most_disruptive_allowed_action": {
 				Type:     schema.TypeString,
@@ -280,7 +301,8 @@ Default is 'REPLACE'. Possible values are:
 * RESTART
 * REFRESH
 * NONE`,
-				Default: "REPLACE",
+				Default:       "REPLACE",
+				ConflictsWith: []string{"allowed_actions"},
 			},
 			"remove_instance_on_destroy": {
 				Type:     schema.TypeBool,
@@ -730,18 +752,21 @@ func resourceComputePerInstanceConfigUpdate(d *schema.ResourceData, meta interfa
 
 	obj = make(map[string]interface{})
 	obj["instances"] = []string{instanceName}
+	if allowedActions, ok := d.GetOk("allowed_actions"); ok && allowedActions.(*schema.Set).Len() > 0 {
+		obj["allowedActions"] = allowedActions.(*schema.Set).List()
+	} else {
+		minAction := d.Get("minimal_action")
+		if minAction == "" {
+			minAction = "NONE"
+		}
+		obj["minimalAction"] = minAction
 
-	minAction := d.Get("minimal_action")
-	if minAction == "" {
-		minAction = "NONE"
+		mostDisruptiveAction := d.Get("most_disruptive_allowed_action")
+		if tpgresource.IsEmptyValue(reflect.ValueOf(mostDisruptiveAction)) {
+			mostDisruptiveAction = "REPLACE"
+		}
+		obj["mostDisruptiveAllowedAction"] = mostDisruptiveAction
 	}
-	obj["minimalAction"] = minAction
-
-	mostDisruptiveAction := d.Get("most_disruptive_allowed_action")
-	if tpgresource.IsEmptyValue(reflect.ValueOf(mostDisruptiveAction)) {
-		mostDisruptiveAction = "REPLACE"
-	}
-	obj["mostDisruptiveAllowedAction"] = mostDisruptiveAction
 
 	url, err = tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/zones/{{zone}}/instanceGroupManagers/{{instance_group_manager}}/applyUpdatesToInstances")
 	if err != nil {

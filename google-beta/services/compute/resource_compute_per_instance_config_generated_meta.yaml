@@ -9,6 +9,8 @@ api_resource_type_kind: InstanceGroupManager
 api_variant_patterns:
     - projects/{project}/zones/{zone}/instanceGroupManagers/{instanceGroupManager}
 fields:
+    - field: allowed_actions
+      provider_only: true
     - field: instance_group_manager
       provider_only: true
     - field: minimal_action
