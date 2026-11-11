@@ -68,7 +68,7 @@ func TestAccStorageControlProjectFeatureConfig_storageControlProjectFeatureConfi
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckStorageControlProjectFeatureConfigDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -93,7 +93,6 @@ func TestAccStorageControlProjectFeatureConfig_storageControlProjectFeatureConfi
 func testAccStorageControlProjectFeatureConfig_storageControlProjectFeatureConfigBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_storage_control_project_feature_config" "example" {
-  provider          = google-beta
   feature_config_id = "%{feature_config_id}"
 
   auto_annotate_config {
@@ -126,7 +125,7 @@ func TestAccStorageControlProjectFeatureConfig_storageControlProjectFeatureConfi
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckStorageControlProjectFeatureConfigDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -171,7 +170,6 @@ func TestAccStorageControlProjectFeatureConfig_storageControlProjectFeatureConfi
 func testAccStorageControlProjectFeatureConfig_storageControlProjectFeatureConfigFullExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_storage_bucket" "bucket" {
-  provider                    = google-beta
   name                        = "%{bucket_name}"
   location                    = "US"
   uniform_bucket_level_access = true
@@ -179,7 +177,6 @@ resource "google_storage_bucket" "bucket" {
 }
 
 resource "google_storage_control_project_feature_config" "example" {
-  provider          = google-beta
   feature_config_id = "%{feature_config_id}"
   description       = "Annotates images in a single bucket"
 
@@ -205,7 +202,6 @@ resource "google_storage_control_project_feature_config" "example" {
 func testAccStorageControlProjectFeatureConfig_storageControlProjectFeatureConfigUpdateExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_storage_bucket" "bucket" {
-  provider                    = google-beta
   name                        = "%{bucket_name}"
   location                    = "US"
   uniform_bucket_level_access = true
@@ -213,7 +209,6 @@ resource "google_storage_bucket" "bucket" {
 }
 
 resource "google_storage_bucket" "second_bucket" {
-  provider                    = google-beta
   name                        = "%{second_bucket_name}"
   location                    = "US"
   uniform_bucket_level_access = true
@@ -221,7 +216,6 @@ resource "google_storage_bucket" "second_bucket" {
 }
 
 resource "google_storage_control_project_feature_config" "example" {
-  provider          = google-beta
   feature_config_id = "%{feature_config_id}"
   description       = "Annotates images in two buckets"
 
