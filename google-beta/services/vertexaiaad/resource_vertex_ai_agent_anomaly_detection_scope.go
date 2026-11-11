@@ -173,11 +173,42 @@ Format: projects/{{project}}/locations/{{location}}/buckets/{{bucket}}/datasets/
 				ForceNew:    true,
 				Description: `The region of the AgentAnomalyDetectionScope, e.g. us-central1.`,
 			},
+			"auto_enroll": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				ForceNew: true,
+				Description: `When true, newly discovered agents that share log and observability
+buckets with this scope are automatically enrolled as ACTIVE monitored
+agents, up to the project's monitored agent quota. When false, newly
+discovered agents are added as DISABLED monitored agents and must be
+enabled explicitly.`,
+			},
 			"display_name": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				ForceNew:    true,
 				Description: `User provided display name of the AgentAnomalyDetectionScope.`,
+			},
+			"encryption_spec": {
+				Type:     schema.TypeList,
+				Optional: true,
+				ForceNew: true,
+				Description: `Customer-managed encryption key spec for the scope. If set, this scope
+and all sub-resources are secured by this key. The key must be a Cloud
+KMS key co-located with the scope location (for example, 'us' for a 'us'
+scope, 'europe' for an 'eu' scope, or matching single region).`,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"kms_key_name": {
+							Type:     schema.TypeString,
+							Required: true,
+							ForceNew: true,
+							Description: `Resource name of the Cloud KMS key used to protect the resource.
+Format: projects/{{project}}/locations/{{location}}/keyRings/{{key_ring}}/cryptoKeys/{{crypto_key}}.`,
+						},
+					},
+				},
 			},
 			"name": {
 				Type:     schema.TypeString,
@@ -238,6 +269,18 @@ func resourceVertexAiAadAgentAnomalyDetectionScopeCreate(d *schema.ResourceData,
 		return err
 	} else if v, ok := d.GetOkExists("observability_buckets"); !tpgresource.IsEmptyValue(reflect.ValueOf(observabilityBucketsProp)) && (ok || !reflect.DeepEqual(v, observabilityBucketsProp)) {
 		obj["observabilityBuckets"] = observabilityBucketsProp
+	}
+	autoEnrollProp, err := expandVertexAiAadAgentAnomalyDetectionScopeAutoEnroll(d.Get("auto_enroll"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("auto_enroll"); !tpgresource.IsEmptyValue(reflect.ValueOf(autoEnrollProp)) && (ok || !reflect.DeepEqual(v, autoEnrollProp)) {
+		obj["autoEnroll"] = autoEnrollProp
+	}
+	encryptionSpecProp, err := expandVertexAiAadAgentAnomalyDetectionScopeEncryptionSpec(d.Get("encryption_spec"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("encryption_spec"); !tpgresource.IsEmptyValue(reflect.ValueOf(encryptionSpecProp)) && (ok || !reflect.DeepEqual(v, encryptionSpecProp)) {
+		obj["encryptionSpec"] = encryptionSpecProp
 	}
 
 	url, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/{{region}}/agentAnomalyDetectionScopes?agentAnomalyDetectionScopeId={{agent_anomaly_detection_scope_id}}")
@@ -559,6 +602,27 @@ func flattenVertexAiAadAgentAnomalyDetectionScopeState(v interface{}, d *schema.
 	return v
 }
 
+func flattenVertexAiAadAgentAnomalyDetectionScopeAutoEnroll(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenVertexAiAadAgentAnomalyDetectionScopeEncryptionSpec(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return nil
+	}
+	original := v.(map[string]interface{})
+	if len(original) == 0 {
+		return nil
+	}
+	transformed := make(map[string]interface{})
+	transformed["kms_key_name"] =
+		flattenVertexAiAadAgentAnomalyDetectionScopeEncryptionSpecKmsKeyName(original["kmsKeyName"], d, config)
+	return []interface{}{transformed}
+}
+func flattenVertexAiAadAgentAnomalyDetectionScopeEncryptionSpecKmsKeyName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func expandVertexAiAadAgentAnomalyDetectionScopeDisplayName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
@@ -568,6 +632,36 @@ func expandVertexAiAadAgentAnomalyDetectionScopeLogBuckets(v interface{}, d tpgr
 }
 
 func expandVertexAiAadAgentAnomalyDetectionScopeObservabilityBuckets(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandVertexAiAadAgentAnomalyDetectionScopeAutoEnroll(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandVertexAiAadAgentAnomalyDetectionScopeEncryptionSpec(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
+	l := v.([]interface{})
+	if len(l) == 0 || l[0] == nil {
+		return nil, nil
+	}
+	raw := l[0]
+	original := raw.(map[string]interface{})
+	transformed := make(map[string]interface{})
+
+	transformedKmsKeyName, err := expandVertexAiAadAgentAnomalyDetectionScopeEncryptionSpecKmsKeyName(original["kms_key_name"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedKmsKeyName); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["kmsKeyName"] = transformedKmsKeyName
+	}
+
+	return transformed, nil
+}
+
+func expandVertexAiAadAgentAnomalyDetectionScopeEncryptionSpecKmsKeyName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
@@ -587,6 +681,12 @@ func ResourceVertexAiAadAgentAnomalyDetectionScopeFlatten(d *schema.ResourceData
 		return fmt.Errorf("Error reading AgentAnomalyDetectionScope: %s", err)
 	}
 	if err = d.Set("state", flattenVertexAiAadAgentAnomalyDetectionScopeState(res["state"], d, config)); err != nil {
+		return fmt.Errorf("Error reading AgentAnomalyDetectionScope: %s", err)
+	}
+	if err = d.Set("auto_enroll", flattenVertexAiAadAgentAnomalyDetectionScopeAutoEnroll(res["autoEnroll"], d, config)); err != nil {
+		return fmt.Errorf("Error reading AgentAnomalyDetectionScope: %s", err)
+	}
+	if err = d.Set("encryption_spec", flattenVertexAiAadAgentAnomalyDetectionScopeEncryptionSpec(res["encryptionSpec"], d, config)); err != nil {
 		return fmt.Errorf("Error reading AgentAnomalyDetectionScope: %s", err)
 	}
 
