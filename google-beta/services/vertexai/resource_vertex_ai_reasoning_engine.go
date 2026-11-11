@@ -2405,7 +2405,6 @@ func flattenVertexAIReasoningEngineSpecClassMethods(v interface{}, d *schema.Res
 	}
 	b, err := json.Marshal(v)
 	if err != nil {
-		// TODO: return error once https://github.com/GoogleCloudPlatform/magic-modules/issues/3257 is fixed.
 		log.Printf("[ERROR] failed to marshal schema to JSON: %v", err)
 	}
 	return string(b)
@@ -2987,7 +2986,6 @@ func flattenVertexAIReasoningEngineSpecSourceCodeSpecAgentConfigSourceAdkConfigJ
 	}
 	b, err := json.Marshal(v)
 	if err != nil {
-		// TODO: return error once https://github.com/GoogleCloudPlatform/magic-modules/issues/3257 is fixed.
 		log.Printf("[ERROR] failed to marshal schema to JSON: %v", err)
 	}
 	return string(b)
@@ -3032,7 +3030,6 @@ func flattenVertexAIReasoningEngineSpecAgentCard(v interface{}, d *schema.Resour
 	}
 	b, err := json.Marshal(v)
 	if err != nil {
-		// TODO: return error once https://github.com/GoogleCloudPlatform/magic-modules/issues/3257 is fixed.
 		log.Printf("[ERROR] failed to marshal schema to JSON: %v", err)
 	}
 	return string(b)
@@ -3578,7 +3575,6 @@ func flattenVertexAIReasoningEngineContextSpecMemoryBankConfigCustomizationConfi
 	}
 	b, err := json.Marshal(v)
 	if err != nil {
-		// TODO: return error once https://github.com/GoogleCloudPlatform/magic-modules/issues/3257 is fixed.
 		log.Printf("[ERROR] failed to marshal schema to JSON: %v", err)
 	}
 	return string(b)
@@ -3615,7 +3611,6 @@ func flattenVertexAIReasoningEngineContextSpecMemoryBankConfigCustomizationConfi
 	}
 	b, err := json.Marshal(v)
 	if err != nil {
-		// TODO: return error once https://github.com/GoogleCloudPlatform/magic-modules/issues/3257 is fixed.
 		log.Printf("[ERROR] failed to marshal schema to JSON: %v", err)
 	}
 	return string(b)
@@ -3889,7 +3884,6 @@ func flattenVertexAIReasoningEngineContextSpecMemoryBankConfigStructuredMemoryCo
 	}
 	b, err := json.Marshal(v)
 	if err != nil {
-		// TODO: return error once https://github.com/GoogleCloudPlatform/magic-modules/issues/3257 is fixed.
 		log.Printf("[ERROR] failed to marshal schema to JSON: %v", err)
 	}
 	return string(b)
