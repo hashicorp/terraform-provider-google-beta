@@ -83,7 +83,7 @@ func TestAccBackupDRAutoProtectionPolicyBinding_backupDrAutoProtectionPolicyBind
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckBackupDRAutoProtectionPolicyBindingDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -128,18 +128,15 @@ func TestAccBackupDRAutoProtectionPolicyBinding_backupDrAutoProtectionPolicyBind
 func testAccBackupDRAutoProtectionPolicyBinding_backupDrAutoProtectionPolicyBindingBasicExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 data "google_project" "project" {
-  provider = google-beta
 }
 
 resource "google_backup_dr_backup_vault" "my_backup_vault" {
-  provider                                   = google-beta
   location                                   = "us-central1"
   backup_vault_id                            = "%{backup_vault_id}"
   backup_minimum_enforced_retention_duration = "100000s"
 }
 
 resource "google_backup_dr_backup_plan" "my_backup_plan" {
-  provider       = google-beta
   location       = "us-central1"
   backup_plan_id = "%{backup_plan_id}"
   resource_type  = "compute.googleapis.com/Instance"
@@ -163,7 +160,6 @@ resource "google_backup_dr_backup_plan" "my_backup_plan" {
 }
 
 resource "google_backup_dr_auto_protection_policy" "my_policy" {
-  provider                  = google-beta
   location                  = "us-central1"
   auto_protection_policy_id = "%{auto_protection_policy_id}"
 
@@ -183,7 +179,6 @@ resource "google_backup_dr_auto_protection_policy" "my_policy" {
 }
 
 resource "google_backup_dr_auto_protection_policy_binding" "my-binding" {
-  provider                          = google-beta
   location                          = "us-central1"
   auto_protection_policy_id         = google_backup_dr_auto_protection_policy.my_policy.auto_protection_policy_id
   auto_protection_policy_binding_id = "%{auto_protection_policy_binding_id}"
@@ -196,18 +191,15 @@ resource "google_backup_dr_auto_protection_policy_binding" "my-binding" {
 func testAccBackupDRAutoProtectionPolicyBinding_backupDrAutoProtectionPolicyBindingUpdateExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 data "google_project" "project" {
-  provider = google-beta
 }
 
 resource "google_backup_dr_backup_vault" "my_backup_vault" {
-  provider                                   = google-beta
   location                                   = "us-central1"
   backup_vault_id                            = "%{backup_vault_id}"
   backup_minimum_enforced_retention_duration = "100000s"
 }
 
 resource "google_backup_dr_backup_plan" "my_backup_plan" {
-  provider       = google-beta
   location       = "us-central1"
   backup_plan_id = "%{backup_plan_id}"
   resource_type  = "compute.googleapis.com/Instance"
@@ -231,7 +223,6 @@ resource "google_backup_dr_backup_plan" "my_backup_plan" {
 }
 
 resource "google_backup_dr_auto_protection_policy" "my_policy" {
-  provider                  = google-beta
   location                  = "us-central1"
   auto_protection_policy_id = "%{auto_protection_policy_id}"
 
@@ -251,7 +242,6 @@ resource "google_backup_dr_auto_protection_policy" "my_policy" {
 }
 
 resource "google_backup_dr_auto_protection_policy_binding" "my-binding" {
-  provider                          = google-beta
   location                          = "us-central1"
   auto_protection_policy_id         = google_backup_dr_auto_protection_policy.my_policy.auto_protection_policy_id
   auto_protection_policy_binding_id = "%{auto_protection_policy_binding_id}"
