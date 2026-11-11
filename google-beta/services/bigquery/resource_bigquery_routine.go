@@ -290,7 +290,8 @@ to execute the code in the container. Format:
 							Optional: true,
 							Description: `List of volume mounts for the Python UDF container that executes the
 managed function. When volume mounts are set, 'runtime_connection' must
-also be set.`,
+also be set. For more information, see [Create a Python UDF with volume
+mounts](https://cloud.google.com/bigquery/docs/user-defined-functions-python#volume-mounts).`,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"mount_path": {
@@ -304,8 +305,8 @@ mounted. For example, '/mnt/data'.`,
 										Required: true,
 										Description: `The absolute path of the source to be mounted. Only Google Cloud
 Storage buckets or folders are currently supported. For example,
-'gs://bucket-xxx' for a Cloud Storage bucket, or
-'gs://bucket-xxx/folder1/folder2' for a Cloud Storage folder.`,
+'gs://my-bucket' for a Cloud Storage bucket, or
+'gs://my-bucket/folder1/folder2' for a Cloud Storage folder.`,
 									},
 								},
 							},
