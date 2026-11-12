@@ -704,6 +704,102 @@ resource "google_compute_network" "producer_net" {
 `, context)
 }
 
+func TestAccMemorystoreInstance_memorystoreInstanceAutoCreatedEndpointsIpv6Example(t *testing.T) {
+	t.Parallel()
+
+	randomSuffix := acctest.RandString(t, 10)
+
+	context := map[string]interface{}{
+		"instance_name":   "tf-test-ipv6-instance" + randomSuffix,
+		"network_name":    "tf-test-my-network" + randomSuffix,
+		"policy_name":     "tf-test-my-policy" + randomSuffix,
+		"prevent_destroy": false,
+		"subnet_name":     "tf-test-my-subnet" + randomSuffix,
+		"random_suffix":   randomSuffix,
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckMemorystoreInstanceDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccMemorystoreInstance_memorystoreInstanceAutoCreatedEndpointsIpv6Example(context),
+			},
+			{
+				ResourceName:            "google_memorystore_instance.instance-ipv6",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"acl_policy", "gcs_source", "instance_id", "labels", "location", "managed_backup_source", "terraform_labels", "update_time"},
+			},
+			{
+				ResourceName:       "google_memorystore_instance.instance-ipv6",
+				ImportState:        true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
+		},
+	})
+}
+
+func testAccMemorystoreInstance_memorystoreInstanceAutoCreatedEndpointsIpv6Example(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_memorystore_instance" "instance-ipv6" {
+  provider    = google-beta
+  instance_id = "%{instance_name}"
+  shard_count = 1
+  desired_auto_created_endpoints {
+    network    = google_compute_network.producer_net.id
+    project_id = data.google_project.project.project_id
+    ip_version = "IPV6"
+  }
+  location                    = "asia-east1"
+  node_type                   = "SHARED_CORE_NANO"
+  deletion_protection_enabled = false
+  depends_on = [
+    google_network_connectivity_service_connection_policy.default
+  ]
+
+  lifecycle {
+    prevent_destroy = "%{prevent_destroy}"
+  }
+}
+
+resource "google_network_connectivity_service_connection_policy" "default" {
+  provider      = google-beta
+  name          = "%{policy_name}"
+  location      = "asia-east1"
+  service_class = "gcp-memorystore"
+  description   = "my basic service connection policy"
+  network       = google_compute_network.producer_net.id
+  psc_config {
+    subnetworks = [google_compute_subnetwork.producer_subnet.id]
+  }
+}
+
+resource "google_compute_subnetwork" "producer_subnet" {
+  provider         = google-beta
+  name             = "%{subnet_name}"
+  ip_cidr_range    = "10.0.0.248/29"
+  region           = "asia-east1"
+  network          = google_compute_network.producer_net.id
+  stack_type       = "IPV4_IPV6"
+  ipv6_access_type = "INTERNAL"
+}
+
+resource "google_compute_network" "producer_net" {
+  provider                 = google-beta
+  name                     = "%{network_name}"
+  auto_create_subnetworks  = false
+  enable_ula_internal_ipv6 = true
+}
+
+data "google_project" "project" {
+  provider = google-beta
+}
+`, context)
+}
+
 func testAccCheckMemorystoreInstanceDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		for name, rs := range s.RootModule().Resources {
