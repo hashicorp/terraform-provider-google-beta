@@ -27,6 +27,8 @@ fields:
     - api_field: crossInstanceReplicationConfig.secondaryInstances.uid
     - api_field: crossInstanceReplicationConfig.updateTime
     - api_field: deletionProtectionEnabled
+    - field: desired_auto_created_endpoints.ip_version
+      provider_only: true
     - field: desired_auto_created_endpoints.network
       provider_only: true
     - field: desired_auto_created_endpoints.project_id
@@ -44,6 +46,7 @@ fields:
     - api_field: endpoints.connections.pscAutoConnection.connectionType
     - api_field: endpoints.connections.pscAutoConnection.forwardingRule
     - api_field: endpoints.connections.pscAutoConnection.ipAddress
+    - api_field: endpoints.connections.pscAutoConnection.ipVersion
     - api_field: endpoints.connections.pscAutoConnection.network
     - api_field: endpoints.connections.pscAutoConnection.port
     - api_field: endpoints.connections.pscAutoConnection.projectId
@@ -86,6 +89,7 @@ fields:
     - api_field: pscAutoConnections.connectionType
     - api_field: pscAutoConnections.forwardingRule
     - api_field: pscAutoConnections.ipAddress
+    - api_field: pscAutoConnections.ipVersion
     - api_field: pscAutoConnections.network
     - api_field: pscAutoConnections.port
     - api_field: pscAutoConnections.projectId

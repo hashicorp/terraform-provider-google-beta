@@ -804,6 +804,11 @@ projects/{project}/regions/{region}/forwardingRules/{forwarding_rule}`,
 													Computed:    true,
 													Description: `Output only. The IP allocated on the consumer network for the PSC forwarding rule.`,
 												},
+												"ip_version": {
+													Type:        schema.TypeString,
+													Computed:    true,
+													Description: `The IP version of the PSC connection. Possible values are 'IPV4' and 'IPV6'.`,
+												},
 												"network": {
 													Type:     schema.TypeString,
 													Computed: true,
@@ -969,6 +974,11 @@ projects/{project}/regions/{region}/forwardingRules/{forwarding_rule}`,
 							Computed:    true,
 							Description: `Output only. The IP allocated on the consumer network for the PSC forwarding rule.`,
 						},
+						"ip_version": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: `The IP version of the PSC connection. Possible values are 'IPV4' and 'IPV6'.`,
+						},
 						"network": {
 							Type:     schema.TypeString,
 							Computed: true,
@@ -1112,6 +1122,15 @@ projects/{project_id}/global/networks/{network_id}.`,
 							Type:        schema.TypeString,
 							Required:    true,
 							Description: `Required. The consumer project_id where the forwarding rule is created from.`,
+						},
+						"ip_version": {
+							Type:         schema.TypeString,
+							Computed:     true,
+							Optional:     true,
+							ForceNew:     true,
+							ValidateFunc: verify.ValidateEnum([]string{"IPV4", "IPV6", ""}),
+							Description: `Immutable. The IP version that the consumer endpoint will use.
+Default value is 'IPV4'. Possible values: ["IPV4", "IPV6"]`,
 						},
 					},
 				},
@@ -2860,6 +2879,8 @@ func flattenMemorystoreInstanceEndpointsConnectionsPscAutoConnection(v interface
 		flattenMemorystoreInstanceEndpointsConnectionsPscAutoConnectionConnectionType(original["connectionType"], d, config)
 	transformed["port"] =
 		flattenMemorystoreInstanceEndpointsConnectionsPscAutoConnectionPort(original["port"], d, config)
+	transformed["ip_version"] =
+		flattenMemorystoreInstanceEndpointsConnectionsPscAutoConnectionIpVersion(original["ipVersion"], d, config)
 	return []interface{}{transformed}
 }
 func flattenMemorystoreInstanceEndpointsConnectionsPscAutoConnectionPscConnectionId(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -2905,6 +2926,10 @@ func flattenMemorystoreInstanceEndpointsConnectionsPscAutoConnectionPort(v inter
 	}
 
 	return v // let terraform core handle it otherwise
+}
+
+func flattenMemorystoreInstanceEndpointsConnectionsPscAutoConnectionIpVersion(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
 }
 
 func flattenMemorystoreInstanceCrossInstanceReplicationConfig(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -3108,6 +3133,7 @@ func flattenMemorystoreInstancePscAutoConnections(v interface{}, d *schema.Resou
 			"psc_connection_status": flattenMemorystoreInstancePscAutoConnectionsPscConnectionStatus(original["pscConnectionStatus"], d, config),
 			"connection_type":       flattenMemorystoreInstancePscAutoConnectionsConnectionType(original["connectionType"], d, config),
 			"port":                  flattenMemorystoreInstancePscAutoConnectionsPort(original["port"], d, config),
+			"ip_version":            flattenMemorystoreInstancePscAutoConnectionsIpVersion(original["ipVersion"], d, config),
 		})
 	}
 	return transformed
@@ -3159,6 +3185,10 @@ func flattenMemorystoreInstancePscAutoConnectionsPort(v interface{}, d *schema.R
 	}
 
 	return v // let terraform core handle it otherwise
+}
+
+func flattenMemorystoreInstancePscAutoConnectionsIpVersion(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
 }
 
 func flattenMemorystoreInstanceBackupCollection(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -4025,6 +4055,11 @@ func resourceMemorystoreInstanceEncoder(d *schema.ResourceData, meta interface{}
 					pscAutoConnection["network"] = network
 				}
 
+				ipVersion := desiredEndpoint["ip_version"]
+				if val := reflect.ValueOf(ipVersion); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+					pscAutoConnection["ipVersion"] = ipVersion
+				}
+
 				connectionObj["pscAutoConnection"] = pscAutoConnection
 				connections = append(connections, connectionObj)
 			}
@@ -4122,6 +4157,7 @@ func resourceMemorystoreInstanceDecoder(d *schema.ResourceData, meta interface{}
 			// No endpoints or empty array, nothing to process
 		} else {
 			transformed := make([]interface{}, 0)
+			transformedPsc := make([]interface{}, 0)
 			uniqueEndpoints := make(map[string]bool) // Track unique project+network combos
 
 			for _, endpoint := range endpointsArray {
@@ -4148,12 +4184,18 @@ func resourceMemorystoreInstanceDecoder(d *schema.ResourceData, meta interface{}
 
 					projectID, projectOk := pscAutoConnection["projectId"].(string)
 					networkID, networkOk := pscAutoConnection["network"].(string)
+					ipVersion, _ := pscAutoConnection["ipVersion"].(string)
 
 					if projectOk && networkOk {
 						uniqueKey := projectID + networkID
 						if !uniqueEndpoints[uniqueKey] { // Check for uniqueness
 							uniqueEndpoints[uniqueKey] = true
 							transformed = append(transformed, map[string]interface{}{
+								"project_id": projectID,
+								"network":    networkID,
+								"ip_version": ipVersion,
+							})
+							transformedPsc = append(transformedPsc, map[string]interface{}{
 								"project_id": projectID,
 								"network":    networkID,
 							})
@@ -4173,8 +4215,8 @@ func resourceMemorystoreInstanceDecoder(d *schema.ResourceData, meta interface{}
 					d.Set("desired_auto_created_endpoints", []interface{}{})
 				}
 				if okPsc {
-					d.Set("desired_psc_auto_connections", transformed)
-					log.Printf("[DEBUG] Setting desired_psc_auto_connections in decoder within endpoints for %#v", transformed)
+					d.Set("desired_psc_auto_connections", transformedPsc)
+					log.Printf("[DEBUG] Setting desired_psc_auto_connections in decoder within endpoints for %#v", transformedPsc)
 				} else if okEndpoint {
 					d.Set("desired_psc_auto_connections", []interface{}{})
 				}
