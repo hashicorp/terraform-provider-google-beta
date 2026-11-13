@@ -1849,6 +1849,7 @@ FEATURES:
 * **New Data Source:** `google_artifact_registry_python_package` ([#10671](https://github.com/hashicorp/terraform-provider-google-beta/pull/10671))
 * **New Data Source:** `google_backup_dr_data_source_references` ([#10672](https://github.com/hashicorp/terraform-provider-google-beta/pull/10672))
 * **New Resource:** `google_discovery_engine_acl_config` ([#10680](https://github.com/hashicorp/terraform-provider-google-beta/pull/10680))
+* **New Resource:** `google_network_management_organization_vpc_flow_logs_config` ([#10660](https://github.com/hashicorp/terraform-provider-google-beta/pull/10660))
 * **New Resource:** `google_saas_runtime_unit_kind` ([#10652](https://github.com/hashicorp/terraform-provider-google-beta/pull/10652))
 
 IMPROVEMENTS:
@@ -1857,7 +1858,6 @@ IMPROVEMENTS:
 * container: added `secret_manager_config.rotation_config` field to `google_container_cluster` resource ([#10659](https://github.com/hashicorp/terraform-provider-google-beta/pull/10659))
 * container: added new fields `memory_manager` and `topology_manager` to `google_container_cluster.node_config.kubelet_config` and `google_container_node_pool.node_config.kubelet_config` ([#10681](https://github.com/hashicorp/terraform-provider-google-beta/pull/10681))
 * healthcare: added `consent_config` field to `google_healthcare_fhir_store` resource ([#10666](https://github.com/hashicorp/terraform-provider-google-beta/pull/10666))
-**New Resource:** `google_network_management_organization_vpc_flow_logs_config` ([#10660](https://github.com/hashicorp/terraform-provider-google-beta/pull/10660))
 * sql: added `final_backup_description` and `final_backup_config` fields to `google_sql_database_instance` resource ([#10678](https://github.com/hashicorp/terraform-provider-google-beta/pull/10678))
 * storage: added `aws_s3_compatible_data_source` to `google_storage_transfer_job` resource ([#10656](https://github.com/hashicorp/terraform-provider-google-beta/pull/10656))
 
