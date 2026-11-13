@@ -116,6 +116,7 @@ fields:
   - api_field: 'region'
   - api_field: 'resourcePolicies.workloadPolicy'
   - api_field: 'selfLink'
+  - api_field: 'serviceAccount'
   - api_field: 'standbyPolicy.initialDelaySec'
   - api_field: 'standbyPolicy.mode'
   - field: 'stateful_disk.delete_rule'
