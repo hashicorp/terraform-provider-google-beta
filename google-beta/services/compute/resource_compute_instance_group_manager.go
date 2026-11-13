@@ -667,6 +667,13 @@ When set to "FORCE", deleting the resource is allowed, and graceful shutdown is 
 					},
 				},
 			},
+			"service_account": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Computed:    true,
+				ForceNew:    true,
+				Description: `The service account to be used as credentials for all operations performed by the managed instance group on instances. The service account needs all permissions required to create and delete instances. By default, the service account {projectNumber}@cloudservices.gserviceaccount.com is used.`,
+			},
 
 			//UDP schema start
 			"deletion_policy": deletionPolicySchema,
@@ -868,6 +875,9 @@ func resourceComputeInstanceGroupManagerCreate(d *schema.ResourceData, meta inte
 	}
 	if params := expandInstanceGroupManagerParamsV2(d); params != nil {
 		insertBody["params"] = params
+	}
+	if sa := d.Get("service_account").(string); sa != "" {
+		insertBody["serviceAccount"] = sa
 	}
 
 	url, err := tpgresource.ReplaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/zones/{{zone}}/instanceGroupManagers")
@@ -1130,6 +1140,9 @@ func resourceComputeInstanceGroupManagerRead(d *schema.ResourceData, meta interf
 	}
 	if err := d.Set("self_link", tpgresource.ConvertSelfLinkToV1(stringFromMap(manager, "selfLink"))); err != nil {
 		return fmt.Errorf("Error setting self_link: %s", err)
+	}
+	if err := d.Set("service_account", stringFromMap(manager, "serviceAccount")); err != nil {
+		return fmt.Errorf("Error setting service_account: %s", err)
 	}
 
 	if err = d.Set("auto_healing_policies", flattenAutoHealingPoliciesV2(manager["autoHealingPolicies"])); err != nil {
