@@ -3,13 +3,16 @@
 ## 8.11.0 (Nov 10, 2026)
 
 DEPRECATIONS:
+* compute: deprecated `md5_authentication_keys` on `google_compute_router`; it no longer has any effect. Use `md5_authentication_key` on `google_compute_router_peer` instead. ([#13648](https://github.com/hashicorp/terraform-provider-google-beta/pull/13648))
 * vertexai: deprecated `optimized` on `google_vertex_ai_feature_online_store`. Use `bigtable` for online serving instead. ([#13700](https://github.com/hashicorp/terraform-provider-google-beta/pull/13700))
 
 FEATURES:
 * **New Data Source:** `google_redis_cluster_token_auth_user` ([#13748](https://github.com/hashicorp/terraform-provider-google-beta/pull/13748))
 * **New Resource:** `google_backup_dr_auto_protection_policy_binding` (beta) ([#13669](https://github.com/hashicorp/terraform-provider-google-beta/pull/13669))
 * **New Resource:** `google_data_lineage_open_lineage_job` ([#13722](https://github.com/hashicorp/terraform-provider-google-beta/pull/13722))
+* **New Resource:** `google_dataflow_config_store_setting` ([#13644](https://github.com/hashicorp/terraform-provider-google-beta/pull/13644))
 * **New Resource:** `google_dialogflow_companion_agent` ([#13699](https://github.com/hashicorp/terraform-provider-google-beta/pull/13699))
+* **New Resource:** `google_discovery_engine_project_provision` ([#13647](https://github.com/hashicorp/terraform-provider-google-beta/pull/13647))
 * **New Resource:** `google_redis_cluster_token_auth_user` ([#13748](https://github.com/hashicorp/terraform-provider-google-beta/pull/13748))
 * **New Resource:** `google_vertex_ai_evaluation_item` ([#13670](https://github.com/hashicorp/terraform-provider-google-beta/pull/13670))
 
@@ -21,6 +24,7 @@ IMPROVEMENTS:
 * ces: added `modality` and `model_settings` fields to `google_ces_deployment` resource ([#13725](https://github.com/hashicorp/terraform-provider-google-beta/pull/13725))
 * cloudbuild: added `build.options.worker_release` field to `google_cloudbuild_trigger` resource ([#13750](https://github.com/hashicorp/terraform-provider-google-beta/pull/13750))
 * compute: added `ASN` option to `enforce_on_key` and `enforce_on_key_configs.enforce_on_key_type` fields in `google_compute_security_policy`, `google_compute_security_policy_rule`, `google_compute_region_security_policy`, and `google_compute_region_security_policy_rule` resources ([#13694](https://github.com/hashicorp/terraform-provider-google-beta/pull/13694))
+* compute: added `google_compute_instance_reset` action for `google_compute_instance` resource ([#13641](https://github.com/hashicorp/terraform-provider-google-beta/pull/13641))
 * gemini: added `has_custom_instructions` field to `google_gemini_gemini_gcp_enablement_setting` resource ([#13756](https://github.com/hashicorp/terraform-provider-google-beta/pull/13756))
 * integrationconnectors: added `eventing_config.allowed_event_types`, `eventing_config.global_event_filter`, `eventing_config.dead_letter_config`, and `eventing_config.enrichment_config` fields to `google_integration_connectors_connection` resource ([#13696](https://github.com/hashicorp/terraform-provider-google-beta/pull/13696))
 * integrations: added `decrypted_credential.oauth2_authorization_code.apply_reauth_policy`, `decrypted_credential.oauth2_authorization_code.request_type`, `decrypted_credential.oauth2_authorization_code.auth_params`, and `decrypted_credential.oauth2_authorization_code.token_params` fields to `google_integrations_auth_config` resource ([#13695](https://github.com/hashicorp/terraform-provider-google-beta/pull/13695))
@@ -30,9 +34,11 @@ IMPROVEMENTS:
 * provider: improved refresh speed of `*_iam_member`, `*_iam_binding`, `*_iam_audit_config` and `*_iam_policy` resources and `*_iam_policy` data sources that share a parent, which are no longer read one at a time ([#13757](https://github.com/hashicorp/terraform-provider-google-beta/pull/13757))
 * redis: added `zone_distribution_config.zones` and `zone_distribution_config.active_zones` fields to `google_redis_cluster` resource ([#13731](https://github.com/hashicorp/terraform-provider-google-beta/pull/13731))
 * resourcemanagerv3: added `boundaries` field to `google_resource_manager_capability_config` resource ([#13763](https://github.com/hashicorp/terraform-provider-google-beta/pull/13763))
+* sql: `blue_green_deployment` on `google_sql_database_instance` can now be removed in the same apply as a `database_version` upgrade ([#13643](https://github.com/hashicorp/terraform-provider-google-beta/pull/13643))
 * storage: added `rapid_cache_config` field to `google_storage_managed_folder` resource ([#13755](https://github.com/hashicorp/terraform-provider-google-beta/pull/13755))
 * storageinsights: added `labels` field to `google_storage_insights_report_config` resource ([#13697](https://github.com/hashicorp/terraform-provider-google-beta/pull/13697))
 * vertexai: added `spec.context_spec.memory_bank_config.customization_configs.generate_memories_examples.conversation_source.events.content.parts.speech_metadata` field to `google_vertex_ai_reasoning_engine` resource ([#13701](https://github.com/hashicorp/terraform-provider-google-beta/pull/13701))
+* vertexai: added `update_mode` field to `google_vertex_ai_model_development_cluster` resource (beta) ([#13649](https://github.com/hashicorp/terraform-provider-google-beta/pull/13649))
 * workstations: added `host.gce_instance.reservation_affinity` and `host.gce_instance.boost_configs.reservation_affinity` fields to `google_workstations_workstation_config` resource (beta) ([#13685](https://github.com/hashicorp/terraform-provider-google-beta/pull/13685))
 
 BUG FIXES:
@@ -45,6 +51,7 @@ BUG FIXES:
 * cloudidentity: fixed Resource Identity import for `google_cloud_identity_policy` ([#13681](https://github.com/hashicorp/terraform-provider-google-beta/pull/13681))
 * cloudsecuritycompliance: fixed `organization` not being populated in state and Resource Identity during import for `google_cloud_security_compliance_cloud_control`, `google_cloud_security_compliance_framework`, and `google_cloud_security_compliance_framework_deployment` ([#13705](https://github.com/hashicorp/terraform-provider-google-beta/pull/13705))
 * colab: fixed bad diffs for `euc_config.euc_disabled` and `shielded_vm_config.enable_secure_boot` when set to `false` on `google_colab_runtime_template` ([#13739](https://github.com/hashicorp/terraform-provider-google-beta/pull/13739))
+* compute: fixed `google_compute_router` updates removing MD5 authentication keys added by `google_compute_router_peer` ([#13648](https://github.com/hashicorp/terraform-provider-google-beta/pull/13648))
 * compute: fixed default provider `region` not being populated in state and Resource Identity for `google_compute_region_network_policy`, `google_compute_region_network_firewall_policy`, and `google_compute_region_network_firewall_policy_with_rules` when `region` is omitted from configuration ([#13678](https://github.com/hashicorp/terraform-provider-google-beta/pull/13678))
 * dataform: fixed default provider `region` not being populated in state and Resource Identity for `google_dataform_repository` when `region` is omitted from configuration ([#13706](https://github.com/hashicorp/terraform-provider-google-beta/pull/13706))
 * discoveryengine: fixed `google_discovery_engine_data_store` silently ignoring changes to fields nested in `document_processing_config`. These changes now force replacement of the resource. ([#13749](https://github.com/hashicorp/terraform-provider-google-beta/pull/13749))
