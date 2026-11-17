@@ -89,7 +89,7 @@ resource "google_project_service" "ces" {
 
 resource "time_sleep" "wait_enable_service" {
   provider        = time
-  create_duration = "30s"
+  create_duration = "120s"
   depends_on      = [google_project_service.ces]
 }
 
@@ -127,7 +127,7 @@ resource "google_project_service" "ces" {
 
 resource "time_sleep" "wait_enable_service" {
   provider        = time
-  create_duration = "30s"
+  create_duration = "120s"
   depends_on      = [google_project_service.ces]
 }
 
