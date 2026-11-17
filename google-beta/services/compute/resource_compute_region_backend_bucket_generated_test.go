@@ -63,7 +63,6 @@ func TestAccComputeRegionBackendBucket_regionBackendBucketBasicExample(t *testin
 	context := map[string]interface{}{
 		"backend_bucket_name": "tf-test-region-image-backend-bucket" + randomSuffix,
 		"bucket_name":         "tf-test-region-image-store-bucket" + randomSuffix,
-		"region":              "us-central1",
 		"random_suffix":       randomSuffix,
 	}
 
@@ -122,7 +121,6 @@ func TestAccComputeRegionBackendBucket_regionBackendBucketInternalLbExample(t *t
 	context := map[string]interface{}{
 		"backend_bucket_name": "tf-test-regional-internal-backend" + randomSuffix,
 		"bucket_name":         "tf-test-regional-internal-bucket" + randomSuffix,
-		"region":              "us-central1",
 		"random_suffix":       randomSuffix,
 	}
 
@@ -194,7 +192,6 @@ func TestAccComputeRegionBackendBucket_regionBackendBucketExternalLbExample(t *t
 	context := map[string]interface{}{
 		"backend_bucket_name": "tf-test-regional-external-backend" + randomSuffix,
 		"bucket_name":         "tf-test-regional-external-bucket" + randomSuffix,
-		"region":              "us-east1",
 		"random_suffix":       randomSuffix,
 	}
 

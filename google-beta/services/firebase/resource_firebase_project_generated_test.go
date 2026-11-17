@@ -62,7 +62,6 @@ func TestAccFirebaseProject_firebaseProjectBasicExample(t *testing.T) {
 
 	context := map[string]interface{}{
 		"org_id":        envvar.GetTestOrgFromEnv(t),
-		"instance_name": "tf-test-memory-cache" + randomSuffix,
 		"project_name":  "tf-test-my-project" + randomSuffix,
 		"random_suffix": randomSuffix,
 	}

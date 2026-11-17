@@ -64,8 +64,6 @@ func TestAccManagedKafkaCluster_managedkafkaClusterBasicExample(t *testing.T) {
 
 	context := map[string]interface{}{
 		"cluster_id":    "tf-test-my-cluster" + randomSuffix,
-		"key_name":      "tf-test-example-key" + randomSuffix,
-		"keyring_name":  "tf-test-example-keyring" + randomSuffix,
 		"random_suffix": randomSuffix,
 	}
 
@@ -212,7 +210,6 @@ func TestAccManagedKafkaCluster_managedkafkaClusterCmekExample(t *testing.T) {
 	context := map[string]interface{}{
 		"cluster_id":    "tf-test-my-cluster" + randomSuffix,
 		"key_name":      kms.BootstrapKMSKeyInLocation(t, "us-central1").CryptoKey.Name,
-		"key_ring_name": "tf-test-example-key-ring" + randomSuffix,
 		"random_suffix": randomSuffix,
 	}
 

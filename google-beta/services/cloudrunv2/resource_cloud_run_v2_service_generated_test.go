@@ -1252,7 +1252,6 @@ func TestAccCloudRunV2Service_cloudrunv2ServiceZipDeployExample(t *testing.T) {
 
 	context := map[string]interface{}{
 		"cloud_run_service_name": "tf-test-cloudrun-zip-service" + randomSuffix,
-		"targz_path":             "tf-test-./test-fixtures/function-source.tar.gz" + randomSuffix,
 		"random_suffix":          randomSuffix,
 	}
 

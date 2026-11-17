@@ -70,7 +70,6 @@ func TestAccCloudfunctions2function_cloudfunctions2BasicExample(t *testing.T) {
 		"project":       envvar.GetTestProjectFromEnv(),
 		"bucket_name":   "tf-test-gcf-source" + randomSuffix,
 		"function":      "tf-test-function-v2" + randomSuffix,
-		"location":      "us-central1",
 		"zip_path":      "./test-fixtures/function-source.zip",
 		"random_suffix": randomSuffix,
 	}
@@ -148,15 +147,13 @@ func TestAccCloudfunctions2function_cloudfunctions2FullExample(t *testing.T) {
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"project":             envvar.GetTestProjectFromEnv(),
-		"bucket_name":         "tf-test-gcf-source" + randomSuffix,
-		"function":            "tf-test-gcf-function" + randomSuffix,
-		"location":            "us-central1",
-		"primary_resource_id": "terraform-test",
-		"service_account":     "tf-test-gcf-sa" + randomSuffix,
-		"topic":               "tf-test-functions2-topic" + randomSuffix,
-		"zip_path":            "./test-fixtures/function-source-pubsub.zip",
-		"random_suffix":       randomSuffix,
+		"project":         envvar.GetTestProjectFromEnv(),
+		"bucket_name":     "tf-test-gcf-source" + randomSuffix,
+		"function":        "tf-test-gcf-function" + randomSuffix,
+		"service_account": "tf-test-gcf-sa" + randomSuffix,
+		"topic":           "tf-test-functions2-topic" + randomSuffix,
+		"zip_path":        "./test-fixtures/function-source-pubsub.zip",
+		"random_suffix":   randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -271,7 +268,6 @@ func TestAccCloudfunctions2function_cloudfunctions2BasicGcsExample(t *testing.T)
 		"bucket_name_source":  "tf-test-gcf-source-bucket" + randomSuffix,
 		"bucket_name_trigger": "tf-test-gcf-trigger-bucket" + randomSuffix,
 		"function_name":       "tf-test-gcf-function" + randomSuffix,
-		"primary_resource_id": "terraform-test",
 		"service_account":     "tf-test-gcf-sa" + randomSuffix,
 		"zip_path":            "./test-fixtures/function-source-eventarc-gcs.zip",
 		"random_suffix":       randomSuffix,
@@ -424,7 +420,6 @@ func TestAccCloudfunctions2function_cloudfunctions2BasicAuditlogsExample(t *test
 		"bucket_name_auditlogs": "tf-test-gcf-auditlog-bucket" + randomSuffix,
 		"bucket_name_source":    "tf-test-gcf-source-bucket" + randomSuffix,
 		"function_name":         "tf-test-gcf-function" + randomSuffix,
-		"primary_resource_id":   "terraform-test",
 		"service_account":       "tf-test-gcf-sa" + randomSuffix,
 		"zip_path":              "./test-fixtures/function-source-eventarc-gcs.zip",
 		"random_suffix":         randomSuffix,
@@ -576,7 +571,6 @@ func TestAccCloudfunctions2function_cloudfunctions2BasicBuilderExample(t *testin
 		"project":         envvar.GetTestProjectFromEnv(),
 		"bucket_name":     "tf-test-gcf-source" + randomSuffix,
 		"function":        "tf-test-function-v2" + randomSuffix,
-		"location":        "us-central1",
 		"service_account": "tf-test-gcf-sa" + randomSuffix,
 		"zip_path":        "./test-fixtures/function-source.zip",
 		"random_suffix":   randomSuffix,
@@ -705,7 +699,6 @@ func TestAccCloudfunctions2function_cloudfunctions2SecretEnvExample(t *testing.T
 		"project":       envvar.GetTestProjectFromEnv(),
 		"bucket_name":   "tf-test-gcf-source" + randomSuffix,
 		"function":      "tf-test-function-secret" + randomSuffix,
-		"location":      "us-central1",
 		"secret":        "secret" + randomSuffix,
 		"zip_path":      "./test-fixtures/function-source.zip",
 		"random_suffix": randomSuffix,
@@ -820,7 +813,6 @@ func TestAccCloudfunctions2function_cloudfunctions2SecretVolumeExample(t *testin
 		"project":       envvar.GetTestProjectFromEnv(),
 		"bucket_name":   "tf-test-gcf-source" + randomSuffix,
 		"function":      "tf-test-function-secret" + randomSuffix,
-		"location":      "us-central1",
 		"secret":        "secret" + randomSuffix,
 		"zip_path":      "./test-fixtures/function-source.zip",
 		"random_suffix": randomSuffix,
@@ -928,7 +920,6 @@ func TestAccCloudfunctions2function_cloudfunctions2PrivateWorkerpoolExample(t *t
 		"project":       envvar.GetTestProjectFromEnv(),
 		"bucket_name":   "tf-test-gcf-source" + randomSuffix,
 		"function":      "tf-test-function-workerpool" + randomSuffix,
-		"location":      "us-central1",
 		"pool":          "workerpool" + randomSuffix,
 		"zip_path":      "./test-fixtures/function-source.zip",
 		"random_suffix": randomSuffix,
@@ -1024,8 +1015,6 @@ func TestAccCloudfunctions2function_cloudfunctions2CmekExample(t *testing.T) {
 		"cmek-repo":         "tf-test-cmek-repo" + randomSuffix,
 		"function":          "tf-test-function-cmek" + randomSuffix,
 		"kms_key_name":      kms.BootstrapKMSKeyInLocation(t, "us-central1").CryptoKey.Name,
-		"kms_service_name":  "cloudkms.googleapis.com" + randomSuffix,
-		"location":          "us-central1",
 		"unencoded-ar-repo": "tf-test-ar-repo" + randomSuffix,
 		"zip_path":          "./test-fixtures/function-source.zip",
 		"random_suffix":     randomSuffix,
@@ -1211,15 +1200,13 @@ func TestAccCloudfunctions2function_cloudfunctions2AutomaticBaseImageUpdateExamp
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"project":             envvar.GetTestProjectFromEnv(),
-		"bucket_name":         "tf-test-gcf-source" + randomSuffix,
-		"function":            "tf-test-gcf-function" + randomSuffix,
-		"location":            "europe-west6",
-		"primary_resource_id": "terraform-test",
-		"service_account":     "tf-test-gcf-sa" + randomSuffix,
-		"topic":               "tf-test-functions2-topic" + randomSuffix,
-		"zip_path":            "./test-fixtures/function-source-pubsub.zip",
-		"random_suffix":       randomSuffix,
+		"project":         envvar.GetTestProjectFromEnv(),
+		"bucket_name":     "tf-test-gcf-source" + randomSuffix,
+		"function":        "tf-test-gcf-function" + randomSuffix,
+		"service_account": "tf-test-gcf-sa" + randomSuffix,
+		"topic":           "tf-test-functions2-topic" + randomSuffix,
+		"zip_path":        "./test-fixtures/function-source-pubsub.zip",
+		"random_suffix":   randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -1329,15 +1316,13 @@ func TestAccCloudfunctions2function_cloudfunctions2OnDeployBaseImageUpdateExampl
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"project":             envvar.GetTestProjectFromEnv(),
-		"bucket_name":         "tf-test-gcf-source" + randomSuffix,
-		"function":            "tf-test-gcf-function" + randomSuffix,
-		"location":            "europe-west6",
-		"primary_resource_id": "terraform-test",
-		"service_account":     "tf-test-gcf-sa" + randomSuffix,
-		"topic":               "tf-test-functions2-topic" + randomSuffix,
-		"zip_path":            "./test-fixtures/function-source-pubsub.zip",
-		"random_suffix":       randomSuffix,
+		"project":         envvar.GetTestProjectFromEnv(),
+		"bucket_name":     "tf-test-gcf-source" + randomSuffix,
+		"function":        "tf-test-gcf-function" + randomSuffix,
+		"service_account": "tf-test-gcf-sa" + randomSuffix,
+		"topic":           "tf-test-functions2-topic" + randomSuffix,
+		"zip_path":        "./test-fixtures/function-source-pubsub.zip",
+		"random_suffix":   randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -1450,7 +1435,6 @@ func TestAccCloudfunctions2function_cloudfunctions2DirectvpcExample(t *testing.T
 		"project":       envvar.GetTestProjectFromEnv(),
 		"bucket_name":   "tf-test-gcf-source" + randomSuffix,
 		"function":      "tf-test-function-v2" + randomSuffix,
-		"location":      "us-central1",
 		"zip_path":      "./test-fixtures/function-source.zip",
 		"random_suffix": randomSuffix,
 	}

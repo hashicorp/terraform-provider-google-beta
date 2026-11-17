@@ -62,8 +62,6 @@ func TestAccComputeFutureReservation_futureReservationBasicExample(t *testing.T)
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"billing_account":         envvar.GetTestBillingAccountFromEnv(t),
-		"org_id":                  envvar.GetTestOrgFromEnv(t),
 		"project":                 envvar.GetTestProjectFromEnv(),
 		"end_time":                time.Date(time.Now().Year(), 12, 31, 0, 0, 0, 0, time.Now().Location()).AddDate(0, 0, 10).Format(time.RFC3339),
 		"future_reservation_name": "tf-test-gce-future-reservation" + randomSuffix,
@@ -127,8 +125,6 @@ func TestAccComputeFutureReservation_futureReservationAggregateReservationExampl
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"billing_account":         envvar.GetTestBillingAccountFromEnv(t),
-		"org_id":                  envvar.GetTestOrgFromEnv(t),
 		"project":                 envvar.GetTestProjectFromEnv(),
 		"end_time":                time.Date(time.Now().Year(), 12, 31, 0, 0, 0, 0, time.Now().Location()).AddDate(0, 0, 10).Format(time.RFC3339),
 		"future_reservation_name": "tf-test-gce-future-reservation-aggregate-reservation" + randomSuffix,
@@ -203,7 +199,6 @@ func TestAccComputeFutureReservation_sharedFutureReservationExample(t *testing.T
 	context := map[string]interface{}{
 		"billing_account":         envvar.GetTestBillingAccountFromEnv(t),
 		"org_id":                  envvar.GetTestOrgTargetFromEnv(t),
-		"project":                 envvar.GetTestProjectFromEnv(),
 		"end_time":                time.Date(time.Now().Year(), 12, 31, 0, 0, 0, 0, time.Now().Location()).AddDate(0, 0, 10).Format(time.RFC3339),
 		"future_reservation_name": "tf-test-gce-shared-future-reservation" + randomSuffix,
 		"start_time":              time.Date(time.Now().Year(), 12, 31, 0, 0, 0, 0, time.Now().Location()).AddDate(0, 0, 1).Format(time.RFC3339),

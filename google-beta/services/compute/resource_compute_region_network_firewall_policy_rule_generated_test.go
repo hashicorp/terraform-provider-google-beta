@@ -175,7 +175,6 @@ func TestAccComputeRegionNetworkFirewallPolicyRule_regionNetworkFirewallPolicyRu
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"org_id":        envvar.GetTestOrgFromEnv(t),
 		"project_name":  envvar.GetTestProjectFromEnv(),
 		"region":        envvar.GetTestRegionFromEnv(),
 		"fw_policy":     "tf-test-fw-policy" + randomSuffix,
@@ -246,7 +245,6 @@ func TestAccComputeRegionNetworkFirewallPolicyRule_regionNetworkFirewallPolicyRu
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"org_id":        envvar.GetTestOrgFromEnv(t),
 		"project_name":  envvar.GetTestProjectFromEnv(),
 		"region":        envvar.GetTestRegionFromEnv(),
 		"fw_policy":     "tf-test-fw-policy" + randomSuffix,
@@ -324,7 +322,6 @@ func TestAccComputeRegionNetworkFirewallPolicyRule_regionNetworkFirewallPolicyRu
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"org_id":        envvar.GetTestOrgFromEnv(t),
 		"project_name":  envvar.GetTestProjectFromEnv(),
 		"region":        envvar.GetTestRegionFromEnv(),
 		"fw_policy":     "tf-test-fw-policy" + randomSuffix,
@@ -393,11 +390,9 @@ func TestAccComputeRegionNetworkFirewallPolicyRule_regionNetworkFirewallPolicyRu
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"org_id":        envvar.GetTestOrgFromEnv(t),
 		"project_name":  envvar.GetTestProjectFromEnv(),
 		"region":        envvar.GetTestRegionFromEnv(),
 		"fw_policy":     "tf-test-fw-policy" + randomSuffix,
-		"network":       "tf-test-network" + randomSuffix,
 		"random_suffix": randomSuffix,
 	}
 
@@ -463,8 +458,6 @@ func TestAccComputeRegionNetworkFirewallPolicyRule_firewallPolicyRuleTargetTypeI
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"org_id":                     envvar.GetTestOrgFromEnv(t),
-		"folder":                     "folder" + randomSuffix,
 		"fw_policy_association_name": "tf-test-fw-policy-assoc" + randomSuffix,
 		"fw_policy_name":             "tf-test-simple-fw-policy" + randomSuffix,
 		"network_name":               "tf-test-fw-policy-net" + randomSuffix,
