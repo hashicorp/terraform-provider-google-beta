@@ -1349,6 +1349,7 @@ IMPROVEMENTS:
 * oracledatabase: added `deletion_protection` field to `google_oracle_database_cloud_exadata_infrastructure` ([#8788](https://github.com/hashicorp/terraform-provider-google-beta/pull/8788))
 * oracledatabase: added `deletion_protection` field to `google_oracle_database_cloud_vm_cluster ` ([#8730](https://github.com/hashicorp/terraform-provider-google-beta/pull/8730))
 * parallelstore: added `deployment_type` to `google_parallelstore_instance` ([#8769](https://github.com/hashicorp/terraform-provider-google-beta/pull/8769))
+* redis: added `cross_cluster_replication_config` field to `google_redis_cluster` resource ([#8721](https://github.com/hashicorp/terraform-provider-google-beta/pull/8721))
 * resourcemanager: made `google_service_account` `email` and `member` fields available during plan ([#8799](https://github.com/hashicorp/terraform-provider-google-beta/pull/8799))
 
 BUG FIXES:
