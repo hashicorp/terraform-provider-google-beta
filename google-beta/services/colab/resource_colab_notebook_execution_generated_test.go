@@ -66,7 +66,6 @@ func TestAccColabNotebookExecution_colabNotebookExecutionBasicExample(t *testing
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"project_id":            envvar.GetTestProjectFromEnv(),
 		"service_account":       envvar.GetTestServiceAccountFromEnv(t),
 		"bucket":                "tf_test_my_bucket" + randomSuffix,
 		"runtime_template_name": "tf-test-runtime-template-name" + randomSuffix,
@@ -185,7 +184,6 @@ func TestAccColabNotebookExecution_colabNotebookExecutionCustomEnvExample(t *tes
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"project_id":      envvar.GetTestProjectFromEnv(),
 		"service_account": envvar.GetTestServiceAccountFromEnv(t),
 		"bucket":          "tf_test_my_bucket" + randomSuffix,
 		"network_name":    "tf-test-colab-test-default" + randomSuffix,
@@ -324,7 +322,6 @@ func TestAccColabNotebookExecution_colabNotebookExecutionWorkbenchRuntimeCustomC
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"project_id":      envvar.GetTestProjectFromEnv(),
 		"service_account": envvar.GetTestServiceAccountFromEnv(t),
 		"bucket":          "tf_test_my_bucket" + randomSuffix,
 		"random_suffix":   randomSuffix,
@@ -444,7 +441,6 @@ func TestAccColabNotebookExecution_colabNotebookExecutionWorkbenchRuntimeCustomC
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"project_id":      envvar.GetTestProjectFromEnv(),
 		"service_account": envvar.GetTestServiceAccountFromEnv(t),
 		"bucket":          "tf_test_my_bucket" + randomSuffix,
 		"random_suffix":   randomSuffix,
@@ -563,7 +559,6 @@ func TestAccColabNotebookExecution_colabNotebookExecutionWorkbenchRuntimeVmExamp
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"project_id":      envvar.GetTestProjectFromEnv(),
 		"service_account": envvar.GetTestServiceAccountFromEnv(t),
 		"bucket":          "tf_test_my_bucket" + randomSuffix,
 		"random_suffix":   randomSuffix,
@@ -681,7 +676,6 @@ func TestAccColabNotebookExecution_colabNotebookExecutionWorkbenchRuntimeVmNameE
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"project_id":      envvar.GetTestProjectFromEnv(),
 		"service_account": envvar.GetTestServiceAccountFromEnv(t),
 		"bucket":          "tf_test_my_bucket" + randomSuffix,
 		"random_suffix":   randomSuffix,
@@ -799,7 +793,6 @@ func TestAccColabNotebookExecution_colabNotebookExecutionFullExample(t *testing.
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"project_id":                envvar.GetTestProjectFromEnv(),
 		"service_account":           envvar.GetTestServiceAccountFromEnv(t),
 		"bucket":                    "tf_test_my_bucket" + randomSuffix,
 		"notebook_execution_job_id": "tf-test-colab-notebook-execution" + randomSuffix,
@@ -937,7 +930,6 @@ func TestAccColabNotebookExecution_colabNotebookExecutionDataformExample(t *test
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"project_id":            envvar.GetTestProjectFromEnv(),
 		"service_account":       envvar.GetTestServiceAccountFromEnv(t),
 		"bucket":                "tf_test_my_bucket" + randomSuffix,
 		"dataform_repository":   "tf-test-dataform-repository" + randomSuffix,

@@ -49,7 +49,7 @@ func TestAccComputeRegionBackendBucketListQuery_generated(t *testing.T) {
 	context := map[string]interface{}{
 		"backend_bucket_name": "tf-test-region-image-backend-bucket" + randomSuffix,
 		"bucket_name":         "tf-test-region-image-store-bucket" + randomSuffix,
-		"region":              "us-central1",
+		"region":              envvar.GetTestRegionFromEnv(),
 		"project":             envvar.GetTestProjectFromEnv(),
 		"random_suffix":       randomSuffix,
 	}

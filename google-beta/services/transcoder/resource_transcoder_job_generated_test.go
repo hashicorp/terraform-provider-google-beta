@@ -213,7 +213,6 @@ func TestAccTranscoderJob_transcoderJobPubsubExample(t *testing.T) {
 
 	context := map[string]interface{}{
 		"bucket_name":        "tf-test-transcoder-job" + randomSuffix,
-		"job_template_id":    "tf-test-example-job-template" + randomSuffix,
 		"pub_sub_topic_name": "tf-test-transcoder-notifications" + randomSuffix,
 		"random_suffix":      randomSuffix,
 	}
@@ -363,7 +362,6 @@ func TestAccTranscoderJob_transcoderJobEncryptionsExample(t *testing.T) {
 
 	context := map[string]interface{}{
 		"bucket_name":              "tf-test-transcoder-job" + randomSuffix,
-		"job_template_id":          "tf-test-example-job-template" + randomSuffix,
 		"secret_manager_secret_id": "tf-test-transcoder-encryption-key" + randomSuffix,
 		"random_suffix":            randomSuffix,
 	}
@@ -584,9 +582,8 @@ func TestAccTranscoderJob_transcoderJobOverlaysExample(t *testing.T) {
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"bucket_name":     "tf-test-transcoder-job" + randomSuffix,
-		"job_template_id": "tf-test-example-job-template" + randomSuffix,
-		"random_suffix":   randomSuffix,
+		"bucket_name":   "tf-test-transcoder-job" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -748,9 +745,8 @@ func TestAccTranscoderJob_transcoderJobManifestsExample(t *testing.T) {
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"bucket_name":     "tf-test-transcoder-job" + randomSuffix,
-		"job_template_id": "tf-test-example-job-template" + randomSuffix,
-		"random_suffix":   randomSuffix,
+		"bucket_name":   "tf-test-transcoder-job" + randomSuffix,
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{

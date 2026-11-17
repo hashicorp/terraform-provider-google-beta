@@ -529,7 +529,6 @@ func TestAccComputeForwardingRule_forwardingRuleExternallbExample(t *testing.T) 
 	context := map[string]interface{}{
 		"backend_name":         "tf-test-website-backend" + randomSuffix,
 		"forwarding_rule_name": "tf-test-website-forwarding-rule" + randomSuffix,
-		"network_name":         "tf-test-website-net" + randomSuffix,
 		"random_suffix":        randomSuffix,
 	}
 
@@ -598,7 +597,6 @@ func TestAccComputeForwardingRule_forwardingRuleExternallbByoipv6Example(t *test
 		"forwarding_rule_name": "tf-test-byoipv6-forwarding-rule" + randomSuffix,
 		"ip_address":           fmt.Sprintf("2600:1901:4457:1:%d:%d::/96", acctest.RandIntRange(t, 0, 9999), acctest.RandIntRange(t, 0, 9999)),
 		"ip_collection_url":    "projects/tf-static-byoip/regions/us-central1/publicDelegatedPrefixes/tf-test-forwarding-rule-mode-pdp",
-		"network_name":         "tf-test-website-net" + randomSuffix,
 		"random_suffix":        randomSuffix,
 	}
 

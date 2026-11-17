@@ -60,7 +60,6 @@ func TestAccFirebaseAILogicPromptTemplateLock_firebaseailogicPromptTemplateLockB
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"project_id":    envvar.GetTestProjectFromEnv(),
 		"template_id":   "tf-test-lock-template" + randomSuffix,
 		"random_suffix": randomSuffix,
 	}

@@ -63,11 +63,9 @@ func TestAccVertexAIIndex_vertexAiIndexExample(t *testing.T) {
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"project":       envvar.GetTestProjectFromEnv(),
 		"bucket_name":   "tf-test-vertex-ai-index-test" + randomSuffix,
 		"display_name":  "tf-test-test-index" + randomSuffix,
 		"kms_key_name":  kms.BootstrapKMSKeyInLocation(t, "us-central1").CryptoKey.Name,
-		"region":        "us-central1",
 		"random_suffix": randomSuffix,
 	}
 
@@ -169,11 +167,8 @@ func TestAccVertexAIIndex_vertexAiIndexStreamingExample(t *testing.T) {
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"project":       envvar.GetTestProjectFromEnv(),
 		"bucket_name":   "tf-test-vertex-ai-index-test" + randomSuffix,
 		"display_name":  "tf-test-test-index" + randomSuffix,
-		"kms_key_name":  kms.BootstrapKMSKeyInLocation(t, "us-central1").CryptoKey.Name,
-		"region":        "us-central1",
 		"random_suffix": randomSuffix,
 	}
 

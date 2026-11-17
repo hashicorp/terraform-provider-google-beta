@@ -50,7 +50,6 @@ func TestAccVertexAIFeatureOnlineStoreIamBindingGenerated(t *testing.T) {
 		"random_suffix": randomSuffix,
 		"role":          "roles/viewer",
 		"name":          "tf_test_example_feature_online_store" + randomSuffix,
-		"region":        "us-central1",
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -89,7 +88,6 @@ func TestAccVertexAIFeatureOnlineStoreIamMemberGenerated(t *testing.T) {
 		"random_suffix": randomSuffix,
 		"role":          "roles/viewer",
 		"name":          "tf_test_example_feature_online_store" + randomSuffix,
-		"region":        "us-central1",
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -126,7 +124,6 @@ func TestAccVertexAIFeatureOnlineStoreIamPolicyGenerated(t *testing.T) {
 		"random_suffix": randomSuffix,
 		"role":          "roles/viewer",
 		"name":          "tf_test_example_feature_online_store" + randomSuffix,
-		"region":        "us-central1",
 	}
 
 	acctest.VcrTest(t, resource.TestCase{

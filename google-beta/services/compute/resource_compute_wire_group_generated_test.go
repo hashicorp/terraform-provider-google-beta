@@ -61,7 +61,6 @@ func TestAccComputeWireGroup_computeWireGroupBasicExample(t *testing.T) {
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"project":            envvar.GetTestProjectFromEnv(),
 		"cross_site_network": "tf-test-test-cross-site-network" + randomSuffix,
 		"description":        "Example Wire Group" + randomSuffix,
 		"name":               "tf-test-test-wire-group" + randomSuffix,
@@ -125,7 +124,6 @@ func TestAccComputeWireGroup_computeWireGroupBasicBetaExample(t *testing.T) {
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"project":            envvar.GetTestProjectFromEnv(),
 		"cross_site_network": "tf-test-test-cross-site-network-beta" + randomSuffix,
 		"description":        "Example Wire Group Beta" + randomSuffix,
 		"name":               "tf-test-test-wire-group-beta" + randomSuffix,

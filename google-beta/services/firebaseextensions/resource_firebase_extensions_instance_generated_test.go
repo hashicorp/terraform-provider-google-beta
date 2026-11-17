@@ -61,12 +61,11 @@ func TestAccFirebaseExtensionsInstance_firebaseExtensionsInstanceResizeImageExam
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"project_id":         envvar.GetTestProjectFromEnv(),
-		"bucket_id":          "tf-test-bucket-id" + randomSuffix,
-		"instance-id":        "tf-test-storage-resize-images" + randomSuffix,
-		"location":           "us-central1",
-		"service-account-id": "tf-test-s-a" + randomSuffix,
-		"random_suffix":      randomSuffix,
+		"project_id":    envvar.GetTestProjectFromEnv(),
+		"bucket_id":     "tf-test-bucket-id" + randomSuffix,
+		"instance-id":   "tf-test-storage-resize-images" + randomSuffix,
+		"location":      "us-central1",
+		"random_suffix": randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{

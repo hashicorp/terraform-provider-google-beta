@@ -449,7 +449,6 @@ func TestAccComputeNetworkFirewallPolicyRule_networkFirewallPolicyRuleTargetType
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"org_id":          envvar.GetTestOrgFromEnv(t),
 		"project_name":    envvar.GetTestProjectFromEnv(),
 		"backend_service": "tf-test-backend-service" + randomSuffix,
 		"backend_subnet":  "tf-test-backend-subnet" + randomSuffix,

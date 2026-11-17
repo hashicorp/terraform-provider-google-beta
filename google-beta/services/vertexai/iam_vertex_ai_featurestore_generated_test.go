@@ -48,15 +48,10 @@ func TestAccVertexAIFeaturestoreIamBindingGenerated(t *testing.T) {
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"random_suffix":   randomSuffix,
-		"role":            "roles/viewer",
-		"billing_account": envvar.GetTestBillingAccountFromEnv(t),
-		"org_id":          envvar.GetTestOrgFromEnv(t),
-
-		"kms_key_name": kms.BootstrapKMSKeyInLocation(t, "us-central1").CryptoKey.Name,
-		"name":         "tf_test_terraform_featurestore" + randomSuffix,
-		"project":      "tf-test-appeng-flex" + randomSuffix,
-		"region":       "us-central1",
+		"random_suffix": randomSuffix,
+		"role":          "roles/viewer",
+		"kms_key_name":  kms.BootstrapKMSKeyInLocation(t, "us-central1").CryptoKey.Name,
+		"name":          "tf_test_terraform_featurestore" + randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -92,15 +87,10 @@ func TestAccVertexAIFeaturestoreIamMemberGenerated(t *testing.T) {
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"random_suffix":   randomSuffix,
-		"role":            "roles/viewer",
-		"billing_account": envvar.GetTestBillingAccountFromEnv(t),
-		"org_id":          envvar.GetTestOrgFromEnv(t),
-
-		"kms_key_name": kms.BootstrapKMSKeyInLocation(t, "us-central1").CryptoKey.Name,
-		"name":         "tf_test_terraform_featurestore" + randomSuffix,
-		"project":      "tf-test-appeng-flex" + randomSuffix,
-		"region":       "us-central1",
+		"random_suffix": randomSuffix,
+		"role":          "roles/viewer",
+		"kms_key_name":  kms.BootstrapKMSKeyInLocation(t, "us-central1").CryptoKey.Name,
+		"name":          "tf_test_terraform_featurestore" + randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -134,15 +124,10 @@ func TestAccVertexAIFeaturestoreIamPolicyGenerated(t *testing.T) {
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"random_suffix":   randomSuffix,
-		"role":            "roles/viewer",
-		"billing_account": envvar.GetTestBillingAccountFromEnv(t),
-		"org_id":          envvar.GetTestOrgFromEnv(t),
-
-		"kms_key_name": kms.BootstrapKMSKeyInLocation(t, "us-central1").CryptoKey.Name,
-		"name":         "tf_test_terraform_featurestore" + randomSuffix,
-		"project":      "tf-test-appeng-flex" + randomSuffix,
-		"region":       "us-central1",
+		"random_suffix": randomSuffix,
+		"role":          "roles/viewer",
+		"kms_key_name":  kms.BootstrapKMSKeyInLocation(t, "us-central1").CryptoKey.Name,
+		"name":          "tf_test_terraform_featurestore" + randomSuffix,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{

@@ -64,7 +64,6 @@ func TestAccGKEHub2MembershipRBACRoleBinding_gkehubMembershipRbacRoleBindingBasi
 	randomSuffix := acctest.RandString(t, 10)
 
 	context := map[string]interface{}{
-		"project":             envvar.GetTestProjectFromEnv(),
 		"cluster_name":        "tf-test-basic-cluster" + randomSuffix,
 		"deletion_protection": false,
 		"network_name":        compute.BootstrapSharedTestNetwork(t, "gke-cluster"),
