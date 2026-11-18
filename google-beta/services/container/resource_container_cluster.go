@@ -1169,10 +1169,9 @@ func ResourceContainerCluster() *schema.Resource {
 				Optional:      true,
 				ForceNew:      true,
 				Description:   `Whether to enable Cloud TPU resources in this cluster.`,
+				Deprecated:    "`enable_tpu` is deprecated and will be removed in a future major release. Configure TPUs using `google_container_node_pool` instead. See https://docs.cloud.google.com/kubernetes-engine/docs/how-to/tpus#terraform",
 				ConflictsWith: []string{"tpu_config"},
 				Computed:      true,
-				// TODO: deprecate when tpu_config is correctly returned by the API
-				// Deprecated: "Deprecated in favor of tpu_config",
 			},
 
 			"tpu_config": {
@@ -1181,6 +1180,7 @@ func ResourceContainerCluster() *schema.Resource {
 				Computed:    true,
 				MaxItems:    1,
 				Description: `TPU configuration for the cluster.`,
+				Deprecated:  "`tpu_config` is deprecated and will be removed in a future major release. Configure TPUs using `google_container_node_pool` instead. See https://docs.cloud.google.com/kubernetes-engine/docs/how-to/tpus#terraform",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"enabled": {
