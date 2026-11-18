@@ -1433,6 +1433,8 @@ FEATURES:
 * **New Resource:** `google_network_security_sac_realm` ([#11084](https://github.com/hashicorp/terraform-provider-google-beta/pull/11084))
 * **New Resource:** `google_network_services_lb_edge_extension` ([#11129](https://github.com/hashicorp/terraform-provider-google-beta/pull/11129))
 * **New Resource:** `google_network_services_multicast_consumer_association` ([#11141](https://github.com/hashicorp/terraform-provider-google-beta/pull/11141))
+* **New Resource:** `google_network_services_multicast_domain_activation` ([#11077](https://github.com/hashicorp/terraform-provider-google-beta/pull/11077))
+* **New Resource:** `google_network_services_multicast_domain_group` ([#11067](https://github.com/hashicorp/terraform-provider-google-beta/pull/11067))
 * **New Resource:** `google_network_services_multicast_group_range_activation` ([#11174](https://github.com/hashicorp/terraform-provider-google-beta/pull/11174))
 * **New Resource:** `google_network_services_multicast_group_range` ([#11151](https://github.com/hashicorp/terraform-provider-google-beta/pull/11151))
 * **New Resource:** `google_network_services_multicast_producer_association` ([#11123](https://github.com/hashicorp/terraform-provider-google-beta/pull/11123))
@@ -1459,6 +1461,7 @@ IMPROVEMENTS:
 * compute: added new field `instance_flexibility_policy.instance_selection.min_cpu_platform` & `instance_flexibility_policy.instance_selection.disks` to `google_compute_region_instance_group_manager` ([#11231](https://github.com/hashicorp/terraform-provider-google-beta/pull/11231))
 * container: added `autoscaled_rollout_policy` field to `google_container_node_pool` resource (beta) ([#11154](https://github.com/hashicorp/terraform-provider-google-beta/pull/11154))
 * container: added `node_kernel_module_loading.policy` field to `google_container_node_pool` and `google_container_cluster` resources ([#11171](https://github.com/hashicorp/terraform-provider-google-beta/pull/11171))
+* dialogflow_cx: added `connector_spec` field to `google_dialogflow_cx_tool` resource ([#11066](https://github.com/hashicorp/terraform-provider-google-beta/pull/11066))
 * filestore: added support for updating `directory_services` fields in place in `google_filestore_instance` ([#11137](https://github.com/hashicorp/terraform-provider-google-beta/pull/11137))
 * iamworkforcepool: added `claim_mapping`, `purge_time`, and `service_agent` fields to `google_iam_workforce_pool_provider_scim_tenant` resource ([#11113](https://github.com/hashicorp/terraform-provider-google-beta/pull/11113))
 * looker: added `controlled_egress_enabled` and `controlled_egress_config` fields to `google_looker_instance` resource ([#11082](https://github.com/hashicorp/terraform-provider-google-beta/pull/11082))
@@ -1478,6 +1481,7 @@ IMPROVEMENTS:
 BUG FIXES:
 * bigquery: fixed the permadiff when email field values contain non-lower-case characters in `access` in `google_bigquery_dataset` ([#11139](https://github.com/hashicorp/terraform-provider-google-beta/pull/11139))
 * bigquery: fixed the permadiff when table schema is unchanged for a `google_bigquery_table` with row access policies ([#11102](https://github.com/hashicorp/terraform-provider-google-beta/pull/11102))
+* ces: fixed conflicting required and output tags in CES tool ([#11064](https://github.com/hashicorp/terraform-provider-google-beta/pull/11064))
 * cloudrunv2: fixed permadiff if `scaling` field is unset on resource `google_cloud_run_v2_service` ([#11132](https://github.com/hashicorp/terraform-provider-google-beta/pull/11132))
 * compute: fixed an issue where the `bgp_always_compare_med` field could not be unset in in `google_compute_network`. It can now be unset by configuring the new field `delete_bgp_always_compare_med` to a value of `true`. ([#11121](https://github.com/hashicorp/terraform-provider-google-beta/pull/11121))
 * compute: fixed crashes when no `network_endpoints` block specified in `google_compute_network_endpoints` resource or no network endpoints exist ([#11085](https://github.com/hashicorp/terraform-provider-google-beta/pull/11085))
@@ -1489,6 +1493,7 @@ BUG FIXES:
 * logging: fixed an issue with `google_logging_*_sink.include_children` fields not being updatable to true ([#11094](https://github.com/hashicorp/terraform-provider-google-beta/pull/11094))
 * memorystore: fixed an issue where a permadiff on `desired_auto_created_endpoints` caused the `google_memorystore_instance` resource to recreated. ([#11119](https://github.com/hashicorp/terraform-provider-google-beta/pull/11119))
 * spanner: prevented recreation when `kms_key_name` and `kms_key_names` are same for `google_spanner_database` ([#11083](https://github.com/hashicorp/terraform-provider-google-beta/pull/11083))
+* sql: fixed a crash when set `name = ""` in `google_sql_database_instance` datasource ([#11068](https://github.com/hashicorp/terraform-provider-google-beta/pull/11068))
 
 ## 7.12.0 (November 18, 2025)
 
