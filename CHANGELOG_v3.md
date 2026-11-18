@@ -323,8 +323,8 @@ BUG FIXES:
 FEATURES:
 * **New Resource:** `google_compute_service_attachment` ([#3328](https://github.com/hashicorp/terraform-provider-google-beta/pull/3328))
 * **New Resource:** `google_dialogflow_cx_agent` ([#3324](https://github.com/hashicorp/terraform-provider-google-beta/pull/3324))
-* **New Resource:** `google_gkehub_feature` ([#3330](https://github.com/hashicorp/terraform-provider-google-beta/pull/3330))
-* **New Resource:** `google_gkehub_feature_membership` ([#3330](https://github.com/hashicorp/terraform-provider-google-beta/pull/3330))
+* **New Resource:** `google_gke_hub_feature` ([#3330](https://github.com/hashicorp/terraform-provider-google-beta/pull/3330))
+* **New Resource:** `google_gke_hub_feature_membership` ([#3330](https://github.com/hashicorp/terraform-provider-google-beta/pull/3330))
 
 IMPROVEMENTS:
 * provider: added support for [mtls authentication](https://google.aip.dev/auth/4114) ([#3348](https://github.com/hashicorp/terraform-provider-google-beta/pull/3348))
@@ -739,9 +739,9 @@ BUG FIXES:
 FEATURES:
 * **New Data Source:** `google_compute_instance_template` ([#2842](https://github.com/hashicorp/terraform-provider-google-beta/pull/2842))
 * **New Resource:** `google_apigee_organization` ([#2856](https://github.com/hashicorp/terraform-provider-google-beta/pull/2856))
+* **New Resource:** `google_access_context_manager_gcp_user_access_binding` ([#2851](https://github.com/hashicorp/terraform-provider-google-beta/pull/2851))
 
 IMPROVEMENTS:
-* accesscontextmanager: added support for `google_access_context_manager_gcp_user_access_binding` ([#2851](https://github.com/hashicorp/terraform-provider-google-beta/pull/2851))
 * memcached: fixed an issue where `google_memcached_instance` resource was not inferring the region from the provider. ([More info](https://github.com/hashicorp/terraform-provider-google/issues/8027))
 * serviceaccount: added a `keepers` field to `google_service_account_key` that recreates the field when it is modified ([#2860](https://github.com/hashicorp/terraform-provider-google-beta/pull/2860))
 * sql: added restore from backup support to `google_sql_database_instance` ([#2843](https://github.com/hashicorp/terraform-provider-google-beta/pull/2843))
@@ -959,7 +959,7 @@ FEATURES:
 * **New Resource:** `google_notebooks_instance_iam_binding` ([#2605](https://github.com/hashicorp/terraform-provider-google-beta/pull/2605))
 * **New Resource:** `google_notebooks_instance_iam_member` ([#2605](https://github.com/hashicorp/terraform-provider-google-beta/pull/2605))
 * **New Resource:** `google_notebooks_instance_iam_policy` ([#2605](https://github.com/hashicorp/terraform-provider-google-beta/pull/2605))
-* **New Resource:** `access_context_manager_access_level_condition` ([#2595](https://github.com/hashicorp/terraform-provider-google-beta/pull/2595))
+* **New Resource:** `google_access_context_manager_access_level_condition` ([#2595](https://github.com/hashicorp/terraform-provider-google-beta/pull/2595))
 * **New Resource:** `google_bigquery_routine` ([#2622](https://github.com/hashicorp/terraform-provider-google-beta/pull/2622))
 * **New Resource:** `google_iam_workload_identity_pool` ([#2623](https://github.com/hashicorp/terraform-provider-google-beta/pull/2623))
 * **New Resource:** `google_data_catalog_taxonomy` ([#2626](https://github.com/hashicorp/terraform-provider-google-beta/pull/2626))
@@ -1246,9 +1246,9 @@ NOTES:
 * all: fix markdown formatting while showing enum values in documentation ([#2327](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2327))
 
 FEATURES:
-* **New Resource:** `google_compute_compute_organization_security_policy_association` ([#2333](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2333))
-* **New Resource:** `google_compute_compute_organization_security_policy_rule` ([#2333](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2333))
-* **New Resource:** `google_compute_compute_organization_security_policy` ([#2333](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2333))
+* **New Resource:** `google_compute_organization_security_policy_association` ([#2333](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2333))
+* **New Resource:** `google_compute_organization_security_policy_rule` ([#2333](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2333))
+* **New Resource:** `google_compute_organization_security_policy` ([#2333](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2333))
 
 IMPROVEMENTS:
 * bigtable: added support for labels in `google_bigtable_instance` ([#2325](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2325))
@@ -1362,8 +1362,9 @@ BUG FIXES:
 
 FEATURES:
 * **New Data Source:** `google_redis_instance` ([#2209](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2209))
-* **New Resource:** `google_notebook_environment` ([#2199](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2199))
-* **New Resource:** `google_notebook_instance` ([#2199](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2199))
+* **New Resource:** `google_notebooks_environment` ([#2199](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2199))
+* **New Resource:** `google_notebooks_instance` ([#2199](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2199))
+* **New Resource:** `google_notebooks_location` ([#2199](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2199))
 
 IMPROVEMENTS:
 * appengine: Enabled provisioning Firestore on a new project by adding the option to specify `database_type` in `google_app_engine_application` ([#2193](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2193))
@@ -1430,7 +1431,7 @@ BREAKING CHANGES:
 
 FEATURES:
 * **New Resource:** `google_data_catalog_tag_template` ([#2120](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2120))
-* **New Resource:** `google_container_analysis_occurence` ([#2114](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2114))
+* **New Resource:** `google_container_analysis_occurrence` ([#2114](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2114))
 
 IMPROVEMENTS:
 * appengine: added `inbound_services` to `StandardAppVersion` resource ([#2131](https://github.com/terraform-providers/terraform-provider-google-beta/pull/2131))
@@ -1651,7 +1652,7 @@ BUG FIXES:
 ## 3.16.0 (April 06, 2020)
 FEATURES:
 * **New Data Source:** `google_monitoring_uptime_check_ips` ([#1912](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1912))
-* **New Resource:** `firebase_project_location`: finalizes the firebase location. ([#1919](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1919))
+* **New Resource:** `google_firebase_project_location`: finalizes the firebase location. ([#1919](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1919))
 
 IMPROVEMENTS:
 * cloudfunctions: Added `ingress_settings` field to `google_cloudfunctions_function` ([#1898](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1898))
@@ -1675,7 +1676,7 @@ FEATURES:
 * **New Resource:** `google_firebase_project`: enables Firebase for a referenced Google project ([#1885](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1885))
 * **New Resource:** `google_iap_brand` ([#1848](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1848))
 * **New Resource:** `google_iap_client` ([#1848](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1848))
-* **New Resource:** `google_appengine_flexible_app_version` ([#1849](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1849))
+* **New Resource:** `google_app_engine_flexible_app_version` ([#1849](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1849))
 
 IMPROVEMENTS:
 * accesscontextmanager: Added `regions` field to `google_access_context_manager_access_level` ([#1882](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1882))
@@ -1817,8 +1818,8 @@ BREAKING CHANGES:
 FEATURES:
 * **New Data Source:** `secret_manager_secret_version` ([#1708](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1708))
 * **New Resource:** `google_access_context_manager_service_perimeter_resource` ([#1712](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1712))
-* **New Resource:** `secret_manager_secret_version` ([#1708](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1708))
-* **New Resource:** `secret_manager_secret` ([#1708](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1708))
+* **New Resource:** `google_secret_manager_secret_version` ([#1708](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1708))
+* **New Resource:** `google_secret_manager_secret` ([#1708](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1708))
 * **New Resource:** `google_dialogflow_agent` ([#1706](https://github.com/terraform-providers/terraform-provider-google-beta/pull/1706))
 
 IMPROVEMENTS:

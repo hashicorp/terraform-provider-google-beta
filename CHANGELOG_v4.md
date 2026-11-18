@@ -161,7 +161,7 @@ FEATURES:
 * **New Resource:** `google_compute_region_security_policy_rule` ([#6086](https://github.com/hashicorp/terraform-provider-google-beta/pull/6086))
 * **New Resource:** `google_gke_hub_membership_rbac_role_binding` ([#6103](https://github.com/hashicorp/terraform-provider-google-beta/pull/6103))
 * **New Resource:** `google_iam_deny_policy` (ga only) ([#6125](https://github.com/hashicorp/terraform-provider-google-beta/pull/6125))
-* **New Resource:** dataform_repository_workflow_config (beta) ([#6102](https://github.com/hashicorp/terraform-provider-google-beta/pull/6102))
+* **New Resource:** `google_dataform_repository_workflow_config` ([#6102](https://github.com/hashicorp/terraform-provider-google-beta/pull/6102))
 * **New Resource:** google_bigquery_bi_reservation ([#6088](https://github.com/hashicorp/terraform-provider-google-beta/pull/6088))
 
 IMPROVEMENTS:
@@ -454,7 +454,7 @@ BUG FIXES:
 
 FEATURES:
 * **New Resource:** `google_compute_network_endpoints` ([#5756](https://github.com/hashicorp/terraform-provider-google-beta/pull/5756))
-* **New Resource:** `vertex_ai_index_endpoint` ([#5738](https://github.com/hashicorp/terraform-provider-google-beta/pull/5738))
+* **New Resource:** `google_vertex_ai_index_endpoint` ([#5738](https://github.com/hashicorp/terraform-provider-google-beta/pull/5738))
 
 IMPROVEMENTS:
 * bigtable: added 20 minutes timeout support to `google_bigtable_gc_policy` ([#5752](https://github.com/hashicorp/terraform-provider-google-beta/pull/5752))
@@ -630,9 +630,9 @@ FEATURES:
 * **New Resource:** `google_network_security_authorization_policy` ([#5582](https://github.com/hashicorp/terraform-provider-google-beta/pull/5582))
 * **New Resource:** `google_network_services_grpc_route` ([#5572](https://github.com/hashicorp/terraform-provider-google-beta/pull/5572))
 * **New Resource:** `google_network_services_service_binding` ([#5536](https://github.com/hashicorp/terraform-provider-google-beta/pull/5536))
-* **New Resource:** `google_networksecurity_client_tls_policy` ([#5561](https://github.com/hashicorp/terraform-provider-google-beta/pull/5561))
-* **New Resource:** `google_networkservices_endpoint_policy` ([#5542](https://github.com/hashicorp/terraform-provider-google-beta/pull/5542))
-* **New Resource:** `google_networkservices_tls_route` ([#5524](https://github.com/hashicorp/terraform-provider-google-beta/pull/5524))
+* **New Resource:** `google_network_security_client_tls_policy` ([#5561](https://github.com/hashicorp/terraform-provider-google-beta/pull/5561))
+* **New Resource:** `google_network_services_endpoint_policy` ([#5542](https://github.com/hashicorp/terraform-provider-google-beta/pull/5542))
+* **New Resource:** `google_network_services_tls_route` ([#5524](https://github.com/hashicorp/terraform-provider-google-beta/pull/5524))
 * **New Resource:** `google_workstations_workstation_config_iam` ([#5512](https://github.com/hashicorp/terraform-provider-google-beta/pull/5512))
 * **New Resource:** `google_workstations_workstation_iam` ([#5512](https://github.com/hashicorp/terraform-provider-google-beta/pull/5512))
 
@@ -984,7 +984,7 @@ DEPRECATIONS:
 
 FEATURES:
 * **New Resource:** `google_iam_access_boundary_policy` ([#5130](https://github.com/hashicorp/terraform-provider-google-beta/pull/5130))
-* **New Resource:** `google_tags_location_tag_bindings` ([#5115](https://github.com/hashicorp/terraform-provider-google-beta/pull/5115))
+* **New Resource:** `google_tags_location_tag_binding` ([#5115](https://github.com/hashicorp/terraform-provider-google-beta/pull/5115))
 
 IMPROVEMENTS:
 * cloudbuild: added `github_enterprise_config` fields to `google_cloudbuild_trigger` resource. ([#5110](https://github.com/hashicorp/terraform-provider-google-beta/pull/5110))
@@ -1239,7 +1239,6 @@ FEATURES:
 * **New Resource:** `google_firebase_hosting_channel` ([#4890](https://github.com/hashicorp/terraform-provider-google-beta/pull/4890))
 * **New Resource:** `google_firebase_hosting_site` ([#4846](https://github.com/hashicorp/terraform-provider-google-beta/pull/4846))
 * **New Resource:** `google_identity_platform_project_default_config` ([#4853](https://github.com/hashicorp/terraform-provider-google-beta/pull/4853))
-* **New Resource:** `google_kms_crypto_key_versions` ([#4831](https://github.com/hashicorp/terraform-provider-google-beta/pull/4831))
 * **New Resource:** `google_storage_transfer_agent_pool` ([#4835](https://github.com/hashicorp/terraform-provider-google-beta/pull/4835))
 
 IMPROVEMENTS:
@@ -1295,7 +1294,7 @@ BUG FIXES:
 ## 4.43.0 (November 7, 2022)
 
 FEATURES:
-* **New Resource:** `google_kms_crypto_key_version`([#4831](https://github.com/hashicorp/terraform-provider-google-beta/pull/4831))
+* **New Resource:** `google_kms_crypto_key_version` ([#4831](https://github.com/hashicorp/terraform-provider-google-beta/pull/4831))
 
 ## 4.42.1 (November 2, 2022)
 
@@ -1311,7 +1310,7 @@ FEATURES:
 * **New Resource:** `google_dataform_repository` (beta) ([#4801](https://github.com/hashicorp/terraform-provider-google-beta/pull/4801))
 * **New Resource:** `google_firebase_android_app` ([#4814](https://github.com/hashicorp/terraform-provider-google-beta/pull/4814))
 * **New Resource:** `google_iam_workforce_pool` ([#4818](https://github.com/hashicorp/terraform-provider-google-beta/pull/4818))
-* **New Resource:** `google_monitoring_generic_service` ([#4789](https://github.com/hashicorp/terraform-provider-google-beta/pull/4789))
+* **New Resource:** `google_monitoring_service` ([#4789](https://github.com/hashicorp/terraform-provider-google-beta/pull/4789))
 * **New Resource:** `google_scc_source_iam_binding` ([#4806](https://github.com/hashicorp/terraform-provider-google-beta/pull/4806))
 * **New Resource:** `google_scc_source_iam_member` ([#4806](https://github.com/hashicorp/terraform-provider-google-beta/pull/4806))
 * **New Resource:** `google_scc_source_iam_policy` ([#4806](https://github.com/hashicorp/terraform-provider-google-beta/pull/4806))
@@ -1554,6 +1553,7 @@ NOTES:
 
 FEATURES:
 * **New Resource:** `google_dataplex_asset` ([#4543](https://github.com/hashicorp/terraform-provider-google-beta/pull/4543))
+* **New Resource:** `google_active_directory_peering` ([#4537](https://github.com/hashicorp/terraform-provider-google-beta/pull/4537))
 * **New Resource:** `google_gke_hub_membership_iam_binding` ([#4583](https://github.com/hashicorp/terraform-provider-google-beta/pull/4583))
 * **New Resource:** `google_gke_hub_membership_iam_member` ([#4583](https://github.com/hashicorp/terraform-provider-google-beta/pull/4583))
 * **New Resource:** `google_gke_hub_membership_iam_policy` ([#4583](https://github.com/hashicorp/terraform-provider-google-beta/pull/4583))
@@ -1601,8 +1601,8 @@ BUG FIXES:
 
 FEATURES:
 * **New Data Source:** `google_service_account_jwt` ([#4489](https://github.com/hashicorp/terraform-provider-google-beta/pull/4489))
-* **New Resource:** `google_certificate_map_entry` ([#4501](https://github.com/hashicorp/terraform-provider-google-beta/pull/4501))
-* **New Resource:** `google_certificate_map` ([#4501](https://github.com/hashicorp/terraform-provider-google-beta/pull/4501))
+* **New Resource:** `google_certificate_manager_certificate_map_entry` ([#4501](https://github.com/hashicorp/terraform-provider-google-beta/pull/4501))
+* **New Resource:** `google_certificate_manager_certificate_map` ([#4501](https://github.com/hashicorp/terraform-provider-google-beta/pull/4501))
 * **New Resource:** `google_compute_backend_bucket_iam_binding` ([#4484](https://github.com/hashicorp/terraform-provider-google-beta/pull/4484))
 * **New Resource:** `google_compute_backend_bucket_iam_member` ([#4484](https://github.com/hashicorp/terraform-provider-google-beta/pull/4484))
 * **New Resource:** `google_compute_backend_bucket_iam_policy` ([#4484](https://github.com/hashicorp/terraform-provider-google-beta/pull/4484))
@@ -1708,8 +1708,8 @@ FEATURES:
 * **New Resource:** `google_cloudfunctions2_function_iam_member` ([#4377](https://github.com/hashicorp/terraform-provider-google-beta/pull/4377))
 * **New Resource:** `google_cloudfunctions2_function_iam_policy` ([#4377](https://github.com/hashicorp/terraform-provider-google-beta/pull/4377))
 * **New Resource:** `google_compute_region_ssl_policy` ([#4376](https://github.com/hashicorp/terraform-provider-google-beta/pull/4376))
-* **New Resource:** `google_documentai_processor` ([#4389](https://github.com/hashicorp/terraform-provider-google-beta/pull/4389))
-* **New Resource:** `google_documentai_processor_default_version` ([#4389](https://github.com/hashicorp/terraform-provider-google-beta/pull/4389))
+* **New Resource:** `google_document_ai_processor` ([#4389](https://github.com/hashicorp/terraform-provider-google-beta/pull/4389))
+* **New Resource:** `google_document_ai_processor_default_version` ([#4389](https://github.com/hashicorp/terraform-provider-google-beta/pull/4389))
 
 IMPROVEMENTS:
 * accesscontextmanager: Added `external_resources` to `egress_to` in `google_access_context_manager_service_perimeter` and `google_access_context_manager_service_perimeters` resource ([#4378](https://github.com/hashicorp/terraform-provider-google-beta/pull/4378))
@@ -1956,7 +1956,7 @@ BUG FIXES:
 ## 4.14.0 (March 14, 2022)
 
 FEATURES:
-* **New Resource:** `google_bigqueryreservation_assignment` ([#4098](https://github.com/hashicorp/terraform-provider-google-beta/pull/4098))
+* **New Resource:** `google_bigquery_reservation_assignment` ([#4098](https://github.com/hashicorp/terraform-provider-google-beta/pull/4098))
 * **New Resource:** `google_apikeys_key` ([#4114](https://github.com/hashicorp/terraform-provider-google-beta/pull/4114))
 
 IMPROVEMENTS:
@@ -1993,8 +1993,8 @@ NOTE:
 * updated to go 1.16.14 ([#4066](https://github.com/hashicorp/terraform-provider-google-beta/pull/4066))
 
 FEATURES:
-* **New Resource:** `dns_response_policy*` ([#4046](https://github.com/hashicorp/terraform-provider-google-beta/pull/4046))
-* **New Resource:** `dns_response_policy_rule*` ([#4046](https://github.com/hashicorp/terraform-provider-google-beta/pull/4046))
+* **New Resource:** `google_dns_response_policy` ([#4046](https://github.com/hashicorp/terraform-provider-google-beta/pull/4046))
+* **New Resource:** `google_dns_response_policy_rule` ([#4046](https://github.com/hashicorp/terraform-provider-google-beta/pull/4046))
 
 DEPRECATIONS:
 * datafusion: deprecated `service_account` in `google_datafusion_instance`. Use `tenant_project_id` instead to extract the tenant project ID (beta) ([#4045](https://github.com/hashicorp/terraform-provider-google-beta/pull/4045))
