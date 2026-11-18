@@ -492,6 +492,7 @@ FEATURES:
 * **New Data Source:** `google_oracle_database_goldengate_deployment_versions` ([#12451](https://github.com/hashicorp/terraform-provider-google-beta/pull/12451))
 * **New Data Source:** `google_storage_control_project_intelligence_finding` ([#12444](https://github.com/hashicorp/terraform-provider-google-beta/pull/12444))
 * **New Data Source:** `google_storage_control_project_intelligence_findings` ([#12444](https://github.com/hashicorp/terraform-provider-google-beta/pull/12444))
+* **New Resource:** `google_apigee_environment_debugmask` ([#12421](https://github.com/hashicorp/terraform-provider-google-beta/pull/12421))
 * **New Resource:** `google_chronicle_parser` ([#12477](https://github.com/hashicorp/terraform-provider-google-beta/pull/12477))
 * **New Resource:** `google_chronicle_soar_network` ([#12439](https://github.com/hashicorp/terraform-provider-google-beta/pull/12439))
 * **New Resource:** `google_migration_center_import_data_file` ([#12423](https://github.com/hashicorp/terraform-provider-google-beta/pull/12423))
@@ -504,7 +505,6 @@ FEATURES:
 * **New List Resource:** `google_pubsub_subscription` ([#12441](https://github.com/hashicorp/terraform-provider-google-beta/pull/12441))
 
 IMPROVEMENTS:
-* apigee: added new resource `google_apigee_environment_debugmask` for managing Apigee environment debug masks ([#12421](https://github.com/hashicorp/terraform-provider-google-beta/pull/12421))
 * backupdr: added support for `use_project_service_account` flag in `google_backup_dr_restore_workload` disk and compute restores ([#12473](https://github.com/hashicorp/terraform-provider-google-beta/pull/12473))
 * cloudrunv2: added `http_get.http_headers.name` field to container startup probe and liveness probe in `google_cloud_run_v2_worker_pool` resource ([#12476](https://github.com/hashicorp/terraform-provider-google-beta/pull/12476))
 * cloudrunv2: added `template.client` and `template.client_version` fields to `google_cloud_run_v2_worker_pool` resource ([#12440](https://github.com/hashicorp/terraform-provider-google-beta/pull/12440))
@@ -540,7 +540,7 @@ FEATURES:
 * **New Data Source:** `google_apigee_instance` ([#12393](https://github.com/hashicorp/terraform-provider-google-beta/pull/12393))
 * **New Data Source:** `google_oracle_database_goldengate_deployment_types` ([#12361](https://github.com/hashicorp/terraform-provider-google-beta/pull/12361))
 * **New Resource:** `google_apigee_datastore` ([#12358](https://github.com/hashicorp/terraform-provider-google-beta/pull/12358))
-* **New Resource:** `google_chronicle_customlist` ([#12378](https://github.com/hashicorp/terraform-provider-google-beta/pull/12378))
+* **New Resource:** `google_chronicle_custom_list` ([#12378](https://github.com/hashicorp/terraform-provider-google-beta/pull/12378))
 * **New Resource:** `google_chronicle_environment` ([#12385](https://github.com/hashicorp/terraform-provider-google-beta/pull/12385))
 * **New Resource:** `google_chronicle_findings_refinement` ([#12348](https://github.com/hashicorp/terraform-provider-google-beta/pull/12348))
 * **New Resource:** `google_discovery_engine_search_engine_iam_binding` ([#12409](https://github.com/hashicorp/terraform-provider-google-beta/pull/12409))
@@ -965,8 +965,8 @@ BUG FIXES:
 ## 7.26.0 (Mar 31, 2026)
 FEATURES:
 * **New Data Source:** `google_network_security_address_groups` ([#11773](https://github.com/hashicorp/terraform-provider-google-beta/pull/11773))
-* **New Resource:** `google_bigqueryreservation_reservation_group` ([#11771](https://github.com/hashicorp/terraform-provider-google-beta/pull/11771))
-* **New Resource:** `google_chronicle_datatable_row` ([#11769](https://github.com/hashicorp/terraform-provider-google-beta/pull/11769))
+* **New Resource:** `google_bigquery_reservation_group` ([#11771](https://github.com/hashicorp/terraform-provider-google-beta/pull/11771))
+* **New Resource:** `google_chronicle_data_table_row` ([#11769](https://github.com/hashicorp/terraform-provider-google-beta/pull/11769))
 * **New Resource:** `google_chronicle_native_dashboard` ([#11806](https://github.com/hashicorp/terraform-provider-google-beta/pull/11806))
 * **New Resource:** `google_contact_center_insights_assessment_rule` ([#11764](https://github.com/hashicorp/terraform-provider-google-beta/pull/11764))
 
@@ -1037,7 +1037,7 @@ DEPRECATIONS:
 
 FEATURES:
 * **New Resource:** `google_biglake_iceberg_table` ([#11689](https://github.com/hashicorp/terraform-provider-google-beta/pull/11689))
-* **New Resource:** `google_chronicle_datatable` ([#11708](https://github.com/hashicorp/terraform-provider-google-beta/pull/11708))
+* **New Resource:** `google_chronicle_data_table` ([#11708](https://github.com/hashicorp/terraform-provider-google-beta/pull/11708))
 * **New Resource:** `google_contact_center_insights_auto_labeling_rule` ([#11707](https://github.com/hashicorp/terraform-provider-google-beta/pull/11707))
 * **New Resource:** `google_network_security_ull_mirroring_collector` ([#11687](https://github.com/hashicorp/terraform-provider-google-beta/pull/11687))
 * **New Resource:** `google_network_security_ull_mirroring_engine` ([#11687](https://github.com/hashicorp/terraform-provider-google-beta/pull/11687))
