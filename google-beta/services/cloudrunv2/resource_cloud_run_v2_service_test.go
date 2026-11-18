@@ -1904,7 +1904,6 @@ func testAccCloudRunV2Service_cloudrunv2ServiceWithHTTPReadinessProbe(context ma
 resource "google_cloud_run_v2_service" "default" {
   name     = "tf-test-cloudrun-service%{random_suffix}"
   location = "us-central1"
-  launch_stage = "BETA"
   deletion_protection = false
 
   template {
@@ -1927,7 +1926,6 @@ func testAccCloudRunV2Service_cloudrunv2ServiceUpdateWithHTTPReadinessProbe(cont
 resource "google_cloud_run_v2_service" "default" {
   name     = "tf-test-cloudrun-service%{random_suffix}"
   location = "us-central1"
-  launch_stage = "BETA"
   deletion_protection = false
 
   template {
@@ -1957,7 +1955,6 @@ func testAccCloudRunV2Service_cloudrunv2ServiceUpdateWithGRPCReadinessProbe(cont
 resource "google_cloud_run_v2_service" "default" {
   name     = "tf-test-cloudrun-service%{random_suffix}"
   location = "us-central1"
-  launch_stage = "BETA"
   deletion_protection = false
 
   template {
