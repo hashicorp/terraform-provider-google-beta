@@ -176,9 +176,7 @@ client when the resource is created.`,
 				Computed:     true,
 				Optional:     true,
 				ValidateFunc: verify.ValidateEnum([]string{"INTERNAL_MANAGED", "EXTERNAL_MANAGED", ""}),
-				Description: `Specifies the load balancer type this backend bucket will be used with.
-
-Possible values:
+				Description: `Specifies the load balancer type this backend bucket will be used with:
 - 'INTERNAL_MANAGED': for regional internal Application Load Balancers
 - 'EXTERNAL_MANAGED': for regional external Application Load Balancers
 
