@@ -80,6 +80,18 @@ func TestAccContactCenterInsightsEncryptionSpec_contactCenterInsightsEncryptionS
 			{
 				Config: testAccContactCenterInsightsEncryptionSpec_contactCenterInsightsEncryptionSpecBasicExample(context),
 			},
+			{
+				ResourceName:            "google_contact_center_insights_encryption_spec.my-encryption-spec",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"location"},
+			},
+			{
+				ResourceName:       "google_contact_center_insights_encryption_spec.my-encryption-spec",
+				ImportState:        true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
 		},
 	})
 }
