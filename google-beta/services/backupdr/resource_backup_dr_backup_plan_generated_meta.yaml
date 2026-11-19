@@ -10,6 +10,8 @@ fields:
     - field: backup_plan_id
       provider_only: true
     - api_field: backupRules.backupRetentionDays
+    - api_field: backupRules.backupVault
+    - api_field: backupRules.backupVaultServiceAccount
     - api_field: backupRules.ruleId
     - api_field: backupRules.standardSchedule.backupWindow.endHourOfDay
     - api_field: backupRules.standardSchedule.backupWindow.startHourOfDay
