@@ -1250,7 +1250,7 @@ func TestAccComputeBackendService_backendServiceDynamicForwardingExample(t *test
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeBackendServiceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -1275,7 +1275,6 @@ func TestAccComputeBackendService_backendServiceDynamicForwardingExample(t *test
 func testAccComputeBackendService_backendServiceDynamicForwardingExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_backend_service" "default" {
-  provider              = google-beta
   name                  = "%{backend_service_name}"
   load_balancing_scheme = "INTERNAL_MANAGED"
   dynamic_forwarding {
