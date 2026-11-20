@@ -150,7 +150,7 @@ func TestAccNetworkConnectivityHub_networkConnectivityHubWithExportPscConfigExam
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckNetworkConnectivityHubDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -183,7 +183,6 @@ func TestAccNetworkConnectivityHub_networkConnectivityHubWithExportPscConfigExam
 func testAccNetworkConnectivityHub_networkConnectivityHubWithExportPscConfigExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_network_connectivity_hub" "primary" {
-  provider    = google-beta
   name        = "%{resource_name}"
   description = "A sample hub that propagates Private Service Connect endpoints for global Google APIs only"
   export_psc  = true
@@ -198,7 +197,6 @@ resource "google_network_connectivity_hub" "primary" {
 func testAccNetworkConnectivityHub_networkConnectivityHubWithExportPscConfigUpdateExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_network_connectivity_hub" "primary" {
-  provider    = google-beta
   name        = "%{resource_name}"
   description = "A sample hub that propagates all Private Service Connect endpoints"
   export_psc  = true
