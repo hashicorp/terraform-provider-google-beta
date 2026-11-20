@@ -1973,14 +1973,15 @@ func resourceComputeRegionBackendServiceCreate(d *schema.ResourceData, meta inte
 	// security_policy isn't set by Create
 	delete(obj, "securityPolicy")
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
-		Config:    config,
-		Method:    "POST",
-		Project:   billingProject,
-		RawURL:    url,
-		UserAgent: userAgent,
-		Body:      obj,
-		Timeout:   d.Timeout(schema.TimeoutCreate),
-		Headers:   headers,
+		Config:     config,
+		Method:     "POST",
+		Project:    billingProject,
+		RawURL:     url,
+		UserAgent:  userAgent,
+		Body:       obj,
+		Timeout:    d.Timeout(schema.TimeoutCreate),
+		Headers:    headers,
+		ApiVersion: "2026-11-01",
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating RegionBackendService: %s", err)
@@ -2023,12 +2024,13 @@ func resourceComputeRegionBackendServiceCreate(d *schema.ResourceData, meta inte
 		}
 
 		res, err = transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
-			Config:    config,
-			Method:    "POST",
-			Project:   project,
-			RawURL:    url,
-			UserAgent: userAgent,
-			Body:      obj,
+			Config:     config,
+			Method:     "POST",
+			Project:    project,
+			RawURL:     url,
+			UserAgent:  userAgent,
+			Body:       obj,
+			ApiVersion: "2026-11-01",
 		})
 
 		if err != nil {
@@ -2094,12 +2096,13 @@ func resourceComputeRegionBackendServiceRead(d *schema.ResourceData, meta interf
 
 	headers := make(http.Header)
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
-		Config:    config,
-		Method:    "GET",
-		Project:   billingProject,
-		RawURL:    url,
-		UserAgent: userAgent,
-		Headers:   headers,
+		Config:     config,
+		Method:     "GET",
+		Project:    billingProject,
+		RawURL:     url,
+		UserAgent:  userAgent,
+		Headers:    headers,
+		ApiVersion: "2026-11-01",
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("ComputeRegionBackendService %q", d.Id()))
@@ -2445,14 +2448,15 @@ func resourceComputeRegionBackendServiceUpdate(d *schema.ResourceData, meta inte
 	}
 
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
-		Config:    config,
-		Method:    "PUT",
-		Project:   billingProject,
-		RawURL:    url,
-		UserAgent: userAgent,
-		Body:      obj,
-		Timeout:   d.Timeout(schema.TimeoutUpdate),
-		Headers:   headers,
+		Config:     config,
+		Method:     "PUT",
+		Project:    billingProject,
+		RawURL:     url,
+		UserAgent:  userAgent,
+		Body:       obj,
+		Timeout:    d.Timeout(schema.TimeoutUpdate),
+		Headers:    headers,
+		ApiVersion: "2026-11-01",
 	})
 
 	if err != nil {
@@ -2496,14 +2500,15 @@ func resourceComputeRegionBackendServiceUpdate(d *schema.ResourceData, meta inte
 		}
 
 		res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
-			Config:    config,
-			Method:    "POST",
-			Project:   billingProject,
-			RawURL:    url,
-			UserAgent: userAgent,
-			Body:      obj,
-			Timeout:   d.Timeout(schema.TimeoutUpdate),
-			Headers:   headers,
+			Config:     config,
+			Method:     "POST",
+			Project:    billingProject,
+			RawURL:     url,
+			UserAgent:  userAgent,
+			Body:       obj,
+			Timeout:    d.Timeout(schema.TimeoutUpdate),
+			ApiVersion: "2026-11-01",
+			Headers:    headers,
 		})
 		if err != nil {
 			return fmt.Errorf("Error updating RegionBackendService %q: %s", d.Id(), err)
@@ -2561,14 +2566,15 @@ func resourceComputeRegionBackendServiceDelete(d *schema.ResourceData, meta inte
 
 	log.Printf("[DEBUG] Deleting RegionBackendService %q", d.Id())
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
-		Config:    config,
-		Method:    "DELETE",
-		Project:   billingProject,
-		RawURL:    url,
-		UserAgent: userAgent,
-		Body:      obj,
-		Timeout:   d.Timeout(schema.TimeoutDelete),
-		Headers:   headers,
+		Config:     config,
+		Method:     "DELETE",
+		Project:    billingProject,
+		RawURL:     url,
+		UserAgent:  userAgent,
+		Body:       obj,
+		Timeout:    d.Timeout(schema.TimeoutDelete),
+		Headers:    headers,
+		ApiVersion: "2026-11-01",
 	})
 	if err != nil {
 		return transport_tpg.HandleNotFoundError(err, d, "RegionBackendService")

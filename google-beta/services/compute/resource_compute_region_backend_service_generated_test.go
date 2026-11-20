@@ -67,6 +67,8 @@ func TestAccComputeRegionBackendService_regionBackendServiceBasicExample(t *test
 		"random_suffix":               randomSuffix,
 	}
 
+	acctest.AssertRequestApiVersion(t, "projects/{{project}}/regions/{{region}}/backendServices", "2026-11-01")
+
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
@@ -123,6 +125,8 @@ func TestAccComputeRegionBackendService_regionBackendServiceExternalIapExample(t
 		"random_suffix":               randomSuffix,
 	}
 
+	acctest.AssertRequestApiVersion(t, "projects/{{project}}/regions/{{region}}/backendServices", "2026-11-01")
+
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
@@ -173,6 +177,8 @@ func TestAccComputeRegionBackendService_regionBackendServiceIlbRoundRobinExample
 		"region_backend_service_name": "tf-test-region-service" + randomSuffix,
 		"random_suffix":               randomSuffix,
 	}
+
+	acctest.AssertRequestApiVersion(t, "projects/{{project}}/regions/{{region}}/backendServices", "2026-11-01")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -228,6 +234,8 @@ func TestAccComputeRegionBackendService_regionBackendServiceExternalExample(t *t
 		"region_backend_service_name": "tf-test-region-service" + randomSuffix,
 		"random_suffix":               randomSuffix,
 	}
+
+	acctest.AssertRequestApiVersion(t, "projects/{{project}}/regions/{{region}}/backendServices", "2026-11-01")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -287,6 +295,8 @@ func TestAccComputeRegionBackendService_regionBackendServiceExternalWeightedExam
 		"random_suffix":               randomSuffix,
 	}
 
+	acctest.AssertRequestApiVersion(t, "projects/{{project}}/regions/{{region}}/backendServices", "2026-11-01")
+
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
@@ -343,6 +353,8 @@ func TestAccComputeRegionBackendService_regionBackendServiceIlbRingHashExample(t
 		"region_backend_service_name": "tf-test-region-service" + randomSuffix,
 		"random_suffix":               randomSuffix,
 	}
+
+	acctest.AssertRequestApiVersion(t, "projects/{{project}}/regions/{{region}}/backendServices", "2026-11-01")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -415,6 +427,8 @@ func TestAccComputeRegionBackendService_regionBackendServiceIlbStatefulSessionAf
 		"random_suffix":               randomSuffix,
 	}
 
+	acctest.AssertRequestApiVersion(t, "projects/{{project}}/regions/{{region}}/backendServices", "2026-11-01")
+
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
@@ -483,6 +497,8 @@ func TestAccComputeRegionBackendService_regionBackendServiceBalancingModeExample
 		"rigm_name":                   "tf-test-rbs-rigm" + randomSuffix,
 		"random_suffix":               randomSuffix,
 	}
+
+	acctest.AssertRequestApiVersion(t, "projects/{{project}}/regions/{{region}}/backendServices", "2026-11-01")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -598,6 +614,8 @@ func TestAccComputeRegionBackendService_regionBackendServiceInFlightExample(t *t
 		"subnetwork_name":             "tf-test-custom-subnet" + randomSuffix,
 		"random_suffix":               randomSuffix,
 	}
+
+	acctest.AssertRequestApiVersion(t, "projects/{{project}}/regions/{{region}}/backendServices", "2026-11-01")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -722,6 +740,8 @@ func TestAccComputeRegionBackendService_regionBackendServiceConnectionTrackingEx
 		"random_suffix":               randomSuffix,
 	}
 
+	acctest.AssertRequestApiVersion(t, "projects/{{project}}/regions/{{region}}/backendServices", "2026-11-01")
+
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
@@ -786,6 +806,8 @@ func TestAccComputeRegionBackendService_regionBackendServiceIpAddressSelectionPo
 		"random_suffix":               randomSuffix,
 	}
 
+	acctest.AssertRequestApiVersion(t, "projects/{{project}}/regions/{{region}}/backendServices", "2026-11-01")
+
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
@@ -845,6 +867,8 @@ func TestAccComputeRegionBackendService_regionBackendServiceIlbCustomMetricsExam
 		"region_backend_service_name": "tf-test-region-service" + randomSuffix,
 		"random_suffix":               randomSuffix,
 	}
+
+	acctest.AssertRequestApiVersion(t, "projects/{{project}}/regions/{{region}}/backendServices", "2026-11-01")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -931,9 +955,11 @@ func TestAccComputeRegionBackendService_regionBackendServiceDynamicForwardingExa
 		"random_suffix":               randomSuffix,
 	}
 
+	acctest.AssertRequestApiVersion(t, "projects/{{project}}/regions/{{region}}/backendServices", "2026-11-01")
+
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeRegionBackendServiceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -958,7 +984,6 @@ func TestAccComputeRegionBackendService_regionBackendServiceDynamicForwardingExa
 func testAccComputeRegionBackendService_regionBackendServiceDynamicForwardingExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_region_backend_service" "default" {
-  provider                        = google-beta
   name                            = "%{region_backend_service_name}"
   region                          = "us-central1"
   load_balancing_scheme           = "EXTERNAL_MANAGED"
@@ -981,9 +1006,11 @@ func TestAccComputeRegionBackendService_regionBackendServiceDynamicForwardingFor
 		"random_suffix":               randomSuffix,
 	}
 
+	acctest.AssertRequestApiVersion(t, "projects/{{project}}/regions/{{region}}/backendServices", "2026-11-01")
+
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeRegionBackendServiceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -1008,7 +1035,6 @@ func TestAccComputeRegionBackendService_regionBackendServiceDynamicForwardingFor
 func testAccComputeRegionBackendService_regionBackendServiceDynamicForwardingForwardProxyCloudRunExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_region_backend_service" "default" {
-  provider              = google-beta
   name                  = "%{region_backend_service_name}"
   region                = "us-central1"
   load_balancing_scheme = "INTERNAL_SELF_MANAGED"
@@ -1033,9 +1059,11 @@ func TestAccComputeRegionBackendService_regionBackendServiceDynamicForwardingFor
 		"random_suffix":               randomSuffix,
 	}
 
+	acctest.AssertRequestApiVersion(t, "projects/{{project}}/regions/{{region}}/backendServices", "2026-11-01")
+
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
 		CheckDestroy:             testAccCheckComputeRegionBackendServiceDestroyProducer(t),
 		Steps: []resource.TestStep{
 			{
@@ -1060,7 +1088,6 @@ func TestAccComputeRegionBackendService_regionBackendServiceDynamicForwardingFor
 func testAccComputeRegionBackendService_regionBackendServiceDynamicForwardingForwardProxyDirectForwardingExample(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_compute_region_backend_service" "default" {
-  provider                        = google-beta
   name                            = "%{region_backend_service_name}"
   region                          = "us-central1"
   load_balancing_scheme           = "INTERNAL_SELF_MANAGED"
@@ -1085,6 +1112,8 @@ func TestAccComputeRegionBackendService_regionBackendServiceHaPolicyExample(t *t
 		"region_backend_service_name": "tf-test-region-service" + randomSuffix,
 		"random_suffix":               randomSuffix,
 	}
+
+	acctest.AssertRequestApiVersion(t, "projects/{{project}}/regions/{{region}}/backendServices", "2026-11-01")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -1144,6 +1173,8 @@ func TestAccComputeRegionBackendService_regionBackendServiceHaPolicyManualLeader
 		"subnetwork_name":             "tf-test-rbs-subnet" + randomSuffix,
 		"random_suffix":               randomSuffix,
 	}
+
+	acctest.AssertRequestApiVersion(t, "projects/{{project}}/regions/{{region}}/backendServices", "2026-11-01")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -1257,6 +1288,8 @@ func TestAccComputeRegionBackendService_regionBackendServiceTlsSettingsExample(t
 		"random_suffix":               randomSuffix,
 	}
 
+	acctest.AssertRequestApiVersion(t, "projects/{{project}}/regions/{{region}}/backendServices", "2026-11-01")
+
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories(t),
@@ -1335,6 +1368,8 @@ func TestAccComputeRegionBackendService_regionBackendServiceIdentityExample(t *t
 		"region_backend_service_name": "tf-test-backend-service" + randomSuffix,
 		"random_suffix":               randomSuffix,
 	}
+
+	acctest.AssertRequestApiVersion(t, "projects/{{project}}/regions/{{region}}/backendServices", "2026-11-01")
 
 	acctest.VcrTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
@@ -1427,11 +1462,12 @@ func testAccCheckComputeRegionBackendServiceDestroyProducer(t *testing.T) func(s
 			}
 
 			_, err = transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
-				Config:    config,
-				Method:    "GET",
-				Project:   billingProject,
-				RawURL:    url,
-				UserAgent: config.UserAgent,
+				Config:     config,
+				Method:     "GET",
+				Project:    billingProject,
+				RawURL:     url,
+				UserAgent:  config.UserAgent,
+				ApiVersion: "2026-11-01",
 			})
 			if err == nil {
 				return fmt.Errorf("ComputeRegionBackendService still exists at %s", url)
