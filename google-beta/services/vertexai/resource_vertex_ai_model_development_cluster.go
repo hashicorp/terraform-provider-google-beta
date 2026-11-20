@@ -587,12 +587,14 @@ This field is only applicable when 'provisioning_model' is set to
 										Computed:         true,
 										Optional:         true,
 										DiffSuppressFunc: vertexAiModelDevelopmentClusterGkeVersionDiffSuppress,
-										Description: `The Kubernetes version of the GKE control plane.
-Accepted formats are minor version (for example, '"1.30"'), patch version
-(for example, '"1.30.5"'), full GKE release version (for example,
-'"1.30.5-gke.1014001"'), or '"-"' to use the service default version.
-Upgrades can advance at most one minor version at a time; downgrades are
-rejected.`,
+										Description: `The Kubernetes version of the GKE control plane. Can be set on creation
+or updated in place.
+Accepted formats are minor version (for example, '"1.35"'), patch version
+(for example, '"1.35.8"'), full GKE release version (for example,
+'"1.35.8-gke.1796000"'), or '"-"' to use the service default version.
+On creation, versions older than the service default minor version are
+rejected. Upgrades can advance at most one minor version at a time;
+downgrades are rejected.`,
 									},
 									"enable_ip_alias": {
 										Type:        schema.TypeBool,
@@ -600,12 +602,51 @@ rejected.`,
 										ForceNew:    true,
 										Description: `Whether to enable IP alias.`,
 									},
+									"kueue_version": {
+										Type:     schema.TypeString,
+										Optional: true,
+										ForceNew: true,
+										Description: `The Kueue version to install on the cluster, in the form
+'vMAJOR.MINOR.PATCH' (for example, '"v0.16.2"'). Can be set only on
+creation.
+If unset, the service installs its default Kueue version and manages
+Kueue upgrades and default queues. If set, the service installs the
+specified version on creation and leaves subsequent Kueue upgrades to
+the user.`,
+									},
+									"maintenance_policy": {
+										Type:     schema.TypeString,
+										Optional: true,
+										ForceNew: true,
+										Description: `GKE maintenance policy configuration in JSON or YAML format matching
+'google.container.v1.MaintenancePolicy'
+(https://cloud.google.com/kubernetes-engine/docs/reference/rest/v1/projects.locations.clusters#MaintenancePolicy).
+Can be set only on creation.
+If unset, the service applies a default maintenance exclusion with scope
+'NO_MINOR_OR_NODE_UPGRADES' and end-time behavior 'UNTIL_END_OF_SUPPORT'
+so automatic minor or node upgrades do not interrupt training workloads.
+If set, the parsed 'MaintenancePolicy' replaces that default exclusion on
+the underlying GKE cluster.`,
+									},
+									"nccl_gib_version": {
+										Type:     schema.TypeString,
+										Optional: true,
+										ForceNew: true,
+										Description: `The version of the NCCL gIB plugin to install on RDMA GPU node pools
+(such as A3 Ultra and A4), in the form 'vMAJOR.MINOR.PATCH' (for example,
+'"v1.1.2"'). Can be set only on creation.
+If unset, the service default version is used. Ignored when the cluster
+has no RDMA GPU node pools.`,
+									},
 									"node_pool_ids": {
 										Type:     schema.TypeList,
 										Optional: true,
 										ForceNew: true,
 										Description: `IDs of the NodePools to be included in this GKE cluster. These IDs must
-correspond to NodePools defined in the 'node_pools' field.`,
+correspond to NodePools defined in the 'node_pools' field.
+Optional; if omitted, all node pools defined in 'node_pools' are included
+in the GKE cluster and node pools can be added or removed in place.
+If set, changing 'node_pool_ids' forces replacement of the cluster.`,
 										Elem: &schema.Schema{
 											Type: schema.TypeString,
 										},
@@ -616,10 +657,11 @@ correspond to NodePools defined in the 'node_pools' field.`,
 										Optional:         true,
 										DiffSuppressFunc: vertexAiModelDevelopmentClusterGkeVersionDiffSuppress,
 										Description: `The Kubernetes versions for specific node pools, keyed by node pool ID.
+Can be set on creation or updated in place.
 When specified, all node pool IDs in the cluster must be included.
-Accepted formats are minor version (for example, '"1.30"'), patch version
-(for example, '"1.30.5"'), full GKE release version (for example,
-'"1.30.5-gke.1014001"'), or '"-"' to align with the control plane version.
+Accepted formats are minor version (for example, '"1.35"'), patch version
+(for example, '"1.35.8"'), full GKE release version (for example,
+'"1.35.8-gke.1796000"'), or '"-"' to align with the control plane version.
 Node pools cannot be newer than the control plane or more than 2 minor
 versions behind it; upgrades can advance at most one minor version at a
 time and downgrades are rejected.`,
@@ -901,6 +943,22 @@ equal to 59.`,
 							Description: `The name of the VPC network where to create the cluster.
 The 'default' network is used if not specified.`,
 						},
+						"pods_secondary_range_name": {
+							Type:     schema.TypeString,
+							Optional: true,
+							ForceNew: true,
+							Description: `The name of the secondary IP range within the subnetwork for pods.
+Applicable to GKE clusters ('kubernetes_spec'). If not specified, GKE
+automatically creates a secondary IP range for pods.`,
+						},
+						"services_secondary_range_name": {
+							Type:     schema.TypeString,
+							Optional: true,
+							ForceNew: true,
+							Description: `The name of the secondary IP range within the subnetwork for services.
+Applicable to GKE clusters ('kubernetes_spec'). If not specified, GKE
+automatically creates a secondary IP range for services.`,
+						},
 						"subnetwork": {
 							Type:     schema.TypeString,
 							Computed: true,
@@ -910,6 +968,21 @@ The 'default' network is used if not specified.`,
 If not specified:
 * for auto mode VPC, the subnet in corresponding region is auto-selected;
 * for custom mode VPC, a new subnet will be automatically created.`,
+						},
+						"effective_pods_secondary_range_name": {
+							Type:     schema.TypeString,
+							Computed: true,
+							Description: `The effective name of the secondary IP range within the subnetwork for pods.
+This field reflects the value of 'pods_secondary_range_name' if it is set
+by the user, or is empty when GKE auto-creates the secondary range.`,
+						},
+						"effective_services_secondary_range_name": {
+							Type:     schema.TypeString,
+							Computed: true,
+							Description: `The effective name of the secondary IP range within the subnetwork for
+services. This field reflects the value of 'services_secondary_range_name'
+if it is set by the user, or is empty when GKE auto-creates the secondary
+range.`,
 						},
 					},
 				},
@@ -1438,16 +1511,6 @@ func resourceVertexAIModelDevelopmentClusterCreate(d *schema.ResourceData, meta 
 	if err := validateVertexAIModelDevelopmentClusterNodePoolVersions(d); err != nil {
 		return err
 	}
-
-	// The Create API rejects controlPlaneVersion and nodePoolVersions on initial
-	// cluster creation; strip them from the POST body and apply them via a
-	// follow-up PATCH in post_create if configured.
-	if orch, ok := obj["orchestratorSpec"].(map[string]interface{}); ok {
-		if k8s, ok := orch["kubernetesSpec"].(map[string]interface{}); ok {
-			delete(k8s, "controlPlaneVersion")
-			delete(k8s, "nodePoolVersions")
-		}
-	}
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",
@@ -1479,88 +1542,6 @@ func resourceVertexAIModelDevelopmentClusterCreate(d *schema.ResourceData, meta 
 		// The resource didn't actually create
 		d.SetId("")
 		return fmt.Errorf("Error waiting to create ModelDevelopmentCluster: %s", err)
-	}
-
-	var postCreateMask []string
-	k8sPatch := make(map[string]interface{})
-
-	cpVer, _ := d.Get("orchestrator_spec.0.kubernetes_spec.0.control_plane_version").(string)
-	if cpVer != "" && cpVer != "-" {
-		postCreateMask = append(postCreateMask, "orchestrator_spec.kubernetes_spec.control_plane_version")
-		k8sPatch["controlPlaneVersion"] = cpVer
-	}
-
-	if v, ok := d.GetOk("orchestrator_spec.0.kubernetes_spec.0.node_pool_versions"); ok {
-		if m, ok := v.(map[string]interface{}); ok && len(m) > 0 {
-			needsNodePoolPatch := len(postCreateMask) > 0
-			if !needsNodePoolPatch {
-				for _, rawVer := range m {
-					if ver, ok := rawVer.(string); ok && ver != "" && ver != "-" {
-						needsNodePoolPatch = true
-						break
-					}
-				}
-			}
-			if needsNodePoolPatch {
-				expanded, err := expandVertexAIModelDevelopmentClusterOrchestratorSpecKubernetesSpecNodePoolVersions(m, d, config)
-				if err != nil {
-					_ = resourceVertexAIModelDevelopmentClusterRead(d, meta)
-					return err
-				}
-				if expanded != nil {
-					postCreateMask = append(postCreateMask, "orchestrator_spec.kubernetes_spec.node_pool_versions")
-					k8sPatch["nodePoolVersions"] = expanded
-				}
-			}
-		}
-	}
-
-	if len(postCreateMask) > 0 {
-		patchObj := map[string]interface{}{
-			"orchestratorSpec": map[string]interface{}{
-				"kubernetesSpec": k8sPatch,
-			},
-		}
-		patchUrl, err := tpgresource.ReplaceVars(d, config, transport_tpg.BaseUrl(Product, config)+"projects/{{project}}/locations/{{region}}/modelDevelopmentClusters/{{model_development_cluster_id}}?updateMode={{update_mode}}")
-		if err != nil {
-			_ = resourceVertexAIModelDevelopmentClusterRead(d, meta)
-			return err
-		}
-		patchUrl, err = transport_tpg.AddQueryParams(patchUrl, map[string]string{"updateMask": strings.Join(postCreateMask, ",")})
-		if err != nil {
-			_ = resourceVertexAIModelDevelopmentClusterRead(d, meta)
-			return err
-		}
-		log.Printf("[DEBUG] Patching ModelDevelopmentCluster %q versions after creation: %#v", d.Id(), patchObj)
-		patchRes, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
-			Config:    config,
-			Method:    "PATCH",
-			Project:   billingProject,
-			RawURL:    patchUrl,
-			UserAgent: userAgent,
-			Body:      patchObj,
-			Timeout:   d.Timeout(schema.TimeoutCreate),
-			Headers:   headers,
-		})
-		// The cluster exists and is RUNNING here. Returning an error taints it, so tell the user how to
-		// keep it rather than let the next apply replace a healthy cluster.
-		versionErrHint := "The cluster was created at the service default version and is running, but Terraform " +
-			"marks it tainted and the next apply will replace it. To keep it, run `terraform untaint` on this " +
-			"resource and set control_plane_version and node_pool_versions to \"-\" or at most one minor version " +
-			"above the running version."
-		if err != nil {
-			log.Printf("[WARN] Applying versions to ModelDevelopmentCluster %q after creation failed: %s. %s", d.Id(), err, versionErrHint)
-			_ = resourceVertexAIModelDevelopmentClusterRead(d, meta)
-			return fmt.Errorf("Error patching ModelDevelopmentCluster %q versions after creation: %s. %s", d.Id(), err, versionErrHint)
-		}
-		err = VertexAIOperationWaitTime(
-			config, patchRes, project, tpgresource.LocationFromId(d.Id()), "Updating ModelDevelopmentCluster", userAgent,
-			d.Timeout(schema.TimeoutCreate))
-		if err != nil {
-			log.Printf("[WARN] Applying versions to ModelDevelopmentCluster %q after creation failed: %s. %s", d.Id(), err, versionErrHint)
-			_ = resourceVertexAIModelDevelopmentClusterRead(d, meta)
-			return fmt.Errorf("Error waiting to apply ModelDevelopmentCluster %q versions after creation: %s. %s", d.Id(), err, versionErrHint)
-		}
 	}
 
 	log.Printf("[DEBUG] Finished creating ModelDevelopmentCluster %q: %#v", d.Id(), res)
@@ -2316,13 +2297,37 @@ func flattenVertexAIModelDevelopmentClusterNetwork(v interface{}, d *schema.Reso
 		return nil
 	}
 	transformed := make(map[string]interface{})
+	transformed["effective_pods_secondary_range_name"] =
+		flattenVertexAIModelDevelopmentClusterNetworkEffectivePodsSecondaryRangeName(original["effectivePodsSecondaryRangeName"], d, config)
+	transformed["effective_services_secondary_range_name"] =
+		flattenVertexAIModelDevelopmentClusterNetworkEffectiveServicesSecondaryRangeName(original["effectiveServicesSecondaryRangeName"], d, config)
 	transformed["network"] =
 		flattenVertexAIModelDevelopmentClusterNetworkNetwork(original["network"], d, config)
+	transformed["pods_secondary_range_name"] =
+		flattenVertexAIModelDevelopmentClusterNetworkPodsSecondaryRangeName(original["podsSecondaryRangeName"], d, config)
+	transformed["services_secondary_range_name"] =
+		flattenVertexAIModelDevelopmentClusterNetworkServicesSecondaryRangeName(original["servicesSecondaryRangeName"], d, config)
 	transformed["subnetwork"] =
 		flattenVertexAIModelDevelopmentClusterNetworkSubnetwork(original["subnetwork"], d, config)
 	return []interface{}{transformed}
 }
+func flattenVertexAIModelDevelopmentClusterNetworkEffectivePodsSecondaryRangeName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenVertexAIModelDevelopmentClusterNetworkEffectiveServicesSecondaryRangeName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenVertexAIModelDevelopmentClusterNetworkNetwork(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenVertexAIModelDevelopmentClusterNetworkPodsSecondaryRangeName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenVertexAIModelDevelopmentClusterNetworkServicesSecondaryRangeName(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	return v
 }
 
@@ -2676,6 +2681,12 @@ func flattenVertexAIModelDevelopmentClusterOrchestratorSpecKubernetesSpec(v inte
 		flattenVertexAIModelDevelopmentClusterOrchestratorSpecKubernetesSpecControlPlaneVersion(original["controlPlaneVersion"], d, config)
 	transformed["node_pool_versions"] =
 		flattenVertexAIModelDevelopmentClusterOrchestratorSpecKubernetesSpecNodePoolVersions(original["nodePoolVersions"], d, config)
+	transformed["kueue_version"] =
+		flattenVertexAIModelDevelopmentClusterOrchestratorSpecKubernetesSpecKueueVersion(original["kueueVersion"], d, config)
+	transformed["nccl_gib_version"] =
+		flattenVertexAIModelDevelopmentClusterOrchestratorSpecKubernetesSpecNcclGibVersion(original["ncclGibVersion"], d, config)
+	transformed["maintenance_policy"] =
+		flattenVertexAIModelDevelopmentClusterOrchestratorSpecKubernetesSpecMaintenancePolicy(original["maintenancePolicy"], d, config)
 	return []interface{}{transformed}
 }
 func flattenVertexAIModelDevelopmentClusterOrchestratorSpecKubernetesSpecNodePoolIds(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -2711,6 +2722,18 @@ func flattenVertexAIModelDevelopmentClusterOrchestratorSpecKubernetesSpecNodePoo
 		}
 	}
 	return transformed
+}
+
+func flattenVertexAIModelDevelopmentClusterOrchestratorSpecKubernetesSpecKueueVersion(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenVertexAIModelDevelopmentClusterOrchestratorSpecKubernetesSpecNcclGibVersion(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
+func flattenVertexAIModelDevelopmentClusterOrchestratorSpecKubernetesSpecMaintenancePolicy(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
 }
 
 func flattenVertexAIModelDevelopmentClusterRuntime(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
@@ -3069,11 +3092,39 @@ func expandVertexAIModelDevelopmentClusterNetwork(v interface{}, d tpgresource.T
 	original := raw.(map[string]interface{})
 	transformed := make(map[string]interface{})
 
+	transformedEffectivePodsSecondaryRangeName, err := expandVertexAIModelDevelopmentClusterNetworkEffectivePodsSecondaryRangeName(original["effective_pods_secondary_range_name"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedEffectivePodsSecondaryRangeName); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["effectivePodsSecondaryRangeName"] = transformedEffectivePodsSecondaryRangeName
+	}
+
+	transformedEffectiveServicesSecondaryRangeName, err := expandVertexAIModelDevelopmentClusterNetworkEffectiveServicesSecondaryRangeName(original["effective_services_secondary_range_name"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedEffectiveServicesSecondaryRangeName); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["effectiveServicesSecondaryRangeName"] = transformedEffectiveServicesSecondaryRangeName
+	}
+
 	transformedNetwork, err := expandVertexAIModelDevelopmentClusterNetworkNetwork(original["network"], d, config)
 	if err != nil {
 		return nil, err
 	} else if val := reflect.ValueOf(transformedNetwork); val.IsValid() && !tpgresource.IsEmptyValue(val) {
 		transformed["network"] = transformedNetwork
+	}
+
+	transformedPodsSecondaryRangeName, err := expandVertexAIModelDevelopmentClusterNetworkPodsSecondaryRangeName(original["pods_secondary_range_name"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedPodsSecondaryRangeName); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["podsSecondaryRangeName"] = transformedPodsSecondaryRangeName
+	}
+
+	transformedServicesSecondaryRangeName, err := expandVertexAIModelDevelopmentClusterNetworkServicesSecondaryRangeName(original["services_secondary_range_name"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedServicesSecondaryRangeName); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["servicesSecondaryRangeName"] = transformedServicesSecondaryRangeName
 	}
 
 	transformedSubnetwork, err := expandVertexAIModelDevelopmentClusterNetworkSubnetwork(original["subnetwork"], d, config)
@@ -3086,7 +3137,23 @@ func expandVertexAIModelDevelopmentClusterNetwork(v interface{}, d tpgresource.T
 	return transformed, nil
 }
 
+func expandVertexAIModelDevelopmentClusterNetworkEffectivePodsSecondaryRangeName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandVertexAIModelDevelopmentClusterNetworkEffectiveServicesSecondaryRangeName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
 func expandVertexAIModelDevelopmentClusterNetworkNetwork(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandVertexAIModelDevelopmentClusterNetworkPodsSecondaryRangeName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandVertexAIModelDevelopmentClusterNetworkServicesSecondaryRangeName(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	return v, nil
 }
 
@@ -3692,6 +3759,27 @@ func expandVertexAIModelDevelopmentClusterOrchestratorSpecKubernetesSpec(v inter
 		transformed["nodePoolVersions"] = transformedNodePoolVersions
 	}
 
+	transformedKueueVersion, err := expandVertexAIModelDevelopmentClusterOrchestratorSpecKubernetesSpecKueueVersion(original["kueue_version"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedKueueVersion); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["kueueVersion"] = transformedKueueVersion
+	}
+
+	transformedNcclGibVersion, err := expandVertexAIModelDevelopmentClusterOrchestratorSpecKubernetesSpecNcclGibVersion(original["nccl_gib_version"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedNcclGibVersion); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["ncclGibVersion"] = transformedNcclGibVersion
+	}
+
+	transformedMaintenancePolicy, err := expandVertexAIModelDevelopmentClusterOrchestratorSpecKubernetesSpecMaintenancePolicy(original["maintenance_policy"], d, config)
+	if err != nil {
+		return nil, err
+	} else if val := reflect.ValueOf(transformedMaintenancePolicy); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+		transformed["maintenancePolicy"] = transformedMaintenancePolicy
+	}
+
 	return transformed, nil
 }
 
@@ -3733,6 +3821,18 @@ func expandVertexAIModelDevelopmentClusterOrchestratorSpecKubernetesSpecNodePool
 		return transformed, nil
 	}
 	return nil, nil
+}
+
+func expandVertexAIModelDevelopmentClusterOrchestratorSpecKubernetesSpecKueueVersion(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandVertexAIModelDevelopmentClusterOrchestratorSpecKubernetesSpecNcclGibVersion(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
+func expandVertexAIModelDevelopmentClusterOrchestratorSpecKubernetesSpecMaintenancePolicy(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
 }
 
 func expandVertexAIModelDevelopmentClusterRuntimeSpec(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
