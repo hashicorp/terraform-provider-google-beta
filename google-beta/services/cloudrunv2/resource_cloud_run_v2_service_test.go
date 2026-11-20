@@ -2222,8 +2222,16 @@ resource "google_cloud_run_v2_service" "default" {
 func TestAccCloudRunV2Service_cloudrunv2ServiceWorkloadIdentityConfigUpdate(t *testing.T) {
 	t.Parallel()
 
+	randomSuffix := acctest.RandString(t, 10)
+	projectNumber := envvar.GetTestProjectNumberFromEnv()
+	identity1 := fmt.Sprintf("//tf-test-wi-pool%s.global.%s.workload.id.goog/ns/tf-test-ns%s/sa/tf-test-id1-%s", randomSuffix, projectNumber, randomSuffix, randomSuffix)
+	identity2 := fmt.Sprintf("//tf-test-wi-pool%s.global.%s.workload.id.goog/ns/tf-test-ns%s/sa/tf-test-id2-%s", randomSuffix, projectNumber, randomSuffix, randomSuffix)
+
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
+		"random_suffix":  randomSuffix,
+		"project_number": projectNumber,
+		"identity_1":     identity1,
+		"identity_2":     identity2,
 	}
 
 	acctest.VcrTest(t, resource.TestCase{
@@ -2247,7 +2255,7 @@ func TestAccCloudRunV2Service_cloudrunv2ServiceWorkloadIdentityConfigUpdate(t *t
 				Config: testAccCloudRunV2Service_cloudrunv2ServiceWorkloadIdentityConfig_step2(context),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_cloud_run_v2_service.default", "template.0.workload_identity_config.#", "1"),
-					resource.TestCheckResourceAttr("google_cloud_run_v2_service.default", "template.0.workload_identity_config.0.identity", "//spiffe.example.com/ns/default/sa/test"),
+					resource.TestCheckResourceAttr("google_cloud_run_v2_service.default", "template.0.workload_identity_config.0.identity", identity1),
 					resource.TestCheckResourceAttr("google_cloud_run_v2_service.default", "template.0.workload_identity_config.0.identity_type", "IDENTITY_TYPE_WORKLOAD_IDENTITY"),
 					resource.TestCheckResourceAttr("google_cloud_run_v2_service.default", "template.0.workload_identity_config.0.identity_certificate_enabled", "false"),
 				),
@@ -2262,7 +2270,7 @@ func TestAccCloudRunV2Service_cloudrunv2ServiceWorkloadIdentityConfigUpdate(t *t
 				Config: testAccCloudRunV2Service_cloudrunv2ServiceWorkloadIdentityConfig_step3(context),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("google_cloud_run_v2_service.default", "template.0.workload_identity_config.#", "1"),
-					resource.TestCheckResourceAttr("google_cloud_run_v2_service.default", "template.0.workload_identity_config.0.identity", "//spiffe.example.com/ns/default/sa/updated"),
+					resource.TestCheckResourceAttr("google_cloud_run_v2_service.default", "template.0.workload_identity_config.0.identity", identity2),
 					resource.TestCheckResourceAttr("google_cloud_run_v2_service.default", "template.0.workload_identity_config.0.identity_type", "IDENTITY_TYPE_WORKLOAD_IDENTITY"),
 					resource.TestCheckResourceAttr("google_cloud_run_v2_service.default", "template.0.workload_identity_config.0.identity_certificate_enabled", "false"),
 				),
@@ -2292,6 +2300,43 @@ func TestAccCloudRunV2Service_cloudrunv2ServiceWorkloadIdentityConfigUpdate(t *t
 	})
 }
 
+func testAccCloudRunV2Service_workloadIdentityResources(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+resource "google_iam_workload_identity_pool" "pool" {
+  workload_identity_pool_id = "tf-test-wi-pool%{random_suffix}"
+  mode                      = "TRUST_DOMAIN"
+  inline_certificate_issuance_config {
+    use_default_shared_ca = true
+  }
+}
+
+resource "google_iam_workload_identity_pool_namespace" "ns" {
+  workload_identity_pool_id           = google_iam_workload_identity_pool.pool.workload_identity_pool_id
+  workload_identity_pool_namespace_id = "tf-test-ns%{random_suffix}"
+}
+
+resource "google_iam_workload_identity_pool_managed_identity" "id1" {
+  workload_identity_pool_id                  = google_iam_workload_identity_pool.pool.workload_identity_pool_id
+  workload_identity_pool_namespace_id        = google_iam_workload_identity_pool_namespace.ns.workload_identity_pool_namespace_id
+  workload_identity_pool_managed_identity_id = "tf-test-id1-%{random_suffix}"
+  attestation_rules {
+    google_cloud_resource = "//run.googleapis.com/projects/%{project_number}/name/locations/us-central1/services/tf-test-cloudrun-service%{random_suffix}"
+  }
+}
+
+resource "google_iam_workload_identity_pool_managed_identity" "id2" {
+  depends_on = [google_iam_workload_identity_pool_managed_identity.id1]
+
+  workload_identity_pool_id                  = google_iam_workload_identity_pool.pool.workload_identity_pool_id
+  workload_identity_pool_namespace_id        = google_iam_workload_identity_pool_namespace.ns.workload_identity_pool_namespace_id
+  workload_identity_pool_managed_identity_id = "tf-test-id2-%{random_suffix}"
+  attestation_rules {
+    google_cloud_resource = "//run.googleapis.com/projects/%{project_number}/name/locations/us-central1/services/tf-test-cloudrun-service%{random_suffix}"
+  }
+}
+`, context)
+}
+
 func testAccCloudRunV2Service_cloudrunv2ServiceWorkloadIdentityConfig_step1(context map[string]interface{}) string {
 	return acctest.Nprintf(`
 resource "google_cloud_run_v2_service" "default" {
@@ -2310,8 +2355,13 @@ resource "google_cloud_run_v2_service" "default" {
 }
 
 func testAccCloudRunV2Service_cloudrunv2ServiceWorkloadIdentityConfig_step2(context map[string]interface{}) string {
-	return acctest.Nprintf(`
+	return testAccCloudRunV2Service_workloadIdentityResources(context) + acctest.Nprintf(`
 resource "google_cloud_run_v2_service" "default" {
+  depends_on = [
+    google_iam_workload_identity_pool_managed_identity.id1,
+    google_iam_workload_identity_pool_managed_identity.id2,
+  ]
+
   name                = "tf-test-cloudrun-service%{random_suffix}"
   location            = "us-central1"
   deletion_protection = false
@@ -2323,7 +2373,7 @@ resource "google_cloud_run_v2_service" "default" {
       image = "us-docker.pkg.dev/cloudrun/container/hello"
     }
     workload_identity_config {
-      identity                     = "//spiffe.example.com/ns/default/sa/test"
+      identity                     = "%{identity_1}"
       identity_type                = "IDENTITY_TYPE_WORKLOAD_IDENTITY"
       identity_certificate_enabled = false
     }
@@ -2333,8 +2383,13 @@ resource "google_cloud_run_v2_service" "default" {
 }
 
 func testAccCloudRunV2Service_cloudrunv2ServiceWorkloadIdentityConfig_step3(context map[string]interface{}) string {
-	return acctest.Nprintf(`
+	return testAccCloudRunV2Service_workloadIdentityResources(context) + acctest.Nprintf(`
 resource "google_cloud_run_v2_service" "default" {
+  depends_on = [
+    google_iam_workload_identity_pool_managed_identity.id1,
+    google_iam_workload_identity_pool_managed_identity.id2,
+  ]
+
   name                = "tf-test-cloudrun-service%{random_suffix}"
   location            = "us-central1"
   deletion_protection = false
@@ -2346,7 +2401,7 @@ resource "google_cloud_run_v2_service" "default" {
       image = "us-docker.pkg.dev/cloudrun/container/hello"
     }
     workload_identity_config {
-      identity                     = "//spiffe.example.com/ns/default/sa/updated"
+      identity                     = "%{identity_2}"
       identity_type                = "IDENTITY_TYPE_WORKLOAD_IDENTITY"
       identity_certificate_enabled = false
     }
@@ -2356,8 +2411,13 @@ resource "google_cloud_run_v2_service" "default" {
 }
 
 func testAccCloudRunV2Service_cloudrunv2ServiceWorkloadIdentityConfig_step4(context map[string]interface{}) string {
-	return acctest.Nprintf(`
+	return testAccCloudRunV2Service_workloadIdentityResources(context) + acctest.Nprintf(`
 resource "google_cloud_run_v2_service" "default" {
+  depends_on = [
+    google_iam_workload_identity_pool_managed_identity.id1,
+    google_iam_workload_identity_pool_managed_identity.id2,
+  ]
+
   name                = "tf-test-cloudrun-service%{random_suffix}"
   location            = "us-central1"
   deletion_protection = false
