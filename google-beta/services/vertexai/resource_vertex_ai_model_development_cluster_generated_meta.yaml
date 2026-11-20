@@ -42,7 +42,11 @@ fields:
     - field: model_development_cluster_id
       provider_only: true
     - api_field: name
+    - api_field: network.effectivePodsSecondaryRangeName
+    - api_field: network.effectiveServicesSecondaryRangeName
     - api_field: network.network
+    - api_field: network.podsSecondaryRangeName
+    - api_field: network.servicesSecondaryRangeName
     - api_field: network.subnetwork
     - api_field: nodePools.bootDisk.bootDiskSizeGb
     - api_field: nodePools.bootDisk.bootDiskType
@@ -64,6 +68,9 @@ fields:
     - api_field: nodePools.zone
     - api_field: orchestratorSpec.kubernetesSpec.controlPlaneVersion
     - api_field: orchestratorSpec.kubernetesSpec.enableIpAlias
+    - api_field: orchestratorSpec.kubernetesSpec.kueueVersion
+    - api_field: orchestratorSpec.kubernetesSpec.maintenancePolicy
+    - api_field: orchestratorSpec.kubernetesSpec.ncclGibVersion
     - api_field: orchestratorSpec.kubernetesSpec.nodePoolIds
     - api_field: orchestratorSpec.kubernetesSpec.nodePoolVersions
     - api_field: orchestratorSpec.kubernetesSpec.publicAccessEndpointEnabled

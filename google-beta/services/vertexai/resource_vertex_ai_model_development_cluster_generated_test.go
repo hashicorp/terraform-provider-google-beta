@@ -1059,6 +1059,187 @@ resource "google_vertex_ai_model_development_cluster" "default" {
 `, context)
 }
 
+func TestAccVertexAIModelDevelopmentCluster_vertexAiModelDevelopmentClusterGkeFullExample(t *testing.T) {
+	t.Parallel()
+	resourcemanager.BootstrapIamMembers(t, []resourcemanager.IamMember{
+		{
+			Member: "serviceAccount:service-{project_number}@gcp-sa-vertex-vtc.iam.gserviceaccount.com",
+			Role:   "roles/resourcemanager.projectIamAdmin",
+		},
+		{
+			Member: "serviceAccount:service-{project_number}@gcp-sa-vertex-vtc.iam.gserviceaccount.com",
+			Role:   "roles/container.admin",
+		},
+		{
+			Member: "serviceAccount:service-{project_number}@gcp-sa-vertex-vtc.iam.gserviceaccount.com",
+			Role:   "roles/compute.admin",
+		},
+		{
+			Member: "serviceAccount:service-{project_number}@gcp-sa-vertex-vtc.iam.gserviceaccount.com",
+			Role:   "roles/compute.networkAdmin",
+		},
+		{
+			Member: "serviceAccount:service-{project_number}@gcp-sa-vertex-vtc.iam.gserviceaccount.com",
+			Role:   "roles/hypercomputecluster.editor",
+		},
+	})
+
+	randomSuffix := acctest.RandString(t, 10)
+
+	context := map[string]interface{}{
+		"firewall_name":                "tf-test-mdc-gkef-fw" + randomSuffix,
+		"model_development_cluster_id": "tfgen" + randomSuffix[:5],
+		"network_name":                 "tf-test-mdc-gkef-net" + randomSuffix,
+		"subnetwork_name":              "tf-test-mdc-gkef-subnet" + randomSuffix,
+		"random_suffix":                randomSuffix,
+	}
+
+	acctest.VcrTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccTestPreCheck(t) },
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderBetaFactories(t),
+		CheckDestroy:             testAccCheckVertexAIModelDevelopmentClusterDestroyProducer(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccVertexAIModelDevelopmentCluster_vertexAiModelDevelopmentClusterGkeFullExample(context),
+			},
+			{
+				ResourceName:            "google_vertex_ai_model_development_cluster.default",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"labels", "model_development_cluster_id", "region", "terraform_labels"},
+			},
+			{
+				ResourceName:       "google_vertex_ai_model_development_cluster.default",
+				ImportState:        true,
+				ExpectNonEmptyPlan: true,
+				ImportStateKind:    resource.ImportBlockWithResourceIdentity,
+			},
+		},
+	})
+}
+
+func testAccVertexAIModelDevelopmentCluster_vertexAiModelDevelopmentClusterGkeFullExample(context map[string]interface{}) string {
+	return acctest.Nprintf(`
+data "google_container_engine_versions" "default" {
+  provider = google-beta
+  location = "us-east1"
+}
+
+resource "google_compute_network" "net" {
+  provider                = google-beta
+  name                    = "%{network_name}"
+  auto_create_subnetworks = false
+}
+
+resource "google_compute_subnetwork" "subnet" {
+  provider                 = google-beta
+  name                     = "%{subnetwork_name}"
+  ip_cidr_range            = "10.0.0.0/24"
+  region                   = "us-east1"
+  network                  = google_compute_network.net.id
+  private_ip_google_access = true
+
+  secondary_ip_range {
+    range_name    = "pods-range"
+    ip_cidr_range = "10.16.0.0/14"
+  }
+
+  secondary_ip_range {
+    range_name    = "services-range"
+    ip_cidr_range = "10.20.0.0/20"
+  }
+}
+
+resource "google_compute_firewall" "internal" {
+  provider      = google-beta
+  name          = "%{firewall_name}"
+  network       = google_compute_network.net.name
+  direction     = "INGRESS"
+  source_ranges = ["10.0.0.0/24"]
+
+  allow {
+    protocol = "tcp"
+    ports    = ["0-65535"]
+  }
+  allow {
+    protocol = "udp"
+    ports    = ["0-65535"]
+  }
+  allow {
+    protocol = "icmp"
+  }
+}
+
+resource "google_vertex_ai_model_development_cluster" "default" {
+  provider                     = google-beta
+  region                       = "us-east1"
+  model_development_cluster_id = "%{model_development_cluster_id}"
+  display_name                 = "tftest-gke-full"
+  deletion_policy              = "DELETE"
+  depends_on                   = [google_compute_firewall.internal]
+
+  labels = {
+    env = "dev"
+  }
+
+  network {
+    network                       = google_compute_network.net.id
+    subnetwork                    = google_compute_subnetwork.subnet.id
+    pods_secondary_range_name     = "pods-range"
+    services_secondary_range_name = "services-range"
+  }
+
+  orchestrator_spec {
+    kubernetes_spec {
+      enable_ip_alias                = true
+      public_access_endpoint_enabled = true
+      control_plane_version          = data.google_container_engine_versions.default.release_channel_latest_version["REGULAR"]
+      node_pool_versions = {
+        cpu1 = data.google_container_engine_versions.default.release_channel_latest_version["REGULAR"]
+      }
+      kueue_version    = "v0.16.2"
+      nccl_gib_version = "v1.1.2"
+      maintenance_policy = jsonencode({
+        window = {
+          dailyMaintenanceWindow = {
+            startTime = "03:00"
+          }
+          maintenanceExclusions = {
+            no-node-upgrades = {
+              maintenanceExclusionOptions = {
+                scope           = "NO_MINOR_OR_NODE_UPGRADES"
+                endTimeBehavior = "UNTIL_END_OF_SUPPORT"
+              }
+            }
+          }
+        }
+      })
+    }
+  }
+
+  node_pools {
+    id                 = "cpu1"
+    zone               = "us-east1-b"
+    provisioning_model = "ON_DEMAND"
+
+    boot_disk {
+      boot_disk_size_gb = 100
+      boot_disk_type    = "pd-standard"
+    }
+
+    machine_spec {
+      machine_type = "n2-standard-4"
+    }
+
+    scaling_spec {
+      min_node_count = 1
+      max_node_count = 2
+    }
+  }
+}
+`, context)
+}
+
 func testAccCheckVertexAIModelDevelopmentClusterDestroyProducer(t *testing.T) func(s *terraform.State) error {
 	return func(s *terraform.State) error {
 		for name, rs := range s.RootModule().Resources {
