@@ -196,6 +196,27 @@ Cloud Pub/Sub topic. Not having adequate permissions will cause the calls that s
 						},
 					},
 				},
+				ConflictsWith: []string{"notification_configs"},
+			},
+			"notification_configs": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: `Specifies where and whether to send notifications upon changes to a DICOM store.`,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"pubsub_topic": {
+							Type:     schema.TypeString,
+							Required: true,
+							Description: `The Cloud Pub/Sub topic that notifications of changes are published on. Supplied by the client.
+PubsubMessage.Data will contain the resource name. PubsubMessage.MessageId is the ID of this message.
+It is guaranteed to be unique within the topic. PubsubMessage.PublishTime is the time at which the message
+was published. Notifications are only sent if the topic is non-empty. Topic names must be scoped to a
+project. service-PROJECT_NUMBER@gcp-sa-healthcare.iam.gserviceaccount.com must have publisher permissions on the given
+Cloud Pub/Sub topic. Not having adequate permissions will cause the calls that send notifications to fail.`,
+						},
+					},
+				},
+				ConflictsWith: []string{"notification_config"},
 			},
 			"stream_configs": {
 				Type:     schema.TypeList,
@@ -277,6 +298,12 @@ func resourceHealthcareDicomStoreCreate(d *schema.ResourceData, meta interface{}
 		return err
 	} else if v, ok := d.GetOkExists("notification_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(notificationConfigProp)) && (ok || !reflect.DeepEqual(v, notificationConfigProp)) {
 		obj["notificationConfig"] = notificationConfigProp
+	}
+	notificationConfigsProp, err := expandHealthcareDicomStoreNotificationConfigs(d.Get("notification_configs"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("notification_configs"); !tpgresource.IsEmptyValue(reflect.ValueOf(notificationConfigsProp)) && (ok || !reflect.DeepEqual(v, notificationConfigsProp)) {
+		obj["notificationConfigs"] = notificationConfigsProp
 	}
 	streamConfigsProp, err := expandHealthcareDicomStoreStreamConfigs(d.Get("stream_configs"), d, config)
 	if err != nil {
@@ -477,6 +504,12 @@ func resourceHealthcareDicomStoreUpdate(d *schema.ResourceData, meta interface{}
 	} else if v, ok := d.GetOkExists("notification_config"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, notificationConfigProp)) {
 		obj["notificationConfig"] = notificationConfigProp
 	}
+	notificationConfigsProp, err := expandHealthcareDicomStoreNotificationConfigs(d.Get("notification_configs"), d, config)
+	if err != nil {
+		return err
+	} else if v, ok := d.GetOkExists("notification_configs"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, notificationConfigsProp)) {
+		obj["notificationConfigs"] = notificationConfigsProp
+	}
 	streamConfigsProp, err := expandHealthcareDicomStoreStreamConfigs(d.Get("stream_configs"), d, config)
 	if err != nil {
 		return err
@@ -501,6 +534,10 @@ func resourceHealthcareDicomStoreUpdate(d *schema.ResourceData, meta interface{}
 
 	if d.HasChange("notification_config") {
 		updateMask = append(updateMask, "notificationConfig")
+	}
+
+	if d.HasChange("notification_configs") {
+		updateMask = append(updateMask, "notificationConfigs")
 	}
 
 	if d.HasChange("stream_configs") {
@@ -667,6 +704,29 @@ func flattenHealthcareDicomStoreNotificationConfigSendForBulkImport(v interface{
 	return v
 }
 
+func flattenHealthcareDicomStoreNotificationConfigs(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	if v == nil {
+		return v
+	}
+	l := v.([]interface{})
+	transformed := make([]interface{}, 0, len(l))
+	for i, raw := range l {
+		_ = i
+		original := raw.(map[string]interface{})
+		if len(original) < 1 {
+			// Do not include empty json objects coming back from the api
+			continue
+		}
+		transformed = append(transformed, map[string]interface{}{
+			"pubsub_topic": flattenHealthcareDicomStoreNotificationConfigsPubsubTopic(original["pubsubTopic"], d, config),
+		})
+	}
+	return transformed
+}
+func flattenHealthcareDicomStoreNotificationConfigsPubsubTopic(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
+	return v
+}
+
 func flattenHealthcareDicomStoreStreamConfigs(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
 	if v == nil {
 		return v
@@ -763,6 +823,35 @@ func expandHealthcareDicomStoreNotificationConfigSendForBulkImport(v interface{}
 	return v, nil
 }
 
+func expandHealthcareDicomStoreNotificationConfigs(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
+	l := v.([]interface{})
+	req := make([]interface{}, 0, len(l))
+	for _, raw := range l {
+		if raw == nil {
+			continue
+		}
+		original := raw.(map[string]interface{})
+		transformed := make(map[string]interface{})
+
+		transformedPubsubTopic, err := expandHealthcareDicomStoreNotificationConfigsPubsubTopic(original["pubsub_topic"], d, config)
+		if err != nil {
+			return nil, err
+		} else if val := reflect.ValueOf(transformedPubsubTopic); val.IsValid() && !tpgresource.IsEmptyValue(val) {
+			transformed["pubsubTopic"] = transformedPubsubTopic
+		}
+
+		req = append(req, transformed)
+	}
+	return req, nil
+}
+
+func expandHealthcareDicomStoreNotificationConfigsPubsubTopic(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
+	return v, nil
+}
+
 func expandHealthcareDicomStoreStreamConfigs(v interface{}, d tpgresource.TerraformResourceData, config *transport_tpg.Config) (interface{}, error) {
 	if v == nil {
 		return nil, nil
@@ -848,6 +937,9 @@ func ResourceHealthcareDicomStoreFlatten(d *schema.ResourceData, meta interface{
 		return fmt.Errorf("Error reading DicomStore: %s", err)
 	}
 	if err = d.Set("notification_config", flattenHealthcareDicomStoreNotificationConfig(res["notificationConfig"], d, config)); err != nil {
+		return fmt.Errorf("Error reading DicomStore: %s", err)
+	}
+	if err = d.Set("notification_configs", flattenHealthcareDicomStoreNotificationConfigs(res["notificationConfigs"], d, config)); err != nil {
 		return fmt.Errorf("Error reading DicomStore: %s", err)
 	}
 	if err = d.Set("stream_configs", flattenHealthcareDicomStoreStreamConfigs(res["streamConfigs"], d, config)); err != nil {
