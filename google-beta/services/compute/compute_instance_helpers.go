@@ -242,11 +242,6 @@ func expandScheduling(v interface{}) (map[string]interface{}, error) {
 			result["hostErrorTimeoutSeconds"] = int64(v.(int))
 		}
 	}
-
-	if v, ok := original["maintenance_interval"]; ok && v.(string) != "" {
-		result["maintenanceInterval"] = v.(string)
-	}
-
 	if v, ok := original["graceful_shutdown"]; ok {
 		transformedGracefulShutdown, err := expandGracefulShutdown(v)
 		if err != nil {
@@ -255,6 +250,10 @@ func expandScheduling(v interface{}) (map[string]interface{}, error) {
 		if transformedGracefulShutdown != nil || !omitDurations {
 			result["gracefulShutdown"] = transformedGracefulShutdown
 		}
+	}
+
+	if v, ok := original["maintenance_interval"]; ok && v.(string) != "" {
+		result["maintenanceInterval"] = v.(string)
 	}
 
 	if v, ok := original["skip_guest_os_shutdown"]; ok {
@@ -366,6 +365,7 @@ func expandComputeLocalSsdRecoveryTimeoutNanos(v interface{}) (interface{}, erro
 func expandComputeLocalSsdRecoveryTimeoutSeconds(v interface{}) (interface{}, error) {
 	return v, nil
 }
+
 func expandGracefulShutdown(v interface{}) (map[string]interface{}, error) {
 	l := v.([]interface{})
 	if len(l) == 0 || l[0] == nil {
@@ -435,14 +435,14 @@ func flattenScheduling(resp map[string]interface{}) []map[string]interface{} {
 		schedulingMap["host_error_timeout_seconds"] = h
 	}
 
+	if gs, ok := resp["gracefulShutdown"].(map[string]interface{}); ok {
+		schedulingMap["graceful_shutdown"] = flattenGracefulShutdown(gs)
+	}
+
 	schedulingMap["skip_guest_os_shutdown"] = resp["skipGuestOsShutdown"]
 
 	if mi, ok := resp["maintenanceInterval"].(string); ok && mi != "" {
 		schedulingMap["maintenance_interval"] = mi
-	}
-
-	if gs, ok := resp["gracefulShutdown"].(map[string]interface{}); ok {
-		schedulingMap["graceful_shutdown"] = flattenGracefulShutdown(gs)
 	}
 
 	if pnd, ok := resp["preemptionNoticeDuration"].(map[string]interface{}); ok {
@@ -1355,12 +1355,11 @@ func schedulingHasChangeWithoutReboot(d *schema.ResourceData) bool {
 	if oScheduling["host_error_timeout_seconds"] != newScheduling["host_error_timeout_seconds"] {
 		return true
 	}
-
-	if oScheduling["skip_guest_os_shutdown"] != newScheduling["skip_guest_os_shutdown"] {
+	if hasGracefulShutdownChanged(oScheduling, newScheduling) {
 		return true
 	}
 
-	if hasGracefulShutdownChanged(oScheduling, newScheduling) {
+	if oScheduling["skip_guest_os_shutdown"] != newScheduling["skip_guest_os_shutdown"] {
 		return true
 	}
 

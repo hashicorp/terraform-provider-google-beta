@@ -930,7 +930,6 @@ be from 0 to 999,999,999 inclusive.`,
 								},
 							},
 						},
-
 						"graceful_shutdown": {
 							Type:        schema.TypeList,
 							Optional:    true,
@@ -976,6 +975,7 @@ be from 0 to 999,999,999 inclusive.`,
 								},
 							},
 						},
+
 						"skip_guest_os_shutdown": {
 							Type:        schema.TypeBool,
 							Optional:    true,
@@ -1759,7 +1759,6 @@ func resourceComputeRegionInstanceTemplateRead(d *schema.ResourceData, meta inte
 	}
 	if properties["scheduling"] != nil {
 		scheduling := FlattenSchedulingHTTP(properties["scheduling"].(map[string]interface{}))
-
 		if nanos, ok := d.GetOk("scheduling.0.graceful_shutdown.0.max_duration.0.nanos"); ok {
 			if len(scheduling) > 0 && scheduling[0]["graceful_shutdown"] != nil {
 				if gs, ok := scheduling[0]["graceful_shutdown"].([]map[string]interface{}); ok && len(gs) > 0 && gs[0] != nil {

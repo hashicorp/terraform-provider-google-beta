@@ -51,8 +51,8 @@ var (
 		"scheduling.0.on_instance_stop_action",
 		"scheduling.0.termination_time",
 		"scheduling.0.host_error_timeout_seconds",
-		"scheduling.0.maintenance_interval",
 		"scheduling.0.graceful_shutdown",
+		"scheduling.0.maintenance_interval",
 		"scheduling.0.skip_guest_os_shutdown",
 		"scheduling.0.preemption_notice_duration",
 		"scheduling.0.local_ssd_recovery_timeout",
@@ -962,7 +962,6 @@ be from 0 to 999,999,999 inclusive.`,
 								},
 							},
 						},
-
 						"graceful_shutdown": {
 							Type:        schema.TypeList,
 							Optional:    true,
@@ -1008,6 +1007,7 @@ be from 0 to 999,999,999 inclusive.`,
 								},
 							},
 						},
+
 						"skip_guest_os_shutdown": {
 							Type:        schema.TypeBool,
 							Optional:    true,
@@ -2157,7 +2157,6 @@ func resourceComputeInstanceTemplateRead(d *schema.ResourceData, meta interface{
 			return fmt.Errorf("Error converting scheduling: %s", err)
 		}
 		scheduling := flattenScheduling(schedulingMap)
-
 		// Workaroud: API doesn't update the scheduling.graceful_shutdown.max_duration.nanos field.
 		// To avoid diff, we need to set the value from the state not from API response.
 		if nanos, ok := d.GetOk("scheduling.0.graceful_shutdown.0.max_duration.0.nanos"); ok {
