@@ -353,6 +353,7 @@ func FlattenSchedulingHTTP(resp map[string]interface{}) []map[string]interface{}
 			},
 		}
 	}
+
 	if gracefulRaw, ok := resp["gracefulShutdown"]; ok && gracefulRaw != nil {
 		graceful := gracefulRaw.(map[string]interface{})
 		graceMap := map[string]interface{}{
