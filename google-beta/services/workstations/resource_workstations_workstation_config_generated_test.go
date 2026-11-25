@@ -725,7 +725,7 @@ resource "google_compute_network" "default" {
 resource "google_compute_subnetwork" "default" {
   name          = "%{workstation_cluster_name}"
   ip_cidr_range = "10.0.0.0/24"
-  region        = "europe-west4"
+  region        = "us-central1"
   network       = google_compute_network.default.name
 }
 
@@ -733,7 +733,7 @@ resource "google_workstations_workstation_cluster" "default" {
   workstation_cluster_id = "%{workstation_cluster_name}"
   network                = google_compute_network.default.id
   subnetwork             = google_compute_subnetwork.default.id
-  location               = "europe-west4"
+  location               = "us-central1"
   
   labels = {
     "label" = "key"
@@ -747,7 +747,7 @@ resource "google_workstations_workstation_cluster" "default" {
 resource "google_workstations_workstation_config" "default" {
   workstation_config_id  = "%{workstation_config_name}"
   workstation_cluster_id = google_workstations_workstation_cluster.default.workstation_cluster_id
-  location               = "europe-west4"
+  location               = "us-central1"
 
   host {
     gce_instance {
@@ -785,7 +785,7 @@ resource "google_compute_network" "default" {
 resource "google_compute_subnetwork" "default" {
   name          = "%{workstation_cluster_name}"
   ip_cidr_range = "10.0.0.0/24"
-  region        = "europe-west4"
+  region        = "us-central1"
   network       = google_compute_network.default.name
 }
 
@@ -793,7 +793,7 @@ resource "google_workstations_workstation_cluster" "default" {
   workstation_cluster_id = "%{workstation_cluster_name}"
   network                = google_compute_network.default.id
   subnetwork             = google_compute_subnetwork.default.id
-  location               = "europe-west4"
+  location               = "us-central1"
   
   labels = {
     "label" = "key"
@@ -807,7 +807,7 @@ resource "google_workstations_workstation_cluster" "default" {
 resource "google_workstations_workstation_config" "default" {
   workstation_config_id  = "%{workstation_config_name}"
   workstation_cluster_id = google_workstations_workstation_cluster.default.workstation_cluster_id
-  location               = "europe-west4"
+  location               = "us-central1"
 
   host {
     gce_instance {
@@ -846,7 +846,7 @@ resource "google_compute_network" "default" {
 resource "google_compute_subnetwork" "default" {
   name          = "%{workstation_cluster_name}"
   ip_cidr_range = "10.0.0.0/24"
-  region        = "europe-west4"
+  region        = "us-central1"
   network       = google_compute_network.default.name
 }
 
@@ -854,7 +854,7 @@ resource "google_workstations_workstation_cluster" "default" {
   workstation_cluster_id = "%{workstation_cluster_name}"
   network                = google_compute_network.default.id
   subnetwork             = google_compute_subnetwork.default.id
-  location               = "europe-west4"
+  location               = "us-central1"
 
   labels = {
     "label" = "key"
@@ -868,7 +868,7 @@ resource "google_workstations_workstation_cluster" "default" {
 resource "google_workstations_workstation_config" "default" {
   workstation_config_id  = "%{workstation_config_name}"
   workstation_cluster_id = google_workstations_workstation_cluster.default.workstation_cluster_id
-  location               = "europe-west4"
+  location               = "us-central1"
 
   host {
     gce_instance {
